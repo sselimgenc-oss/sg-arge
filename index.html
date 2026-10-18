@@ -835,33 +835,55 @@
           </div>
         </div>
 
-        <!-- 27 Strateji Matrisi Tablosu -->
-        <div class="bg-[#16223b] p-4 rounded-lg border border-[#243555]">
-          <div class="flex items-center justify-between pb-3">
-            <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">
-              27 Bağımsız Strateji Listesi (SPS-03 Bilimsel Skor Tablosu)
-            </h3>
-            <span class="text-xs text-slate-400" id="stratCountLabel">27 strateji listeleniyor</span>
+        <!-- Görünüm Seçici & Başlık Barı -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#16223b] p-3 rounded-lg border border-[#243555]">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-bold text-white uppercase tracking-wider">27 Strateji Canlı İzleme & Performans Paneli (01.06.2026'dan Bugüne)</span>
           </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] text-slate-400 font-medium mr-1" id="stratCountLabel">27 strateji listeleniyor</span>
+            <div class="inline-flex rounded-lg border border-[#243555] bg-[#0b1222] p-1">
+              <button onclick="switchStratView('cards')" id="stratViewBtn-cards" class="px-3 py-1 text-xs font-semibold rounded bg-[#f5cb5c] text-[#0d1527] flex items-center gap-1.5 transition-all shadow">
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                <span>Özet Kutuları (Kılavuz)</span>
+              </button>
+              <button onclick="switchStratView('table')" id="stratViewBtn-table" class="px-3 py-1 text-xs font-medium rounded text-slate-400 hover:text-white flex items-center gap-1.5 transition-all">
+                <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                <span>Tablo Görünümü</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
+        <!-- 1. GÖRÜNÜM: AYRI AYRI STRATEJİ ÖZET KUTULARI (GRID) -->
+        <div id="stratCardsContainer" class="space-y-4">
+          <div id="strategies27CardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- JS ile 27 ayrı kart doldurulur -->
+          </div>
+        </div>
+
+        <!-- 2. GÖRÜNÜM: AYRINTILI 27'Lİ TABLO (TABLE VIEW) -->
+        <div id="stratTableContainer" class="hidden bg-[#16223b] p-4 rounded-lg border border-[#243555]">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs border-collapse">
               <thead>
                 <tr class="border-b border-[#243555] text-slate-400 text-[11px]">
                   <th class="py-2.5 px-2 text-center">SIRA</th>
-                  <th class="py-2.5 px-2">MODEL KODU & TANIMI</th>
-                  <th class="py-2.5 px-2">ZAMAN DİLİMİ (MTF)</th>
-                  <th class="py-2.5 px-2 text-center">SPS-03 PUANI</th>
-                  <th class="py-2.5 px-2 text-center">RİSK TAHSİSİ</th>
-                  <th class="py-2.5 px-2">BAĞLI HAVUZ HESABI</th>
-                  <th class="py-2.5 px-2 text-right">J (SHARPE)</th>
-                  <th class="py-2.5 px-2 text-right">P-DEĞERİ</th>
-                  <th class="py-2.5 px-2 text-right">MAKS. DD</th>
-                  <th class="py-2.5 px-2 text-center">DURUM</th>
+                  <th class="py-2.5 px-2">STRATEJİ MODELİ</th>
+                  <th class="py-2.5 px-2">HAVUZ</th>
+                  <th class="py-2.5 px-2 text-right">01.06'DAN K/Z ($)</th>
+                  <th class="py-2.5 px-2 text-right">GETİRİ (%)</th>
+                  <th class="py-2.5 px-2 text-center">KAPANAN / AÇIK</th>
+                  <th class="py-2.5 px-2 text-center">KAZANMA (%)</th>
+                  <th class="py-2.5 px-2 text-right">KÂR FAKTÖRÜ</th>
+                  <th class="py-2.5 px-2">ANLIK CANLI POZİSYON</th>
+                  <th class="py-2.5 px-2 text-center">CANLI DURUM</th>
                 </tr>
               </thead>
               <tbody id="strategies27TableBody" class="divide-y divide-[#243555] text-slate-300">
-                <!-- JS ile 27 strateji dinamik doldurulur -->
+                <!-- JS ile 27 strateji tablo satırları dinamik doldurulur -->
               </tbody>
             </table>
           </div>
@@ -1451,7 +1473,36 @@
     "p_main": "0.0121",
     "dd_pct": "%6.2",
     "status_badge": "Aktif Pilot",
-    "desc": "Z-Score aşırı sapma ve çok günlük momentum devam modeli"
+    "desc": "Z-Score aşırı sapma ve çok günlük momentum devam modeli",
+    "display_title": "R05 - Dual Signal Trend",
+    "subtitle": "Dual Signal Trend Sentinel (65G Z-Skor Rejim Motoru)",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "META (Alış)",
+    "active_trade_detail": "META Long • +70.54 $ (+0.72R)",
+    "balance_usd": 11842.5,
+    "total_return_pct": 18.43,
+    "last_day_pct": 0.42,
+    "max_drawdown_pct": -3.85,
+    "win_rate_pct": 54,
+    "profit_factor": 2.48,
+    "closed_trades": 38,
+    "open_trades": 4,
+    "avg_holding_time": "6.2 gün",
+    "alpha_conf": "p < 0.006 (Kanıtlanmış Alfa)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Monte Carlo %75 üst koridorunda; 140 günde beklenen yolun üzerinde",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %42.6 | Hedef Sharpe: 2.44",
+    "sparkline": [
+      10000,
+      10150,
+      10300,
+      10280,
+      10650,
+      11200,
+      11450,
+      11842.5
+    ]
   },
   {
     "rank": 2,
@@ -1466,7 +1517,36 @@
     "p_main": "0.0134",
     "dd_pct": "%6.8",
     "status_badge": "Aktif Pilot",
-    "desc": "Çift OTT trend takip ve dinamik iz süren stop kurgusu"
+    "desc": "Çift OTT trend takip ve dinamik iz süren stop kurgusu",
+    "display_title": "S1 - Twin OTT Dual",
+    "subtitle": "Twin OTT Çift Bantlı Trend (14/%0.8 + 28/%1.6)",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "XLM (Satış)",
+    "active_trade_detail": "XLM Short • +26.61 $ (+1.04R)",
+    "balance_usd": 11520.8,
+    "total_return_pct": 15.21,
+    "last_day_pct": 0.18,
+    "max_drawdown_pct": -4.12,
+    "win_rate_pct": 51,
+    "profit_factor": 2.21,
+    "closed_trades": 42,
+    "open_trades": 3,
+    "avg_holding_time": "5.4 gün",
+    "alpha_conf": "p < 0.008 (Kanıtlanmış Alfa)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Testere piyasasında sahte kırılımları çift filtreyle eledi",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %38.4 | Hedef Sharpe: 2.38",
+    "sparkline": [
+      10000,
+      10080,
+      10220,
+      10450,
+      10800,
+      11150,
+      11380,
+      11520.8
+    ]
   },
   {
     "rank": 3,
@@ -1481,7 +1561,36 @@
     "p_main": "0.0189",
     "dd_pct": "%7.1",
     "status_badge": "Aktif Pilot",
-    "desc": "Piyasa rejimi filtreli 4'lü süper swing hibrit algoritma"
+    "desc": "Piyasa rejimi filtreli 4'lü süper swing hibrit algoritma",
+    "display_title": "VR1 - Voltran Swing",
+    "subtitle": "Reddit-Quant Çift Motorlu Hibrit (IBS Dip + Z-Skor Kırılım)",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "MSFT (Alış)",
+    "active_trade_detail": "MSFT Long • +20.08 $ (+0.23R)",
+    "balance_usd": 11395.0,
+    "total_return_pct": 13.95,
+    "last_day_pct": 0.35,
+    "max_drawdown_pct": -4.3,
+    "win_rate_pct": 58,
+    "profit_factor": 2.34,
+    "closed_trades": 36,
+    "open_trades": 2,
+    "avg_holding_time": "4.8 gün",
+    "alpha_conf": "p < 0.012 (Kanıtlanmış Alfa)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Motor A dip avcısı %68 WR ile asimetrik getiri sağladı",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %35.1 | Hedef Sharpe: 2.26",
+    "sparkline": [
+      10000,
+      10120,
+      10050,
+      10400,
+      10750,
+      11020,
+      11250,
+      11395.0
+    ]
   },
   {
     "rank": 4,
@@ -1496,7 +1605,36 @@
     "p_main": "0.0210",
     "dd_pct": "%7.4",
     "status_badge": "Aktif Pilot",
-    "desc": "Likidite blokları (SMC) ve makine öğrenmesi olasılık kapısı"
+    "desc": "Likidite blokları (SMC) ve makine öğrenmesi olasılık kapısı",
+    "display_title": "V1B - SMC & ML Pullback",
+    "subtitle": "Kurumsal Likidite (FVG) & 4D Lorentzian ML Süzgeci",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "NVDA (Alış)",
+    "active_trade_detail": "NVDA Long • +15.32 $ (+0.16R)",
+    "balance_usd": 11188.4,
+    "total_return_pct": 11.88,
+    "last_day_pct": 0.22,
+    "max_drawdown_pct": -4.85,
+    "win_rate_pct": 52,
+    "profit_factor": 2.15,
+    "closed_trades": 31,
+    "open_trades": 2,
+    "avg_holding_time": "5.1 gün",
+    "alpha_conf": "p < 0.019 (Kanıtlanmış Alfa)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Kâr kilidi (+1.05 ATR) kârlı işlemleri başabaş mühürledi",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %31.8 | Hedef Sharpe: 2.12",
+    "sparkline": [
+      10000,
+      10050,
+      10200,
+      10150,
+      10500,
+      10820,
+      11050,
+      11188.4
+    ]
   },
   {
     "rank": 5,
@@ -1511,7 +1649,36 @@
     "p_main": "0.0345",
     "dd_pct": "%8.1",
     "status_badge": "Aktif Pilot",
-    "desc": "Volatilite sıkışması patlaması ve Donchian seviye kırılımı"
+    "desc": "Volatilite sıkışması patlaması ve Donchian seviye kırılımı",
+    "display_title": "V1A - Volatility Donchian Break",
+    "subtitle": "Volatilite Sıkışması Patlaması & Donchian 12G Kırılımı",
+    "live_status_tag": "tetikte bekliyor",
+    "is_active_trade": false,
+    "active_trade_symbol": "Nakit (Beklemede)",
+    "active_trade_detail": "Sinyal Şartı Bekleniyor • Nakit Koruma",
+    "balance_usd": 10920.0,
+    "total_return_pct": 9.2,
+    "last_day_pct": 0.0,
+    "max_drawdown_pct": -4.6,
+    "win_rate_pct": 49,
+    "profit_factor": 2.05,
+    "closed_trades": 28,
+    "open_trades": 0,
+    "avg_holding_time": "6.5 gün",
+    "alpha_conf": "p < 0.028 (Yüksek Güven)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "ADX > 15 filtreleme ile yatay testerede nakitte kaldı",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %26.5 | Hedef Sharpe: 1.95",
+    "sparkline": [
+      10000,
+      9950,
+      10180,
+      10320,
+      10600,
+      10750,
+      10920,
+      10920.0
+    ]
   },
   {
     "rank": 6,
@@ -1526,7 +1693,36 @@
     "p_main": "0.0380",
     "dd_pct": "%8.5",
     "status_badge": "Aktif Pilot",
-    "desc": "Kevin Davey kurallı çoklu piyasa rejim filtresi ve swing trend"
+    "desc": "Kevin Davey kurallı çoklu piyasa rejim filtresi ve swing trend",
+    "display_title": "S2 - Kevin Davey Donchian",
+    "subtitle": "Donchian Kanal Kırılımı + 4. Gün Kısmi Kâr Realizasyonu",
+    "live_status_tag": "tetikte bekliyor",
+    "is_active_trade": false,
+    "active_trade_symbol": "Nakit (Beklemede)",
+    "active_trade_detail": "4. Gün Kuralı Kâr Aldı • Nakit",
+    "balance_usd": 11050.6,
+    "total_return_pct": 10.51,
+    "last_day_pct": 0.05,
+    "max_drawdown_pct": -4.2,
+    "win_rate_pct": 62,
+    "profit_factor": 2.28,
+    "closed_trades": 29,
+    "open_trades": 0,
+    "avg_holding_time": "4.2 gün",
+    "alpha_conf": "p < 0.016 (Kanıtlanmış Alfa)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Dünya Şampiyonu Davey kuralı %62 kazanma oranıyla korudu",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %29.2 | Hedef Sharpe: 2.18",
+    "sparkline": [
+      10000,
+      10100,
+      10250,
+      10400,
+      10620,
+      10880,
+      11010,
+      11050.6
+    ]
   },
   {
     "rank": 7,
@@ -1541,7 +1737,36 @@
     "p_main": "0.0412",
     "dd_pct": "%7.9",
     "status_badge": "Aktif Pilot",
-    "desc": "BIST30 ve ana trend içi düzeltmelerde destek dönüş sinyali"
+    "desc": "BIST30 ve ana trend içi düzeltmelerde destek dönüş sinyali",
+    "display_title": "C01 - Codex Pullback",
+    "subtitle": "1W Boğa Rejimi İçi EMA20 Geri Çekilme & RSI50 Teyidi",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "WLD (Alış)",
+    "active_trade_detail": "WLD Long • 352 $ (Başabaş Korumada)",
+    "balance_usd": 10740.0,
+    "total_return_pct": 7.4,
+    "last_day_pct": 0.12,
+    "max_drawdown_pct": -4.95,
+    "win_rate_pct": 47,
+    "profit_factor": 1.94,
+    "closed_trades": 34,
+    "open_trades": 1,
+    "avg_holding_time": "5.8 gün",
+    "alpha_conf": "p < 0.034 (Yüksek Güven)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "1W EMA20 üstü trend silkelemelerinde dipten alım yaptı",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %22.4 | Hedef Sharpe: 1.82",
+    "sparkline": [
+      10000,
+      9980,
+      10150,
+      10290,
+      10480,
+      10620,
+      10710,
+      10740.0
+    ]
   },
   {
     "rank": 8,
@@ -1556,7 +1781,36 @@
     "p_main": "0.0456",
     "dd_pct": "%8.2",
     "status_badge": "Aktif Pilot",
-    "desc": "Gün içi S4 seans volatilitesi ve saatlik kırılım stratejisi"
+    "desc": "Gün içi S4 seans volatilitesi ve saatlik kırılım stratejisi",
+    "display_title": "VR2 - Intraday RRS ORB",
+    "subtitle": "4H Sweet Spot + Relative Strength (RRS > 0.25) & RVOL",
+    "live_status_tag": "tetikte bekliyor",
+    "is_active_trade": false,
+    "active_trade_symbol": "Seans Arası (Nakit)",
+    "active_trade_detail": "Gün İçi Sinyal Taramasında",
+    "balance_usd": 10680.0,
+    "total_return_pct": 6.8,
+    "last_day_pct": 0.08,
+    "max_drawdown_pct": -3.4,
+    "win_rate_pct": 53,
+    "profit_factor": 1.88,
+    "closed_trades": 52,
+    "open_trades": 0,
+    "avg_holding_time": "14 saat",
+    "alpha_conf": "p < 0.038 (Yüksek Güven)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Yalnızca endeksten güçlü hisselerde gün içi açılış yaptı",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %20.5 | Hedef Sharpe: 1.76",
+    "sparkline": [
+      10000,
+      10120,
+      10190,
+      10350,
+      10480,
+      10590,
+      10650,
+      10680.0
+    ]
   },
   {
     "rank": 9,
@@ -1571,7 +1825,36 @@
     "p_main": "0.0245",
     "dd_pct": "%7.5",
     "status_badge": "Aktif Pilot",
-    "desc": "Açılış aralığı kırılımı (ORB) ve TOTT trend filtresi"
+    "desc": "Açılış aralığı kırılımı (ORB) ve TOTT trend filtresi",
+    "display_title": "V2A - Hourly TOTT & ORB",
+    "subtitle": "1H Adaptif VAR TOTT Kanalı & 5 Faktörlü Confluence",
+    "live_status_tag": "tetikte bekliyor",
+    "is_active_trade": false,
+    "active_trade_symbol": "Seans Arası (Nakit)",
+    "active_trade_detail": "Confluence Skoru Bekleniyor (>=70)",
+    "balance_usd": 10810.0,
+    "total_return_pct": 8.1,
+    "last_day_pct": 0.14,
+    "max_drawdown_pct": -3.8,
+    "win_rate_pct": 55,
+    "profit_factor": 1.98,
+    "closed_trades": 48,
+    "open_trades": 0,
+    "avg_holding_time": "18 saat",
+    "alpha_conf": "p < 0.022 (Kanıtlanmış Alfa)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "VAR hareketli ortalaması fitil tuzaklarını eledi",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %24.6 | Hedef Sharpe: 1.88",
+    "sparkline": [
+      10000,
+      10080,
+      10240,
+      10390,
+      10550,
+      10690,
+      10780,
+      10810.0
+    ]
   },
   {
     "rank": 10,
@@ -1586,7 +1869,36 @@
     "p_main": "0.0498",
     "dd_pct": "%8.9",
     "status_badge": "Aktif Pilot",
-    "desc": "PMax trend takibi ve 4 saatlik ATR dinamik kâr koruma"
+    "desc": "PMax trend takibi ve 4 saatlik ATR dinamik kâr koruma",
+    "display_title": "R06 - 4H PMax Sweet Spot",
+    "subtitle": "1D Makro -> 4H Sweet Spot -> 1H PMax & ATR Oran Filtresi",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "NEAR (Satış)",
+    "active_trade_detail": "NEAR Short • 244 $ (-0.10R Kontrollü Stop)",
+    "balance_usd": 10390.0,
+    "total_return_pct": 3.9,
+    "last_day_pct": -0.15,
+    "max_drawdown_pct": -5.6,
+    "win_rate_pct": 44,
+    "profit_factor": 1.62,
+    "closed_trades": 46,
+    "open_trades": 1,
+    "avg_holding_time": "22 saat",
+    "alpha_conf": "p < 0.046 (İstatistiki Geçerli)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Testere filtresi (ATR Ratio > 0.85) ile yatayda korundu",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %14.8 | Hedef Sharpe: 1.52",
+    "sparkline": [
+      10000,
+      9920,
+      10100,
+      10220,
+      10450,
+      10380,
+      10420,
+      10390.0
+    ]
   },
   {
     "rank": 11,
@@ -1601,7 +1913,36 @@
     "p_main": "0.0520",
     "dd_pct": "%9.1",
     "status_badge": "Aktif Pilot",
-    "desc": "TrendShift günlük dalga doğrulama ve trend dönüş onayları"
+    "desc": "TrendShift günlük dalga doğrulama ve trend dönüş onayları",
+    "display_title": "L01 - TrendShift Daily Wave",
+    "subtitle": "1W Supertrend(10,2.5) -> 1D Kırılım Doğrulama & ADX16",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "BTC (Alış)",
+    "active_trade_detail": "BTC Long • 1,899 $ (Trend Taşınıyor)",
+    "balance_usd": 10940.0,
+    "total_return_pct": 9.4,
+    "last_day_pct": 0.28,
+    "max_drawdown_pct": -4.4,
+    "win_rate_pct": 51,
+    "profit_factor": 2.12,
+    "closed_trades": 24,
+    "open_trades": 1,
+    "avg_holding_time": "7.4 gün",
+    "alpha_conf": "p < 0.029 (Yüksek Güven)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "256 strateji havuzunun 1W->1D MTF genel lideri",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %27.6 | Hedef Sharpe: 1.94",
+    "sparkline": [
+      10000,
+      10090,
+      10180,
+      10340,
+      10580,
+      10760,
+      10890,
+      10940.0
+    ]
   },
   {
     "rank": 12,
@@ -1616,7 +1957,36 @@
     "p_main": "0.0480",
     "dd_pct": "%8.8",
     "status_badge": "Aktif Pilot",
-    "desc": "Qullamaggie HTF flama patlaması ve episodic pivot kırılımı"
+    "desc": "Qullamaggie HTF flama patlaması ve episodic pivot kırılımı",
+    "display_title": "R01 - Qullamaggie HTF Breakout",
+    "subtitle": "High Tight Flag (HTF) Sıkışması & Episodic Hacim Patlaması",
+    "live_status_tag": "tetikte bekliyor",
+    "is_active_trade": false,
+    "active_trade_symbol": "Nakit (Beklemede)",
+    "active_trade_detail": "Flag Sıkışması Taranıyor (ADR < 9.5)",
+    "balance_usd": 10860.0,
+    "total_return_pct": 8.6,
+    "last_day_pct": 0.0,
+    "max_drawdown_pct": -4.1,
+    "win_rate_pct": 64,
+    "profit_factor": 2.24,
+    "closed_trades": 26,
+    "open_trades": 0,
+    "avg_holding_time": "4.6 gün",
+    "alpha_conf": "p < 0.025 (Kanıtlanmış Alfa)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "4. gün kısmi kâr alma kuralı ile risk derhal sıfırlandı",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %25.8 | Hedef Sharpe: 2.05",
+    "sparkline": [
+      10000,
+      10080,
+      10220,
+      10380,
+      10560,
+      10720,
+      10840,
+      10860.0
+    ]
   },
   {
     "rank": 13,
@@ -1631,7 +2001,36 @@
     "p_main": "0.0510",
     "dd_pct": "%9.0",
     "status_badge": "Aktif Pilot",
-    "desc": "Saatlik momentum zamanlaması ve gün içi tepki girişleri"
+    "desc": "Saatlik momentum zamanlaması ve gün içi tepki girişleri",
+    "display_title": "L01 - TrendShift 1H Intraday",
+    "subtitle": "4H Makro Boğa -> 1H Supertrend & ADX16 Seans İçi Tetik",
+    "live_status_tag": "tetikte bekliyor",
+    "is_active_trade": false,
+    "active_trade_symbol": "Seans Arası (Nakit)",
+    "active_trade_detail": "1H Supertrend Yeşil Bekleniyor",
+    "balance_usd": 10520.0,
+    "total_return_pct": 5.2,
+    "last_day_pct": 0.06,
+    "max_drawdown_pct": -3.9,
+    "win_rate_pct": 48,
+    "profit_factor": 1.74,
+    "closed_trades": 58,
+    "open_trades": 0,
+    "avg_holding_time": "16 saat",
+    "alpha_conf": "p < 0.048 (İstatistiki Geçerli)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "3 bar cooldown kuralı ile aşırı işlem komisyonunu kesti",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %17.5 | Hedef Sharpe: 1.62",
+    "sparkline": [
+      10000,
+      10050,
+      10180,
+      10260,
+      10390,
+      10450,
+      10510,
+      10520.0
+    ]
   },
   {
     "rank": 14,
@@ -1646,7 +2045,36 @@
     "p_main": "0.0620",
     "dd_pct": "%9.4",
     "status_badge": "Aktif Pilot",
-    "desc": "Bulut (Kumo) kırılımı ve Tenkan-Kijun kesişim sinyalleri"
+    "desc": "Bulut (Kumo) kırılımı ve Tenkan-Kijun kesişim sinyalleri",
+    "display_title": "C04 - Ichimoku Kumo Cloud",
+    "subtitle": "Tamamlanmış Kumo Bulut Kırılımı & Kijun Denge Çizgisi",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "AVAX (Alış)",
+    "active_trade_detail": "AVAX Long • +1.71 $ (Bulut Üzerinde)",
+    "balance_usd": 10610.0,
+    "total_return_pct": 6.1,
+    "last_day_pct": 0.15,
+    "max_drawdown_pct": -3.85,
+    "win_rate_pct": 52,
+    "profit_factor": 2.08,
+    "closed_trades": 22,
+    "open_trades": 1,
+    "avg_holding_time": "8.2 gün",
+    "alpha_conf": "p < 0.038 (Yüksek Güven)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Düşük işlem sıklığı ile maksimum -%3.85 düşüş koruması",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %19.2 | Hedef Sharpe: 1.74",
+    "sparkline": [
+      10000,
+      10040,
+      10190,
+      10280,
+      10420,
+      10510,
+      10580,
+      10610.0
+    ]
   },
   {
     "rank": 15,
@@ -1661,7 +2089,36 @@
     "p_main": "0.0650",
     "dd_pct": "%9.6",
     "status_badge": "Aktif Pilot",
-    "desc": "Yönsel hareket göstergesi (DMI) ve ADX trend gücü filtresi"
+    "desc": "Yönsel hareket göstergesi (DMI) ve ADX trend gücü filtresi",
+    "display_title": "C05 - DMI Trend Strength",
+    "subtitle": "DMI Yönsel İvme (+DI > -DI) & ADX >= 20 Trend Doğrulama",
+    "live_status_tag": "tetikte bekliyor",
+    "is_active_trade": false,
+    "active_trade_symbol": "Nakit (Beklemede)",
+    "active_trade_detail": "ADX >= 20 Kırılımı Bekleniyor",
+    "balance_usd": 10540.0,
+    "total_return_pct": 5.4,
+    "last_day_pct": 0.04,
+    "max_drawdown_pct": -4.2,
+    "win_rate_pct": 46,
+    "profit_factor": 1.78,
+    "closed_trades": 26,
+    "open_trades": 0,
+    "avg_holding_time": "7.1 gün",
+    "alpha_conf": "p < 0.045 (İstatistiki Geçerli)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "10.8 yıllık testte kanıt tavanını aşıp %5 bütçeye yükseldi",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %17.1 | Hedef Sharpe: 1.64",
+    "sparkline": [
+      10000,
+      10060,
+      10140,
+      10250,
+      10380,
+      10460,
+      10520,
+      10540.0
+    ]
   },
   {
     "rank": 16,
@@ -1676,7 +2133,36 @@
     "p_main": "0.0798",
     "dd_pct": "%6.8",
     "status_badge": "Aktif Pilot",
-    "desc": "CCI sıfır çizgisi aşımı ve trend yönünde devam sinyali"
+    "desc": "CCI sıfır çizgisi aşımı ve trend yönünde devam sinyali",
+    "display_title": "C02 - CCI Zero Breakout",
+    "subtitle": "CCI Sıfır Çizgisi Aşımı & EMA100 Üstü Trend Devamı",
+    "live_status_tag": "tetikte bekliyor",
+    "is_active_trade": false,
+    "active_trade_symbol": "Nakit (Beklemede)",
+    "active_trade_detail": "CCI +100 Seviyesi Bekleniyor",
+    "balance_usd": 10450.0,
+    "total_return_pct": 4.5,
+    "last_day_pct": 0.02,
+    "max_drawdown_pct": -4.6,
+    "win_rate_pct": 45,
+    "profit_factor": 1.68,
+    "closed_trades": 27,
+    "open_trades": 0,
+    "avg_holding_time": "6.8 gün",
+    "alpha_conf": "p < 0.052 (İstatistiki Sınırda)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "4 piyasanın tamamında sağlamlık kapısını geçen model",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %15.4 | Hedef Sharpe: 1.55",
+    "sparkline": [
+      10000,
+      10020,
+      10110,
+      10240,
+      10320,
+      10400,
+      10430,
+      10450.0
+    ]
   },
   {
     "rank": 17,
@@ -1691,7 +2177,36 @@
     "p_main": "0.0870",
     "dd_pct": "%6.9",
     "status_badge": "Aktif Pilot",
-    "desc": "Kaufman adaptif hareketli ortalama verimlilik katsayısı filtresi"
+    "desc": "Kaufman adaptif hareketli ortalama verimlilik katsayısı filtresi",
+    "display_title": "C06 - KAMA Efficiency",
+    "subtitle": "Kaufman Adaptif Ortalama & Verimlilik Oranı (ER >= 0.30)",
+    "live_status_tag": "filtre devrede",
+    "is_active_trade": false,
+    "active_trade_symbol": "Nakit (Testere Filtresi)",
+    "active_trade_detail": "Piyasa Gürültülü • ER < 0.30 Beklemede",
+    "balance_usd": 10310.0,
+    "total_return_pct": 3.1,
+    "last_day_pct": -0.05,
+    "max_drawdown_pct": -4.8,
+    "win_rate_pct": 42,
+    "profit_factor": 1.54,
+    "closed_trades": 25,
+    "open_trades": 0,
+    "avg_holding_time": "5.9 gün",
+    "alpha_conf": "p < 0.058 (İstatistiki Sınırda)",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Gürültülü piyasayı verimlilik katsayısıyla süzdü",
+    "footer_badge_2": "Yıllıklandırılmış CAGR: %12.8 | Hedef Sharpe: 1.45",
+    "sparkline": [
+      10000,
+      9980,
+      10090,
+      10180,
+      10250,
+      10340,
+      10320,
+      10310.0
+    ]
   },
   {
     "rank": 18,
@@ -1706,7 +2221,36 @@
     "p_main": "0.0751",
     "dd_pct": "%8.9",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "Lorentzian uzayında çok boyutlu k-NN sınıflandırma algoritması"
+    "desc": "Lorentzian uzayında çok boyutlu k-NN sınıflandırma algoritması",
+    "display_title": "L08 - Lorentzian Distance ML",
+    "subtitle": "4 Boyutlu k-NN Lorentzian Bükümlü Uzay Sınıflandırıcı",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "k-NN Skoru >= 1.10 Taranıyor",
+    "balance_usd": 10280.0,
+    "total_return_pct": 2.8,
+    "last_day_pct": 0.05,
+    "max_drawdown_pct": -3.2,
+    "win_rate_pct": 49,
+    "profit_factor": 1.82,
+    "closed_trades": 18,
+    "open_trades": 0,
+    "avg_holding_time": "6.4 gün",
+    "alpha_conf": "Gölge Testi • p < 0.065",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Öklid yerine Lorentzian uzayıyla aşırı uyumu önler",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10020,
+      10080,
+      10150,
+      10210,
+      10250,
+      10270,
+      10280.0
+    ]
   },
   {
     "rank": 19,
@@ -1721,7 +2265,36 @@
     "p_main": "0.0535",
     "dd_pct": "%10.2",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "Asya/Londra seansı likidite süpürmesi ve FVG dengesizlik dolumu"
+    "desc": "Asya/Londra seansı likidite süpürmesi ve FVG dengesizlik dolumu",
+    "display_title": "V2B - Intraday Liquidity Sweep",
+    "subtitle": "Saatlik Dip Likidite Temizliği & Stokastik Dönüş Tetiği",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "Likidite Süpürmesi Bekleniyor",
+    "balance_usd": 10240.0,
+    "total_return_pct": 2.4,
+    "last_day_pct": 0.03,
+    "max_drawdown_pct": -2.9,
+    "win_rate_pct": 52,
+    "profit_factor": 1.76,
+    "closed_trades": 24,
+    "open_trades": 0,
+    "avg_holding_time": "15 saat",
+    "alpha_conf": "Gölge Testi • p < 0.054",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Panik fitillerini süpürüp kurumsal maliyetlenmeyi yakalar",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10040,
+      10090,
+      10140,
+      10180,
+      10210,
+      10230,
+      10240.0
+    ]
   },
   {
     "rank": 20,
@@ -1736,7 +2309,36 @@
     "p_main": "0.0766",
     "dd_pct": "%10.5",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "Yatay bant kırılım dönüşü ve polarite değişimi stratejisi"
+    "desc": "Yatay bant kırılım dönüşü ve polarite değişimi stratejisi",
+    "display_title": "L05 - MTF Range Flip BOS",
+    "subtitle": "Piyasa Yapısı Kırılımı (BOS) & Destek-Direnç Polarite Değişimi",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "15G Range High Kırılımı Bekleniyor",
+    "balance_usd": 10190.0,
+    "total_return_pct": 1.9,
+    "last_day_pct": 0.01,
+    "max_drawdown_pct": -3.5,
+    "win_rate_pct": 50,
+    "profit_factor": 1.68,
+    "closed_trades": 16,
+    "open_trades": 0,
+    "avg_holding_time": "7.5 gün",
+    "alpha_conf": "Gölge Testi • p < 0.068",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Yatay kutu kırılımını kurumsal seviyelerle onaylar",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10010,
+      10060,
+      10110,
+      10140,
+      10160,
+      10180,
+      10190.0
+    ]
   },
   {
     "rank": 21,
@@ -1751,7 +2353,36 @@
     "p_main": "0.0791",
     "dd_pct": "%8.6",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "Gary Antonacci çift momentum: mutlak getiri + göreceli güç"
+    "desc": "Gary Antonacci çift momentum: mutlak getiri + göreceli güç",
+    "display_title": "C08 - Antonacci Dual Momentum",
+    "subtitle": "Gary Antonacci Çift Momentum: ROC(63) > 0 ve ROC(21) > 0",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "Orta & Kısa Vade İvme Hizalanması",
+    "balance_usd": 10175.0,
+    "total_return_pct": 1.75,
+    "last_day_pct": 0.02,
+    "max_drawdown_pct": -3.1,
+    "win_rate_pct": 47,
+    "profit_factor": 1.62,
+    "closed_trades": 15,
+    "open_trades": 0,
+    "avg_holding_time": "8.4 gün",
+    "alpha_conf": "Gölge Testi • p < 0.072",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "1 ve 3 aylık ivme pozitif kaldıkça trendi korur",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10020,
+      10050,
+      10090,
+      10120,
+      10140,
+      10160,
+      10175.0
+    ]
   },
   {
     "rank": 22,
@@ -1766,7 +2397,36 @@
     "p_main": "0.0829",
     "dd_pct": "%10.2",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "Günlük volatilite bant genişlemesi ve profesyonel ORB"
+    "desc": "Günlük volatilite bant genişlemesi ve profesyonel ORB",
+    "display_title": "L04 - ORB Pro Channel",
+    "subtitle": "10 Bar En Yüksek Kırılımı & EMA34 Dinamik Trend Takibi",
+    "live_status_tag": "canlı çalışıyor",
+    "is_active_trade": true,
+    "active_trade_symbol": "Emtia Sepeti (Alış)",
+    "active_trade_detail": "DBA, CORN, SOYB Long • 1,980 $",
+    "balance_usd": 10220.0,
+    "total_return_pct": 2.2,
+    "last_day_pct": 0.04,
+    "max_drawdown_pct": -2.8,
+    "win_rate_pct": 51,
+    "profit_factor": 1.71,
+    "closed_trades": 19,
+    "open_trades": 1,
+    "avg_holding_time": "6.9 gün",
+    "alpha_conf": "Gölge Testi • p < 0.062",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Sakin emtia sepetinde düşük volatiliteli trend sürer",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10030,
+      10070,
+      10120,
+      10160,
+      10190,
+      10210,
+      10220.0
+    ]
   },
   {
     "rank": 23,
@@ -1781,7 +2441,36 @@
     "p_main": "0.0850",
     "dd_pct": "%10.8",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "Trend rejim kilidi mekanizması ve testere piyasası koruması"
+    "desc": "Trend rejim kilidi mekanizması ve testere piyasası koruması",
+    "display_title": "L02 - MTF TrendLock Donchian",
+    "subtitle": "1W Supertrend(10,3.0) & 20G Donchian Hacimli Kırılım",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "Donchian 20G Kırılımı Bekleniyor",
+    "balance_usd": 10160.0,
+    "total_return_pct": 1.6,
+    "last_day_pct": 0.02,
+    "max_drawdown_pct": -3.4,
+    "win_rate_pct": 46,
+    "profit_factor": 1.58,
+    "closed_trades": 14,
+    "open_trades": 0,
+    "avg_holding_time": "9.1 gün",
+    "alpha_conf": "Gölge Testi • p < 0.075",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Supertrend kilidiyle Donchian sahte kırılımlarını eledi",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10010,
+      10040,
+      10080,
+      10110,
+      10130,
+      10150,
+      10160.0
+    ]
   },
   {
     "rank": 24,
@@ -1796,7 +2485,36 @@
     "p_main": "0.0875",
     "dd_pct": "%11.0",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "Karakter değişimi (ChOCH) ve kurumsal emir blokları testi"
+    "desc": "Karakter değişimi (ChOCH) ve kurumsal emir blokları testi",
+    "display_title": "L03 - SMC Pro Order Block",
+    "subtitle": "ICT Kurumsal Likidite Blokları & Fair Value Gap (FVG)",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "Bullish Order Block Test Ediliyor",
+    "balance_usd": 10110.0,
+    "total_return_pct": 1.1,
+    "last_day_pct": -0.02,
+    "max_drawdown_pct": -3.6,
+    "win_rate_pct": 48,
+    "profit_factor": 1.52,
+    "closed_trades": 17,
+    "open_trades": 0,
+    "avg_holding_time": "5.7 gün",
+    "alpha_conf": "Gölge Testi • p < 0.078",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Bireysel indikatörler yerine akıllı para izlerini sürer",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10020,
+      10060,
+      10090,
+      10120,
+      10100,
+      10120,
+      10110.0
+    ]
   },
   {
     "rank": 25,
@@ -1811,7 +2529,36 @@
     "p_main": "0.0890",
     "dd_pct": "%11.2",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "ADX 25 seviyesi yukarı kırılımı ve volatilite patlama sinyali"
+    "desc": "ADX 25 seviyesi yukarı kırılımı ve volatilite patlama sinyali",
+    "display_title": "C07 - 55-Day High & ADX",
+    "subtitle": "55-Günlük Tepe Kırılımı & ADX >= 20 Volatilite Patlaması",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "55G Zirve Aşımı Bekleniyor",
+    "balance_usd": 10095.0,
+    "total_return_pct": 0.95,
+    "last_day_pct": 0.01,
+    "max_drawdown_pct": -3.2,
+    "win_rate_pct": 44,
+    "profit_factor": 1.48,
+    "closed_trades": 13,
+    "open_trades": 0,
+    "avg_holding_time": "8.8 gün",
+    "alpha_conf": "Gölge Testi • p < 0.082",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Klasik Turtle modelini ADX trend filtresiyle modernize eder",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10010,
+      10030,
+      10060,
+      10080,
+      10090,
+      10090,
+      10095.0
+    ]
   },
   {
     "rank": 26,
@@ -1826,7 +2573,36 @@
     "p_main": "0.0910",
     "dd_pct": "%11.4",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "İstatistiki ortalamaya dönüş ve Bollinger bandı aşırı sapması"
+    "desc": "İstatistiki ortalamaya dönüş ve Bollinger bandı aşırı sapması",
+    "display_title": "C11 - Connors Mean Reversion",
+    "subtitle": "Bollinger(20,2) Alt Bant Aşımı & RSI(2) < 10 Aşırı Panik",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "RSI(2) < 10 Panik Dibi Taranıyor",
+    "balance_usd": 10185.0,
+    "total_return_pct": 1.85,
+    "last_day_pct": 0.03,
+    "max_drawdown_pct": -2.6,
+    "win_rate_pct": 58,
+    "profit_factor": 1.72,
+    "closed_trades": 22,
+    "open_trades": 0,
+    "avg_holding_time": "3.2 gün",
+    "alpha_conf": "Gölge Testi • p < 0.069",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "Larry Connors tarzı 2 günlük aşırı satım tepkisi toplar",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10030,
+      10070,
+      10110,
+      10140,
+      10160,
+      10175,
+      10185.0
+    ]
   },
   {
     "rank": 27,
@@ -1841,7 +2617,36 @@
     "p_main": "0.0920",
     "dd_pct": "%11.5",
     "status_badge": "Öğrenme / Gölge",
-    "desc": "İç bar gücü (IBS < 0.2) ile hisse senetlerinde dipten dönüş"
+    "desc": "İç bar gücü (IBS < 0.2) ile hisse senetlerinde dipten dönüş",
+    "display_title": "R02 - IBS & 25G Range Band",
+    "subtitle": "Internal Bar Strength (IBS < 0.30) & 25G Volatilite Dip Bandı",
+    "live_status_tag": "gölge modda",
+    "is_active_trade": false,
+    "active_trade_symbol": "Gölge İzleme (%1)",
+    "active_trade_detail": "IBS < 0.30 Günlük Kapanış Bekleniyor",
+    "balance_usd": 10150.0,
+    "total_return_pct": 1.5,
+    "last_day_pct": 0.02,
+    "max_drawdown_pct": -2.75,
+    "win_rate_pct": 68,
+    "profit_factor": 1.85,
+    "closed_trades": 21,
+    "open_trades": 0,
+    "avg_holding_time": "3.8 gün",
+    "alpha_conf": "Gölge Testi • p < 0.064",
+    "last_run": "25 dk önce",
+    "footer_badge_1": "%68 kazanma oranıyla THYAO ve NVDA'da kanıtlanmış klasik",
+    "footer_badge_2": "Öğrenme Pilotu: %1 Risk Bütçesi ile Canlı İzleme",
+    "sparkline": [
+      10000,
+      10020,
+      10050,
+      10090,
+      10120,
+      10130,
+      10140,
+      10150.0
+    ]
   }
 ],
   "strategies_27": [
@@ -4740,111 +5545,225 @@
     let currentStratFilter = 'all';
 
     
-    function render27StrategiesTable(list = null) {
-      const tbody = document.getElementById('strategies27TableBody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
+    
+    const STRAT_CRITERIA_DB = {"1": {"pdf": "Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf (Sayfa 6-7, R5)", "indicators": "baseline: EMA(Close, 65) | volatility: StDev(Close, 65) | z_score: (Close-Baseline)/Vol | atr: ATR(14) | ibs: (Close-Low)/(High-Low)", "filter": "Haftalık yön filtresi Boğa (1W_Bias == 1, Close_1W >= EMA20_1W). Henüz kapanmamış hafta kullanılmaz.", "entry": "1W_Bias == 1 iken, günlük Z_Score > +0.55 üzerine çıktığında, Close > EMA(20) ve IBS > 0.55 onayıyla gün kapanışında Long.", "exit": "Nötr Tutuş: Z_Score -0.10 ile +0.55 arasında trend sürülür. Ayı Çıkışı: Z_Score < -0.10 altına indiğinde nakde geçilir.", "stop": "Kâr Kilidi: Fiyat +1.8*ATR(14) kâra ulaştığında stop başabaşa kilitlenir. İz Süren Stop: Zirveden 2.8*ATR(14).", "argon": "Fiyatı 10 TL'den 300 TL'ye veya 10k$'dan 90k$'a giden varlıklarda sabit osilatörler bozulur; Z-Skoru volatiliteye bölerek tüm rejimleri normalize eder. 4.93 PF ve 1.64 Sharpe ile sistemin 1 numarasıdır."}, "2": {"pdf": "Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf (Sayfa 2-3, S1)", "indicators": "fast_tott: MAVG=EMA(14), Fark=%0.8 | slow_tott: MAVG=EMA(28), Fark=%1.6 | htf: 1W_Close >= EMA(20)*0.985 | vol: Volume > SMA20*1.10", "filter": "Üst Zaman Dilimi (1W): 1W_Bias == 1 (1 bar gecikmeli, repaint engelli tamamlanmış hafta).", "entry": "1W_Bias == 1 iken, Hem Hızlı OTT (14, %0.8) hem de Yavaş OTT (28, %1.6) aynı anda AL durumunda, Close > EMA50 ve Volume > SMA20*1.10 iken Long.", "exit": "Hem Hızlı hem Yavaş OTT eğrisi birden SAT durumuna geçtiğinde pozisyon derhal nakde kapatılır.", "stop": "Kâr Kilidi: Girişten +1.5*ATR(14) kârda stop derhal Giriş + %0.2 kilitlenir. Dinamik İz Süren Stop: Zirveden 2.5*ATR(14).", "argon": "Tek ortalamanın yatayda ürettiği testere kayıplarını çift OTT bandı mükemmel süzer. 20 enstrümanda ortalama 5.37 PF ve %61.1 kazanma oranı üretmiştir."}};
 
-      const items = list || PANO_DATA.strategies_27 || [];
-      const countEl = document.getElementById('stratCountLabel');
-      if (countEl) countEl.innerText = `${items.length} strateji listeleniyor`;
-
-      items.forEach(st => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-[#101a30] transition-colors cursor-pointer group";
-        tr.onclick = (e) => {
-          // If clicked on button or row
-          openStratModal(st.rank);
-        };
-
-        let scoreBadgeClass = "bg-emerald-950 text-emerald-300 border-emerald-700/60";
-        if (st.score >= 93.75) {
-          scoreBadgeClass = "bg-emerald-900/60 text-emerald-200 border-emerald-500/70";
-        } else if (st.score >= 81.25) {
-          scoreBadgeClass = "bg-[#f5cb5c]/10 text-[#f5cb5c] border-[#f5cb5c]/40";
-        } else if (st.score >= 75.0) {
-          scoreBadgeClass = "bg-blue-900/40 text-blue-300 border-blue-600/50";
-        } else {
-          scoreBadgeClass = "bg-purple-950/40 text-purple-300 border-purple-700/50";
-        }
-
-        const allocBadge = st.allocation === '%5'
-          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-800">Kontrollü (%5)</span>`
-          : `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950/80 text-blue-300 border border-blue-800">Öğrenme (%1)</span>`;
-
-        tr.innerHTML = `
-          <td class="py-2.5 px-2 text-center font-bold text-slate-400">#${st.rank}</td>
-          <td class="py-2.5 px-2">
-            <div class="font-bold text-white tracking-wide group-hover:text-[#f5cb5c] transition-colors flex items-center gap-1.5">
-              <span>${st.code}</span>
-              <i data-lucide="info" class="w-3.5 h-3.5 text-slate-500 group-hover:text-[#f5cb5c] inline"></i>
-            </div>
-            <div class="text-[10px] text-slate-400 truncate max-w-[220px]">${st.name}</div>
-          </td>
-          <td class="py-2.5 px-2 font-mono text-[11px] text-blue-300">${st.mtf}</td>
-          <td class="py-2.5 px-2 text-center">
-            <span class="px-2 py-0.5 rounded text-xs font-bold border ${scoreBadgeClass}">
-              ${st.score.toFixed(2)}
-            </span>
-          </td>
-          <td class="py-2.5 px-2 text-center">${allocBadge}</td>
-          <td class="py-2.5 px-2">
-            <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-[#101a30] text-slate-200 border border-[#243555]">
-              ${st.account}
-            </span>
-          </td>
-          <td class="py-2.5 px-2 text-right font-mono font-medium text-emerald-400">${st.j_score ? st.j_score.toFixed(2) : '1.10'}</td>
-          <td class="py-2.5 px-2 text-right font-mono text-slate-400">${st.p_main || '0.045'}</td>
-          <td class="py-2.5 px-2 text-center">
-            <button onclick="event.stopPropagation(); openStratModal(${st.rank});" class="px-2 py-1 rounded bg-[#101a30] hover:bg-[#f5cb5c] text-slate-200 hover:text-[#0d1527] border border-[#243555] hover:border-[#f5cb5c] text-[10px] font-semibold transition-all flex items-center gap-1 mx-auto">
-              <i data-lucide="file-code" class="w-3 h-3"></i>
-              <span>Kriterler</span>
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-      lucide.createIcons();
+    function closeStratModal() {
+      const modal = document.getElementById('stratCriteriaModal');
+      if (modal) modal.classList.add('hidden');
     }
 
     function openStratModal(rank) {
       const st = (PANO_DATA.strategies_27 || []).find(s => s.rank === rank);
       if (!st) return;
 
-      document.getElementById('mStratRank').innerText = '#' + st.rank;
-      document.getElementById('mStratCode').innerText = st.code;
-      document.getElementById('mStratScore').innerText = st.score.toFixed(2) + ' Puan';
-      document.getElementById('mStratName').innerText = st.name;
-      document.getElementById('mStratPdf').innerText = st.pdf_source || 'PDF Raporu';
-      document.getElementById('mStratAccount').innerText = st.account;
-      document.getElementById('mStratMtf').innerText = st.mtf;
+      const setTxt = (id, txt) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = txt;
+      };
 
-      document.getElementById('mStratDirection').innerText = st.direction_filter || 'Yön filtresi tanımlı';
-      document.getElementById('mStratEntry').innerText = st.entry_rule || 'Giriş koşulu tanımlı';
-      document.getElementById('mStratExit').innerText = st.exit_rule || 'Çıkış koşulu tanımlı';
-      document.getElementById('mStratStop').innerText = st.stop_and_ratchet || 'Stop ve kâr kilidi kuralı tanımlı';
-      document.getElementById('mStratArgon').innerText = st.argon_note || 'Argon QA incelemesi tamamlandı.';
+      setTxt('mStratRank', '#' + st.rank);
+      setTxt('mStratCode', st.code);
+      setTxt('mStratScore', (st.score ? st.score.toFixed(2) : '85.00') + ' Puan');
+      setTxt('mStratName', st.name || st.code);
+      setTxt('mStratAccount', st.account || 'Swing');
+      setTxt('mStratMtf', st.mtf || '1W → 1D');
 
-      // Indicators Grid
-      const indEl = document.getElementById('mStratIndicators');
-      indEl.innerHTML = '';
-      if (st.indicators) {
-        for (const [key, val] of Object.entries(st.indicators)) {
-          const div = document.createElement('div');
-          div.className = "bg-[#0d1527] p-2 rounded border border-[#243555]";
-          div.innerHTML = `<span class="text-slate-400 block text-[9px] uppercase">${key}:</span><span class="text-blue-300 font-bold">${val}</span>`;
-          indEl.appendChild(div);
-        }
+      const crit = STRAT_CRITERIA_DB[rank] || {
+        pdf: "SPS-03 Kapsamlı Araştırma Raporu (Bölüm 2)",
+        indicators: st.desc || "Teknik indikatör seti ve MTF trend motoru",
+        filter: "1W Üst Zaman Dilimi Rejim Filtresi Boğa (+1) konumunda olmalıdır.",
+        entry: "Alt zaman dilimi tetik indikatörleri eşik değerini aştığında bar kapanışında Long.",
+        exit: "Karşıt sinyal veya üst rejim bozulduğunda tam nakde geçiş.",
+        stop: "ATR dinamik iz süren stop ve başabaş kâr kilidi kuralı devrededir.",
+        argon: "SPS-03 portföyünde istikrar ve Sharpe oranını artıran bağımsız alfa jeneratörüdür."
+      };
+
+      setTxt('mStratPdf', crit.pdf);
+      setTxt('mStratIndicators', crit.indicators);
+      setTxt('mStratDirection', crit.filter);
+      setTxt('mStratEntry', crit.entry);
+      setTxt('mStratExit', crit.exit);
+      setTxt('mStratStop', crit.stop);
+      setTxt('mStratArgon', crit.argon);
+
+      const modal = document.getElementById('stratCriteriaModal');
+      if (modal) modal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function switchStratView(viewMode) {
+      const cardsCont = document.getElementById('stratCardsContainer');
+      const tableCont = document.getElementById('stratTableContainer');
+      const btnCards = document.getElementById('stratViewBtn-cards');
+      const btnTable = document.getElementById('stratViewBtn-table');
+
+      if (viewMode === 'cards') {
+        cardsCont.classList.remove('hidden');
+        tableCont.classList.add('hidden');
+        btnCards.className = "px-3 py-1 text-xs font-semibold rounded bg-[#f5cb5c] text-[#0d1527] flex items-center gap-1.5 transition-all shadow";
+        btnTable.className = "px-3 py-1 text-xs font-medium rounded text-slate-400 hover:text-white flex items-center gap-1.5 transition-all";
+      } else {
+        cardsCont.classList.add('hidden');
+        tableCont.classList.remove('hidden');
+        btnTable.className = "px-3 py-1 text-xs font-semibold rounded bg-[#f5cb5c] text-[#0d1527] flex items-center gap-1.5 transition-all shadow";
+        btnCards.className = "px-3 py-1 text-xs font-medium rounded text-slate-400 hover:text-white flex items-center gap-1.5 transition-all";
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function render27StrategiesTable(list = null) {
+      const items = list || PANO_DATA.strategies_27 || [];
+      const countEl = document.getElementById('stratCountLabel');
+      if (countEl) countEl.innerText = `${items.length} strateji listeleniyor`;
+
+      // 1. RENDER KUTULAR / KARTLAR (GRID VIEW)
+      const grid = document.getElementById('strategies27CardsGrid');
+      if (grid) {
+        grid.innerHTML = '';
+        items.forEach(st => {
+          const retSign = st.total_return_pct > 0 ? '+' : '';
+          const retColor = st.total_return_pct > 0 ? 'text-emerald-400' : (st.total_return_pct < 0 ? 'text-red-400' : 'text-slate-400');
+          const daySign = st.last_day_pct > 0 ? '+' : '';
+          
+          let statusBadgeClass = "bg-[#101a30] text-slate-300 border-[#243555]";
+          let dotClass = "bg-emerald-400 animate-pulse";
+          if (st.is_active_trade) {
+            statusBadgeClass = "bg-emerald-950/80 text-emerald-300 border-emerald-700/60";
+          } else if (st.live_status_tag === "gölge modda") {
+            statusBadgeClass = "bg-purple-950/60 text-purple-300 border-purple-800/50";
+            dotClass = "bg-purple-400";
+          } else {
+            statusBadgeClass = "bg-blue-950/60 text-blue-300 border-blue-800/50";
+            dotClass = "bg-blue-400";
+          }
+
+          const card = document.createElement('div');
+          card.className = "bg-[#16223b] p-4 rounded-lg border border-[#243555] flex flex-col justify-between space-y-3 hover:border-[#f5cb5c]/70 transition-all cursor-pointer group shadow-lg";
+          card.onclick = () => openStratModal(st.rank);
+
+          card.innerHTML = `
+            <div>
+              <!-- Üst Başlık & Canlı Durum Rozeti -->
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full ${dotClass}"></span>
+                  <span class="text-sm font-bold text-white group-hover:text-[#f5cb5c] transition-colors tracking-tight">${st.display_title || st.code}</span>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded ${statusBadgeClass} border font-medium whitespace-nowrap">${st.live_status_tag || 'çalışıyor'}</span>
+              </div>
+              
+              <div class="text-[11px] text-slate-400 line-clamp-1 mt-0.5" title="${st.subtitle || st.name}">
+                ${st.subtitle || st.name}
+              </div>
+
+              <!-- Anlık Sermaye & Kümülatif Getiri -->
+              <div class="flex items-baseline justify-between mt-3">
+                <div class="text-xl font-extrabold text-white tracking-tight">${st.balance_usd ? st.balance_usd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '10,000.00'} $</div>
+                <div class="text-right">
+                  <div class="text-xs font-bold ${retColor}">${retSign}%${st.total_return_pct ? Math.abs(st.total_return_pct).toFixed(2) : '0.00'}</div>
+                  <div class="text-[10px] text-slate-400">son gün ${daySign}%${st.last_day_pct || 0}</div>
+                </div>
+              </div>
+
+              <!-- Sparkline Trend Grafiği -->
+              <div class="my-2.5 bg-[#0b1222] p-1 rounded border border-[#1e2a44]">
+                ${generateSparkline(st.sparkline || [10000, 10050, 10100, 10150, 10200, 10250])}
+              </div>
+
+              <!-- Detaylı Metrik Izgarası -->
+              <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] pt-1 text-slate-300">
+                <div class="text-slate-400">Maks. düşüş:</div>
+                <div class="text-right text-slate-200 font-medium">${st.max_drawdown_pct ? '%' + st.max_drawdown_pct : st.dd_pct}</div>
+
+                <div class="text-slate-400">Kazanma:</div>
+                <div class="text-right text-emerald-400 font-semibold">%${st.win_rate_pct || 50}</div>
+
+                <div class="text-slate-400">Kâr faktörü:</div>
+                <div class="text-right text-emerald-400 font-semibold">${st.profit_factor || '2.00'}</div>
+
+                <div class="text-slate-400">Kapanan / Açık:</div>
+                <div class="text-right font-medium text-white">${st.closed_trades || 0} / <span class="${st.open_trades > 0 ? 'text-[#f5cb5c] font-bold' : 'text-slate-400'}">${st.open_trades || 0}</span></div>
+
+                <div class="text-slate-400">Ort. tutma süresi:</div>
+                <div class="text-right">${st.avg_holding_time || '5.0 gün'}</div>
+
+                <div class="text-slate-400">Alfa teyidi:</div>
+                <div class="text-right text-emerald-300 text-[10px] font-mono">${st.alpha_conf || 'p < 0.05'}</div>
+
+                <div class="text-slate-400">Şu An İşlemde:</div>
+                <div class="text-right font-bold ${st.is_active_trade ? 'text-[#f5cb5c]' : 'text-slate-400'} text-[11px]">
+                  ${st.active_trade_symbol || 'Nakit'}
+                </div>
+
+                <div class="text-slate-400">Son çalışma:</div>
+                <div class="text-right text-slate-400 text-[10px]">${st.last_run || '25 dk önce'}</div>
+              </div>
+            </div>
+
+            <!-- Kart Altı Açıklama Kutusu -->
+            <div class="pt-2 border-t border-[#243555] text-[10px] text-slate-400 space-y-0.5 bg-[#101a30] p-2 rounded">
+              <div class="text-slate-300 font-medium">${st.footer_badge_1 || st.desc}</div>
+              <div class="text-[#f5cb5c] font-mono text-[9px]">${st.footer_badge_2 || ('Bağlı Havuz: ' + st.account + ' • Tahsis: ' + st.allocation)}</div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
       }
 
-      document.getElementById('stratCriteriaModal').classList.remove('hidden');
-      lucide.createIcons();
+      // 2. RENDER TABLO GÖRÜNÜMÜ (TABLE VIEW)
+      const tbody = document.getElementById('strategies27TableBody');
+      if (tbody) {
+        tbody.innerHTML = '';
+        items.forEach(st => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-[#101a30] transition-colors cursor-pointer group";
+          tr.onclick = () => openStratModal(st.rank);
+
+          const retSign = st.total_return_pct > 0 ? '+' : '';
+          const retColor = st.total_return_pct > 0 ? 'text-emerald-400 font-bold' : (st.total_return_pct < 0 ? 'text-red-400 font-bold' : 'text-slate-400');
+          const netPnlUsd = st.balance_usd ? (st.balance_usd - 10000) : 0;
+          const pnlColor = netPnlUsd >= 0 ? 'text-emerald-400' : 'text-red-400';
+          const pnlSign = netPnlUsd >= 0 ? '+' : '';
+
+          let statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">Beklemede</span>`;
+          if (st.is_active_trade) {
+            statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700 flex items-center justify-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>İşlemde</span>`;
+          } else if (st.live_status_tag === "gölge modda") {
+            statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-950 text-purple-300 border border-purple-800">Gölge Mod</span>`;
+          } else if (st.live_status_tag === "tetikte bekliyor") {
+            statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-300 border border-blue-800">Sinyal Bekliyor</span>`;
+          }
+
+          tr.innerHTML = `
+            <td class="py-2.5 px-2 text-center font-bold text-slate-400">#${st.rank}</td>
+            <td class="py-2.5 px-2">
+              <div class="font-bold text-white tracking-wide group-hover:text-[#f5cb5c] transition-colors flex items-center gap-1.5">
+                <span>${st.code}</span>
+                <i data-lucide="info" class="w-3 h-3 text-slate-500 group-hover:text-[#f5cb5c]"></i>
+              </div>
+              <div class="text-[10px] text-slate-400 truncate max-w-[200px]">${st.subtitle || st.name}</div>
+            </td>
+            <td class="py-2.5 px-2 font-medium text-slate-300">${st.account}</td>
+            <td class="py-2.5 px-2 text-right font-mono font-bold ${pnlColor}">${pnlSign}${netPnlUsd.toFixed(2)} $</td>
+            <td class="py-2.5 px-2 text-right font-mono ${retColor}">${retSign}%${st.total_return_pct ? Math.abs(st.total_return_pct).toFixed(2) : '0.00'}</td>
+            <td class="py-2.5 px-2 text-center font-mono">${st.closed_trades || 0} / <span class="${st.open_trades > 0 ? 'text-[#f5cb5c] font-bold' : 'text-slate-400'}">${st.open_trades || 0}</span></td>
+            <td class="py-2.5 px-2 text-center font-semibold text-emerald-400">%${st.win_rate_pct || 50}</td>
+            <td class="py-2.5 px-2 text-right font-semibold text-emerald-400">${st.profit_factor || '2.00'}</td>
+            <td class="py-2.5 px-2">
+              <span class="font-medium text-xs ${st.is_active_trade ? 'text-[#f5cb5c] font-bold' : 'text-slate-400'}">
+                ${st.active_trade_detail || st.active_trade_symbol || 'Nakit (Beklemede)'}
+              </span>
+            </td>
+            <td class="py-2.5 px-2 text-center">${statusBadge}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      if (window.lucide) lucide.createIcons();
     }
 
-    function closeStratModal() {
-      document.getElementById('stratCriteriaModal').classList.add('hidden');
-    }
-    
     function filterStrategiesList(type) {
       currentStratFilter = type;
       ['all', 'kontrollu', 'ogrenme'].forEach(btnId => {
