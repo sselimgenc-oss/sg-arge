@@ -2,7 +2,7 @@
   "meta": {
     "title": "Kağıt Hesaplar",
     "subtitle": "6 hesap - her biri 10.000 $ sanal - gerçek para yok",
-    "last_update": "18/10 02:50",
+    "last_update": "18/10 04:44",
     "test_period": "gün 8 / 62 - 9 Ekim - 10 Aralık",
     "exchange_rate": 49.26,
     "currency": "USD",
@@ -10,15 +10,15 @@
     "footer_note": "Kağıt üzerinde al-sat: botlar canlı piyasa verisiyle çalışır, gerçek emir gönderilmez. Saatler İstanbul saatidir. Panel her saat başı (yaklaşık :11) botların kendi kayıtlarından güncellenir; swing ve trend kolları günde bir, diğerleri saatlik çalışır. Günler İstanbul gününe göre. İşlem listesi her hesap için son 1000 işlemi tutar; kart özetleri tüm işlemlerden hesaplanır."
   },
   "kpis": {
-    "total_value": 69465.85,
-    "total_return_pct": -0.76,
+    "total_value": 69286.12,
+    "total_return_pct": -1.02,
     "last_day_pct": -0.24,
-    "open_positions_count": 27,
-    "closed_trades_count": 25,
-    "win_rate_pct": 4,
-    "total_try": 3421887.77,
+    "open_positions_count": 26,
+    "closed_trades_count": 26,
+    "win_rate_pct": 3,
+    "total_try": 3413034.27,
     "initial_total_capital": 70000.0,
-    "net_pnl": -384.25
+    "net_pnl": -484.27
   },
   "alerts": [
     {
@@ -286,6 +286,20 @@
     }
   ],
   "closed_trades_list": [
+    {
+      "id": 7867969,
+      "account": "Swing",
+      "strategy": "Dipten Sekme",
+      "asset": "NVDA",
+      "type": "Alış",
+      "entry_date": "12.10.2026",
+      "exit_date": "18/10 04:44",
+      "entry_price": 226.439,
+      "exit_price": 214.13,
+      "r": -1.0,
+      "pnl": -100.02,
+      "reason": "stop"
+    },
     {
       "id": 1005996,
       "account": "Swing",
@@ -650,8 +664,8 @@
       "entry_price": 725.99,
       "stop_price": 700.221,
       "size_usd": 2003,
-      "unrealized_pnl": 24.86,
-      "r": 0.35
+      "unrealized_pnl": -45.98,
+      "r": -0.65
     },
     {
       "account": "Algo",
@@ -676,21 +690,8 @@
       "entry_price": 527.53,
       "stop_price": 512.071,
       "size_usd": 2000,
-      "unrealized_pnl": 9.36,
-      "r": 0.16
-    },
-    {
-      "account": "Swing",
-      "strategy": "Dipten Sekme",
-      "asset": "NVDA",
-      "type": "Alış",
-      "entry_date": "12.10.2026",
-      "duration": "5 gün",
-      "entry_price": 226.439,
-      "stop_price": 215.075,
-      "size_usd": 1993,
-      "unrealized_pnl": 13.74,
-      "r": 0.14
+      "unrealized_pnl": 5.76,
+      "r": 0.1
     },
     {
       "account": "TradingView",
@@ -910,8 +911,8 @@
       "entry_price": 344.67,
       "stop_price": 327.354,
       "size_usd": 1998,
-      "unrealized_pnl": -15.48,
-      "r": -0.15
+      "unrealized_pnl": -7.01,
+      "r": -0.07
     },
     {
       "account": "Swing",
