@@ -264,8 +264,9 @@ def update_positions_and_pnl(data, live_prices):
     losses = [t for t in closed_trades if t.get("pnl", 0) < 0]
 
     win_rate = round((len(wins) / len(closed_trades) * 100), 1) if closed_trades else 0
-    total_equity = 70000.0 + total_closed_pnl + total_open_pnl
-    total_return_pct = round(((total_equity - 70000.0) / 70000.0) * 100, 2)
+    initial_cap = float(data.get("kpis", {}).get("initial_total_capital", 5000.0))
+    total_equity = initial_cap + total_closed_pnl + total_open_pnl
+    total_return_pct = round(((total_equity - initial_cap) / initial_cap) * 100, 2)
 
     data["kpis"]["total_value"] = round(total_equity, 2)
     data["kpis"]["total_return_pct"] = total_return_pct
