@@ -1,0 +1,33 @@
+name: Codex Algo 21 T1a
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Download daily bars
+        run: python data/fetch.py --interval 1d --allow-partial
+      - name: Run T1a replication
+        run: python backtests/run_codex21.py --rows C01,C19,C02,C09,C15,C17
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Commit reproducibility records
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/MANIFEST.csv data/evren.csv results/
+          git diff --cached --quiet || git commit -m "chore: refresh Codex Algo 21 results"
+          git push

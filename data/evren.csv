@@ -15,7 +15,7 @@ HEKTS.IS,BIST30,yfinance,
 ISCTR.IS,BIST30,yfinance,
 KCHOL.IS,BIST30,yfinance,
 KONTR.IS,BIST30,yfinance,
-KOZAL.IS,BIST30,yfinance,
+KOZAL.IS,BIST30,yfinance,eksik: source returned no bars
 KRDMD.IS,BIST30,yfinance,
 OYAKC.IS,BIST30,yfinance,
 PETKM.IS,BIST30,yfinance,

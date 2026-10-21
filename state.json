@@ -19,7 +19,7 @@
       "id": "T1a",
       "owner": "codex-worker",
       "title": "Veri + referans motor + 2 aile pilotu (C01,C19,C02,C09,C15,C17), replikasyon ve 2015-2019 on donem testi",
-      "status": "atandi (@codex, Issue #1)",
+      "status": "review (T1a pilotu ve gercek veri sonuclari teslim edildi)",
       "spec": "docs/GOREV_T1.md"
     },
     {

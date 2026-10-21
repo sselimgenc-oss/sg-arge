@@ -176,7 +176,7 @@ def fetch_binance(
             break
         page = _binance_rows_to_frame(rows)
         pages.append(page)
-        next_cursor = page.index[-1] + pd.Timedelta(milliseconds=1)
+        next_cursor = page.index[-1] + pd.Timedelta(1, unit="ms")
         if next_cursor <= cursor:
             raise RuntimeError(f"Binance pagination did not advance for {asset.symbol}")
         cursor = next_cursor
@@ -301,7 +301,7 @@ def fetch_asset(asset: Asset, interval: str, *, append: bool) -> tuple[Path, pd.
     path = directory / asset.filename
     existing = _read_archive(path) if append else normalize_ohlcv(pd.DataFrame())
     if asset.source == "binance":
-        start = existing.index[-1] + pd.Timedelta(milliseconds=1) if not existing.empty else None
+        start = existing.index[-1] + pd.Timedelta(1, unit="ms") if not existing.empty else None
         incoming = fetch_binance(asset, interval, start=start)
     else:
         incoming = fetch_yfinance(asset, interval)
@@ -312,7 +312,7 @@ def fetch_asset(asset: Asset, interval: str, *, append: bool) -> tuple[Path, pd.
     return path, combined
 
 
-def run(interval: str, *, append: bool) -> int:
+def run(interval: str, *, append: bool, allow_partial: bool = False) -> int:
     manifest_rows: list[dict[str, object]] = []
     quality_rows: list[dict[str, object]] = []
     successful: set[str] = set()
@@ -357,7 +357,7 @@ def run(interval: str, *, append: bool) -> int:
     update_manifest(manifest_rows)
     if interval == "1h":
         write_quality_report(quality_rows)
-    return 1 if failures else 0
+    return 1 if failures and not allow_partial else 0
 
 
 def parse_args() -> argparse.Namespace:
@@ -368,9 +368,16 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="merge downloads into an existing archive without duplicate timestamps",
     )
+    parser.add_argument(
+        "--allow-partial",
+        action="store_true",
+        help="record per-symbol failures but return success when at least part of the universe downloads",
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     arguments = parse_args()
-    raise SystemExit(run(arguments.interval, append=arguments.append))
+    raise SystemExit(
+        run(arguments.interval, append=arguments.append, allow_partial=arguments.allow_partial)
+    )
