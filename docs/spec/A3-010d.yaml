@@ -37,9 +37,9 @@ gostergeler:
     f: sma
     src: volume
     n: 12
-giris: (adx14 > 50 or adx35 > 26) and cci14 < -100 and fastk[1] < 20 and fastd[1] < 20 and slowfastk[1] < 30 and slowfastd[1] < 30 and fastk[1] < fastd[1]
-  and fastk > fastd and mean_volume12 > 0.75
-cikis: adx35 < 25 and (fastk > 70 or fastd > 70) and fastk[1] < fastd[1] and close > ema5
+giris: (adx14 > 50 or adx35 > 26) and cci14 < -100 and fast.k[1] < 20 and fast.d[1] < 20 and slowfast.k[1] < 30 and slowfast.d[1] < 30 and fast.k[1] < fast.d[1]
+  and fast.k > fast.d and mean_volume12 > 0.75
+cikis: adx35 < 25 and (fast.k > 70 or fast.d > 70) and fast.k[1] < fast.d[1] and close > ema5
 stop:
   tip: yuzde
   deger: 10

@@ -10,8 +10,8 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: EURUSD
 gostergeler: {}
-giris: abc_zigzag_deseni(prd=8, fib 0.382-0.618, hata %5) and sma_bulutu_trend == 1
-cikis: 'stop/hedef: kaynak koddaki longSl/longTp (TP katsayısı 2.0)'
+giris: abc_zigzag_deseni and sma_bulutu_trend == 1
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -34,4 +34,6 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/ABSAR.pine'
 - Yazarın test penceresi çok kısa (2022-01-02/2023-09-01), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
+- "T7 sozdizimi: ozgun cikis metni: 'stop/hedef: kaynak koddaki longSl/longTp (TP katsayisi 2.0)'"
+- "T7 sozdizimi: 'abc_zigzag_deseni(prd=8, fib 0.382-0.618, hata %5)' -> ad 'abc_zigzag_deseni'; parametreler: prd=8, fib 0.382-0.618, hata %5"
 bias_varsayim: false

@@ -27,6 +27,7 @@ rapor:
   maliyet_dahil: hayır
 spec_durumu: tam
 ozel_kod: false
+dolum: kapanis
 belirsiz:
 - 'Kaynak ''kapanışta al'' diyor; EVRENSEL_KURALLAR A1 gereği emir sonraki açılışta dolar: strateji kapanış->kapanış/açılış kenarını taşımayabilir (aşağıya
   bakınız lider notu)'

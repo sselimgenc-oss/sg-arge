@@ -28,6 +28,7 @@ cikis: cross_over(zs10, -0.5) or cross_under(sma10, sma100)
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: false
 parametreler:
   ZScoreLength: 10
   FastAvgLength: 10

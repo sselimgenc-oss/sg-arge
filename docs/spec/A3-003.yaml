@@ -33,7 +33,7 @@ gostergeler:
     f: atr
     n: 14
 giris: sektor_aylik_rsi > 55 and rsi14_ay > 60 and rsi14_hafta > 58 and cross_over(rsi14, 50)
-cikis: 'iz_suren: en yüksek kapanış - 4*ATR14'
+cikis: null
 stop:
   tip: atr
   n: 14
@@ -58,6 +58,7 @@ belirsiz:
 - 'Aylık tf: şema 1M tf desteği gerekir'
 - Maliyetsiz (cost=0.0), hayatta kalma yanlılığı, örneklem içi parametreler (yazarın kendi uyarısı); MDD -%40..-%48
 - Pozisyon boyutu/sıralama (60g momentum) A6 gereği yok sayılır
+- "T7 sozdizimi: ozgun cikis metni: 'iz_suren: en yuksek kapanis - 4*ATR14' (iz_suren alaninda yapisal olarak zaten var)"
 iz_suren:
   tip: atr_kapanis_zirve
   n: 14

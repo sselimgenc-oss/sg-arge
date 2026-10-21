@@ -15,11 +15,12 @@ gostergeler:
     f: supertrend
     n: 10
     carpan: 3.0
-giris: cross_over(close, st10)
-cikis: cross_under(close, st10)
+giris: cross_over(close, st10.line)
+cikis: cross_under(close, st10.line)
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: false
 parametreler:
   Periods: 10
   Multiplier: 3.0

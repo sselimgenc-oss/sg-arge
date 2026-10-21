@@ -7,7 +7,7 @@ kaynak:
   sayfa: null
 tarz: day
 tf: 5m
-mtf: 1h
+mtf: 1H
 tf_varsayim: false
 yazar_piyasasi: Emtia (XAUUSD)
 gostergeler:
@@ -30,8 +30,8 @@ gostergeler:
     f: sma
     src: close
     n: 50
-    tf: 1h
-giris: volume >= avg_vol * 1.5 and (body / range) >= 0.5 and range >= atr14 * 1.0 and close > ma50 and rsi14 < 70.0 and close > high[1] + atr14 * 0.2 and close > open and mtf(1h, close > ma50_1h)
+    tf: 1H
+giris: volume >= avg_vol * 1.5 and (body / range) >= 0.5 and range >= atr14 * 1.0 and close > ma50 and rsi14 < 70.0 and close > high[1] + atr14 * 0.2 and close > open and mtf("1H", close > ma50_1h)
 cikis: null
 stop: null
 hedef: null

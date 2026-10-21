@@ -11,7 +11,7 @@ tf_varsayim: false
 yazar_piyasasi: EURJPY
 gostergeler: {}
 giris: close < open and close[1] < open[1] and open[1] > open and close < close[1] and high > high[1] and high > open[1]
-cikis: 'stop: giris - (sinyal_bari_yuksek - giris) ; hedef: sinyal_bari_yuksek'
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -26,7 +26,8 @@ rapor:
   wr: '%78.2'
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: false
+ozel_kod: true
+ters_sinyal: true
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Varsayılan reverse=true: yazarın raporladığı test ''düşüş formasyonunda LONG, yükseliş formasyonunda SHORT'' (ters sinyal); long kolu için düşüş formasyonu
@@ -35,4 +36,5 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/CP1.pine'
 - Yazarın test penceresi çok kısa (2023-07-02/07-12 (10 gün)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
+- "T7 sozdizimi: ozgun stop/hedef metni: 'stop: giris - (sinyal_bari_yuksek - giris) ; hedef: sinyal_bari_yuksek' (sinyal barinin yukseklerine bagli; A1 ile giris sonraki barda oldugundan sinyal bari referansi dil disi: elle kodlanacak)"
 bias_varsayim: false

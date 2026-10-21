@@ -11,7 +11,7 @@ tf_varsayim: false
 yazar_piyasasi: EURUSD
 gostergeler: {}
 giris: mlcel_yeni_al_sinyali and macd_100_200_50_boga
-cikis: 'stop: lowest(low,7) ; hedef: giris + 3*(giris - stop)'
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -33,4 +33,5 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/MLCEL_MACD.pine'
 - Yazarın test penceresi çok kısa (2022-06-16/2023-09-21), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
+- "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: lowest(low,7) ; hedef: giris + 3*(giris - stop)' (sinyal barinda sabitlenen degerler: elle kodlanacak)"
 bias_varsayim: false

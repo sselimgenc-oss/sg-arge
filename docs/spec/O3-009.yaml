@@ -14,8 +14,8 @@ gostergeler:
     f: atr
     n: 14
     tf: 1D
-giris: ilk 5 dk mumu yükselişse yüksek kırılınca long (düşüşse düşük kırılınca short) ; ilk 5 dk rel. hacim >= %100 and günün rel. hacimde ilk 20'si
-cikis: 'stop: giriş - 0.10 * ATR14(günlük) ; stop olmazsa seans sonu'
+giris: null
+cikis: null
 stop:
   tip: atr_gunluk_yuzde
   n: 14
@@ -33,7 +33,7 @@ rapor:
   wr: hisse bazında tabloda
   maliyet_dahil: evet, $0.0035/hisse
 spec_durumu: dakikalik
-ozel_kod: false
+ozel_kod: true
 belirsiz:
 - 'Seans açılışına bağlı (ABD hisse): kripto 7/24 açılış tanımsız; BIST/emtia ETF için 5 dk verisi yok -> piyasa özgü, Doğrulanamaz (5 dk ABD hisse verisi
   evrenimizde yok)'
@@ -43,4 +43,6 @@ belirsiz:
 - Kaynak long/short; temel mod long-only, yalnız long kolu
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - Kaynak sitesi bu ortamda erişilemedi, kural xlsx özeti
+- "T7 sozdizimi: ifadeye cevrilemeyen serbest metin belirsiz'e tasindi (ilk 5 dk mumu / gunluk RVOL siralamasi dil disi; ozel_kod yapildi). Ozgun giris: ilk 5 dk mumu yükselişse yüksek kırılınca long (düşüşse düşük kırılınca short) ; ilk 5 dk rel. hacim >= %100 and günün rel. hacimde ilk 20'si"
+- "Ozgun cikis: stop: giriş - 0.10 * ATR14(günlük) ; stop olmazsa seans sonu"
 bias_varsayim: false

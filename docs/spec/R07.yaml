@@ -10,6 +10,7 @@ belirsiz:
   -> lider onayı
 - Rapordaki PF değeri tavanlanmış görünüyor (birçok satırda birebir 5,80); ölçüm/raporlama tavanı olabilir, PF'ye güvenilmez
 - 'Üç stratejinin birleşimi: seçim yanlılığı/aşırı uyum riski yüksek'
+- "T7 sozdizimi: cikis 'MOD_A: ...; MOD_B: ...' giris_modu calisma zamani degiskeniyle yazildi (A = dip avcisi, B = trend/kirilim); anlam ayni"
 parametreler: {}
 id: R07
 ad: VOLTRAN-R1 swing hibrit (Qullamaggie + Z-skor + IBS dip avcısı)
@@ -78,7 +79,7 @@ gostergeler:
 giris: (ema10w >= ema20w or close_1w >= ema20w * 0.985) and ((close > sma100 * 0.95 and close < hh10 - 2.15 * range25 and (close - low) / (high
   - low) < 0.28) or ((close - ema65) / sd65 > 0.48 and ((close >= hh15 * 0.997 and rvol20 > 1.20) or ((close - low) / (high - low) > 0.65 and
   ema10 > ema20))))
-cikis: 'MOD_A: close > high[1] ; MOD_B: (close - ema65) / sd65 < -0.15'
+cikis: "(giris_modu == \"A\" and close > high[1]) or (giris_modu == \"B\" and (close - ema65) / sd65 < -0.15)"
 iz_suren:
   tip: atr_zirve
   n: 14

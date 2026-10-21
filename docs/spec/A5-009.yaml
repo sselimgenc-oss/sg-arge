@@ -18,7 +18,7 @@ gostergeler:
     f: highest
     src: high
     n: 25
-giris: close < highest(high,25) - 2 * sma(high - low, 25) and (close - low) / (high - low) > 0.4
+giris: close < hh25 - 2 * range25 and (close - low) / (high - low) > 0.4
 cikis: close > high[1]
 stop: null
 hedef: null

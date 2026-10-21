@@ -8,6 +8,8 @@ Usage::
 Cards are never modified. ``tam`` cards must have parsable ``giris``/``cikis``,
 defined indicator names and defined ``name.attr`` fields. Other statuses
 (eksik, ihtiyari, ...) are checked too but their findings are informational.
+``ozel_kod: true`` cards may have empty expressions and names outside the library
+(they are ported by hand); syntax errors still count.
 """
 
 from __future__ import annotations
@@ -27,8 +29,8 @@ from . import gosterge as _ind
 
 DURUMLAR = ("gizli", "ihtiyari", "sadece_short", "eksik", "dakikalik", "tam", "kapsam_disi")
 TARZLAR = ("day", "swing", "belirsiz")
-TF_RE = re.compile(r"^\d+[mHDWM]$")
-MTF_RE = re.compile(r"^\d+[mHDWM](/\d+[mHDWM])*$")
+TF_RE = re.compile(r"^\d+[mHDWMr]$")  # r = renko bricks (not time based)
+MTF_RE = re.compile(r"^\d+[mHDWMr](/\d+[mHDWMr])*$")
 BASE_NAMES = frozenset({"open", "high", "low", "close", "volume"})
 RUNTIME_NAMES = frozenset({"giris", "giris_fiyati", "giris_stop", "giris_hedef", "bars_since_entry", "endeks_close", "stop_mesafesi", "giris_modu"})
 REQUIRED = ("id", "ad", "kaynak", "tarz", "tf", "gostergeler", "giris", "cikis", "spec_durumu", "belirsiz", "ozel_kod")
@@ -84,6 +86,11 @@ def _check_expression(text: Any, field_name: str, defined: set[str], gost: dict[
     allowed = defined | BASE_NAMES | (RUNTIME_NAMES if runtime else set())
     for name in sorted(parsed.names - allowed):
         issues.append(Issue("tanimsiz_ad", f"{field_name}: tanimsiz ad '{name}'"))
+    bare = parsed.names - {n for n, _ in parsed.attrs}
+    for name in sorted(bare & set(gost)):
+        spec = gost[name]
+        if isinstance(spec, dict) and spec.get("f") in _ind.REGISTRY and _ind.COLUMNS.get(spec["f"]):
+            issues.append(Issue("cok_sutunlu_cirplak", f"{field_name}: '{name}' ({spec['f']}) cok sutunlu, alan secilmeli: {', '.join(_ind.COLUMNS[spec['f']])}"))
     for name, attr in sorted(parsed.attrs):
         spec = gost.get(name)
         if not isinstance(spec, dict) or spec.get("f") not in _ind.REGISTRY:
@@ -139,7 +146,7 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
     # exit rules may use entry state (bars_since_entry, giris_fiyati, ...); entries may not
     _check_expression(card.get("giris"), "giris", defined, gost, issues, runtime=False)
     _check_expression(card.get("cikis"), "cikis", defined, gost, issues, runtime=True)
-    for block, sub in (("stop", "secenekler"), ("kar_kilidi", "stop"), ("kismi_kar", "tetik"), ("kismi_kar", "kalan_stop")):
+    for block, sub in (("stop", "secenekler"), ("stop", "ifade"), ("hedef", "ifade"), ("kar_kilidi", "stop"), ("kismi_kar", "tetik"), ("kismi_kar", "kalan_stop")):
         value = card.get(block)
         if isinstance(value, dict):
             target = value.get(sub)
@@ -151,7 +158,14 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
         for key in EXPR_FIELDS:
             value = card.get(key)
             if not isinstance(value, str) or not value.strip():
-                issues.append(Issue("tam_bos_ifade", f"durum 'tam' ama {key} bos"))
+                # lider kurali: bos ifade yalniz ozel_kod kartlarda, mantik `belirsiz`'de
+                issues.append(Issue("tam_bos_ifade", f"durum 'tam' ama {key} bos", ciddi=not ozel))
+    if ozel:
+        # ozel_kod kartlarda ifade ozel gostergelere (kutuphanede olmayan adlara) baglanabilir;
+        # bu adlar bilgi amaclidir. Sozdizimi hatalari ve gecersiz alanlar hata olarak kalir.
+        for issue in issues:
+            if issue.kod == "tanimsiz_ad":
+                issue.ciddi = False
     return result
 
 
@@ -176,7 +190,8 @@ def render_report(results: list[CardResult]) -> str:
     lines += [""]
 
     hazir = [r for r in results if r.durum == "tam" and not r.errors and not r.card.get("ozel_kod")]
-    lines.insert(3, f"T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **{len(hazir)}**")
+    hazir_dk = [r for r in results if r.durum == "dakikalik" and not r.errors and not r.card.get("ozel_kod")]
+    lines.insert(3, f"T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **{len(hazir)}**; ayrica `dakikalik` (yalniz kripto testi) hazir: **{len(hazir_dk)}**")
     lines.insert(4, "")
     gosterge_kart: dict[str, set[str]] = defaultdict(set)
     ifade_hata: list[tuple[str, str, str]] = []

@@ -27,8 +27,8 @@ gostergeler:
     f: lowest
     src: low
     n: 24
-giris: 'major_trend_bull ? (ott2_bull and stoc1_bull and high > hhv20[1]) : (ott3_bull and stoc2_bull and high > hhv22[1])'
-cikis: 'major_trend_bull ? (ott4_bear and stoc3_bear and low < llv23[1]) : (ott5_bear and stoc4_bear and low < llv24[1])'
+giris: "(major_trend_bull and (ott2_bull and stoc1_bull and high > hhv20[1])) or (not major_trend_bull and (ott3_bull and stoc2_bull and high > hhv22[1]))"
+cikis: "(major_trend_bull and (ott4_bear and stoc3_bear and low < llv23[1])) or (not major_trend_bull and (ott5_bear and stoc4_bear and low < llv24[1]))"
 stop: null
 hedef: null
 stop_eklendi: false
@@ -78,3 +78,4 @@ belirsiz:
 - 'Özel kod mantığı: Major Trend = MOV(C, 30, VAR) > OTT(C, 30, 8.0). Eğer Major Trend yukarı ise 1. Bölge şartları (OTT(40, 0.6) altta, StochSlow(500,200,111) yukarı kesişimli ve H > HHV(H, 20)[1]) ile
   Long açılır. Major Trend aşağı ise 2. Bölge şartları (OTT(30, 0.9) altta, StochSlow(500,300,111) yukarı kesişimli ve H > HHV(H, 22)[1]) ile Long açılır. Pozisyon kapama 3. Bölge (LLV 23) veya 4. Bölge
   (LLV 24) koşullarıyla gerçekleşir'
+- "T7 sozdizimi: ternary (c ? a : b) '(c and a) or (not c and b)' bicimine cevrildi; anlam ayni"

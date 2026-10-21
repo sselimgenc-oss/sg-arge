@@ -10,8 +10,8 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: USDCHF
 gostergeler: {}
-giris: 'ut_bot_al and close > sma(linreg_mum_kapanis, 7)  # reverse=true: bu sinyalde SHORT'
-cikis: linreg mum rengi ters dönünce kapat
+giris: ut_bot_al and close > linreg_sinyal
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -35,4 +35,6 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/LRCUTB.pine'
 - Yazarın test penceresi çok kısa (2023-08-01/10-27), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
+- "T7 sozdizimi: ozgun cikis metni: 'linreg mum rengi ters dönünce kapat'"
+- "T7 sozdizimi: 'sma(linreg_mum_kapanis, 7)' -> ad 'linreg_sinyal' (= SMA(linreg mum kapanisi, 7)); ozgun giris metni sonundaki yorum: 'reverse=true: bu sinyalde SHORT'"
 bias_varsayim: false

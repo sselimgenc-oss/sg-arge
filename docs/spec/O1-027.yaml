@@ -6,7 +6,7 @@ kaynak:
   url: https://www.tradingview.com/script/nHGK4Qtp/
   sayfa: null
 tarz: swing
-tf: 1h
+tf: 1H
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: Emtia (XAUUSD) / Forex / Kripto
@@ -20,11 +20,12 @@ gostergeler:
     src: hl2
     n: 10
     carpan: 3.0
-giris: cross_over(ema10, pmax10)
-cikis: cross_under(ema10, pmax10)
+giris: cross_over(ema10, pmax10.pmax)
+cikis: cross_under(ema10, pmax10.pmax)
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: false
 parametreler:
   MAvg_period: 10
   MAvg_type: EMA

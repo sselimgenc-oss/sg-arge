@@ -15,8 +15,8 @@ gostergeler:
     f: supertrend
     n: 10
     carpan: 3.0
-giris: cross_over(ha_close, st_ha)
-cikis: cross_under(ha_close, st_ha)
+giris: cross_over(ha_close, st_ha.line)
+cikis: cross_under(ha_close, st_ha.line)
 stop: null
 hedef: null
 stop_eklendi: false

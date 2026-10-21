@@ -132,3 +132,60 @@ def test_repository_cards_load_and_report_renders():
     assert len(results) > 50
     report = spec.render_report(results)
     assert "Durum dagilimi" in report and "Kutuphanede olmayan gosterge adlari" in report
+
+
+def _synthetic_ohlcv(periods: int = 3000, seed: int = 1):
+    import numpy as np
+    import pandas as pd
+
+    rng = np.random.default_rng(seed)
+    index = pd.date_range("2022-01-03", periods=periods, freq="h")
+    close = 100 + np.cumsum(rng.normal(0, 0.5, periods))
+    return pd.DataFrame(
+        {
+            "open": close + rng.normal(0, 0.1, periods),
+            "high": close + rng.uniform(0.1, 1.0, periods),
+            "low": close - rng.uniform(0.1, 1.0, periods),
+            "close": close,
+            "volume": rng.uniform(1_000, 5_000, periods),
+        },
+        index=index,
+    )
+
+
+@pytest.mark.skipif(not REPO_SPEC.is_dir(), reason="docs/spec not present")
+def test_repository_cards_evaluate_on_synthetic_data():
+    """Every non-ozel `tam`/`dakikalik` card must not only parse but run: indicators
+    compute and giris/cikis evaluate to boolean Series on synthetic OHLCV."""
+    import pandas as pd
+
+    from engine import expr, gosterge
+
+    frame = _synthetic_ohlcv()
+    benchmarks = {"endeks": _synthetic_ohlcv(seed=2)}
+    runtime = {
+        "giris": pd.Series(100.0, index=frame.index), "giris_fiyati": pd.Series(100.0, index=frame.index),
+        "giris_stop": pd.Series(98.0, index=frame.index), "giris_hedef": pd.Series(104.0, index=frame.index),
+        "bars_since_entry": pd.Series(3.0, index=frame.index), "stop_mesafesi": pd.Series(2.0, index=frame.index),
+        "giris_modu": "A",
+    }
+    failures = []
+    checked = 0
+    for result in spec.validate_directory(REPO_SPEC):
+        card = result.card
+        if card.get("spec_durumu") not in ("tam", "dakikalik") or card.get("ozel_kod"):
+            continue
+        if not (card.get("giris") or card.get("cikis")):
+            continue
+        try:
+            env = gosterge.build_env(frame, card["gostergeler"], benchmarks=benchmarks)
+            env.update(runtime)
+            for key in ("giris", "cikis"):
+                if card.get(key):
+                    out = expr.parse(card[key]).evaluate(env, index=frame.index, mtf=lambda tf, s: s)
+                    assert out.dtype == bool, f"{key} bool degil: {out.dtype}"
+            checked += 1
+        except Exception as exc:  # noqa: BLE001 - collect every failing card
+            failures.append(f"{result.id}: {type(exc).__name__}: {exc}")
+    assert checked >= 15
+    assert not failures, "calismayan kartlar:\n" + "\n".join(failures)

@@ -19,8 +19,8 @@ gostergeler:
     src: close
     n: 3
     ma: rma
-giris: rsi3[1] < 30 and close[1] < bb_lower[1] and rsi3 > 30 and close > bb_lower and rsi3 < 50 and close < bb_basis
-cikis: cross_over(close, bb_basis) or close <= giris_stop or close >= giris_hedef
+giris: rsi3[1] < 30 and close[1] < bb.lower[1] and rsi3 > 30 and close > bb.lower and rsi3 < 50 and close < bb.basis
+cikis: cross_over(close, bb.basis) or close <= giris_stop or close >= giris_hedef
 stop: null
 hedef: null
 stop_eklendi: false
