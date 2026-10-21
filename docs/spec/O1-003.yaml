@@ -1,22 +1,28 @@
 id: O1-003
 ad: PHL1 YİĞİT KAYNAK
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL1-YİGİT-KAYNAK
-  sayfa: O1-003
+  sayfa: null
 tarz: day
-tf: 1H
-mtf: null
+tf: 1h
+mtf: 1D
 tf_varsayim: true
-yazar_piyasasi: BIST/VİOP
-gostergeler: {}
-giris: mov(c,1,s) > DI ; DI = 2*YGT - onceki_gun_dusuk ; YGT = (onceki_kapanis + onceki_yuksek + onceki_dusuk)/3
-cikis: close < DE ; DE tanımı yok
+yazar_piyasasi: BIST (XU030)
+gostergeler:
+  mov1_close:
+    f: sma
+    src: close
+    n: 1
+giris: close > di
+cikis: close < de
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
-deneme_sayisi_kaynakta: null
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -24,12 +30,11 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- Backtest sonucu yayımlanmamış (yalnız popülerlik)
-- 'DE seviyesinin formülü xlsx''te yok (DI''nin simetriği olabilir: 2*YGT - önceki gün yüksek; doğrulanamadı)'
-- '''Günlük altı periyotlar'': tf belirsiz, 1H varsayıldı'
-- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
-bias_varsayim: false
+- 'Algo Kütüphanesi sayfasından formül birebir okundu; yazar (@YgtKyn / Yiğit Kaynak) sistemin gün altı periyotlarda ve özellikle 60dk, 120dk, 180dk XU030 spot grafiğinde kullanılmasını önermiştir (tf:
+  1h, tf_varsayim: true)'
+- 'Özel kod mantığı: YIGIT:=dayofmonth()><ref(dayofmonth(),-1); ADAM:=valuewhen(1,YIGIT,ref(c,-1)); TX:=valuewhen(1,YIGIT,ref(highestsince(1,YIGIT,h),-1)); RX:=valuewhen(1,YIGIT,ref(lowestsince(1,YIGIT,l),-1));
+  YGT:=(ADAM+RX+TX)/3; DI:=2*YGT-RX; DE:=2*YGT-TX. AL Formülü: Mov(C,1,s)>DI (yani close > di); SAT Formülü: Mov(C,1,s)<DE (yani close < de)'
+- Giriş ve çıkış formülünde optimize edilecek eksik parametre yoktur; önceki günün kapanış, en yüksek ve en düşük fiyatlarından hesaplanan günlük pivot seviyeleridir

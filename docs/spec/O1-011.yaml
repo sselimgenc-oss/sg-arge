@@ -1,24 +1,30 @@
 id: O1-011
 ad: SuperTrendVadeliStratejisi
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://algokutuphanesi.com/Sistem/Detay/MatriksIq/SuperTrendVadeliStratejisi
-  sayfa: O1-011
+  sayfa: null
 tarz: day
 tf: 5m
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: VİOP/Binance Futures
+yazar_piyasasi: VIOP / Kripto Vadeli
 gostergeler:
-  st:
+  st10:
     f: supertrend
-giris: cross_over(close, supertrend)
-cikis: cross_under(close, supertrend)
+    n: 10
+    carpan: 3.0
+giris: cross_over(close, st10)
+cikis: cross_under(close, st10)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+parametreler:
+  SuperPeriod: 10
+  Coeff: 3.0
+  SymbolPeriod: 5m
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -26,14 +32,10 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
 belirsiz:
-- Backtest sonucu yayımlanmamış (yalnız popülerlik)
-- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
-- SuperTrend ATR periyodu/çarpanı sayfadan okunamadı (kod parametresi)
-- 'Varsayılan 5 dk; açığa satış opsiyonel: yalnız long'
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
-bias_varsayim: false
+- Karar zaman dilimi kodda [Parameter(SymbolPeriod.Min5)] olarak tanımlanmıştır (5m, 1 saatin altında)
+- 'AlgoDirekt / MatriksIq C# kaynak kodundan kurallar eksiksiz okundu: CrossAbove(barDataModel, superTrend, OHLCType.Close) ile Long, CrossBelow(barDataModel, superTrend, OHLCType.Close) ile Short / Exit
+  emri gönderilir'
+- 'short kuralı var: CrossBelow gerçekleştiğinde ters yönde vadeli açığa satış (FX_Satis) emri gönderilir'

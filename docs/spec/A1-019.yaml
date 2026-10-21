@@ -1,21 +1,22 @@
 id: A1-019
 ad: BIST30 to S&P 500 ATR Momentum Rider
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/jd1KSVn7/
   sayfa: null
+erisim_engeli: true
 tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: Hisse / Endeks (BIST30, S&P 500)
+yazar_piyasasi: BIST / ABD Endeks
 gostergeler: {}
 giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: false
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -28,7 +29,4 @@ rapor:
   maliyet_dahil: belirtilmemis
 spec_durumu: eksik
 belirsiz:
-- 'URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod/açıklama bulunmuyor'
-- Giriş/çıkış kuralları, ATR çarpanları ve momentum göstergesi parametreleri kaynağa erişilemediği için belirsiz
-erisim_engeli: true
-kart_yazari: argon
+- TradingView URL'si erişim engeli nedeniyle okunamadı ve web üzerinde ayna kopyası bulunamadı

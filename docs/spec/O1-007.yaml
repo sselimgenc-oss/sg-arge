@@ -1,21 +1,27 @@
 id: O1-007
 ad: SÜPERTRENDMOSTOPTİMİZASYONLU
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://algokutuphanesi.com/Sistem/Detay/Matriks/SÜPERTRENDMOSTOPTİMİZASYONLU
-  sayfa: O1-007
-tarz: belirsiz
+  sayfa: null
+tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: BIST/VİOP
+yazar_piyasasi: BIST / Kripto
 gostergeler: {}
-giris: cross(strend((h+l)/2,opt1,opt2), most(c,opt3,opt4))
-cikis: cross(most, strend)
+giris: cross_over(strend, most)
+cikis: cross_under(strend, most)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
+ozel_kod: true
+parametreler:
+  opt1: null
+  opt2: null
+  opt3: null
+  opt4: null
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
@@ -24,12 +30,9 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: true
 belirsiz:
-- Backtest sonucu yayımlanmamış (yalnız popülerlik)
-- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
-- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
-- MOST (Moving Stop Loss) listede yok; yorumcu düşüşte al sinyali verdiğini eleştirmiş
-bias_varsayim: false
+- 'Algo Kütüphanesi sayfasından Matriks formülü okundu: AL: cross(STrend((H+L)/2,opt1,opt2),MOST(c,opt3,opt4)); SAT: cross(MOST(c,opt3,opt4),STrend((H+L)/2,opt1,opt2))'
+- 'Formüldeki opt1, opt2, opt3, opt4 değerleri kullanıcı optimizasyonu için açık bırakılmış olup varsayılan sayısal değerler kaynakta verilmemiştir; lider kuralına göre (''parametre eksikse ... eksik'')
+  spec_durumu: eksik olarak işaretlendi'

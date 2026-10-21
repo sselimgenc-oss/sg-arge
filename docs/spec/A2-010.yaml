@@ -1,21 +1,22 @@
 id: A2-010
 ad: ICE (Impulse Confirmation Engine)
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.mql5.com/en/code/69651
   sayfa: null
+erisim_engeli: true
 tarz: day
-tf: 15m
-mtf: 1h
-tf_varsayim: false
-yazar_piyasasi: null
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Forex
 gostergeler: {}
 giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: false
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -28,6 +29,4 @@ rapor:
   maliyet_dahil: belirtilmemis
 spec_durumu: eksik
 belirsiz:
-- 'URL okunamadı: MQL5 CodeBase 69651 sayfası yayından kaldırılmış veya erişime kapalı, arama motoru önbelleğinde de bulunmuyor'
-erisim_engeli: true
-kart_yazari: argon
+- MQL5 CodeBase 69651 sayfası yayından kaldırılmış veya erişime kapalıdır, arama motoru önbelleğinde de bulunmamaktadır

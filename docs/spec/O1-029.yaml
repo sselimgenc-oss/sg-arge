@@ -1,35 +1,34 @@
 id: O1-029
 ad: Grover Llorens Activator Strategy Analysis
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/VuYM89Tw-Grover-Llorens-Activator-Strategy-An
-  sayfa: O1-029
-tarz: day
-tf: 1H
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
 mtf: null
-tf_varsayim: false
-yazar_piyasasi: Forex/Kripto/ABD hisse
+tf_varsayim: true
+yazar_piyasasi: Kripto / Hisse
 gostergeler: {}
-giris: cross_over(close, gl_activator)
-cikis: ters sinyal (sürekli long/short)
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
-  pf: 1.036
+  pf: null
   sharpe: null
-  getiri: $86.63 (EURUSD) / $2010.64 (BTCUSD) / $17.86 (AMD)
-  mdd: $76.67 / $5738.01 / $10.37
+  getiri: null
+  mdd: null
   islem: null
-  wr: '%37.65 / %38.23 / %36.27'
-  maliyet_dahil: hayır
+  wr: null
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: true
 belirsiz:
-- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
-- Gösterge formülü (length 480, mult 14) xlsx'te yok
-- Yazar sonucu zayıf buluyor, spread eklenince EURUSD negatife dönüyor; maliyetsiz
-- 'Sürekli long/short: yalnız long kolu'
-bias_varsayim: false
+- TradingView sayfası erişim engeli nedeniyle okunamadı; AlphaInsider ve Medium ayna özetlerinden yazarın alexgrover olduğu, sistemin Parabolic SAR ve Gann HiLo Activator esintili iz süren stop indikatörüne
+  dayandığı okundu ancak tam Pine Script kodu ve varsayılan parametreler teyit edilemedi
