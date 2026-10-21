@@ -21,12 +21,16 @@ gostergeler:
     f: rsi
     src: close
     n: 14
+  alphatrend:
+    f: "alphatrend"
+    n: 14
+    carpan: 1.0
 giris: cross_over(alphatrend, alphatrend[2])
 cikis: cross_under(alphatrend, alphatrend[2])
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   coeff: 1.0
   AP: 14
@@ -48,3 +52,4 @@ belirsiz:
 - 'Özel kod mantığı: upT = low - atr(14)*coeff; downT = high + atr(14)*coeff; AlphaTrend = (novolumedata ? rsi(14)>=50 : mfi(14)>=50) ? (upT < AlphaTrend[1] ? AlphaTrend[1] : upT) : (downT > AlphaTrend[1]
   ? AlphaTrend[1] : downT). Long Giriş: cross_over(AlphaTrend, AlphaTrend[2]); Çıkış / Reversal: cross_under(AlphaTrend, AlphaTrend[2])'
 - 'short kuralı var: cross_under(AlphaTrend, AlphaTrend[2]) olduğunda short açılır'
+- "T8: ozel_kod true -> false (alphatrend kutuphaneye eklendi: SMA(TR,14) tabanli ATR, MFI>=50 yonlu; varsayilan coeff=1, AP=14); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

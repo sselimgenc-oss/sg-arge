@@ -51,7 +51,7 @@ rapor:
   wr: '%47.5'
   maliyet_dahil: hayır (cost=0.0)
 spec_durumu: tam
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - 'Sektör endeksi gerekli: BIST sektör endeksleri / ABD sektör ETF''leri / kripto-emtia için tanımsız; kaynak yoksa piyasa endeksi (README: Nifty 50) kullanır
   -> lider kararı'
@@ -59,6 +59,7 @@ belirsiz:
 - Maliyetsiz (cost=0.0), hayatta kalma yanlılığı, örneklem içi parametreler (yazarın kendi uyarısı); MDD -%40..-%48
 - Pozisyon boyutu/sıralama (60g momentum) A6 gereği yok sayılır
 - "T7 sozdizimi: ozgun cikis metni: 'iz_suren: en yuksek kapanis - 4*ATR14' (iz_suren alaninda yapisal olarak zaten var)"
+- "T8: ozel_kod true -> false (cikis yalniz iz_suren (en yuksek kapanis - 4*ATR14); sektor endeksi yerine piyasa endeksi (endeks_close) kartta zaten boyleydi); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 iz_suren:
   tip: atr_kapanis_zirve
   n: 14

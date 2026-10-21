@@ -37,6 +37,7 @@ zaman_stop:
   bar: 11
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: cok_enstruman
 parametreler:
   SEC2: FXY
   SEC3: SPY
@@ -74,3 +75,4 @@ belirsiz:
   (3) BarsSinceEntry >= 11 barda zaman stopu'
 - 'short kuralı var: IM2[3] < 25 ve IM2 > IM2[3] ve IM2 < 75 ve CR3 < 0.8 ve (LR <= LR[1] veya Close < SMA(Close, 25)) olduğunda short açılır (3 bar sonra %1.5 stop + Stoch < 90, 7 bar sonra %1.5 iz süren
   stop, 11 bar zaman stopu)'
+- "ozel_kod_nedeni: cok_enstruman (FXY ve SPY serileri ile cross-instrument regresyon uyumsuzlugu)"

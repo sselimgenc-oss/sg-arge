@@ -27,6 +27,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: tam
 ozel_kod: true
+ozel_kod_nedeni: ml
 belirsiz:
 - 'MLCEL (Lorentzian benzeri ML tahmini, 351 satır Pine) + MACD(100,200,50): ozel_kod, elle port'
 - Sadece 47 işlem
@@ -34,4 +35,5 @@ belirsiz:
 - Yazarın test penceresi çok kısa (2022-06-16/2023-09-21), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
 - "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: lowest(low,7) ; hedef: giris + 3*(giris - stop)' (sinyal barinda sabitlenen degerler: elle kodlanacak)"
+- "ozel_kod_nedeni: ml (MLCEL (Lorentzian benzeri ML tahmini, 351 satir Pine))"
 bias_varsayim: false

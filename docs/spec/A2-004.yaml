@@ -25,6 +25,7 @@ zaman_stop:
   bar: 2
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 parametreler:
   InpEntryHour: 1
   InpEntryWindowMin: 15
@@ -50,3 +51,4 @@ belirsiz:
   piyasadan çıkılır (zaman_stop: {bar: 2}); sunucu taraflı koruma stopu son 480 H1 barının ortalama aralığının 2.0 katı olarak konulur (InpStopAtrMult=2.0, InpRangeBars=480); Pazartesi haftalık açılışı
   atlanır (InpSkipMonday=true)'
 - Yalnızca Long yönlü bir seans anomalisidir
+- "ozel_kod_nedeni: seans_saat (CME bakim arasi sonrasi yeniden acilis saatinde tek islem, sunucu saati ve spread filtresi)"

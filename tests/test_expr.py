@@ -107,3 +107,16 @@ def test_calendar_primitives_in_expressions():
     last = parse("ay_islem_gunu_sondan(1)").evaluate(env)
     assert idx[last.to_numpy()].strftime("%m-%d").tolist() == ["01-31", "02-29", "03-29"]
     assert parse("haftanin_gunu() == 0").evaluate(env).sum() == (idx.weekday == 0).sum()
+
+
+def test_valuewhen_highestsince_lowestsince_yeni_gun():
+    idx = pd.to_datetime(["2024-01-01 10:00", "2024-01-01 11:00", "2024-01-02 10:00", "2024-01-02 11:00", "2024-01-03 10:00"])
+    env = {"high": pd.Series([5, 7, 6, 9, 4.0], index=idx), "close": pd.Series([1, 2, 3, 4, 5.0], index=idx)}
+    assert parse("yeni_gun()").evaluate(env).tolist() == [True, False, True, False, True]
+    assert parse("valuewhen(yeni_gun(), close[1])").evaluate(env).fillna(-1).tolist() == [-1, -1, 2, 2, 4]
+    assert parse("highestsince(yeni_gun(), high)").evaluate(env).fillna(-1).tolist() == [5, 7, 6, 9, 4]
+    assert parse("lowestsince(yeni_gun(), high)").evaluate(env).fillna(-1).tolist() == [5, 5, 6, 6, 4]
+    with pytest.raises(ExprError):
+        parse("yeni_gun(1)").evaluate(env)
+    with pytest.raises(ExprError):
+        parse("valuewhen(close)").evaluate(env)

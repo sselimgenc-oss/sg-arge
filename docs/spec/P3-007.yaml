@@ -15,12 +15,15 @@ gostergeler:
     f: supertrend
     n: 10
     carpan: 3.0
-giris: cross_over(ha_close, st_ha.line)
-cikis: cross_under(ha_close, st_ha.line)
+    ha: true
+  ha:
+    f: "heikinashi"
+giris: cross_over(ha.close, st_ha.line)
+cikis: cross_under(ha.close, st_ha.line)
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   Periods: 10
   Multiplier: 3.0
@@ -39,3 +42,4 @@ belirsiz:
 - 'Özel kod mantığı: Supertrend hesaplaması Heikin Ashi mumlarının (ha_close, ha_high, ha_low) sentetik serileri üzerinden yapılır; ha_close Supertrend çizgisini yukarı kestiğinde Long girilir, aşağı kestiğinde
   çıkılır / ters yöne dönülür'
 - 'short kuralı var: cross_under(ha_close, st_ha) olduğunda short açılır'
+- "T8: ozel_kod true -> false (heikinashi kutuphaneye eklendi; Supertrend `ha: true` ile Heikin Ashi mumlari uzerinde hesaplanir; 'ha_close' -> 'ha.close'. Not: onceki gostergeler'deki st_ha normal OHLC uzerindeydi, kartin metnine uygun olarak HA uzerine alindi); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

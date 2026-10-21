@@ -23,6 +23,18 @@ gostergeler:
     f: sma
     src: volume
     n: 4
+  range_:
+    f: "seri"
+    ifade: "hh4 - ll4"
+  daralma:
+    f: "seri"
+    ifade: "range_ < 0.75 * range_[4]"
+  box_top:
+    f: "seri"
+    ifade: "valuewhen(daralma, hh4)"
+  box_bot:
+    f: "seri"
+    ifade: "valuewhen(daralma, ll4)"
 giris: close > box_top and box_bot > box_bot[12] and vol_sma4[4] > 1.0 * vol_sma4[8]
 cikis: close < box_bot
 stop: null
@@ -34,7 +46,7 @@ varyantlar:
 - ad: ADX / ATR Konsolidasyon Varyantları
   aciklama: Makalede ayrıca Range_ < 0.75*Range_[4] yerine ADX(4) < 25 ve ATR(4) < 0.75*ATR(4)[4] kullanılan Breakout ve Pullback varyantları test edilmiştir
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   Length: 4
   ConsolidationFactor: 0.75
@@ -59,3 +71,4 @@ belirsiz:
   4) ve box_bot = Lowest(Low, 4) (koşul sağlanmadığı barlarda son box_top ve box_bot değerleri korunur). Giriş: close > box_top ve box_bot > box_bot[12] (yükselen dipler/birikim) ve Average(Volume, 4)[4]
   > 1.0 * Average(Volume, 4)[8] olduğunda sonraki bar açılışında Long girilir. Çıkış: close < box_bot olduğunda (aktif konsolidasyon kutusunun alt bandı iz süren stop gibi çalışır) pozisyon kapatılır'
 - Yalnızca Long kuralları tanımlanmıştır (S&P 100 hisselerinde birikim kırılımı)
+- "T8: ozel_kod true -> false (daralma kutusu valuewhen ile yazildi (kosul saglanmayan barlarda son deger korunur)); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

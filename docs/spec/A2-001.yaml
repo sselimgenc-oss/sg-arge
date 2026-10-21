@@ -37,6 +37,7 @@ hedef:
   carpan: 4.5
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 parametreler:
   vol_fast.n: 50
   vol_slow.n: 252
@@ -65,4 +66,5 @@ belirsiz:
   son 100 saatlik getirinin standart sapması, (2) tick hacmi >= 50 barlık ortalama tick hacmi, (3) son 252 barın ortalama tick hacmi < sabit eşik, (4) son 13 bardan en az biri NR7 (kendi son 7 barının en
   dar high-low aralığına sahip bar); sonraki bar açılışında Long açılır ve 23:00 sunucu saatinde açık pozisyon kapatılır'
 - 3. koşuldaki 252-barlık ortalama tick hacmi üst eşiğinin sayısal varsayılan değeri ve ATR periyodu açıklama metninde yazmayıp .mq5 kaynak dosyasındadır (ATR periyodu 14 varsayıldı)
+- "ozel_kod_nedeni: seans_saat (sunucu saati 18:00-21:00 penceresi, 23:00 zorunlu kapanis, tick hacmi; 252 barlik hacim esigi sayisal degeri kartta yok)"
 kart_yazari: argon

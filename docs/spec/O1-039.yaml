@@ -17,6 +17,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 parametreler:
   alpha: 0.2
   gamma: 0.8
@@ -40,3 +41,4 @@ belirsiz:
   L3 = -(1-alpha)*L2 + L2[1] + (1-alpha)*L3[1]; cu = max(L0-L1, 0) + max(L1-L2, 0) + max(L2-L3, 0); cd = max(L1-L0, 0) + max(L2-L1, 0) + max(L3-L2, 0); lrsi = cu / (cu + cd). Giriş: lrsi 0.2 seviyesini
   yukarı kestiğinde (cross_over(lrsi, 0.2)) Long; Çıkış: lrsi 0.8 seviyesini aşağı kestiğinde (cross_under(lrsi, 0.8)) pozisyon kapatılır / short açılır'
 - 'short kuralı var: cross_under(lrsi, 0.8) olduğunda short pozisyona geçilir'
+- "ozel_kod_nedeni: ozel_gosterge (Laguerre RSI (ozyinelemeli L0..L3); kutuphanede yok ve yalniz bu kartta gerekli)"

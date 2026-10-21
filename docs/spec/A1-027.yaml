@@ -31,6 +31,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: desen
 parametreler:
   tol: 15.0
   len: 50
@@ -64,4 +65,5 @@ belirsiz:
   hedefe ulaşıldığında lowest(5) - 1.0 * atr(14) izsüren stop devreye girer'
 - 'Kod içi tutarsızlık: Kullanıcı girdisi olarak atrLength=14 tanımlanmış ancak 207. satırda ta.atr(14) sabit 14 ile çağrılmıştır'
 - 'short kuralı var: dShort=true ve FLIP=true varsayılanıyla İkili Tepe (Double Top) boyun çizgisi aşağı kırılımında (close < y3) short açılır ve açık long varsa tersine döner'
+- "ozel_kod_nedeni: desen (5x3 pivot matrisinde cift dip (double bottom) deseni)"
 kart_yazari: argon

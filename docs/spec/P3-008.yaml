@@ -27,6 +27,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 parametreler:
   bb_length: 20
   bb_mult: 2.0
@@ -48,3 +49,4 @@ belirsiz:
 - 'Özel kod mantığı (John Carter Squeeze): Bollinger Bantları(20, 2.0) Keltner Kanalı(20, 1.5 ATR) içine girdiğinde sıkışma başlar (sqzOn); sıkışma bittiğinde (sqzOff) ve doğrusal regresyon momentum histogramı
   val = linreg(close - avg(avg(highest(20), lowest(20)), sma(20)), 20, 0) pozitif ve yükseliyorsa Long girilir; momentum çubuğu bir önceki çubuğun altına indiğinde pozisyon kapatılır'
 - 'short kuralı var: sqzOff anında val < 0 ve val < val[1] ise short açılır'
+- "ozel_kod_nedeni: ozel_gosterge (LazyBear Squeeze Momentum (linreg histogram, SMA tabanli Keltner); linreg kutuphanede yok ve yalniz bu kartta gerekli)"

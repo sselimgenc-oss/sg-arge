@@ -15,12 +15,41 @@ gostergeler:
     f: sma
     src: close
     n: 1
+  yeni:
+    f: "seri"
+    ifade: "yeni_gun()"
+  adam:
+    f: "seri"
+    ifade: "valuewhen(yeni, close[1])"
+  tx:
+    f: "seri"
+    ifade: "valuewhen(yeni, highestsince(yeni, high)[1])"
+  rx:
+    f: "seri"
+    ifade: "valuewhen(yeni, lowestsince(yeni, low)[1])"
+  pvt1:
+    f: "seri"
+    ifade: "(adam + rx + tx) / 3"
+  pvt2:
+    f: "seri"
+    ifade: "adam"
+  hh3:
+    f: "highest"
+    src: "high"
+    n: 3
+  ll3:
+    f: "lowest"
+    src: "low"
+    n: 3
+  willr3:
+    f: "seri"
+    ifade: "-100 * (hh3 - close) / (hh3 - ll3)"
 giris: close > pvt2 and close > pvt1 and willr3 > -20
 cikis: close < pvt2 and close < pvt1 and willr3 < -70
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   willr.n: 3
   willr_buy_threshold: -20
@@ -41,3 +70,4 @@ belirsiz:
 - 'Özel kod mantığı: YIGIT:=dayofmonth()><ref(dayofmonth(),-1); ADAM:=valuewhen(1,YIGIT,ref(c,-1)); TX:=valuewhen(1,YIGIT,ref(highestsince(1,YIGIT,h),-1)); RX:=valuewhen(1,YIGIT,ref(lowestsince(1,YIGIT,l),-1));
   PVT1:=(ADAM+RX+TX)/3; PVT2:=ADAM. AL: Mov(C,1,S)>PVT2 and Mov(C,1,S)>PVT1 AND WillR(3)>-20; SAT: Mov(C,1,S)<PVT2 and Mov(C,1,S)<PVT1 AND WillR(3)<-70'
 - 'short kuralı var: AÇIĞA SAT KOŞULU: Mov(C,1,S)<PVT2 and Mov(C,1,S)<PVT1 AND WillR(3)<-70; AÇIK POZ. KAPAT KOŞULU: Mov(C,1,S)>PVT2 and Mov(C,1,S)>PVT1 AND WillR(3)>-20'
+- "T8: ozel_kod true -> false (PVT1/PVT2 ve Williams %R(3) seri olarak yazildi); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

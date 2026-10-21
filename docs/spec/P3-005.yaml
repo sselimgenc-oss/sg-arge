@@ -18,12 +18,16 @@ gostergeler:
     f: ema
     src: close
     n: 1
-giris: cross_over(close, xATRTrailingStop) and ema1 > xATRTrailingStop
-cikis: cross_under(close, xATRTrailingStop) and ema1 < xATRTrailingStop
+  utbot:
+    f: "ut_bot"
+    carpan: 1.0
+    n: 10
+giris: cross_over(close, utbot) and ema1 > utbot
+cikis: cross_under(close, utbot) and ema1 < utbot
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   KeyValue: 1.0
   ATRPeriod: 10
@@ -40,4 +44,5 @@ rapor:
 spec_durumu: tam
 belirsiz:
 - QuantNomad kaynak kodundan (https://quantnomad.com/implementing-ut-bot-strategy-in-python-with-vectorbt/) okundu; P3-003 ile aynı çekirdek mantığı kullanır ve ek olarak tarih aralığı filtresi içerir
-- 'short kuralı var: cross_under(close, xATRTrailingStop) olduğunda short açılır'
+- 'short kuralı var: cross_under(close, utbot) olduğunda short açılır'
+- "T8: ozel_kod true -> false (ut_bot kutuphaneye eklendi (KeyValue=1.0, ATR periyodu 10); 'xATRTrailingStop' -> 'utbot'); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

@@ -3,13 +3,14 @@ stop: null
 hedef: null
 stop_eklendi: false
 deneme_sayisi_kaynakta: null
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - 'stdev listede yok; Z-skor EMA tabanlı (listedeki zscore SMA tabanlı olabilir): ozel_kod'
 - 1W_Bias formülü bu raporda tanımlı değil; Paper_Test_4 S1'deki tanım varsayıldı (1W EMA10>=EMA20 veya 1W kapanış>=EMA20*0.985, 1 bar gecikmeli)
   -> lider onayı
 - Rapordaki PF değeri tavanlanmış görünüyor (birçok satırda birebir 5,80); ölçüm/raporlama tavanı olabilir, PF'ye güvenilmez
 - En yüksek getiri/PF -> aşırı uyum alarmı
+- "T8: ozel_kod true -> false (stdev kutuphanede); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 parametreler: {}
 id: R05
 ad: 'Dual Signal Trend Sentinel: 65 günlük Z-skor rejimi'

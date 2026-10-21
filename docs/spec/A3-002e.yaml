@@ -27,6 +27,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: tam
 ozel_kod: true
+ozel_kod_nedeni: desen
 belirsiz:
 - 'ZigZag/ABC deseni + 6 ortalamalı trend bulutu: ozel_kod; SL/TP seviyeleri Pine''ın son bölümünde (satır 235-271), karta işlenmedi: manuel port'
 - 'Sadece 31 işlem: istatistiksel olarak anlamsız'
@@ -36,4 +37,5 @@ belirsiz:
 - Kaynak long/short; temel mod long-only
 - "T7 sozdizimi: ozgun cikis metni: 'stop/hedef: kaynak koddaki longSl/longTp (TP katsayisi 2.0)'"
 - "T7 sozdizimi: 'abc_zigzag_deseni(prd=8, fib 0.382-0.618, hata %5)' -> ad 'abc_zigzag_deseni'; parametreler: prd=8, fib 0.382-0.618, hata %5"
+- "ozel_kod_nedeni: desen (ZigZag/ABC deseni (Fibonacci oranli) ve 6 ortalamali trend bulutu)"
 bias_varsayim: false

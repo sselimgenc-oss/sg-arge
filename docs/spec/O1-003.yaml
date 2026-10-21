@@ -15,12 +15,33 @@ gostergeler:
     f: sma
     src: close
     n: 1
+  yeni:
+    f: "seri"
+    ifade: "yeni_gun()"
+  adam:
+    f: "seri"
+    ifade: "valuewhen(yeni, close[1])"
+  tx:
+    f: "seri"
+    ifade: "valuewhen(yeni, highestsince(yeni, high)[1])"
+  rx:
+    f: "seri"
+    ifade: "valuewhen(yeni, lowestsince(yeni, low)[1])"
+  ygt:
+    f: "seri"
+    ifade: "(adam + rx + tx) / 3"
+  di:
+    f: "seri"
+    ifade: "2 * ygt - rx"
+  de:
+    f: "seri"
+    ifade: "2 * ygt - tx"
 giris: close > di
 cikis: close < de
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler: {}
 deneme_sayisi_kaynakta: 1
 rapor:
@@ -38,3 +59,4 @@ belirsiz:
 - 'Özel kod mantığı: YIGIT:=dayofmonth()><ref(dayofmonth(),-1); ADAM:=valuewhen(1,YIGIT,ref(c,-1)); TX:=valuewhen(1,YIGIT,ref(highestsince(1,YIGIT,h),-1)); RX:=valuewhen(1,YIGIT,ref(lowestsince(1,YIGIT,l),-1));
   YGT:=(ADAM+RX+TX)/3; DI:=2*YGT-RX; DE:=2*YGT-TX. AL Formülü: Mov(C,1,s)>DI (yani close > di); SAT Formülü: Mov(C,1,s)<DE (yani close < de)'
 - Giriş ve çıkış formülünde optimize edilecek eksik parametre yoktur; önceki günün kapanış, en yüksek ve en düşük fiyatlarından hesaplanan günlük pivot seviyeleridir
+- "T8: ozel_kod true -> false (Matriks YIGIT/ADAM/TX/RX/YGT/DI/DE formulu seri + valuewhen/highestsince/lowestsince/yeni_gun ile yazildi; Mov(C,1,S) = close); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
