@@ -10,7 +10,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 |---|---|---|---|
 | Codex | T1a: Codex Algo pilotu (motor + 6 aday + replikasyon + 2015-2019 testi) | **Duraklatıldı: saatlik limit, 04:30 (TR) sonrası devam.** Henüz dal/PR yok | 04:30 sonrası "devam et" |
 | Sonnet (ilk oturum) | T5a: kart okuyucu motor çekirdeği (kod, internet gerekmez) | Çalışıyor | Yok. PR açınca lidere haber |
-| Argon | T2 yeniden okuma (38 kart) | Sıradaki iş | `argon/PAKET_T2_yeniden.md`'yi aynı sohbete yapıştır; cevabı `argon/T2_yeniden.yaml` olarak yükle |
+| Argon | T2 yeniden okuma (38 kart) | Gönderildi; **limitte, 02:30 (TR) sonrası devam** | Cevabı `argon/T2_yeniden.yaml` olarak yükle |
 | Veri arşivi | Saatlik arşiv | 2. çalıştırma sürüyor (düzeltilmiş iş akışıyla) | Yok |
 
 ## Sırada bekleyen (açılmadı)
