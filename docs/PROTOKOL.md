@@ -24,3 +24,8 @@
 - Lider `argon/PAKET_<gorev>.md` paketini hazirlar (kendi icinde tam: talimat + sema + liste). Kullanici Argon'a yapistirir.
 - Kullanici Argon'un ciktisini `argon/<gorev>.yaml` olarak web arayuzunden yukler, commit `[Argon] ...`.
 - Lider inceler; kabul edilen kartlari `docs/spec/<id>.yaml`'a boler. Argon dogrudan `docs/` ya da `state.json`'a yazmaz.
+
+## Tetikleme durumu (2026-10-21)
+- `@codex`: Codex Cloud environment kurulu, Issue yorumuyla otomatik tetiklenir.
+- `@claude` (Sonnet): secret yok, **kullanici manuel tetikler**. Lider gorevi `docs/GOREV_*.md` + Issue yorumuna yazar; kullanici Sonnet oturumuna iletir. Issue'da `@claude` etiketi kullanilmaz (Actions bos yere hata verir).
+- Argon: kullanici araciligiyla (`argon/PAKET_*.md`).

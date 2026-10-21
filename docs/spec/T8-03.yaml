@@ -2,7 +2,7 @@ tf_varsayim: false
 stop: null
 hedef: null
 stop_eklendi: false
-deneme_sayisi_kaynakta: null
+deneme_sayisi_kaynakta: 256  # lider: rapor 256 havuzdan secim
 ozel_kod: true
 belirsiz:
 - 'Raporda 8 stratejinin 256''lık havuzdan seçildiği belirtiliyor: seçim yanlılığı (DSR''de N>=256)'

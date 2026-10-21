@@ -26,7 +26,7 @@
       "id": "T2",
       "owner": "claude-moderator",
       "title": "YAML kart + triyaj: parti 1 (PDF B seviyesi) ve xlsx tek partiler 3,5,7,9 (docs/spec/PARTILER.csv)",
-      "status": "parti-1 PR acik, lider incelemesi bekleniyor",
+      "status": "parti-1 kabul (PR #11); parti 3 hazir (PARTILER.csv)",
       "spec": "docs/GOREV_T2.md"
     },
     {
@@ -77,16 +77,26 @@
       "owner": "kullanici",
       "title": "Kullanici amacini dogrudan lidere bildirdi",
       "ref": "docs/HEDEF.md"
+    },
+    {
+      "id": "T2-p1",
+      "owner": "claude-moderator",
+      "title": "22 kart (PDF B seviyesi), 5/5 ornek kaynakla tutarli",
+      "ref": "PR #11"
     }
   ],
-  "user_decisions_pending": [
-    "Codex cloud environment kurulumu (Issue #1'de @codex cevap vermiyor)"
-  ],
+  "user_decisions_pending": [],
   "rules": "Paralel calisma: her gorev sahibi yalniz kendi gorev dosyalarina ve state.json'daki kendi kaydinin status alanina yazar. turn, queue ekleme/cikarma ve kriterler yalniz lider.",
   "notes": "Lider kararlari: tartisma/001_cevap_opus.md. T1b, T1a lider incelemesinden sonra acilir.",
   "decisions": [
     "2026-10-21 kullanici: portfoy MDD ust siniri %15 onaylandi",
-    "2026-10-21 kullanici: saatlik veri ucretsiz internet kaynaklarindan (yfinance 1h ~730 gun, Binance data-api)"
+    "2026-10-21 kullanici: saatlik veri ucretsiz internet kaynaklarindan (yfinance 1h ~730 gun, Binance data-api)",
+    "2026-10-21 kullanici: Codex environment kuruldu; Sonnet manuel tetiklenecek"
   ],
-  "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz."
+  "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz.",
+  "triggers": {
+    "codex": "otomatik (@codex)",
+    "claude-moderator": "manuel (kullanici)",
+    "argon": "manuel (kullanici, argon/PAKET_*.md)"
+  }
 }
