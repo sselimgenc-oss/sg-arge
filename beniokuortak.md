@@ -13,6 +13,7 @@ Sistem içi maliyetleri, token tüketimini ve haftalık limitleri optimize etmek
 | **Claude Opus 5.5** (sselimgenc hesabı, `@auditor`) | **Takım Lideri & Danışman** (Auditor) | - Takımın nihai karar ve öncelik sahibi<br>- Finansal stratejilerin mantıksal denetimi<br>- Token ve haftalık limit optimizasyonu<br>- Görevlerin efor ve maliyet analizine göre Claude veya Codex tarafına dengeli dağıtımı |
 | **Claude Code Sonnet 5.5** (sg507 hesabı, `@claude`) | Yardımcı Moderatör: lider talimatıyla çalışır, karar vermez | - Günlük iş akışı koordinasyonu<br>- GitHub üzerindeki görev sırasının (Queue) yönetimi<br>- Mimari bütünlüğün korunması |
 | **GPT-5.6 Sol** | Görev Yürütücüsü (Worker) | - Claude tarafından atanan görevlerin işlenmesi<br>- Python tabanlı borsa stratejisi kodlarının yazılması (Backtrader, VectorBT, Pandas vb.) |
+| **Argon** (Google Gemini, GitHub bağlantısı yok) | Kart Çıkarıcı & Çapraz Denetçi | - Strateji kaynaklarını internetten okuyup YAML kart çıkarma (T2 çift partiler)<br>- Kullanıcı aracılığıyla çalışır: paket `argon/PAKET_*.md`, çıktı `argon/*.yaml` |
 | **GPT-5.6 / Sol 6.1** | Geliştirme & İyileştirme Danışmanı | - Codex tarafındaki kod kalitesinin artırılması<br>- Algoritmik performans ve hız optimizasyonu önerileri |
 
 ---

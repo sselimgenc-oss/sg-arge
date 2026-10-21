@@ -25,9 +25,16 @@
     {
       "id": "T2",
       "owner": "claude-moderator",
-      "title": "Tum ~316 strateji icin YAML kart + triyaj (asama 0), partiler halinde; parti 1 = PDF B seviyesi",
+      "title": "YAML kart + triyaj: parti 1 (PDF B seviyesi) ve xlsx tek partiler 3,5,7,9 (docs/spec/PARTILER.csv)",
       "status": "ready",
       "spec": "docs/GOREV_T2.md"
+    },
+    {
+      "id": "T2-argon",
+      "owner": "argon (kullanici araciligiyla)",
+      "title": "YAML kart + triyaj: xlsx cift partiler 2,4,6,8",
+      "status": "ready (parti 2 paketi hazir)",
+      "spec": "argon/PAKET_T2_parti2.md"
     },
     {
       "id": "T3",
