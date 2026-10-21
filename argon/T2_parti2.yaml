@@ -1,0 +1,1011 @@
+id: A1-016
+ad: "VIOP Scalping - ATR SNIPER"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingview.com/script/R0CTM8NR-VIOP-Scalping-ATR-SNIPER/", sayfa: null}
+tarz: day
+tf: null
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: VIOP
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod/açıklama bulunmuyor"
+  - "Karar zaman dilimi, giriş/çıkış kuralları ve ATR parametreleri kaynağa erişilemediği için belirsiz"
+---
+id: A1-017
+ad: "VIOP Scalping - Original"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingview.com/script/4BcYQ0Ns-VIOP-Scalping-Original/", sayfa: null}
+tarz: day
+tf: null
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: VIOP
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod/açıklama bulunmuyor"
+  - "Karar zaman dilimi, giriş/çıkış kuralları ve parametreler kaynağa erişilemediği için belirsiz"
+---
+id: A1-019
+ad: "BIST30 to S&P 500 ATR Momentum Rider"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingview.com/script/jd1KSVn7/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Hisse / Endeks (BIST30, S&P 500)"
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod/açıklama bulunmuyor"
+  - "Giriş/çıkış kuralları, ATR çarpanları ve momentum göstergesi parametreleri kaynağa erişilemediği için belirsiz"
+---
+id: A1-020
+ad: "Antony.N4A - NQ ORB Quartile Str v6.3"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://de.tradingview.com/script/uUtBQ59O-Antony-N4A-NQ-ORB-Quartile-Str-v6-3", sayfa: null}
+tarz: day
+tf: 5m
+mtf: 15m
+tf_varsayim: false
+yazar_piyasasi: "Endeks Vadeli (NQ)"
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: gizli
+belirsiz:
+  - "Kaynak kodu kapalı/korumalı (invite-only / protected Pine Script)"
+  - "URL okunamadı: TradingView sayfası erişime kapalı"
+  - "Karar zaman dilimi 5m (1 saatin altında, dakikalık); 09:30-09:45 ORB çeyrek dilim (quartile) giriş/çıkış kuralları kapalı kodda"
+---
+id: A1-022
+ad: "Slight Swing Momentum Strategy"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://it.tradingview.com/script/6l9kcw7j", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: 1W
+tf_varsayim: false
+yazar_piyasasi: Hisse
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "URL doğrudan okunamadı (TradingView erişim engeli); yalnızca ikincil önbellek özeti (TradeSearcher) okunabildi"
+  - "Önbellek özetine göre hareketli ortalamalar, kesişim sinyalleri, hacim analizi, A1/A2/A3/XG koşulları ve haftalık eğim (weekly slope) kullanıyor ancak tam Pine Script formülleri ve çıkış kuralları belirsiz"
+  - "Haftalık eğim (mtf 1W) hesabında request.security lookahead kullanımı varsa REPAINT riski kontrol edilmeli"
+---
+id: A1-023
+ad: "ORB Breakout Strategy (chartsquare)"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://ru.tradingview.com/script/VJ9ZHgNB-ORB-Breakout-Strategy", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: null
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi 5m (1 saatin altında)"
+  - "URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod bulunmuyor"
+---
+id: A1-024
+ad: "TrendMaster Pro 2.3 with Alerts"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingview.com/script/mVkDf8qh-TrendMaster-Pro-2-3-with-Alerts/", sayfa: null}
+tarz: day
+tf: null
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: null
+gostergeler:
+  htf_ma50: {f: sma, src: close, n: 50}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: false
+parametreler: {htf_ma50.n: 50}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod bulunmuyor"
+  - "Karar zaman dilimi, üst zaman dilimi (HTF MA 50), giriş/çıkış kuralları ve parametreler kaynağa erişilemediği için belirsiz"
+---
+id: A1-025
+ad: "TASC 2026.03 One Percent A Week"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingview.com/script/nVECqIQx-TASC-2026-03-One-Percent-A-Week/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: 1W
+tf_varsayim: false
+yazar_piyasasi: "ABD ETF (TQQQ)"
+gostergeler: {}
+giris: "low <= mtf(1W, open) * 0.99"
+cikis: "high >= entry_price * 1.01"
+stop: null
+hedef: {tip: yuzde, deger: 1.0}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {entry_dip_mult: 0.99, target_mult: 1.01, breakeven_trigger_mult: 0.995}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "TradingView URL doğrudan açılmadı ancak resmi TASC Mart 2026 Traders' Tips sayfasından (PineCodersTASC) birebir Pine Script v6 kodu okundu"
+  - "Özel kod mantığı: Pazartesi normal seans açılış fiyatının (wOpen) %1 altına (wOpen * 0.99) haftada en fazla 1 kez çalışacak Buy Limit emri konur; pozisyon açıldıktan sonra low < entry_price * 0.995 (-%0.5 geri çekilme) görülürse kâr al limiti başabaş seviyesine (entry_price) çekilir; aksi halde %1 kâr hedefinde (entry_price * 1.01) veya Cuma seans kapanışında (dayofweek.friday ve session.islastbar_regular) piyasa fiyatından kapatılır"
+  - "Kod-açıklama çelişkisi: Makale metninde ve TradeStation kodunda %1 kâr hedefi emri pozisyon açılır açılmaz konurken, Pine Script v6 kodunda 'if sendPT == true and session.isfirstbar_regular and not beSent' koşulu nedeniyle %1 limit çıkış emri yalnızca ertesi günün ilk seans barında gönderilmektedir"
+---
+id: A1-027
+ad: "Bjorgum Double Tap"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingview.com/script/rLkjr2sQ-Bjorgum-Double-Tap/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: "Kripto / Hisse / Forex"
+gostergeler:
+  piv_high: {f: highest, src: high, n: 50}
+  piv_low: {f: lowest, src: low, n: 50}
+  atr14: {f: atr, n: 14}
+  swing_low5: {f: lowest, src: low, n: 5}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {tol: 15.0, len: 50, fib: 100.0, stopPer: 0, offset: 30, atrStop: false, atrLength: 14, atrMult: 1.0, lookback: 5, dLong: true, dShort: true, FLIP: true}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 1.9, sharpe: 0.15, getiri: 52.0, mdd: 21.0, islem: null, wr: null, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+  - "TradingView URL doğrudan açılmadı ancak Scribd arşivinden birebir Pine Script v5 kaynak kodu ve TradeSearcher üzerinden 40 backtest ortalaması okundu"
+  - "Karar zaman dilimi kodda sabit değil, grafik zaman dilimini kullanır (tf: 1D varsayıldı)"
+  - "Özel kod mantığı (İkili Dip / Double Bottom): highestbars(50) == 0 ve lowestbars(50) == 0 olduğunda yön değiştiren 5x3 boyutlu bir pivot matrisinde son 4 ekstrem [y1 (önceki tepe), y2 (1. dip), y3 (boyun çizgisi/ara tepe), y4 (2. dip)] izlenir; y1 > y3 iken 2. dip (y4), 1. dibin (y2) formasyon yüksekliğinin (y3 - max(y2,y4)) ±%15 (tol=15) bandı içindeyse ve kapanış boyun çizgisini yukarı kırarsa (close > y3 and close[1] <= y3) Long girilir"
+  - "Stop ve hedef: stopPer=0 varsayılanında stop=min(y2, y4) (iki dipten düşüğü), hedef=y3 + (y3 - min(y2,y4)) * (fib/100) (boyun çizgisinden %100 formasyon yüksekliği projeksiyonu); atrStop=true yapılırsa hedefe ulaşıldığında lowest(5) - 1.0 * atr(14) izsüren stop devreye girer"
+  - "Kod içi tutarsızlık: Kullanıcı girdisi olarak atrLength=14 tanımlanmış ancak 207. satırda ta.atr(14) sabit 14 ile çağrılmıştır"
+  - "short kuralı var: dShort=true ve FLIP=true varsayılanıyla İkili Tepe (Double Top) boyun çizgisi aşağı kırılımında (close < y3) short açılır ve açık long varsa tersine döner"
+---
+id: A1-029
+ad: "SPX Trading Strategy for ThinkorSwim"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://usethinkscript.com/threads/spx-trading-strategy-for-thinkorswim.5087/", sayfa: null}
+tarz: day
+tf: 10m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "ABD Endeks Opsiyon (SPX)"
+gostergeler:
+  sma3: {f: sma, src: close, n: 3}
+  sma9: {f: sma, src: close, n: 9}
+  macd_8_16_36: {f: macd, src: close, fast: 8, slow: 16, signal: 36}
+giris: "sma3 > sma9 and cross_over(macd_8_16_36.macd, 0) and macd_8_16_36.macd > macd_8_16_36.macd[1]"
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {sma_fast.n: 3, sma_slow.n: 9, macd.fast: 8, macd.slow: 16, macd.signal: 36, ergodic.long: 2, ergodic.short: 10, ergodic.signal: 36}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: 95, wr: 78.95, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi 10m Heikin Ashi mumlarıdır (1 saatin altında)"
+  - "Özel kod mantığı: 10m Heikin Ashi grafikte önce SMA(3) > SMA(9) kesişimi gerçekleşmeli, ardından MACDBB(8,16,36) çizgisi (noktaları) sıfır çizgisini arada boşluk bırakacak şekilde net yukarı kesmeli (kesişim sırasında kırmızı nokta yani macd < macd[1] oluşmamalı) ve aynı anda ErgodicOsc(2,10,36) > 0 (yeşil) olmalıdır"
+  - "Çıkış ve stop belirsizliği: İlk mesajda ErgodicOsc kırmızıya (< 0) dönene kadar tutulabileceği yazarken, 11. mesajda yazarın opsiyon priminde +$0.75 ile +$1.00 artışa (SPX'te ~3 puan hareket) limit satış koyup 10 dakikadan kısa sürede çıktığı ve mekanik bir stop-loss kullanmadığı belirtilmiştir"
+  - "Rapor çelişkisi: Yazar 90 günde 95 işlemin 75'inin pozitif olduğunu söyleyip başarı oranını %83 olarak yazmıştır (75/95 = %78.95)"
+  - "short kuralı var: SMA(3) < SMA(9) sonrası MACDBB noktalarının kırmızı renkte sıfır çizgisini net aşağı kesmesi ve ErgodicOsc(2,10,36) < 0 (kırmızı) olması durumunda Put (short) alınır"
+---
+id: A2-001
+ad: "GER40 Evening Coil"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/78380", sayfa: null}
+tarz: day
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Endeks CFD (GER40 / DAX)"
+gostergeler:
+  atr14: {f: atr, n: 14}
+  roc1: {f: roc, src: close, n: 1}
+  vol_sma50: {f: sma, src: volume, n: 50}
+  vol_sma252: {f: sma, src: volume, n: 252}
+giris: "volume >= vol_sma50"
+cikis: null
+stop: {tip: atr, n: 14, carpan: 3.5}
+hedef: {tip: atr, n: 14, carpan: 4.5}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {vol_fast.n: 50, vol_slow.n: 252, ret_fast.n: 10, ret_slow.n: 100, vol_ratio_max: 1.6, nr7_lookback: 13, nr_window: 7, sl_atr_mult: 3.5, tp_atr_mult: 4.5, entry_start_hour: 18, entry_end_hour: 21, exit_hour: 23}
+deneme_sayisi_kaynakta: 5552
+rapor: {pf: 2.07, sharpe: null, getiri: 376.5, mdd: 10.5, islem: 465, wr: 62.6, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+  - "Özel kod mantığı: Pazartesi-Cuma sunucu saatiyle (GMT+2 kış / GMT+3 yaz) 18:00-21:00 arasında kapanan H1 barında 4 koşul birlikte sağlanmalıdır: (1) son 10 saatlik getirinin standart sapması < 1.6 * son 100 saatlik getirinin standart sapması, (2) tick hacmi >= 50 barlık ortalama tick hacmi, (3) son 252 barın ortalama tick hacmi < sabit eşik, (4) son 13 bardan en az biri NR7 (kendi son 7 barının en dar high-low aralığına sahip bar); sonraki bar açılışında Long açılır ve 23:00 sunucu saatinde açık pozisyon kapatılır"
+  - "3. koşuldaki 252-barlık ortalama tick hacmi üst eşiğinin sayısal varsayılan değeri ve ATR periyodu açıklama metninde yazmayıp .mq5 kaynak dosyasındadır (ATR periyodu 14 varsayıldı)"
+---
+id: A2-002
+ad: "Stochastic Daily Breakout for Gold"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/77900", sayfa: null}
+tarz: day
+tf: 1h
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: "Emtia (XAUUSD)"
+gostergeler:
+  stoch_custom: {f: stoch, k: 23, d: 3, smooth: 7}
+  bb9: {f: bb, src: close, n: 9, std: 2.0}
+giris: "stoch_custom.d < stoch_custom.d[1] and stoch_custom.d[1] > stoch_custom.d[2] and open[3] < bb9.upper[3]"
+cikis: null
+stop: {tip: yuzde, deger: 1.9}
+hedef: {tip: yuzde, deger: 1.9}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {InpBandPeriod: 9, bb_dev: 2.0, InpKPeriod: 23, InpDPeriod: 3, InpSlowing: 7, InpStopPct: 1.9, InpTargetPct: 1.9, InpExpiryBars: 9, InpLots: 0.01}
+deneme_sayisi_kaynakta: 2000000
+rapor: {pf: 1.54, sharpe: null, getiri: 245.3, mdd: 23.9, islem: 213, wr: 59.15, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+  - "Özel kod mantığı: EA içindeki Stochastic(23,3,7) standart high-low aralığı yerine close-to-close aralığı ve SMMA yumuşatması kullanır; Bollinger Bands(9, 2.0) ise weighted price ((H+L+C+C)/4) üzerinden hesaplanır"
+  - "Emir tipi: Sinyal oluştuğunda piyasa emri yerine önceki günün yükseğine (mtf(1D, high[1])) 9 H1 barı geçerli (InpExpiryBars=9) Buy Stop bekleyen emri konur; aynı yönde yeni sinyal gelirse bekleyen emri yeniler"
+  - "short kuralı var: Stochastic sinyal çizgisi önceki barda dip yapıp yukarı döndüğünde (stoch_d > stoch_d[1] and stoch_d[1] < stoch_d[2]) ve open[3] > bb9.lower[3] olduğunda dünün düşüğüne (mtf(1D, low[1])) Sell Stop konur"
+---
+id: A2-003
+ad: "Buy GBPJPY Every Monday"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/77835", sayfa: null}
+tarz: day
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex (GBPJPY)"
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {entry_day: 1, entry_hour_server: 11, exit_hour_server: 23, max_spread_pips: 1.5, min_margin_level_pct: 300}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 1.86, sharpe: null, getiri: 52.9, mdd: 7.05, islem: 242, wr: 59.1, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+  - "Özel kod mantığı (takvim/saat stratejisi): Teknik gösterge kullanmaz; her Pazartesi sunucu saatiyle 11:00'de (New York 04:00, GMT+2/GMT+3) spread <= 1.5 pip ve marjin seviyesi >= %300 ise Long açar ve aynı gün 23:00 sunucu saatinde (12 saat sonra, swap saatinden önce) kapatır; stop-loss ve kâr al hedefi yoktur"
+---
+id: A2-004
+ad: "SessionReopenEA"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/77060", sayfa: null}
+tarz: day
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Emtia (XAUUSD)"
+gostergeler:
+  atr480: {f: atr, n: 480}
+giris: null
+cikis: null
+stop: {tip: atr, n: 480, carpan: 2.0}
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {InpHoldHours: 2, InpSkipMonday: true, InpStopAtrMult: 2.0, InpRangeBars: 480, InpLots: 0.01}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 1.3, sharpe: 1.23, getiri: null, mdd: 4.6, islem: 2200, wr: 50.8, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+  - "Özel kod mantığı: Altın (XAUUSD) piyasasında CME günlük bakım molası sonrası yeniden açılış saatinde (InpEntryHour, ilk InpEntryWindowMin dakika içinde; InpSkipMonday=true ile Pazartesi açılışı hariç Salı-Cuma) Long açılır; pozisyon 2 saat (InpHoldHours=2) tutulduktan sonra zaman çıkışıyla kapatılır; stop-loss son 480 H1 barının ortalama saatlik aralığının (high - low) 2.0 katıdır"
+  - "InpEntryHour (sunucu yeniden açılış saati, genellikle 01:00), InpEntryWindowMin ve InpMaxSpreadPts parametrelerinin tam sayısal varsayılanları açıklama tablosunda metin olarak tarif edilmiş olup .mq5 kaynak dosyasındadır"
+---
+id: A2-005
+ad: "GDS Renko RSI + MACD 4-Mode Demo EA"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/78581", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Emtia (XAUUSD)"
+gostergeler:
+  macd_renko: {f: macd, src: close, fast: 5, slow: 30, signal: 5}
+  rsi_renko: {f: rsi, src: close, n: 14}
+giris: "cross_over(macd_renko.macd, macd_renko.signal)"
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {brick_size: 12.0, macd_fast: 5, macd_slow: 30, macd_signal: 5, tp_bricks: 14, sl_bricks: 13, max_hold_minutes: 1380, cooldown_bricks: 1, lots: 0.01}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 1.49, sharpe: null, getiri: 23.49, mdd: 5.99, islem: 178, wr: null, maliyet_dahil: evet}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M1 gerçek tick verisi üzerinde oluşturulan 12.00 fiyat birimi boyutlu sabit Renko tuğlalarıdır (1 saatin altında / bar-dışı)"
+  - "Özel kod mantığı: Klasik 2-tuğla dönüşlü Renko üzerinde seçilen 4 moddan biri çalışır: (1) RSI Re-entry: cross_over(rsi, lower_threshold), (2) RSI Midline: cross_over(rsi, 50), (3) MACD Signal (preset varsayılanı): cross_over(macd(5,30,5), signal), (4) MACD Zero: cross_over(macd, 0); MACD sinyal çizgisi SMA ile hesaplanır; çıkışlar 13 tuğla sanal SL, 14 tuğla sanal TP veya 1380 dk maksimum tutma süresiyle yapılır, çıkış sonrası 1 tuğla cooldown beklenir"
+  - "short kuralı var: Seçili modun ters kesişiminde (ör. cross_under(macd, signal)) short pozisyon açılır"
+---
+id: A2-006
+ad: "Price Action Intraday Trading - Expert for MT5"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/68704", sayfa: null}
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex / Emtia (EURUSD, GBPUSD, XAUUSD)"
+gostergeler:
+  ema20: {f: ema, src: close, n: 20}
+  ema50: {f: ema, src: close, n: 50}
+giris: "ema20 > ema50"
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {FastMA: 20, SlowMA: 50, RiskPercent: 1.5, MaxDailyLossPct: 3.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Yazarın backtesti EURUSD M15 (1 saatin altında) üzerindedir (ayrıca H1 ve H4 için de önerilmiştir)"
+  - "Özel kod mantığı: EMA(20) > EMA(50) trend filtresi ve geçmiş SRLookback barlık destek/direnç (S/R) doğrulaması ile birlikte 3 fiyat aksiyonu formasyonundan biri oluştuğunda girilir: (1) Pin Bar (fitil/gövde oranı >= PinBarRatio), (2) Bullish Engulfing (yutan mum), (3) Inside Bar (ana bar kırılımı); çıkış sabit StopLossPips, TakeProfitRatio (R:R çarpanı), otomatik Break-Even, Trailing Stop ve gün sonu seans kapanışı ile yapılır"
+  - "StopLossPips, TakeProfitRatio, PinBarRatio, SRLookback ve Start/End Hour parametrelerinin varsayılan sayısal değerleri açıklama metninde yazmayıp .mq5 kaynak dosyasındadır"
+  - "short kuralı var: EMA(20) < EMA(50) iken direnç bölgesinde bearish Pin Bar, Bearish Engulfing veya aşağı Inside Bar kırılımında short açılır"
+---
+id: A2-007
+ad: "Pro MA Crossover EA for MT5"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/70916", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex (EURUSD)"
+gostergeler:
+  ma100: {f: ema, src: close, n: 100}
+  ma200: {f: ema, src: close, n: 200}
+giris: "cross_over(ma100, ma200) and close > ma100"
+cikis: "cross_under(close, ma100)"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: false
+parametreler: {period_ma_fast: 100, period_ma_slow: 200, use_ma_filter: false, useFastMAexit: true}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Yazarın önerilen test parametreleri EURUSD D1 üzerinde Fast MA=100 ve Slow MA=200 olarak verilmiştir; mode_ma (EMA/SMA), opsiyonel stopLoss/takeProfit pip değerleri (0=kapalı) ve use_ma_filter varsayılanları .mq5 dosyasında yer almaktadır"
+  - "short kuralı var: cross_under(ma100, ma200) and close < ma100 olduğunda short açılır, close > ma100 olduğunda kapatılır"
+---
+id: A2-009
+ad: "The Playground Series v1 to V4"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/68125", sayfa: null}
+tarz: day
+tf: null
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {sl_buffer_points: 5, sb1_hours_gmt: "03:00-04:00", sb2_hours_gmt: "10:00-11:00", sb3_hours_gmt: "14:00-15:00"}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Harici FVGLibrary.mqh ve LiquidityLibrary.mqh kütüphanelerine bağımlı deneysel 5 sürüm (v1.00-v1.04) içerir; yazar bazı uygulama detaylarını hatırlamadığını belirtmiştir"
+  - "Özel kod mantığı (v1.04): 3 mumlu Fair Value Gap (FVG) orta noktası (Encroachment - ENC) hesaplanır; fiyat ENC seviyesine dokunup üzerinde kapanırsa (close > ENC) Long açılır; Simple modda sabit dolar hedef/zarar (Eprofit/Eloss), Silver Bullet modunda ise GMT 03-04 (Sydney H/L), 10-11 (Tokyo H/L) ve 14-15 (Londra H/L) pencerelerinde FVG altına 5 puan buffer stop-loss ve seans likidite seviyesine (DOL) yüzdesel mesafe hedefiyle çalışır"
+  - "FVG zaman dilimi, minimum gap boyutu, Eprofit/Eloss dolar değerleri ve DOL yüzdesi varsayılanları açıklama metninde belirtilmemiştir"
+  - "short kuralı var: Fiyat FVG orta noktasının (ENC) altında kapandığında (close < ENC) short açılır, stop FVG üst sınırının 5 puan üstüne konur"
+---
+id: A2-010
+ad: "ICE (Impulse Confirmation Engine)"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/69651", sayfa: null}
+tarz: day
+tf: 15m
+mtf: 1h
+tf_varsayim: false
+yazar_piyasasi: null
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "URL okunamadı: MQL5 CodeBase 69651 sayfası yayından kaldırılmış veya erişime kapalı, arama motoru önbelleğinde de bulunmuyor"
+---
+id: A2-011
+ad: "APEX VELOCITY"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/78275", sayfa: null}
+tarz: day
+tf: 5m
+mtf: 1h
+tf_varsayim: false
+yazar_piyasasi: "Emtia (XAUUSD)"
+gostergeler:
+  atr_m5: {f: atr, n: 14}
+  ma10: {f: sma, src: close, n: 10}
+  ma50: {f: sma, src: close, n: 50}
+  rsi14: {f: rsi, src: close, n: 14}
+  vol_sma: {f: sma, src: volume, n: 20}
+  htf_ma50: {f: sma, src: close, n: 50}
+giris: "close > high[1] and close > open and close > ma50 and rsi14 < 70 and mtf(1h, close > htf_ma50)"
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {ma_fast.n: 10, ma_slow.n: 50, htf_ma.n: 50, rsi_buy_max: 70.0, rsi_sell_min: 30.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M5 (1 saatin altında), üst zaman dilimi onayı H1 MA(50)"
+  - "Özel kod mantığı (GetVolumeAccelerationSignal): (1) tick_volume >= önceki InpVolumePeriod barın ortalama hacmi * InpAggrVolumeThreshold, (2) abs(close - open) / (high - low) >= InpMinBodyPercent, (3) (high - low) >= atr * InpMinVolatilityATR, (4) close > ma50 ve rsi < 70, (5) close > high[1] + atr * InpBreakoutBufferATR ve close > open, (6) H1 close > H1 ma50 ve Londra/NY seans filtresi"
+  - "InpVolumePeriod, InpAggrVolumeThreshold, InpMinBodyPercent, InpMinVolatilityATR, InpBreakoutBufferATR ve ATR SL/TP çarpanlarının varsayılan sayısal değerleri açıklama metnindeki kod kesitinde yer almayıp .mq5 dosyasının başlık kısmındadır"
+  - "short kuralı var: close < low[1] - atr * InpBreakoutBufferATR and close < open and close < ma50 and rsi > 30 and mtf(1h, close < htf_ma50) olduğunda short açılır"
+---
+id: A2-012
+ad: "ORB Risk Managed - Opening Range Breakout"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/77967", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Endeks CFD (US100 / Nasdaq 100)"
+gostergeler:
+  atr14: {f: atr, n: 14}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {session_open_server: "16:30"}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar ve aralık hesaplama verisi M1 (1 saatin altında); ABD seans açılışı (16:30 GMT+3) sonrası ilk dakikaların high/low aralığını (Opening Range) M1 verisinden çıkarır"
+  - "Özel kod mantığı: Açılış aralığının üstüne Buy Stop, altına Sell Stop (OCO) konur; günde en fazla 1 işlem açılır; ATR filtresiyle aşırı dar/geniş aralıklı günler atlanır; SL aralık genişliğinin bir kesri, TP ise R çarpanıdır; seans sonunda tüm pozisyonlar kapatılır"
+  - "Aralık uzunluğu (dakika), SL aralık kesri, TP R çarpanı ve ATR filtre eşiklerinin sayısal varsayılanları açıklama metninde yazmayıp .mq5 dosyasındadır"
+  - "short kuralı var: Açılış aralığının altına konan Sell Stop tetiklendiğinde short açılır ve Buy Stop silinir"
+---
+id: A2-013
+ad: "Opening Range Breakout with NR4 / NR7 Contraction Filters"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/78259", sayfa: null}
+tarz: day
+tf: 1m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: "Emtia (XAUUSD)"
+gostergeler:
+  atr_d1: {f: atr, n: 14}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {session_start_london: "08:00", exit_after_minutes: 780}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "EA doğrudan M1 ve D1 verisini okuyarak gün içi seans kırılımını M1 üzerinde yürütür (1 saatin altında)"
+  - "Özel kod mantığı (Toby Crabel ORB): Londra 08:00 seans açılış fiyatı (session_open) kaydedilir; önceki D1 barı seçilen daralma filtresini (None, NR4, NR7, Inside day + NR4, 3-bar NR) geçerse session_open + offset seviyesine Buy Stop, session_open - offset seviyesine Sell Stop (OCO) konur; offset Crabel stretch veya D1 ATR çarpanıyla hesaplanır; SL karşı emir seviyesidir (2 * offset); başlangıçtan 13 saat (780 dk) sonra açık pozisyon kapatılır"
+  - "Varsayılan daralma filtresi seçimi, ATR çarpanı, stretch periyodu ve TP çarpanı açıklama metninde sayısal olarak belirtilmemiştir (.mq5 içindedir)"
+  - "short kuralı var: session_open - offset seviyesindeki Sell Stop tetiklendiğinde short açılır, SL session_open + offset seviyesidir"
+---
+id: A2-014
+ad: "Gold MT5 Fractal Breakout EA"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/78308", sayfa: null}
+tarz: swing
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Emtia (XAUUSD)"
+gostergeler: {}
+giris: null
+cikis: null
+stop: {tip: yuzde, deger: 2.0}
+hedef: {tip: yuzde, deger: 1.0}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {InpFractalLeft: 5, InpFractalRight: 5, InpMaxSearchBars: 200, InpMinFractalClearancePct: 0.02, InpBuyEntryOffsetPct: -0.10, InpSellEntryOffsetPct: -0.10, InpStopLossPct: 2.0, InpTakeProfitPct: 1.0, InpTrailTriggerPct: 0.20, InpTrailDistancePct: 0.20, InpMaxTrailPct: 1.0, InpSalvageTriggerPct: 1.0, InpSalvageExitPct: 0.15, InpBreakEvenTriggerPct: 0.10, InpBreakEvenLockPct: 0.025, InpRescanMinutes: 15, InpPendingExpiryHours: 15, InpDuplicatePoints: 100}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: 50, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Kodda yapı zaman dilimi sabit olarak H1'dir (const ENUM_TIMEFRAMES InpFractalTF = PERIOD_H1); D1 grafiğe eklense bile H1 verisini okur"
+  - "Özel kod mantığı: Son 5 kapanmış bar (InpFractalRight=5) onaylandıktan sonra geriye doğru 200 H1 barı içinde solunda 5 ve sağında 5 komşu bardan kesin büyük olan en güncel swing high (IsSwingHigh) bulunur (5 bar kapanmış olduğu için REPAINT yapmaz); mevcut Ask fiyatı swing_high'ın en az %0.02 altındaysa swing_high * (1 - 0.0010) seviyesine (-%0.10 ofset) Buy Stop konur; ilk SL -%2.0, ilk TP +1.0%; +%0.10 kârda SL +%0.025'e (BreakEven) çekilir; +%0.20 ile +%1.00 kâr arasında %0.20 mesafeli izsüren stop uygulanır; pozisyon -%1.00 zarara düşerse (Salvage) TP seviyesi girişin -%0.15 altına çekilir"
+  - "Kod-açıklama çelişkisi: InpPendingExpiryHours=15 parametresi ile zaman damgası hesaplansa da emir gönderiminde ORDER_TIME_GTC kullanıldığı için saat bazlı bekleyen emir iptali kodda çalışmamaktadır"
+  - "short kuralı var: Onaylanmış swing low (solunda 5 ve sağında 5 bardan kesin düşük) bulunduğunda swing_low * (1 + 0.0010) seviyesine Sell Stop konur"
+---
+id: A2-015
+ad: "EMA Cross Scalper M15 (XAUUSD)"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/77180", sayfa: null}
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Emtia (XAUUSD)"
+gostergeler:
+  ema10: {f: ema, src: close, n: 10}
+  ema30: {f: ema, src: close, n: 30}
+giris: "cross_over(ema10, ema30)"
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {InpFastEMA: 10, InpSlowEMA: 30, InpStartHourWIB: 19, InpEndHourWIB: 22, InpLot: 0.01, InpSLpoints: 70, InpTPpoints: 200, InpMaxPos: 1, MaxInpSpreadPoints: 100}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: 22, wr: null, maliyet_dahil: evet}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M15 (1 saatin altında)"
+  - "Özel kod mantığı: WIB seans saatleri (19:00-22:00 UTC+7) içinde ve spread <= 100 puan iken M15 kapanmış barda EMA(10) EMA(30)'u yukarı kestiğinde Long açılır; sabit 70 puan SL ve 200 puan TP ile kapatılır"
+  - "short kuralı var: Aynı seans ve spread filtresi altında cross_under(ema10, ema30) olduğunda 70 puan SL ve 200 puan TP ile short açılır"
+---
+id: A2-016
+ad: "RSI Exhaustion Reversal - EURUSD"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/77738", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex (EURUSD)"
+gostergeler:
+  rsi14: {f: rsi, src: close, n: 14}
+  atr14: {f: atr, n: 14}
+giris: null
+cikis: null
+stop: {tip: atr, n: 14, carpan: 4.0}
+hedef: {tip: atr, n: 14, carpan: 4.0}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {rsi_period: 14, rsi_sell_level: 65, session_start_hour: 14, session_end_hour: 18, atr_period: 14, max_spread_atr_ratio: 0.15, sl_atr_mult: 4.0, tp_atr_mult: 4.0, max_duration_bars: 96, max_positions: 1, lots: 1.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M5 (1 saatin altında)"
+  - "Strateji yalnızca SELL (short only) yönlüdür, Long kuralı yoktur"
+  - "short kuralı var: Sunucu saatiyle 14:00-18:00 arasında, spread / ATR(14) <= 0.15 iken RSI(14) 65 aşırı alım seviyesinde tükenme (exhaustion) sinyali verdiğinde short açılır; 4 * ATR(14) SL, 4 * ATR(14) TP ve maksimum 96 mum (8 saat) tutma süresi uygulanır"
+---
+id: A2-017
+ad: "ZoneUS30"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.mql5.com/en/code/77748", sayfa: null}
+tarz: swing
+tf: null
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Endeks CFD (US30)"
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Strateji yalnızca SELL (short only) yönlüdür, Long kuralı yoktur"
+  - "Açıklama metninde yalnızca US30 endeksinde yukarı yönlü fiyat uzamaları sonrasında ortalamaya dönüş (mean reversion) ve pozitif short swap için satış yapıldığı belirtilmiş, dahili (internally defined) giriş/çıkış göstergeleri, parametreler ve varsayılan zaman dilimi açıklanmamıştır"
+---
+id: A2-018
+ad: "TMS for M30 charts"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/526735-tms-for-m30-charts", sayfa: null}
+tarz: day
+tf: 30m
+mtf: 4h
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler:
+  ema200: {f: ema, src: close, n: 200}
+  ema21: {f: ema, src: close, n: 21}
+  stoch: {f: stoch, k: 14, d: 3, smooth: 3}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {tdi_oversold: 32, tdi_overbought: 68, stoch_min_long: 50, stoch_max_long: 75, stoch_min_short: 25}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M30 (1 saatin altında)"
+  - "İhtiyari (discretionary) kurallar içerir: Frankfurt/Londra/NY açılışlarında destek/direnç (S/R) bölgesinde, Daily Open Line (DOL) ve EMA(200) uzağında, uyumsuzluk (divergence/hidden divergence) veya trend çizgisi kırılımı/mum formasyonu eşliğinde TDI yeşil çizginin kırmızıyı yukarı kesmesi (TDI > 32), APB (Heikin Ashi) mum renginin aynı olması ve Stochastic > 50 (ve < 75) olmasıyla Long girilir; mekanik bir çıkış ve stop-loss kuralı tanımlanmamıştır"
+  - "short kuralı var: S/R direncinde TDI aşağı kesişimi (TDI < 68), kırmızı APB mumu ve Stochastic < 50 (ve > 25) ile short girilir"
+---
+id: A2-019
+ad: "Williams%R, SAR X-over 15 minute candles"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/989455-williamsr-sar-x-over-15-minute-candles", sayfa: null}
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {wpr.n: 16, wpr_midline: -50, sar.step: 0.02, sar.max: 0.2}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M15 (1 saatin altında, bazen M5)"
+  - "Özel kod mantığı: NY seans açılışında (08:00-11:00 EST, Salı-Perşembe) Parabolic SAR(0.02, 0.2) noktası fiyatın üstünden altına geçtiğinde (bullish crossover) ve Williams %R(16) > -50 olduğunda (konsolidasyon varsa direnç kırılımı beklenerek) Long açılır; SL önceki swing low'un birkaç pip altına konur; sabit TP yoktur, stop ihtiyari olarak taşınır"
+  - "short kuralı var: Parabolic SAR fiyatın üstüne geçtiğinde ve Williams %R(16) < -50 olduğunda short açılır, SL önceki swing high'ın birkaç pip üstüne konur"
+---
+id: A2-020
+ad: "Quantum London Trading"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/551382-quantum-london-trading", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex (GBPUSD)"
+gostergeler:
+  quantum_low: {f: lowest, src: low, n: 300}
+  quantum_high: {f: highest, src: high, n: 300}
+giris: "low == quantum_low"
+cikis: "high == quantum_high"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {start_time_gmt: "05:00", max_basket_trades: 40}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: hayir}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M1 (1 saatin altında)"
+  - "REPAINT: Quantum göstergesi (ZigZag/kanal ekstrem kutuları) geçmişe dönük grafik yenilendiğinde veya zaman dilimi değiştirildiğinde repaint yapar (18. ve 20. mesajlarda teyit edilmiştir)"
+  - "Özel kod mantığı (Grid / Sepet): 05:00 GMT (Frankfurt açılışı öncesi) sonrasında Quantum göstergesi mavi kutu (yeni dip) çizdiğinde takip eden M1 mumunun açılışında Long açılır; her yeni mavi kutuda artan lotlarla (1-12: 0.01, 13-21: 0.02, 22-29: 0.05, 30-36: 0.13, 37-39: 0.34, 40: 0.89 lot) sepete yeni Long eklenir; kırmızı kutu (yeni tepe) oluştuğunda sonraki mum açılışında sepetteki tüm işlemler kapatılır; stop-loss yoktur"
+  - "Quantum.mq4 içindeki varsayılan eintDepth3 (kanal periyodu) sayısal değeri ilk mesaj metninde yazmayıp ekli .mq4/.tpl dosyasındadır"
+  - "short kuralı var: 05:00 GMT sonrası kırmızı kutularda kademeli short sepeti açılır ve ilk mavi kutuda tüm sepet kapatılır"
+---
+id: A2-021
+ad: "Magic 100"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/989445-magic-100", sayfa: null}
+tarz: day
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler:
+  ema100: {f: ema, src: close, n: 100}
+giris: "close[1] > ema100[1] and close[1] < open[1] and high > high[1]"
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {ema.n: 100, rr_target: 2.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Özel kod mantığı: Fiyat EMA(100) üzerindeyken (yükseliş trendi) kırmızı bir geri çekilme mumu (close < open) kapandığında, o mumun yükseğinin (high) üstüne Buy Stop bekleyen emri ve düşüğünün (low) altına Stop Loss konur; emir tetiklenmeden daha düşük yeni bir kırmızı mum kapanırsa Buy Stop ve SL yeni kırmızı mumun high/low seviyelerine taşınır; TP stop mesafesinin 2 katıdır (2R, 1:2 veya 1:3 R:R)"
+  - "Mumun high/low seviyesinin kaç pip üstüne/altına buffer bırakıldığı ve 'güçlü trend' filtresinin ek mekanik koşulu metinde belirtilmemiştir"
+  - "short kuralı var: Fiyat EMA(100) altındayken yeşil geri çekilme mumunun (close > open) düşüğünün altına Sell Stop, yükseğinin üstüne SL ve 2R TP konur"
+---
+id: A2-022
+ad: "Lets Automate a Simple Renko Strategy!"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/531783-lets-automate-a-simple-renko-strategy", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex (EURUSD)"
+gostergeler:
+  ema21: {f: ema, src: close, n: 21}
+  ema50: {f: ema, src: close, n: 50}
+giris: "close > ema21 and close > ema50 and close > open and close[1] > open[1] and close[2] < open[2]"
+cikis: "close < open"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {RenkoBoxSize_pips: 10.0, ema_fast.n: 21, ema_slow.n: 50, trailing_sl_pips: 25}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar grafiği M1 verisinden üretilen 10 pip Renko (M2 çevrimdışı grafik, 1 saatin altında / bar-dışı)"
+  - "Özel kod mantığı: 10 pip Renko grafikte fiyat EMA(21) ve EMA(50) üzerindeyken tuğla rengi kırmızıdan yeşile dönüp 2 ardışık yeşil tuğla kapandığında (3. yeşil tuğla açılışında) Long açılır; SL dönüşteki son kırmızı tuğlanın düşüğü veya son anlamlı diptir; çıkış ters renkli (kırmızı) tuğla kapanışında veya 20-30 pip izsüren stop ile yapılır"
+  - "short kuralı var: Fiyat EMA(21) ve EMA(50) altındayken yeşilden kırmızıya dönüp 2 ardışık kırmızı tuğla kapandığında short açılır"
+---
+id: A2-023
+ad: "Up and under price pattern"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/444458-up-and-under-price-pattern", sayfa: null}
+tarz: day
+tf: 30m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M30 (1 saatin altında, bazen M10)"
+  - "Tamamen görsel/ihtiyari (discretionary) Quasimodo / Over-and-Under fiyat formasyonudur: Dip (L) -> Tepe (H) -> Daha Düşük Dip (LL) -> Daha Yüksek Tepe (HH) kırılımı sonrası fiyatın ilk Dip (L) yatay seviyesine geri çekilmesinde Long girilir; mekanik swing tanımı, stop-loss ve çıkış kuralları yoktur"
+  - "short kuralı var: Tepe (H) -> Dip (L) -> Daha Yüksek Tepe (HH) -> Daha Düşük Dip (LL) sonrası ilk Tepe (H) seviyesine geri çekilmede short girilir"
+---
+id: A2-024
+ad: "Most Famous Blessing 3.9.6 EA and Setfiles"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/792598-most-famous-blessing-396-ea-and-setfiles", sayfa: null}
+tarz: day
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex / Emtia (EURUSD, GBPUSD, XAUUSD, EURJPY)"
+gostergeler: {}
+giris: null
+cikis: null
+stop: {tip: yuzde, deger: 50.0}
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {equity_protection_pct: 50.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: 22.48, islem: null, wr: null, maliyet_dahil: evet}
+spec_durumu: eksik
+belirsiz:
+  - "Blessing 3 v3.9.6.09 çok parametreli bir Grid / Martingale sepet EA'sıdır (EURUSD ve GBPUSD için H1, XAUUSD ve EURJPY için M5 set dosyaları paylaşılmıştır)"
+  - "İlk giriş sinyali kombinasyonu (MA, CCI, BB, Stoch, MACD), grid kademe mesafeleri, lot çarpan dizileri ve sepet kâr al parametreleri forum metninde açıklanmamış olup yalnızca ekli .mq4 ve .set dosyalarının içindedir"
+---
+id: A2-025
+ad: "The Equilibrium, a key to success!"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/727775-the-equilibrium-a-key-to-success", sayfa: null}
+tarz: day
+tf: null
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex (EURUSD)"
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Kural karta çevrilemez: Yazar bu başlığın belirli bir sistem olmadığını, vadeli işlem (futures) order flow, footprint, volume profile, DOM, times & sales ve 15 saniyelik / tick grafiklerle sezgisel arz-talep denge (equilibrium) bölgelerini inceleyen bir blog olduğunu ve equilibrium tespitinin matematiksel olarak nicelleştirilemeyeceğini açıkça belirtmiştir"
+---
+id: A2-026
+ad: "v2v dynamic trading system"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/901713-v2v-dynamic-trading-system", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Kural karta çevrilemez: Yazar sistemin sinyal okları üreten mekanik bir strateji değil, ihtiyari (discretionary) yatırımcılar için M1 geçmiş verisiyle çalışan bir analiz araç seti (Shifted VWAP/MIDAS z-score, Volume Profile, Pivot Fibs, Jurik MA, T3-HMA, Ehlers DSMA, Dynamic Zones, VHF, Dominant Cycle Period, MyNET, Hurst Exponent, HA-APB) olduğunu belirtmiştir; giriş, çıkış ve stop kuralları yoktur"
+---
+id: A2-027
+ad: "Happs Trading System"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/259419-happs-trading-system", sayfa: null}
+tarz: swing
+tf: 4h
+mtf: 1M
+tf_varsayim: true
+yazar_piyasasi: "Forex (EURUSD, GBPUSD)"
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {Factor: 32}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Açık uçlu / ihtiyari (discretionary) seviye analiz sistemidir: Aylık (Monthly) grafikteki tarihsel en yüksek ve en düşük fiyat aralığını Factor=32 (veya 64, 128, 16, 8) ve Fibonacci oranlarıyla statik yatay Primary/Secondary arz-talep faz bölgelerine böler"
+  - "Mekanik bir giriş, çıkış veya stop-loss kuralı yoktur; yazar Primary Zone + manuel trend çizgisi + Stochastic uyumsuzluğu gibi ihtiyari kombinasyonlarla işlem aldığını belirtmiştir"
+---
+id: A2-028
+ad: "TCO Trader EA"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/430840-tco-trader-ea", sayfa: null}
+tarz: day
+tf: 1h
+mtf: 1D
+tf_varsayim: true
+yazar_piyasasi: Forex
+gostergeler:
+  ema20_d1: {f: ema, src: close, n: 20}
+  ema50_d1: {f: ema, src: close, n: 50}
+  macd_d1: {f: macd, src: close, fast: 12, slow: 26, signal: 9}
+  ichimoku_d1: {f: ichimoku, tenkan: 9, kijun: 26, senkou: 52}
+  stoch_ltf: {f: stoch, k: 14, d: 3, smooth: 3}
+giris: "mtf(1D, ema20_d1 > ema50_d1 and close > ema20_d1) and cross_over(stoch_ltf.k, 20)"
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {Trend_TF: 1440, wpr_oversold: -80, wpr_overbought: -20, stoch_oversold: 20, stoch_overbought: 80}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Çoklu mod içeren esnek bir EA çerçevesidir: Üst zaman diliminde (varsayılan D1=1440) 4 trend yönteminden (20/50 EMA, MACD > 0, Ichimoku Tenkan/Kijun kesişimi, Turtle/Donchian kanalı) seçilenlerin tamamı yükselişteyken, alt zaman diliminde (ör. H1) Williams %R (-80 altı/üstü) veya Stochastic (20 altı/üstü) sinyaliyle Long açar"
+  - "Çıkış ve stop için sabit SL/TP, ATR SL/TP, Kijun-sen trailing SL, Breakeven, Jumping SL, ters sinyalde kapatma ve bakiye yüzdesi sepet hedefi seçenekleri vardır ancak hangi trend/giriş/çıkış kombinasyonunun ve SL/TP sayısal değerlerinin varsayılan olduğu forum metninde yazmayıp ekli TCO_Trader.mq4 dosyasındadır"
+  - "short kuralı var: D1 trend yöntemleri düşüşteyken alt zaman diliminde Williams %R -20'yi aşağı kestiğinde (veya > -20) ya da Stochastic 80'i aşağı kestiğinde (veya > 80) short açılır"
+---
+id: A2-029
+ad: "Simple Zigzag + Fibonacci Strategy"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/987910-simple-zigzag-fibonacci-strategy", sayfa: null}
+tarz: swing
+tf: 1h
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: "Forex / Sentetik Endeks"
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {zigzag_depth: 12, zigzag_deviation: 5, zigzag_backstep: 3, fib_entry_level: 0.782, fib_partial_tp: 0.382}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "REPAINT: ZigZag göstergesi gelecek barlara göre son bacağı yeniden çizer (repaint yapar)"
+  - "Karar zaman dilimi metinde sabitlenmemiştir (örnek grafiklerde H1, M30, H4, D1 kullanılmış; ilk örnekler EURCHF H1 olduğu için 1h varsayıldı)"
+  - "Özel kod mantığı: ZigZag(12,5,3) ile bir Tepe (H) ve Dip (L) belirlendikten sonra fiyatın Tepeyi yukarı kırıp yeni bir Yüksek Tepe (HH) yapması beklenir; L ile HH arasına çekilen Fibonacci düzeltmesinin %78.2 (0.782) seviyesine fiyat geri çekildiğinde Long girilir"
+  - "Stop-loss seviyesi ve tam çıkış kuralı tanımlanmamıştır (yalnızca bir örnekte %38.2 Fib seviyesinde kısmi kâr alındığı ve stop-loss'un kullanıcıya bağlı olduğu belirtilmiştir)"
+  - "short kuralı var: Dip (L) ve Tepe (H) sonrası fiyat Dibi aşağı kırıp LL yaptığında, LL ile H arasına çekilen Fibonacci %78.2 düzeltme seviyesinde short girilir"
+---
+id: A2-030
+ad: "Channel MA Short-Term System"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/707474-channel-ma-short-term-system", sayfa: null}
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Forex (USDJPY, EURUSD, GBPUSD)"
+gostergeler:
+  ema33_close: {f: ema, src: close, n: 33}
+  ema55_high: {f: ema, src: high, n: 55}
+  ema55_low: {f: ema, src: low, n: 55}
+giris: "cross_over(ema33_close, ema55_high)"
+cikis: "cross_under(ema33_close, ema55_low)"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {signal_ema.n: 33, channel_ema.n: 55, hard_sl_pips: 45, fixed_tp_pips: 40, flexible_tp_pips: 210}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: 57.5, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi M15 (1 saatin altında)"
+  - "Özel kod mantığı: EMA(33, close) sinyal çizgisi, EMA(55, high) üst kanal bandını yukarı kestiğinde (cross_over(ema33_close, ema55_high)) Long sinyali oluşur; kesişim anında fiyat kanala yakınsa (40-50 pip SL kanalın altına düşüyorsa) hemen girilir, aşırı volatilite nedeniyle fiyat kanaldan >40 pip uzaktaysa EMA(33, close) seviyesine bekleyen limit emir (Delayed Entry) bırakılır; çıkış için 3 seçenek sunulmuştur: (1) 40 pip sabit TP ve 20-25 pipte BE, (2) 210 pip esnek TP ve seans sonunda kapatma, (3) ters sinyalde kapatıp tersine dönme"
+  - "short kuralı var: cross_under(ema33_close, ema55_low) olduğunda aynı normal/gecikmeli giriş ve SL/TP kurallarıyla short açılır"
+---
+id: A3-001
+ad: "XAUUSD Pullback Window (4 fazlı durum makinesi)"
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://github.com/ilahuerta-IA/backtrader-pullback-window-xauusd", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Emtia (XAUUSD)"
+gostergeler:
+  ema1: {f: ema, src: close, n: 1}
+  ema14: {f: ema, src: close, n: 14}
+  ema18: {f: ema, src: close, n: 18}
+  ema24: {f: ema, src: close, n: 24}
+  atr14: {f: atr, n: 14}
+giris: "ema1 > ema14 and ema1 > ema18 and ema1 > ema24"
+cikis: null
+stop: {tip: atr, n: 14, carpan: 2.5}
+hedef: {tip: atr, n: 14, carpan: 12.0}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {ema_confirm_period: 1, ema_fast_period: 14, ema_medium_period: 18, ema_slow_period: 24, long_pullback_max_candles: 3, short_pullback_max_candles: 3, long_entry_window_periods: 2, short_entry_window_periods: 2, window_offset_multiplier: 1.0, long_sl_atr_mult: 2.5, long_tp_atr_mult: 12.0, risk_percent: 0.01}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 1.64, sharpe: 0.892, getiri: 44.75, mdd: 5.81, islem: 175, wr: 55.43, maliyet_dahil: evet}
+spec_durumu: dakikalik
+belirsiz:
+  - "Karar zaman dilimi 5m (1 saatin altında)"
+  - "Özel kod mantığı (4 fazlı durum makinesi - sunrise_ogle_xauusd.py): (1) SCANNING: EMA(1)'in EMA(14, 18, 24) sepetini yukarı kesmesi + mum yönü + EMA eğim açısı (slope in degrees) + ATR volatilite ve saat filtresi, (2) ARMED: 1 ile 3 adet (long_pullback_max_candles=3) düşüş (counter-trend) geri çekilme mumunun tamamlanmasını bekleme, (3) WINDOW_OPEN: 2 bar boyunca (long_entry_window_periods=2) window_offset_multiplier=1.0 ile hesaplanan volatilite kanal kırılım seviyesini izleme (ters sinyalde sıfırlanır), (4) ENTRY: üst kırılım seviyesi aşıldığında Long giriş, 2.5 * ATR stop-loss ve 12.0 * ATR take-profit (OCA)"
+  - "short kuralı var: Kodda short parametreleri (short_pullback_max_candles=3, short_entry_window_periods=2) tanımlanmış ancak varsayılan olarak devre dışı bırakılmıştır (SHORT strategy currently disabled)"
+---
+ozet: {parti: 2, kart_sayisi: 40, tam: 9, eksik: 14, gizli: 1, dakikalik: 16, okunamayan_url: [A1-016, A1-017, A1-019, A1-020, A1-022, A1-023, A1-024, A2-010]}
