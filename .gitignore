@@ -1,0 +1,10 @@
+__pycache__/
+.pytest_cache/
+.venv/
+*.py[cod]
+
+# Daily data is reproducible and is intentionally not versioned.
+data/daily/*.parquet
+
+# Temporary parquet writes must never be committed.
+data/**/*.tmp
