@@ -9,7 +9,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Codex | T1b: kalan 9 aile (15 satır) | **Sırada; limit açılınca** | Limit açılınca "görev geldi" |
-| Sonnet | T10: Argon parti 6'nın 40 kartını standarda getir (T7+T8 kuralları) | Atandı | "Görev geldi" |
+| Sonnet | **T5b-1: günlük kartların hızlı taraması** (ilk geniş eleme) | Atandı | "Görev geldi" |
 | Argon | Parti 7 (40 kart) | Sırada | `argon/PAKET_T2_parti7.md`'yi yapıştır; cevabı `argon/T2_parti7.yaml` adıyla yükle |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
 
@@ -22,9 +22,9 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Sırada bekleyen (açılmadı)
 - Argon: partiler 7, 8, 9
 - Argon yeniden okuma 2 kabul edildi: 36 kart, 26'i çözüldü
-- Codex: T5b (hızlı tarama). T1b'den sonra. **Ek:** BIST saatlik verisinde hisse başına ~727 seans dışı ve ~385 sıfır hacimli bar var (`results/veri_kalitesi_1h.md`). Yahoo 09:30 etiketi ve kapanış seansı olabilir. BIST 1H/4H testlerinden önce çözülecek.
+- Codex: T1b, sonra T6 (tam doğrulama). T5b Sonnet'e geçti. **Ek:** BIST saatlik verisinde hisse başına ~727 seans dışı ve ~385 sıfır hacimli bar var (`results/veri_kalitesi_1h.md`). Yahoo 09:30 etiketi ve kapanış seansı olabilir. BIST 1H/4H testlerinden önce çözülecek.
 - T5a kabul edildi (PR #22). T7 kabul edildi (PR #26): `tam` kartlarda 0 sözdizimi hatası; taramaya hazır 26 tam + 7 dakikalık kart. T8 tamamlandı (PR #33, #35): hazır kart **49 tam + 11 dakikalık**; göstergeler TA-Lib ile 1e-7 içinde doğrulandı.
 
 ## İlerleme
-- Kart: 243 / ~316. Taramaya hazır: 49 tam + 11 dakikalık (Argon parti 6 standarda getirilince artacak). Doğrulanamaz (kaynak erişilemedi): 71
+- Kart: 243 / ~316. Taramaya hazır: **51 tam** + 11 dakikalık. Doğrulanamaz (kaynak erişilemedi): 71
 - Backtest: 6 / 21 Codex Algo satırı (T1a)
