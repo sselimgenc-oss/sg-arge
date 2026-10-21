@@ -24,6 +24,7 @@ gostergeler:
     src: close
     n: 100
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 giris: rsi2 < 10 and close > sma100 and sma100 > sma100[21]
 cikis: rsi2 > 60
 stop: null
@@ -62,3 +63,4 @@ belirsiz:
 - 'Ortak Setup Kurallari (ozel_kod: true): 1) S&P 500 hissesi ve SPX endeksi kendi 200-gunluk SMA''sinin uzerinde (SPX > SMA200), 2) Hisse Close > SMA(100), 3) SMA(100) > SMA(100)[21], 4) RSI(2) < X (X
   in {5, 10, 15, 20}; standart orta deger 10 secildi). Sinyaller 100-gunluk tarihsel volatiliteye (hv100) gore yuksekten dusuge siralanir, en fazla 7 pozisyon (%14.2 agirlik) acilir.'
 - Ana kartta 1. kurgu (Entry on Open - RSI Exit, RSI(2) > Y, Y in {20, 40, 60, 80}) tanimlanmis, diger 5 giris/cikis kombinasyonu varyantlar altina eklenmistir.
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (SPX>SMA200 rejim filtresi (ikinci enstruman) + hv100 siralamasi ve en fazla 7 pozisyon)"

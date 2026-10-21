@@ -12,6 +12,7 @@ tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 giris: close < close[1]
 cikis: close > close[1]
 stop: null
@@ -42,3 +43,4 @@ belirsiz:
   N) hesaplanir. 2) i = N''den 1''e kadar dongude LinVal(i) = Intercept + Slope * (N - i) bulunur; HighDev = max(0, max_i(close[i] - LinVal(i))) ve LowDev = min(0, min_i(close[i] - LinVal(i))) maksimum
   pozitif ve negatif sapmalari hesaplanir (mevcut bar i=0 icin LinVal = Intercept + Slope * N). 3) Zone = Factor * (HighDev + LowDev) (Factor = 0.2). 4) Long giris: acik long yokken close < LinVal + LowDev
   + Zone. 5) Long cikis: close > LinVal + HighDev - Zone.'
+- "T10: ozel_kod_nedeni: ozel_gosterge (dogrusal regresyon kanali sapmalari (HighDev/LowDev); giris/cikis alanlari yer tutucu)"

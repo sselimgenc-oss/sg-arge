@@ -13,11 +13,13 @@ tf_varsayim: false
 yazar_piyasasi: Endeks (Dow Jones)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 giris: close > open
 cikis: close < open
 stop: null
 hedef: null
 stop_eklendi: false
+piyasa_kisiti: [US30]
 parametreler:
   StartHour: 101500
   LimitHour: 150000
@@ -41,3 +43,4 @@ belirsiz:
   puandir.'
 - 'Kurtarilan DOW saatleri (UK saati): StartHour = 101500, LimitHour = 150000, DEFPARAM FlatAfter = 153000 (veya 203000), PositionSize = max(1, 1 + ROUND((strategyprofit - 1000) / 1000)). Ancak DOW icin
   optimize edilen MaxAmplitude, MinAmplitude, OrderDistance ve PourcentageMin sayisal degerleri sayfa engeli nedeniyle okunamadi (CAC40 baz degerleri: 58, 11, 4, 30).'
+- "T10: ozel_kod_nedeni: bekleyen_emir (STOP emirli kirilim + saat penceresi)"

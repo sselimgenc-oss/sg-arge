@@ -19,14 +19,16 @@ gostergeler:
     f: rvol
     n: 14
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 giris: close > open and rvol14 > 1 and atr14_1d > 0.5
-cikis: 'false'
+cikis: null
 stop:
   tip: atr
   n: 14
   carpan: 0.1
 hedef: null
 stop_eklendi: false
+piyasa_kisiti: [ABD]
 parametreler:
   opening_range_minutes: 5
   universe_size: 1000
@@ -58,3 +60,4 @@ belirsiz:
   Acilis 5m barinda Close > Open ise, OpeningBar.High seviyesine StopMarket alim emri konur; stop-loss OpeningBar.High - 0.1 * ATR(14, 1D) seviyesidir. Pozisyon buyuklugu stop vuruldugunda portfoyun %1''i
   kaybedilecek sekilde (ve hisse basina en fazla 1/20 = %5 agirlikla) hesaplanir. 4) Cikis: Stop vurulmazsa gun sonunda (16:00 kapanista) pozisyon kapatilir.'
 - 'Short kurallari da vardir: Acilis 5m barinda Close < Open ise OpeningBar.Low seviyesine StopMarket short emri ve OpeningBar.Low + 0.1 * ATR(14, 1D) stop-loss konur.'
+- "T10: ozel_kod_nedeni: bekleyen_emir (acilis mumu yuksegine stop alim emri + evren secimi (1000 hisse, en yuksek RelVol 20))"

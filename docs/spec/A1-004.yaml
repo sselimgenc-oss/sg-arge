@@ -23,8 +23,9 @@ gostergeler:
     n: 7
     cikti: di_minus
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 giris: (adx7 > 16 and cross_over(di_plus7, 26)) or (cross_over(adx7, 16) and di_plus7 > 26)
-cikis: 'false'
+cikis: null
 stop:
   tip: puan
   deger: 600
@@ -32,6 +33,7 @@ hedef:
   tip: puan
   deger: 200
 stop_eklendi: false
+piyasa_kisiti: [US100]
 parametreler:
   K: 16
   u: 26
@@ -58,3 +60,4 @@ belirsiz:
 - Strateji yalniz long yonludur (DEFPARAM CumulateOrders = False).
 - 'Takvim/saat filtresi (ozel_kod: true): Giris yalniz haftanin ilk 3 gunu yapilir (finestra: dayofweek == 1 or dayofweek == 2 or dayofweek == 3, yani Pazartesi, Sali, Carsamba).'
 - 'Zaman cikisi: Persembe gunu saat 17:50 ve sonrasinda (currentdayofweek == 4 and time >= 175000) pozisyon piyasadan kapatilir (SELL n CONTRACT AT MARKET).'
+- "T10: ozel_kod_nedeni: seans_saat (giris yalniz Pzt-Car, Persembe 17:50 zaman cikisi; saat/gun-ici dakika ilkeli yok)"

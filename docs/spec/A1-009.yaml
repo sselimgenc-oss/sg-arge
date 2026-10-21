@@ -12,8 +12,9 @@ tf_varsayim: false
 yazar_piyasasi: Endeks (NASDAQ100)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 giris: low <= close * 0.99
-cikis: 'false'
+cikis: null
 stop:
   tip: yuzde
   deger: 5
@@ -21,6 +22,7 @@ hedef:
   tip: yuzde
   deger: 1
 stop_eklendi: false
+piyasa_kisiti: [US100]
 parametreler:
   giris_dusus_yuzde: 1.0
   breakeven_dusus_yuzde: 1.5
@@ -42,3 +44,4 @@ belirsiz:
   alti). 2) Pazartesi 15:30''dan Sali 21:30''a kadar (timec1 and timec2) Kauf seviyesine limit alim emri (buy at Kauf limit) verilir ve hedef %1 (set target %profit 1) olarak ayarlanir. 3) Pozisyon acikken
   fiyat ek %0.5 daha duserse (kodda ''(close - tradePrice) =< AnpassungTP'' yazilmistir, metinde fiyat %0.5 daha duserse yani close <= AnpassungTP oldugunda hedef basabas noktasina Kauf''a cekilir). 4)
   Cuma saat 21:30''da (opendayofweek == 5 and time == 213000) acik pozisyon piyasadan kapatilir (zaman stopu). 5) Sigorta stop-loss %5''tir (set stop %loss 5).'
+- "T10: ozel_kod_nedeni: bekleyen_emir (Pazartesi 15:30 kapanisinin %1 altina limit alim, %1.5'ta basabas hedefi, Cuma 21:30 zaman cikisi)"

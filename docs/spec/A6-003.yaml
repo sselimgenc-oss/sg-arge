@@ -23,6 +23,7 @@ gostergeler:
     f: atr
     n: 10
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 giris: close[1] > sma100[1] and close[1] < sma5[1] and low[1] < low[2] and low[2] < low[3] and low[3] < low[4] and low <= close[1] - 0.5 * atr10[1]
 cikis: close > close[1]
 stop: null
@@ -58,3 +59,4 @@ belirsiz:
   - 0.5 * ATR(10)[1] fiyatina limit alim emri girilir. Cikis: Kapanis bir onceki gunun kapanisindan buyuk oldugunda (close > close[1]) ertesi acilista satilir.'
 - 'Yorumlarda (Greg / Cesar Alvarez) ters (short) kurallari da verilmistir: Close < SMA(100), Close > SMA(5), 3 higher highs, limit giris Close[1] + 0.5 * ATR(10)[1], ilk dusuk kapanista (close < close[1])
   cikis.'
+- "T10: ozel_kod_nedeni: bekleyen_emir (Close[1]-0.5*ATR(10)[1] fiyatinda limit alim; motor yalniz sonraki acilista dolum yapar)"

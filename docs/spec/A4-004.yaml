@@ -16,6 +16,7 @@ gostergeler:
     src: close
     n: 10
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 giris: rsi10 <= 82
 cikis: rsi10 > 82
 stop: null
@@ -36,3 +37,4 @@ rapor:
 spec_durumu: tam
 belirsiz:
 - 'Capraz varlik sinyali (ozel_kod: true): Gunluk olarak SPY''in 10 gunluk RSI degeri (RSI(10)) kontrol edilir. SPY RSI(10) > 82 ise %100 UVXY tutulur; SPY RSI(10) <= 82 ise %100 TQQQ tutulur.'
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (SPY RSI sinyaliyle TQQQ <-> UVXY tahsisati; kaldiracli ETF, kaldirac fazina ertelendi)"

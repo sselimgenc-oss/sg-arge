@@ -17,6 +17,7 @@ gostergeler:
     src: close
     n: 10
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 giris: rsi10 < 30
 cikis: rsi10 > 70
 stop: null
@@ -38,3 +39,4 @@ belirsiz:
 - 'Kurtarilan kurallar: Gunluk yeniden dengelenen taktik ETF stratejisi; 1) Makro rejimi (''weather'') skor kartlariyla okur, 2) Atak (SOXX - yari iletkenler) veya defans (TLT, GLD, XLU) sepetleri ile volatilite/doviz
   korumasi (VIXM) arasinda secim yapar, 3) Kisa vadeli RSI ile asiri alim/satim (mean reversion front-runner) dali calistirir, 4) Short/koruma oncesinde bankalarin sigortacilari yenip yenmedigini (EUFN
   > KIE) kontrol eder. Kesin RSI periyotlari ve dal esikleri sayfa engeli nedeniyle okunamadi.'
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (Composer makro rejim ve sepet tahsisati)"

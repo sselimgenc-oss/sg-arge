@@ -21,6 +21,7 @@ gostergeler:
     src: close
     n: 10
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 giris: roc8 < 0
 cikis: roc8 > 0
 stop: null
@@ -44,3 +45,4 @@ belirsiz:
 - 'ResearchGate aynasinda makale ozeti bulundu (''Reversal in Cryptocurrency Returns'', Mayis 2026): kripto para getirilerinde 8 ve 10 haftalik ufuklarda, ozellikle orta olcekli (midsize) ve nispeten yuksek
   volatiliteli varliklarda yogunlasan anlamli getiri tersine donusu (reversal) belgelenmektedir. Ancak kesitsel portfoy dilimleri (quintile/decile), piyasa degeri ve volatilite esikleri sayfa engeli nedeniyle
   okunamadi.'
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (kesitsel kripto sepet; dilim ve esikler okunamadi)"

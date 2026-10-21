@@ -12,6 +12,7 @@ tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 giris: close > close[1]
 cikis: close < close[1]
 stop: null
@@ -38,3 +39,4 @@ belirsiz:
   adim 5 optimize edilir; MMI son N barda fiyatin medyana gore ortalamaya donus sikligini olcer). 3) MMISlow = LowPass(MMIFast, 100). 4) Rejim filtresi: MMISlow dusuyor olmali (falling(MMISlow) yani MMISlow[0]
   < MMISlow[1], piyasa trend rejimine giriyor). 5) Long giris: falling(MMISlow) ve valley(Signals) (Signals dip yaptiysa: Signals[0] > Signals[1] ve Signals[1] < Signals[2]). 6) Long cikis: falling(MMISlow)
   ve peak(Signals) (Signals tepe yaptiysa: Signals[0] < Signals[1] ve Signals[1] > Signals[2]).'
+- "T10: ozel_kod_nedeni: ozel_gosterge (Zorro LowPass (2. derece) ve Market Meanness Index; giris/cikis alanlari yer tutucu)"

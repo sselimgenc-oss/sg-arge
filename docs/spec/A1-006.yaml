@@ -47,8 +47,9 @@ gostergeler:
     n: 60
     kaydir: 1
 ozel_kod: true
+ozel_kod_nedeni: tick_veri
 giris: close < close[80]
-cikis: 'false'
+cikis: null
 stop:
   tip: puan
   deger: 38
@@ -56,6 +57,7 @@ hedef:
   tip: puan
   deger: 5
 stop_eklendi: false
+piyasa_kisiti: [FR40]
 parametreler:
   lookback_long: 80
   lookback_short: 30
@@ -89,3 +91,4 @@ belirsiz:
 - 'Hedef kar: 5 puan, ancak 16:00 < time < 17:00 arasinda 6 puana cikarilir; stop loss 38 puandir.'
 - 'Short kurallari da mevcuttur: 09:00 <= time < 17:00 ve close > close[30] ve stopv == 0 iken sellshort yapilir.'
 - 'lider: 10 saniyelik bar; tick/saniye verisi yok -> Dogrulanamaz (veri yok)'
+- "T10: ozel_kod_nedeni: tick_veri (10 saniyelik bar + 4 zaman diliminde histerezis durum degiskenleri)"

@@ -44,13 +44,15 @@ gostergeler:
     src: low
     n: 4
 ozel_kod: true
+ozel_kod_nedeni: ml
 giris: close > close[1]
-cikis: 'false'
+cikis: null
 stop: null
 hedef: null
 zaman_stop:
   bar: 3
 stop_eklendi: false
+piyasa_kisiti: [FX]
 parametreler:
   BarPeriod: 60
   LookBack: 100
@@ -80,3 +82,4 @@ belirsiz:
 - 'Model ve ozellikler: 1H EUR/USD barlarinda son 4 bar icin 8 oznitelik cikarilir: change(n) = scale((close[0] - close[n]) / close[0], 100) / 100 ve range(n) = scale((HH(n) - LL(n)) / close[0], 100) /
   100 (n = 1..4). R ''deepnet'' paketi sae.dnn.train fonksiyonu ile 3 gizli katmanli c(50, 100, 50) (veya 9 farkli ag mimarisi denemesinde 3x100 ile SR=1.33) ag 1 yillik WFO (%90 egitim / %10 test) ile
   egitilir. adviseLong > 0.5 ise long (adviseShort > 0.5 ise short) acilir ve LifeTime = 3 bar (3 saat) sonra kapatilir.'
+- "T10: ozel_kod_nedeni: ml (derin ogrenme (SAE) ile tahmin)"

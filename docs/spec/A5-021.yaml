@@ -13,6 +13,7 @@ tf_varsayim: false
 yazar_piyasasi: ABD Hisse
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: close > 0
 cikis: close > 0
 stop: null
@@ -36,3 +37,4 @@ belirsiz:
 - 'Kural temel/olay verisine dayalidir ve fiyat serisiyle (OHLCV) mekanik karta cevrilemez: SEC kurallari sirketlere onemli kurumsal olaylari Form 8-K ile kamuya aciklamak icin 4 is gunu sure tanir (''8-K
   trading gap''). Makalede sirket iceriden ogrenenlerinin (insiders) bu 4 gunluk boslukta acik piyasa alimlari (Form 4) yaptiginda islem basina ortalama 163 bps (tum islemlerde 42.3 bps), yeni musteri/tedarikci
   anlasmalarinda anlasma gunu alip 8-K aciklamasi oncesi satildiginda 35.4 bps anormal getiri elde edildigi gosterilmektedir.'
+- "T10: ozel_kod_nedeni: tanim_belirsiz (SEC 8-K olay verisi, OHLCV ile karta cevrilemez)"

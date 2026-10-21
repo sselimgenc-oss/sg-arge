@@ -12,8 +12,9 @@ tf_varsayim: false
 yazar_piyasasi: ABD / Ulke ETF (24 iShares MSCI + SPY)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: desen
 giris: close <= close[1]
-cikis: 'false'
+cikis: null
 stop:
   tip: yuzde
   deger: 3
@@ -50,3 +51,4 @@ belirsiz:
   tum destek noktalarinin daha yuksek dip seviyesinden (higher_bottom) asagi dusmedigi ciftler ''Double_Bottom'' olarak isaretlenir. 4) Son Double_Bottom olustuktan bugune kadar fiyat bu seviyenin altina
   hic inmemisse, o fiyata (limit_price = Double_Bottom) limit alim emri konur (en fazla 4 eszamanli acik pozisyon). 5) Emir gerceklestiginde %6 kar al (BUY_TP) ve %3 stop-loss (BUY_SL) konur; fiyat giris
   limit fiyatinin uzerine ciktikca stop-loss yeni zirvenin %3 altina (Price * 0.97) yukari tasinir.'
+- "T10: ozel_kod_nedeni: desen (ikili dip (double bottom) deseni, aylik yeniden tarama, 24 ulke ETF evreni; giris/cikis alanlari yer tutucu)"

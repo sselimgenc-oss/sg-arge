@@ -13,13 +13,15 @@ tf_varsayim: false
 yazar_piyasasi: Forex
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: ml
 giris: close > open
-cikis: 'false'
+cikis: null
 stop: null
 hedef: null
 zaman_stop:
   bar: 3
 stop_eklendi: false
+piyasa_kisiti: [FX]
 parametreler:
   NumSampleCycles: 4
   LifeTime: 3
@@ -38,3 +40,4 @@ belirsiz:
 - 'Financial Hacker sayfasina dogrudan erisim engellendi (erisim_engeli: true); Zorro dokumantasyonu ve arama indeksinden kod yapisi kurtarildi.'
 - 'Strateji Zorro''nun makine ogrenmesi / formasyon madenciligi fonksiyonunu (adviseLong(PATTERN+FAST+2, 0, ...) > 50 ise enterLong(), adviseShort(PATTERN+FAST+2) > 50 ise enterShort()) ve 4 katli asiri
   ornekleme (NumSampleCycles = 4) ile 3 saatlik islem suresini (LifeTime = 3) kullanir; hem sayfa erisim engeli hem de veri madenciligi/ML yapisi nedeniyle spec_durumu: eksik olarak isaretlendi.'
+- "T10: ozel_kod_nedeni: ml (Zorro desen madenciligi (adviseLong))"

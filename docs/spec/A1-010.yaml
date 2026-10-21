@@ -24,13 +24,15 @@ gostergeler:
     src: close
     n: 50
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 giris: cross_over(ema1, ema2) and ema1 < ema50
-cikis: 'false'
+cikis: null
 stop: null
 hedef:
   tip: yuzde
   deger: 1
 stop_eklendi: false
+piyasa_kisiti: [GER40]
 parametreler:
   ema1.n: 1
   ema2.n: 2
@@ -53,3 +55,4 @@ belirsiz:
   at market endif; set target %profit 1.'
 - 'Takvim/saat filtresi (ozel_kod: true): Giris yalniz Pazartesi gunleri (opendayofweek == 1) 09:00 ile 21:00 saatleri arasinda yapilir; pozisyon biriktirme (cumulateorders = true) aciktir ve cikis yalniz
   %1 kar hedefiyle (set target %profit 1) gerceklesir, stop-loss yoktur.'
+- "T10: ozel_kod_nedeni: seans_saat (yalniz Pazartesi 09:00-21:00 saat penceresi ve cumulateorders=true (piramitleme))"
