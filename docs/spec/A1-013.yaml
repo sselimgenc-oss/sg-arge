@@ -17,8 +17,9 @@ gostergeler:
     src: close
     n: 11
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: open[2] > close[1] and close[1] > close and (open[2] - close) > 10
-cikis: 'false'
+cikis: null
 stop:
   tip: puan
   deger: 70
@@ -26,6 +27,7 @@ hedef:
   tip: puan
   deger: 75
 stop_eklendi: false
+piyasa_kisiti: [FR40]
 parametreler:
   target_pips: 75
   stop_pips: 70
@@ -48,3 +50,4 @@ belirsiz:
   IF Not onmarket AND POH AND (open[2] > close[1]) AND (close[1] > close) AND ... THEN BUY 1 CONTRACT AT MARKET ENDIF; DUE = (close - open[2]) > 25*pipsize; IF timeEnterAfter AND timeEnterBefore AND (open[2]
   < close[1]) ...; Target 75 pips (yorumlarda 72), Stop 70 pips (yorumlarda 69), breakeven 30 pipte bir guncellenir (yorumlarda M8 = average[11](close) filtresi eklenmistir).'
 - IF satirinin sonundaki kosul ve breakeven dongusunun tam satirlari sayfa engeli nedeniyle eksiktir.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kodun bir kismi okunamadi; pip ve saat filtresi)"

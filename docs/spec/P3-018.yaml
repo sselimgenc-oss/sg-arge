@@ -13,6 +13,7 @@ tf_varsayim: true
 yazar_piyasasi: Hisse
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: close > open
 cikis: close < open
 stop: null
@@ -34,3 +35,4 @@ belirsiz:
 - GitHub, Scribd ve TradeSearcher uzerinde 6kDE9bLA scripti arandi ancak ayna kopyasi bulunamadi.
 - Strateji yalniz long yonlu acilis araligi kirilimi (ORB) ve Pivot Noktalari (R1/R2/S1 hedefleri veya filtreleri) uzerine kuruludur ancak acilis araligi dakikasi, pivot periyodu ve stop/hedef kurallari
   kaynak okunamadigi icin belirsizdir.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (ORB dakikasi, pivot periyodu ve cikis kurallari okunamadi)"

@@ -33,6 +33,7 @@ gostergeler:
     carpan: 3
     tf: 1m
 ozel_kod: true
+ozel_kod_nedeni: tick_veri
 giris: cross_over(atr1, atr6) and close < hh5 - 6 and close >= st_10s
 cikis: close < st_10s
 stop:
@@ -42,6 +43,7 @@ hedef:
   tip: puan
   deger: 80
 stop_eklendi: false
+piyasa_kisiti: [FR40]
 parametreler:
   capital: 1000
   stop_loss: 35
@@ -65,3 +67,4 @@ belirsiz:
 - Ayrica Pazartesi/saat bazli erken cikis kural (dayofweek = 1 and longonmarket and (close - tradeprice) >= -1) ve sellshort kurallari mevcuttur ancak journee ve ust zaman dilimi kosullarinin tamami sayfa
   engeli nedeniyle okunamadi.
 - 'lider: 10 saniyelik bar; tick/saniye verisi yok -> Dogrulanamaz (veri yok)'
+- "T10: ozel_kod_nedeni: tick_veri (10 saniyelik bar)"

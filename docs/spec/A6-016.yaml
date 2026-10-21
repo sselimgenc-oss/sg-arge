@@ -18,6 +18,7 @@ gostergeler:
     n: 20
     tf: 1D
 ozel_kod: true
+ozel_kod_nedeni: tick_veri
 giris: close > sma20_1d
 cikis: close < sma20_1d
 stop: null
@@ -40,3 +41,4 @@ belirsiz:
 - 'Kural order flow (emir akisi) verisine dayandigi icin standart fiyat serisiyle karta cevrilemez (kural geregi spec_durumu: eksik): Makalede 1 dakikalik SPY verisi ve Trade Reporting Facility (TRF) uzerinden
   raporlanan bireysel yatirimci alim/satim emir akisi hacimleri (RetailTRFBuySize, RetailTRFSellSize ve TotalVolume) kullanilarak gunluk bireysel yatirimci aktivite gostergeleri (Relative Retail indicator)
   uretilmekte; gunluk gosterge kendi 20 gunluk hareketli ortalamasini (20-day MA) astiginda saat 15:59''da (3:59 PM) long pozisyon acilip secilen islem penceresi boyunca tutulmaktadir.'
+- "T10: ozel_kod_nedeni: tick_veri (perakende emir akisi (TRF) verisi)"

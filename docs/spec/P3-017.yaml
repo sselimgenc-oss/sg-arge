@@ -12,12 +12,13 @@ mtf: null
 tf_varsayim: true
 yazar_piyasasi: Kripto
 gostergeler:
-  atr10:
-    f: atr
+  utbot:
+    f: ut_bot
+    carpan: 1.0
     n: 10
-ozel_kod: true
-giris: close > atr10
-cikis: close < atr10
+ozel_kod: false
+giris: cross_over(close, utbot)
+cikis: cross_under(close, utbot)
 stop: null
 hedef: null
 stop_eklendi: false
@@ -39,3 +40,4 @@ belirsiz:
 - 'GitHub, Medium ve diger aynalarda UT Bot Alerts / Strategy (QuantNomad / HPotter tabanli) incelendi: xATR = atr(atr_period), nLoss = key_value * xATR iz suren stop cizgisi (xATRTrailingStop) uzerine
   kurulu; close bu cizgiyi yukari kestiginde long giris, asagi kestiginde cikis/short yapilir.'
 - Kirk65 tarafindan yapilan Fixed surumundeki spesifik varsayilan input degerleri (key_value, atr_period, varsa ek filtre veya TP/SL) kaynak sayfadan okunamadi.
+- "T10: ozel_kod false; close vs UT Bot izleyen stop (ut_bot, KeyValue=1, ATR 10) kesisimi; Kirk65 surumunun varsayilan girdileri okunamadigi icin kart eksik, taramaya girmez"

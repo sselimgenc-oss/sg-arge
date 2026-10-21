@@ -17,11 +17,13 @@ gostergeler:
     n: 10
     carpan: 3
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: close > st
 cikis: close < st
 stop: null
 hedef: null
 stop_eklendi: false
+piyasa_kisiti: [GER40]
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -36,3 +38,4 @@ spec_durumu: eksik
 belirsiz:
 - 'ProRealCode sayfasina erisim engellendi (erisim_engeli: true) ve arama motoru onbelleginde kod metni yer almiyor.'
 - DAX 15m uzerinde sahte kirilim (false breakout) ve SuperTrend kombinasyonunun kesin ProBuilder kodu ve parametreleri okunamadi.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kod okunamadi; yer tutucu)"

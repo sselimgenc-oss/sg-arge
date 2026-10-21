@@ -18,6 +18,7 @@ gostergeler:
     n: 5
     kaydir: 1
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 giris: roc5 < 0
 cikis: roc5 > 0
 stop: null
@@ -43,3 +44,4 @@ belirsiz:
 - 'Kurtarilan kurallar: Aylik evren seciminde fiyati > 5$ ve temel verisi olan en yuksek dolar hacimli 50 hisse secilir, Fine asamada EV/EBITDA > 0 olanlar filtrelenir. Gunluk kapanista yeniden dengeleme
   yapilir: en son gun atlanarak 5 gunluk ortalama geri donus getirisi hesaplanir, asiri momentum hisseleri filtrelenir ve en dusuk getirili hisselere esit agirlikli long, en yuksek getirili hisselere short
   girilir. Asiri momentum filtresinin kesin yuzdelik/standart sapma esigi sayfa engeli nedeniyle okunamadi.'
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (kesitsel sira ve long/short sepet)"

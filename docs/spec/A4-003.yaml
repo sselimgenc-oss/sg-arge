@@ -17,6 +17,7 @@ gostergeler:
     src: close
     n: 10
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 giris: rsi10 < 30
 cikis: rsi10 > 80
 stop: null
@@ -38,3 +39,4 @@ belirsiz:
 - 'Composer C8QUEQBKayzmaSBz7MAZ sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
 - Ayni serideki erisilebilen Composer varyantlarinda (Overbought or Oversold SPY else UVXY | Now let's make it weird ve SPY Overbought UVXY Test) SPY 10-gunluk RSI degeri izlenerek asiri alimda (orn. RSI(10)
   > 68 veya 80) UVXY'ye, asiri satimda UPRO/SPY'a, diger durumda BIL/sepete gecildigi gorulmektedir; ancak C8QUEQBKayzmaSBz7MAZ ID'li senfoninin kesin esik sayilari dogrulanamadi.
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (Composer SPY/UVXY tahsisati)"

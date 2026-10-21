@@ -229,3 +229,26 @@ def test_repository_cards_evaluate_on_synthetic_data():
             failures.append(f"{result.id}: {type(exc).__name__}: {exc}")
     assert checked >= 15
     assert not failures, "calismayan kartlar:\n" + "\n".join(failures)
+
+
+@pytest.mark.skipif(not REPO_SPEC.is_dir(), reason="docs/spec not present")
+def test_gap_momentum_card_matches_direct_computation():
+    """A6-010 (Kaufman GAPM): ratio of summed up-gaps to summed down-gaps over 40 bars,
+    smoothed by SMA(20); entry when the signal rises, exit when it falls."""
+    import numpy as np
+    import pandas as pd
+
+    from engine import expr, gosterge
+
+    card = yaml.safe_load((REPO_SPEC / "A6-010.yaml").read_text(encoding="utf-8"))
+    frame = _synthetic_ohlcv(600, freq="B")
+    env = gosterge.build_env(frame, card["gostergeler"])
+    gap = frame["open"] - frame["close"].shift(1)
+    ratio = 100 * gap.clip(lower=0).rolling(40).sum() / (-gap.clip(upper=0)).rolling(40).sum()
+    signals = ratio.rolling(20).mean()
+    np.testing.assert_allclose(env["signals"].dropna().to_numpy(), signals.dropna().to_numpy(), rtol=1e-6)
+    entry = expr.parse(card["giris"]).evaluate(env, index=frame.index)
+    exit_ = expr.parse(card["cikis"]).evaluate(env, index=frame.index)
+    pd.testing.assert_series_equal(entry, (signals > signals.shift(1)).fillna(False), check_names=False)
+    pd.testing.assert_series_equal(exit_, (signals < signals.shift(1)).fillna(False), check_names=False)
+    assert entry.sum() > 0 and exit_.sum() > 0
