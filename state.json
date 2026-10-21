@@ -77,6 +77,13 @@
       "title": "ozel_kod azaltma: tam/dakikalik ozel_kod kartlari (88) ifade diline ya da kutuphaneye tasima",
       "status": "1/2 PR acik (tam: 23 kart taramaya hazir, 24 ozel_kod_nedeni); 2/2 dakikalik sirada",
       "spec": "Issue #1 GOREV -> Sonnet T8"
+    },
+    {
+      "id": "T9",
+      "owner": "tarayici (kullanicinin bilgisayarindaki Claude)",
+      "title": "YENIDEN.csv'deki 47 kaynagin kodunu kaynak/<ID>.md olarak kopyalamak",
+      "status": "iptal (kullanici karari): 47 kart Dogrulanamaz (kaynak erisilemedi)",
+      "spec": "kaynak/GOREV_TARAYICI.md"
     }
   ],
   "done": [
@@ -159,7 +166,8 @@
   "decisions": [
     "2026-10-21 kullanici: portfoy MDD ust siniri %15 onaylandi",
     "2026-10-21 kullanici: saatlik veri ucretsiz internet kaynaklarindan (yfinance 1h ~730 gun, Binance data-api)",
-    "2026-10-21 kullanici: Codex environment kuruldu; Sonnet manuel tetiklenecek"
+    "2026-10-21 kullanici: Codex environment kuruldu; Sonnet manuel tetiklenecek",
+    "2026-10-21 kullanici: okunamayan kaynaklar icin tarayici yolu yok; YENIDEN.csv kartlari Dogrulanamaz (kaynak erisilemedi)"
   ],
   "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz.",
   "triggers": {
