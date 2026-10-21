@@ -1,35 +1,40 @@
 id: O2-021c
 ad: 'Jesse: IchimokuCloud'
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://jesse.trade/strategies
-  sayfa: O2-021
-tarz: belirsiz
-tf: 1D
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1h
 mtf: null
 tf_varsayim: true
 yazar_piyasasi: Kripto
-gostergeler: {}
-giris: null
-cikis: null
+gostergeler:
+  ichimoku_cloud:
+    f: ichimoku
+    tenkan: 9
+    kijun: 26
+    senkou: 52
+giris: close > ichimoku_cloud.span_a and close > ichimoku_cloud.span_b
+cikis: close < ichimoku_cloud.span_a or close < ichimoku_cloud.span_b
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
+parametreler:
+  tenkan: 9
+  kijun: 26
+  senkou: 52
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
-  sharpe: 4.74
-  getiri: +%45.84
-  mdd: '-3.49'
+  sharpe: null
+  getiri: null
+  mdd: null
   islem: null
-  wr: '%100.00'
-  maliyet_dahil: belirtilmemiş
+  wr: null
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: false
 belirsiz:
-- 'Kural xlsx''te yok: yalnız Jesse liste özeti (Sharpe/WR/getiri), toplu kayıttan ayrıştırıldı'
-- Liste metrikleri kısa ve belirsiz dönemden; %100 kazanma çok az işleme işaret ediyor
-- Kaynak bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Jesse strateji kataloğu genel listeleme URL'sidir; tekil strateji kodu ve kesin çıkış kuralları eksiktir

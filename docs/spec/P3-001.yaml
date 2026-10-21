@@ -1,28 +1,29 @@
 id: P3-001
 ad: SuperTrend STRATEGY
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/P5Gu6F8k/
-  sayfa: P3-001
-tarz: belirsiz
+  sayfa: null
+tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
+yazar_piyasasi: Kripto / BIST / Forex
 gostergeler:
-  st:
+  st10:
     f: supertrend
     n: 10
     carpan: 3.0
-giris: cross_over(close, st.line)
-cikis: cross_under(close, st.line)
+giris: cross_over(close, st10)
+cikis: cross_under(close, st10)
 stop: null
 hedef: null
 stop_eklendi: false
 parametreler:
-  st.n: 10
-  st.carpan: 3.0
-deneme_sayisi_kaynakta: null
+  Periods: 10
+  Multiplier: 3.0
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -30,14 +31,9 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: tam
-ozel_kod: false
 belirsiz:
-- 'ATR hesaplama yöntemi (RMA/SMA) seçilebilir: varsayılan RMA (TradingView ta.atr) varsayıldı'
-- Kaynak long/short; temel mod long-only, yalnız long kolu
-- 'Tür/zaman dilimi belirtilmemiş: 1D varsayıldı'
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- TradingView sayfası erişim engeline takıldığından Scribd aynasından (https://www.scribd.com/document/814660281/Supertrend-With-Trailing) Kıvanç Özbilgiç'in orijinal Pine Script v5 kodu okundu
+- 'Giriş: cross_over(close, supertrend); Çıkış / Reversal: cross_under(close, supertrend)'
+- 'short kuralı var: cross_under(close, supertrend) olduğunda short açılır'

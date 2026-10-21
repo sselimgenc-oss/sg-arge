@@ -1,24 +1,54 @@
 id: O1-078
 ad: Atr Breakout
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://ninjatraderecosystem.com/user-app-share-download/atr-breakout-2/
-  sayfa: O1-078
-tarz: day
-tf: 1H
+  sayfa: null
+tarz: swing
+tf: 1D
 mtf: null
-tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
 gostergeler:
-  atr:
+  atr14:
     f: atr
-giris: null
-cikis: null
-stop: null
+    n: 14
+  hhv_atr14:
+    f: highest
+    src: atr14
+    n: 14
+  sma100:
+    f: sma
+    src: close
+    n: 100
+  hh15:
+    f: highest
+    src: high
+    n: 15
+  ll2:
+    f: lowest
+    src: low
+    n: 2
+giris: atr14 > hhv_atr14[1] and close > sma100 and high >= hh15[1] + 0.50
+cikis: close < ll2[1] or close < entry_price - 2.0
+stop:
+  tip: puan
+  deger: 2.0
 hedef: null
+iz_suren:
+  tip: fiyat_adim
+  deger: 2.0
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  ATRLength: 14
+  HighestATRLookback: 14
+  SMALength: 100
+  HighLookback: 15
+  BreakoutOffset: 0.5
+  StopDollars: 2.0
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -26,12 +56,10 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- 'Giriş/çıkış kuralı yok: kaynak S&C Haziran 2016 ''ATR Breakout Entries'' makalesi'
-- Backtest metriği yok
-- Kaynak sitesi (ninjatraderecosystem.com) bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- NinjaTrader sayfasının referans verdiği Haziran 2016 Stocks & Commodities Traders' Tips (https://traders.com/Documentation/FEEDbk_docs/2016/06/TradersTips.html, Ken Calhoun 'ATR Breakout Entries') ve
+  thinkorswim dokümantasyonundan tam kod okundu
+- 'Özel kod mantığı: ATR(14) değeri son 14 günün en yüksek ATR değerini aştığında (volatilite patlaması), hisse 100 günlük basit hareketli ortalamanın (SMA 100) üzerindeyse ve fiyat son 15 günün en yüksek
+  seviyesinin $0.50 üzerine çıktığında Buy Stop ile Long girilir; $2.00 iz süren stop veya son 2 günün en düşüğü (lowest(low, 2)[1]) kırıldığında çıkılır'

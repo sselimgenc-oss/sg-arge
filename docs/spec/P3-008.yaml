@@ -1,22 +1,39 @@
 id: P3-008
 ad: Strategy based on Squeeze Momentum Indicator [LazyBear]
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/qp9BoNyS-Strategy-based-on-Squeeze-Momentum-Indicator-LazyBear/
-  sayfa: P3-008
-tarz: belirsiz
+  sayfa: null
+tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
-gostergeler: {}
-giris: squeeze momentum (Bollinger/Keltner sıkışması + momentum) sinyali + özel filtreler
-cikis: null
+yazar_piyasasi: Kripto / Hisse / Forex
+gostergeler:
+  bb20:
+    f: bb
+    src: close
+    n: 20
+    std: 2.0
+  kc20:
+    f: kc
+    src: close
+    n: 20
+    mult: 1.5
+giris: sqz_off and linreg_val > 0 and linreg_val > linreg_val[1]
+cikis: linreg_val < linreg_val[1]
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  bb_length: 20
+  bb_mult: 2.0
+  kc_length: 20
+  kc_mult: 1.5
+  linreg_length: 20
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -24,13 +41,10 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: true
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- 'LazyBear Squeeze Momentum: filtreler ve çıkış xlsx''te yok'
-- Yazar MT4/JForex EA sürümünden söz ediyor
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- Scribd aynasından (https://www.scribd.com/document/909889921/Strategy-Based-on-Squeeze-Momentum-Indicator-LazyBear) LazyBear'ın açık kaynak kodu okundu
+- 'Özel kod mantığı (John Carter Squeeze): Bollinger Bantları(20, 2.0) Keltner Kanalı(20, 1.5 ATR) içine girdiğinde sıkışma başlar (sqzOn); sıkışma bittiğinde (sqzOff) ve doğrusal regresyon momentum histogramı
+  val = linreg(close - avg(avg(highest(20), lowest(20)), sma(20)), 20, 0) pozitif ve yükseliyorsa Long girilir; momentum çubuğu bir önceki çubuğun altına indiğinde pozisyon kapatılır'
+- 'short kuralı var: sqzOff anında val < 0 ve val < val[1] ise short açılır'

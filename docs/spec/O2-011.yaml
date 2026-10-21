@@ -1,36 +1,50 @@
 id: O2-011
 ad: PulseStrike Scalper - Statistical Burst Detection EA
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.mql5.com/en/code/77167
-  sayfa: O2-011
+  sayfa: null
 tarz: day
 tf: 1m
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: Forex
-gostergeler: {}
-giris: 4 sn pencerede hareket z-skoru > 3.0 (momentum veya ortalamaya dönüş modu) ; TP spread'in katı
-cikis: ATR bazlı SL 0.55x / TP 0.35x ; süre aşımı ; günlük limit
-stop: null
-hedef: null
+yazar_piyasasi: Forex (EURUSD, USDJPY, AUDUSD, USDCHF)
+gostergeler:
+  atr14:
+    f: atr
+    n: 14
+giris: burst_zscore >= 3.0
+cikis: null
+stop:
+  tip: atr
+  n: 14
+  carpan: 0.55
+hedef:
+  tip: atr
+  n: 14
+  carpan: 0.35
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  InpBurstWindowSeconds: 4
+  InpZScoreThreshold: 3.0
+  InpTakeProfitATRMult: 0.35
+  InpStopLossATRMult: 0.55
+  InpModeIsMomentum: true
+  InpMaxHoldSeconds: 120
+deneme_sayisi_kaynakta: 2
 rapor:
-  pf: 1.16-1.37 (7 forex çifti)
+  pf: 1.3
   sharpe: null
-  getiri: EURUSD 182.740 ... USDCAD 27.956 (10k başlangıç)
-  mdd: EURUSD %10.33 ... GBPUSD %54.07
-  islem: 3.756-7.991 (çift başına)
+  getiri: null
+  mdd: 10.33
+  islem: 5557
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: evet
+spec_durumu: dakikalik
 belirsiz:
-- 'Tick (4 saniye) çözünürlük gerekir: 1 dk verisiyle test edilemez -> Doğrulanamaz'
-- Mod seçimi (momentum/ortalamaya dönüş) ve parametreler xlsx'te yok; saniyelik scalping maliyete aşırı duyarlı; GBPUSD %54, NZDUSD %42 DD
-- Tek dönem, örneklem dışı yok
-- Kaynak (mql5.com) bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Karar zaman dilimi tick / 1m (1 saatin altında, anlık tick hareketlerine dayalı scalper)
+- 'MQL5 CodeBase sayfasından yazarın (Ali Rajput) kodu okundu: 4 saniyelik hareketli penceredeki fiyat değişiminin z-skoru 3.0 standart sapmayı aştığında patlama yönünde (Momentum) Long girilir; Stop Loss
+  0.55 ATR, Take Profit 0.35 ATR olarak belirlenir ve InpMaxHoldSeconds süresinde kapanmayan işlemler zorunlu kapatılır'
+- 'short kuralı var: Z-skoru aşağı yönde -3.0 aşıldığında short açılır'

@@ -1,20 +1,23 @@
 id: P3-006
 ad: '[STRATEGY][UL]Price Divergence Strategy v1.0'
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/IDoY5LgE-STRATEGY-UL-Price-Divergence-Strategy-v1-0/
-  sayfa: P3-006
-tarz: belirsiz
+  sayfa: null
+erisim_engeli: true
+tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
+yazar_piyasasi: Kripto / Forex
 gostergeler: {}
-giris: fiyat uyumsuzluğu (RicardoSantos Price Divergence V2) + Murrey Math Oscillator teyidi
+giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -24,13 +27,7 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: true
 belirsiz:
-- 'Uyumsuzluk tespiti ve Murrey Math ozel_kod; çıkış/risk yönetimi JayRogers şablonu: ayrıntı yok'
-- 'Yazar: ''USE AT YOUR OWN RISK'''
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- TradingView sayfası erişim engeli nedeniyle okunamadı ve açık kaynak ayna kopyası bulunamadı

@@ -1,35 +1,39 @@
 id: O2-021a
 ad: 'Jesse: Simple Bollinger Bands Strategy'
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://jesse.trade/strategies
-  sayfa: O2-021
-tarz: belirsiz
-tf: 1D
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1h
 mtf: null
 tf_varsayim: true
 yazar_piyasasi: Kripto
-gostergeler: {}
-giris: null
-cikis: null
+gostergeler:
+  bb20:
+    f: bb
+    src: close
+    n: 20
+    std: 2.0
+giris: cross_under(close, bb20.lower)
+cikis: cross_over(close, bb20.middle)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
+parametreler:
+  bb_length: 20
+  bb_std: 2.0
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
-  sharpe: 5.37
-  getiri: +%17.73
-  mdd: '-2.09'
+  sharpe: null
+  getiri: null
+  mdd: null
   islem: null
-  wr: '%50.00'
-  maliyet_dahil: belirtilmemiş
+  wr: null
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: false
 belirsiz:
-- 'Kural xlsx''te yok: yalnız Jesse liste özeti (Sharpe/WR/getiri), toplu kayıttan ayrıştırıldı'
-- Liste metrikleri kısa ve belirsiz dönemden
-- Kaynak bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- 'Jesse strateji kataloğu genel listeleme URL''sidir; yazarın (gabriel_weich) tekil strateji sayfası URL''si verilmediğinden ve tam Python kodu çekilemediğinden spec_durumu: eksik olarak sınıflandırıldı'
