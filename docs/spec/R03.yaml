@@ -1,0 +1,76 @@
+tf_varsayim: false
+stop: null
+hedef: null
+stop_eklendi: false
+deneme_sayisi_kaynakta: null
+ozel_kod: true
+belirsiz:
+- 'RRS (benchmark) listede yok: ozel_kod'
+- Referans endeks (XU030/SPY/BTC) gerekli; emtia için endeks tanımsız -> lider kararı (filtre emtiada devre dışı mı?)
+- 1D/HTF_Bias formülü hiçbir raporda tanımlı değil; Voltran raporundaki HTF kuralı varsayıldı (Supertrend(10,2.5)=+1 veya kapanış>=EMA21*0.985)
+  -> lider onayı
+- 'Gün içi 1H: BIST/ABD/emtia saatlik veri ~730 gün -> en fazla Koşullu'
+- 'Raporun kendi Sharpe''ı 0.88: hedef altında'
+parametreler: {}
+id: R03
+ad: RealDayTrading göreceli güç (RRS) 1H momentum
+kaynak:
+  dosya: Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf
+  url: null
+  sayfa: bölüm 2.3
+tarz: day
+tf: 1H
+mtf: 1D
+yazar_piyasasi: ABD hisse (r/RealDayTrading)
+gostergeler:
+  st_htf:
+    f: supertrend
+    n: 10
+    carpan: 2.5
+    tf: 1D
+  ema21h:
+    f: ema
+    src: close
+    n: 21
+    tf: 1D
+  close_1d:
+    f: close
+    tf: 1D
+  rrs:
+    f: rrs
+    n: 12
+    benchmark: endeks
+  ema8:
+    f: ema
+    src: close
+    n: 8
+  ema20:
+    f: ema
+    src: close
+    n: 20
+  ema10:
+    f: ema
+    src: close
+    n: 10
+  atr14:
+    f: atr
+    n: 14
+giris: (st_htf.dir == 1 or close_1d >= ema21h * 0.985) and rrs > 1.10 and ema8 > ema20 and close > ema8 and (close - low) / (high - low) > 0.60
+cikis: rrs < -0.35 and close < ema10
+iz_suren:
+  tip: atr_zirve
+  n: 14
+  carpan: 2.2
+kar_kilidi:
+  tetik_atr: 1.4
+  stop: giris * 1.002
+rapor:
+  pf: 1.87
+  sharpe: 0.88
+  getiri: +%166.9
+  mdd: '%18.3'
+  islem: 229.5
+  wr: '%48.4'
+  maliyet_dahil: evet, %0,1 komisyon (slippage belirtilmemiş)
+spec_durumu: tam
+bias_varsayim: true

@@ -1,0 +1,67 @@
+tf_varsayim: false
+stop: null
+hedef: null
+stop_eklendi: false
+deneme_sayisi_kaynakta: null
+ozel_kod: false
+belirsiz:
+- 'Raporda 8 stratejinin 256''lık havuzdan seçildiği belirtiliyor: seçim yanlılığı (DSR''de N>=256)'
+- Sonuçlar 1W->1D ve 4H/1D->1H iki kurguda raporlanmış; kartta ana kurgu 1W->1D, 1H varyantı 'varyantlar' altında
+- 'Üst zaman ''pozitif trend dizilimi'' formülü yok: Supertrend varsayımı'
+- 'Çıkışta ''stoch.k < 45'' girişte kesişim eşiğiyle aynı: aynı barda girip çıkma riski -> yorumlayıcı min 1 bar tutma'
+parametreler: {}
+id: T8-07
+ad: StackLight MTF momentum stack + Stochastic
+kaynak:
+  dosya: Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf
+  url: null
+  sayfa: bölüm 3.7
+tarz: day
+tf: 1H
+mtf: 4H
+varyantlar:
+- tf: 1D
+  mtf: 1W
+yazar_piyasasi: Çoklu zaman dilimi (blitz_locked, TradingView)
+gostergeler:
+  ema13:
+    f: ema
+    src: close
+    n: 13
+  ema34:
+    f: ema
+    src: close
+    n: 34
+  ema89:
+    f: ema
+    src: close
+    n: 89
+  stoch:
+    f: stoch
+    k: 14
+    d: 3
+    smooth: 3
+  atr14:
+    f: atr
+    n: 14
+  htf:
+    f: supertrend
+    n: 10
+    carpan: 2.5
+    tf: 4H
+giris: htf.dir == 1 and ema13 > ema34 and ema34 > ema89 and cross_over(stoch.k, 45)
+cikis: ema13 < ema34 or stoch.k < 45
+iz_suren:
+  tip: atr_zirve
+  n: 14
+  carpan: 2.6
+rapor:
+  pf: 2.04
+  sharpe: 0.97
+  getiri: null
+  mdd: '%21.8 (4H->1H)'
+  islem: null
+  wr: null
+  maliyet_dahil: evet, %0,1
+spec_durumu: tam
+bias_varsayim: true

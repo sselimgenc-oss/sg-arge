@@ -1,0 +1,89 @@
+tf_varsayim: false
+stop: null
+hedef: null
+stop_eklendi: false
+deneme_sayisi_kaynakta: null
+ozel_kod: true
+belirsiz:
+- 'PMax, RRS (benchmark gerekli) ve RVOL listede yok: ozel_kod'
+- Referans endeks (XU030/SPY/BTC) gerekli; emtia için endeks tanımsız -> lider kararı (filtre emtiada devre dışı mı?)
+- 1D/HTF_Bias formülü hiçbir raporda tanımlı değil; Voltran raporundaki HTF kuralı varsayıldı (Supertrend(10,2.5)=+1 veya kapanış>=EMA21*0.985)
+  -> lider onayı
+- Motor B giriş koşulundaki 'açılış seansında hacim patlaması' 7/24 piyasada (kripto) tanımsız
+- 'Gün içi 1H: BIST/ABD/emtia saatlik veri ~730 gün -> en fazla Koşullu'
+parametreler: {}
+id: P04
+ad: 'VOLTRAN-R2 intraday hibrit (RRS göreceli güç + RVOL ORB) (aynı strateji: S8/R8)'
+kaynak:
+  dosya: Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf
+  url: null
+  sayfa: bölüm 2.4
+tarz: day
+tf: 1H
+mtf: 4H
+yazar_piyasasi: r/RealDayTrading + QuantConnect SSRN 4729284 (Zarattini)
+gostergeler:
+  ema50d:
+    f: ema
+    src: close
+    n: 50
+    tf: 1D
+  close_1d:
+    f: close
+    tf: 1D
+  ema8:
+    f: ema
+    src: close
+    n: 8
+  ema20:
+    f: ema
+    src: close
+    n: 20
+  adx14:
+    f: adx
+    n: 14
+  dmi14:
+    f: dmi
+    n: 14
+  pmax:
+    f: pmax
+    src: hl2
+    ma: ema
+    n: 10
+    atr_n: 10
+    carpan: 2.7
+  rrs:
+    f: rrs
+    n: 12
+    benchmark: endeks
+  rvol14:
+    f: rvol
+    n: 14
+  hh6:
+    f: highest
+    src: high
+    n: 6
+    kaydir: 1
+  atr14:
+    f: atr
+    n: 14
+giris: close_1d > ema50d and ((ema8 > ema20 and pmax.dir == 1 and adx14 > 18 and rrs > 0.25) or (pmax.dir == 1 and rvol14 > 1.45 and close >=
+  hh6 * 0.998 and (close - low) / (high - low) > 0.70 and rrs > 0.60))
+cikis: pmax.dir == -1
+iz_suren:
+  tip: atr_zirve
+  n: 14
+  carpan: 2.35
+kar_kilidi:
+  tetik_atr: 1.35
+  stop: giris * 1.002
+rapor:
+  pf: 2.73
+  sharpe: 1.33
+  getiri: +%462.3
+  mdd: '%16.1'
+  islem: 154.7
+  wr: '%51.4'
+  maliyet_dahil: evet, %0,1 komisyon (slippage belirtilmemiş)
+spec_durumu: tam
+bias_varsayim: true
