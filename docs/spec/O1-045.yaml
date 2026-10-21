@@ -1,0 +1,73 @@
+id: O1-045
+ad: VECTORIAL DAX (M5)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/vectorial-dax-m5/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler:
+  mma10:
+    f: ema
+    src: close
+    n: 10
+  mmb20:
+    f: ema
+    src: close
+    n: 20
+  atr25:
+    f: atr
+    n: 25
+giris: angle >= 45 and pente > trigger and pente < 0
+cikis: null
+stop: null
+hedef:
+  tip: yuzde
+  deger: 4.25
+iz_suren:
+  tip: atr_zirve
+  n: 25
+  carpan: 7.5
+zaman_stop:
+  bar: 950
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  PeriodeA: 10
+  nbChandelierA: 15
+  PeriodeB: 20
+  nbChandelierB: 35
+  lag: 5
+  trigger_ema.n: 25
+  angle_buy_min: 45
+  angle_short_max: -37
+  tp_long_pct: 4.25
+  tp_short_pct: 1.25
+  atrtrailingperiod: 25
+  trailingstoplong: 7.5
+  trailingstopshort: 4.0
+  BarLong: 950
+  BarShort: 650
+  start_time: 80000
+  end_time: 220000
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi M5 (1 saatin altında)
+- 'Özel kod mantığı (ProBuilder kaynak kodundan): (1) Saat filtresi CtimeA: 08:00 <= time <= 22:00, (2) Açı vektörü: MMA = EMA[10](close), ADJASUROPPO = (MMA - MMA[15]*pipsize) / 15, ANGLE = ATAN(ADJASUROPPO),
+  CondBuy1 = ANGLE >= 45, (3) Eğim vektörü: MMB = EMA[20](close), pente = (MMB - MMB[35]*pipsize) / 35, trigger = EMA[25](pente) (PeriodeB + lag = 20 + 5 = 25), CondBuy2 = (pente > trigger) and (pente <
+  0), (4) Long Giriş: CondBuy1 and CondBuy2 and CtimeA, (5) Çıkış: %4.25 Take Profit (SET TARGET %PROFIT 4.25), ATR(25)*7.5 tabanlı iz süren stop (TGL) ve işlem zarardayken (POSITIONPERF < 0) 950 bar sonra
+  kapatan zombi zaman stopu (BarLong = 950)'
+- 'short kuralı var: ANGLE <= -37 ve cross_under(pente, trigger) ve pente > -1 olduğunda short açılır (hedef %1.25, ATR iz süren çarpan 4, zararda zaman stopu 650 bar)'

@@ -1,0 +1,40 @@
+id: O1-068
+ad: MACD Cross Over
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/macd-cross-over/
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler:
+  macd_std:
+    f: macd
+    src: close
+    fast: 12
+    slow: 26
+    sig: 9
+giris: cross_over(macd_std.line, macd_std.signal)
+cikis: cross_under(macd_std.line, macd_std.signal)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- NinjaTrader Ecosystem sayfasında yalnızca 'A cross over strategy using the MACD indicator' açıklaması yer almakta olup C# kaynak kodu yalnızca indirilebilir .zip (MACD_Cross_Over_NT8.zip) içinde bulunduğundan
+  okunamadı
+- 'Ek filtre, stop-loss, kar hedefi ve varsayılan periyotlar .zip içerisinden doğrulanamadığından spec_durumu: eksik olarak işaretlendi'

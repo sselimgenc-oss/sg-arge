@@ -1,0 +1,35 @@
+id: O1-074
+ad: Camarillapoints ATS
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/camarillapoints-ats/
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Hisse / Endeks / Forex
+gostergeler: {}
+giris: cross_over(close, cam_s3) or cross_over(close, cam_r4)
+cikis: cross_under(close, cam_r3) or cross_under(close, cam_s4)
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'NinjaTrader sayfası ve referans verdiği Mart 2013 Stocks & Commodities Traders'' Tips sayfası (https://traders.com/documentation/feedbk_docs/2013/03/traderstips.html) erişim engeline takıldı; Slawomir
+  Bobrowski''nin Mart 2013 S&C makale özetinden (https://traders.com/documentation/feedbk_docs/2013/03/bobrowski.html) sistemin çoklu zaman dilimli Camarilla pivot seviyelerine (S3/S4 desteklerinden dönüş
+  ve R4/R5 kırılımı) dayandığı okundu ancak NinjaScript C# kodundaki kesin parametreler okunamadığından spec_durumu: eksik verildi'

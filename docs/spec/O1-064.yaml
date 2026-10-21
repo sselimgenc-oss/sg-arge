@@ -1,0 +1,49 @@
+id: O1-064
+ad: Try this NQ Strategy + Code
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://usethinkscript.com/threads/try-this-nq-strategy-code-for-thinkorswim.1958/
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Endeks Vadeli (NQ)
+gostergeler:
+  ema20:
+    f: ema
+    src: close
+    n: 20
+  dopen:
+    f: open
+    tf: 1D
+giris: close[1] > ema20[1] and high >= high[1] + 0.25
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  ema20.n: 20
+  entry_offset_ticks: 1
+  tick_size: 0.25
+  target_points: 100.0
+  target_ticks: 400
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi 1m (1 saatin altında)
+- 'Özel kod mantığı (AlgoTrader77): 1 dakikalık NQ grafiğinde EMA(20) kullanılır (paylaşılan kodda setHiding(if close > open(period=''DAY'') then 0 else 1) ile günlük açılış üzerinde görünür kılınmıştır);
+  bir mum EMA(20) üzerinde kapandığında (close[1] > ema20[1]), bir sonraki mum o sinyal mumunun en yükseğini 1 tick (0.25 puan) yukarı kırdığında (high >= high[1] + 0.25) Long girilir; stop-loss sinyal
+  mumunun diğer ucuna (low[1]) konulur, kar hedefi 100 NQ puanıdır (400 tick)'
+- 'short kuralı var: Mum EMA(20) altında kapandığında (close[1] < ema20[1]), o mumun en düşüğünün 1 tick (0.25 puan) altına kırılımda short girilir; stop-loss sinyal mumunun en yükseği (high[1]), hedef
+  100 puan'

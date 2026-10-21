@@ -1,0 +1,62 @@
+id: O1-058
+ad: /ES Futures Trading Strategy on ThinkorSwim
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://usethinkscript.com/threads/es-futures-trading-strategy-on-thinkorswim.987/
+  sayfa: null
+tarz: day
+tf: 512t
+mtf: 1600t
+tf_varsayim: false
+yazar_piyasasi: Endeks Vadeli (/ES)
+gostergeler:
+  ema8:
+    f: ema
+    src: close
+    n: 8
+  ema13:
+    f: ema
+    src: close
+    n: 13
+  ema21:
+    f: ema
+    src: close
+    n: 21
+  atr14:
+    f: atr
+    n: 14
+giris: wt_cross_up and ema8 > ema13 and ema13 > ema21
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  wt_channel_len: 10
+  wt_avg_len: 21
+  wt_ob1: 60
+  wt_ob2: 53
+  wt_os1: -60
+  wt_os2: -53
+  slim_fast_ema: 8
+  slim_med_ema: 13
+  slim_slow_ema: 21
+  displace_atr_len: 14
+  displace_atr_mult: 2.0
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: ihtiyari
+belirsiz:
+- Strateji 512, 1000 ve 1600 tick Heikin Ashi grafiklerinde elle çizilen seans öncesi (premarket) destek/direnç bölgeleri, Fractal Energy (FE) okuması, WaveTrend osilatörü (10, 21) ve Slim Ribbon (EMA 8/13/21)
+  kombinasyonuna dayanır
+- 'Yazar (#12 mesajında) girişi ''elle çizilen S&R + düşük FE okuması + Al/Sat oku'' olarak tanımlamış, maksimum FE eşiğini nasıl mekanikleştireceğini henüz bilmediğini ve mekanik bir çıkış/stop-loss kuralı
+  olmadığını belirtmiştir; kurallar yoruma dayalı olduğundan spec_durumu: ihtiyari olarak sınıflandırıldı'
+- 'short kuralı var: Direnç bölgesinde WaveTrend aşırı alım kesişimi ve Slim Ribbon aşağı diziliminde short aranır'

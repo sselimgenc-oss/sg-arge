@@ -1,0 +1,64 @@
+id: O1-063
+ad: Renko Bar Based Trading System
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://usethinkscript.com/threads/renko-bar-based-trading-system-for-thinkorswim.3252/
+  sayfa: null
+tarz: day
+tf: 10r
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / Endeks Vadeli
+gostergeler:
+  rsi13:
+    f: rsi
+    src: close
+    n: 13
+  bb20:
+    f: bb
+    src: close
+    n: 20
+    std: 2.0
+  macd_ fast:
+    f: macd
+    src: close
+    fast: 13
+    slow: 26
+    sig: 9
+giris: wae_trend_up > wae_explosion and bull_power > 0 and bmp > 0 and rsi13 < 65
+cikis: wae_trend_down > 0 or bull_power < 0 or cross_over(rsi13, 70)
+stop: null
+hedef: null
+varyantlar:
+- ad: 'Post #20 irishgold Mekanik Renko Strateji Uyarlaması'
+  giris: RTH (09:35-15:50) içinde Waddah Attar Explosion (sensitivity=100, fast=13, slow=26, channel=20, mult=2.0, deadZone=0.2) trendUp > explosionLine ve trendUp > deadZone ve RayBullPower(HULL, 13) >
+    0 ve BalanceOfMarketPower(HULL, 13) > 0 ve RSI(13) < 65
+  cikis: trendDown > 0 veya BullPower < 0 veya trendUp <= explosionLine veya cross_over(RSI(13), 70) veya saat 15:50 EOD çıkışı
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  hull_len: 13
+  st_atr_mult: 1.7
+  st_nATR: 4
+  wae_sensitivity: 100
+  wae_fast: 13
+  wae_slow: 26
+  wae_channel: 20
+  wae_mult: 2.0
+  rsi.n: 13
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: ihtiyari
+belirsiz:
+- 'Yazar (rad14733) #1, #8 ve #14 numaralı mesajlarda paylaştığı Renko çalışma alanının kesin ''Al/Sat'' kuralları içermediğini, göstergelerin (SuperTrend(4, 1.7), HMA(13), Waddah Attar Explosion, BalanceOfMarketPower,
+  ErgodicOsc, Ray Bear/Bull Power) yatırımcının piyasa hissiyatını (''feel'') yorumlaması için bir arada kullanıldığını açıkça belirtmiştir; bu nedenle öncelik sırasına göre spec_durumu: ihtiyari verildi'
+- 'Konunun #20 numaralı mesajında ''irishgold'' adlı kullanıcı bu göstergelerden mekanik bir ThinkScript Strategy uyarlaması (10-tick Renko, RTH 09:35-15:50, WAE + BullPower + BMP + RSI(13) < 65) üretmiştir;
+  bu mekanik kurgu giris/cikis ve varyantlar alanına işlenmiştir'

@@ -1,0 +1,33 @@
+id: O1-072
+ad: Automated Strategy for trading NQ
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/automated-strategy-for-trading-nq/
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Endeks Vadeli (NQ)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- NinjaTrader Ecosystem sayfasında yalnızca 'NQ automated trading strategy using EMAs, ADX, MACD, RSI, VWAP, Bollinger Bands, and more to optimize trend-following and mean-reversion trades' açıklaması bulunmakta
+  olup C# kaynak kodu indirilebilir .zip (NQ_Strategy.zip) içinde yer aldığından okunamadı

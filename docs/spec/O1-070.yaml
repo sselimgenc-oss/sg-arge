@@ -1,0 +1,76 @@
+id: O1-070
+ad: Divergencesystem Strategy
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/divergencesystem-strategy-2/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ETF / Endeks (DXJ / Nikkei 225, FXY, SPY)
+gostergeler:
+  sma25:
+    f: sma
+    src: close
+    n: 25
+  roc3:
+    f: roc
+    src: close
+    n: 3
+  stoch25:
+    f: stoch
+    k: 25
+    d: 3
+    smooth: 3
+giris: im2[3] > 75 and im2 < im2[3] and im2 > 25 and cr3 < 0.8 and (lr25 >= lr25[1] or close > sma25)
+cikis: bars_since_entry >= 11 or (bars_since_entry > 3 and close < entry_close * 0.985 and stoch25.k > 10) or (bars_since_entry > 7 and close < highest_close_since_entry * 0.985)
+stop:
+  tip: yuzde
+  deger: 1.5
+hedef: null
+iz_suren:
+  tip: yuzde_zirve
+  deger: 1.5
+zaman_stop:
+  bar: 11
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  SEC2: FXY
+  SEC3: SPY
+  STD: 25
+  OB: 90
+  OS: 10
+  D1_roc: 3
+  D2_ma_lr: 25
+  DIVDAYS: 50
+  IMDAYS: 50
+  CR3CR: 0.8
+  DIVCRIT: 75
+  DIVSHORT: 25
+  LAG: 3
+  STP_pct: 1.5
+  EXIT_days: 11
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- NinjaTrader sayfasının referans verdiği Temmuz 2017 Stocks & Commodities Traders' Tips sayfasından (https://technical.traders.com/content/TTlink.asp?mo=07&yr=2017, Markos Katsanos 'Trading The Nikkei')
+  tam strateji kodu okundu
+- 'Özel kod mantığı (Piyasalararası Regresyon Uyumsuzluğu): Ana enstrüman (DXJ / Nikkei) için RS1 = ROC(Close, 3), Data2 (FXY - Yen ETF) için RS2 = ROC(Close_FXY, 3) ve Data3 (SPY) için RS3 = ROC(Close_SPY,
+  3) hesaplanır. CR2 = Correlation(RS1, RS2, 50), CR3 = Correlation(RS1, RS3, 50). 50 barlık doğrusal regresyon eğimi b2 = CR2 * StdDev(RS1, 50) / (StdDev(RS2, 50) + 0.001), kesim noktası a2 = SMA(RS1,
+  50) - b2 * SMA(RS2, 50), tahmin PRED2 = b2 * RS2 + a2 ve uyumsuzluk DIV2 = PRED2 - RS1 bulunur. IM2 = SMA(DIV2 - Lowest(DIV2, 50), 2) * 100 / (SMA(Highest(DIV2, 50) - Lowest(DIV2, 50), 2) + 0.01) olarak
+  normalize edilir. Long Giriş: IM2[3] > 75 ve IM2 < IM2[3] ve IM2 > 25 ve CR3 < 0.8 ve (LinRegSlope(Close, 25) >= LinRegSlope(Close, 25)[1] veya Close > SMA(Close, 25)). Çıkış: (1) İşlemde 3 bardan fazla
+  kalındıysa ve Close < GirisFiyati * (1 - 0.015) ve Stoch(25, 3) > 10 ise başlangıç stopu, (2) İşlemde 7 bardan fazla kalındıysa ve Close < Highest(Close, BarsSinceEntry) * (1 - 0.015) ise iz süren stop,
+  (3) BarsSinceEntry >= 11 barda zaman stopu'
+- 'short kuralı var: IM2[3] < 25 ve IM2 > IM2[3] ve IM2 < 75 ve CR3 < 0.8 ve (LR <= LR[1] veya Close < SMA(Close, 25)) olduğunda short açılır (3 bar sonra %1.5 stop + Stoch < 90, 7 bar sonra %1.5 iz süren
+  stop, 11 bar zaman stopu)'

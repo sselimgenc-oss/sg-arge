@@ -1,0 +1,61 @@
+id: O1-066
+ad: Accumulation/Distribution Range Breakout Strategy NT8 - August 2018 S&C
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/accumulation-distribution-range-breakout-strategy/
+  sayfa: null
+tarz: swing
+tf: 1W
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (S&P 100)
+gostergeler:
+  hh4:
+    f: highest
+    src: high
+    n: 4
+  ll4:
+    f: lowest
+    src: low
+    n: 4
+  vol_sma4:
+    f: sma
+    src: volume
+    n: 4
+giris: close > box_top and box_bot > box_bot[12] and vol_sma4[4] > 1.0 * vol_sma4[8]
+cikis: close < box_bot
+stop: null
+hedef: null
+varyantlar:
+- ad: Range Pullback Varyantı
+  giris: close < box_top and box_bot > box_bot[12] and vol_sma4[4] > vol_sma4[8]
+  cikis: close > box_top (kar al) veya close < box_bot (stop)
+- ad: ADX / ATR Konsolidasyon Varyantları
+  aciklama: Makalede ayrıca Range_ < 0.75*Range_[4] yerine ADX(4) < 25 ve ATR(4) < 0.75*ATR(4)[4] kullanılan Breakout ve Pullback varyantları test edilmiştir
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  Length: 4
+  ConsolidationFactor: 0.75
+  VolRatio: 1.0
+  VolAvg: 4
+  VolDelay: 4
+  BotLookback: 12
+deneme_sayisi_kaynakta: 6
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 50.76
+  mdd: 9.24
+  islem: 1244
+  wr: 45.0
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz:
+- NinjaTrader sayfasındaki .zip bağlantısının dayandığı Ağustos 2018 Stocks & Commodities makalesi ('Detecting Accumulation And Distribution' - Domenico D'Errico & Antonio Zaffino) Scribd aynasından (https://www.scribd.com/document/436895252/Detecting-Accumulation-and-Distribution-Stocks-Commodities-August-2018)
+  tam kod ve backtest tablosuyla okundu
+- 'Özel kod mantığı (EasyLanguage kodundan): Haftalık (1W) grafikte Range_ = Highest(High, 4) - Lowest(Low, 4); eğer Range_ < 0.75 * Range_[4] ise daralma (konsolidasyon) kutusu güncellenir: box_top = Highest(High,
+  4) ve box_bot = Lowest(Low, 4) (koşul sağlanmadığı barlarda son box_top ve box_bot değerleri korunur). Giriş: close > box_top ve box_bot > box_bot[12] (yükselen dipler/birikim) ve Average(Volume, 4)[4]
+  > 1.0 * Average(Volume, 4)[8] olduğunda sonraki bar açılışında Long girilir. Çıkış: close < box_bot olduğunda (aktif konsolidasyon kutusunun alt bandı iz süren stop gibi çalışır) pozisyon kapatılır'
+- Yalnızca Long kuralları tanımlanmıştır (S&P 100 hisselerinde birikim kırılımı)

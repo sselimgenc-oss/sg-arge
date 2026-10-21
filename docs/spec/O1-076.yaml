@@ -1,0 +1,54 @@
+id: O1-076
+ad: Mean Reversion Swing Trading Strategy
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/mean-reversion-swing-trading-strategy-2/
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
+gostergeler:
+  hh20:
+    f: highest
+    src: high
+    n: 20
+  ll20:
+    f: lowest
+    src: low
+    n: 20
+  sma50:
+    f: sma
+    src: close
+    n: 50
+giris: close > sma50 and high >= low_ref + 0.50
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  ChanLength: 20
+  MALength: 50
+  StopDollars: 1.0
+  EntryOffset: 0.5
+  RetracePct: 50.0
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'NinjaTrader sayfası ve Ocak 2017 Stocks & Commodities Traders'' Tips sayfası (https://traders.com/Documentation/FEEDbk_docs/2017/01/TradersTips.html, Ken Calhoun Aralık 2016 ''Mean-Reversion Swing Trading'')
+  doğrudan erişim engeline takıldı; arama motoru önbelleğinden strateji girdileri (inputs: ChanLength(20), StopDollars(1), MALength(50)) ve geri çekilme dip fiyatının $0.50 üzerine Buy Stop emri (''buy
+  on a stop 50 cents above the retracement price'') kurtarıldı'
+- 'Özel kod mantığı: Fiyat 20 günlük kanalın (ChanLength=20) üst bandını kırdıktan sonra 50 günlük SMA (MALength=50) üzerinde kalmaya devam ederek 20 günlük aralığın en az %50''si kadar geri çekilir (LowRef)
+  ve ardından LowRef + $0.50 seviyesine Buy Stop konulur; StopDollars=1 ($1.00) stop-loss uygulanır. Tam çıkış/kar al satırları sayfa engeli nedeniyle doğrulanamadığından spec_durumu: eksik olarak işaretlendi'

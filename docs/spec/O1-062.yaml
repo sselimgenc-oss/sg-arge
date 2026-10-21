@@ -1,0 +1,39 @@
+id: O1-062
+ad: High and Low Reversals Indicator + Intraday Strategy
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://usethinkscript.com/threads/high-and-low-reversals-indicator-intraday-strategy-for-thinkorswim.49/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler: {}
+giris: cross_over(close, lod_bar_high)
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  session: RTH
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'REPAINT: Mobius tarafından yazılan ThinkScript kodu highestAll(LOD_x) ve isNaN(c[-1]) kullanır; gün içinde yeni bir gün içi dip (LOD) veya tepe (HOD) oluştuğunda önceki sinyaller ve yatay çizgiler geçmiş
+  grafikten silinip yeni seviyeye taşınır (#7 mesajında teyit edilmiştir)'
+- 'Özel kod mantığı: Normal seans (RTH) içinde günün en düşük seviyesini (LOD) yapan mumun en yüksek fiyatı (LOD_h) izlenir; sonraki mumlardan biri LOD_h seviyesini yukarı kırdığında (close crosses above
+  LOD_h) ArrowUP (Long) sinyali üretilir ve stop-loss LOD_h altına kapanış olarak belirlenir'
+- 'Kazanan işlemler için kar hedefi veya mekanik çıkış kuralı tanımlanmamıştır (yazar #4 mesajında çıkış için EMA ve pivot gibi başka göstergelere baktığını belirtmiştir); çıkış kuralı eksik olduğundan
+  öncelik sırasına göre (eksik > dakikalik) spec_durumu: eksik verildi'
+- 'short kuralı var: Günün en yüksek seviyesini (HOD) yapan mumun en düşüğü (HOD_l) aşağı kırıldığında (close crosses below HOD_l) short sinyali üretilir'

@@ -1,0 +1,57 @@
+id: O1-059
+ad: Relative Volume Strategy and Momentum Scanner
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://usethinkscript.com/threads/relative-volume-strategy-and-momentum-scanner-for-thinkorswim.3002/
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: ABD Düşük Float Hisse (Small Cap)
+gostergeler:
+  ema9:
+    f: ema
+    src: close
+    n: 9
+  vwap_val:
+    f: vwap
+  rvol60:
+    f: rvol
+    n: 60
+giris: close > vwap_val and low <= ema9 and close > ema9 and rvol60 >= 1.4
+cikis: close < vwap_val
+stop:
+  tip: yuzde
+  deger: 5.0
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  min_price: 0.5
+  max_price: 15.0
+  min_pct_change: 10.0
+  min_volume: 500000
+  max_float: 70000000
+  daily_candle_gain_pct: 4.0
+  unusual_vol_pct: 40.0
+  unusual_vol_len: 60
+  ema.n: 9
+  sl_pct: 5.0
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: ihtiyari
+belirsiz:
+- Sistem bir hisse tarayıcısı (Fiyat $0.5-$15, Değişim >= %10, Hacim >= 500K, Float <= 70M, Günlük close >= open*1.04, 60 günlük ortalamanın %40 üstünde olağandışı hacim) ve görsel 1m grafik takibinden
+  oluşur
+- 'Yazar (#1, #8, #9 mesajlarında) açılış sonrası en yüksek göreceli hacimli (RV1) ve haber katalizörlü 3 hissenin seçilmesini, grafikte göz kararı ''rounding bottom, VWAP kırılımı veya bullish flag/pennant''
+  formasyonu aranmasını, 9 EMA geri çekilmesinde girilip ~%5 stop konulmasını ve hisse VWAP üzerinde kaldıkça tutulup öznel fiyat hedefine ulaşınca satılmasını önermektedir; formasyon ve hedef seçimi yoruma
+  dayalı olduğundan spec_durumu: ihtiyari olarak sınıflandırıldı'

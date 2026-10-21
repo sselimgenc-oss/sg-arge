@@ -1,0 +1,50 @@
+id: O1-075
+ad: MeanReversal Strategy NT8
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/meanreversal-strategy-nt8/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY, NASDAQ 100)
+gostergeler:
+  zs10:
+    f: zscore
+    src: close
+    n: 10
+  sma10:
+    f: sma
+    src: close
+    n: 10
+  sma100:
+    f: sma
+    src: close
+    n: 100
+giris: cross_under(zs10, -1.0) and sma10 > sma100
+cikis: cross_over(zs10, -0.5) or cross_under(sma10, sma100)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  ZScoreLength: 10
+  FastAvgLength: 10
+  SlowAvgLength: 100
+  EntryLevel: 1.0
+  ExitLevel: 0.5
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- NinjaTrader sayfasının referans verdiği Mayıs 2019 Stocks & Commodities Traders' Tips sayfasından (https://traders.com/Documentation/FEEDbk_docs/2019/05/TradersTips.html, Anthony Garner 'Steady As They
+  Go') tam strateji kodu okundu
+- 'short kuralı var: cross_over(zs10, 1.0) and sma10 < sma100 olduğunda short açılır; cross_under(zs10, 0.5) or cross_over(sma10, sma100) olduğunda kapatılır'

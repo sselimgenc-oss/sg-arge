@@ -1,0 +1,42 @@
+id: O1-043
+ad: Navigator DAX Trading Strategy 4H
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/navigator-dax-trading-strategy-4h/
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 4h
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler:
+  stoch10:
+    f: stoch
+    k: 10
+    d: 13
+    smooth: 22
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  stoch.k: 10
+  stoch.d: 13
+  stoch.smooth: 22
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- Ana strateji sayfası erişim engeli nedeniyle okunamadı; ekli PDF grafiği (https://www.prorealcode.com/wp-content/uploads/2017/05/Navigator-DAX-4H-200-Einheiten.pdf) ve arama özetinden 4H DAX üzerinde
+  Stochastic (10, 13, 22), günlük mum formasyonu ve FOMC (ayın 1. ve 3. Çarşamba günü) filtresi kullanıldığı görüldü ancak ProBuilder kaynak kodu okunamadı

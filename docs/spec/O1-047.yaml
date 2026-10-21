@@ -1,0 +1,53 @@
+id: O1-047
+ad: Kama & Sma Trading System DAX mtf
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/kama-sma-trading-system-dax-mtf/
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: 1h
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler:
+  kama15:
+    f: kama
+    src: close
+    n: 15
+  sma22:
+    f: sma
+    src: close
+    n: 22
+giris: null
+cikis: null
+stop:
+  tip: yuzde
+  deger: 1.0
+hedef:
+  tip: yuzde
+  deger: 1.0
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  kama_period: 15
+  kama_fast: 2
+  kama_slow: 30
+  sma_period: 22
+  tp_pct: 1.0
+  sl_pct: 1.0
+  trailing_pct: 0.25
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- ProRealCode sayfası erişim engeli nedeniyle doğrudan açılamadı; arama özetlerinden 1h, 15m ve 5m çoklu zaman diliminde (MTF) KAMA(15, 2, 30), SMA(22, TypicalPrice) ve Supertrend kullanıldığı, %1 TP, %1
+  SL ve %0.25 iz süren stop içerdiği görüldü ancak tam MTF giriş/çıkış kodu okunamadı
