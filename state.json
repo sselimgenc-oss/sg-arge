@@ -5,7 +5,7 @@
   "phase": "1-dogrulama",
   "updated": "2026-10-21",
   "heartbeat_minutes": 15,
-  "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider onayli; kullanici kararlari acik)",
+  "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider + kullanici onayli)",
   "queue": [
     {
       "id": "T0",
@@ -21,6 +21,14 @@
       "title": "Veri + referans motor + 2 aile pilotu (C01,C19,C02,C09,C15,C17), replikasyon ve 2015-2019 on donem testi",
       "status": "ready",
       "spec": "docs/GOREV_T1.md"
+    },
+    {
+      "id": "T4",
+      "owner": "codex-worker",
+      "title": "Saatlik veri katmani + haftalik arsiv (yfinance 730 gun kayan pencere)",
+      "status": "ready",
+      "spec": "docs/GOREV_T4.md",
+      "priority": "yuksek, T1a ile paralel"
     },
     {
       "id": "T2",
@@ -53,10 +61,12 @@
     }
   ],
   "user_decisions_pending": [
-    "Portfoy MDD ust siniri %15 onayi",
-    "Saatlik veri kaynagi (BIST dahil)",
     "Codex cloud environment kurulumu (Issue #1'de @codex cevap vermiyor)"
   ],
   "rules": "Paralel calisma: her gorev sahibi yalniz kendi gorev dosyalarina ve state.json'daki kendi kaydinin status alanina yazar. turn, queue ekleme/cikarma ve kriterler yalniz lider.",
-  "notes": "Lider kararlari: tartisma/001_cevap_opus.md. T1b, T1a lider incelemesinden sonra acilir."
+  "notes": "Lider kararlari: tartisma/001_cevap_opus.md. T1b, T1a lider incelemesinden sonra acilir.",
+  "decisions": [
+    "2026-10-21 kullanici: portfoy MDD ust siniri %15 onaylandi",
+    "2026-10-21 kullanici: saatlik veri ucretsiz internet kaynaklarindan (yfinance 1h ~730 gun, Binance data-api)"
+  ]
 }

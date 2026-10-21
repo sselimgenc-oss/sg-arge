@@ -1,6 +1,6 @@
 # Paper Trading Aday Eleme Kriterleri (v0.3)
 
-Durum: Claude-Mod önerisi + Codex görüşü (Issue #1) + **lider/denetçi (Opus) kararları** (`tartisma/001_cevap_opus.md`). Lider onaylı; yalnız "Kullanıcı kararları" bölümü açık.
+Durum: Claude-Mod önerisi + Codex görüşü (Issue #1) + **lider/denetçi (Opus) kararları** (`tartisma/001_cevap_opus.md`). Lider ve kullanıcı onaylı (2026-10-21).
 Eşikler evrensel yasa değil, kural-ı pratik (Pardo, Bailey & López de Prado, Harvey-Liu-Zhu, Davey, Carver).
 
 ## İlkeler
@@ -47,13 +47,19 @@ PDF'lerde baz maliyet yazmadığı için replikasyon bu tabloyla yapılır; fark
 | Paper sonucu | - | Aşağıdaki canlı kapısı |
 
 ## Day trade
-Günlük OHLCV ile doğrulanamayanlar: gün içi sinyal sırası, aynı bar stop/target önceliği, gerçek spread, derinlik, kısmi dolum, seans içi likidite, açılış müzayedesi. İntraday adaylar saatlik/dakikalık veri olmadan **Doğrulanamaz** etiketi alır (reddedilmez, geçmiş de sayılmaz). Saatlik veri kaynağı açık soru.
+Günlük OHLCV ile doğrulanamayanlar: gün içi sinyal sırası, aynı bar stop/target önceliği, gerçek spread, derinlik, kısmi dolum, seans içi likidite, açılış müzayedesi. İntraday adaylar saatlik/dakikalık veri olmadan **Doğrulanamaz** etiketi alır (reddedilmez, geçmiş de sayılmaz).
+
+**Saatlik veri (kullanıcı kararı: ücretsiz internet kaynakları; lider doğruladı 2026-10-21):**
+- BIST30, ABD, emtia ETF: yfinance `interval=1h`, yalnız son ~730 gün (bugün 2023-11 →). Kayan pencere: eski veri kaybolur, **haftalık arşivlenir**.
+- Kripto: Binance `data-api.binance.vision` (api.binance.com bulut IP'lerinde coğrafi engel veriyor), 2017 →.
+- 4H barlar 1H'den yeniden örneklenir; seans sınırına (BIST 10:00-18:00 TRT) hizalanır.
+- Sonuç: BIST/ABD/emtia day trade adaylarında 2015-2019 ön dönem testi **yapılamaz**. Bunun yerine ilk 2 yıl IS, son ~1 yıl tutma (adaylar görülmeden ayrılır) ve gerçek OOS = paper dönemi. Bu adaylar paper'a en fazla **Koşullu** girer. Kripto day trade adayları 2018-2019 ön dönem testine tabidir.
 
 ## Short ve kaldıraç (x2/x3)
 Ayrı kapı: borrow/fee, funding, short kısıtları, gap ve tasfiye/marjin riski modellenmeden long sonucu ölçeklenmez. Her varyantın ayrı OOS + stres sonucu olur. Önce long-only x1 geçmeli.
 
 ## Portföy riski
-MDD üst sınırı istatistik eşiği değil **risk bütçesidir**. Öneri portföy MDD %15 (kullanıcı onayı bekliyor). Strateji başına sermaye, marj ve korelasyon buna göre çözülür; tek strateji MDD'sini %15'e eşitlemek yerine bootstrap %95 MDD ve portföy katkısı kapı olur. İşlem başı risk %0,5, toplam açık risk %2, paper kill-switch %10 MDD.
+MDD üst sınırı istatistik eşiği değil **risk bütçesidir**. Portföy MDD üst sınırı **%15 (kullanıcı onayladı, 2026-10-21)**. Strateji başına sermaye, marj ve korelasyon buna göre çözülür; tek strateji MDD'sini %15'e eşitlemek yerine bootstrap %95 MDD ve portföy katkısı kapı olur. İşlem başı risk %0,5, toplam açık risk %2, paper kill-switch %10 MDD.
 
 ## Altyapı (Codex önerisi)
 Tarama/plato için VectorBT/Numba; nihai doğrulama ve paper paritesi için aynı emir kurallarını kullanan küçük event-driven referans motor. Sabit çıktı şeması: IS/OOS ayrımı, deneme sayısı, maliyet senaryoları, güven aralıkları, veri kusurları, yeniden üretim hash'i.
@@ -61,9 +67,9 @@ Tarama/plato için VectorBT/Numba; nihai doğrulama ve paper paritesi için ayn�
 ## Canlıya geçiş kapısı (paper sonrası)
 >= 3 ay ve >= 30 işlem, paper sonucu backtest beklentisinin güven aralığında, gerçek kayma varsayımı aşmıyor, portföyde düşük korelasyon, kaldıraç x1 → x2 → x3 kademeli.
 
-## Kullanıcı kararları (açık)
-- Portföy MDD üst sınırı %15 onayı.
-- Saatlik veri kaynağı (BIST dahil). Gelene kadar day trade adayları **Doğrulanamaz**.
+## Kullanıcı kararları
+- ~~Portföy MDD %15~~: onaylandı.
+- ~~Saatlik veri kaynağı~~: ücretsiz internet kaynakları (yukarıda).
 
 ## Görev olarak açılanlar
 - Sol 6.1: T1a kod incelemesi (look-ahead/survivorship korumaları dahil), T3.
