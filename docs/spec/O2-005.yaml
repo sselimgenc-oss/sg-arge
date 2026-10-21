@@ -37,6 +37,7 @@ stop:
 hedef: null
 stop_eklendi: false
 ozel_kod: false
+piyasa_kisiti: [FX]
 parametreler:
   RSI_Period: 13
   Price_Line: 2
@@ -61,3 +62,4 @@ belirsiz:
   girilir; Çıkış: Yeşil çizgi yataylaştığında, aşağı büküldüğünde veya kırmızıyı aşağı kestiğinde kapatılır; varsayılan stop-loss 30 piptir'
 - 'short kuralı var: Yeşil TDI kırmızıyı aşağı kestiğinde ve HA mumu kırmızı olup 5 EMA altında kapandığında short açılır'
 - "T8: ozel_kod true -> false (TDI yesil cizgi = SMA(RSI13, 2), kirmizi = SMA(RSI13, 7) (kartin parametreler alani: Price_Line 2, Trade_Signal 7); 'ha_candle == green' -> 'ha.close > ha.open'. 30 pip stop kartta oldugu gibi); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
+- "piyasa_kisiti: ['FX'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

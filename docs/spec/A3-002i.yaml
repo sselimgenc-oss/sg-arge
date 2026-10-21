@@ -27,6 +27,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Varsayılan reverse=true: yazarın raporu ''UT Bot AL sinyalinde SHORT, SAT sinyalinde LONG''; long kolu için SAT sinyali + ters mantık gerekir -> lider
@@ -37,4 +38,5 @@ belirsiz:
 - Kaynak long/short; temel mod long-only
 - "T7 sozdizimi: ozgun cikis metni: 'linreg mum rengi ters dönünce kapat'"
 - "T7 sozdizimi: 'sma(linreg_mum_kapanis, 7)' -> ad 'linreg_sinyal' (= SMA(linreg mum kapanisi, 7)); ozgun giris metni sonundaki yorum: 'reverse=true: bu sinyalde SHORT'"
+- "ozel_kod_nedeni: ozel_gosterge (Linear Regression Candles; ayrica D3 reverse=true karari kartta uygulanmadi (T7/PR #26 notu))"
 bias_varsayim: false

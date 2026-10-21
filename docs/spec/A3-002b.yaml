@@ -39,6 +39,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
 ozel_kod: true
+ozel_kod_nedeni: desen
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Williams fraktal (n=2, genişletilmiş sınırlar) listede yok: ozel_kod'
@@ -48,4 +49,5 @@ belirsiz:
 - Kaynak long/short; temel mod long-only
 - "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: ema50 if low > ema50 else ema100 ; hedef: giris + 1*(giris - stop)' (sayisal ternary dil disi; sinyal barina bagli: elle kodlanacak)"
 - "T7 sozdizimi: 'down_fractal(n=2)' -> ad 'down_fractal2' (Williams fraktal, n=2; ozel gosterge)"
+- "ozel_kod_nedeni: desen (Williams fraktal (n=2) ve sinyal barina bagli sayisal ternary stop)"
 bias_varsayim: false

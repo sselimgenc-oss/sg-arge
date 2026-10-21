@@ -488,6 +488,59 @@ def ut_bot(df: pd.DataFrame, carpan: float = 1.0, n: int = 10) -> pd.Series:
     return pd.Series(out, index=df.index)
 
 
+def sar(df: pd.DataFrame, acceleration: float = 0.02, maximum: float = 0.2) -> pd.Series:
+    """Parabolic SAR, a port of TA-Lib's ``TA_SAR`` (initial direction from -DM of the first bar pair)."""
+    high, low = _col(df, "high").to_numpy(), _col(df, "low").to_numpy()
+    size = len(high)
+    out = np.full(size, np.nan)
+    if size < 2:
+        return pd.Series(out, index=df.index)
+    step, cap = float(acceleration), float(maximum)
+    up, down = high[1] - high[0], low[0] - low[1]
+    is_long = not (down > up and down > 0)
+    new_high, new_low = high[0], low[0]
+    ep, value = (high[1], new_low) if is_long else (low[1], new_high)
+    new_low, new_high = low[1], high[1]
+    af = step
+    for today in range(1, size):
+        prev_low, prev_high = new_low, new_high
+        new_low, new_high = low[today], high[today]
+        if is_long:
+            if new_low <= value:
+                is_long = False
+                value = max(ep, prev_high, new_high)
+                out[today] = value
+                af, ep = step, new_low
+                value = value + af * (ep - value)
+                value = max(value, prev_high, new_high)
+            else:
+                out[today] = value
+                if new_high > ep:
+                    ep, af = new_high, min(af + step, cap)
+                value = value + af * (ep - value)
+                value = min(value, prev_low, new_low)
+        else:
+            if new_high >= value:
+                is_long = True
+                value = min(ep, prev_low, new_low)
+                out[today] = value
+                af, ep = step, new_high
+                value = value + af * (ep - value)
+                value = min(value, prev_low, new_low)
+            else:
+                out[today] = value
+                if new_low < ep:
+                    ep, af = new_low, min(af + step, cap)
+                value = value + af * (ep - value)
+                value = max(value, prev_high, new_high)
+    return pd.Series(out, index=df.index)
+
+
+def fisher_rsi(df: pd.DataFrame, src: str = "close", n: int = 14) -> pd.Series:
+    """Fisher transform of RSI as in the Freqtrade sample strategies: tanh(0.1 * (RSI - 50))."""
+    return np.tanh(0.1 * (rsi(df, src, int(n)) - 50.0))
+
+
 def rvol(df: pd.DataFrame, n: int = 14) -> pd.Series:
     """Relative volume: volume / SMA(volume, n), the current bar included."""
     vol = _col(df, "volume")
@@ -516,7 +569,7 @@ REGISTRY: dict[str, Callable[..., pd.Series | pd.DataFrame]] = {
     "vwap": vwap, "kama": kama, "ichimoku": ichimoku, "supertrend": supertrend, "roc": roc,
     "zscore": zscore, "highest": highest, "lowest": lowest, "ott": ott, "pmax": pmax, "rvol": rvol,
     "stdev": stdev, "var": var, "rrs": rrs, "atr_ratio": atr_ratio,
-    "heikinashi": heikinashi, "alphatrend": alphatrend, "ut_bot": ut_bot,
+    "heikinashi": heikinashi, "alphatrend": alphatrend, "ut_bot": ut_bot, "sar": sar, "fisher_rsi": fisher_rsi,
     "open": _price("open"), "high": _price("high"), "low": _price("low"), "close": _price("close"), "volume": _price("volume"),
 }
 

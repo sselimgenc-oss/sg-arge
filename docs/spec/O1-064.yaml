@@ -24,6 +24,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [NQ]
+ozel_kod_nedeni: bekleyen_emir
 parametreler:
   ema20.n: 20
   entry_offset_ticks: 1
@@ -47,3 +49,5 @@ belirsiz:
   mumunun diğer ucuna (low[1]) konulur, kar hedefi 100 NQ puanıdır (400 tick)'
 - 'short kuralı var: Mum EMA(20) altında kapandığında (close[1] < ema20[1]), o mumun en düşüğünün 1 tick (0.25 puan) altına kırılımda short girilir; stop-loss sinyal mumunun en yükseği (high[1]), hedef
   100 puan'
+- "ozel_kod_nedeni: bekleyen_emir (sinyal mumunun yuksegine +1 tick (0.25 puan) Buy Stop; tick/puan birimi NQ'ya ozgu)"
+- "piyasa_kisiti: ['NQ'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

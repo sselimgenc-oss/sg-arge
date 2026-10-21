@@ -39,6 +39,7 @@ hedef:
   carpan: 3.0
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   tenkan_len: 9
   kijun_len: 26
@@ -61,3 +62,4 @@ belirsiz:
 - 'Jesse.Trade sayfasından yazarın (saleh) strateji açıklaması ve backtest raporu okundu: Ichimoku Bulutu üzerinde trend teyidi + ADX trend gücü filtresi + Bollinger Bant Genişliği (BBW) volatilite filtresi
   ile Long açılır; ATR tabanlı stop loss ve take profit uygulanır'
 - 'short kuralı var: Fiyat Kumo bulutu altına indiğinde ve ADX teyit verdiğinde short açılır'
+- "ozel_kod_nedeni: tanim_belirsiz (bbw_expansion (Bollinger genisligi genislemesi) ve ADX/BB esikleri kartta tanimli degil)"

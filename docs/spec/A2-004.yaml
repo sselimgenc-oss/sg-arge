@@ -25,6 +25,7 @@ zaman_stop:
   bar: 2
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [XAUUSD]
 ozel_kod_nedeni: seans_saat
 parametreler:
   InpEntryHour: 1
@@ -52,3 +53,4 @@ belirsiz:
   atlanır (InpSkipMonday=true)'
 - Yalnızca Long yönlü bir seans anomalisidir
 - "ozel_kod_nedeni: seans_saat (CME bakim arasi sonrasi yeniden acilis saatinde tek islem, sunucu saati ve spread filtresi)"
+- "piyasa_kisiti: ['XAUUSD'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

@@ -21,6 +21,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [GER40]
+ozel_kod_nedeni: seans_saat
 parametreler:
   tema.n: 5
   orb_start: 90000
@@ -52,3 +54,5 @@ belirsiz:
   DailyHigh) gerçekleştiğinde Long açılır, (4) Stop-loss sl = DailyHigh - DailyLow (açılış aralığı genişliği kadar), Take-profit tp = sl (1:1 R:R) ve akşam 17:30''da (DEFPARAM FlatAfter = 173000) açık pozisyon
   kapatılır'
 - 'short kuralı var: Saat 09:30-15:00 arasında günde en fazla 1 short şartıyla cross_under(TEMA[5](close), DailyLow) ve close < DClose(1) olduğunda short açılır (SL ve TP = DailyHigh - DailyLow)'
+- "ozel_kod_nedeni: seans_saat (09:00-09:30 acilis araligi, 09:30-11:30 / 13:00-17:15 islem pencereleri, gunde en fazla 1 islem)"
+- "piyasa_kisiti: ['GER40'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

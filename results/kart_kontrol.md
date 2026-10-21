@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
-Kart sayisi: 203 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 110
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **49**; ayrica `dakikalik` (yalniz kripto testi) hazir: **7**
+Kart sayisi: 203 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 93
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **49**; ayrica `dakikalik` (yalniz kripto testi) hazir: **11**
 
 
 ## Durum dagilimi
@@ -52,12 +52,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | mott_b5 | 4 |
 | close_tqqq | 4 |
 | orb_high | 3 |
-| fisher_rsi | 3 |
-| ha_close | 2 |
-| ha_open | 2 |
-| sar | 2 |
-| fastd | 2 |
-| fastk | 2 |
 | mov_var | 2 |
 | ott_opt2 | 2 |
 | session_time | 2 |
@@ -117,7 +111,8 @@ Toplam: 7 (durum `tam` olanlar once)
 | bb_typical_alt | 1 |
 | cdl_hammer | 1 |
 | stoch_slowk | 1 |
-| fisher_rsi_norma | 1 |
+| fisher_rsi | 1 |
+| sar | 1 |
 | ott_hhv | 1 |
 | stosk_ott | 1 |
 | ott_llv | 1 |
@@ -191,5 +186,5 @@ Toplam: 7 (durum `tam` olanlar once)
 
 ## Diger kartlarda sorun sayisi
 
-`tam` olmayan 92 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
+`tam` olmayan 75 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
 

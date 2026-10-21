@@ -17,6 +17,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [US100]
+ozel_kod_nedeni: seans_saat
 parametreler:
   range_start_server: '16:30'
   range_length_min: 15
@@ -39,3 +41,5 @@ belirsiz:
   aralığın üstüne Buy Stop, altına Sell Stop konulur (biri tetiklendiğinde diğeri silinir, OCO); günde en fazla 1 işlem yapılır ve tüm işlemler seans kapanışından önce kapatılır; stop mesafesi aralık genişliğine
   göredir'
 - 'short kuralı var: low <= orb_low - buffer olduğunda Sell Stop tetiklenerek short açılır'
+- "ozel_kod_nedeni: seans_saat (acilis araligi sunucu saati 16:30'dan baslar, OCO Buy/Sell Stop, gunde 1 islem ve seans kapanisi)"
+- "piyasa_kisiti: ['US100'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

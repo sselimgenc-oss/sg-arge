@@ -31,6 +31,7 @@ hedef:
   deger: 0.5
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   nBars: 12
   farback: 100
@@ -59,3 +60,4 @@ belirsiz:
 - 'Özel kod mantığı: nBars=12 periyotluk yerel dip pivotunda (aLPivs == 1) Buy, yerel tepe pivotunda (aHPivs == 1) Sell üretilir; yorum panosundaki genişletilmiş sürümde hedefler tar1 = +0.50%, tar2 = +0.92%,
   tar3 = +1.79% ve stop-loss slPrice = HighestSince(Buy, LLV(L, 40)) olarak tanımlanmıştır'
 - 'short kuralı var: aHPivs == 1 (12 barlık tepe pivotu) oluştuğunda Sell / Short sinyali üretilir'
+- "ozel_kod_nedeni: tanim_belirsiz ('aLPivs == 1' yerel pivot tanimi (cok barli onay mi, low == LLV(12) mi) kartta belirsiz; kodun genisletilmis surumu farkli hedefler kullaniyor)"

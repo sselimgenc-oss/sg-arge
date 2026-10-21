@@ -35,6 +35,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Chandelier Exit ATR periyodu 1 (= bar aralığı) ve çarpan 2; ZLSMA = lsma + (lsma - linreg(lsma,50)): ikisi listede yok: ozel_kod'
@@ -42,4 +43,5 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/CEZLSMA.pine'
 - Yazarın test penceresi çok kısa (2023-07-02/07-12 (10 gün)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
+- "ozel_kod_nedeni: ozel_gosterge (ZLSMA ve Chandelier Exit (ATR periyodu 1) kutuphanede yok ve yalniz bu kartta gerekli; stop sinyal barinda sabitlenir)"
 bias_varsayim: false

@@ -29,6 +29,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [BIST]
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   MajorTrend_OttPeriod: 15
   MajorTrend_OttOPT: 7.0
@@ -55,3 +57,5 @@ belirsiz:
 - Algo Kütüphanesi MatriksIq C# kodundan tüm parametreler eksiksiz okundu; sadece LONG işlem yapmaktadır
 - 'Özel kod mantığı: HOTT (HHV üzerine OTT) ve LOTT (LLV üzerine OTT) indikatörleri ile TOTT ve SOTT bileşenlerinin 4 bölgeli trend filtreli kurgusudur'
 - "T7 sozdizimi: ternary (c ? a : b) '(c and a) or (not c and b)' bicimine cevrildi; anlam ayni"
+- "ozel_kod_nedeni: tanim_belirsiz (TOTT/SOTT ve HOTT/LOTT (OTT(HHV)/OTT(LLV)) bolge kosullari kartta tanimli degil)"
+- "piyasa_kisiti: ['BIST'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

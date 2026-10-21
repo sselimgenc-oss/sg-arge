@@ -23,6 +23,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 parametreler:
   mm_tema.n: 56
   surachat_tma.n: 10
@@ -53,3 +54,4 @@ belirsiz:
   emir), 33 pip MFE iz süren stop ve 200 pip ana stop-loss (SET STOP pLOSS 200)'
 - 'İçsel gün içi güncellenme notu: DHigh(0) ve DLow(0) cari günün o ana kadarki en yüksek/düşük değerini kullanır'
 - 'short kuralı var: MM < Survente ve cross_under(close, Milieu) olduğunda 3 kontrat short açılır (+40 pip ve +78 pip kısmi kâr, 33 pip iz süren stop, 200 pip SL)'
+- "ozel_kod_nedeni: ozel_gosterge (TEMA/ucgen MA ve Dhigh/Dlow (cari gun) tabanli Milieu/Surachat; ProBuilder gunluk ust-alt fonksiyonlari)"

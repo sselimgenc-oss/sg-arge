@@ -30,7 +30,18 @@ gostergeler:
   dmi14:
     f: dmi
     n: 14
-giris: volume > vol_sma70 * 4 and close < sma40 and fastd > fastk and rsi14 > 30 and fastd > 30 and fisher_rsi_norma < 30
+  fisher:
+    f: "fisher_rsi"
+    n: 14
+  fisher_norma:
+    f: "seri"
+    ifade: "50 * (fisher + 1)"
+  fast:
+    f: "stoch"
+    k: 5
+    d: 3
+    smooth: 1
+giris: "volume > vol_sma70 * 4 and close < sma40 and fast.d > fast.k and rsi14 > 30 and fast.d > 30 and fisher_norma < 30"
 cikis: cross_over(rsi14, 70) and macd.macd < 0 and dmi14.minus > 50
 stop:
   tip: yuzde
@@ -48,13 +59,14 @@ rapor:
   wr: null
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - Fisher RSI normalize (50*(fisher+1)) ve STOCHF listede yok
 - Parametreler optimize edilebilir (IntParameter); varsayılanlar alındı
 - Çıkış tetikleyicisi varsayılan 'rsi-macd-minusdi'
 - 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy005.py'
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- "T8: ozel_kod true -> false (fisher_rsi eklendi (A3-010c ile ortak); fisher_rsi_norma = 50*(fisher+1) seri olarak yazildi; dmi14.minus TA-Lib MINUS_DI ile 1e-13 uyumlu; 5m kart yalniz kripto testine gider); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 roi_tablosu:
   0: 0.05
   20: 0.04

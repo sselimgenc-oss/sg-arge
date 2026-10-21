@@ -24,6 +24,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
 parametreler:
   start_time_gmt: 05:00
   max_basket_trades: 40
@@ -45,4 +46,5 @@ belirsiz:
   kapatılır; stop-loss yoktur'
 - Quantum.mq4 içindeki varsayılan eintDepth3 (kanal periyodu) sayısal değeri ilk mesaj metninde yazmayıp ekli .mq4/.tpl dosyasındadır
 - 'short kuralı var: 05:00 GMT sonrası kırmızı kutularda kademeli short sepeti açılır ve ilk mavi kutuda tüm sepet kapatılır'
+- "ozel_kod_nedeni: durum_makinesi (kademeli lot artan sepet (grid) ve repaint eden Quantum gostergesi)"
 kart_yazari: argon

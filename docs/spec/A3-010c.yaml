@@ -37,9 +37,18 @@ gostergeler:
     f: ema
     src: close
     n: 100
-giris: rsi14 < 28 and rsi14 > 0 and close < sma40 and fisher_rsi < -0.94 and mfi < 16 and (ema50 > ema100 or cross_over(ema5, ema10)) and fastd > fastk
-  and fastd > 0
-cikis: sar > close and fisher_rsi > 0.3
+  fisher:
+    f: "fisher_rsi"
+    n: 14
+  sar:
+    f: "sar"
+  fast:
+    f: "stoch"
+    k: 5
+    d: 3
+    smooth: 1
+giris: "rsi14 < 28 and rsi14 > 0 and close < sma40 and fisher < -0.94 and mfi < 16 and (ema50 > ema100 or cross_over(ema5, ema10)) and fast.d > fast.k and fast.d > 0"
+cikis: "sar > close and fisher > 0.3"
 stop:
   tip: yuzde
   deger: 10
@@ -56,7 +65,7 @@ rapor:
   wr: null
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - '5m zaman dilimi: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Zaman bazlı ROI tablosu (roi_tablosu) ve sabit %10 stop şemada yok: şema uzantısı'
@@ -64,6 +73,7 @@ belirsiz:
 - Fork içeriği resmi depodakiyle karşılaştırılmadı; kural resmi depo koduna dayanıyor
 - SAR ve Fisher RSI listede yok; STOCHF (fast stoch)
 - 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy003.py'
+- "T8: ozel_kod true -> false (sar (TA-Lib TA_SAR portu, TA-Lib ile 1e-14 uyumlu) ve fisher_rsi (tanh(0.1*(RSI-50))) kutuphaneye eklendi; STOCHF(5,3) = stoch(k=5,d=3,smooth=1) (TA-Lib ile uyumlu); 'sar'/'fisher_rsi'/'fastd/fastk' adlari gostergelere baglandi; 5m kart yalniz kripto testine gider); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 roi_tablosu:
   0: 0.05
   20: 0.04

@@ -75,7 +75,7 @@
       "id": "T8",
       "owner": "claude-moderator",
       "title": "ozel_kod azaltma: tam/dakikalik ozel_kod kartlari (88) ifade diline ya da kutuphaneye tasima",
-      "status": "1/2 PR acik (tam: 23 kart taramaya hazir, 24 ozel_kod_nedeni); 2/2 dakikalik sirada",
+      "status": "2/2 PR acik: dakikalik 41 kart (4 cevrildi, 37 ozel_kod_nedeni); piyasa_kisiti 25 kart; lider incelemesi bekleniyor",
       "spec": "Issue #1 GOREV -> Sonnet T8"
     },
     {

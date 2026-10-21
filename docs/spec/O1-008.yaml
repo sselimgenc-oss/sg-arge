@@ -33,6 +33,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [BIST]
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   MajorTrend_period: 30
   MajorTrend_OttOpt: 8.0
@@ -79,3 +81,5 @@ belirsiz:
   Long açılır. Major Trend aşağı ise 2. Bölge şartları (OTT(30, 0.9) altta, StochSlow(500,300,111) yukarı kesişimli ve H > HHV(H, 22)[1]) ile Long açılır. Pozisyon kapama 3. Bölge (LLV 23) veya 4. Bölge
   (LLV 24) koşullarıyla gerçekleşir'
 - "T7 sozdizimi: ternary (c ? a : b) '(c and a) or (not c and b)' bicimine cevrildi; anlam ayni"
+- "ozel_kod_nedeni: tanim_belirsiz (OTT/StochSlow(500,200,111) bolge kosullari (ott2_bull, stoc1_bull...) Matriks tanimlariyla kartta yok)"
+- "piyasa_kisiti: ['BIST'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
