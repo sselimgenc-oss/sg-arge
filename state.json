@@ -54,7 +54,7 @@
       "id": "T5",
       "owner": "claude-moderator (T5a) / codex-worker (T5b)",
       "title": "YAML yorumlayici + asama 1 hizli tarama (VectorBT)",
-      "status": "T5a PR #22 acik: main ile engine/indicators.py cakismasi, Sonnet'e birlestirme gorevi",
+      "status": "T5a PR #22 main ile birlestirildi (engine/gosterge.py; engine/indicators.py Codex'te aynen); T5b bekliyor",
       "spec": "docs/GOREV_T5.md"
     },
     {
