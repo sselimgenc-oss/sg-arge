@@ -82,7 +82,7 @@
       "id": "T9",
       "owner": "tarayici (kullanicinin bilgisayarindaki Claude)",
       "title": "YENIDEN.csv'deki 47 kaynagin kodunu kaynak/<ID>.md olarak kopyalamak",
-      "status": "atandi",
+      "status": "iptal (kullanici karari): 47 kart Dogrulanamaz (kaynak erisilemedi)",
       "spec": "kaynak/GOREV_TARAYICI.md"
     }
   ],
@@ -166,7 +166,8 @@
   "decisions": [
     "2026-10-21 kullanici: portfoy MDD ust siniri %15 onaylandi",
     "2026-10-21 kullanici: saatlik veri ucretsiz internet kaynaklarindan (yfinance 1h ~730 gun, Binance data-api)",
-    "2026-10-21 kullanici: Codex environment kuruldu; Sonnet manuel tetiklenecek"
+    "2026-10-21 kullanici: Codex environment kuruldu; Sonnet manuel tetiklenecek",
+    "2026-10-21 kullanici: okunamayan kaynaklar icin tarayici yolu yok; YENIDEN.csv kartlari Dogrulanamaz (kaynak erisilemedi)"
   ],
   "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz.",
   "triggers": {
