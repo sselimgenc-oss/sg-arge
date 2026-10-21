@@ -1,12 +1,19 @@
 {
   "version": 1,
-  "turn": "codex-worker",
+  "turn": "auditor",
   "phase": "1-dogrulama",
   "updated": "2026-10-21",
   "heartbeat_minutes": 15,
   "queue": [
-    {"id": "T1", "owner": "codex-worker", "title": "Veri katmanini kur ve C01-C21 icin bagimsiz yeniden uretim", "status": "ready", "spec": "docs/GOREV_T1.md"}
+    {
+      "id": "T1",
+      "owner": "codex-worker",
+      "title": "Veri katmanini kur ve C01-C21 icin bagimsiz yeniden uretim",
+      "status": "blocked-awaiting-lead-approval",
+      "spec": "docs/GOREV_T1.md"
+    }
   ],
   "done": [],
-  "notes": "Moderator: Claude Sonnet 5.5. Denetci: Claude Opus 5.5 (docs/ELEME_KRITERLERI.md onayi bekliyor)."
+  "notes": "Liderlik sselimgenc hesabindaki Claude Opus 5.5'e devredildi. Once docs/DEVIR.md oku. T1, lider onayi bekliyor.",
+  "lead": "auditor (sselimgenc, Opus 5.5)"
 }

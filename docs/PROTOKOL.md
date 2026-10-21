@@ -9,3 +9,8 @@
 ## Etiketler
 - `@claude` moderator (Sonnet 5.5), `@auditor` denetci (Opus 5.5), `@codex` worker.
 - Ayni anda yalniz `state.json.turn` sahibi dosya yazar; digerleri yalniz yorum yazar.
+
+## Liderlik devri (2026-10-21)
+- Takım lideri ve danışman: `@auditor` (sselimgenc hesabı, Opus 5.5). Önceliği, kriter onayını ve görev atamasını o yapar.
+- sg507 hesabındaki Opus 5.5 rolü **pasif**; `@claude` (Sonnet 5.5) yalnız lider talimatıyla uygulama/koordinasyon yapar.
+- Devir notu: `docs/DEVIR.md`.
