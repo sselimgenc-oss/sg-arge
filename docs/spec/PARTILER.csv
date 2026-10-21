@@ -199,46 +199,46 @@ A6-012,6,argon,1,Better Tests with Oversampling (3 mum fiyat aksiyonu),Day,The F
 A6-014,6,argon,1,Trend trading system with Market Meanness Index (Why 90% of Backtests Fail),Swing,The Financial Hacker,https://financial-hacker.com/why-90-of-backtests-fail/
 A6-015,6,argon,1,Double Bottom Country ETF Trading,Swing,QuantPedia,https://quantpedia.com/technical-analysis-report-methodology-double-bottom-country-trading-strategy/
 A6-016,6,argon,1,Building and Testing Trend-Following Strategies on One-Minute SPY Data,Swing,QuantPedia,https://quantpedia.com/building-and-testing-trend-following-strategies-on-one-minute-spy-data/
-A6-017,7,claude-moderator,1,Can Weakening Morning Order Flow Predict SPY Reversals?,Swing,QuantPedia,https://quantpedia.com/can-weakening-morning-order-flow-predict-spy-reversals/
-A6-019,7,claude-moderator,1,Overnight Seasonality in Bitcoin,Day,QuantPedia,https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin
-A6-021,7,claude-moderator,1,Pairs Trading with Country ETFs,Swing,QuantPedia,https://quantpedia.com/strategies/pairs-trading-with-country-etfs
-A6-022,7,claude-moderator,1,How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin,Day,QuantPedia,https://quantpedia.com/how-to-design-a-simple-multi-timeframe-trend-strategy-on-bitcoin/
-A6-023,7,claude-moderator,1,Attention Prop Traders: first half hour predicts last half hour,Day,Alpha Architect,https://alphaarchitect.com/attention-prop-traders-the-first-half-hour-of-trading-predicts-the-last-half-hour/
-A7-001,7,claude-moderator,1,NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan),Day,Elite Trader,https://www.elitetrader.com/et/threads/i-backtested-37-famous-strategies-with-fees-on-most-lose-mechanically-after-costs-data-one-that-didnt.390197/
-A7-004,7,claude-moderator,1,"S&P500-VIX diverjans stratejisi (Scherman, BI makalesi)",Swing,Elite Trader,https://www.elitetrader.com/et/threads/strategy-with-75-win-ratio-and-3-to-1-profit-potential-count-me-as-a-skeptic.382581/
-A7-007,7,claude-moderator,1,ES Renko/Donchian 21 pullback scalp (RichJamo günlüğü),Day,NexusFi (futures.io),https://futures.io/trading-journals/33441-rich-s-es-s-p-500-futures-contract-intraday-strategy.html
-O1-017,7,claude-moderator,1,"Sistem 2: RSI ortalama kesişimi (VİOP30 5 dk, long)",Day,Bilge Yatırımcı,https://www.bilgeyatirimci.com/i/sistem-tester-performans-testi-back-test-yaparken-nelere-dikkat-etmeliyiz/
-O2-008,7,claude-moderator,1,Highest Open / Lowest Open Trade,Day,Forex Factory,https://www.forexfactory.com/thread/590623-highest-open-lowest-open-trade
-O2-009,7,claude-moderator,1,M1 Countertrend Scalping Strategy,Day,Forex Factory,https://www.forexfactory.com/thread/1190104-m1-countertrend-scalping-strategy
-O2-023,7,claude-moderator,1,Intraday Trading Strategy for Futures Contract NQ,Day,QuantConnect,https://www.quantconnect.com/forum/discussion/15192
-O3-012,7,claude-moderator,1,MACD and RSI Strategy (73% win rate),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/macd-and-rsi-strategy/
-O3-013,7,claude-moderator,1,Turnaround Tuesday (SPY),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/turnaround-tuesday-strategy/
-O3-016,7,claude-moderator,1,Gap down + 25 MA filtresi (S&P 500 gün içi),Day,QuantifiedStrategies,https://www.quantifiedstrategies.com/gap-trading-strategies/
-O3-018,7,claude-moderator,1,VRT Levels – hacim tabanlı destek/direnç kırılım+reddi,Swing,Reddit (ayna/anlık görüntü),https://reddit.com/r/algotrading/comments/1tbgqmn/my_strategy_outperformed_the_sp_500_over_3_years/
-O3-022,7,claude-moderator,1,DAX Value Area günlük bias sistemi,Day,NexusFi (futures.io),https://nexusfi.com/showthread.php?t=44951
-O3-023,7,claude-moderator,1,London Session ORB – GBP (mekanik kırılım günlüğü),Day,NexusFi (futures.io),https://nexusfi.com/showthread.php?t=36245
-O3-025,7,claude-moderator,1,Bollinger Prism – NQ reversal (PF 2.78),Day,Elite Trader,https://www.elitetrader.com/et/threads/nq-reversal-strategy-backtest-reached-profit-factor-2-78.389985/
-O3-027,7,claude-moderator,1,Mean Reversion Strategy Journal – Buy Sell Bands (ABD hisseleri),Swing,Elite Trader,https://elitetrader.com/et/threads/mean-reversion-strategy-journal.363044/
-O3-030,7,claude-moderator,1,75%+ win rate trend stratejisi (Jim Brown kitabından) – EURUSD,Swing,Trading Heroes,https://www.tradingheroes.com/75-win-rate-trading-strategy/
-O3-031,7,claude-moderator,1,RSI Divergence swing – 27 parite günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-strategy-for-swing-trading/
-O3-032,7,claude-moderator,1,RSI50 stratejisi – EURUSD günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-trading-strategy-results/
-O3-033,7,claude-moderator,1,RSIDive (RSI uyumsuzluğu) – EURUSD günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-trading-strategy-results/
-O3-034,7,claude-moderator,1,Trending Pin Bar v2 – EURUSD H4,Swing,Trading Heroes,https://www.tradingheroes.com/backtesting-results-tpb-eurusd-h4/
-A1-018,7,claude-moderator,2,HYSTERIAN BIST:SISE TRADE ALGORITHM,Day,TradingView,https://tr.tradingview.com/script/DuPtf4A6
-A5-012,7,claude-moderator,2,Self-Imposed Limits to Arbitrage,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/self-imposed-limits-to-arbitrage
-A5-013,7,claude-moderator,2,Trading Volume Effects of Moving Average Heuristics,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/trading-volume-effects-of-moving-average-heuristics
-A5-014,7,claude-moderator,2,"Seasonality, Trend-following, and Mean reversion in Bitcoin",Day,PapersWithBacktest,https://paperswithbacktest.com/strategies/seasonality-trend-following-and-mean-reversion-in-bitcoin
-A5-016,7,claude-moderator,2,Stock Market Predictability in the MENA: Evidence from New Variance Ratio Tests and Technical Trade Analysis,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/stock-market-predictability-in-the-mena-evidence-from-new-variance-ratio-tests-and-technical-trade-analysis
-A5-020,7,claude-moderator,2,Finding Consistent Trends with Strong Momentum – RSI for Trend-Following and Momentum Strategies,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/finding-consistent-trends-with-strong-momentum-rsi-for-trend-following-and-momentum-strategies
-A5-022,7,claude-moderator,2,Trend-based Forecast of Cryptocurrency Returns,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/trend-based-forecast-of-cryptocurrency-returns
-A5-023,7,claude-moderator,2,Signal Prediction in cryptocurrency tradeoperations: a machine learning-based approach,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/signal-prediction-in-cryptocurrency-tradeoperations-a-machine-learning-based-approach
-A5-024,7,claude-moderator,2,Impact of Earnings Announcements for Dow Jones Index Stocks,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/impact-of-earnings-announcements-for-dow-jones-index-stocks
-A6-020,7,claude-moderator,2,Market Sentiment and an Overnight Anomaly,Day,QuantPedia,https://quantpedia.com/strategies/market-sentiment-and-an-overnight-anomaly
-A7-002,7,claude-moderator,2,RSI aşırı alım/satım Forex sistemi (PF 2.41),Day,Elite Trader,https://www.elitetrader.com/et/threads/improved-trading-strategy-results-profit-factor-increased-to-2-41.382680/
-A7-005,7,claude-moderator,2,Long-only ABD hisseleri dakikalık gün içi (Level4),Day,Elite Trader,https://www.elitetrader.com/et/threads/analyzing-backtesting-results.387769/
-A7-006,7,claude-moderator,2,Kripto 50 parite long-only gösterge tarayıcı sistemi,Swing,Elite Trader,https://www.elitetrader.com/et/threads/automated-trading-feedback.382851/
-B3-001,7,claude-moderator,2,RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/rsi-mean-reversion-trading-strategy
-B3-002,7,claude-moderator,2,RSI Pullback Strategy (SPY),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/rsi-pullback-strategy
+A6-017,7,argon,1,Can Weakening Morning Order Flow Predict SPY Reversals?,Swing,QuantPedia,https://quantpedia.com/can-weakening-morning-order-flow-predict-spy-reversals/
+A6-019,7,argon,1,Overnight Seasonality in Bitcoin,Day,QuantPedia,https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin
+A6-021,7,argon,1,Pairs Trading with Country ETFs,Swing,QuantPedia,https://quantpedia.com/strategies/pairs-trading-with-country-etfs
+A6-022,7,argon,1,How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin,Day,QuantPedia,https://quantpedia.com/how-to-design-a-simple-multi-timeframe-trend-strategy-on-bitcoin/
+A6-023,7,argon,1,Attention Prop Traders: first half hour predicts last half hour,Day,Alpha Architect,https://alphaarchitect.com/attention-prop-traders-the-first-half-hour-of-trading-predicts-the-last-half-hour/
+A7-001,7,argon,1,NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan),Day,Elite Trader,https://www.elitetrader.com/et/threads/i-backtested-37-famous-strategies-with-fees-on-most-lose-mechanically-after-costs-data-one-that-didnt.390197/
+A7-004,7,argon,1,"S&P500-VIX diverjans stratejisi (Scherman, BI makalesi)",Swing,Elite Trader,https://www.elitetrader.com/et/threads/strategy-with-75-win-ratio-and-3-to-1-profit-potential-count-me-as-a-skeptic.382581/
+A7-007,7,argon,1,ES Renko/Donchian 21 pullback scalp (RichJamo günlüğü),Day,NexusFi (futures.io),https://futures.io/trading-journals/33441-rich-s-es-s-p-500-futures-contract-intraday-strategy.html
+O1-017,7,argon,1,"Sistem 2: RSI ortalama kesişimi (VİOP30 5 dk, long)",Day,Bilge Yatırımcı,https://www.bilgeyatirimci.com/i/sistem-tester-performans-testi-back-test-yaparken-nelere-dikkat-etmeliyiz/
+O2-008,7,argon,1,Highest Open / Lowest Open Trade,Day,Forex Factory,https://www.forexfactory.com/thread/590623-highest-open-lowest-open-trade
+O2-009,7,argon,1,M1 Countertrend Scalping Strategy,Day,Forex Factory,https://www.forexfactory.com/thread/1190104-m1-countertrend-scalping-strategy
+O2-023,7,argon,1,Intraday Trading Strategy for Futures Contract NQ,Day,QuantConnect,https://www.quantconnect.com/forum/discussion/15192
+O3-012,7,argon,1,MACD and RSI Strategy (73% win rate),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/macd-and-rsi-strategy/
+O3-013,7,argon,1,Turnaround Tuesday (SPY),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/turnaround-tuesday-strategy/
+O3-016,7,argon,1,Gap down + 25 MA filtresi (S&P 500 gün içi),Day,QuantifiedStrategies,https://www.quantifiedstrategies.com/gap-trading-strategies/
+O3-018,7,argon,1,VRT Levels – hacim tabanlı destek/direnç kırılım+reddi,Swing,Reddit (ayna/anlık görüntü),https://reddit.com/r/algotrading/comments/1tbgqmn/my_strategy_outperformed_the_sp_500_over_3_years/
+O3-022,7,argon,1,DAX Value Area günlük bias sistemi,Day,NexusFi (futures.io),https://nexusfi.com/showthread.php?t=44951
+O3-023,7,argon,1,London Session ORB – GBP (mekanik kırılım günlüğü),Day,NexusFi (futures.io),https://nexusfi.com/showthread.php?t=36245
+O3-025,7,argon,1,Bollinger Prism – NQ reversal (PF 2.78),Day,Elite Trader,https://www.elitetrader.com/et/threads/nq-reversal-strategy-backtest-reached-profit-factor-2-78.389985/
+O3-027,7,argon,1,Mean Reversion Strategy Journal – Buy Sell Bands (ABD hisseleri),Swing,Elite Trader,https://elitetrader.com/et/threads/mean-reversion-strategy-journal.363044/
+O3-030,7,argon,1,75%+ win rate trend stratejisi (Jim Brown kitabından) – EURUSD,Swing,Trading Heroes,https://www.tradingheroes.com/75-win-rate-trading-strategy/
+O3-031,7,argon,1,RSI Divergence swing – 27 parite günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-strategy-for-swing-trading/
+O3-032,7,argon,1,RSI50 stratejisi – EURUSD günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-trading-strategy-results/
+O3-033,7,argon,1,RSIDive (RSI uyumsuzluğu) – EURUSD günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-trading-strategy-results/
+O3-034,7,argon,1,Trending Pin Bar v2 – EURUSD H4,Swing,Trading Heroes,https://www.tradingheroes.com/backtesting-results-tpb-eurusd-h4/
+A1-018,7,argon,2,HYSTERIAN BIST:SISE TRADE ALGORITHM,Day,TradingView,https://tr.tradingview.com/script/DuPtf4A6
+A5-012,7,argon,2,Self-Imposed Limits to Arbitrage,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/self-imposed-limits-to-arbitrage
+A5-013,7,argon,2,Trading Volume Effects of Moving Average Heuristics,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/trading-volume-effects-of-moving-average-heuristics
+A5-014,7,argon,2,"Seasonality, Trend-following, and Mean reversion in Bitcoin",Day,PapersWithBacktest,https://paperswithbacktest.com/strategies/seasonality-trend-following-and-mean-reversion-in-bitcoin
+A5-016,7,argon,2,Stock Market Predictability in the MENA: Evidence from New Variance Ratio Tests and Technical Trade Analysis,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/stock-market-predictability-in-the-mena-evidence-from-new-variance-ratio-tests-and-technical-trade-analysis
+A5-020,7,argon,2,Finding Consistent Trends with Strong Momentum – RSI for Trend-Following and Momentum Strategies,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/finding-consistent-trends-with-strong-momentum-rsi-for-trend-following-and-momentum-strategies
+A5-022,7,argon,2,Trend-based Forecast of Cryptocurrency Returns,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/trend-based-forecast-of-cryptocurrency-returns
+A5-023,7,argon,2,Signal Prediction in cryptocurrency tradeoperations: a machine learning-based approach,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/signal-prediction-in-cryptocurrency-tradeoperations-a-machine-learning-based-approach
+A5-024,7,argon,2,Impact of Earnings Announcements for Dow Jones Index Stocks,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/impact-of-earnings-announcements-for-dow-jones-index-stocks
+A6-020,7,argon,2,Market Sentiment and an Overnight Anomaly,Day,QuantPedia,https://quantpedia.com/strategies/market-sentiment-and-an-overnight-anomaly
+A7-002,7,argon,2,RSI aşırı alım/satım Forex sistemi (PF 2.41),Day,Elite Trader,https://www.elitetrader.com/et/threads/improved-trading-strategy-results-profit-factor-increased-to-2-41.382680/
+A7-005,7,argon,2,Long-only ABD hisseleri dakikalık gün içi (Level4),Day,Elite Trader,https://www.elitetrader.com/et/threads/analyzing-backtesting-results.387769/
+A7-006,7,argon,2,Kripto 50 parite long-only gösterge tarayıcı sistemi,Swing,Elite Trader,https://www.elitetrader.com/et/threads/automated-trading-feedback.382851/
+B3-001,7,argon,2,RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/rsi-mean-reversion-trading-strategy
+B3-002,7,argon,2,RSI Pullback Strategy (SPY),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/rsi-pullback-strategy
 B3-003,8,argon,2,GBPUSD Forex Strategy (Python Code Included),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/gbpusd-forex-strategy-python-code
 B3-004,8,argon,2,Trend Following and Mean Reversion Strategy - Combined (QQQ),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/trend-following-and-mean-reversion
 B3-005,8,argon,2,Triple RSI Strategy (90.36% win rate),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/triple-rsi-strategy-9036-win-rate-2c5
@@ -279,4 +279,4 @@ P3-029,8,argon,2,Quant AI SP500,Belirsiz (Day/Swing),Collective2,https://collect
 P3-030,8,argon,2,AIB STOCKS and FUT,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
 P3-031,8,argon,2,AEA Algo MES,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
 P3-032,8,argon,2,SQT Stocks Long Portfolio 2x,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
-P3-033,9,claude-moderator,2,Index Futures Trading,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-033,9,argon,2,Index Futures Trading,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid

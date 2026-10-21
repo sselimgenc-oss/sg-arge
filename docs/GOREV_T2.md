@@ -6,7 +6,7 @@ Hedef ve mimari: `docs/HEDEF.md`. Kart semasi ve kurallar: `docs/EVRENSEL_KURALL
 ## Kapsam (~316 strateji, partiler halinde)
 Her parti ayri PR. Lider her partiyi inceler; onaydan sonra sonraki parti.
 - **Parti 1 (pilot, 20 kart):** PDF raporlarindaki B seviyesi stratejiler: P01-P04, R01-R05, R07, V1A, V1B, V2A, V2B ve Paper_Test_8'deki 7 strateji.
-- **Parti 2-9 (40'ar kart):** `strateji_listesi (2).xlsx` (281 satir). Parti ve sahip atamasi lider tarafindan sabitlendi: `docs/spec/PARTILER.csv` (sira: kodu acik → kurali metinde acik → geri kalan). **Cift partiler (2,4,6,8) Argon'da, tek partiler (3,5,7,9) Sonnet'te.** Sonnet: parti 1 → 3 → 5 → 7 → 9.
+- **Parti 2-9 (40'ar kart):** `strateji_listesi (2).xlsx` (281 satir). Parti ve sahip atamasi lider tarafindan sabitlendi: `docs/spec/PARTILER.csv` (sira: kodu acik → kurali metinde acik → geri kalan). **B plani:** 1, 3, 5 Sonnet'te tamamlandi; kalan 4, 6, 7, 8, 9 ve YENIDEN.csv Argon'da (Sonnet ortami web'e erisemiyor).
 - C01-C21 kartlari gerekmez (T1a'da dogrudan kodlaniyor).
 
 ## Her strateji icin
