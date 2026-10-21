@@ -1,0 +1,32 @@
+id: O2-012
+ad: OHLCMTF Scalper EA - Multi-Timeframe Price Action
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/70796
+  sayfa: O2-012
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Emtia/Kripto
+gostergeler: {}
+giris: null
+cikis: SL modu (puan/%bakiye/USD), başabaş, emir süresi
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: kapsam_disi
+ozel_kod: false
+belirsiz:
+- 'Yazarın kendi sözleriyle kod bir iskelet (''minimal shell''): girişler kullanıcı mantığı için yer tutucu: strateji değil'
+bias_varsayim: false

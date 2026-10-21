@@ -1,0 +1,45 @@
+id: O2-017
+ad: TemaTrendFollowing
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://jesse.trade/strategies/tematrendfollowing
+  sayfa: O2-017
+tarz: day
+tf: 30m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler:
+  tema10:
+    f: tema
+    n: 10
+  tema80:
+    f: tema
+    n: 80
+  adx:
+    f: adx
+    n: 14
+giris: tema10 cross_over tema80 and adx > 40 and cmo_teyit ; 4h TEMA 20/70 trend filtresi
+cikis: ATR bazlı stop/hedef (çarpanlar yok)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: 2.97
+  getiri: +%309.26 (3x kaldıraç; 30.925,87 $)
+  mdd: -25.99 (birim yok)
+  islem: 67
+  wr: '%76.12'
+  maliyet_dahil: evet (ücretler raporlanmış)
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- TEMA ve CMO listede yok; CMO eşiği, ATR stop/hedef çarpanları xlsx'te yok
+- Long+short (35/32), 3x kaldıraçlı sonuç; tek yıl (2024); Jesse liste/detay metrikleri farklı dönemlere ait
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- Kaynak (jesse.trade) bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true

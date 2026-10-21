@@ -1,0 +1,33 @@
+id: O2-031
+ad: je-suis-tm/quant-trading (London Breakout, Dual Thrust vb.)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/je-suis-tm/quant-trading
+  sayfa: O2-031
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Çoklu
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: kapsam_disi
+ozel_kod: false
+belirsiz:
+- 'Toplu depo: London Breakout, Dual Thrust, ... (gün içi ORB + teknik göstergeler); performans metriği yok, ''frictionless'''
+- Alt stratejiler lider kararıyla ayrı kartlanabilir; depo listesi github.com erişimi olmadan okunamadı
+bias_varsayim: false

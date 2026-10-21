@@ -1,0 +1,36 @@
+id: O3-007
+ad: 'Turn of the month strategy S&P 500 (10 Best Swing #9)'
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantifiedstrategies.com/swing-trading-strategies/
+  sayfa: O3-007
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD endeks (S&P 500)
+gostergeler: {}
+giris: ayın sondan 5. işlem günü kapanışta al
+cikis: yeni ayın 3. işlem günü kapanışında sat
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 2.0
+  sharpe: null
+  getiri: CAGR %7.3 (al-tut %10.3); işlem başı %0.63; QQQ'da CAGR %7.2
+  mdd: '%21 (QQQ''da %51)'
+  islem: 376
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: tam
+ozel_kod: true
+belirsiz:
+- 'Takvim kuralı: işlem günü sayacı (ay sonundan 5., ay başından 3.) ifade dilinde yok: yeni ilkel gerekir (ay_islem_gunu_sondan/bastan) -> ozel_kod'
+- 'Kaynak ''kapanışta al'' diyor; EVRENSEL_KURALLAR A1 gereği emir sonraki açılışta dolar: strateji kapanış->kapanış/açılış kenarını taşımayabilir (aşağıya
+  bakınız lider notu)'
+- Al-tut'un altında getiri; maliyet/kayma belirtilmemiş
+- Kaynak sitesi (quantifiedstrategies.com) bu ortamda erişilemedi, kural xlsx özeti
+bias_varsayim: false

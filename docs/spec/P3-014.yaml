@@ -1,0 +1,38 @@
+id: P3-014
+ad: EmperorBTC's VWAP Strategy
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/wmJ1ovZQ-EmperorBTC-s-VWAP-Strategy/
+  sayfa: P3-014
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Belirtilmemiş
+gostergeler:
+  vwap:
+    f: vwap
+giris: pivot noktası kırılımı and stoch_rsi ile vwap kesişimi (mevcut/önceki mum) and kapanış trend yönünde
+cikis: ters sinyal (belirtilmemiş)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- 'Stoch-RSI/VWAP/pivot parametreleri xlsx''te yok; yazar zaman dilimi önerisi 5/15/30 dk: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider,
+  BIST/ABD/emtia için Doğrulanamaz'
+- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
+- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
+bias_varsayim: false
+erisim_engeli: true

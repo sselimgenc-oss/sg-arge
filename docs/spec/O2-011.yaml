@@ -1,0 +1,36 @@
+id: O2-011
+ad: PulseStrike Scalper - Statistical Burst Detection EA
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/77167
+  sayfa: O2-011
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: 4 sn pencerede hareket z-skoru > 3.0 (momentum veya ortalamaya dönüş modu) ; TP spread'in katı
+cikis: ATR bazlı SL 0.55x / TP 0.35x ; süre aşımı ; günlük limit
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.16-1.37 (7 forex çifti)
+  sharpe: null
+  getiri: EURUSD 182.740 ... USDCAD 27.956 (10k başlangıç)
+  mdd: EURUSD %10.33 ... GBPUSD %54.07
+  islem: 3.756-7.991 (çift başına)
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- 'Tick (4 saniye) çözünürlük gerekir: 1 dk verisiyle test edilemez -> Doğrulanamaz'
+- Mod seçimi (momentum/ortalamaya dönüş) ve parametreler xlsx'te yok; saniyelik scalping maliyete aşırı duyarlı; GBPUSD %54, NZDUSD %42 DD
+- Tek dönem, örneklem dışı yok
+- Kaynak (mql5.com) bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true

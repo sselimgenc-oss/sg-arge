@@ -1,0 +1,36 @@
+id: O3-015
+ad: IBS (Internal Bar Strength) SPY – IBS<0.2 al / >0.8 sat
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantifiedstrategies.com/ibs-internal-bar-strength-indicator-strategies/
+  sayfa: O3-015
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD endeks (SPY)
+gostergeler: {}
+giris: (close - low) / (high - low) < 0.2
+cikis: (close - low) / (high - low) > 0.8
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.9
+  sharpe: null
+  getiri: CAGR %12.5 (al-tut %9.9); işlem başı %0.41
+  mdd: -%26
+  islem: 919
+  wr: null
+  maliyet_dahil: hayır
+spec_durumu: tam
+ozel_kod: false
+belirsiz:
+- 'Kaynak ''kapanışta al'' diyor; EVRENSEL_KURALLAR A1 gereği emir sonraki açılışta dolar: strateji kapanış->kapanış/açılış kenarını taşımayabilir (aşağıya
+  bakınız lider notu)'
+- Maliyetsiz; varyant 583 işlem, kazanma %74, CAGR %15.3; SPY %78/0.8%, QQQ %75/1.33%
+- Dönem 1993-günümüz (OOS ayrımı yok)
+- Kaynak sitesi bu ortamda erişilemedi, kural xlsx özeti
+bias_varsayim: false

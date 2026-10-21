@@ -120,3 +120,45 @@ A2-028,TCO Trader EA,day,1h,eksik,true,3,https://www.forexfactory.com/thread/430
 A2-029,Simple Zigzag + Fibonacci Strategy,swing,1h,eksik,true,5,https://www.forexfactory.com/thread/987910-simple-zigzag-fibonacci-strategy
 A2-030,Channel MA Short-Term System,day,15m,dakikalik,true,3,https://www.forexfactory.com/thread/707474-channel-ma-short-term-system
 A3-001,XAUUSD Pullback Window (4 fazlı durum makinesi),day,5m,dakikalik,true,3,https://github.com/ilahuerta-IA/backtrader-pullback-window-xauusd
+O1-077,Automated Strategy StrategyPeakHoursTradingNQ,day,1H,eksik,false,5,https://ninjatraderecosystem.com/user-app-share-download/automated-strategy-strategypeakhourstradingnq/
+O1-078,Atr Breakout,day,1H,eksik,false,3,https://ninjatraderecosystem.com/user-app-share-download/atr-breakout-2/
+O1-079,Golden Triangle Strategy,swing,1D,eksik,false,3,https://ninjatraderecosystem.com/user-app-share-download/golden-triangle-strategy/
+O2-001,JP225 Opening Range Break Strategy,day,1m,ihtiyari,false,6,https://forex-station.com/jp225-opening-range-break-strategy-t8476395.html
+O2-002,JP225 ADR Extension-Based Momentum Model,day,15m,eksik,false,6,https://forex-station.com/jp225-adr-extension-based-momentum-model-t8476400.html
+O2-003,XARD - Simple Trend Following Trading System,day,1H,ihtiyari,false,3,https://forex-station.com/xard-simple-trend-following-trading-system-t8416709.html
+O2-004,Trading Pullbacks System,day,1H,ihtiyari,false,3,https://forex-station.com/trading-pullbacks-system-t8474130.html
+O2-005,Trading Made Simple,day,1H,ihtiyari,true,4,https://www.forexfactory.com/thread/291622-trading-made-simple
+O2-006,Pivot Trading,swing,15m,ihtiyari,true,4,https://www.forexfactory.com/thread/588764-pivot-trading
+O2-007,Another simple system - Time-Frame 15,day,15m,eksik,true,5,https://www.forexfactory.com/thread/345586-another-simple-system-time-frame-15
+O2-010,JPN225 QuietDrift (The Nikkei EA That Only Buys When Volume Is Quiet),day,15m,eksik,false,7,https://www.mql5.com/en/code/78027
+O2-011,PulseStrike Scalper - Statistical Burst Detection EA,day,1m,eksik,false,4,https://www.mql5.com/en/code/77167
+O2-012,OHLCMTF Scalper EA - Multi-Timeframe Price Action,day,1H,kapsam_disi,false,1,https://www.mql5.com/en/code/70796
+O2-017,TemaTrendFollowing,day,30m,eksik,true,4,https://jesse.trade/strategies/tematrendfollowing
+O2-018,MACD + EMA,day,1H,eksik,false,3,https://jesse.trade/strategies/macd-ema
+O2-019,CloudScalper,day,15m,eksik,false,4,https://jesse.trade/strategies/cloudscalper
+O2-021a,Jesse: Simple Bollinger Bands Strategy,belirsiz,1D,eksik,false,3,https://jesse.trade/strategies
+O2-021b,Jesse: RSI Trend,belirsiz,1D,eksik,false,3,https://jesse.trade/strategies
+O2-021c,Jesse: IchimokuCloud,belirsiz,1D,eksik,false,3,https://jesse.trade/strategies
+O2-025,The Holy Grail,swing,1D,eksik,false,4,https://www.composer.trade/trading-strategies/the-holy-grail-MmQbpf2U5TMQFmr9Nt2e
+O2-026,KMLM Switcher of Simon97 - Original,swing,1D,eksik,false,4,https://www.composer.trade/trading-strategies/kmlm-switcher-of-simon97-original-syMn9OgFREE0wo8LtYsG
+O2-027,TQQQ For The Long Term (Reddit Post Link),swing,1D,eksik,false,4,https://www.composer.trade/trading-strategies/tqqq-for-the-long-term-reddit-post-link-HukRwDJLlYPLMbrQbua5
+O2-028,SVIX/XXXX KMLM switcher (single pops) | BT 12/19/23 = 786/10.5,swing,1D,eksik,false,4,https://www.composer.trade/trading-strategies/svixxxxx-kmlm-switcher-single-pops-bt-121923-786105-D9oE44Y87boHDOYQ9rPm
+O2-031,"je-suis-tm/quant-trading (London Breakout, Dual Thrust vb.)",day,1H,kapsam_disi,false,2,https://github.com/je-suis-tm/quant-trading
+O3-007,Turn of the month strategy S&P 500 (10 Best Swing #9),swing,1D,tam,true,4,https://www.quantifiedstrategies.com/swing-trading-strategies/
+O3-009,Stocks in Play – 5 dk ORB + Relative Volume (Zarattini/Barbon/Aziz),day,5m,dakikalik,false,7,https://www.quantifiedstrategies.com/stocks-in-play-trading-strategy-day-trading/
+O3-014,3 Days Down Overnight (S&P 500),swing,1D,tam,false,4,https://www.quantifiedstrategies.com/3-days-down-overnight-trading-strategy/
+O3-015,IBS (Internal Bar Strength) SPY – IBS<0.2 al / >0.8 sat,swing,1D,tam,false,4,https://www.quantifiedstrategies.com/ibs-internal-bar-strength-indicator-strategies/
+P3-001,SuperTrend STRATEGY,belirsiz,1D,tam,false,5,https://www.tradingview.com/script/P5Gu6F8k/
+P3-002,BUY and SELL - Backtest single EMA cross By che_trader,belirsiz,1D,eksik,false,5,https://www.tradingview.com/script/j9rq1wQq-BUY-and-SELL-Backtest-single-EMA-cross-By-che-trader/
+P3-003,UT Bot Strategy,belirsiz,1D,eksik,true,5,https://www.tradingview.com/script/VKMgZdYr-UT-Bot-Strategy/
+P3-004,EMA Slope + EMA Cross Strategy (by ChartArt),swing,1D,eksik,false,5,https://www.tradingview.com/script/XLGBqrZq-EMA-Slope-EMA-Cross-Strategy-by-ChartArt/
+P3-005,UT Bot Strategy with Backtesting Range [QuantNomad],belirsiz,1D,eksik,true,3,https://www.tradingview.com/script/RHagaXIp-UT-Bot-Strategy-with-Backtesting-Range-QuantNomad/
+P3-006,[STRATEGY][UL]Price Divergence Strategy v1.0,belirsiz,1D,eksik,true,4,https://www.tradingview.com/script/IDoY5LgE-STRATEGY-UL-Price-Divergence-Strategy-v1-0/
+P3-007,Heikin Ashi Supertrend,belirsiz,1D,eksik,true,3,https://www.tradingview.com/script/9z16eauD-Heikin-Ashi-Supertrend/
+P3-008,Strategy based on Squeeze Momentum Indicator [LazyBear],belirsiz,1D,eksik,true,4,https://www.tradingview.com/script/qp9BoNyS-Strategy-based-on-Squeeze-Momentum-Indicator-LazyBear/
+P3-009,Delta-RSI Strategy (with filters),belirsiz,1D,eksik,true,3,https://www.tradingview.com/script/0OdCms2T-Delta-RSI-Strategy-with-filters/
+P3-010,Dynamic Swing Anchored VWAP STRAT (Zeiierman/PineIndicators),belirsiz,1D,eksik,true,3,https://www.tradingview.com/script/gjFSGRCo-Dynamic-Swing-Anchored-VWAP-STRAT-Zeiierman-PineIndicators/
+P3-011,MACD Strategy with trailing ATR stop,belirsiz,1D,eksik,false,3,https://www.tradingview.com/script/2jDHQAJc-MACD-Strategy-with-trailing-ATR-stop/
+P3-013,ORB Strategy [LuciTech],day,1H,eksik,false,4,https://www.tradingview.com/script/10yYqaY7-ORB-Strategy-LuciTech/
+P3-014,EmperorBTC's VWAP Strategy,day,15m,eksik,true,3,https://www.tradingview.com/script/wmJ1ovZQ-EmperorBTC-s-VWAP-Strategy/
+P3-015,Davin's 10/200MA Pullback on SPY Strategy v2.0,swing,1D,eksik,false,4,https://www.tradingview.com/script/Gkib6KgL-Davin-s-10-200MA-Pullback-on-SPY-Strategy-v2-0/

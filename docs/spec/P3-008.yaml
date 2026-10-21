@@ -1,0 +1,36 @@
+id: P3-008
+ad: Strategy based on Squeeze Momentum Indicator [LazyBear]
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/qp9BoNyS-Strategy-based-on-Squeeze-Momentum-Indicator-LazyBear/
+  sayfa: P3-008
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler: {}
+giris: squeeze momentum (Bollinger/Keltner sıkışması + momentum) sinyali + özel filtreler
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- 'LazyBear Squeeze Momentum: filtreler ve çıkış xlsx''te yok'
+- Yazar MT4/JForex EA sürümünden söz ediyor
+- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
+- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
+bias_varsayim: false
+erisim_engeli: true

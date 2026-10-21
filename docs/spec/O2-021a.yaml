@@ -1,0 +1,35 @@
+id: O2-021a
+ad: 'Jesse: Simple Bollinger Bands Strategy'
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://jesse.trade/strategies
+  sayfa: O2-021
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Kripto
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: 5.37
+  getiri: +%17.73
+  mdd: '-2.09'
+  islem: null
+  wr: '%50.00'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- 'Kural xlsx''te yok: yalnız Jesse liste özeti (Sharpe/WR/getiri), toplu kayıttan ayrıştırıldı'
+- Liste metrikleri kısa ve belirsiz dönemden
+- Kaynak bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true
