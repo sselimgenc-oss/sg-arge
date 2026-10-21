@@ -1,0 +1,61 @@
+id: A1-029
+ad: SPX Trading Strategy for ThinkorSwim
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://usethinkscript.com/threads/spx-trading-strategy-for-thinkorswim.5087/
+  sayfa: null
+tarz: day
+tf: 10m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Endeks Opsiyon (SPX)
+gostergeler:
+  sma3:
+    f: sma
+    src: close
+    n: 3
+  sma9:
+    f: sma
+    src: close
+    n: 9
+  macd_8_16_36:
+    f: macd
+    src: close
+    fast: 8
+    slow: 16
+    signal: 36
+giris: sma3 > sma9 and cross_over(macd_8_16_36.macd, 0) and macd_8_16_36.macd > macd_8_16_36.macd[1]
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  sma_fast.n: 3
+  sma_slow.n: 9
+  macd.fast: 8
+  macd.slow: 16
+  macd.signal: 36
+  ergodic.long: 2
+  ergodic.short: 10
+  ergodic.signal: 36
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 95
+  wr: 78.95
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- Karar zaman dilimi 10m Heikin Ashi mumlarıdır (1 saatin altında)
+- 'Özel kod mantığı: 10m Heikin Ashi grafikte önce SMA(3) > SMA(9) kesişimi gerçekleşmeli, ardından MACDBB(8,16,36) çizgisi (noktaları) sıfır çizgisini arada boşluk bırakacak şekilde net yukarı kesmeli
+  (kesişim sırasında kırmızı nokta yani macd < macd[1] oluşmamalı) ve aynı anda ErgodicOsc(2,10,36) > 0 (yeşil) olmalıdır'
+- 'Çıkış ve stop belirsizliği: İlk mesajda ErgodicOsc kırmızıya (< 0) dönene kadar tutulabileceği yazarken, 11. mesajda yazarın opsiyon priminde +$0.75 ile +$1.00 artışa (SPX''te ~3 puan hareket) limit
+  satış koyup 10 dakikadan kısa sürede çıktığı ve mekanik bir stop-loss kullanmadığı belirtilmiştir'
+- 'Rapor çelişkisi: Yazar 90 günde 95 işlemin 75''inin pozitif olduğunu söyleyip başarı oranını %83 olarak yazmıştır (75/95 = %78.95)'
+- 'short kuralı var: SMA(3) < SMA(9) sonrası MACDBB noktalarının kırmızı renkte sıfır çizgisini net aşağı kesmesi ve ErgodicOsc(2,10,36) < 0 (kırmızı) olması durumunda Put (short) alınır'
+- 'lider: cikis kurali belirsiz (iki farkli cikis anlatimi)'
+kart_yazari: argon

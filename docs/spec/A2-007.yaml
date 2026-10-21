@@ -1,0 +1,46 @@
+id: A2-007
+ad: Pro MA Crossover EA for MT5
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/70916
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  ma100:
+    f: ema
+    src: close
+    n: 100
+  ma200:
+    f: ema
+    src: close
+    n: 200
+giris: cross_over(ma100, ma200) and close > ma100
+cikis: cross_under(close, ma100)
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: false
+parametreler:
+  period_ma_fast: 100
+  period_ma_slow: 200
+  use_ma_filter: false
+  useFastMAexit: true
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- Yazarın önerilen test parametreleri EURUSD D1 üzerinde Fast MA=100 ve Slow MA=200 olarak verilmiştir; mode_ma (EMA/SMA), opsiyonel stopLoss/takeProfit pip değerleri (0=kapalı) ve use_ma_filter varsayılanları
+  .mq5 dosyasında yer almaktadır
+- 'short kuralı var: cross_under(ma100, ma200) and close < ma100 olduğunda short açılır, close > ma100 olduğunda kapatılır'
+kart_yazari: argon

@@ -1,0 +1,50 @@
+id: A2-006
+ad: Price Action Intraday Trading - Expert for MT5
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/68704
+  sayfa: null
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex / Emtia (EURUSD, GBPUSD, XAUUSD)
+gostergeler:
+  ema20:
+    f: ema
+    src: close
+    n: 20
+  ema50:
+    f: ema
+    src: close
+    n: 50
+giris: ema20 > ema50
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  FastMA: 20
+  SlowMA: 50
+  RiskPercent: 1.5
+  MaxDailyLossPct: 3.0
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- Yazarın backtesti EURUSD M15 (1 saatin altında) üzerindedir (ayrıca H1 ve H4 için de önerilmiştir)
+- 'Özel kod mantığı: EMA(20) > EMA(50) trend filtresi ve geçmiş SRLookback barlık destek/direnç (S/R) doğrulaması ile birlikte 3 fiyat aksiyonu formasyonundan biri oluştuğunda girilir: (1) Pin Bar (fitil/gövde
+  oranı >= PinBarRatio), (2) Bullish Engulfing (yutan mum), (3) Inside Bar (ana bar kırılımı); çıkış sabit StopLossPips, TakeProfitRatio (R:R çarpanı), otomatik Break-Even, Trailing Stop ve gün sonu seans
+  kapanışı ile yapılır'
+- StopLossPips, TakeProfitRatio, PinBarRatio, SRLookback ve Start/End Hour parametrelerinin varsayılan sayısal değerleri açıklama metninde yazmayıp .mq5 kaynak dosyasındadır
+- 'short kuralı var: EMA(20) < EMA(50) iken direnç bölgesinde bearish Pin Bar, Bearish Engulfing veya aşağı Inside Bar kırılımında short açılır'
+- 'lider: varsayilan parametreler .mq5 icinde, okunmadi'
+kart_yazari: argon

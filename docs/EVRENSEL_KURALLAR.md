@@ -63,4 +63,13 @@ belirsiz: ["çıkış kuralı yazmıyor"]
 - `spec_durumu: tam`, `belirsiz` listesi yalnız yukarıdaki gibi açıkça yazılmış varsayımlar içeriyorsa kullanılabilir. Giriş ya da çıkış kuralı yoksa `eksik`.
 - Kaynakta "kapanışta al" denmesi A1'i değiştirmez: emir sonraki açılışta.
 
+### D3. Lider kararları (T2 parti 2-3 sonrası)
+- **`spec_durumu` öncelik sırası:** `gizli` > `ihtiyari` > `sadece_short` > `eksik` > `dakikalik` > `tam`. Yeni durumlar: `ihtiyari` (yoruma dayalı kural, mekanik test edilemez → **Doğrulanamaz**), `sadece_short` (long kuralı yok → short fazına ertelenir), `kapsam_disi` (strateji değil: meta/örnek depo, ör. A3-012/013/014).
+- `erisim_engeli: true`: kaynak okunamadı; kart `docs/spec/YENIDEN.csv` üzerinden yeniden okunur. Erişim sorunu stratejinin başarısızlığı değildir.
+- **`reverse=true` varsayılanlı Pine'lar (CP1, LRCUTB):** yazarın raporladığı davranış esastır. Ters sinyal uygulanmış hâlin long kolu test edilir (formasyon "bearish" iken long). Kartta `ters_sinyal: true`.
+- **Şema ekleri kabul:** `roi_tablosu` (Freqtrade), `alias_of` (aynı kural; ayrıca test edilmez, sonucu asıl karttan alır), stop/hedef ifadelerinde `giris`, `giris_stop`, `giris_hedef`, gösterge `tf: 1M`.
+- **Piyasaya özgü saat kuralları** (BIST seansı 10:03-17:58 gibi): yalnız o piyasada test edilir; diğer piyasalarda `Doğrulanamaz (piyasa özgü)`.
+- **`ozel_kod: true` kartlar** aşama 1 taramasında atlanır. Tarama bittikten sonra T5b'de, raporlanan kanıt kalitesi ve kaynak kodun açık olması sırasıyla elle kodlanır. Kaynak kodu karta bağlı olmalı.
+- **Çok kısa yazar testleri** (10 gün ile birkaç ay arası pencere): rapor rakamı kanıt sayılmaz, yalnız bizim testimiz geçerli.
+
 Kural karta çevrilemiyorsa (ör. makine öğrenmesi, order flow, haber) → `spec_durumu: eksik` ve `belirsiz`'e neden yazılır; yorumlayıcıya özel kod gerekiyorsa `ozel_kod: true`.

@@ -1,0 +1,59 @@
+id: A2-014
+ad: Gold MT5 Fractal Breakout EA
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/78308
+  sayfa: null
+tarz: swing
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Emtia (XAUUSD)
+gostergeler: {}
+giris: null
+cikis: null
+stop:
+  tip: yuzde
+  deger: 2.0
+hedef:
+  tip: yuzde
+  deger: 1.0
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  InpFractalLeft: 5
+  InpFractalRight: 5
+  InpMaxSearchBars: 200
+  InpMinFractalClearancePct: 0.02
+  InpBuyEntryOffsetPct: -0.1
+  InpSellEntryOffsetPct: -0.1
+  InpStopLossPct: 2.0
+  InpTakeProfitPct: 1.0
+  InpTrailTriggerPct: 0.2
+  InpTrailDistancePct: 0.2
+  InpMaxTrailPct: 1.0
+  InpSalvageTriggerPct: 1.0
+  InpSalvageExitPct: 0.15
+  InpBreakEvenTriggerPct: 0.1
+  InpBreakEvenLockPct: 0.025
+  InpRescanMinutes: 15
+  InpPendingExpiryHours: 15
+  InpDuplicatePoints: 100
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 50
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- Kodda yapı zaman dilimi sabit olarak H1'dir (const ENUM_TIMEFRAMES InpFractalTF = PERIOD_H1); D1 grafiğe eklense bile H1 verisini okur
+- 'Özel kod mantığı: Son 5 kapanmış bar (InpFractalRight=5) onaylandıktan sonra geriye doğru 200 H1 barı içinde solunda 5 ve sağında 5 komşu bardan kesin büyük olan en güncel swing high (IsSwingHigh) bulunur
+  (5 bar kapanmış olduğu için REPAINT yapmaz); mevcut Ask fiyatı swing_high''ın en az %0.02 altındaysa swing_high * (1 - 0.0010) seviyesine (-%0.10 ofset) Buy Stop konur; ilk SL -%2.0, ilk TP +1.0%; +%0.10
+  kârda SL +%0.025''e (BreakEven) çekilir; +%0.20 ile +%1.00 kâr arasında %0.20 mesafeli izsüren stop uygulanır; pozisyon -%1.00 zarara düşerse (Salvage) TP seviyesi girişin -%0.15 altına çekilir'
+- 'Kod-açıklama çelişkisi: InpPendingExpiryHours=15 parametresi ile zaman damgası hesaplansa da emir gönderiminde ORDER_TIME_GTC kullanıldığı için saat bazlı bekleyen emir iptali kodda çalışmamaktadır'
+- 'short kuralı var: Onaylanmış swing low (solunda 5 ve sağında 5 bardan kesin düşük) bulunduğunda swing_low * (1 + 0.0010) seviyesine Sell Stop konur'
+kart_yazari: argon

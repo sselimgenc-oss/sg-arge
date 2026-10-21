@@ -1,0 +1,34 @@
+id: A2-017
+ad: ZoneUS30
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/77748
+  sayfa: null
+tarz: swing
+tf: null
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (US30)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- Strateji yalnızca SELL (short only) yönlüdür, Long kuralı yoktur
+- Açıklama metninde yalnızca US30 endeksinde yukarı yönlü fiyat uzamaları sonrasında ortalamaya dönüş (mean reversion) ve pozitif short swap için satış yapıldığı belirtilmiş, dahili (internally defined)
+  giriş/çıkış göstergeleri, parametreler ve varsayılan zaman dilimi açıklanmamıştır
+kart_yazari: argon

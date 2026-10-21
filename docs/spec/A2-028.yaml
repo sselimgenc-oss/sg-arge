@@ -1,0 +1,65 @@
+id: A2-028
+ad: TCO Trader EA
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/430840-tco-trader-ea
+  sayfa: null
+tarz: day
+tf: 1h
+mtf: 1D
+tf_varsayim: true
+yazar_piyasasi: Forex
+gostergeler:
+  ema20_d1:
+    f: ema
+    src: close
+    n: 20
+  ema50_d1:
+    f: ema
+    src: close
+    n: 50
+  macd_d1:
+    f: macd
+    src: close
+    fast: 12
+    slow: 26
+    signal: 9
+  ichimoku_d1:
+    f: ichimoku
+    tenkan: 9
+    kijun: 26
+    senkou: 52
+  stoch_ltf:
+    f: stoch
+    k: 14
+    d: 3
+    smooth: 3
+giris: mtf(1D, ema20_d1 > ema50_d1 and close > ema20_d1) and cross_over(stoch_ltf.k, 20)
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  Trend_TF: 1440
+  wpr_oversold: -80
+  wpr_overbought: -20
+  stoch_oversold: 20
+  stoch_overbought: 80
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Çoklu mod içeren esnek bir EA çerçevesidir: Üst zaman diliminde (varsayılan D1=1440) 4 trend yönteminden (20/50 EMA, MACD > 0, Ichimoku Tenkan/Kijun kesişimi, Turtle/Donchian kanalı) seçilenlerin tamamı
+  yükselişteyken, alt zaman diliminde (ör. H1) Williams %R (-80 altı/üstü) veya Stochastic (20 altı/üstü) sinyaliyle Long açar'
+- Çıkış ve stop için sabit SL/TP, ATR SL/TP, Kijun-sen trailing SL, Breakeven, Jumping SL, ters sinyalde kapatma ve bakiye yüzdesi sepet hedefi seçenekleri vardır ancak hangi trend/giriş/çıkış kombinasyonunun
+  ve SL/TP sayısal değerlerinin varsayılan olduğu forum metninde yazmayıp ekli TCO_Trader.mq4 dosyasındadır
+- 'short kuralı var: D1 trend yöntemleri düşüşteyken alt zaman diliminde Williams %R -20''yi aşağı kestiğinde (veya > -20) ya da Stochastic 80''i aşağı kestiğinde (veya > 80) short açılır'
+kart_yazari: argon

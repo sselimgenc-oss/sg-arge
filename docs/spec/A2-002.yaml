@@ -1,0 +1,60 @@
+id: A2-002
+ad: Stochastic Daily Breakout for Gold
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/77900
+  sayfa: null
+tarz: day
+tf: 1h
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Emtia (XAUUSD)
+gostergeler:
+  stoch_custom:
+    f: stoch
+    k: 23
+    d: 3
+    smooth: 7
+  bb9:
+    f: bb
+    src: close
+    n: 9
+    std: 2.0
+giris: stoch_custom.d < stoch_custom.d[1] and stoch_custom.d[1] > stoch_custom.d[2] and open[3] < bb9.upper[3]
+cikis: null
+stop:
+  tip: yuzde
+  deger: 1.9
+hedef:
+  tip: yuzde
+  deger: 1.9
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  InpBandPeriod: 9
+  bb_dev: 2.0
+  InpKPeriod: 23
+  InpDPeriod: 3
+  InpSlowing: 7
+  InpStopPct: 1.9
+  InpTargetPct: 1.9
+  InpExpiryBars: 9
+  InpLots: 0.01
+deneme_sayisi_kaynakta: 2000000
+rapor:
+  pf: 1.54
+  sharpe: null
+  getiri: 245.3
+  mdd: 23.9
+  islem: 213
+  wr: 59.15
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz:
+- 'Özel kod mantığı: EA içindeki Stochastic(23,3,7) standart high-low aralığı yerine close-to-close aralığı ve SMMA yumuşatması kullanır; Bollinger Bands(9, 2.0) ise weighted price ((H+L+C+C)/4) üzerinden
+  hesaplanır'
+- 'Emir tipi: Sinyal oluştuğunda piyasa emri yerine önceki günün yükseğine (mtf(1D, high[1])) 9 H1 barı geçerli (InpExpiryBars=9) Buy Stop bekleyen emri konur; aynı yönde yeni sinyal gelirse bekleyen emri
+  yeniler'
+- 'short kuralı var: Stochastic sinyal çizgisi önceki barda dip yapıp yukarı döndüğünde (stoch_d > stoch_d[1] and stoch_d[1] < stoch_d[2]) ve open[3] > bb9.lower[3] olduğunda dünün düşüğüne (mtf(1D, low[1]))
+  Sell Stop konur'
+kart_yazari: argon

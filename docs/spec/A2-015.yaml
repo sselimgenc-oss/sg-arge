@@ -1,0 +1,51 @@
+id: A2-015
+ad: EMA Cross Scalper M15 (XAUUSD)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/77180
+  sayfa: null
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Emtia (XAUUSD)
+gostergeler:
+  ema10:
+    f: ema
+    src: close
+    n: 10
+  ema30:
+    f: ema
+    src: close
+    n: 30
+giris: cross_over(ema10, ema30)
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  InpFastEMA: 10
+  InpSlowEMA: 30
+  InpStartHourWIB: 19
+  InpEndHourWIB: 22
+  InpLot: 0.01
+  InpSLpoints: 70
+  InpTPpoints: 200
+  InpMaxPos: 1
+  MaxInpSpreadPoints: 100
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 22
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi M15 (1 saatin altında)
+- 'Özel kod mantığı: WIB seans saatleri (19:00-22:00 UTC+7) içinde ve spread <= 100 puan iken M15 kapanmış barda EMA(10) EMA(30)''u yukarı kestiğinde Long açılır; sabit 70 puan SL ve 200 puan TP ile kapatılır'
+- 'short kuralı var: Aynı seans ve spread filtresi altında cross_under(ema10, ema30) olduğunda 70 puan SL ve 200 puan TP ile short açılır'
+kart_yazari: argon

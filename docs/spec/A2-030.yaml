@@ -1,0 +1,53 @@
+id: A2-030
+ad: Channel MA Short-Term System
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/707474-channel-ma-short-term-system
+  sayfa: null
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (USDJPY, EURUSD, GBPUSD)
+gostergeler:
+  ema33_close:
+    f: ema
+    src: close
+    n: 33
+  ema55_high:
+    f: ema
+    src: high
+    n: 55
+  ema55_low:
+    f: ema
+    src: low
+    n: 55
+giris: cross_over(ema33_close, ema55_high)
+cikis: cross_under(ema33_close, ema55_low)
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  signal_ema.n: 33
+  channel_ema.n: 55
+  hard_sl_pips: 45
+  fixed_tp_pips: 40
+  flexible_tp_pips: 210
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: 57.5
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi M15 (1 saatin altında)
+- 'Özel kod mantığı: EMA(33, close) sinyal çizgisi, EMA(55, high) üst kanal bandını yukarı kestiğinde (cross_over(ema33_close, ema55_high)) Long sinyali oluşur; kesişim anında fiyat kanala yakınsa (40-50
+  pip SL kanalın altına düşüyorsa) hemen girilir, aşırı volatilite nedeniyle fiyat kanaldan >40 pip uzaktaysa EMA(33, close) seviyesine bekleyen limit emir (Delayed Entry) bırakılır; çıkış için 3 seçenek
+  sunulmuştur: (1) 40 pip sabit TP ve 20-25 pipte BE, (2) 210 pip esnek TP ve seans sonunda kapatma, (3) ters sinyalde kapatıp tersine dönme'
+- 'short kuralı var: cross_under(ema33_close, ema55_low) olduğunda aynı normal/gecikmeli giriş ve SL/TP kurallarıyla short açılır'
+kart_yazari: argon

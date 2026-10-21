@@ -1,0 +1,56 @@
+id: A2-005
+ad: GDS Renko RSI + MACD 4-Mode Demo EA
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/78581
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Emtia (XAUUSD)
+gostergeler:
+  macd_renko:
+    f: macd
+    src: close
+    fast: 5
+    slow: 30
+    signal: 5
+  rsi_renko:
+    f: rsi
+    src: close
+    n: 14
+giris: cross_over(macd_renko.macd, macd_renko.signal)
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  brick_size: 12.0
+  macd_fast: 5
+  macd_slow: 30
+  macd_signal: 5
+  tp_bricks: 14
+  sl_bricks: 13
+  max_hold_minutes: 1380
+  cooldown_bricks: 1
+  lots: 0.01
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.49
+  sharpe: null
+  getiri: 23.49
+  mdd: 5.99
+  islem: 178
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: eksik
+belirsiz:
+- Karar zaman dilimi M1 gerçek tick verisi üzerinde oluşturulan 12.00 fiyat birimi boyutlu sabit Renko tuğlalarıdır (1 saatin altında / bar-dışı)
+- 'Özel kod mantığı: Klasik 2-tuğla dönüşlü Renko üzerinde seçilen 4 moddan biri çalışır: (1) RSI Re-entry: cross_over(rsi, lower_threshold), (2) RSI Midline: cross_over(rsi, 50), (3) MACD Signal (preset
+  varsayılanı): cross_over(macd(5,30,5), signal), (4) MACD Zero: cross_over(macd, 0); MACD sinyal çizgisi SMA ile hesaplanır; çıkışlar 13 tuğla sanal SL, 14 tuğla sanal TP veya 1380 dk maksimum tutma süresiyle
+  yapılır, çıkış sonrası 1 tuğla cooldown beklenir'
+- 'short kuralı var: Seçili modun ters kesişiminde (ör. cross_under(macd, signal)) short pozisyon açılır'
+- 'lider: Renko tuglasi bar tipi desteklenmiyor, cikis yok'
+kart_yazari: argon
