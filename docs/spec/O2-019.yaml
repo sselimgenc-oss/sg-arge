@@ -1,45 +1,63 @@
 id: O2-019
 ad: CloudScalper
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://jesse.trade/strategies/cloudscalper
-  sayfa: O2-019
+  sayfa: null
 tarz: day
 tf: 15m
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: Kripto
+yazar_piyasasi: Kripto (BTC-USDT)
 gostergeler:
-  ichi:
+  ichimoku_cloud:
     f: ichimoku
-  adx:
+    tenkan: 9
+    kijun: 26
+    senkou: 52
+  adx14:
     f: adx
     n: 14
-  bb:
+  bb20:
     f: bb
+    src: close
     n: 20
-    carpan: 2.0
-giris: ichimoku_trend and adx_teyit and bb_genislik_teyit
-cikis: ATR bazlı SL/TP (çarpanlar yok)
-stop: null
-hedef: null
+    std: 2.0
+  atr14:
+    f: atr
+    n: 14
+giris: close > ichimoku_cloud.span_a and close > ichimoku_cloud.span_b and adx14 > 25 and bbw_expansion
+cikis: close < ichimoku_cloud.kijun
+stop:
+  tip: atr
+  n: 14
+  carpan: 2.0
+hedef:
+  tip: atr
+  n: 14
+  carpan: 3.0
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  tenkan_len: 9
+  kijun_len: 26
+  senkou_len: 52
+  adx_threshold: 25
+  sl_atr_mult: 2.0
+  tp_atr_mult: 3.0
+deneme_sayisi_kaynakta: 1
 rapor:
-  pf: null
+  pf: 1.18
   sharpe: 1.29
-  getiri: +%73.25 (7.324,67 $)
-  mdd: '-30.81'
+  getiri: 73.25
+  mdd: 30.81
   islem: 95
-  wr: '%52.63'
-  maliyet_dahil: evet (ücretler 5.169,98)
-spec_durumu: eksik
-ozel_kod: false
+  wr: 52.63
+  maliyet_dahil: evet
+spec_durumu: dakikalik
 belirsiz:
-- ADX/BB genişlik eşikleri ve ATR çarpanları xlsx'te yok
-- 'Long 35 / short 60: açıklama long vurgularken işlemlerin %63''ü short; Jesse liste/detay metrikleri farklı dönemlere ait'
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- Kaynak bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Karar zaman dilimi 15m (1 saatin altında)
+- 'Jesse.Trade sayfasından yazarın (saleh) strateji açıklaması ve backtest raporu okundu: Ichimoku Bulutu üzerinde trend teyidi + ADX trend gücü filtresi + Bollinger Bant Genişliği (BBW) volatilite filtresi
+  ile Long açılır; ATR tabanlı stop loss ve take profit uygulanır'
+- 'short kuralı var: Fiyat Kumo bulutu altına indiğinde ve ADX teyit verdiğinde short açılır'

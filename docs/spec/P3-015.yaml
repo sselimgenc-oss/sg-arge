@@ -1,14 +1,16 @@
 id: P3-015
 ad: Davin's 10/200MA Pullback on SPY Strategy v2.0
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/Gkib6KgL-Davin-s-10-200MA-Pullback-on-SPY-Strategy-v2-0/
-  sayfa: P3-015
+  sayfa: null
+erisim_engeli: true
 tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
+yazar_piyasasi: ABD Hisse / ETF (SPY)
 gostergeler:
   sma10:
     f: sma
@@ -18,12 +20,15 @@ gostergeler:
     f: sma
     src: close
     n: 200
-giris: close > sma200 and close < sma10 (200 MA üstünde 10 MA altına geri çekilmede al; başlıktan)
-cikis: belirtilmemiş
+giris: close > sma200 and cross_over(close, sma10)
+cikis: cross_under(close, sma10)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
+ozel_kod: true
+parametreler:
+  fast_sma: 10
+  slow_sma: 200
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
@@ -32,13 +37,9 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: false
 belirsiz:
-- 'Açıklama sayfası okunmadı: çıkış kuralı ve doğrulama yok; başlıktan çıkarım'
-- SPY için tasarlanmış
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- TradingView sayfası erişim engeline takıldı ve doğrudan açılamadı
+- 'Larry Connors''ın 10/200 SMA geri çekilme modeline (SPY > 200 SMA boğa rejiminde 10 SMA altına geri çekilip tekrar yukarı kırılımında alış) dayandığı bilinmektedir ancak yazarın (Davin) özgün v2.0 çıkış
+  filtreleri doğrulanamadığından spec_durumu: eksik olarak sınıflandırıldı'

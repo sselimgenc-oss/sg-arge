@@ -1,41 +1,52 @@
 id: O2-005
 ad: Trading Made Simple
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.forexfactory.com/thread/291622-trading-made-simple
-  sayfa: O2-005
-tarz: day
-tf: 1H
+  sayfa: null
+tarz: swing
+tf: 1h
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: Forex
 gostergeler:
-  stoch:
-    f: stoch
-    k: 8
-    d: 3
-    smooth: 3
-giris: tdi_yesil cross_over tdi_kirmizi (3. mum veya sonrası ise girme) ; stoch(8,3,3) ve Heiken Ashi yön teyidi
-cikis: tdi_yesil yataylaşınca/kancalanınca
-stop: null
+  ema5:
+    f: ema
+    src: close
+    n: 5
+  tdi_rsi:
+    f: rsi
+    src: close
+    n: 13
+giris: cross_over(tdi_green, tdi_red) and tdi_green > 50 and close > ema5 and ha_candle == green
+cikis: cross_under(tdi_green, tdi_red) or tdi_green < tdi_green[1]
+stop:
+  tip: pips
+  deger: 30
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  RSI_Period: 13
+  Price_Line: 2
+  Trade_Signal: 7
+  Market_Base_Line: 34
+  EMA_Period: 5
+  StopLossPips: 30
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
-  getiri: '''200-500 pips/hafta'' (beyan)'
+  getiri: null
   mdd: null
   islem: null
-  wr: '''70-80%+'' (beyan, doğrulanmamış)'
-  maliyet_dahil: belirtilmemiş
-spec_durumu: ihtiyari
-ozel_kod: true
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- TDI (Traders Dynamic Index) parametreleri xlsx'te yok; çıkış 'kancalanınca' yoruma dayalı; stop kuralı yok
-- Doğrulanmamış iddialar
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- Kaynak (forexfactory.com) bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- 'ForexFactory konusu Post #1 ve BigE (Eric) resmi sistem kılavuzundan (https://www.forexfactory.com/thread/494420-trading-made-simple-the-right-way-and-other) okundu'
+- 'Özel kod mantığı: Heiken Ashi mumları, 5 EMA ve Traders Dynamic Index (TDI: 13 periyot RSI, 2 periyot yeşil RSI Fiyat çizgisi, 7 periyot kırmızı Ticaret Sinyal çizgisi, 34 periyot sarı Piyasa Taban çizgisi).
+  Long Giriş: Yeşil çizgi Kırmızı çizgiyi yukarı kestiğinde (saat 12-2 yönünde açı), tercihen sarı 50 çizgisinin üzerinde ise ve Heiken Ashi mumu mavi/yeşil olup 5 EMA üzerinde kapandığında yeni mum açılışında
+  girilir; Çıkış: Yeşil çizgi yataylaştığında, aşağı büküldüğünde veya kırmızıyı aşağı kestiğinde kapatılır; varsayılan stop-loss 30 piptir'
+- 'short kuralı var: Yeşil TDI kırmızıyı aşağı kestiğinde ve HA mumu kırmızı olup 5 EMA altında kapandığında short açılır'

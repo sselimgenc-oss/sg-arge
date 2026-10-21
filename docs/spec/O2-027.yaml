@@ -1,36 +1,46 @@
 id: O2-027
 ad: TQQQ For The Long Term (Reddit Post Link)
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.composer.trade/trading-strategies/tqqq-for-the-long-term-reddit-post-link-HukRwDJLlYPLMbrQbua5
-  sayfa: O2-027
+  sayfa: null
 tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: ABD ETF (kaldıraçlı)
-gostergeler: {}
-giris: kaldıraçlı ETF'ler arasında koşullu (RSI vb.) günlük geçişler (kural sayfada)
-cikis: null
+yazar_piyasasi: ABD Hisse / Kaldıraçlı ETF (TQQQ, UVXY, TECL, SOXL, BIL, SQQQ)
+gostergeler:
+  sma200_tqqq:
+    f: sma
+    src: close
+    n: 200
+  rsi10_tqqq:
+    f: rsi
+    src: close
+    n: 10
+giris: close_tqqq > sma200_tqqq and rsi10_tqqq < 79
+cikis: close_tqqq < sma200_tqqq or rsi10_tqqq >= 79
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  trend_sma: 200
+  heat_rsi: 10
+  heat_threshold: 79
+  bounce_threshold: 31
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
-  sharpe: 1.29
-  getiri: OOS kümülatif %810.06 (yıllık %80.88)
-  mdd: '%50.19'
+  sharpe: 1.75
+  getiri: 162.29
+  mdd: 47.0
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: evet
+spec_durumu: tam
 belirsiz:
-- 'Kural xlsx''te yok: Composer sembol sayfasındaki mantık okunmalı'
-- 'Kaldıraçlı ETF''ler arası rotasyon: portföy MDD %15 sınırının çok üstünde (OOS DD %25-50)'
-- OOS çok kısa; listede aynı metrikli kopyalar var; maliyet/kayma belirtilmemiş
-- Kaynak (composer.trade) bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Reddit r/LETFs resmi başlığından (derecknielsen) ve Composer dokümantasyonundan okundu
+- 'Özel kod mantığı: 200 günlük hareketli ortalama üzerinde TQQQ tutulur; 10 günlük RSI > 79 aşırı ısınmada UVXY''ye geçilir; 200 günlük ortalama altında iken aşırı satımda TECL/SOXL dip sıçraması denenir,
+  aksi halde BIL / SQQQ ile korunulur'

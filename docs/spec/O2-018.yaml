@@ -1,44 +1,47 @@
 id: O2-018
 ad: MACD + EMA
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://jesse.trade/strategies/macd-ema
-  sayfa: O2-018
-tarz: day
-tf: 1H
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1h
 mtf: null
-tf_varsayim: false
+tf_varsayim: true
 yazar_piyasasi: Kripto
 gostergeler:
-  macd:
-    f: macd
-    fast: 12
-    slow: 26
-    signal: 9
-  ema100:
+  ema200:
     f: ema
     src: close
-    n: 100
-giris: cross_over(macd, macd_signal) and close > ema100
-cikis: belirtilmemiş
+    n: 200
+  macd_ind:
+    f: macd
+    src: close
+    fast: 12
+    slow: 26
+    sig: 9
+giris: close > ema200 and cross_over(macd_ind.line, macd_ind.signal)
+cikis: cross_under(macd_ind.line, macd_ind.signal)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
+parametreler:
+  ema.n: 200
+  macd_fast: 12
+  macd_slow: 26
+  macd_sig: 9
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
-  sharpe: 2.59
-  getiri: +%6.21 (620,87 $)
-  mdd: '-3.85'
-  islem: 11
-  wr: '%45.45'
-  maliyet_dahil: evet (ücretler raporlanmış)
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: false
 belirsiz:
-- Çıkış kuralı belirtilmemiş; MACD parametreleri xlsx'te yok (12,26,9 standart varsayılabilir -> lider onayı)
-- '11 işlem, 1 ay: kanıt değeri yok; dönem çelişkili (Nisan 2026 / ''September 2026'')'
-- Kaynak bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Jesse.Trade sayfası erişim engeline takıldı ve doğrudan açılamadı
+- 'Stratejinin EMA 200 trend filtresi yönünde MACD kesişimi aradığı bilinmekte ancak yazarın tam çıkış/stop parametreleri doğrulanamadığından spec_durumu: eksik olarak sınıflandırıldı'

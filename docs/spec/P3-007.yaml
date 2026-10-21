@@ -1,22 +1,30 @@
 id: P3-007
 ad: Heikin Ashi Supertrend
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/9z16eauD-Heikin-Ashi-Supertrend/
-  sayfa: P3-007
-tarz: belirsiz
+  sayfa: null
+tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
-gostergeler: {}
-giris: null
-cikis: null
+yazar_piyasasi: Kripto / Forex / Endeks
+gostergeler:
+  st_ha:
+    f: supertrend
+    n: 10
+    carpan: 3.0
+giris: cross_over(ha_close, st_ha)
+cikis: cross_under(ha_close, st_ha)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  Periods: 10
+  Multiplier: 3.0
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -24,12 +32,10 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: true
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- Açıklama sayfası okunmadı; Heikin Ashi + SuperTrend birleşimi, kural yok
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- Scribd aynasından (https://www.scribd.com/document/948242736/ABO-LANA) ve TradingView topluluk kodlarından okundu
+- 'Özel kod mantığı: Supertrend hesaplaması Heikin Ashi mumlarının (ha_close, ha_high, ha_low) sentetik serileri üzerinden yapılır; ha_close Supertrend çizgisini yukarı kestiğinde Long girilir, aşağı kestiğinde
+  çıkılır / ters yöne dönülür'
+- 'short kuralı var: cross_under(ha_close, st_ha) olduğunda short açılır'

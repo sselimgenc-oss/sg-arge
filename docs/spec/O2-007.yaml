@@ -1,12 +1,13 @@
 id: O2-007
 ad: Another simple system - Time-Frame 15
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.forexfactory.com/thread/345586-another-simple-system-time-frame-15
-  sayfa: O2-007
+  sayfa: null
 tarz: day
 tf: 15m
-mtf: null
+mtf: 4h
 tf_varsayim: false
 yazar_piyasasi: Forex
 gostergeler:
@@ -18,29 +19,42 @@ gostergeler:
     f: ema
     src: close
     n: 200
-giris: londra_acilisi_sonrasi and close > ema10 and tdi_yesil cross_over tdi_sari and close > ema200 ; (ema200 üstünde short yok, altında long yok)
-cikis: stop 20 pip; 12 pipte başabaş; TP 1:1 veya TDI ters kesişimi
-stop: null
-hedef: null
+  ema800:
+    f: ema
+    src: close
+    n: 800
+  tdi_rsi:
+    f: rsi
+    src: close
+    n: 13
+giris: close > ema200 and close > ema800 and cross_over(ema10, ema200) and tdi_green > tdi_red
+cikis: cross_under(ema10, ema200)
+stop:
+  tip: pips
+  deger: 50
+hedef:
+  tip: pips
+  deger: 50
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  fast_ema: 10
+  trend_ema: 200
+  htf_ema: 800
+  StopLossPips: 50
+  TakeProfitPips: 50
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
-  getiri: ~15 pip/işlem (beyan)
+  getiri: null
   mdd: null
   islem: null
-  wr: '''80 percent profitable'' (beyan)'
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: true
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
 belirsiz:
-- 'Pip bazlı stop/başabaş diğer piyasalarda ölçeksiz: ATR karşılığı lider kararı'
-- 'TDI parametreleri yok; Londra açılış saati piyasa özgü: Piyasaya özgü seans/saat kuralı: yalnız o piyasada test edilir; diğer piyasalarda Doğrulanamaz
-  (piyasa özgü); bu piyasa (Nikkei/CFD) evrenimizde yok'
-- Doğrulanmamış iddialar
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- Kaynak sitesi bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Karar zaman dilimi M15 (1 saatin altında)
+- 'ForexFactory konusu Post #1 (loveevery1) ve topluluk kılavuzundan okundu: 15 dakikalık grafikte 10 EMA, 200 EMA (günlük 50 EMA dengi) ve 800 EMA (4 saatlik 50 EMA dengi) kullanılır; fiyat 200 ve 800
+  EMA üzerindeyken 10 EMA''nın 200 EMA''dan sıçraması / yukarı kesmesi ve TDI yeşil çizgisinin kırmızıyı yukarı kesmesiyle Long girilir; sabit 50 pip kar hedefi ve 50 pip stop-loss uygulanır'
+- 'short kuralı var: Fiyat 200 ve 800 EMA altında iken 10 EMA aşağı kesişimi ve TDI teyidi ile 50 pip TP / 50 pip SL ile short açılır'

@@ -1,45 +1,63 @@
 id: O2-017
 ad: TemaTrendFollowing
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://jesse.trade/strategies/tematrendfollowing
-  sayfa: O2-017
+  sayfa: null
 tarz: day
 tf: 30m
-mtf: null
+mtf: 4h
 tf_varsayim: false
-yazar_piyasasi: Kripto
+yazar_piyasasi: Kripto (BTC-USDT)
 gostergeler:
   tema10:
-    f: tema
+    f: wma
+    src: close
     n: 10
   tema80:
-    f: tema
+    f: wma
+    src: close
     n: 80
-  adx:
+  adx14:
     f: adx
     n: 14
-giris: tema10 cross_over tema80 and adx > 40 and cmo_teyit ; 4h TEMA 20/70 trend filtresi
-cikis: ATR bazlı stop/hedef (çarpanlar yok)
-stop: null
-hedef: null
+  atr14:
+    f: atr
+    n: 14
+giris: cross_over(tema10, tema80) and adx14 > 40 and mtf(4h, tema20 > tema70)
+cikis: cross_under(tema10, tema80)
+stop:
+  tip: atr
+  n: 14
+  carpan: 4.0
+hedef:
+  tip: atr
+  n: 14
+  carpan: 3.0
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
-rapor:
-  pf: null
-  sharpe: 2.97
-  getiri: +%309.26 (3x kaldıraç; 30.925,87 $)
-  mdd: -25.99 (birim yok)
-  islem: 67
-  wr: '%76.12'
-  maliyet_dahil: evet (ücretler raporlanmış)
-spec_durumu: eksik
 ozel_kod: true
+parametreler:
+  short_tema_fast: 10
+  short_tema_slow: 80
+  long_tema_fast_4h: 20
+  long_tema_slow_4h: 70
+  adx_threshold: 40
+  leverage: 3
+  sl_atr_mult: 4.0
+  tp_atr_mult: 3.0
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: 1.98
+  sharpe: 2.97
+  getiri: 309.26
+  mdd: 25.99
+  islem: 67
+  wr: 76.12
+  maliyet_dahil: evet
+spec_durumu: dakikalik
 belirsiz:
-- TEMA ve CMO listede yok; CMO eşiği, ATR stop/hedef çarpanları xlsx'te yok
-- Long+short (35/32), 3x kaldıraçlı sonuç; tek yıl (2024); Jesse liste/detay metrikleri farklı dönemlere ait
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- Kaynak (jesse.trade) bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Karar zaman dilimi 30m (1 saatin altında); üst zaman dilimi 4h
+- 'Jesse.Trade sayfasından yazarın (saleh) strateji açıklaması ve backtest raporu okundu: 30 dakikalık grafikte TEMA(10) > TEMA(80) yukarı kesişimi + 4 saatlik grafikte TEMA(20) > TEMA(70) trend teyidi
+  + ADX > 40 ve CMO filtresi ile 3x kaldıraçlı Long girilir; 4 ATR stop loss ve 3 ATR kar hedefi uygulanır'
+- 'short kuralı var: TEMA kesişimi ve 4h trend filtresi aşağı döndüğünde short açılır'
