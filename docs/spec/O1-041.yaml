@@ -1,0 +1,54 @@
+id: O1-041
+ad: Optimization moving average crossing strategy with 'machine learning'
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/optimization-ma-cross-machine-learning/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  wafr:
+    f: ema
+    src: close
+    n: 30
+  wafr_v2:
+    f: ema
+    src: close
+    n: 30
+giris: cross_over(wafr, wafr_v2)
+cikis: null
+stop:
+  tip: yuzde
+  deger: 1.0
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  Period: 15
+  Period2: 15
+  smooth_ema.n: 30
+  start_time: 80000
+  end_time: 113000
+  flat_after: 160000
+  stop_pct: 1.0
+deneme_sayisi_kaynakta: 4900
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Kodda MAType (0..69) ve MATypeV2 (0..69) değişkenleri sabitlenmemiş olup 70 farklı hareketli ortalama tipi (SMA, EMA, WMA, Wilder, Triangular, EndPoint, TimeSeries, Hull, ZeroLag, DEMA, TEMA, Adaptive,
+  Ehrenberg, Decycler, Ehlers SuperSmoother, Butterworth, Gaussian, Laguerre, Kaufman, T3, VIDYA, McGinley vb.) arasından 70x70 = 4900 kombinasyonun kullanıcı tarafından optimize edilerek seçilmesini gerektirir
+  (örnek yorumda EURUSD 5m için MAType=10 ve MATypeV2=30 anılmıştır); sabit bir varsayılan MA çifti olmadığından spec_durumu: eksik olarak sınıflandırıldı'
+- 'Özel kod mantığı: Seçilen MAType(Period=15) çıktısı AFR ve MATypeV2(Period2=15) çıktısı AFRv2 üzerine 30 barlık EMA uygulanır (wAFR = EMA[30](AFR), wAFRv2 = EMA[30](AFRv2)). Saat 08:00 ile 11:30 arasında
+  günde en fazla 1 işlem (OTD) şartıyla cross_over(wAFR, wAFRv2) olduğunda Long açılır; saat 16:00''da (Defparam Flatafter = 160000) kapatılır, stop-loss TSL = round(100/10000*close) (%1)'
+- 'short kuralı var: 08:00-11:30 arasında günde tek işlem şartıyla cross_under(wAFR, wAFRv2) olduğunda short açılır'

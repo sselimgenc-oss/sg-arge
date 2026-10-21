@@ -1,0 +1,42 @@
+id: O1-039
+ad: Laguerre RSI by KivancOzbilgic STRATEGY
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/vWG3tMJh-Laguerre-RSI-by-KivancOzbilgic-STRATEGY/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Hisse / Kripto / Forex
+gostergeler: {}
+giris: cross_over(lrsi, 0.2)
+cikis: cross_under(lrsi, 0.8)
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  alpha: 0.2
+  gamma: 0.8
+  oversold: 0.2
+  overbought: 0.8
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- TradingView sayfası doğrudan açılmadı; Kıvanç Özbilgiç'in paylaştığı Laguerre RSI formülü ve strateji kuralları Algo Kütüphanesi aynasından (https://algokutuphanesi.com/Sistem/Detay/Matriks/LAGUERRE-RSI)
+  okundu
+- 'Zaman dilimi kaynakta sabitlenmemiştir; varsayılan 1D alındı (tf_varsayim: true)'
+- 'Özel kod mantığı (John Ehlers Laguerre RSI, varsayılan alpha=0.2, gamma=1-alpha=0.8): L0 = alpha*close + (1-alpha)*L0[1]; L1 = -(1-alpha)*L0 + L0[1] + (1-alpha)*L1[1]; L2 = -(1-alpha)*L1 + L1[1] + (1-alpha)*L2[1];
+  L3 = -(1-alpha)*L2 + L2[1] + (1-alpha)*L3[1]; cu = max(L0-L1, 0) + max(L1-L2, 0) + max(L2-L3, 0); cd = max(L1-L0, 0) + max(L2-L1, 0) + max(L3-L2, 0); lrsi = cu / (cu + cd). Giriş: lrsi 0.2 seviyesini
+  yukarı kestiğinde (cross_over(lrsi, 0.2)) Long; Çıkış: lrsi 0.8 seviyesini aşağı kestiğinde (cross_under(lrsi, 0.8)) pozisyon kapatılır / short açılır'
+- 'short kuralı var: cross_under(lrsi, 0.8) olduğunda short pozisyona geçilir'

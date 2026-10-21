@@ -1,0 +1,61 @@
+id: O1-055
+ad: Intraday Profit Maker (Best with Automation)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.wisestocktrader.com/indicators/4853-intraday-profit-maker-best-with-automation-for-amibroker-afl
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Hisse / Endeks Vadeli (Hindistan NSE)
+gostergeler:
+  hh12:
+    f: highest
+    src: high
+    n: 12
+  ll12:
+    f: lowest
+    src: low
+    n: 12
+  ll40:
+    f: lowest
+    src: low
+    n: 40
+giris: low == ll12
+cikis: high == hh12
+stop: null
+hedef:
+  tip: yuzde
+  deger: 0.5
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  nBars: 12
+  farback: 100
+  nPivs: 2
+  fibo_zig_pct: 0.325
+  tar1_pct: 0.5
+  tar2_pct: 0.92
+  tar3_pct: 1.79
+  sl_llv_bars: 40
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- 'Karar zaman dilimi kodda sabitlenmemiştir (gün içi 5m/15m grafik, varsayılan 5m alındı, tf_varsayim: true)'
+- 'Kod ile açıklama çelişkisi: Açıklama metninde ''Modified version of MACD'' yazmasına karşın AmiBroker AFL kodunda hiçbir MACD hesaplaması yoktur; al/sat sinyalleri doğrudan ''Pivot Finder for Amibroker''
+  bloğundaki 12 barlık tepe/dip pivotlarından (Buy = aLPivs == 1; Sell = aHPivs == 1;) üretilir'
+- 'REPAINT: AFL kodundaki pivot döngüsü son bardan (curBar = BarCount - 1) geriye doğru çalışır ve HHVBars(H, 12) / LLVBars(L, 12) kullanarak pivot onaylandığında sinyali geçmişteki tepe/dip barına (curPivBarIdx
+  = curBar - aLLVBars[curBar]) geriye dönük yazar; ayrıca Fibonacci seviyeleri için gelecek barları kullanan PeakBars(H, 0.325, 1) ve TroughBars(L, 0.325, 1) (ZigZag) fonksiyonları kullanılmıştır'
+- 'Özel kod mantığı: nBars=12 periyotluk yerel dip pivotunda (aLPivs == 1) Buy, yerel tepe pivotunda (aHPivs == 1) Sell üretilir; yorum panosundaki genişletilmiş sürümde hedefler tar1 = +0.50%, tar2 = +0.92%,
+  tar3 = +1.79% ve stop-loss slPrice = HighestSince(Buy, LLV(L, 40)) olarak tanımlanmıştır'
+- 'short kuralı var: aHPivs == 1 (12 barlık tepe pivotu) oluştuğunda Sell / Short sinyali üretilir'

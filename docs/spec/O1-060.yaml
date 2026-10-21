@@ -1,0 +1,80 @@
+id: O1-060
+ad: Strategy Based on EMAs, TSI, MACD, and Premarket Highs/Lows
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://usethinkscript.com/threads/strategy-based-on-emas-tsi-macd-and-premarket-highs-lows-for-thinkorswim.10866/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / Opsiyon
+gostergeler:
+  ema5:
+    f: ema
+    src: close
+    n: 5
+  ema12:
+    f: ema
+    src: close
+    n: 12
+  ema34:
+    f: ema
+    src: close
+    n: 34
+  ema50:
+    f: ema
+    src: close
+    n: 50
+  macd_ind:
+    f: macd
+    src: close
+    fast: 10
+    slow: 22
+    sig: 8
+giris: ema5 > ema12 and close > premarket_high and tsi_val > macd_ind.signal and tsi_val > tsi_val[2] and low <= ema5 * 1.0025
+cikis: close < open and close < ema5 and low < low[4] and close < ema12 and (cross_under(ema5, ema12) or tsi_val < tsi_val[1] * 0.91 or cross_under(tsi_val, macd_ind.signal))
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  EMA1: 5
+  EMA2: 12
+  EMA3: 34
+  EMA4: 50
+  EMA200: 200
+  EMASepThrHld_5m: 0.2
+  EntryPullBackFactor: 0.0025
+  TkPftFactor: 0.01
+  TSI_LongLength: 25
+  TSI_ShortLength: 13
+  TSI_SignalLength: 8
+  MACD_FastLength: 10
+  MACD_SlowLength: 22
+  MACD_Length: 8
+  PreMarketStartTime: 700
+  PreMarketEndTime: 929
+  StartTime: 930
+  EndTime: 1600
+  LastCandleStop_min: 5
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi 5m (1 saatin altında); ayrıca kodda 1m, 2m, 3m, 10m, 15m, 30m için ayrı EMASepThrHld eşikleri tanımlıdır
+- 'Kod ile açıklama çelişkileri (kod esas alındı): (1) Açıklamada ''Low > Pre-Market High'' yazarken kodda PreMarketBull = close > Pre_Market_High olarak kodlanmıştır, (2) Açıklamada ''TSI > 10 and trending
+  up'' yazarken kodda ''> 10'' şartı yorum satırına alınmış ve yalnızca TSIBull = TSIRound > TSIRound[2] bırakılmıştır, (3) Açıklamada ''MACD Trending Up'' yazarken kodda MACDAverage > MACDAverage[1] yorum
+  satırına alınmış ve yerine MACDBull = TSIRound > MACDAverage (TSI değerinin MACD sinyal çizgisinden büyük olması) yazılmıştır'
+- 'Özel kod mantığı (ThinkScript v10.4 kodundan): Seans 09:30-15:00 EST arasında LongBuyInd = TradingDay and (EMA5 > EMA12) and (EMAPctBullRound > 0.2 and EMAPctBullRound >= EMAPctBullRound[1]) and (TSIRound
+  > MACDAverage) and (TSIRound > TSIRound[2]) and (close > Pre_Market_High); önceki 1 veya 2 barda LongBuyInd aktifken cari barda da aktifse ve fiyat EMA5*1.0025 seviyesine geri çekilirse (low <= EMA5 *
+  1.0025) EMA5*1.0025 fiyattan Long girilir; LongSellInd şartı gerçekleştiğinde veya saat 15:55 EST''de (EndDay) kapatılır'
+- 'short kuralı var: EMA5 < EMA12, EMAPctBearRound < -0.2, TSIRound < MACDAverage, TSIRound < TSIRound[2] ve close < Pre_Market_Low sonrası high >= EMA5 * 0.9975 geri çekilmesinde short açılır'

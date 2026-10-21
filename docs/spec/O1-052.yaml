@@ -1,0 +1,32 @@
+id: O1-052
+ad: Wing's Resistance Breacher (DAX-30m)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/wings-resistance-breacher-dax-30m/
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 30m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- ProRealCode URL'si erişim engeli nedeniyle okunamadı ve web üzerinde önbellek/ayna kopyası bulunamadı

@@ -1,0 +1,32 @@
+id: O1-044
+ad: ALEX AutoTradingBot INDEX
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/alex-autotradingbot-index/
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Endeks CFD
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- ProRealCode URL'si erişim engeli nedeniyle okunamadı ve web üzerinde önbellek/ayna kopyası bulunamadı

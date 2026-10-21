@@ -162,3 +162,43 @@ P3-011,MACD Strategy with trailing ATR stop,belirsiz,1D,eksik,false,3,https://ww
 P3-013,ORB Strategy [LuciTech],day,1H,eksik,false,4,https://www.tradingview.com/script/10yYqaY7-ORB-Strategy-LuciTech/
 P3-014,EmperorBTC's VWAP Strategy,day,15m,eksik,true,3,https://www.tradingview.com/script/wmJ1ovZQ-EmperorBTC-s-VWAP-Strategy/
 P3-015,Davin's 10/200MA Pullback on SPY Strategy v2.0,swing,1D,eksik,false,4,https://www.tradingview.com/script/Gkib6KgL-Davin-s-10-200MA-Pullback-on-SPY-Strategy-v2-0/
+O1-036,"Gold ORB Strategy (15-min Range, 5-min Entry)",day,5m,eksik,true,2,https://www.tradingview.com/script/oYW9gdag-Gold-ORB-Strategy-15-min-Range-5-min-Entry/
+O1-037,Simple and Profitable Scalping Strategy (ForexSignals TV),day,5m,dakikalik,true,4,https://www.tradingview.com/script/x4za4NFZ-Simple-and-Profitable-Scalping-Strategy-ForexSignals-TV/
+O1-038,KPL Swing Strategy,swing,1D,tam,false,3,https://www.tradingview.com/script/4mz6xvnK/
+O1-039,Laguerre RSI by KivancOzbilgic STRATEGY,swing,1D,tam,true,4,https://www.tradingview.com/script/vWG3tMJh-Laguerre-RSI-by-KivancOzbilgic-STRATEGY/
+O1-040,Pathfinder DAX 4H,swing,4h,eksik,true,2,https://www.prorealcode.com/prorealtime-trading-strategies/pathfinder-dax-4h/
+O1-041,Optimization moving average crossing strategy with 'machine learning',day,5m,eksik,true,3,https://www.prorealcode.com/prorealtime-trading-strategies/optimization-ma-cross-machine-learning/
+O1-042,Smoothed Bollinger% Strategy Daily,swing,1D,eksik,true,3,https://www.prorealcode.com/prorealtime-trading-strategies/smoothed-bollinger-strategy-daily/
+O1-043,Navigator DAX Trading Strategy 4H,swing,4h,eksik,true,1,https://www.prorealcode.com/prorealtime-trading-strategies/navigator-dax-trading-strategy-4h/
+O1-044,ALEX AutoTradingBot INDEX,day,5m,eksik,false,1,https://www.prorealcode.com/prorealtime-trading-strategies/alex-autotradingbot-index/
+O1-045,VECTORIAL DAX (M5),day,5m,dakikalik,true,3,https://www.prorealcode.com/prorealtime-trading-strategies/vectorial-dax-m5/
+O1-046,Fractal breakout intraday Strategy EUR/USD 1H,day,1h,tam,true,2,https://www.prorealcode.com/prorealtime-trading-strategies/fractal-breakout-intraday-strategy-eurusd-1h/
+O1-047,Kama & Sma Trading System DAX mtf,day,5m,eksik,true,1,https://www.prorealcode.com/prorealtime-trading-strategies/kama-sma-trading-system-dax-mtf/
+O1-048,Stochastic Gold Trader,swing,1h,tam,true,3,https://www.prorealcode.com/prorealtime-trading-strategies/stochastic-gold-trader/
+O1-049,Oil 10min 'hammernegated' pattern strategy,day,10m,eksik,true,1,https://www.prorealcode.com/prorealtime-trading-strategies/oil-10min-hammernegated-pattern-strategy/
+O1-050,EURUSD 15-minutes timeframe Dhigh / Dlow Strategy,day,15m,dakikalik,true,4,https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/
+O1-051,Brent Oil 5 minutes trading strategy,day,5m,eksik,false,1,https://www.prorealcode.com/prorealtime-trading-strategies/brent-oil-5-minutes-trading-strategy/
+O1-052,Wing's Resistance Breacher (DAX-30m),day,30m,eksik,false,1,https://www.prorealcode.com/prorealtime-trading-strategies/wings-resistance-breacher-dax-30m/
+O1-053,Open Range Breakout DAX 5/15M,day,5m,dakikalik,true,3,https://www.prorealcode.com/prorealtime-trading-strategies/open-range-breakout-dax-515m/
+O1-054,End Of Day – YEN M15,day,15m,eksik,true,1,https://www.prorealcode.com/prorealtime-trading-strategies/end-of-day-yen-m15/
+O1-055,Intraday Profit Maker (Best with Automation),day,5m,dakikalik,true,5,https://www.wisestocktrader.com/indicators/4853-intraday-profit-maker-best-with-automation-for-amibroker-afl
+O1-056,Intraday Stochastic Trading System,day,5m,dakikalik,true,4,https://www.wisestocktrader.com/indicators/5858-intraday-stochastic-trading-system-for-amibroker-afl
+O1-058,/ES Futures Trading Strategy on ThinkorSwim,day,512t,ihtiyari,true,3,https://usethinkscript.com/threads/es-futures-trading-strategy-on-thinkorswim.987/
+O1-059,Relative Volume Strategy and Momentum Scanner,day,1m,ihtiyari,true,2,https://usethinkscript.com/threads/relative-volume-strategy-and-momentum-scanner-for-thinkorswim.3002/
+O1-060,"Strategy Based on EMAs, TSI, MACD, and Premarket Highs/Lows",day,5m,dakikalik,true,4,https://usethinkscript.com/threads/strategy-based-on-emas-tsi-macd-and-premarket-highs-lows-for-thinkorswim.10866/
+O1-061,"Chewie's Super Trend, Hull Average, Donchian Trend Ribbon Trading System",day,4m,dakikalik,true,4,https://usethinkscript.com/threads/chewies-super-trend-hull-average-donchian-trend-ribbon-trading-system-for-thinkorswim.10894/
+O1-062,High and Low Reversals Indicator + Intraday Strategy,day,5m,eksik,true,4,https://usethinkscript.com/threads/high-and-low-reversals-indicator-intraday-strategy-for-thinkorswim.49/
+O1-063,Renko Bar Based Trading System,day,10r,ihtiyari,true,2,https://usethinkscript.com/threads/renko-bar-based-trading-system-for-thinkorswim.3252/
+O1-064,Try this NQ Strategy + Code,day,1m,dakikalik,true,3,https://usethinkscript.com/threads/try-this-nq-strategy-code-for-thinkorswim.1958/
+O1-065,Camarilla Pivot Points Day Trading System,day,5m,ihtiyari,true,2,https://usethinkscript.com/threads/camarilla-pivot-points-day-trading-system-for-thinkorswim.12988/
+O1-066,Accumulation/Distribution Range Breakout Strategy NT8 - August 2018 S&C,swing,1W,tam,true,3,https://ninjatraderecosystem.com/user-app-share-download/accumulation-distribution-range-breakout-strategy/
+O1-067,Renko Trading Strategy NT8 - December 2019 S&C,day,2r,dakikalik,true,4,https://ninjatraderecosystem.com/user-app-share-download/renko-trading-strategy-nt8/
+O1-068,MACD Cross Over,day,1D,eksik,false,2,https://ninjatraderecosystem.com/user-app-share-download/macd-cross-over/
+O1-069,Woodies CCI Autotrader,day,5m,eksik,true,2,https://ninjatraderecosystem.com/user-app-share-download/woodies-cci-autotrader-2/
+O1-070,Divergencesystem Strategy,swing,1D,tam,true,3,https://ninjatraderecosystem.com/user-app-share-download/divergencesystem-strategy-2/
+O1-071,Adx Breakouts Strategy,swing,1D,eksik,true,2,https://ninjatraderecosystem.com/user-app-share-download/adx-breakouts-strategy-2/
+O1-072,Automated Strategy for trading NQ,day,5m,eksik,false,1,https://ninjatraderecosystem.com/user-app-share-download/automated-strategy-for-trading-nq/
+O1-073,LargeTrades Strategy NT8,day,1m,eksik,true,1,https://ninjatraderecosystem.com/user-app-share-download/largetrades-strategy-nt8/
+O1-074,Camarillapoints ATS,day,1D,eksik,true,1,https://ninjatraderecosystem.com/user-app-share-download/camarillapoints-ats/
+O1-075,MeanReversal Strategy NT8,swing,1D,tam,false,2,https://ninjatraderecosystem.com/user-app-share-download/meanreversal-strategy-nt8/
+O1-076,Mean Reversion Swing Trading Strategy,swing,1D,eksik,true,2,https://ninjatraderecosystem.com/user-app-share-download/mean-reversion-swing-trading-strategy-2/

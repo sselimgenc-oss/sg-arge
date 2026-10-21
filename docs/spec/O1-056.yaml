@@ -1,0 +1,56 @@
+id: O1-056
+ad: Intraday Stochastic Trading System
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.wisestocktrader.com/indicators/5858-intraday-stochastic-trading-system-for-amibroker-afl
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Hisse / Endeks Vadeli (Hindistan NSE)
+gostergeler:
+  stoch14:
+    f: stoch
+    k: 14
+    d: 3
+    smooth: 3
+giris: cross_over(stoch14.k, stoch14.d) and cross_over(stoch14.k, 20)
+cikis: cross_under(stoch14.k, stoch14.d) and cross_under(stoch14.k, 80)
+stop:
+  tip: yuzde
+  deger: 1.0
+hedef:
+  tip: yuzde
+  deger: 1.0
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  periods: 14
+  Ksmooth: 3
+  Dsmooth: 3
+  Overbought: 80
+  Oversold: 20
+  StopLoss_pct: 1.0
+  Target_pct: 1.0
+  TradeStartTime: 93000
+  TradeEndTime: 143000
+  SquareOffTime: 151500
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- WiseStockTrader sayfası Cloudflare engeli nedeniyle doğrudan açılmadı; aynı AFL kodunun MarketSecrets aynasından (https://marketsecrets.in/script-library/amibroker-afl-script-library/afl-for-intraday-stochastic-trading-system/)
+  tam kod okundu
+- 'Karar zaman dilimi gün içi (varsayılan 5m alındı, tf_varsayim: true)'
+- 'Özel kod mantığı (AFL kodundan): myStochK = StochK(14, 3); myStochD = StochD(14, 3, 3); TradeStartTime ile TradeEndTime arasında Buy = Cross(myStochK, myStochD) AND Cross(myStochK, Oversold) (Oversold=20)
+  olduğunda Long açılır; Sell = Short OR TimeNum() >= SquareOffTime ile kapatılır; ApplyStop ile %1 StopLoss ve %1 Target uygulanır'
+- 'short kuralı var: Short = Cross(myStochD, myStochK) AND Cross(Overbought, myStochK) (Overbought=80) olduğunda short açılır, Cover = Buy OR TimeNum() >= SquareOffTime'

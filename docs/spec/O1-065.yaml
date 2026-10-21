@@ -1,0 +1,40 @@
+id: O1-065
+ad: Camarilla Pivot Points Day Trading System
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://usethinkscript.com/threads/camarilla-pivot-points-day-trading-system-for-thinkorswim.12988/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / Endeks Vadeli
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  aggregationPeriod: DAY
+  length: 1
+  r3_s3_mult: 0.275
+  r4_s4_mult: 0.55
+  r4a_s4a_mult: 0.549
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: ihtiyari
+belirsiz:
+- Paylaşılan ThinkScript kodu yalnızca Thor Young'ın 'A Complete Day Trading System' kitabına dayalı Camarilla Pivot seviyelerini (seans öncesi verili w/PMD ve verisiz w/o PMD otomatik seçimiyle R1..R6,
+  S1..S6, R4a/S4a) ve Floor Pivotlarını (CP, FR3, FR4, FS3, FS4) çizen bir destek/direnç göstergesidir
+- 'Kodda veya konu metninde mekanik al/sat emir kuralları yoktur; pivot seviyelerinde hacim-fiyat analizi (VPA / Market Phase) ve mum tepkilerine göre ihtiyari (discretionary) işlem yapıldığından spec_durumu:
+  ihtiyari olarak sınıflandırıldı'

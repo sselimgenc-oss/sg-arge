@@ -1,0 +1,58 @@
+id: O1-048
+ad: Stochastic Gold Trader
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/stochastic-gold-trader/
+  sayfa: null
+tarz: swing
+tf: 1h
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Emtia (XAUUSD)
+gostergeler:
+  stoch18:
+    f: stoch
+    k: 18
+    d: 6
+    smooth: 2
+  rsi2:
+    f: rsi
+    src: close
+    n: 2
+giris: cross_over(stoch18.k, stoch18.d) and lowest(stoch18.k, 2)[2] < 10
+cikis: cross_over(rsi2, 95)
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  StochPeriods: 18
+  StochK: 2
+  StochD: 6
+  StochUpperLimit: 90
+  StochLowerLimit: 10
+  StochConsolidationPeriod: 2
+  RSIPeriods: 2
+  RSIUpperLimit: 95
+  RSILowerLimit: 5
+  RSILimit: 4
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- 'Yazar yorumlarda stratejiyi Gold H1 ve H2 grafiklerinde test ettiğini belirtmiştir; karar zaman dilimi 1h alındı (tf_varsayim: true)'
+- 'Özel kod mantığı (ProBuilder kaynak kodundan, 2 aşamalı durum makinesi): (1) Kurulum (Arming): StochSignal = Stochastic[18,2](close), StochMain = SMA[6](StochSignal). Stoch == 0 iken lowest[2](StochSignal)
+  < 10 şartıyla cross_over(StochSignal, StochMain) gerçekleşirse Stoch = -1 yapılır ve StochCounter = 0 sıfırlanır (her barda StochCounter + 1 artar), (2) Tetikleme (Long Giriş): Piyasada pozisyon yokken,
+  Stoch == -1 ve StochCounter > 1 (en az 2 bar konsolidasyon) sonrasında tekrar cross_over(StochSignal, StochMain) gerçekleştiğinde Long açılır (Not: Yazarın kodunda ''Stoch -1'' yazım hatası vardır, yorumlarda
+  ''Stoch = -1'' olması gerektiği teyit edilmiştir), (3) Çıkış: İşlem boyunca RSI[2]''nin 95 altına her kesişinde RSICounter 1 artırılır (eğer son 8 barın en yüksek RSI[2] değeri bir önceki kesişteki LastRSI
+  değerinden küçükse RSICounterAdj = 1 düşülür); cross_over(RSI[2], 95) olduğunda RSICounter >= (4 - RSICounterAdj) ise Long pozisyon kapatılır'
+- 'short kuralı var: highest[2](StochSignal) > 90 iken cross_under(StochSignal, StochMain) ile Stoch = 1 kurulur, StochCounter > 1 sonrası ikinci cross_under(StochSignal, StochMain) ile short açılır; RSI[2]
+  5 seviyesini 4 kez test ettikten sonra cross_under(RSI[2], 5) ile çıkılır'
