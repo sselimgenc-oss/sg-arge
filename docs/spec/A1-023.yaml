@@ -1,21 +1,22 @@
 id: A1-023
 ad: ORB Breakout Strategy (chartsquare)
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://ru.tradingview.com/script/VJ9ZHgNB-ORB-Breakout-Strategy
   sayfa: null
+erisim_engeli: true
 tarz: day
 tf: 5m
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: null
+yazar_piyasasi: Hisse / Endeks
 gostergeler: {}
 giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -28,8 +29,5 @@ rapor:
   maliyet_dahil: belirtilmemis
 spec_durumu: eksik
 belirsiz:
-- Karar zaman dilimi 5m (1 saatin altında)
-- 'URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod bulunmuyor'
-- 'lider: kaynak okunamadi; dakikalik (5m) ama kural yok'
-erisim_engeli: true
-kart_yazari: argon
+- TradingView sayfası erişim engeli nedeniyle okunamadı ve web üzerinde ayna kopyası bulunamadı
+- 'Lider öncelik kuralına göre (eksik > dakikalik) giriş/çıkış kuralları eksik olduğundan 1H altında olsa bile spec_durumu: eksik verildi'

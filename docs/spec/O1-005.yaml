@@ -1,20 +1,23 @@
 id: O1-005
 ad: ROTT-SOTT
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://algokutuphanesi.com/Sistem/Detay/Matriks/ROTT-SOTT
-  sayfa: O1-005
-tarz: belirsiz
+  sayfa: null
+erisim_engeli: true
+tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: BIST/VİOP
+yazar_piyasasi: BIST / Kripto
 gostergeler: {}
-giris: mov(c,opt1) > ott(c,opt1,opt2) and stosk+1000 > ott(stosk+1000,2,opt5) (uzun vadeli ROTT filtresine göre IF'li)
-cikis: mov < ott and stosk < ott
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -24,11 +27,9 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: true
 belirsiz:
-- Backtest sonucu yayımlanmamış (yalnız popülerlik)
-- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
-- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
-bias_varsayim: false
+- Algo Kütüphanesi ROTT-SOTT sayfası erişim kısıtlaması nedeniyle doğrudan açılamadı
+- 'Anıl Özekşi''nin ROTT (RSI üzerine OTT) ve SOTT (Stochastic üzerine OTT) indikatörlerinin kesişim veya trend uyumuna dayandığı bilinmektedir ancak stratejideki kesin al/sat formülü ve parametreler teyit
+  edilemediğinden spec_durumu: eksik olarak sınıflandırıldı'

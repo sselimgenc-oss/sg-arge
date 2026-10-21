@@ -37,7 +37,8 @@ jobs:
 
       - name: Enforce the repository archive size limit
         run: |
-          bytes=$(du -sb data/hourly | cut -f1)
+          # Yalniz commit edilen (kripto disi) dosyalar sayilir.
+          bytes=$(find data/hourly -name "*.parquet" ! -name "*USDT*" -printf "%s\n" | awk '{s+=$1} END {print s+0}')
           if [ "$bytes" -gt 52428800 ]; then
             echo "Hourly archive is larger than 50 MiB ($bytes bytes); auditor approval is required."
             exit 1

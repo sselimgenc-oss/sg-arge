@@ -8,3 +8,7 @@ data/daily/*.parquet
 
 # Temporary parquet writes must never be committed.
 data/**/*.tmp
+
+# Kripto saatlik veri arsivlenmez: Binance tum gecmisi her zaman verir (lider karari).
+# Arsiv yalniz kayan pencereli yfinance verisi (BIST, ABD, emtia) icindir.
+data/hourly/*USDT*.parquet

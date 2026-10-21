@@ -1,37 +1,51 @@
 id: O1-027
 ad: PMax Explorer STRATEGY & SCREENER
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/nHGK4Qtp/
-  sayfa: O1-027
-tarz: belirsiz
-tf: 1D
+  sayfa: null
+tarz: swing
+tf: 1h
 mtf: null
-tf_varsayim: true
-yazar_piyasasi: Çoklu (20 sembol)
+tf_varsayim: false
+yazar_piyasasi: Emtia (XAUUSD) / Forex / Kripto
 gostergeler:
-  pmax:
+  ema10:
+    f: ema
+    src: hl2
+    n: 10
+  pmax10:
     f: pmax
-giris: PMax al dönüşü (onaylı reversal)
-cikis: PMax sat dönüşü
+    src: hl2
+    n: 10
+    carpan: 3.0
+giris: cross_over(ema10, pmax10)
+cikis: cross_under(ema10, pmax10)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+parametreler:
+  MAvg_period: 10
+  MAvg_type: EMA
+  ATR_period: 10
+  Multiplier: 3.0
+deneme_sayisi_kaynakta: 1
 rapor:
-  pf: null
+  pf: 1.37
   sharpe: null
   getiri: null
-  mdd: null
-  islem: null
-  wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: true
+  mdd: 13.21
+  islem: 448
+  wr: 40.8
+  maliyet_dahil: evet
+spec_durumu: tam
 belirsiz:
-- Backtest metriği yok / yazar sonucu (yazarın bildirimi, doğrulanmamış)
-- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
-- PMax parametreleri (MA tipi/uzunluk, ATR çarpanı) xlsx'te yok; P03/P04'teki PMax(10,2.7) başka strateji, varsayılmadı
-- 'Tür/zaman dilimi belirtilmemiş: 1D varsayıldı'
-bias_varsayim: false
+- TradingView sayfası doğrudan erişime kapalı olduğundan bağımsız Pine Script v5 / Python port incelemesinden (https://dev.to/moonthetrain/tradingview-pmax-strategy-best-settings-repaint-backtest-2f4, Moon
+  The Train) tam kod satır satır okundu
+- 'Yazar: Kıvanç Özbilgiç. PMax (Profit Maximizer) göstergesinde ATR bantları fiyat yerine hareketli ortalamaya (varsayılan EMA 10, hl2) bağlanır'
+- 'Pine Kodu: longStop = MAvg - Multiplier*atr; longStopPrev = nz(longStop[1], longStop); longStop := MAvg > longStopPrev ? max(longStop, longStopPrev) : longStop; shortStop = MAvg + Multiplier*atr; shortStopPrev
+  = nz(shortStop[1], shortStop); shortStop := MAvg < shortStopPrev ? min(shortStop, shortStopPrev) : shortStop; dir := dir == -1 and MAvg > shortStopPrev ? 1 : dir == 1 and MAvg < longStopPrev ? -1 : dir;
+  PMax = dir==1 ? longStop: shortStop'
+- 'Giriş: cross_over(MAvg, PMax); Çıkış: cross_under(MAvg, PMax). Rapor verileri Exness gerçek tick verisiyle XAUUSD H1 üzerinde 2020-2026 döneminde 448 işlemde elde edilen net sonuçlardır'
+- 'short kuralı var: cross_under(MAvg, PMax) olduğunda short pozisyona geçilir'

@@ -1,22 +1,27 @@
 id: O1-034
 ad: '[Sniper] SuperTrend + SSL Hybrid + QQE MOD'
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/6w9Jchj6/
-  sayfa: O1-034
+  sayfa: null
+erisim_engeli: true
 tarz: day
-tf: 15m
+tf: 5m
 mtf: null
-tf_varsayim: false
-yazar_piyasasi: Kripto
+tf_varsayim: true
+yazar_piyasasi: Kripto / Forex
 gostergeler:
-  st:
+  st10:
     f: supertrend
-giris: supertrend short->long and close > ssl_hybrid_ust and qqe_mod_mavi
-cikis: supertrend yön değişimi ; SL % / ATR / önceki dip-tepe ; TP risk-ödül
+    n: 10
+    carpan: 2.0
+giris: ssl_baseline_bull and qqe_mod_bull and st10.yon == 1
+cikis: ssl_baseline_bear or qqe_mod_bear or st10.yon == -1
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -26,12 +31,9 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: true
 belirsiz:
-- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
-- SSL Hybrid ve QQE MOD parametreleri xlsx'te yok
-- 'Yazar: 15 dk''da küçük kâr, 5 dk''da ''super bad'', 1s-1g''de kârlı (sayı yok), puan 3.5/5'
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-bias_varsayim: false
+- TradingView sayfası doğrudan erişim engeline takıldı; Scribd (https://www.scribd.com/document/903169249/QQE-Mod-SSL-Hybrid-Waddah) ve YouTube incelemelerinden stratejinin SSL Hybrid ana trend çizgisi
+  üzerinde kapanış + QQE MOD mavi/yeşil aşırı alım çubuğu + SuperTrend al sinyali kombinasyonu olduğu tespit edildi
+- 'Yazarın TradingView üzerindeki özgün kod parametreleri ve SL/TP kuralları tam doğrulanamadığından spec_durumu: eksik verildi'

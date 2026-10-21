@@ -1,5 +1,6 @@
 id: A2-012
 ad: ORB Risk Managed - Opening Range Breakout
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.mql5.com/en/code/77967
@@ -9,19 +10,20 @@ tf: 1m
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: Endeks CFD (US100 / Nasdaq 100)
-gostergeler:
-  atr14:
-    f: atr
-    n: 14
-giris: null
+gostergeler: {}
+giris: high >= orb_high + buffer
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
 parametreler:
-  session_open_server: '16:30'
-deneme_sayisi_kaynakta: null
+  range_start_server: '16:30'
+  range_length_min: 15
+  max_trades_per_day: 1
+  take_profit_r_mult: 2.0
+  stop_fraction_range: 1.0
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -30,12 +32,10 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: eksik
+spec_durumu: dakikalik
 belirsiz:
-- Karar ve aralık hesaplama verisi M1 (1 saatin altında); ABD seans açılışı (16:30 GMT+3) sonrası ilk dakikaların high/low aralığını (Opening Range) M1 verisinden çıkarır
-- 'Özel kod mantığı: Açılış aralığının üstüne Buy Stop, altına Sell Stop (OCO) konur; günde en fazla 1 işlem açılır; ATR filtresiyle aşırı dar/geniş aralıklı günler atlanır; SL aralık genişliğinin bir kesri,
-  TP ise R çarpanıdır; seans sonunda tüm pozisyonlar kapatılır'
-- Aralık uzunluğu (dakika), SL aralık kesri, TP R çarpanı ve ATR filtre eşiklerinin sayısal varsayılanları açıklama metninde yazmayıp .mq5 dosyasındadır
-- 'short kuralı var: Açılış aralığının altına konan Sell Stop tetiklendiğinde short açılır ve Buy Stop silinir'
-- 'lider: varsayilan parametreler .mq5 icinde, okunmadi'
-kart_yazari: argon
+- Karar zaman dilimi 1m (1 saatin altında, açılış aralığı M1 verisinden hesaplanır)
+- 'MQL5 CodeBase sayfasından kurallar okundu (Matas Kerys): ABD seans açılışından (varsayılan 16:30 sunucu saati) itibaren ilk dakikaların en yüksek ve en düşüğü açılış aralığı (ORB) olarak kaydedilir;
+  aralığın üstüne Buy Stop, altına Sell Stop konulur (biri tetiklendiğinde diğeri silinir, OCO); günde en fazla 1 işlem yapılır ve tüm işlemler seans kapanışından önce kapatılır; stop mesafesi aralık genişliğine
+  göredir'
+- 'short kuralı var: low <= orb_low - buffer olduğunda Sell Stop tetiklenerek short açılır'

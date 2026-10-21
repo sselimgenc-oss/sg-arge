@@ -1,5 +1,6 @@
 id: A2-011
 ad: APEX VELOCITY
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.mql5.com/en/code/78275
@@ -10,7 +11,7 @@ mtf: 1h
 tf_varsayim: false
 yazar_piyasasi: Emtia (XAUUSD)
 gostergeler:
-  atr_m5:
+  atr14:
     f: atr
     n: 14
   ma10:
@@ -25,27 +26,28 @@ gostergeler:
     f: rsi
     src: close
     n: 14
-  vol_sma:
-    f: sma
-    src: volume
-    n: 20
-  htf_ma50:
+  ma50_1h:
     f: sma
     src: close
     n: 50
-giris: close > high[1] and close > open and close > ma50 and rsi14 < 70 and mtf(1h, close > htf_ma50)
+    tf: 1h
+giris: volume >= avg_vol * 1.5 and (body / range) >= 0.5 and range >= atr14 * 1.0 and close > ma50 and rsi14 < 70.0 and close > high[1] + atr14 * 0.2 and close > open and mtf(1h, close > ma50_1h)
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
 parametreler:
-  ma_fast.n: 10
-  ma_slow.n: 50
-  htf_ma.n: 50
-  rsi_buy_max: 70.0
-  rsi_sell_min: 30.0
-deneme_sayisi_kaynakta: null
+  InpVolumePeriod: 20
+  InpAggrVolumeThreshold: 1.5
+  InpMinBodyPercent: 0.5
+  InpMinVolatilityATR: 1.0
+  InpBreakoutBufferATR: 0.2
+  FastMA: 10
+  SlowMA: 50
+  HTF_MA: 50
+  RSI_Period: 14
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -54,13 +56,11 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: eksik
+spec_durumu: dakikalik
 belirsiz:
-- Karar zaman dilimi M5 (1 saatin altında), üst zaman dilimi onayı H1 MA(50)
-- 'Özel kod mantığı (GetVolumeAccelerationSignal): (1) tick_volume >= önceki InpVolumePeriod barın ortalama hacmi * InpAggrVolumeThreshold, (2) abs(close - open) / (high - low) >= InpMinBodyPercent, (3)
-  (high - low) >= atr * InpMinVolatilityATR, (4) close > ma50 ve rsi < 70, (5) close > high[1] + atr * InpBreakoutBufferATR ve close > open, (6) H1 close > H1 ma50 ve Londra/NY seans filtresi'
-- InpVolumePeriod, InpAggrVolumeThreshold, InpMinBodyPercent, InpMinVolatilityATR, InpBreakoutBufferATR ve ATR SL/TP çarpanlarının varsayılan sayısal değerleri açıklama metnindeki kod kesitinde yer almayıp
-  .mq5 dosyasının başlık kısmındadır
-- 'short kuralı var: close < low[1] - atr * InpBreakoutBufferATR and close < open and close < ma50 and rsi > 30 and mtf(1h, close < htf_ma50) olduğunda short açılır'
-- 'lider: varsayilan parametreler .mq5 icinde, okunmadi'
-kart_yazari: argon
+- Karar zaman dilimi M5 (1 saatin altında); üst zaman dilimi H1
+- 'MQL5 CodeBase sayfasında paylaşılan tam C++ kaynak kodundan (GetVolumeAccelerationSignal ve ConfirmHigherTF fonksiyonları) kurallar birebir çıkarıldı: (1) Anlık hacim 20 barlık ortalama hacmin 1.5 katı
+  veya üstünde olmalı, (2) Mum gövdesi toplam aralığın en az %50''si olmalı (body/range >= 0.5), (3) Mum aralığı ATR(14)''ün 1.0 katından büyük olmalı, (4) Kapanış MA(50)''nin üzerinde ve RSI(14) < 70 olmalı,
+  (5) Kapanış önceki mumun en yükseğini ATR(14)*0.2 tampon ile yukarı kırmalı (bullish breakout), (6) H1 üst zaman diliminde kapanış MA(50) üzerinde olmalı'
+- Çıkışlar ATR çarpanlı dinamik başabaş (break-even), ATR iz süren stop ve maksimum hesap düşüş koruma kesicisi ile yönetilir
+- 'short kuralı var: Hacim, gövde ve volatilite şartları sağlandığında close < ma50, rsi > 30, close < low[1] - atr*0.2 ve H1 close < ma50 şartlarıyla short açılır'

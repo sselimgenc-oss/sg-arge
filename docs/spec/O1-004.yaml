@@ -1,22 +1,31 @@
 id: O1-004
 ad: PHL2 YIGITBOX
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL2YIGITBOX
-  sayfa: O1-004
-tarz: swing
-tf: 1H
-mtf: null
-tf_varsayim: false
-yazar_piyasasi: BIST/VİOP
-gostergeler: {}
-giris: phl2_kutu_ust yukarı kırılımı
-cikis: phl2_kutu_alt aşağı kırılımı
+  sayfa: null
+tarz: day
+tf: 1h
+mtf: 1D
+tf_varsayim: true
+yazar_piyasasi: BIST (XU030)
+gostergeler:
+  mov1_close:
+    f: sma
+    src: close
+    n: 1
+giris: close > pvt2 and close > pvt1 and willr3 > -20
+cikis: close < pvt2 and close < pvt1 and willr3 < -70
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  willr.n: 3
+  willr_buy_threshold: -20
+  willr_sell_threshold: -70
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -24,13 +33,11 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: true
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- Backtest sonucu yayımlanmamış (yalnız popülerlik)
-- PHL2 kutu seviyelerinin formülü xlsx'te yok
-- '60/120/180 dk: 2H/3H bar 1H''den yeniden örneklenmeli'
-- Yazar vade geçiş boşlukları için XU030 spot önerir
-- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
-bias_varsayim: false
+- Algo Kütüphanesi sayfasından Matriks System Tester formülü birebir okundu
+- 'Zaman dilimi yazar tarafından 60dk, 120dk veya 180dk XU030 spot grafiği olarak önerilmiştir (tf: 1h, tf_varsayim: true)'
+- 'Özel kod mantığı: YIGIT:=dayofmonth()><ref(dayofmonth(),-1); ADAM:=valuewhen(1,YIGIT,ref(c,-1)); TX:=valuewhen(1,YIGIT,ref(highestsince(1,YIGIT,h),-1)); RX:=valuewhen(1,YIGIT,ref(lowestsince(1,YIGIT,l),-1));
+  PVT1:=(ADAM+RX+TX)/3; PVT2:=ADAM. AL: Mov(C,1,S)>PVT2 and Mov(C,1,S)>PVT1 AND WillR(3)>-20; SAT: Mov(C,1,S)<PVT2 and Mov(C,1,S)<PVT1 AND WillR(3)<-70'
+- 'short kuralı var: AÇIĞA SAT KOŞULU: Mov(C,1,S)<PVT2 and Mov(C,1,S)<PVT1 AND WillR(3)<-70; AÇIK POZ. KAPAT KOŞULU: Mov(C,1,S)>PVT2 and Mov(C,1,S)>PVT1 AND WillR(3)>-20'

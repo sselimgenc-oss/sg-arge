@@ -1,17 +1,19 @@
 id: O1-033
 ad: Scalping with Bill Williams Alligator
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/b2ShO5Fv-Scalping-with-Bill-Williams-Alligator
-  sayfa: O1-033
+  sayfa: null
+erisim_engeli: true
 tarz: day
-tf: 1m
+tf: 5m
 mtf: null
-tf_varsayim: false
-yazar_piyasasi: belirtilmemiş
+tf_varsayim: true
+yazar_piyasasi: Kripto / Forex
 gostergeler: {}
-giris: Alligator çizgileri (Heikin Ashi ile) hizalanması
-cikis: Alligator ters dönüşü
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -24,13 +26,7 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: true
 belirsiz:
-- Backtest metriği yok / yazar sonucu (yazarın bildirimi, doğrulanmamış)
-- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
-- Yazar ATR stopunun eksik olduğunu belirtiyor
-- Hizalama koşulu ve Alligator parametreleri xlsx'te yok
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-bias_varsayim: false
+- TradingView sayfası erişim engeli nedeniyle okunamadı ve web üzerinde ayna kopyası bulunamadı

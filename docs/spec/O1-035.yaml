@@ -1,22 +1,25 @@
 id: O1-035
 ad: ORB Heikin Ashi SPY 5min Correlation Strategy
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/QpJvYDzb-ORB-Heikin-Ashi-SPY-5min-Correlation
-  sayfa: O1-035
+  sayfa: null
+erisim_engeli: true
 tarz: day
 tf: 5m
-mtf: null
+mtf: 30m
 tf_varsayim: false
-yazar_piyasasi: ABD
+yazar_piyasasi: Hisse (SPY) / Kripto
 gostergeler: {}
-giris: açılış aralığı yukarı kırılımı and HA yönü yukarı and rvol > eşik
-cikis: belirtilmemiş
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
-deneme_sayisi_kaynakta: null
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -24,13 +27,8 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: false
 belirsiz:
-- Backtest metriği yok / yazar sonucu (yazarın bildirimi, doğrulanmamış)
-- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
-- Açılış aralığı süresi, RVOL eşiği, çıkış kuralı belirtilmemiş
-- Long+short; yalnız long kolu
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-bias_varsayim: false
+- 'TradingView sayfası erişim engeline takıldı; PyneSys aynasında (https://wild.pynesys.io/scripts/orb-heikin-ashi-spy-5min-correlation-strategy-QpJvYDzb) scriptin yazarının exlux olduğu, Pine Script v5
+  dilinde yazıldığı ve SPY korelasyonlu Heikin Ashi ORB kullandığı doğrulandı ancak kaynak kod metni sayfada açık bulunmadığından spec_durumu: eksik olarak sınıflandırıldı'

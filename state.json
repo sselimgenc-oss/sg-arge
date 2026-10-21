@@ -19,7 +19,7 @@
       "id": "T1a",
       "owner": "codex-worker",
       "title": "Veri + referans motor + 2 aile pilotu (C01,C19,C02,C09,C15,C17), replikasyon ve 2015-2019 on donem testi",
-      "status": "review (T1a pilotu ve gercek veri sonuclari teslim edildi)",
+      "status": "done (PR #23); degerlendirme tartisma/004",
       "spec": "docs/GOREV_T1.md"
     },
     {
@@ -33,28 +33,28 @@
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
       "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart)",
-      "status": "paket 4, yeniden, yeniden2 hazir",
+      "status": "parti 2, 4, yeniden kabul; sirada yeniden2 (Argon limitte)",
       "spec": "argon/PAKET_*.md"
     },
     {
       "id": "T3",
       "owner": "sol-6.1",
       "title": "T1a PR kod incelemesi: look-ahead/survivorship korumalari, motor dogrulugu",
-      "status": "waiting-T1a",
+      "status": "kapandi: lider incelemesiyle (Sol 6.1 kanali yok)",
       "spec": "docs/GOREV_T1.md"
     },
     {
       "id": "T1b",
       "owner": "codex-worker",
       "title": "Kalan 9 aile yeniden uretim",
-      "status": "blocked-awaiting-T1a-review",
+      "status": "ready; Codex limiti acilinca",
       "spec": "docs/GOREV_T1.md"
     },
     {
       "id": "T5",
       "owner": "claude-moderator (T5a) / codex-worker (T5b)",
       "title": "YAML yorumlayici + asama 1 hizli tarama (VectorBT)",
-      "status": "T5a atandi (Sonnet); T5b T1a onayini bekliyor",
+      "status": "T5a PR #22 acik: main ile engine/indicators.py cakismasi, Sonnet'e birlestirme gorevi",
       "spec": "docs/GOREV_T5.md"
     },
     {
@@ -107,6 +107,24 @@
       "owner": "claude-moderator",
       "title": "42 kart (36 erisim engelli -> YENIDEN.csv)",
       "ref": "PR #15"
+    },
+    {
+      "id": "T1a",
+      "owner": "codex-worker",
+      "title": "6 satir replikasyon + 2015-2019",
+      "ref": "PR #23, tartisma/004"
+    },
+    {
+      "id": "T2-p4",
+      "owner": "argon",
+      "title": "40 kart",
+      "ref": "PR #20"
+    },
+    {
+      "id": "T2-yeniden",
+      "owner": "argon",
+      "title": "38 kart yeniden okundu, 18 cozuldu",
+      "ref": "argon/T2_yeniden.yaml"
     }
   ],
   "user_decisions_pending": [],

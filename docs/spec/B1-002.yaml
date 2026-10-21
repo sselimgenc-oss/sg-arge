@@ -1,38 +1,50 @@
 id: B1-002
 ad: AlphaTrend Strategy (TradingView, Kıvanç Özbilgiç)
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/3wdQu7P3-AlphaTrend-Strategy
-  sayfa: B1-002
+  sayfa: null
 tarz: swing
 tf: 1D
 mtf: null
-tf_varsayim: false
-yazar_piyasasi: Kripto (BTCUSDT günlük örnek)
+tf_varsayim: true
+yazar_piyasasi: Kripto / BIST / Forex
 gostergeler:
-  alphatrend:
-    f: alphatrend
+  atr14:
+    f: atr
     n: 14
-    carpan: 1.0
-giris: null
-cikis: null
+  mfi14:
+    f: mfi
+    n: 14
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+giris: cross_over(alphatrend, alphatrend[2])
+cikis: cross_under(alphatrend, alphatrend[2])
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  coeff: 1.0
+  AP: 14
+  novolumedata: false
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
   getiri: null
   mdd: null
-  islem: 41
+  islem: null
   wr: null
-  maliyet_dahil: evet, %0.1 komisyon + 100 tick kayma
-spec_durumu: eksik
-ozel_kod: true
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- Giriş/çıkış kuralı xlsx'te belirtilmemiş; O1-001'deki 'cross(AlphaTrend, AlphaTrend[2])' aynı gösterge için varsayılabilir -> lider kararı
-- Varsayılan 14/1 (coeff=1, AP=14) kayıtta; AlphaTrend listede yok
-- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
-bias_varsayim: false
+- TradingView sayfası doğrudan erişime kapalı olduğundan Algo Kütüphanesi (https://www.algokutuphanesi.com/Sistem/Detay/Matriks/AlphaTrend-Strategy), PineConnector kütüphanesi ve GitHub aynalarından tam
+  Pine Script kodu okundu
+- 'Zaman dilimi yazar tarafından serbest bırakılmıştır; varsayılan günlük (1D) kabul edildi (tf_varsayim: true)'
+- 'Özel kod mantığı: upT = low - atr(14)*coeff; downT = high + atr(14)*coeff; AlphaTrend = (novolumedata ? rsi(14)>=50 : mfi(14)>=50) ? (upT < AlphaTrend[1] ? AlphaTrend[1] : upT) : (downT > AlphaTrend[1]
+  ? AlphaTrend[1] : downT). Long Giriş: cross_over(AlphaTrend, AlphaTrend[2]); Çıkış / Reversal: cross_under(AlphaTrend, AlphaTrend[2])'
+- 'short kuralı var: cross_under(AlphaTrend, AlphaTrend[2]) olduğunda short açılır'

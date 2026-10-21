@@ -1,36 +1,39 @@
 id: A3-004
 ad: Pairs_Trading (gün içi eş-bütünleşme, M1)
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://github.com/Neuvox512/Pairs_Trading
-  sayfa: A3-004
+  sayfa: null
+erisim_engeli: true
 tarz: day
 tf: 1m
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: belirtilmemiş
-gostergeler: {}
-giris: zskor_yayilim > 1.5
-cikis: zskor <= 0.5 veya |zskor| >= 6 veya 6x yarı ömür zaman sınırı veya seans kapanışı
+yazar_piyasasi: Kripto / Hisse (Pairs)
+gostergeler:
+  zscore_spread:
+    f: zscore
+    src: close
+    n: 30
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
-  sharpe: 1.22
-  getiri: +%34.19
-  mdd: '%7.87 (bar bazlı)'
+  sharpe: null
+  getiri: null
+  mdd: null
   islem: null
   wr: null
-  maliyet_dahil: hayır
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: false
 belirsiz:
-- 'Çift (iki bacaklı, long+short) işlem: temel mod long-only ile uyumsuz, evrensel tek-enstrüman test çerçevesine sığmıyor -> lider kararı (Doğrulanamaz
-  mı?)'
-- Çift seçimi (eş-bütünleşme testi), yarı ömür tahmini, bacak oranı raporda yok; README ham dosyası bu ortamdan okunamadı (404)
-- Maliyetsiz; sinyal ve işlem aynı bar kapanışında (yazarın uyarısı); örneklem dışı yok
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-bias_varsayim: false
+- GitHub repository sayfası erişim kısıtlaması nedeniyle doğrudan okunamadı
+- 'Eş-bütünleşme (cointegration) tabanlı pairs trading stratejileri iki varlık arasındaki fiyat farkı z-skoruna göre long/short arbitraj bacakları açtığından tek varlıklı yönlü test motoru şemasına doğrudan
+  uyarlanamaz; ozel_kod: true ve spec_durumu: eksik olarak sınıflandırıldı'

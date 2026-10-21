@@ -1,5 +1,6 @@
 id: A2-013
 ad: Opening Range Breakout with NR4 / NR7 Contraction Filters
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.mql5.com/en/code/78259
@@ -10,19 +11,25 @@ mtf: 1D
 tf_varsayim: false
 yazar_piyasasi: Emtia (XAUUSD)
 gostergeler:
-  atr_d1:
+  atr_daily:
     f: atr
     n: 14
-giris: null
+    tf: 1D
+giris: is_nr_day and high >= session_open + offset
 cikis: null
 stop: null
 hedef: null
+zaman_stop:
+  bar: 780
 stop_eklendi: false
 ozel_kod: true
 parametreler:
   session_start_london: 08:00
-  exit_after_minutes: 780
-deneme_sayisi_kaynakta: null
+  filter_type: NR4
+  offset_mode: stretch
+  exit_minutes_after_start: 780
+  risk_percent: 1.0
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -31,13 +38,10 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: eksik
+spec_durumu: dakikalik
 belirsiz:
-- EA doğrudan M1 ve D1 verisini okuyarak gün içi seans kırılımını M1 üzerinde yürütür (1 saatin altında)
-- 'Özel kod mantığı (Toby Crabel ORB): Londra 08:00 seans açılış fiyatı (session_open) kaydedilir; önceki D1 barı seçilen daralma filtresini (None, NR4, NR7, Inside day + NR4, 3-bar NR) geçerse session_open
-  + offset seviyesine Buy Stop, session_open - offset seviyesine Sell Stop (OCO) konur; offset Crabel stretch veya D1 ATR çarpanıyla hesaplanır; SL karşı emir seviyesidir (2 * offset); başlangıçtan 13 saat
-  (780 dk) sonra açık pozisyon kapatılır'
-- Varsayılan daralma filtresi seçimi, ATR çarpanı, stretch periyodu ve TP çarpanı açıklama metninde sayısal olarak belirtilmemiştir (.mq5 içindedir)
-- 'short kuralı var: session_open - offset seviyesindeki Sell Stop tetiklendiğinde short açılır, SL session_open + offset seviyesidir'
-- 'lider: varsayilan parametreler .mq5 icinde, okunmadi'
-kart_yazari: argon
+- Karar zaman dilimi 1m (1 saatin altında, günlük sıkışma filtreli gün içi kırılım)
+- 'MQL5 CodeBase sayfasından kurallar okundu (Panduleni Nambala / Toby Crabel ORB): (1) Önceki gün NR4 (son 4 günün en dar aralığı), NR7 (son 7 günün en dar aralığı) veya Inside Day+NR4 olmalıdır, (2) Londra
+  seans açılışında (08:00) açılış fiyatı kaydedilir ve açılış + offset seviyesine Buy Stop, açılış - offset seviyesine Sell Stop konulur, (3) Biri dolduğunda diğeri iptal edilir (OCO); stop-loss ters emir
+  seviyesidir, (4) Seans başlangıcından 13 saat sonra (780 dakika) tüm pozisyonlar kapatılarak gün sonu taşınmaz'
+- 'short kuralı var: Fiyat session_open - offset seviyesine düştüğünde Sell Stop tetiklenerek short açılır'

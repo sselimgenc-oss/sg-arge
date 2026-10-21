@@ -1,21 +1,22 @@
 id: A1-016
 ad: VIOP Scalping - ATR SNIPER
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/R0CTM8NR-VIOP-Scalping-ATR-SNIPER/
   sayfa: null
+erisim_engeli: true
 tarz: day
-tf: null
+tf: 5m
 mtf: null
-tf_varsayim: false
-yazar_piyasasi: VIOP
+tf_varsayim: true
+yazar_piyasasi: BIST VIOP
 gostergeler: {}
 giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: false
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -28,7 +29,5 @@ rapor:
   maliyet_dahil: belirtilmemis
 spec_durumu: eksik
 belirsiz:
-- 'URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod/açıklama bulunmuyor'
-- Karar zaman dilimi, giriş/çıkış kuralları ve ATR parametreleri kaynağa erişilemediği için belirsiz
-erisim_engeli: true
-kart_yazari: argon
+- TradingView URL'si erişim engeli nedeniyle okunamadı ve web/GitHub üzerinde ayna kopyası bulunamadı
+- Başlıktan VIOP endeksinde ATR tabanlı scalping yapıldığı anlaşılmakta ancak kurallar kaynağa erişilemediği için belirsizdir

@@ -1,14 +1,16 @@
 id: O1-019
 ad: EMA 25/68 BIST30 Futures
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/Tbh1KPxq/
-  sayfa: O1-019
+  sayfa: null
+erisim_engeli: true
 tarz: day
-tf: 15m
+tf: 5m
 mtf: null
-tf_varsayim: false
-yazar_piyasasi: VİOP (BIST30 vadeli)
+tf_varsayim: true
+yazar_piyasasi: BIST VIOP (F_XU030)
 gostergeler:
   ema25:
     f: ema
@@ -18,16 +20,14 @@ gostergeler:
     f: ema
     src: close
     n: 68
-  ema160:
-    f: ema
-    src: close
-    n: 160
-giris: cross_over(ema25, ema68) ; sonraki 4 barda kesişim mumu yükseği kırılır and close > ema160
-cikis: trailing stop (tamamlanmış bar) veya 17:45 bar kapanışı
+giris: cross_over(ema25, ema68)
+cikis: cross_under(ema25, ema68)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
+parametreler:
+  ema_fast.n: 25
+  ema_slow.n: 68
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
@@ -36,13 +36,8 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: false
 belirsiz:
-- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
-- İz süren stop parametreleri xlsx'te yok; seans-sonu 17:45 BIST'e özgü
-- 'Maliyet: bacak başı %0,020 komisyon + %5 vergi = %0,021 (kaynak varsayılanı)'
-- Sayfada performans sayısı yok; yazar eğitim/araştırma amaçlı
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-bias_varsayim: false
+- TradingView sayfası erişim engeli nedeniyle doğrudan okunamadı ve web üzerinde ayna kopyası bulunamadı
+- 'Başlıktan BIST30 vadeli kontratlarında EMA(25) ve EMA(68) kesişimi kullanıldığı anlaşılmakta ancak ek filtreler, seans saatleri ve SL/TP kuralları doğrulanamadığından spec_durumu: eksik olarak sınıflandırıldı'

@@ -1,22 +1,68 @@
 id: O1-008
 ad: Anıl Özekşi Sistem 1
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Anil-Özekşi-Sistem-1
-  sayfa: O1-008
-tarz: belirsiz
-tf: 1D
+  sayfa: null
+tarz: day
+tf: 5m
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: BIST/VİOP/Binance spot
-gostergeler: {}
-giris: OTT/Stokastik/HHV koşulları (kodda)
-cikis: kodda ters koşul
+yazar_piyasasi: BIST (THYAO) / VIOP / BINANCE SPOT
+gostergeler:
+  hhv20:
+    f: highest
+    src: high
+    n: 20
+  hhv22:
+    f: highest
+    src: high
+    n: 22
+  llv23:
+    f: lowest
+    src: low
+    n: 23
+  llv24:
+    f: lowest
+    src: low
+    n: 24
+giris: 'major_trend_bull ? (ott2_bull and stoc1_bull and high > hhv20[1]) : (ott3_bull and stoc2_bull and high > hhv22[1])'
+cikis: 'major_trend_bull ? (ott4_bear and stoc3_bear and low < llv23[1]) : (ott5_bear and stoc4_bear and low < llv24[1])'
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  MajorTrend_period: 30
+  MajorTrend_OttOpt: 8.0
+  Bolge1_OttPeriod: 40
+  Bolge1_OttOpt: 0.6
+  Bolge1_StochK: 500
+  Bolge1_StochSlowK: 200
+  Bolge1_StochD: 111
+  Bolge1_HHV: 20
+  Bolge2_OttPeriod: 30
+  Bolge2_OttOpt: 0.9
+  Bolge2_StochK: 500
+  Bolge2_StochSlowK: 300
+  Bolge2_StochD: 111
+  Bolge2_HHV: 22
+  Bolge3_OttPeriod: 20
+  Bolge3_OttOpt: 1.0
+  Bolge3_StochK: 500
+  Bolge3_StochSlowK: 200
+  Bolge3_StochD: 111
+  Bolge3_LLV: 23
+  Bolge4_OttPeriod: 30
+  Bolge4_OttOpt: 0.9
+  Bolge4_StochK: 500
+  Bolge4_StochSlowK: 300
+  Bolge4_StochD: 111
+  Bolge4_LLV: 24
+  Baslangic: '10:03:00'
+  Bitis: '17:58:00'
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -24,12 +70,11 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: true
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
 belirsiz:
-- Backtest sonucu yayımlanmamış (yalnız popülerlik)
-- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
-- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
-- Yalnız LONG; isteğe bağlı saat filtresi
-bias_varsayim: false
+- Karar zaman dilimi C# kodunda [Parameter(SymbolPeriod.Min)] olarak tanımlı olup gün içi seans saatlidir (10:03 - 17:58, 1 saatin altında, dakikalık)
+- Algo Kütüphanesi MatriksIq C# kodundan tüm bölge parametreleri ve kuralları eksiksiz okundu; sadece LONG işlem yapmaktadır
+- 'Özel kod mantığı: Major Trend = MOV(C, 30, VAR) > OTT(C, 30, 8.0). Eğer Major Trend yukarı ise 1. Bölge şartları (OTT(40, 0.6) altta, StochSlow(500,200,111) yukarı kesişimli ve H > HHV(H, 20)[1]) ile
+  Long açılır. Major Trend aşağı ise 2. Bölge şartları (OTT(30, 0.9) altta, StochSlow(500,300,111) yukarı kesişimli ve H > HHV(H, 22)[1]) ile Long açılır. Pozisyon kapama 3. Bölge (LLV 23) veya 4. Bölge
+  (LLV 24) koşullarıyla gerçekleşir'

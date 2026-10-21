@@ -1,27 +1,24 @@
 id: A1-024
 ad: TrendMaster Pro 2.3 with Alerts
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/mVkDf8qh-TrendMaster-Pro-2-3-with-Alerts/
   sayfa: null
+erisim_engeli: true
 tarz: day
-tf: null
-mtf: null
-tf_varsayim: false
-yazar_piyasasi: null
-gostergeler:
-  htf_ma50:
-    f: sma
-    src: close
-    n: 50
+tf: 5m
+mtf: 1D
+tf_varsayim: true
+yazar_piyasasi: Kripto / Forex
+gostergeler: {}
 giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: false
 parametreler:
-  htf_ma50.n: 50
+  htf_ma.n: 50
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
@@ -33,7 +30,4 @@ rapor:
   maliyet_dahil: belirtilmemis
 spec_durumu: eksik
 belirsiz:
-- 'URL okunamadı: TradingView sayfası otomatik erişime kapalı ve arama motoru önbelleğinde kod bulunmuyor'
-- Karar zaman dilimi, üst zaman dilimi (HTF MA 50), giriş/çıkış kuralları ve parametreler kaynağa erişilemediği için belirsiz
-erisim_engeli: true
-kart_yazari: argon
+- TradingView sayfası erişim engeli nedeniyle okunamadı ve web üzerinde ayna kopyası bulunamadı

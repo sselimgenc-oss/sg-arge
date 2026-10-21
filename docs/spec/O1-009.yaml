@@ -1,22 +1,40 @@
 id: O1-009
 ad: MOTT 4 Kurgu Stratejisi
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4-Kurgu-Stratejisi
-  sayfa: O1-009
-tarz: belirsiz
+  sayfa: null
+tarz: swing
 tf: 1D
 mtf: null
-tf_varsayim: true
-yazar_piyasasi: BIST/VİOP
-gostergeler: {}
-giris: mov(c,opt1)'in ott(hhv)/ara bant/ott(llv) seviyelerinden birini yukarı kesmesi
-cikis: aşağı kesişimler (kodda)
+tf_varsayim: false
+yazar_piyasasi: BIST (GARAN)
+gostergeler:
+  mov4_var:
+    f: var
+    src: close
+    n: 4
+  hhv80:
+    f: highest
+    src: high
+    n: 80
+  llv80:
+    f: lowest
+    src: low
+    n: 80
+giris: cross_over(mov4_var, mott_b1) or cross_over(mov4_var, mott_b2) or cross_over(mov4_var, mott_b3) or cross_over(mov4_var, mott_b4) or cross_over(mov4_var, mott_b5)
+cikis: cross_under(mov4_var, mott_b1) or cross_under(mov4_var, mott_b2) or cross_under(mov4_var, mott_b3) or cross_under(mov4_var, mott_b4) or cross_under(mov4_var, mott_b5)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  MovPeriod: 4
+  MottX1: 80
+  MottX2: 1.4
+  MottOteleme: 0
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -24,11 +42,9 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: true
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- Backtest sonucu yayımlanmamış (yalnız popülerlik)
-- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
-- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
-bias_varsayim: false
+- Algo Kütüphanesi MatriksIq C# kodundan (Akın Hünerli) formül ve varsayılan parametreler eksiksiz okundu
+- 'Özel kod mantığı: MOV(C, 4, VAR) ortalamasının, HHV(H, 80) ve LLV(L, 80) üzerine kurulan OTT(2, 1.4) kanalları ile ara çizgilerinden oluşan 5 MOTT bandı ile kesişiminde Al/Sat emri gönderilir'
+- 'short kuralı var: CrossBelow şartı gerçekleştiğinde pozisyon kapatılır / açığa satılır'
