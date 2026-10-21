@@ -83,3 +83,18 @@ belirsiz: ["çıkış kuralı yazmıyor"]
 - **Kaldıraçlı ETF rotasyonları** (Composer): kaldıraç fazına (faz 3) ertelenir, `ertelendi: kaldirac`.
 
 Kural karta çevrilemiyorsa (ör. makine öğrenmesi, order flow, haber) → `spec_durumu: eksik` ve `belirsiz`'e neden yazılır; yorumlayıcıya özel kod gerekiyorsa `ozel_kod: true`.
+
+
+### D5. Cikis alanlarinin motor anlamlari (T5b-1, Sonnet; lider onayina acik)
+Hepsi `engine/portfolio.py` + `engine/kart_sinyal.py` ile uygulanir; tum emirler A1-A4 ile uyumludur (kapanmis bar sinyali, sonraki acilis, ayni barda stop once, gap'te acilistan dolum).
+- **`stop`**: `atr` = giris - carpan x ATR(n) (sinyal barinin ATR'si, sabit); `yuzde` = giris x (1 - deger/100) (dolum fiyatina gore); `puan` = giris - deger; `max` = `secenekler` ifadelerinin sinyal barindaki en buyugu kadar mesafe. Karta stop yok ve `iz_suren` de yoksa A7: ATR14 x 3 sabit stop eklenir (`stop_eklendi: true` tarama satirinda). Karta stop yok ama `iz_suren` varsa baslangic stopu iz suren mesafesidir.
+- **`hedef`**: `atr` = giris + carpan x ATR(n); `yuzde`; `puan`. Ayni barda stop ve hedef birlikte vurulursa stop.
+- **`iz_suren`**: `atr_kapanis_zirve` = stop = max(stop, kapanis - carpan x ATR_t); `atr_zirve` = stop = max(stop, yuksek - carpan x ATR_t). Her ikisi bar kapanisinda hesaplanir, ertesi bardan gecerlidir (T1a motoruyla ayni).
+- **`kar_kilidi {tetik_atr, stop}`**: bar yuksegi giris + tetik_atr x ATR(sinyal) degerine ulasinca stop `stop` ifadesindeki seviyeye (`giris` = dolum fiyati) cekilir; ertesi bardan gecerli, stop asla asagi inmez.
+- **`zaman_stop {bar}`**: pozisyon `bar` bar piyasada kalinca cikis emri (sonraki acilista). Giris barindan sayilir.
+- **`cooldown_bar`**: cikis barindan sonraki `cooldown_bar` barda gelen giris sinyalleri yok sayilir.
+- **`dolum: kapanis`**: (a) sinyal barinin kapanisindan dolum, maliyet 2x baz; (b) A1 (sonraki acilis, baz maliyet). Tarama karari (a)'ya gore verir, (b) tablo olarak raporlanir, (b) negatifse not duser.
+- **Calisma zamani adlari** (`giris_fiyati`, `giris`, `giris_stop`, `giris_hedef`, `bars_since_entry`, `stop_mesafesi`) yalniz `cikis` ve stop ifadelerinde; `bars_since_entry` dolum barinda 0'dir. `cikis` bunlari kullaniyorsa her pozisyon icin giriste yeniden hesaplanir.
+- **`mtf("1W", x)`** = x'in onceki tamamlanmis haftalik barin son degeri. **`hizalama: etiket`** (gosterge alani, yalniz haftalik `tf`): hafta takvimsel bitis gununde (borsa Cuma, kripto Pazar) tamamlanmis sayilir ve o gunun kapanisinda kullanilabilir (T1a referans hizalamasi; C01/C02 paritesi icin).
+- **Desteklenmeyenler** (`motor_destegi_yok:<alan>` olarak atlanir): `kismi_kar`, `roi_tablosu`, `stop.pips`, `iz_suren.fiyat_adim`, `giris_modu`.
+- **Endeks**: `endeks_close` / `benchmark: endeks` ABD icin SPY, kripto icin BTCUSDT; BIST30 ve emtiada endeks serisi olmadigindan o piyasalarda Dogrulanamaz (`endeks_yok`).

@@ -214,7 +214,7 @@ def test_repository_cards_evaluate_on_synthetic_data():
             "giris_modu": "A",
         }
         try:
-            env = gosterge.build_env(frame, card["gostergeler"], benchmarks=benchmarks)
+            env = gosterge.build_env(frame, card["gostergeler"], benchmarks=benchmarks, week_end="FRI")
             for name in card["gostergeler"]:
                 values = env[name]
                 frame_ok = values.notna().to_numpy().any() if isinstance(values, (pd.Series, pd.DataFrame)) else True

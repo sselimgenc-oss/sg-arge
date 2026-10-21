@@ -18,6 +18,10 @@ class Order:
     execute_date: pd.Timestamp
     signal_date: pd.Timestamp
     signal_atr: float
+    stop_dist: float = float("nan")
+    target_dist: float = float("nan")
+    stop_pct: float = float("nan")
+    target_pct: float = float("nan")
 
 
 @dataclass
@@ -30,6 +34,11 @@ class Position:
     initial_stop: float
     initial_risk: float
     entry_cost: float
+    target: float = float("nan")
+    signal_atr: float = float("nan")
+    bars_held: int = 0
+    locked: bool = False
+    runtime_exit: pd.Series | None = None
 
 
 @dataclass
@@ -115,11 +124,36 @@ def run_portfolio(
     max_gross: float = 1.0,
     atr_stop_multiple: float = 3.0,
     precomputed_signals: dict[str, pd.DataFrame] | None = None,
+    trail_mode: str | None = "close",
+    trail_multiple: float | None = None,
+    fill_at_close: bool = False,
+    time_stop_bars: int | None = None,
+    cooldown_bars: int = 0,
+    profit_lock: dict | None = None,
+    exit_builder: Callable[..., pd.Series | None] | None = None,
 ) -> BacktestResult:
-    """Run shared-capital portfolio events without same-bar signal fills."""
+    """Run shared-capital portfolio events without same-bar signal fills.
+
+    Defaults reproduce the T1a reference behaviour exactly. Optional card-driven
+    extras (docs/EVRENSEL_KURALLAR.md D5):
+
+    * signal columns ``stop_dist`` / ``target_dist`` / ``trail_atr`` (price units at
+      the signal bar) and ``stop_pct`` / ``target_pct`` (fraction of the fill price); a
+      missing stop column falls back to ``atr_stop_multiple * atr``;
+    * ``trail_mode``: ``"close"`` ratchets ``close - m*ATR``, ``"high"`` ratchets
+      ``high - m*ATR``, ``None`` keeps the initial stop;
+    * ``fill_at_close``: signal-bar close fills (MOC); costs are the caller's job;
+    * ``time_stop_bars``, ``cooldown_bars``, ``profit_lock`` (``trigger_atr`` and a
+      ``stop_fn(entry_price)`` returning the locked stop), ``exit_builder`` (position
+      state dependent exit series, called as ``(symbol, entry_date, entry_price,
+      initial_stop, target)``).
+    """
 
     if extra_delay_bars < 0:
         raise ValueError("extra_delay_bars must be non-negative")
+    if trail_mode not in ("close", "high", None):
+        raise ValueError("trail_mode must be 'close', 'high' or None")
+    trail_m = atr_stop_multiple if trail_multiple is None else trail_multiple
     start = _as_utc(start)
     end = _as_utc(end)
     clean_data = {symbol: _validate_frame(frame) for symbol, frame in data.items()}
@@ -154,6 +188,7 @@ def run_portfolio(
     exposure_points: dict[pd.Timestamp, float] = {}
     last_close: dict[str, float] = {}
     max_open_positions = 0
+    last_exit_loc: dict[str, int] = {}
 
     def equity_at(date: pd.Timestamp, field: str) -> float:
         marked = cash
@@ -187,6 +222,66 @@ def run_portfolio(
             )
         )
         pending.pop(symbol, None)
+        if symbol in clean_data and date in clean_data[symbol].index:
+            last_exit_loc[symbol] = int(clean_data[symbol].index.get_loc(date))
+
+    def open_position(symbol: str, date: pd.Timestamp, price: float, signal_atr: float,
+                      stop_dist: float, target_dist: float,
+                      stop_pct: float = float("nan"), target_pct: float = float("nan")) -> None:
+        nonlocal cash, max_open_positions
+        if symbol in positions or not np.isfinite(signal_atr) or signal_atr <= 0:
+            return
+        if np.isfinite(stop_pct):
+            stop_dist = price * stop_pct
+        if np.isfinite(target_pct):
+            target_dist = price * target_pct
+        if not np.isfinite(stop_dist) or stop_dist <= 0:
+            return
+        portfolio_equity = equity_at(date, "close" if fill_at_close else "open")
+        field = "close" if fill_at_close else "open"
+        initial_stop = price - stop_dist
+        risk_per_unit = price - initial_stop
+        existing_risk = sum(
+            max(_mark_price(held, date, clean_data, last_close, field) - position.stop, 0.0)
+            * position.quantity
+            for held, position in positions.items()
+        )
+        gross = sum(
+            position.quantity * _mark_price(held, date, clean_data, last_close, field)
+            for held, position in positions.items()
+        )
+        risk_budget = min(
+            risk_per_trade * portfolio_equity,
+            max(max_total_risk * portfolio_equity - existing_risk, 0.0),
+        )
+        gross_budget = max(max_gross * portfolio_equity - gross, 0.0)
+        cash_budget = max(cash / (1 + cost_rate), 0.0)
+        quantity = min(risk_budget / risk_per_unit, gross_budget / price, cash_budget / price)
+        if quantity <= 0 or not np.isfinite(quantity):
+            return
+        entry_cost = quantity * price * cost_rate
+        cash -= quantity * price + entry_cost
+        initial_risk = quantity * risk_per_unit
+        target = price + target_dist if np.isfinite(target_dist) and target_dist > 0 else float("nan")
+        runtime_exit = (
+            exit_builder(symbol, date, price, initial_stop, target) if exit_builder is not None else None
+        )
+        positions[symbol] = Position(
+            symbol=symbol, entry_date=date, entry_price=price, quantity=quantity,
+            stop=initial_stop, initial_stop=initial_stop, initial_risk=initial_risk,
+            entry_cost=entry_cost, target=target, signal_atr=signal_atr,
+            runtime_exit=runtime_exit,
+        )
+        max_open_positions = max(max_open_positions, len(positions))
+
+    def signal_value(symbol: str, date: pd.Timestamp, column: str, default: float) -> float:
+        row = signals[symbol].loc[date]
+        return float(row[column]) if column in row.index else default
+
+    def cooled_down(symbol: str, date: pd.Timestamp) -> bool:
+        if cooldown_bars <= 0 or symbol not in last_exit_loc:
+            return True
+        return int(clean_data[symbol].index.get_loc(date)) - last_exit_loc[symbol] > cooldown_bars
 
     for date in dates:
         for symbol, frame in clean_data.items():
@@ -207,46 +302,8 @@ def run_portfolio(
                     close_position(order.symbol, date, open_price, "signal")
                 continue
             pending.pop(order.symbol, None)
-            if order.symbol in positions or not np.isfinite(order.signal_atr) or order.signal_atr <= 0:
-                continue
-            portfolio_equity = equity_at(date, "open")
-            initial_stop = open_price - atr_stop_multiple * order.signal_atr
-            risk_per_unit = open_price - initial_stop
-            existing_risk = sum(
-                max(
-                    _mark_price(symbol, date, clean_data, last_close, "open") - position.stop,
-                    0.0,
-                )
-                * position.quantity
-                for symbol, position in positions.items()
-            )
-            gross = sum(
-                position.quantity * _mark_price(symbol, date, clean_data, last_close, "open")
-                for symbol, position in positions.items()
-            )
-            risk_budget = min(
-                risk_per_trade * portfolio_equity,
-                max(max_total_risk * portfolio_equity - existing_risk, 0.0),
-            )
-            gross_budget = max(max_gross * portfolio_equity - gross, 0.0)
-            cash_budget = max(cash / (1 + cost_rate), 0.0)
-            quantity = min(risk_budget / risk_per_unit, gross_budget / open_price, cash_budget / open_price)
-            if quantity <= 0 or not np.isfinite(quantity):
-                continue
-            entry_cost = quantity * open_price * cost_rate
-            cash -= quantity * open_price + entry_cost
-            initial_risk = quantity * risk_per_unit
-            positions[order.symbol] = Position(
-                symbol=order.symbol,
-                entry_date=date,
-                entry_price=open_price,
-                quantity=quantity,
-                stop=initial_stop,
-                initial_stop=initial_stop,
-                initial_risk=initial_risk,
-                entry_cost=entry_cost,
-            )
-            max_open_positions = max(max_open_positions, len(positions))
+            open_position(order.symbol, date, open_price, order.signal_atr, order.stop_dist,
+                          order.target_dist, order.stop_pct, order.target_pct)
 
         # Stops are active during the bar, including a position entered at its open.
         for symbol in sorted(list(positions)):
@@ -260,39 +317,82 @@ def run_portfolio(
                 close_position(symbol, date, open_price, "gap_stop")
             elif low_price <= position.stop:
                 close_position(symbol, date, position.stop, "stop")
+            elif np.isfinite(position.target) and open_price >= position.target:
+                close_position(symbol, date, open_price, "gap_target")
+            elif np.isfinite(position.target) and float(frame.at[date, "high"]) >= position.target:
+                close_position(symbol, date, position.target, "target")
 
         # A trailing stop calculated from today's close becomes active tomorrow.
         for symbol, position in positions.items():
             frame = clean_data[symbol]
             if date not in frame.index:
                 continue
+            position.bars_held += 1
             signal_row = signals[symbol].loc[date]
-            current_atr = float(signal_row["atr"])
+            if profit_lock is not None and not position.locked and (
+                float(frame.at[date, "high"])
+                >= position.entry_price + profit_lock["trigger_atr"] * position.signal_atr
+            ):
+                position.locked = True
+                position.stop = max(position.stop, float(profit_lock["stop_fn"](position.entry_price)))
+            if trail_mode is None:
+                continue
+            current_atr = float(signal_row["trail_atr"]) if "trail_atr" in signal_row.index else float(signal_row["atr"])
             if np.isfinite(current_atr):
                 # VARSAYIM: PDF's ATR14x3 trailing stop uses close - ATR14x3.
-                position.stop = max(
-                    position.stop,
-                    float(frame.at[date, "close"]) - atr_stop_multiple * current_atr,
-                )
+                reference = float(frame.at[date, "close" if trail_mode == "close" else "high"])
+                position.stop = max(position.stop, reference - trail_m * current_atr)
 
         # Closed-bar signals schedule orders for a later open; never this bar.
+        # With fill_at_close the order fills at this bar's close (exits first).
+        close_fills: list[tuple[str, str, float, float, float, float, float]] = []
         for symbol in sorted(clean_data):
             frame = clean_data[symbol]
             if date not in frame.index:
                 continue
             signal_row = signals[symbol].loc[date]
-            if symbol in positions and bool(signal_row["exit"]) and symbol not in pending:
+            position = positions.get(symbol)
+            exit_signal = bool(signal_row["exit"])
+            if position is not None:
+                if position.runtime_exit is not None and bool(position.runtime_exit.get(date, False)):
+                    exit_signal = True
+                if time_stop_bars is not None and position.bars_held >= time_stop_bars:
+                    exit_signal = True
+            if fill_at_close:
+                if position is not None and exit_signal:
+                    close_position(symbol, date, float(frame.at[date, "close"]), "signal")
+                elif position is None and bool(signal_row["entry"]) and cooled_down(symbol, date):
+                    atr_value = float(signal_row["atr"])
+                    close_fills.append((
+                        symbol, "entry", atr_value,
+                        signal_value(symbol, date, "stop_dist", atr_stop_multiple * atr_value),
+                        signal_value(symbol, date, "target_dist", float("nan")),
+                        signal_value(symbol, date, "stop_pct", float("nan")),
+                        signal_value(symbol, date, "target_pct", float("nan")),
+                    ))
+                continue
+            if symbol in positions and exit_signal and symbol not in pending:
                 execute_date = _next_execution_date(frame.index, date, extra_delay_bars)
                 if execute_date is not None and execute_date <= end:
                     order = Order(symbol, "exit", execute_date, date, float(signal_row["atr"]))
                     scheduled.setdefault(execute_date, []).append(order)
                     pending[symbol] = "exit"
-            elif symbol not in positions and bool(signal_row["entry"]) and symbol not in pending:
+            elif symbol not in positions and bool(signal_row["entry"]) and symbol not in pending and cooled_down(symbol, date):
                 execute_date = _next_execution_date(frame.index, date, extra_delay_bars)
                 if execute_date is not None and execute_date <= end:
-                    order = Order(symbol, "entry", execute_date, date, float(signal_row["atr"]))
+                    atr_value = float(signal_row["atr"])
+                    order = Order(
+                        symbol, "entry", execute_date, date, atr_value,
+                        signal_value(symbol, date, "stop_dist", atr_stop_multiple * atr_value),
+                        signal_value(symbol, date, "target_dist", float("nan")),
+                        signal_value(symbol, date, "stop_pct", float("nan")),
+                        signal_value(symbol, date, "target_pct", float("nan")),
+                    )
                     scheduled.setdefault(execute_date, []).append(order)
                     pending[symbol] = "entry"
+        for symbol, _kind, atr_value, stop_dist, target_dist, stop_pct, target_pct in close_fills:
+            open_position(symbol, date, float(clean_data[symbol].at[date, "close"]), atr_value,
+                          stop_dist, target_dist, stop_pct, target_pct)
 
         marked_equity = equity_at(date, "close")
         gross_close = sum(

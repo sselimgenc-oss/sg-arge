@@ -1,0 +1,270 @@
+#!/usr/bin/env python3
+"""Stage 1 quick scan: strategy cards -> shared T1a portfolio engine (T5b-1, daily/weekly cards).
+
+Every ready card (`spec_durumu: tam`, `ozel_kod: false`) runs on each of the four
+markets over the in-sample period only (2020-01-01 -> 2024-09-30) at 1x and 2x
+cost. Stage 1 -> 2 rule (lider): in at least one market IS trades >= 30, 1x PF
+>= 1.1 and 2x net > 0. The OOS (2024-10 ->) and 2015-2019 data are not looked at.
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+import pandas as pd
+import yaml
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
+from engine import gosterge  # noqa: E402
+from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan  # noqa: E402
+from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
+
+IS_START = pd.Timestamp("2020-01-01", tz="UTC")
+IS_END = pd.Timestamp("2024-09-30", tz="UTC")
+MARKETS = ("BIST30", "ABD25", "KRIPTO25", "EMTIA")
+BASE_COST = {"BIST30": 0.0015, "ABD25": 0.0005, "KRIPTO25": 0.0015, "EMTIA": 0.0005}
+MARKET_TOKEN = {"BIST30": "BIST", "ABD25": "ABD", "KRIPTO25": "KRIPTO", "EMTIA": "EMTIA"}
+BENCHMARK_SYMBOL = {"ABD25": "SPY", "KRIPTO25": "BTCUSDT"}  # BIST30/EMTIA: no index series yet
+MIN_TRADES, MIN_PF, PF_ALARM = 30, 1.1, 4.0
+MOC_COST_FACTOR = 2.0  # EVRENSEL_KURALLAR D4: close fills carry 2x base cost
+
+OUTPUT_COLUMNS = [
+    "id", "piyasa", "tf", "durum", "islem", "PF_1x", "PF_2x", "net_1x", "net_2x", "sharpe", "mdd",
+    "maruziyet", "asama2_aday", "neden", "kart_yazari", "piyasa_kisiti", "stop_eklendi", "dolum",
+    "PF_1x_b", "net_1x_b", "islem_b", "pf_alarmi", "data_hash", "git_sha",
+]
+
+
+def load_cards(directory: Path, tf: str) -> list[dict[str, Any]]:
+    cards = []
+    for path in sorted(directory.glob("*.yaml")):
+        card = yaml.safe_load(path.read_text(encoding="utf-8"))
+        if card.get("spec_durumu") == "tam" and not card.get("ozel_kod") and card.get("tf") in tf.split(","):
+            cards.append(card)
+    return cards
+
+
+def weekly_frame(frame: pd.DataFrame, week_end: str) -> pd.DataFrame:
+    """Weekly OHLCV indexed by the week's first bar (the engine fills at the next week's open)."""
+    del week_end  # Monday-keyed weeks cover both Friday and Sunday week ends
+    keys = gosterge._htf_keys(frame.index, "1W")  # noqa: SLF001
+    grouped = frame.groupby(keys, sort=True)
+    weekly = grouped.agg({"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"})
+    weekly.index = pd.DatetimeIndex(frame.index.to_series().groupby(keys, sort=True).first().to_numpy())
+    return weekly
+
+
+def _unused_signal_function(frame: pd.DataFrame, market: str) -> pd.DataFrame:  # pragma: no cover
+    raise RuntimeError("signals are precomputed")
+
+
+def _metrics(result, annualization: int) -> dict[str, float]:
+    return calculate_metrics(result, annualization=annualization)
+
+
+def run_card_market(
+    card: dict[str, Any],
+    data: dict[str, pd.DataFrame],
+    market: str,
+    *,
+    benchmark: pd.DataFrame | None = None,
+    start: pd.Timestamp = IS_START,
+    end: pd.Timestamp = IS_END,
+) -> dict[str, Any]:
+    """Run one card on one market's data; returns the metric fields of a tarama row."""
+    week_end = "SUN" if market == "KRIPTO25" else "FRI"
+    weekly_card = card["tf"] == "1W"
+    if weekly_card:
+        data = {symbol: weekly_frame(frame, week_end) for symbol, frame in data.items()}
+        if benchmark is not None:
+            benchmark = weekly_frame(benchmark, week_end)
+    in_period = {s: f for s, f in data.items() if not f.loc[(f.index >= start) & (f.index <= end)].empty}
+    if not in_period:
+        raise ValueError(f"{market}: donemde veri yok")
+    plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark)
+    annualization = 52 if weekly_card else (365 if market == "KRIPTO25" else 252)
+    base = BASE_COST[market]
+    out: dict[str, Any] = {}
+
+    def run(multiplier: float, close_fill: bool):
+        kwargs = dict(plan.engine_kwargs)
+        kwargs["fill_at_close"] = close_fill
+        cost = base * multiplier * (MOC_COST_FACTOR if close_fill else 1.0)
+        return run_portfolio(
+            in_period, _unused_signal_function, market=market, start=start, end=end,
+            cost_rate=cost, precomputed_signals=plan.signals, **kwargs,
+        )
+
+    main_fill = plan.dolum_kapanis
+    first, second = run(1.0, main_fill), run(2.0, main_fill)
+    m1, m2 = _metrics(first, annualization), _metrics(second, annualization)
+    out.update(
+        islem=m1["islem"], PF_1x=m1["pf"], PF_2x=m2["pf"], net_1x=m1["getiri"], net_2x=m2["getiri"],
+        sharpe=m1["sharpe"], mdd=m1["mdd"], maruziyet=m1["maruziyet"],
+    )
+    if main_fill:
+        variant_b = _metrics(run(1.0, False), annualization)
+        out.update(PF_1x_b=variant_b["pf"], net_1x_b=variant_b["getiri"], islem_b=variant_b["islem"])
+    out["stop_eklendi"] = plan.stop_eklendi
+    out["trades"] = first.trades
+    return out
+
+
+def _stage_decision(row: dict[str, Any]) -> tuple[bool, str]:
+    reasons = []
+    if not row["islem"] >= MIN_TRADES:
+        reasons.append(f"islem<{MIN_TRADES}")
+    pf = row["PF_1x"]
+    if not (isinstance(pf, float) and (np.isinf(pf) or pf >= MIN_PF)):
+        reasons.append(f"PF_1x<{MIN_PF}")
+    if not row["net_2x"] > 0:
+        reasons.append("net_2x<=0")
+    return (not reasons), ",".join(reasons)
+
+
+def _empty(card: dict[str, Any], market: str, durum: str, neden: str) -> dict[str, Any]:
+    return {
+        "id": card["id"], "piyasa": market, "tf": card["tf"], "durum": durum, "neden": neden,
+        "asama2_aday": False, "kart_yazari": card.get("kart_yazari") or "",
+        "piyasa_kisiti": ",".join(card.get("piyasa_kisiti") or []), "dolum": card.get("dolum") or "",
+    }
+
+
+def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path) -> pd.DataFrame:
+    git_sha = _git_sha()
+    market_data: dict[str, tuple[dict[str, pd.DataFrame], str, list[str]]] = {m: _load_market(m, data_dir) for m in MARKETS}
+    benchmarks: dict[str, pd.DataFrame | None] = {}
+    for market, symbol in BENCHMARK_SYMBOL.items():
+        loaded = market_data[market][0]
+        benchmarks[market] = loaded.get(symbol)
+        if benchmarks[market] is None:
+            path = data_dir / f"{symbol}.parquet"
+            if path.exists():
+                from data.fetch import normalize_ohlcv  # noqa: PLC0415
+                benchmarks[market] = normalize_ohlcv(pd.read_parquet(path))
+    rows: list[dict[str, Any]] = []
+    trade_dir = results_dir / "tarama_islemler"
+    trade_dir.mkdir(parents=True, exist_ok=True)
+    for card in cards:
+        if card.get("alias_of"):
+            rows.append(_empty(card, "-", "Atlandi", f"alias:{card['alias_of']}"))
+            continue
+        allowed = card.get("piyasa_kisiti")
+        for market in MARKETS:
+            if allowed and MARKET_TOKEN[market] not in allowed:
+                rows.append(_empty(card, market, "Dogrulanamaz", f"piyasa_ozgu:{','.join(allowed)}"))
+                continue
+            data, data_hash, _missing = market_data[market]
+            if not data:
+                rows.append(_empty(card, market, "Dogrulanamaz", "veri_yok"))
+                continue
+            try:
+                result = run_card_market(card, data, market, benchmark=benchmarks.get(market))
+            except MotorDestegiYok as exc:
+                rows.append(_empty(card, market, "Atlandi", f"motor_destegi_yok:{exc.field_name}"))
+                continue
+            except EndeksYok:
+                rows.append(_empty(card, market, "Dogrulanamaz", f"endeks_yok:{market}"))
+                continue
+            except Exception as exc:  # noqa: BLE001 - one broken card must not stop the scan
+                rows.append(_empty(card, market, "Hata", f"{type(exc).__name__}: {exc}"[:200]))
+                continue
+            trades = result.pop("trades")
+            row = _empty(card, market, "Hesaplandi", "")
+            row.update(result)
+            passed, why = _stage_decision(row)
+            row["asama2_aday"] = passed
+            row["neden"] = why
+            row["pf_alarmi"] = bool(isinstance(row["PF_1x"], float) and row["PF_1x"] > PF_ALARM)
+            row["data_hash"], row["git_sha"] = data_hash, git_sha
+            rows.append(row)
+            if not trades.empty:
+                trades.to_csv(trade_dir / f"{card['id']}_{market}.csv", index=False)
+    table = pd.DataFrame(rows).reindex(columns=OUTPUT_COLUMNS)
+    results_dir.mkdir(parents=True, exist_ok=True)
+    table.to_csv(results_dir / "tarama.csv", index=False, float_format="%.6g")
+    write_summary(table, cards, results_dir / "tarama_ozet.md")
+    return table
+
+
+def card_verdict(rows: pd.DataFrame) -> tuple[str, str]:
+    calculated = rows[rows["durum"] == "Hesaplandi"]
+    if not calculated.empty:
+        passed = calculated[calculated["asama2_aday"] == True]  # noqa: E712
+        if not passed.empty:
+            return "Asama 2 adayi", ",".join(passed["piyasa"])
+        return "Reddedildi (asama 1)", "; ".join(f"{r.piyasa}: {r.neden}" for r in calculated.itertuples())
+    reasons = sorted(set(rows["neden"].fillna("")))
+    return "Dogrulanamaz", "; ".join(reasons)
+
+
+def write_summary(table: pd.DataFrame, cards: list[dict[str, Any]], path: Path) -> None:
+    verdicts = {card["id"]: card_verdict(table[table["id"] == card["id"]]) for card in cards}
+    count: dict[str, int] = {}
+    for verdict, _ in verdicts.values():
+        count[verdict] = count.get(verdict, 0) + 1
+    lines = [
+        "# Asama 1 tarama ozeti (T5b-1: gunluk/haftalik kartlar)", "",
+        "Donem: IS 2020-01-01 -> 2024-09-30 (OOS ve 2015-2019 kullanilmadi). Maliyet 1x ve 2x (ELEME_KRITERLERI baz tablosu).",
+        f"Gecis kurali: en az bir piyasada islem >= {MIN_TRADES}, 1x PF >= {MIN_PF}, 2x net > 0.", "",
+        f"Kart: {len(cards)} | " + " | ".join(f"{k}: {v}" for k, v in sorted(count.items())), "",
+        "## Karar tablosu", "", "| Kart | Karar | Ayrinti |", "|---|---|---|",
+    ]
+    for card in cards:
+        verdict, detail = verdicts[card["id"]]
+        lines.append(f"| {card['id']} | {verdict} | {detail} |")
+    alarms = table[table["pf_alarmi"] == True]  # noqa: E712
+    if not alarms.empty:
+        lines += ["", f"## PF > {PF_ALARM:g} alarmi (asiri uyum suphesi)", ""]
+        lines += [f"- {r.id} / {r.piyasa}: PF_1x={r.PF_1x:.2f}, islem={int(r.islem)}" for r in alarms.itertuples()]
+    moc = table[(table["dolum"] == "kapanis") & (table["durum"] == "Hesaplandi")]
+    if not moc.empty:
+        lines += ["", "## Kapanis dolumu (MOC) kartlari: (a) kapanis 2x maliyet | (b) ertesi acilis", "",
+                  "| Kart | Piyasa | (a) PF_1x | (a) net_1x | (b) PF_1x | (b) net_1x | Not |", "|---|---|---:|---:|---:|---:|---|"]
+        for r in moc.itertuples():
+            note = "Kosullu (b negatif)" if r.net_1x_b <= 0 else ""
+            lines.append(f"| {r.id} | {r.piyasa} | {r.PF_1x:.2f} | {r.net_1x:.2%} | {r.PF_1x_b:.2f} | {r.net_1x_b:.2%} | {note} |")
+    skipped = table[table["durum"].isin(["Atlandi", "Dogrulanamaz", "Hata"])]
+    if not skipped.empty:
+        lines += ["", "## Atlanan / dogrulanamayan satirlar", "", "| Neden | Satir sayisi |", "|---|---:|"]
+        for reason, group in skipped.groupby("neden"):
+            lines.append(f"| {reason} | {len(group)} |")
+    lines += ["", "## Notlar", "",
+              "- Evren gunumuzun buyuk sirketleridir (survivorship yanliligi); BIST/ABD sonuclari en fazla Kosullu sayilir.",
+              "- BIST30 ve EMTIA icin endeks serisi yok: `endeks_close` kullanan kartlar bu piyasalarda Dogrulanamaz.",
+              "- Cikis alan anlamlari: docs/EVRENSEL_KURALLAR.md D5."]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--kartlar", type=Path, default=ROOT / "docs" / "spec")
+    parser.add_argument("--tf", default="1D", help="comma separated card timeframes, e.g. 1D,1W")
+    parser.add_argument("--kart-ids", default="", help="comma separated card ids (default: all)")
+    parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
+    parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    cards = load_cards(args.kartlar, args.tf)
+    if args.kart_ids:
+        wanted = {item.strip() for item in args.kart_ids.split(",") if item.strip()}
+        cards = [card for card in cards if card["id"] in wanted]
+    table = scan(cards, args.data_dir, args.results_dir)
+    print(f"{len(cards)} kart, {len(table)} satir, {int((table['durum'] == 'Hesaplandi').sum())} hesaplandi, "
+          f"{int(table['asama2_aday'].fillna(False).astype(bool).sum())} satir asama 2 adayi")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

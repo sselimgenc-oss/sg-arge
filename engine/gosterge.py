@@ -625,9 +625,35 @@ def align_htf(htf_values: pd.Series | pd.DataFrame, keys: np.ndarray, index: pd.
     return mapped
 
 
-def compute(df: pd.DataFrame, spec: Mapping[str, Any], *, benchmarks: Mapping[str, pd.DataFrame] | None = None) -> pd.Series | pd.DataFrame:
-    """Evaluate one card indicator spec (``{f, src, n, tf, kaydir, ...}``) on ``df``."""
+def align_htf_label(htf_values: pd.Series | pd.DataFrame, index: pd.DatetimeIndex, week_end: str) -> pd.Series | pd.DataFrame:
+    """Weekly values keyed by the calendar week-end label (Friday or Sunday), forward filled.
+
+    A week counts as complete on its calendar end date, so that day's own close may use it
+    (the T1a reference alignment). Earlier days of the week see the previous week.
+    """
+    offset = pd.DateOffset(days=4 if week_end.upper() == "FRI" else 6)
+    labelled = htf_values.copy()
+    labelled.index = pd.DatetimeIndex(htf_values.index) + offset
+    naive = index.tz_localize(None) if index.tz is not None else index
+    mapped = labelled.reindex(naive.normalize(), method="ffill")
+    mapped.index = index
+    return mapped
+
+
+def compute(
+    df: pd.DataFrame,
+    spec: Mapping[str, Any],
+    *,
+    benchmarks: Mapping[str, pd.DataFrame] | None = None,
+    week_end: str | None = None,
+) -> pd.Series | pd.DataFrame:
+    """Evaluate one card indicator spec (``{f, src, n, tf, kaydir, ...}``) on ``df``.
+
+    ``hizalama: etiket`` (weekly ``tf`` only) uses :func:`align_htf_label`; ``week_end`` is
+    ``"FRI"`` for exchange assets and ``"SUN"`` for crypto.
+    """
     params = dict(spec)
+    alignment = params.pop("hizalama", None)
     name = params.pop("f")
     if name not in REGISTRY:
         raise UnknownIndicator(name)
@@ -646,13 +672,21 @@ def compute(df: pd.DataFrame, spec: Mapping[str, Any], *, benchmarks: Mapping[st
         htf, keys = resample_htf(df, tf)
         if bench_name is not None:
             params["benchmark"] = resample_htf(params["benchmark"], tf)[0]
-        result = align_htf(func(htf, **params), keys, df.index)
+        htf_values = func(htf, **params)
+        if alignment == "etiket":
+            if not tf.strip().upper().endswith("W") or week_end is None:
+                raise ValueError("hizalama: etiket needs a weekly tf and a week_end")
+            result = align_htf_label(htf_values, df.index, week_end)
+        elif alignment is not None:
+            raise ValueError(f"unknown hizalama: {alignment}")
+        else:
+            result = align_htf(htf_values, keys, df.index)
     else:
         result = func(df, **params)
     return result.shift(lag) if lag else result
 
 
-def build_env(df: pd.DataFrame, gostergeler: Mapping[str, Mapping[str, Any]], *, benchmarks: Mapping[str, pd.DataFrame] | None = None) -> dict[str, Any]:
+def build_env(df: pd.DataFrame, gostergeler: Mapping[str, Mapping[str, Any]], *, benchmarks: Mapping[str, pd.DataFrame] | None = None, week_end: str | None = None) -> dict[str, Any]:
     """Name -> Series/DataFrame environment for ``engine.expr`` evaluation."""
     env: dict[str, Any] = {c: _col(df, c) for c in OHLCV if c in df.columns}
     if benchmarks and "endeks" in benchmarks:
@@ -667,5 +701,5 @@ def build_env(df: pd.DataFrame, gostergeler: Mapping[str, Mapping[str, Any]], *,
             continue
         if isinstance(spec.get("src"), str) and spec["src"] not in OHLCV and spec["src"] not in _NAMED_SOURCES:
             spec["src"] = source(df, spec["src"], extra=env)
-        env[key] = compute(df, spec, benchmarks=benchmarks)
+        env[key] = compute(df, spec, benchmarks=benchmarks, week_end=week_end)
     return env
