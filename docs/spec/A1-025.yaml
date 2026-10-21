@@ -10,8 +10,8 @@ mtf: 1W
 tf_varsayim: false
 yazar_piyasasi: ABD ETF (TQQQ)
 gostergeler: {}
-giris: low <= mtf(1W, open) * 0.99
-cikis: high >= entry_price * 1.01
+giris: low <= mtf("1W", open) * 0.99
+cikis: high >= giris_fiyati * 1.01
 stop: null
 hedef:
   tip: yuzde

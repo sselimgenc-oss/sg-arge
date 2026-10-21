@@ -6,7 +6,7 @@ kaynak:
   url: https://www.prorealcode.com/prorealtime-trading-strategies/fractal-breakout-intraday-strategy-eurusd-1h/
   sayfa: null
 tarz: day
-tf: 1h
+tf: 1H
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: Forex (EURUSD)

@@ -15,8 +15,8 @@ gostergeler:
     fast: 12
     slow: 26
     signal: 9
-giris: macd > macd_signal
-cikis: macd <= macd_signal
+giris: macd.macd > macd.signal
+cikis: macd.macd <= macd.signal
 stop: null
 hedef: null
 stop_eklendi: false

@@ -14,8 +14,8 @@ gostergeler:
     f: bb
     n: 20
     carpan: 2.0
-giris: close < bb_lower
-cikis: close >= bb_basis
+giris: close < bb.lower
+cikis: close >= bb.basis
 stop: null
 hedef: null
 stop_eklendi: false

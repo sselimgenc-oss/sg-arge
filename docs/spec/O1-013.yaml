@@ -23,8 +23,8 @@ gostergeler:
     f: lowest
     src: low
     n: 46
-giris: 'major_trend_bull ? (tott1_bull and sott1_bull and high > hott1 and high > hhv16[1]) : (tott2_bull and sott2_bull and high > hott2 and high > hhv22[1])'
-cikis: 'major_trend_bull ? (tott3_bear and sott3_bear and low < lott1 and low < llv46[1]) : (tott4_bear and sott4_bear and low < lott2 and low < llv46[1])'
+giris: "(major_trend_bull and (tott1_bull and sott1_bull and high > hott1 and high > hhv16[1])) or (not major_trend_bull and (tott2_bull and sott2_bull and high > hott2 and high > hhv22[1]))"
+cikis: "(major_trend_bull and (tott3_bear and sott3_bear and low < lott1 and low < llv46[1])) or (not major_trend_bull and (tott4_bear and sott4_bear and low < lott2 and low < llv46[1]))"
 stop: null
 hedef: null
 stop_eklendi: false
@@ -54,3 +54,4 @@ belirsiz:
 - Karar zaman dilimi C# kodunda SymbolPeriod.Min olarak tanımlı olup gün içi seans saatlidir (10:03 - 17:58, 1 saatin altında, dakikalık)
 - Algo Kütüphanesi MatriksIq C# kodundan tüm parametreler eksiksiz okundu; sadece LONG işlem yapmaktadır
 - 'Özel kod mantığı: HOTT (HHV üzerine OTT) ve LOTT (LLV üzerine OTT) indikatörleri ile TOTT ve SOTT bileşenlerinin 4 bölgeli trend filtreli kurgusudur'
+- "T7 sozdizimi: ternary (c ? a : b) '(c and a) or (not c and b)' bicimine cevrildi; anlam ayni"

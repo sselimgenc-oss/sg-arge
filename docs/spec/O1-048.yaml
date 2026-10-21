@@ -6,7 +6,7 @@ kaynak:
   url: https://www.prorealcode.com/prorealtime-trading-strategies/stochastic-gold-trader/
   sayfa: null
 tarz: swing
-tf: 1h
+tf: 1H
 mtf: null
 tf_varsayim: true
 yazar_piyasasi: Emtia (XAUUSD)
@@ -20,7 +20,7 @@ gostergeler:
     f: rsi
     src: close
     n: 2
-giris: cross_over(stoch18.k, stoch18.d) and lowest(stoch18.k, 2)[2] < 10
+giris: cross_over(stoch18.k, stoch18.d) and (stoch18.k[2] < 10 or stoch18.k[3] < 10)
 cikis: cross_over(rsi2, 95)
 stop: null
 hedef: null
@@ -56,3 +56,4 @@ belirsiz:
   değerinden küçükse RSICounterAdj = 1 düşülür); cross_over(RSI[2], 95) olduğunda RSICounter >= (4 - RSICounterAdj) ise Long pozisyon kapatılır'
 - 'short kuralı var: highest[2](StochSignal) > 90 iken cross_under(StochSignal, StochMain) ile Stoch = 1 kurulur, StochCounter > 1 sonrası ikinci cross_under(StochSignal, StochMain) ile short açılır; RSI[2]
   5 seviyesini 4 kez test ettikten sonra cross_under(RSI[2], 5) ile çıkılır'
+- "T7 sozdizimi: 'lowest(stoch18.k, 2)[2] < 10' ifadesi birebir (stoch18.k[2] < 10 or stoch18.k[3] < 10) olarak yazildi (2 barlik pencere, 2 bar geriden)"

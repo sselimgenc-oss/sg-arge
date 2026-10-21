@@ -7,7 +7,7 @@ kaynak:
   sayfa: null
 tarz: day
 tf: 5m
-mtf: 1h
+mtf: 1H
 tf_varsayim: false
 yazar_piyasasi: Forex
 gostergeler:
@@ -27,15 +27,15 @@ gostergeler:
     f: ema
     src: close
     n: 8
-    tf: 1h
+    tf: 1H
   ema21_1h:
     f: ema
     src: close
     n: 21
-    tf: 1h
+    tf: 1H
   close_1h:
     f: close
-    tf: 1h
+    tf: 1H
   hh5:
     f: highest
     src: high
@@ -44,7 +44,7 @@ gostergeler:
     f: lowest
     src: low
     n: 3
-giris: mtf(1h, ema8_1h > ema21_1h and close_1h > ema8_1h) and ema8 > ema13 and ema13 > ema21 and low[1] <= ema8[1] and close[1] >= ema21[1] and high > hh5[1]
+giris: mtf("1H", ema8_1h > ema21_1h and close_1h > ema8_1h) and ema8 > ema13 and ema13 > ema21 and low[1] <= ema8[1] and close[1] >= ema21[1] and high > hh5[1]
 cikis: close < ll3[1]
 stop: null
 hedef: null
@@ -52,7 +52,7 @@ kismi_kar:
   gun: null
   tetik_atr: null
   oran: 0.5
-  kalan_stop: breakeven
+  kalan_stop: giris
 varyantlar:
 - ad: Sabit 2R Hedef Varyantı
   cikis: 1R'de %50 kısmi kâr + başabaş (BE) stop sonrası kalan %50 pozisyonu 2R hedefte kapatma

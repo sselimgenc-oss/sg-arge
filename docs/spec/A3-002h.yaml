@@ -16,7 +16,7 @@ gostergeler:
     n: 5
     ma: rma
 giris: low[1] < nw_alt[1] and close > open and close < nw_alt + 0.5*(nw_ust - nw_alt) and rsi5[1] < 30
-cikis: 'stop: low - 0.5*SMA(TR,14) ; hedef: giris + 1.5*(giris - stop)'
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -38,4 +38,5 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/NWERSIASF.pine'
 - Yazarın test penceresi çok kısa (2023-08-15/10-20), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
+- "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: low - 0.5*SMA(TR,14) ; hedef: giris + 1.5*(giris - stop)' (sinyal barinda sabitlenen degerler: elle kodlanacak)"
 bias_varsayim: false

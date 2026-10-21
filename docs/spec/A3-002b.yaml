@@ -22,8 +22,8 @@ gostergeler:
     f: ema
     src: close
     n: 100
-giris: ema20 > ema50 and ema50 > ema100 and low > ema100 and low < ema20 and down_fractal(n=2)
-cikis: 'stop: ema50 if low > ema50 else ema100 ; hedef: giris + 1*(giris - stop)'
+giris: ema20 > ema50 and ema50 > ema100 and low > ema100 and low < ema20 and down_fractal2
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -46,4 +46,6 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/3MAF.pine'
 - Yazarın test penceresi çok kısa (2023-01-02/07-13), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
+- "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: ema50 if low > ema50 else ema100 ; hedef: giris + 1*(giris - stop)' (sayisal ternary dil disi; sinyal barina bagli: elle kodlanacak)"
+- "T7 sozdizimi: 'down_fractal(n=2)' -> ad 'down_fractal2' (Williams fraktal, n=2; ozel gosterge)"
 bias_varsayim: false

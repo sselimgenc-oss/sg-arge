@@ -24,6 +24,7 @@ cikis: cross_under(close, sup20[1])
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: false
 parametreler:
   'no': 20
   res20.n: 20

@@ -11,7 +11,7 @@ tf_varsayim: false
 yazar_piyasasi: AUDUSD
 gostergeler: {}
 giris: andean_bull_signal_cross and gunluk_yuksek_dusuk_onayi
-cikis: 'stop: lowest(low,5) ; hedef: giris + 1.5*(giris - stop)'
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -34,4 +34,5 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/DHLAOS.pine'
 - Yazarın test penceresi çok kısa (2023-08-06/09-03 (4 hafta)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
+- "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: lowest(low,5) ; hedef: giris + 1.5*(giris - stop)' (sinyal barinda sabitlenen degerler: elle kodlanacak)"
 bias_varsayim: false

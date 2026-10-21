@@ -10,6 +10,10 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: Kripto
 gostergeler:
+  vol_sma70:
+    f: sma
+    src: volume
+    n: 70
   rsi14:
     f: rsi
     src: close
@@ -26,8 +30,8 @@ gostergeler:
   dmi14:
     f: dmi
     n: 14
-giris: volume > sma(volume,70)*4 and close < sma40 and fastd > fastk and rsi14 > 30 and fastd > 30 and fisher_rsi_norma < 30
-cikis: cross_over(rsi14, 70) and macd < 0 and minus_di > 50
+giris: volume > vol_sma70 * 4 and close < sma40 and fastd > fastk and rsi14 > 30 and fastd > 30 and fisher_rsi_norma < 30
+cikis: cross_over(rsi14, 70) and macd.macd < 0 and dmi14.minus > 50
 stop:
   tip: yuzde
   deger: 10

@@ -30,8 +30,8 @@ gostergeler:
   dc20:
     f: donchian
     n: 20
-giris: st.yon == 1 and st.yon[1] == -1 and close > hma60
-cikis: close < hma60 or st.yon == -1
+giris: st.dir == 1 and st.dir[1] == -1 and close > hma60
+cikis: close < hma60 or st.dir == -1
 stop: null
 hedef: null
 stop_eklendi: false
@@ -66,3 +66,4 @@ belirsiz:
   STAtrMult=2.75) üst bandını yukarı kırdığında (LongTrigger) Long girilir (kod içinde ayrıca LinReg(80) ve EMA(LinReg, 20) tabanlı DYNO Long_Entry / Long_Exit durum makinesi de yer alır), (4) Stop-loss
   L_stoploss (HMA dip noktası) seviyesidir; hedefler risk mesafesinin (L_Entry - L_Stoploss) 0.5x, 1x, 2x, 3x ve 4x katlarıdır veya fiyat HMA(60) altına kırdığında çıkılır'
 - 'short kuralı var: HMA(60) tepe karesi (MA_Max / S_stoploss) + kırmızı Donchian Trend Ribbon + SuperTrend aşağı kırılımında (ShortTrigger) short açılır'
+- "T7 sozdizimi: 'st.yon' -> 'st.dir' (kutuphane Supertrend yonu: +1 yukselis, -1 dusus; kartin yon==1 ifadesi yukselis olarak okundu, onay gerekir)"
