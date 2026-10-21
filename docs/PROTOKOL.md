@@ -29,3 +29,8 @@
 - `@codex`: Codex Cloud environment kurulu, Issue yorumuyla otomatik tetiklenir.
 - `@claude` (Sonnet): secret yok, **kullanici manuel tetikler**. Lider gorevi `docs/GOREV_*.md` + Issue yorumuna yazar; kullanici Sonnet oturumuna iletir. Issue'da `@claude` etiketi kullanilmaz (Actions bos yere hata verir).
 - Argon: kullanici araciligiyla (`argon/PAKET_*.md`).
+
+## B plani (2026-10-21): web okuma tamamen Argon'da
+- Sonnet'in bulut ortami (Full ag izni verilmesine ragmen) kaynak sitelerine proxy 403 aliyor. Tum web kaynakli kart cikarma isi Argon'a gecti: xlsx partileri 4, 6, 7, 8, 9 ve `docs/spec/YENIDEN.csv`.
+- Sonnet: kod ve denetim (T5a yorumlayici cekirdegi, kart tutarlilik denetimi). Kaynak okuma gerektiren is verilmez.
+- Codex: `@codex` otomatik tetikleme calismiyor; kullanici "gorev geldi" der, Codex Issue #1'deki son `@codex` yorumunu okur.

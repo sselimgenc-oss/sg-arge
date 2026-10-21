@@ -26,15 +26,15 @@
       "id": "T2",
       "owner": "claude-moderator",
       "title": "YAML kart + triyaj: parti 1 (PDF B seviyesi) ve xlsx tek partiler 3,5,7,9 (docs/spec/PARTILER.csv)",
-      "status": "parti 1,3,5 kabul (PR #11,#13,#15); web partileri Sonnet ag erisimi acilana dek bekliyor",
+      "status": "parti 1,3,5 tamam; kalan web isi Argon'a devredildi (B plani)",
       "spec": "docs/GOREV_T2.md"
     },
     {
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
-      "title": "YAML kart + triyaj: xlsx cift partiler 2,4,6,8",
-      "status": "parti 2 kabul (lider duzeltmeli); parti 4 + yeniden okuma paketleri hazir",
-      "spec": "argon/PAKET_T2_parti4.md, argon/PAKET_T2_yeniden.md"
+      "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart)",
+      "status": "paket 4, yeniden, yeniden2 hazir",
+      "spec": "argon/PAKET_*.md"
     },
     {
       "id": "T3",
@@ -120,7 +120,7 @@
   "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz.",
   "triggers": {
     "codex": "manuel (kullanici); @codex otomatik tetikleme calismiyor (bot hala environment istiyor)",
-    "claude-moderator": "manuel (kullanici)",
+    "claude-moderator": "manuel; ortam web'e erisemiyor -> yalniz kod/denetim",
     "argon": "manuel (kullanici, argon/PAKET_*.md)"
   }
 }
