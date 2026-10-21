@@ -1,0 +1,36 @@
+id: O2-006
+ad: Pivot Trading
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/588764-pivot-trading
+  sayfa: O2-006
+tarz: swing
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: haftalık Fibonacci pivot 61-100 bölgesinde ; TDI yeşilin siyahı kesmesi ve fiyat aksiyonu teyidi
+cikis: tüccara bırakılmış (sabit kural yok)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: '''March,April gain 60% combined'' (beyan)'
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: ihtiyari
+ozel_kod: true
+belirsiz:
+- Çıkış/stop kuralı yok, tamamen takdirli; Davits Pivot, TMS Angleator listede yok
+- Doğrulanmamış; ≥2 yıl deneyim öneriliyor
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- Kaynak sitesi bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true

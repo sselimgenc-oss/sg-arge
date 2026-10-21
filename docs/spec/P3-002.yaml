@@ -1,0 +1,37 @@
+id: P3-002
+ad: BUY and SELL - Backtest single EMA cross By che_trader
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/j9rq1wQq-BUY-and-SELL-Backtest-single-EMA-cross-By-che-trader/
+  sayfa: P3-002
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler: {}
+giris: cross_over(ema_hizli, ema_yavas)
+cikis: cross_under(ema_hizli, ema_yavas)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- EMA periyotları xlsx'te yok
+- Yazar yatay dönemlerde büyük drawdown uyarısı veriyor
+- Kaynak long/short; temel mod long-only, yalnız long kolu
+- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
+- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
+bias_varsayim: false
+erisim_engeli: true

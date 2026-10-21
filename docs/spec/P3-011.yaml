@@ -1,0 +1,43 @@
+id: P3-011
+ad: MACD Strategy with trailing ATR stop
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/2jDHQAJc-MACD-Strategy-with-trailing-ATR-stop/
+  sayfa: P3-011
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler:
+  macd:
+    f: macd
+    fast: 12
+    slow: 26
+    signal: 9
+  atr14:
+    f: atr
+    n: 14
+giris: MACD sinyalleri
+cikis: ATR iz süren stop
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Açıklama sayfası okunmadı; MACD sinyal tanımı ve ATR çarpanı yok
+- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
+- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
+bias_varsayim: false
+erisim_engeli: true

@@ -1,0 +1,44 @@
+id: P3-015
+ad: Davin's 10/200MA Pullback on SPY Strategy v2.0
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/Gkib6KgL-Davin-s-10-200MA-Pullback-on-SPY-Strategy-v2-0/
+  sayfa: P3-015
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler:
+  sma10:
+    f: sma
+    src: close
+    n: 10
+  sma200:
+    f: sma
+    src: close
+    n: 200
+giris: close > sma200 and close < sma10 (200 MA üstünde 10 MA altına geri çekilmede al; başlıktan)
+cikis: belirtilmemiş
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- 'Açıklama sayfası okunmadı: çıkış kuralı ve doğrulama yok; başlıktan çıkarım'
+- SPY için tasarlanmış
+- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
+- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
+bias_varsayim: false
+erisim_engeli: true

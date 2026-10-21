@@ -1,0 +1,35 @@
+id: P3-009
+ad: Delta-RSI Strategy (with filters)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/0OdCms2T-Delta-RSI-Strategy-with-filters/
+  sayfa: P3-009
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler: {}
+giris: Delta-RSI sinyal çizgisi kesişimi (+ seçilebilir filtreler)
+cikis: ters sinyal veya TP/SL
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Delta-RSI osilatörü listede yok; filtre/TP/SL parametreleri xlsx'te yok
+- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
+- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
+bias_varsayim: false
+erisim_engeli: true

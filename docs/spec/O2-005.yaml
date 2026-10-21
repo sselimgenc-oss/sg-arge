@@ -1,0 +1,41 @@
+id: O2-005
+ad: Trading Made Simple
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/291622-trading-made-simple
+  sayfa: O2-005
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler:
+  stoch:
+    f: stoch
+    k: 8
+    d: 3
+    smooth: 3
+giris: tdi_yesil cross_over tdi_kirmizi (3. mum veya sonrası ise girme) ; stoch(8,3,3) ve Heiken Ashi yön teyidi
+cikis: tdi_yesil yataylaşınca/kancalanınca
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: '''200-500 pips/hafta'' (beyan)'
+  mdd: null
+  islem: null
+  wr: '''70-80%+'' (beyan, doğrulanmamış)'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: ihtiyari
+ozel_kod: true
+belirsiz:
+- TDI (Traders Dynamic Index) parametreleri xlsx'te yok; çıkış 'kancalanınca' yoruma dayalı; stop kuralı yok
+- Doğrulanmamış iddialar
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- Kaynak (forexfactory.com) bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true

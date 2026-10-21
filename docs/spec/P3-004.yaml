@@ -1,0 +1,37 @@
+id: P3-004
+ad: EMA Slope + EMA Cross Strategy (by ChartArt)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/XLGBqrZq-EMA-Slope-EMA-Cross-Strategy-by-ChartArt/
+  sayfa: P3-004
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler: {}
+giris: üç EMA eğim yönleri ve fiyat-EMA kesişimleri
+cikis: ters pozisyona geçiş (sürekli long veya short)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- EMA periyotları ve kesin giriş kuralı xlsx'te yok
+- 'Her zaman piyasada (long veya short): long kolu ayrıştırma gerekir; EURUSD günlük için tasarlanmış'
+- Kaynak long/short; temel mod long-only, yalnız long kolu
+- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
+- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
+bias_varsayim: false
+erisim_engeli: true

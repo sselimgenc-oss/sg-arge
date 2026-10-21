@@ -1,0 +1,35 @@
+id: O1-079
+ad: Golden Triangle Strategy
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/golden-triangle-strategy/
+  sayfa: O1-079
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- 'Giriş/çıkış kuralı yok: kaynak S&C Eylül 2014 ''Finding The Golden Triangle'' makalesi (MA + hacim, ayrıntı yok)'
+- Backtest metriği yok
+- Kaynak sitesi bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true

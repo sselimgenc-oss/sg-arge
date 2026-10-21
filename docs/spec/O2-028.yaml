@@ -1,0 +1,36 @@
+id: O2-028
+ad: SVIX/XXXX KMLM switcher (single pops) | BT 12/19/23 = 786/10.5
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.composer.trade/trading-strategies/svixxxxx-kmlm-switcher-single-pops-bt-121923-786105-D9oE44Y87boHDOYQ9rPm
+  sayfa: O2-028
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (kaldıraçlı)
+gostergeler: {}
+giris: kaldıraçlı ETF'ler arasında koşullu (RSI vb.) günlük geçişler (kural sayfada)
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: 1.67
+  getiri: OOS kümülatif %750.09 (yıllık %145.32)
+  mdd: '%25.43'
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- 'Kural xlsx''te yok: Composer sembol sayfasındaki mantık okunmalı'
+- 'Kaldıraçlı ETF''ler arası rotasyon: portföy MDD %15 sınırının çok üstünde (OOS DD %25-50)'
+- OOS çok kısa; listede aynı metrikli kopyalar var; maliyet/kayma belirtilmemiş
+- Kaynak (composer.trade) bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true

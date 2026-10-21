@@ -1,0 +1,46 @@
+id: O2-007
+ad: Another simple system - Time-Frame 15
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/345586-another-simple-system-time-frame-15
+  sayfa: O2-007
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler:
+  ema10:
+    f: ema
+    src: close
+    n: 10
+  ema200:
+    f: ema
+    src: close
+    n: 200
+giris: londra_acilisi_sonrasi and close > ema10 and tdi_yesil cross_over tdi_sari and close > ema200 ; (ema200 üstünde short yok, altında long yok)
+cikis: stop 20 pip; 12 pipte başabaş; TP 1:1 veya TDI ters kesişimi
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: ~15 pip/işlem (beyan)
+  mdd: null
+  islem: null
+  wr: '''80 percent profitable'' (beyan)'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- 'Pip bazlı stop/başabaş diğer piyasalarda ölçeksiz: ATR karşılığı lider kararı'
+- 'TDI parametreleri yok; Londra açılış saati piyasa özgü: Piyasaya özgü seans/saat kuralı: yalnız o piyasada test edilir; diğer piyasalarda Doğrulanamaz
+  (piyasa özgü); bu piyasa (Nikkei/CFD) evrenimizde yok'
+- Doğrulanmamış iddialar
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- Kaynak sitesi bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true

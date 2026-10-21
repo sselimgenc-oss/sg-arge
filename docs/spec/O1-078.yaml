@@ -1,0 +1,37 @@
+id: O1-078
+ad: Atr Breakout
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://ninjatraderecosystem.com/user-app-share-download/atr-breakout-2/
+  sayfa: O1-078
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler:
+  atr:
+    f: atr
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- 'Giriş/çıkış kuralı yok: kaynak S&C Haziran 2016 ''ATR Breakout Entries'' makalesi'
+- Backtest metriği yok
+- Kaynak sitesi (ninjatraderecosystem.com) bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true

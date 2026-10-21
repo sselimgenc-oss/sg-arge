@@ -1,0 +1,56 @@
+id: O2-010
+ad: JPN225 QuietDrift (The Nikkei EA That Only Buys When Volume Is Quiet)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/78027
+  sayfa: O2-010
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: JPN225 CFD (Nikkei)
+gostergeler:
+  sma34:
+    f: sma
+    src: close
+    n: 34
+  sd34:
+    f: stdev
+    src: close
+    n: 34
+  atr14:
+    f: atr
+    n: 14
+giris: sunucu saati 11:00-14:59 and close > sma34 + 0.5 * stdev34 and macd_hist_atr < 0.2 and tick_hacim < 0.6 * normal ; sonraki bar açılışında al
+cikis: SL 4*ATR, TP 3.5*ATR, 17:00 zorunlu kapanış
+stop:
+  tip: atr
+  n: 14
+  carpan: 4
+hedef:
+  tip: atr
+  n: 14
+  carpan: 3.5
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.68
+  sharpe: null
+  getiri: +%87.8 (+$8.782, 10k hesap); yıllık basit %18.5
+  mdd: '%8.5'
+  islem: 309
+  wr: '%61.8 (191/309)'
+  maliyet_dahil: temel maliyet belirtilmemiş; 2x ücret PF 1.50, ek kayma PF 1.30
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- MACD histogramı 'ATR biriminde' (ATR periyodu? MACD parametreleri?), 'normal tick hacmi' (ortalama penceresi?) xlsx'te yok
+- 'Tick hacmi CFD''ye özgü; spot/hisse verisinde yok: yerine volume kullanmak stratejiyi değiştirir'
+- 'Piyasaya özgü seans/saat kuralı: yalnız o piyasada test edilir; diğer piyasalarda Doğrulanamaz (piyasa özgü); bu piyasa (Nikkei/CFD) evrenimizde yok'
+- Dönem 2022-Ekim 2026; başlıkta 2021 (çelişkili)
+- Yazar kendi stres testleri var (iyi örnek), 309 işlem tümü long
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- Kaynak kod ücretsiz (mql5.com) ama bu ortamda erişilemedi
+bias_varsayim: false
+erisim_engeli: true
