@@ -20,3 +20,6 @@ En az bir piyasada IS'de: islem >= 30, 1x PF >= 1,1 ve 2x net pozitif. Gecemeyen
 ## Kabul kriteri
 - `pytest` yesil; parite testi gecer; temiz klonda calisir.
 - PR basligi `[Codex-Sol] T5 ...`. `@auditor` etiketle.
+
+## T5a teslim notu (lider, PR #22)
+Kart gosterge kutuphanesi `engine/gosterge.py` (Pine uyumlu, kanonik). `engine/indicators.py` T1a'nin referans fonksiyonlari olarak degismeden kalir. T5b taramasi `engine/gosterge.py` + `engine/expr.py` + `engine/spec.py` kullanir; parite testi (madde 5) iki kutuphane arasindaki farki da gosterir.

@@ -9,7 +9,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Codex | T1b: kalan 9 aile (15 satır) | **Sırada; limit açılınca** | Limit açılınca "görev geldi" |
-| Sonnet | T5a birleştirme: `engine/indicators.py` çakışması | Atandı | "Görev geldi" |
+| Sonnet | T7: kart sözdizimi düzeltme (`tam` kartlardaki hatalar, kaynak okuma yok) | Atandı | "Görev geldi" |
 | Argon | `PAKET_T2_yeniden2.md` (36 kart) | Gönderildi; limitte | Cevabı `argon/T2_yeniden2.yaml` olarak yükle |
 | Veri arşivi | Saatlik arşiv | 2. koşu boyut sınırına takıldı (kripto dahil 59 MB). Düzeltildi: kripto arşivlenmez | Actions → "Hourly market data archive" → Run workflow (bir kez daha) |
 
@@ -19,7 +19,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Sırada bekleyen (açılmadı)
 - Argon: partiler 6, 7, 8, 9
 - Codex: T5b (hızlı tarama). T1b ve T5a'dan sonra.
-- Sonnet: kart sözdizimi düzeltmeleri (19 `tam` kartta hata). T5a'dan sonra.
+- T5a kabul edildi (PR #22, 86 test).
 
 ## İlerleme
 - Kart: 203 / ~316. `tam` 58, `dakikalik` 41, `eksik` 88. Yeniden okunacak 73 (13'ü TradingView, okunamıyor)
