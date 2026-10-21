@@ -19,3 +19,8 @@
 - Paralel calisma serbest: her gorev sahibi yalniz kendi gorev dosyalarina (GOREV_Tx.md'deki kapsam) ve `state.json`'da kendi kaydinin `status` alanina yazar. `turn`, kuyruk ekleme/cikarma, kriter degisikligi yalniz lider.
 - Her teslim PR ile gelir; lider (`@auditor`) inceler ve kabul/ret yazar. Lider onayi olmadan sonraki asama (or. T1b) baslamaz.
 - Itirazlar `tartisma/NNN_*.md` dosyalari uzerinden; kriter dosyasi dogrudan degistirilmez.
+
+## Argon (Gemini) - GitHub'a bagli degil
+- Lider `argon/PAKET_<gorev>.md` paketini hazirlar (kendi icinde tam: talimat + sema + liste). Kullanici Argon'a yapistirir.
+- Kullanici Argon'un ciktisini `argon/<gorev>.yaml` olarak web arayuzunden yukler, commit `[Argon] ...`.
+- Lider inceler; kabul edilen kartlari `docs/spec/<id>.yaml`'a boler. Argon dogrudan `docs/` ya da `state.json`'a yazmaz.

@@ -1,0 +1,282 @@
+id,parti,sahip,oncelik,ad,tur,platform,url
+A1-016,2,argon,0,VIOP Scalping - ATR SNIPER,Day,TradingView,https://www.tradingview.com/script/R0CTM8NR-VIOP-Scalping-ATR-SNIPER/
+A1-017,2,argon,0,VIOP Scalping - Original,Day,TradingView,https://www.tradingview.com/script/4BcYQ0Ns-VIOP-Scalping-Original/
+A1-019,2,argon,0,BIST30 to S&P 500 ATR Momentum Rider,Swing,TradingView,https://www.tradingview.com/script/jd1KSVn7/
+A1-020,2,argon,0,Antony.N4A - NQ ORB Quartile Str v6.3,Day,TradingView,https://de.tradingview.com/script/uUtBQ59O-Antony-N4A-NQ-ORB-Quartile-Str-v6-3
+A1-022,2,argon,0,Slight Swing Momentum Strategy,Swing,TradingView,https://it.tradingview.com/script/6l9kcw7j
+A1-023,2,argon,0,ORB Breakout Strategy (chartsquare),Day,TradingView,https://ru.tradingview.com/script/VJ9ZHgNB-ORB-Breakout-Strategy
+A1-024,2,argon,0,TrendMaster Pro 2.3 with Alerts,Day,TradingView,https://www.tradingview.com/script/mVkDf8qh-TrendMaster-Pro-2-3-with-Alerts/
+A1-025,2,argon,0,TASC 2026.03 One Percent A Week,Swing,TradingView,https://www.tradingview.com/script/nVECqIQx-TASC-2026-03-One-Percent-A-Week/
+A1-027,2,argon,0,Bjorgum Double Tap,Swing,TradingView,https://www.tradingview.com/script/rLkjr2sQ-Bjorgum-Double-Tap/
+A1-029,2,argon,0,SPX Trading Strategy for ThinkorSwim,Day,useThinkScript,https://usethinkscript.com/threads/spx-trading-strategy-for-thinkorswim.5087/
+A2-001,2,argon,0,GER40 Evening Coil,Day,MQL5 Code Base,https://www.mql5.com/en/code/78380
+A2-002,2,argon,0,Stochastic Daily Breakout for Gold,Day,MQL5 Code Base,https://www.mql5.com/en/code/77900
+A2-003,2,argon,0,Buy GBPJPY Every Monday,Day,MQL5 Code Base,https://www.mql5.com/en/code/77835
+A2-004,2,argon,0,SessionReopenEA,Day,MQL5 Code Base,https://www.mql5.com/en/code/77060
+A2-005,2,argon,0,GDS Renko RSI + MACD 4-Mode Demo EA,Day,MQL5 Code Base,https://www.mql5.com/en/code/78581
+A2-006,2,argon,0,Price Action Intraday Trading - Expert for MT5,Day,MQL5 Code Base,https://www.mql5.com/en/code/68704
+A2-007,2,argon,0,Pro MA Crossover EA for MT5,Swing,MQL5 Code Base,https://www.mql5.com/en/code/70916
+A2-009,2,argon,0,The Playground Series v1 to V4,Day,MQL5 Code Base,https://www.mql5.com/en/code/68125
+A2-010,2,argon,0,ICE (Impulse Confirmation Engine),Day,MQL5 Code Base,https://www.mql5.com/en/code/69651
+A2-011,2,argon,0,APEX VELOCITY,Day,MQL5 Code Base,https://www.mql5.com/en/code/78275
+A2-012,2,argon,0,ORB Risk Managed - Opening Range Breakout,Day,MQL5 Code Base,https://www.mql5.com/en/code/77967
+A2-013,2,argon,0,Opening Range Breakout with NR4 / NR7 Contraction Filters,Day,MQL5 Code Base,https://www.mql5.com/en/code/78259
+A2-014,2,argon,0,Gold MT5 Fractal Breakout EA,Swing,MQL5 Code Base,https://www.mql5.com/en/code/78308
+A2-015,2,argon,0,EMA Cross Scalper M15 (XAUUSD),Day,MQL5 Code Base,https://www.mql5.com/en/code/77180
+A2-016,2,argon,0,RSI Exhaustion Reversal - EURUSD,Day,MQL5 Code Base,https://www.mql5.com/en/code/77738
+A2-017,2,argon,0,ZoneUS30,Swing,MQL5 Code Base,https://www.mql5.com/en/code/77748
+A2-018,2,argon,0,TMS for M30 charts,Day,Forex Factory,https://www.forexfactory.com/thread/526735-tms-for-m30-charts
+A2-019,2,argon,0,"Williams%R, SAR X-over 15 minute candles",Day,Forex Factory,https://www.forexfactory.com/thread/989455-williamsr-sar-x-over-15-minute-candles
+A2-020,2,argon,0,Quantum London Trading,Day,Forex Factory,https://www.forexfactory.com/thread/551382-quantum-london-trading
+A2-021,2,argon,0,Magic 100,Day,Forex Factory,https://www.forexfactory.com/thread/989445-magic-100
+A2-022,2,argon,0,Lets Automate a Simple Renko Strategy!,Day,Forex Factory,https://www.forexfactory.com/thread/531783-lets-automate-a-simple-renko-strategy
+A2-023,2,argon,0,Up and under price pattern,Day,Forex Factory,https://www.forexfactory.com/thread/444458-up-and-under-price-pattern
+A2-024,2,argon,0,Most Famous Blessing 3.9.6 EA and Setfiles,Day,Forex Factory,https://www.forexfactory.com/thread/792598-most-famous-blessing-396-ea-and-setfiles
+A2-025,2,argon,0,"The Equilibrium, a key to success!",Day,Forex Factory,https://www.forexfactory.com/thread/727775-the-equilibrium-a-key-to-success
+A2-026,2,argon,0,v2v dynamic trading system,Day,Forex Factory,https://www.forexfactory.com/thread/901713-v2v-dynamic-trading-system
+A2-027,2,argon,0,Happs Trading System,Swing,Forex Factory,https://www.forexfactory.com/thread/259419-happs-trading-system
+A2-028,2,argon,0,TCO Trader EA,Day,Forex Factory,https://www.forexfactory.com/thread/430840-tco-trader-ea
+A2-029,2,argon,0,Simple Zigzag + Fibonacci Strategy,Swing,Forex Factory,https://www.forexfactory.com/thread/987910-simple-zigzag-fibonacci-strategy
+A2-030,2,argon,0,Channel MA Short-Term System,Day,Forex Factory,https://www.forexfactory.com/thread/707474-channel-ma-short-term-system
+A3-001,2,argon,0,XAUUSD Pullback Window (4 fazlı durum makinesi),Day,GitHub,https://github.com/ilahuerta-IA/backtrader-pullback-window-xauusd
+A3-002,3,claude-moderator,0,"geraked/tradingview (CEZLSMA, 3MAF, CP1, BBRSI, ABSAR, DHLAOS, MLCEL_MACD, NWERSIASF, LRCUTB)",Day,GitHub,https://github.com/geraked/tradingview
+A3-003,3,claude-moderator,0,"Sector-Momentum-Pullback (NSE, RSI pullback + ATR trailing stop)",Swing,GitHub,https://github.com/gaurav3331/Sector-Momentum-Pullback-Strategy-NSE-Backtest
+A3-004,3,claude-moderator,0,"Pairs_Trading (gün içi eşleşik işlem, M1)",Day,GitHub,https://github.com/Neuvox512/Pairs_Trading
+A3-005,3,claude-moderator,0,"Indice-Trading-Strategy (EMA200 + range filtresi, Pine)",Day,GitHub,https://github.com/junaid-mahmood/Indice-Trading-Strategy
+A3-007,3,claude-moderator,0,"Backtesting.py örnek SmaCross(10,20)",Swing,GitHub,https://github.com/kernc/backtesting.py
+A3-008,3,claude-moderator,0,"stratestic örnekleri (MA Crossover, MACD, Momentum)",Swing,GitHub,https://github.com/diogomatoschaves/stratestic
+A3-009,3,claude-moderator,0,"Systematic-Trading-Strategy-Backtester (MA 20/50, Bollinger, Momentum 252g, SPY)",Swing,GitHub,https://github.com/shresth711/Systematic-Trading-Strategy-Backtester-
+A3-010,3,claude-moderator,0,DevZenPro/freqtrade-strategies (Strategy001-004 fork),Day,GitHub (Freqtrade),https://github.com/OnChainVibe/freqtrade-strategies
+A3-011,3,claude-moderator,0,pandianmn/freqtrade-strategies (Strategy 001-005),Day,GitHub (Freqtrade),https://github.com/pandianmn/freqtrade-strategies/blob/master/README.md
+A3-012,3,claude-moderator,0,freqtrade/freqtrade-strategies (resmi örnek depo),Day,GitHub (Freqtrade),https://github.com/freqtrade/freqtrade-strategies
+A3-013,3,claude-moderator,0,NostalgiaForInfinity (NFI),Day,GitHub (Freqtrade),https://github.com/iterativv/NostalgiaForInfinity
+A3-014,3,claude-moderator,0,"nateemma/strategies (MomentumRegimeBasket15mFast, ML stratejileri)",Day,GitHub (Freqtrade),https://github.com/nateemma/strategies
+A4-009,3,claude-moderator,0,Volume Spikes in Oil Futures (embedded backtest),Day,QuantConnect,https://www.quantconnect.com/terminal/cache/embedded_backtest_19dce81c99a5fcc43704eea278805f0e.html
+A5-009,3,claude-moderator,0,XLP mean reversion (IBS + 25 günlük bant) (10 Best Swing #7),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/swing-trading-strategies/
+B1-002,3,claude-moderator,0,AlphaTrend Strategy,Swing,TradingView,https://www.tradingview.com/script/3wdQu7P3-AlphaTrend-Strategy
+B2-001,3,claude-moderator,0,Opening-Range Breakout,Day,TradingView,https://pl.tradingview.com/script/8vjWAdLN-Opening-Range-Breakout/
+B2-005,3,claude-moderator,0,"Athena Momentum Squeeze - Short, Lean, and Mean",Day,TradingView,https://in.tradingview.com/script/Oy4huVQ2-Athena-Momentum-Squeeze-Short-Lean-and-Mean
+B3-010,3,claude-moderator,0,RSI-2 Strategy from Larry Connors (ProRealCode),Swing,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/rsi-2-strategy-larry-connors/
+O1-001,3,claude-moderator,0,AlphaTrend Strategy,Belirsiz (Day/Swing),Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/Matriks/AlphaTrend-Strategy
+O1-002,3,claude-moderator,0,FIRSATÇITRENDİFLİSİSTEMANILBy (Fırsatçı Trend + IF'li sistem),Day,Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/Matriks/FIRSATÇITRENDİFLİSİSTEMANILBy
+O1-003,3,claude-moderator,0,PHL1 YİĞİT KAYNAK,Day,Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL1-YİGİT-KAYNAK
+O1-004,3,claude-moderator,0,PHL2 YIGITBOX,Swing,Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL2YIGITBOX
+O1-005,3,claude-moderator,0,ROTT-SOTT,Belirsiz (Day/Swing),Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/Matriks/ROTT-SOTT
+O1-006,3,claude-moderator,0,MOTT-4B Kurgu,Belirsiz (Day/Swing),Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4B-Kurgu
+O1-007,3,claude-moderator,0,SÜPERTRENDMOSTOPTİMİZASYONLU,Belirsiz (Day/Swing),Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/Matriks/SÜPERTRENDMOSTOPTİMİZASYONLU
+O1-008,3,claude-moderator,0,Anıl Özekşi Sistem 1,Belirsiz (Day/Swing),Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Anil-Özekşi-Sistem-1
+O1-009,3,claude-moderator,0,MOTT 4 Kurgu Stratejisi,Belirsiz (Day/Swing),Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4-Kurgu-Stratejisi
+O1-010,3,claude-moderator,0,FirsatciTrend 4Bölge LONG,Belirsiz (Day/Swing),Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/FirsatciTrend-4Bölge-LONG
+O1-011,3,claude-moderator,0,SuperTrendVadeliStratejisi,Day,Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/SuperTrendVadeliStratejisi
+O1-012,3,claude-moderator,0,Yükselen Formasyon Stratejisi,Day,Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Yukselen-Formasyon-Stratejisi
+O1-013,3,claude-moderator,0,OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG,Belirsiz (Day/Swing),Matriks Algo Kütüphanesi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG
+O1-019,3,claude-moderator,0,EMA 25/68 BIST30 Futures,Day,TradingView,https://www.tradingview.com/script/Tbh1KPxq/
+O1-027,3,claude-moderator,0,PMax Explorer STRATEGY & SCREENER,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/nHGK4Qtp/
+O1-029,3,claude-moderator,0,Grover Llorens Activator Strategy Analysis,Day,TradingView,https://www.tradingview.com/script/VuYM89Tw-Grover-Llorens-Activator-Strategy-Analysis/
+O1-030,3,claude-moderator,0,Uhl MA System - Strategy Analysis,Day,TradingView,https://www.tradingview.com/script/4S9Yz3DB-Uhl-MA-System-Strategy-Analysis/
+O1-031,3,claude-moderator,0,Trendline Breaks with Multi Fibonacci Supertrend Strategy (TMFS),Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/aVzNdTMg-Trendline-Breaks-with-Multi-Fibonacci-Supertrend-Strategy/
+O1-032,3,claude-moderator,0,Scalping Support Resistance Strategy,Day,TradingView,https://www.tradingview.com/script/gp332Dao-Scalping-Support-Resistance-Strategy/
+O1-033,3,claude-moderator,0,Scalping with Bill Williams Alligator,Day,TradingView,https://www.tradingview.com/script/b2ShO5Fv-Scalping-with-Bill-Williams-Alligator/
+O1-034,3,claude-moderator,0,[Sniper] SuperTrend + SSL Hybrid + QQE MOD,Day,TradingView,https://www.tradingview.com/script/6w9Jchj6/
+O1-035,3,claude-moderator,0,ORB Heikin Ashi SPY 5min Correlation Strategy,Day,TradingView,https://www.tradingview.com/script/QpJvYDzb-ORB-Heikin-Ashi-SPY-5min-Correlation-Strategy/
+O1-036,4,argon,0,"Gold ORB Strategy (15-min Range, 5-min Entry)",Day,TradingView,https://www.tradingview.com/script/oYW9gdag-Gold-ORB-Strategy-15-min-Range-5-min-Entry/
+O1-037,4,argon,0,Simple and Profitable Scalping Strategy (ForexSignals TV),Day,TradingView,https://www.tradingview.com/script/x4za4NFZ-Simple-and-Profitable-Scalping-Strategy-ForexSignals-TV/
+O1-038,4,argon,0,KPL Swing Strategy,Swing,TradingView,https://www.tradingview.com/script/4mz6xvnK/
+O1-039,4,argon,0,Laguerre RSI by KivancOzbilgic STRATEGY,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/vWG3tMJh-Laguerre-RSI-by-KivancOzbilgic-STRATEGY/
+O1-040,4,argon,0,Pathfinder DAX 4H,Swing,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/pathfinder-dax-4h/
+O1-041,4,argon,0,Optimization moving average crossing strategy with 'machine learning',Belirsiz (Day/Swing),ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/optimization-ma-cross-machine-learning/
+O1-042,4,argon,0,Smoothed Bollinger% Strategy Daily,Swing,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/smoothed-bollinger-strategy-daily/
+O1-043,4,argon,0,Navigator DAX Trading Strategy 4H,Swing,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/navigator-dax-trading-strategy-4h/
+O1-044,4,argon,0,ALEX AutoTradingBot INDEX,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/alex-autotradingbot-index/
+O1-045,4,argon,0,VECTORIAL DAX (M5),Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/vectorial-dax-m5/
+O1-046,4,argon,0,Fractal breakout intraday Strategy EUR/USD 1H,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/fractal-breakout-intraday-strategy-eurusd-1h/
+O1-047,4,argon,0,Kama & Sma Trading System DAX mtf,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/kama-sma-trading-system-dax-mtf/
+O1-048,4,argon,0,Stochastic Gold Trader,Belirsiz (Day/Swing),ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/stochastic-gold-trader/
+O1-049,4,argon,0,Oil 10min 'hammernegated' pattern strategy,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/oil-10min-hammernegated-pattern-strategy/
+O1-050,4,argon,0,EURUSD 15-minutes timeframe Dhigh / Dlow Strategy,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/
+O1-051,4,argon,0,Brent Oil 5 minutes trading strategy,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/brent-oil-5-minutes-trading-strategy/
+O1-052,4,argon,0,Wing's Resistance Breacher (DAX-30m),Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/wings-resistance-breacher-dax-30m/
+O1-053,4,argon,0,Open Range Breakout DAX 5/15M,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/open-range-breakout-dax-515m/
+O1-054,4,argon,0,End Of Day – YEN M15,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/end-of-day-yen-m15/
+O1-055,4,argon,0,Intraday Profit Maker (Best with Automation),Day,WiseStockTrader,https://www.wisestocktrader.com/indicators/4853-intraday-profit-maker-best-with-automation-for-amibroker-afl
+O1-056,4,argon,0,Intraday Stochastic Trading System,Day,WiseStockTrader,https://www.wisestocktrader.com/indicators/5858-intraday-stochastic-trading-system-for-amibroker-afl
+O1-058,4,argon,0,/ES Futures Trading Strategy on ThinkorSwim,Day,useThinkScript,https://usethinkscript.com/threads/es-futures-trading-strategy-on-thinkorswim.987/
+O1-059,4,argon,0,Relative Volume Strategy and Momentum Scanner,Day,useThinkScript,https://usethinkscript.com/threads/relative-volume-strategy-and-momentum-scanner-for-thinkorswim.3002/
+O1-060,4,argon,0,"Strategy Based on EMAs, TSI, MACD, and Premarket Highs/Lows",Day,useThinkScript,https://usethinkscript.com/threads/strategy-based-on-emas-tsi-macd-and-premarket-highs-lows-for-thinkorswim.10866/
+O1-061,4,argon,0,"Chewie's Super Trend, Hull Average, Donchian Trend Ribbon Trading System",Belirsiz (Day/Swing),useThinkScript,https://usethinkscript.com/threads/chewies-super-trend-hull-average-donchian-trend-ribbon-trading-system-for-thinkorswim.10894/
+O1-062,4,argon,0,High and Low Reversals Indicator + Intraday Strategy,Day,useThinkScript,https://usethinkscript.com/threads/high-and-low-reversals-indicator-intraday-strategy-for-thinkorswim.49/
+O1-063,4,argon,0,Renko Bar Based Trading System,Day,useThinkScript,https://usethinkscript.com/threads/renko-bar-based-trading-system-for-thinkorswim.3252/
+O1-064,4,argon,0,Try this NQ Strategy + Code,Day,useThinkScript,https://usethinkscript.com/threads/try-this-nq-strategy-code-for-thinkorswim.1958/
+O1-065,4,argon,0,Camarilla Pivot Points Day Trading System,Day,useThinkScript,https://usethinkscript.com/threads/camarilla-pivot-points-day-trading-system-for-thinkorswim.12988/
+O1-066,4,argon,0,Accumulation/Distribution Range Breakout Strategy NT8 - August 2018 S&C,Swing,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/accumulation-distribution-range-breakout-strategy/
+O1-067,4,argon,0,Renko Trading Strategy NT8 - December 2019 S&C,Belirsiz (Day/Swing),NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/renko-trading-strategy-nt8/
+O1-068,4,argon,0,MACD Cross Over,Belirsiz (Day/Swing),NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/macd-cross-over/
+O1-069,4,argon,0,Woodies CCI Autotrader,Day,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/woodies-cci-autotrader-2/
+O1-070,4,argon,0,Divergencesystem Strategy,Swing,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/divergencesystem-strategy-2/
+O1-071,4,argon,0,Adx Breakouts Strategy,Day,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/adx-breakouts-strategy-2/
+O1-072,4,argon,0,Automated Strategy for trading NQ,Day,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/automated-strategy-for-trading-nq/
+O1-073,4,argon,0,LargeTrades Strategy NT8,Day,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/largetrades-strategy-nt8/
+O1-074,4,argon,0,Camarillapoints ATS,Day,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/camarillapoints-ats/
+O1-075,4,argon,0,MeanReversal Strategy NT8,Swing,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/meanreversal-strategy-nt8/
+O1-076,4,argon,0,Mean Reversion Swing Trading Strategy,Swing,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/mean-reversion-swing-trading-strategy-2/
+O1-077,5,claude-moderator,0,Automated Strategy StrategyPeakHoursTradingNQ,Day,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/automated-strategy-strategypeakhourstradingnq/
+O1-078,5,claude-moderator,0,Atr Breakout,Day,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/atr-breakout-2/
+O1-079,5,claude-moderator,0,Golden Triangle Strategy,Swing,NinjaTrader User App Share,https://ninjatraderecosystem.com/user-app-share-download/golden-triangle-strategy/
+O2-001,5,claude-moderator,0,JP225 Opening Range Break Strategy,Day,Forex Station,https://forex-station.com/jp225-opening-range-break-strategy-t8476395.html
+O2-002,5,claude-moderator,0,JP225 ADR Extension-Based Momentum Model,Day,Forex Station,https://forex-station.com/jp225-adr-extension-based-momentum-model-t8476400.html
+O2-003,5,claude-moderator,0,XARD - Simple Trend Following Trading System,Day,Forex Station,https://forex-station.com/xard-simple-trend-following-trading-system-t8416709.html
+O2-004,5,claude-moderator,0,Trading Pullbacks System,Day,Forex Station,https://forex-station.com/trading-pullbacks-system-t8474130.html
+O2-005,5,claude-moderator,0,Trading Made Simple,Day,Forex Factory,https://www.forexfactory.com/thread/291622-trading-made-simple
+O2-006,5,claude-moderator,0,Pivot Trading,Swing,Forex Factory,https://www.forexfactory.com/thread/588764-pivot-trading
+O2-007,5,claude-moderator,0,Another simple system - Time-Frame 15,Day,Forex Factory,https://www.forexfactory.com/thread/345586-another-simple-system-time-frame-15
+O2-010,5,claude-moderator,0,JPN225 QuietDrift (The Nikkei EA That Only Buys When Volume Is Quiet),Day,MQL5 Code Base,https://www.mql5.com/en/code/78027
+O2-011,5,claude-moderator,0,PulseStrike Scalper - Statistical Burst Detection EA,Day,MQL5 Code Base,https://www.mql5.com/en/code/77167
+O2-012,5,claude-moderator,0,OHLCMTF Scalper EA - Multi-Timeframe Price Action,Day,MQL5 Code Base,https://www.mql5.com/en/code/70796
+O2-017,5,claude-moderator,0,TemaTrendFollowing,Day,Jesse,https://jesse.trade/strategies/tematrendfollowing
+O2-018,5,claude-moderator,0,MACD + EMA,Day,Jesse,https://jesse.trade/strategies/macd-ema
+O2-019,5,claude-moderator,0,CloudScalper,Day,Jesse,https://jesse.trade/strategies/cloudscalper
+O2-021,5,claude-moderator,0,Simple Bollinger Bands Strategy / RSI Trend / IchimokuCloud (Jesse liste özetleri),Belirsiz (Day/Swing),Jesse,https://jesse.trade/strategies
+O2-025,5,claude-moderator,0,The Holy Grail,Swing,Composer,https://www.composer.trade/trading-strategies/the-holy-grail-MmQbpf2U5TMQFmr9Nt2e
+O2-026,5,claude-moderator,0,KMLM Switcher of Simon97 - Original,Swing,Composer,https://www.composer.trade/trading-strategies/kmlm-switcher-of-simon97-original-syMn9OgFREE0wo8LtYsG
+O2-027,5,claude-moderator,0,TQQQ For The Long Term (Reddit Post Link),Swing,Composer,https://www.composer.trade/trading-strategies/tqqq-for-the-long-term-reddit-post-link-HukRwDJLlYPLMbrQbua5
+O2-028,5,claude-moderator,0,SVIX/XXXX KMLM switcher (single pops) | BT 12/19/23 = 786/10.5,Swing,Composer,https://www.composer.trade/trading-strategies/svixxxxx-kmlm-switcher-single-pops-bt-121923-786105-D9oE44Y87boHDOYQ9rPm
+O2-031,5,claude-moderator,0,"je-suis-tm/quant-trading (London Breakout, Dual Thrust vb.)",Day,GitHub,https://github.com/je-suis-tm/quant-trading
+O3-007,5,claude-moderator,0,Turn of the month strategy S&P 500 (10 Best Swing #9),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/swing-trading-strategies/
+O3-009,5,claude-moderator,0,Stocks in Play – 5 dk ORB + Relative Volume (Zarattini/Barbon/Aziz),Day,QuantifiedStrategies,https://www.quantifiedstrategies.com/stocks-in-play-trading-strategy-day-trading/
+O3-014,5,claude-moderator,0,3 Days Down Overnight (S&P 500),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/3-days-down-overnight-trading-strategy/
+O3-015,5,claude-moderator,0,IBS (Internal Bar Strength) SPY – IBS<0.2 al / >0.8 sat,Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/ibs-internal-bar-strength-indicator-strategies/
+P3-001,5,claude-moderator,0,SuperTrend STRATEGY,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/P5Gu6F8k/
+P3-002,5,claude-moderator,0,BUY and SELL - Backtest single EMA cross By che_trader,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/j9rq1wQq-BUY-and-SELL-Backtest-single-EMA-cross-By-che-trader/
+P3-003,5,claude-moderator,0,UT Bot Strategy,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/VKMgZdYr-UT-Bot-Strategy/
+P3-004,5,claude-moderator,0,EMA Slope + EMA Cross Strategy (by ChartArt),Swing,TradingView,https://www.tradingview.com/script/XLGBqrZq-EMA-Slope-EMA-Cross-Strategy-by-ChartArt/
+P3-005,5,claude-moderator,0,UT Bot Strategy with Backtesting Range [QuantNomad],Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/RHagaXIp-UT-Bot-Strategy-with-Backtesting-Range-QuantNomad/
+P3-006,5,claude-moderator,0,[STRATEGY][UL]Price Divergence Strategy v1.0,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/IDoY5LgE-STRATEGY-UL-Price-Divergence-Strategy-v1-0/
+P3-007,5,claude-moderator,0,Heikin Ashi Supertrend,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/9z16eauD-Heikin-Ashi-Supertrend/
+P3-008,5,claude-moderator,0,Strategy based on Squeeze Momentum Indicator [LazyBear],Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/qp9BoNyS-Strategy-based-on-Squeeze-Momentum-Indicator-LazyBear/
+P3-009,5,claude-moderator,0,Delta-RSI Strategy (with filters),Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/0OdCms2T-Delta-RSI-Strategy-with-filters/
+P3-010,5,claude-moderator,0,Dynamic Swing Anchored VWAP STRAT (Zeiierman/PineIndicators),Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/gjFSGRCo-Dynamic-Swing-Anchored-VWAP-STRAT-Zeiierman-PineIndicators/
+P3-011,5,claude-moderator,0,MACD Strategy with trailing ATR stop,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/2jDHQAJc-MACD-Strategy-with-trailing-ATR-stop/
+P3-013,5,claude-moderator,0,ORB Strategy [LuciTech],Day,TradingView,https://www.tradingview.com/script/10yYqaY7-ORB-Strategy-LuciTech/
+P3-014,5,claude-moderator,0,EmperorBTC's VWAP Strategy,Day,TradingView,https://www.tradingview.com/script/wmJ1ovZQ-EmperorBTC-s-VWAP-Strategy/
+P3-015,5,claude-moderator,0,Davin's 10/200MA Pullback on SPY Strategy v2.0,Swing,TradingView,https://www.tradingview.com/script/Gkib6KgL-Davin-s-10-200MA-Pullback-on-SPY-Strategy-v2-0/
+P3-016,6,argon,0,2-Period RSI strategy (with filter),Swing,TradingView,https://www.tradingview.com/script/iHSFQFog/
+P3-017,6,argon,0,Kirk65 UTBot Strategy Fixed,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/cbPurhXs-Kirk65-UTBot-Strategy-Fixed/
+P3-018,6,argon,0,Long-Only Opening Range Breakout (ORB) with Pivot Points,Day,TradingView,https://www.tradingview.com/script/6kDE9bLA-Long-Only-Opening-Range-Breakout-ORB-with-Pivot-Points/
+P3-019,6,argon,0,EMA Cross Strategy,Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/fAxX6kbm-EMA-Cross-Strategy/
+P3-020,6,argon,0,RSI Strategy [PrimeAutomation],Belirsiz (Day/Swing),TradingView,https://www.tradingview.com/script/RiQzLLoh-RSI-Strategy-PrimeAutomation/
+A1-001,6,argon,1,DAX 15Min - False Breakout / SuperTrend,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/
+A1-003,6,argon,1,CAC40 Trend Following on 10-sec Timeframe,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/cac40-trend-following-10sec
+A1-004,6,argon,1,ADX strategy with NASDAQ 30-minutes timeframe,Swing,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/adx-strategy-with-nasdaq-30-minutes-timeframe/
+A1-005,6,argon,1,DOW Breakout 15Min,Day,ProRealCode,https://prorealcode.com/prorealtime-trading-strategies/dow-breakout-15min/?pnum=3
+A1-006,6,argon,1,SCALPING CAC40 10 SECONDS,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/scalping-cac40-10-seconds/
+A1-007,6,argon,1,Morning CAC40,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/morning-cac40/
+A1-009,6,argon,1,1% per week on NASDAQ100,Swing,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/1-per-week-on-nasdaq100/
+A1-010,6,argon,1,Monday in Dax40 with 1%,Swing,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/monday-in-dax40
+A1-011,6,argon,1,DAX40 H1 Long Trend System,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/dax40-h1-long-trend-system/
+A1-013,6,argon,1,Strategy 3 CANDLES with CAC40,Day,ProRealCode,https://prorealcode.com/prorealtime-trading-strategies/strategy-3-candles-cac40
+A1-014,6,argon,1,Blue Monday DAX,Day,ProRealCode,https://www.prorealcode.com/prorealtime-trading-strategies/blue-monday-dax/?pnum=1
+A1-015,6,argon,1,Late lunch trade DAX40 strategy,Swing,ProRealCode,https://prorealcode.com/prorealtime-trading-strategies/late-lunch-trade-dax40-strategy
+A1-021,6,argon,1,Pivot Master LITE,Swing,TradingView,https://cn.tradingview.com/script/RKd6izP4-Pivot-Master-LITE
+A1-026,6,argon,1,LongBuyLongSell 90% profit Excellent Win Rate Strategy,Day,TradingView,https://www.tradingview.com/script/0zX3PYZi-LongBuyLongSell-90-profit-Excellent-Win-Rate-Strategy-indicator/
+A4-001,6,argon,1,Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion,Swing,Composer,https://www.composer.trade/trading-strategies/short-term-momentum-that-works-20-with-macro-filter-mean-reversion-dsPSLcRMdQldkyolwGon
+A4-002,6,argon,1,Simple TQQQ RSI mean reversion,Swing,Composer,https://www.composer.trade/trading-strategies/simple-tqqq-rsi-mean-reversion-4hcYKZBIjhZo3Yg0NTQk
+A4-003,6,argon,1,Overbought or Oversold SPY else UVXY,Swing,Composer,https://www.composer.trade/trading-strategies/overbought-or-oversold-spy-else-uvxy-C8QUEQBKayzmaSBz7MAZ
+A4-004,6,argon,1,RSI 82,Swing,Composer,https://www.composer.trade/trading-strategies/rsi-82-cmAlgPGN7BvS47DC6i0d
+A4-005,6,argon,1,SPY RSI 30 Test,Swing,Composer,https://www.composer.trade/trading-strategies/spy-rsi-30-test-kUp65lDEQCokq8CqK8Us
+A4-006,6,argon,1,Opening Range Breakout for Stocks in Play,Day,QuantConnect,https://www.quantconnect.com/forum/discussion/18444/opening-range-breakout-for-stocks-in-play/
+A4-007,6,argon,1,Enhanced Short-Term Mean Reversion Algorithm,Swing,QuantConnect,https://www.quantconnect.com/forum/discussion/3327/enhanced-short-term-mean-reversion-algorithm/p1
+A4-008,6,argon,1,RSI Extremes Intraday E-mini (embedded backtest),Day,QuantConnect,https://www.quantconnect.com/terminal/cache/embedded_backtest_e51cb798772bb2ad23d4d52e535ed3f7.html
+A4-010,6,argon,1,"Intraday Mean Reversion BTCUSD (r/algotrading yaklaşımı, embedded backtest)",Day,QuantConnect,https://www.quantconnect.com/terminal/cache/embedded_backtest_b5e5be2775f2e65fb530bae2c5fc8486.html
+A5-015,6,argon,1,Reversal in Cryptocurrency Returns,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/reversal-in-cryptocurrency-returns
+A5-021,6,argon,1,The 8-K Trading Gap,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/the-k-trading-gap
+A6-001,6,argon,1,Double 7's Strategy,Swing,Alvarez Quant Trading,https://alvarezquanttrading.com/blog/double-7s-strategy/
+A6-003,6,argon,1,Simple Ideas for a Mean Reversion Strategy with Good Results,Swing,Alvarez Quant Trading,https://alvarezquanttrading.com/blog/simple-ideas-for-a-mean-reversion-strategy-with-good-results/
+A6-004,6,argon,1,Mean Reversion Entry Timing,Swing,Alvarez Quant Trading,https://alvarezquanttrading.com/blog/mean-reversion-entry-timing/
+A6-009,6,argon,1,"Trading the Channel (Inside Channel, Kaufman)",Swing,The Financial Hacker,https://financial-hacker.com/trading-the-channel/
+A6-010,6,argon,1,The Gap Momentum System,Swing,The Financial Hacker,https://financial-hacker.com/the-gap-momentum-system/
+A6-011,6,argon,1,Better Strategies 5: A Short-Term Machine Learning System,Day,The Financial Hacker,https://financial-hacker.com/build-better-strategies-part-5-developing-a-machine-learning-system/
+A6-012,6,argon,1,Better Tests with Oversampling (3 mum fiyat aksiyonu),Day,The Financial Hacker,https://financial-hacker.com/better-tests-with-oversampling/
+A6-014,6,argon,1,Trend trading system with Market Meanness Index (Why 90% of Backtests Fail),Swing,The Financial Hacker,https://financial-hacker.com/why-90-of-backtests-fail/
+A6-015,6,argon,1,Double Bottom Country ETF Trading,Swing,QuantPedia,https://quantpedia.com/technical-analysis-report-methodology-double-bottom-country-trading-strategy/
+A6-016,6,argon,1,Building and Testing Trend-Following Strategies on One-Minute SPY Data,Swing,QuantPedia,https://quantpedia.com/building-and-testing-trend-following-strategies-on-one-minute-spy-data/
+A6-017,7,claude-moderator,1,Can Weakening Morning Order Flow Predict SPY Reversals?,Swing,QuantPedia,https://quantpedia.com/can-weakening-morning-order-flow-predict-spy-reversals/
+A6-019,7,claude-moderator,1,Overnight Seasonality in Bitcoin,Day,QuantPedia,https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin
+A6-021,7,claude-moderator,1,Pairs Trading with Country ETFs,Swing,QuantPedia,https://quantpedia.com/strategies/pairs-trading-with-country-etfs
+A6-022,7,claude-moderator,1,How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin,Day,QuantPedia,https://quantpedia.com/how-to-design-a-simple-multi-timeframe-trend-strategy-on-bitcoin/
+A6-023,7,claude-moderator,1,Attention Prop Traders: first half hour predicts last half hour,Day,Alpha Architect,https://alphaarchitect.com/attention-prop-traders-the-first-half-hour-of-trading-predicts-the-last-half-hour/
+A7-001,7,claude-moderator,1,NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan),Day,Elite Trader,https://www.elitetrader.com/et/threads/i-backtested-37-famous-strategies-with-fees-on-most-lose-mechanically-after-costs-data-one-that-didnt.390197/
+A7-004,7,claude-moderator,1,"S&P500-VIX diverjans stratejisi (Scherman, BI makalesi)",Swing,Elite Trader,https://www.elitetrader.com/et/threads/strategy-with-75-win-ratio-and-3-to-1-profit-potential-count-me-as-a-skeptic.382581/
+A7-007,7,claude-moderator,1,ES Renko/Donchian 21 pullback scalp (RichJamo günlüğü),Day,NexusFi (futures.io),https://futures.io/trading-journals/33441-rich-s-es-s-p-500-futures-contract-intraday-strategy.html
+O1-017,7,claude-moderator,1,"Sistem 2: RSI ortalama kesişimi (VİOP30 5 dk, long)",Day,Bilge Yatırımcı,https://www.bilgeyatirimci.com/i/sistem-tester-performans-testi-back-test-yaparken-nelere-dikkat-etmeliyiz/
+O2-008,7,claude-moderator,1,Highest Open / Lowest Open Trade,Day,Forex Factory,https://www.forexfactory.com/thread/590623-highest-open-lowest-open-trade
+O2-009,7,claude-moderator,1,M1 Countertrend Scalping Strategy,Day,Forex Factory,https://www.forexfactory.com/thread/1190104-m1-countertrend-scalping-strategy
+O2-023,7,claude-moderator,1,Intraday Trading Strategy for Futures Contract NQ,Day,QuantConnect,https://www.quantconnect.com/forum/discussion/15192
+O3-012,7,claude-moderator,1,MACD and RSI Strategy (73% win rate),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/macd-and-rsi-strategy/
+O3-013,7,claude-moderator,1,Turnaround Tuesday (SPY),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/turnaround-tuesday-strategy/
+O3-016,7,claude-moderator,1,Gap down + 25 MA filtresi (S&P 500 gün içi),Day,QuantifiedStrategies,https://www.quantifiedstrategies.com/gap-trading-strategies/
+O3-018,7,claude-moderator,1,VRT Levels – hacim tabanlı destek/direnç kırılım+reddi,Swing,Reddit (ayna/anlık görüntü),https://reddit.com/r/algotrading/comments/1tbgqmn/my_strategy_outperformed_the_sp_500_over_3_years/
+O3-022,7,claude-moderator,1,DAX Value Area günlük bias sistemi,Day,NexusFi (futures.io),https://nexusfi.com/showthread.php?t=44951
+O3-023,7,claude-moderator,1,London Session ORB – GBP (mekanik kırılım günlüğü),Day,NexusFi (futures.io),https://nexusfi.com/showthread.php?t=36245
+O3-025,7,claude-moderator,1,Bollinger Prism – NQ reversal (PF 2.78),Day,Elite Trader,https://www.elitetrader.com/et/threads/nq-reversal-strategy-backtest-reached-profit-factor-2-78.389985/
+O3-027,7,claude-moderator,1,Mean Reversion Strategy Journal – Buy Sell Bands (ABD hisseleri),Swing,Elite Trader,https://elitetrader.com/et/threads/mean-reversion-strategy-journal.363044/
+O3-030,7,claude-moderator,1,75%+ win rate trend stratejisi (Jim Brown kitabından) – EURUSD,Swing,Trading Heroes,https://www.tradingheroes.com/75-win-rate-trading-strategy/
+O3-031,7,claude-moderator,1,RSI Divergence swing – 27 parite günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-strategy-for-swing-trading/
+O3-032,7,claude-moderator,1,RSI50 stratejisi – EURUSD günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-trading-strategy-results/
+O3-033,7,claude-moderator,1,RSIDive (RSI uyumsuzluğu) – EURUSD günlük,Swing,Trading Heroes,https://www.tradingheroes.com/rsi-trading-strategy-results/
+O3-034,7,claude-moderator,1,Trending Pin Bar v2 – EURUSD H4,Swing,Trading Heroes,https://www.tradingheroes.com/backtesting-results-tpb-eurusd-h4/
+A1-018,7,claude-moderator,2,HYSTERIAN BIST:SISE TRADE ALGORITHM,Day,TradingView,https://tr.tradingview.com/script/DuPtf4A6
+A5-012,7,claude-moderator,2,Self-Imposed Limits to Arbitrage,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/self-imposed-limits-to-arbitrage
+A5-013,7,claude-moderator,2,Trading Volume Effects of Moving Average Heuristics,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/trading-volume-effects-of-moving-average-heuristics
+A5-014,7,claude-moderator,2,"Seasonality, Trend-following, and Mean reversion in Bitcoin",Day,PapersWithBacktest,https://paperswithbacktest.com/strategies/seasonality-trend-following-and-mean-reversion-in-bitcoin
+A5-016,7,claude-moderator,2,Stock Market Predictability in the MENA: Evidence from New Variance Ratio Tests and Technical Trade Analysis,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/stock-market-predictability-in-the-mena-evidence-from-new-variance-ratio-tests-and-technical-trade-analysis
+A5-020,7,claude-moderator,2,Finding Consistent Trends with Strong Momentum – RSI for Trend-Following and Momentum Strategies,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/finding-consistent-trends-with-strong-momentum-rsi-for-trend-following-and-momentum-strategies
+A5-022,7,claude-moderator,2,Trend-based Forecast of Cryptocurrency Returns,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/trend-based-forecast-of-cryptocurrency-returns
+A5-023,7,claude-moderator,2,Signal Prediction in cryptocurrency tradeoperations: a machine learning-based approach,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/signal-prediction-in-cryptocurrency-tradeoperations-a-machine-learning-based-approach
+A5-024,7,claude-moderator,2,Impact of Earnings Announcements for Dow Jones Index Stocks,Swing,PapersWithBacktest,https://paperswithbacktest.com/strategies/impact-of-earnings-announcements-for-dow-jones-index-stocks
+A6-020,7,claude-moderator,2,Market Sentiment and an Overnight Anomaly,Day,QuantPedia,https://quantpedia.com/strategies/market-sentiment-and-an-overnight-anomaly
+A7-002,7,claude-moderator,2,RSI aşırı alım/satım Forex sistemi (PF 2.41),Day,Elite Trader,https://www.elitetrader.com/et/threads/improved-trading-strategy-results-profit-factor-increased-to-2-41.382680/
+A7-005,7,claude-moderator,2,Long-only ABD hisseleri dakikalık gün içi (Level4),Day,Elite Trader,https://www.elitetrader.com/et/threads/analyzing-backtesting-results.387769/
+A7-006,7,claude-moderator,2,Kripto 50 parite long-only gösterge tarayıcı sistemi,Swing,Elite Trader,https://www.elitetrader.com/et/threads/automated-trading-feedback.382851/
+B3-001,7,claude-moderator,2,RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/rsi-mean-reversion-trading-strategy
+B3-002,7,claude-moderator,2,RSI Pullback Strategy (SPY),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/rsi-pullback-strategy
+B3-003,8,argon,2,GBPUSD Forex Strategy (Python Code Included),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/gbpusd-forex-strategy-python-code
+B3-004,8,argon,2,Trend Following and Mean Reversion Strategy - Combined (QQQ),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/trend-following-and-mean-reversion
+B3-005,8,argon,2,Triple RSI Strategy (90.36% win rate),Swing,QuantifiedStrategies,https://quantifiedstrategies.substack.com/p/triple-rsi-strategy-9036-win-rate-2c5
+B3-009,8,argon,2,Connors/Alvarez 2009 basit ortalamaya dönüş (ES+TY),Swing,Alpha Algo Trading Research,https://algotr.substack.com/p/this-simple-2009-strategy-still-wins
+B3-014,8,argon,2,Cross-Sectional Equity Mean Reversion (Quantpedia #13),Swing,QuantPedia,https://quantpedia.com/quantopian-quantpedia-trading-strategy-series-cross-sectional-equity-mean-rever/
+B3-015,8,argon,2,Is there 1 Strategy that just works? (günlük long-only ETF betiği),Swing,Wealth-Lab,https://wl6.wealth-lab.com/Forum/Posts/Is-there-1-Strategy-that-just-works-28865
+O1-015,8,argon,2,Algoritmik Trade Sistem Sinyalleri ve Gerçek Hesap Paylaşımlı (Şeffaf) – klasik trend sistemi,Belirsiz (Day/Swing),hisse.net,https://www.hisse.net/topluluk/threads/31870
+O1-016,8,argon,2,Sistem 1 (piyasa şartlarına göre şekillenen sistem),Belirsiz (Day/Swing),Bilge Yatırımcı,https://www.bilgeyatirimci.com/i/sistem-tester-performans-testi-back-test-yaparken-nelere-dikkat-etmeliyiz/
+O1-018,8,argon,2,MACD/RSI/MA/DEMA sistemi (VİOP örnekleri),Belirsiz (Day/Swing),Geist Trading,https://en.geisttrading.com/viop3
+O2-013,8,argon,2,NoPain MT5,Belirsiz (Day/Swing),MQL5 Signals,https://www.mql5.com/en/signals/2262642
+O2-014,8,argon,2,MSC Gold Stable Pro,Belirsiz (Day/Swing),MQL5 Signals,https://www.mql5.com/en/signals/2231030
+O2-015,8,argon,2,FXtrading,Belirsiz (Day/Swing),MQL5 Signals,https://www.mql5.com/en/signals/2356441
+O2-016,8,argon,2,World PEACE Multi FX Algo,Belirsiz (Day/Swing),MQL5 Signals,https://www.mql5.com/en/signals/2379208
+O2-024,8,argon,2,"BeatTheMarketMomentum (SPY intraday momentum, embedded backtest)",Day,QuantConnect,https://www.quantconnect.com/terminal/cache/embedded_backtest_fd22e7bd368af4d6bd31153c9f8c4dad.html
+O3-001,8,argon,2,Monday reversal in the S&P 500 (10 Best Swing #1),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/swing-trading-strategies/
+O3-002,8,argon,2,Overnight swing strategy in the S&P 500 (10 Best Swing #2),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/swing-trading-strategies/
+O3-003,8,argon,2,Buy when S&P 500 makes new intraday high (10 Best Swing #3),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/swing-trading-strategies/
+O3-004,8,argon,2,Monday/Tuesday trade in Nasdaq (10 Best Swing #4),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/swing-trading-strategies/
+O3-006,8,argon,2,MACD-Histogram on the S&P 500 (10 Best Swing #8),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/swing-trading-strategies/
+O3-008,8,argon,2,"Day trading strategy #78 (SPY, açılış→kapanış)",Day,QuantifiedStrategies,https://www.quantifiedstrategies.com/day-trading-strategies/
+O3-010,8,argon,2,Opening Range Breakout – QS gizli varyant (S&P 500),Day,QuantifiedStrategies,https://www.quantifiedstrategies.com/opening-range-breakout-strategy/
+O3-011,8,argon,2,5-Day Low of the Range (IBS<0.25) – S&P 500,Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/5-day-low-of-the-range-strategy/
+O3-017,8,argon,2,RSI SPY trading strategy (RSI(2) on SPY),Swing,QuantifiedStrategies,https://www.quantifiedstrategies.com/rsi2-on-spy/
+O3-019,8,argon,2,"Hisse swing stratejisi (açıklanmamış, %96 kazanma)",Swing,Reddit (ayna/anlık görüntü),https://reddit.sentinel-team.org/posts/1sctlkd/snapshots/2026-04-06T18%3A02%3A16.13595Z
+O3-020,8,argon,2,1 dk long-only gün içi strateji (1:1 RR),Day,Reddit (ayna/anlık görüntü),https://lr.sudovanilla.org/r/Daytrading/comments/1f6w20d/it_looks_good_enough
+O3-021,8,argon,2,TS Trend Strategy – DAX 5 dk long-only,Day,NexusFi (futures.io),https://nexusfi.com/showthread.php?t=55903
+O3-024,8,argon,2,NQ long/short otomatik trend stratejisi,Swing,Elite Trader,https://www.elitetrader.com/et/threads/nq-short-and-long-automated-strategy.372986/
+O3-026,8,argon,2,Bollinger Bands + RSI tick chart (ninZa) – PF 1.5–1.86,Day,Elite Trader,https://elitetrader.com/et/threads/bollinger-bands-rsi-tick-chart-backtests-reached-pfs-as-high-as-1-86.390009/
+P3-021,8,argon,2,NQ Alpha Engine,Day,Collective2,https://collective2.eu/details/154954998
+P3-022,8,argon,2,HTP Momentum2 MNQ1,Day,Collective2,https://collective2.eu/details/157216142
+P3-023,8,argon,2,ares,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-024,8,argon,2,Calicut Commodities,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-025,8,argon,2,Easy Value,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-026,8,argon,2,Adaptive Investments,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-027,8,argon,2,Iberia Capital Strategy,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-028,8,argon,2,US Stock Momentum,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-029,8,argon,2,Quant AI SP500,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-030,8,argon,2,AIB STOCKS and FUT,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-031,8,argon,2,AEA Algo MES,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-032,8,argon,2,SQT Stocks Long Portfolio 2x,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+P3-033,9,claude-moderator,2,Index Futures Trading,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
