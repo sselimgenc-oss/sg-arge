@@ -26,7 +26,7 @@
       "id": "T2",
       "owner": "claude-moderator",
       "title": "YAML kart + triyaj: parti 1 (PDF B seviyesi) ve xlsx tek partiler 3,5,7,9 (docs/spec/PARTILER.csv)",
-      "status": "parti-5 PR acik (42 kart; 30 eksik/erisim engelli), lider incelemesi bekleniyor",
+      "status": "parti 1,3,5 kabul (PR #11,#13,#15); web partileri Sonnet ag erisimi acilana dek bekliyor",
       "spec": "docs/GOREV_T2.md"
     },
     {
@@ -52,9 +52,9 @@
     },
     {
       "id": "T5",
-      "owner": "codex-worker",
+      "owner": "claude-moderator (T5a) / codex-worker (T5b)",
       "title": "YAML yorumlayici + asama 1 hizli tarama (VectorBT)",
-      "status": "blocked-awaiting-T1a-and-T2p1",
+      "status": "T5a atandi (Sonnet); T5b T1a onayini bekliyor",
       "spec": "docs/GOREV_T5.md"
     },
     {
@@ -101,6 +101,12 @@
       "owner": "argon",
       "title": "40 kart, 11 durum duzeltmesi",
       "ref": "docs/spec/INDEKS.csv"
+    },
+    {
+      "id": "T2-p5",
+      "owner": "claude-moderator",
+      "title": "42 kart (36 erisim engelli -> YENIDEN.csv)",
+      "ref": "PR #15"
     }
   ],
   "user_decisions_pending": [],
@@ -113,7 +119,7 @@
   ],
   "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz.",
   "triggers": {
-    "codex": "otomatik (@codex)",
+    "codex": "manuel (kullanici); @codex otomatik tetikleme calismiyor (bot hala environment istiyor)",
     "claude-moderator": "manuel (kullanici)",
     "argon": "manuel (kullanici, argon/PAKET_*.md)"
   }
