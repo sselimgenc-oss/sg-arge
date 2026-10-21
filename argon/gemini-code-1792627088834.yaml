@@ -1,0 +1,1093 @@
+id: A6-017
+ad: "Can Weakening Morning Order Flow Predict SPY Reversals?"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://quantpedia.com/can-weakening-morning-order-flow-predict-spy-reversals/", sayfa: null}
+tarz: day
+tf: 1m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+ozel_kod: true
+giris: "close < close[1] and close[1] < close[2]"
+cikis: "false"
+stop: null
+hedef: null
+zaman_stop: {bar: 1}
+stop_eklendi: false
+parametreler: {signal_window_start: 930, signal_window_end: 1000, decline_days: 2, entry_time: 1559, exit_time: 1559}
+deneme_sayisi_kaynakta: 72
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+varyantlar:
+  - ad: "Gece Boyu Tutma Penceresi (Y3: 15:59 Giris - 09:31 Cikis)"
+    not: "Ayni 09:30-10:00 2 gunluk OFI dusus sinyaliyle 15:59'da girilip ertesi sabah 09:31 acilisinda cikilir."
+  - ad: "Alternatif Emir Akisi Gostergeleri (Normalized OFI, Aggressor Ratio, Ask-Bid Ratio)"
+    not: "Normalized OFI = (TradeAtAsk - TradeAtBid) / Volume, Aggressor Ratio = TradeAtAsk / (TradeAtAsk + TradeAtBid), Ask-Bid Ratio = TradeAtAsk / TradeAtBid."
+spec_durumu: eksik
+belirsiz:
+  - "Kural TAQ (Trade and Quote) emir akisi (order flow) verisine dayandigi icin standart OHLCV fiyat serisiyle karta cevrilemez (kural geregi spec_durumu: eksik ve ozel_kod: true)."
+  - "Tam strateji kurallari (Jakub Demko & David Belobrad, Quantpedia, Eylul 2026): 1) Algoseek 1 dakikalik SPY verisinden her islem gunu 09:30-10:00 (ilk 30 dakika, Pencere A) arasindaki agresif alici ve satici hacimleri toplanarak gunluk Order Flow Imbalance (OFI = TradeAtAsk - TradeAtBid) hesaplanir. 2) Gunluk sabah OFI degeri ust uste 2 islem gunu boyunca dusmusse (OFI[t] < OFI[t-1] and OFI[t-1] < OFI[t-2]), o gunun kapanisinda (saat 15:59) SPY long pozisyon acilir. 3) Pozisyon ertesi islem gununun kapanisinda (15:59, Y4 penceresi) veya ertesi sabah acilista (09:31, Y3 penceresi) kapatilir."
+---
+id: A6-019
+ad: "Overnight Seasonality in Bitcoin"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin", sayfa: null}
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTCUSD)
+gostergeler: {}
+ozel_kod: true
+giris: "close > 0"
+cikis: "false"
+stop: null
+hedef: null
+zaman_stop: {bar: 2}
+stop_eklendi: false
+parametreler: {open_trade_hour_utc: 22, close_trade_hour_utc: 0, hold_hours: 2}
+deneme_sayisi_kaynakta: 24
+rapor: {pf: null, sharpe: 1.58, getiri: 33.0, mdd: 34.04, islem: 7837, wr: 51, maliyet_dahil: false}
+varyantlar:
+  - ad: "QuantConnect OOS Uygulamasi (2016-2026, Komisyon Dahil)"
+    not: "Bitfinex BTCUSD verisi ve 0.5 bps islem maliyetiyle CAGR %7.74, MDD %47, Sharpe 0.2, Win Rate %51, 7837 emir."
+  - ad: "Yuksek Volatilite ve Trend Filtreli Mevsimsellik (2023 Makalesi)"
+    not: "30 gunluk saatlik tarihsel volatilite 365 gunluk medyanin uzerindeyken (veya BTC > SMA) 21:00-23:00 UTC arasinda tutuldugunda CAGR %37.26, MDD %18.87, Calmar 1.97."
+spec_durumu: tam
+belirsiz:
+  - "Saat bazli giris/cikis (ozel_kod: true): Her gun saat 22:00 UTC+0'da (ABD, Avrupa ve Asya ana borsalarinin kapali oldugu saat dilimi) BTCUSD long pozisyon acilir, 2 saat tutulduktan sonra saat 00:00 UTC+0'da kapatilir (Padyšák & Vojtko, 2022)."
+---
+id: A6-021
+ad: "Pairs Trading with Country ETFs"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://quantpedia.com/strategies/pairs-trading-with-country-etfs", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Ulke ETF (22-24 iShares MSCI Ulke ETF)
+gostergeler:
+  z20: {f: zscore, src: close, n: 120}
+ozel_kod: true
+giris: "z20 < -0.5"
+cikis: "z20 >= 0"
+stop: null
+hedef: null
+zaman_stop: {bar: 20}
+stop_eklendi: false
+parametreler: {formation_days: 120, trading_days: 20, max_traded_pairs: 5, std_threshold: 0.5}
+deneme_sayisi_kaynakta: 12
+rapor: {pf: null, sharpe: 1.66, getiri: 20.6, mdd: 26.67, islem: 15823, wr: 49, maliyet_dahil: false}
+varyantlar:
+  - ad: "QuantConnect OOS Uygulamasi (2000-2026)"
+    not: "24 ulke ETF'i uzerinde 0.5 bps komisyonla CAGR %1.47, MDD %27, Sharpe -0.2, Win Rate %49."
+spec_durumu: tam
+belirsiz:
+  - "Ciftli istatistiksel arbitraj (pairs trading) kurallari (ozel_kod: true, Thomakos, Wang & Schizas): 1) 22-24 ulke ETF'i icin 120 islem gunluk olusum (formation) doneminde baslangic fiyati 1$'a normalize edilir (norm_a = price_a / price_a[0]). 2) Tum ikililer icin kareli sapmalarin toplami Distance = sum((norm_a - norm_b)^2) hesaplanir ve en kucuk mesafeli ilk 5 cift secilir. 3) Takip eden 20 islem gununde spread = norm_a - norm_b dizisinin 120 gunluk ortalamasi (mean) ve standart sapmasi (std) izlenir; fark 0.5 * std esigini astiginda ucuz kalan ETF long, pahali kalan ETF esit dolar tutariyla short acilir. 4) Spread tekrar yakinsadiginda (abs(spread - mean) <= 0.5 * std) veya 20 islem gunu doldugunda pozisyon kapatilir."
+---
+id: A6-022
+ad: "How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://quantpedia.com/how-to-design-a-simple-multi-timeframe-trend-strategy-on-bitcoin/", sayfa: null}
+tarz: swing
+tf: 1H
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTCUSD)
+gostergeler:
+  macd_1h: {f: macd, src: close, fast: 12, slow: 26, sig: 9}
+  macd_1d: {f: macd, src: close, fast: 12, slow: 26, sig: 9, tf: 1D}
+giris: "mtf(\"1D\", macd_1d.macd) > mtf(\"1D\", macd_1d.sinyal) and cross_over(macd_1h.macd, macd_1h.sinyal)"
+cikis: "close < open"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {macd_fast: 12, macd_slow: 26, macd_signal: 9}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: 1.07, getiri: 6.6, mdd: 12.4, islem: 1000, wr: null, maliyet_dahil: belirtilmemis}
+varyantlar:
+  - ad: "Adim 1: Saf 1H MACD Kesisimi (MACD Pure)"
+    giris: "cross_over(macd_1h.macd, macd_1h.sinyal)"
+    cikis: "cross_under(macd_1h.macd, macd_1h.sinyal)"
+    not: "2262 islem, yillik getiri %4.6, Sharpe 0.33, Calmar 0.19, MDD %23.9."
+  - ad: "Adim 2: D1H1 Filtresi + 1 Bar Tutma"
+    giris: "mtf(\"1D\", macd_1d.macd) > mtf(\"1D\", macd_1d.sinyal) and cross_over(macd_1h.macd, macd_1h.sinyal)"
+    cikis: "true"
+    not: "1 saatlik tek bar tutma ile ~1000 islem, yillik getiri %6.6, Sharpe 0.80, MDD %12.4."
+spec_durumu: tam
+belirsiz:
+  - "David Mesíček (Quantpedia, Kasim 2025) tarafindan gelistirilen nihai model (D1H1 STOP): Gunluk (1D) mum kapandiktan sonra (00:00 UTC sonrasi) 1D MACD cizgisi sinyal cizgisinin uzerindeyse yukari trend onaylanir; 1H grafikte MACD sinyal cizgisini yukari kestiginde long girilir. Saatlik mumlar pozitif kaldigi surece (close >= open) pozisyon korunur ve ilk negatif saatlik mumun (close < open) kapanisinda cikilir (Sharpe 1.07, Calmar 0.87)."
+---
+id: A6-023
+ad: "Attention Prop Traders: first half hour predicts last half hour"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://alphaarchitect.com/attention-prop-traders-the-first-half-hour-of-trading-predicts-the-last-half-hour/", sayfa: null}
+tarz: day
+tf: 30m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+ozel_kod: true
+giris: "close[11] > open[11]"
+cikis: "false"
+stop: null
+hedef: null
+zaman_stop: {bar: 1}
+stop_eklendi: false
+parametreler: {first_half_hour_bar: 1, twelfth_half_hour_bar: 12, trade_half_hour_bar: 13}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: null, getiri: 6.34, mdd: null, islem: null, wr: null, maliyet_dahil: false}
+varyantlar:
+  - ad: "Strateji 2: 12. Yarim Saat (15:00-15:30) Sinyali"
+    giris: "close[1] > open[1]"
+    not: "12. yarim saat (15:00-15:30 ET) getirisi pozitifse (r_12 > 0) 15:30'da long girilir, 16:00'da cikilir."
+  - ad: "Strateji 3: 1. ve 12. Yarim Saat Ortak Sinyali (r_1 > 0 ve r_12 > 0)"
+    giris: "close[11] > open[11] and close[1] > open[1]"
+    not: "Hem ilk yarim saat (09:30-10:00) hem de 12. yarim saat (15:00-15:30) pozitifse 15:30'da long girilir, 16:00'da cikilir."
+spec_durumu: dakikalik
+belirsiz:
+  - "Gao, Han, Li & Zhou (2014) 'Intraday Momentum: The First Half-Hour Return Predicts the Last Half-Hour Return' makalesinin Jack Vogel (Alpha Architect) ozetidir (SPY 1999-2012)."
+  - "Saat bazli kural (ozel_kod: true): ABD seansinda 13 adet 30 dakikalik bar vardir. 1. yarim saat (09:30-10:00 ET, r_1) getirisi pozitifse saat 15:30 ET'de (son yarim saatin basinda) SPY long acilir ve 16:00 ET kapanisinda kapatilir. Makalede r_1 < 0 oldugunda son yarim saatte short acma kurali da yer alir."
+---
+id: A7-001
+ad: "NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.elitetrader.com/et/threads/i-backtested-37-famous-strategies-with-fees-on-most-lose-mechanically-after-costs-data-one-that-didnt.390197/", sayfa: null}
+tarz: day
+tf: 5m
+mtf: 1H
+tf_varsayim: false
+yazar_piyasasi: Vadeli (NQ - Nasdaq 100 Futures)
+gostergeler:
+  ema20: {f: ema, src: close, n: 20}
+  ema50_1h: {f: ema, src: close, n: 50, tf: 1H}
+  atr14: {f: atr, n: 14}
+ozel_kod: true
+giris: "close > mtf(\"1H\", ema50_1h) and low <= ema20 and close > ema20"
+cikis: "false"
+stop: {tip: atr, n: 14, carpan: 1.5}
+hedef: {tip: rr, deger: 0.75}
+stop_eklendi: false
+parametreler: {ema_fast_5m: 20, ema_trend_1h: 50, stop_atr_mult: 1.5, target_rr: 0.75}
+deneme_sayisi_kaynakta: 106
+rapor: {pf: 1.25, sharpe: null, getiri: 17.5, mdd: null, islem: null, wr: 62.9, maliyet_dahil: true}
+spec_durumu: dakikalik
+belirsiz:
+  - "EliteTrader kullanicisi realvasline tarafindan 37 unlu strateji (106 backtest) icinde komisyon sonrasi ayakta kalan tek strateji olarak paylasilmistir (~80 gunluk test, komisyon dahil ancak kayma/slippage haric)."
+  - "Kurallar (ozel_kod: true): 1) Yalniz NY seansinda islem yapilir. 2) 1H trend filtresi: fiyat 1 saatlik 50 EMA'nin uzerinde olmali (close > mtf(\"1H\", ema50_1h); short icin altinda). 3) 5m grafikte fiyatin 20 EMA'ya geri cekilmesinde (pullback) trend yonunde girilir. 4) Stop-loss 1.5 * ATR (periyot belirtilmemis, 14 varsayildi), kar hedefi 0.75R (yani 1.125 * ATR)."
+---
+id: A7-004
+ad: "S&P500-VIX diverjans stratejisi (Scherman, BI makalesi)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.elitetrader.com/et/threads/strategy-with-75-win-ratio-and-3-to-1-profit-potential-count-me-as-a-skeptic.382581/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Endeks / ETF (S&P 500, ES, SPY, SPXL)
+gostergeler:
+  bb30: {f: bb, src: close, n: 30, mult: 2.0}
+ozel_kod: true
+giris: "close < close[1] and close >= bb30.alt"
+cikis: "close > bb30.orta or close < bb30.alt"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {bb_n: 30, bb_std: 2.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 3.16, sharpe: null, getiri: null, mdd: null, islem: null, wr: 75.3, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Ivan Scherman'in Business Insider makalesinde anlatilan S&P 500 - VIX uyumsuzluk stratejisidir: 1) S&P 500 bir duzeltme (correction) yapip ilk dibini olusturdugunda VIX yukari sicrar. 2) S&P 500 ilk dibin altinda ikinci bir daha dusuk dip (lower low) yaptiginda VIX onceki tepesini gecemezse (lower high - pozitif diverjans) kurumsal put/hedge talebinin azaldigi anlasilir. 3) S&P 500 fiyati 30 gunluk hareketli ortalamanin 2 standart sapma altindaki alt Bollinger bandinin altina inmemis olmalidir (close >= bb30.alt). 4) Gun kapanisinda long girilir; fiyat 30 gunluk ortalamanin uzerine ciktiginda (close > bb30.orta) karla, alt Bollinger bandinin altinda kapattiginda (close < bb30.alt) zararla cikilir."
+  - "Ancak 'duzeltme' (correction) ve iki dip/tepe arasindaki pencere/esik uzunlugu mekanik olarak tanimlanmadigi icin spec_durumu: eksik olarak isaretlendi."
+---
+id: A7-007
+ad: "ES Renko/Donchian 21 pullback scalp (RichJamo gunlugu)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://futures.io/trading-journals/33441-rich-s-es-s-p-500-futures-contract-intraday-strategy.html", sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Vadeli (ES - S&P 500 Futures)
+gostergeler:
+  dc21: {f: donchian, n: 21}
+ozel_kod: true
+giris: "close > dc21.orta"
+cikis: "close < dc21.orta"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {donchian_n: 21}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Futures.io (NexusFi) sayfasina erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde bu basliga ait detayli metin bulunamadi."
+---
+id: O1-017
+ad: "Sistem 2: RSI ortalama kesisimi (VIOP30 5 dk, long)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.bilgeyatirimci.com/i/sistem-tester-performans-testi-back-test-yaparken-nelere-dikkat-etmeliyiz/", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: BIST Vadeli (VIP-X030 / VIOP30)
+gostergeler:
+  rsi14: {f: rsi, src: close, n: 14}
+  ma_rsi15: {f: sma, src: rsi14, n: 15}
+  ma_rsi98: {f: sma, src: rsi14, n: 98}
+giris: "cross_over(ma_rsi15, ma_rsi98)"
+cikis: "cross_under(ma_rsi15, ma_rsi98)"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {rsi14.n: 14, ma_rsi15.n: 15, ma_rsi98.n: 98}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 1.07, sharpe: null, getiri: null, mdd: null, islem: 311, wr: 37, maliyet_dahil: true}
+spec_durumu: dakikalik
+belirsiz:
+  - "Egemen Ozturk (Bilge Yatirimci, 18 Temmuz 2019) tarafindan iDeal platformunda VIP-X030 5 dk periyotta optimize edilmis ornek long-only sistemdir."
+  - "Komisyon ve kaymalar oncesi 27175 puan (PF 1.30), komisyon ve kaymalar sonrasi 7635 puan net getiri (PF 1.07, 311 islem, %37 karli islem, 13 ardisik zararda -7025 puan) raporlanmistir."
+---
+id: O2-008
+ad: "Highest Open / Lowest Open Trade"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/590623-highest-open-lowest-open-trade", sayfa: null}
+tarz: day
+tf: 15m
+mtf: 1H
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+ozel_kod: true
+giris: "open < close and close > open[1]"
+cikis: "false"
+stop: {tip: yuzde, deger: 1}
+hedef: null
+kar_kilidi: {tetik_puan: 5, kilit_puan: 1}
+stop_eklendi: false
+parametreler: {session_start_ny: 800, session_end_ny: 1200, be1_trigger_pips: 5, be1_lock_pips: 1, be2_trigger_pips: 10, be2_lock_pips: 5}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "TooSlow tarafindan paylasilan HOLO (Highest Open / Lowest Open) gun ici donus stratejisidir (ozel_kod: true): 1) Mevcut islem gunu icindeki en yuksek 1H bar acilisi (Highest_H1_Open) ve en dusuk 1H bar acilisi (Lowest_H1_Open) cizilir. 2) Long giris: Fiyat once Lowest_H1_Open altina inmeli (ve 15m bar Lowest_H1_Open altinda acilmali), ardindan yukari donup Lowest_H1_Open seviyesini yukari gecince bar kapanisini beklemeden long acilir (fiyat dunku gunluk yuksek/dusugu kirmissa breakout uyarisi vardir). 3) Stop-loss mevcut gunun en dusuk seviyesidir (Daily Low). 4) Kar yonetimi: Islem +5 pip kara gecince stop BE+1 pipe, +10 pip kara gecince BE+5 pipe veya iz suren stopa cekilir (varsayilan EA seans araligi NY 08:00 - 12:00). 5) Short kurali: Fiyat Highest_H1_Open uzerine cikip tekrar Highest_H1_Open seviyesine indiginde short acilir, stop Daily High'dir."
+---
+id: O2-009
+ad: "M1 Countertrend Scalping Strategy"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.forexfactory.com/thread/1190104-m1-countertrend-scalping-strategy", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD, GBPUSD)
+gostergeler:
+  ema9: {f: ema, src: close, n: 9}
+  ema20: {f: ema, src: close, n: 20}
+  ema50: {f: ema, src: close, n: 50}
+  ema200: {f: ema, src: close, n: 200}
+  vol_ma20: {f: sma, src: volume, n: 20}
+ozel_kod: true
+giris: "close < ema9 and close < ema20 and close < ema50"
+cikis: "high >= ema20 or high >= ema50"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {ema9.n: 9, ema20.n: 20, ema50.n: 50, ema200.n: 200, vol_ma20.n: 20}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: ihtiyari
+belirsiz:
+  - "Abade (King of Forex / cpfleger tabanli) tarafindan acikca ihtiyari (discretional) olarak tanimlanan 1m ters-trend ortalama maliyet (grid/averaging) stratejisidir (spec_durumu: ihtiyari)."
+  - "Kurallar: 1) Kapanis 9, 20 ve 50 EMA'larin tamaminin altinda ve 'yeterince uzak' mesafedeyken ilk long acilir ('yeterince uzak' mesafe yatay destek/direnc, hacim ve volatiliteye gore goz karari belirlenir). 2) Fiyat pozisyonun tersine gitmeye devam ederse stop-loss kullanilmaz; 9 EMA son emir seviyesini kestiginde yeni long pozisyonlar eklenir. 3) Toplam pozisyonu karla kapatmaya yetecek en yakin EMA'ya (9, 20, 50 veya 200 EMA) fiyat degdiginde cikilir."
+---
+id: O2-023
+ad: "Intraday Trading Strategy for Futures Contract NQ"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.quantconnect.com/forum/discussion/15192", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli (NQ Mini)
+gostergeler:
+  ema500: {f: ema, src: close, n: 500}
+  ema_fast: {f: ema, src: close, n: 14}
+  rsi14: {f: rsi, src: close, n: 14}
+  roc14: {f: roc, src: close, n: 14}
+ozel_kod: true
+giris: "ema500 > ema500[1] and ema_fast > ema_fast[1] and rsi14 > rsi14[1] and roc14 > roc14[1]"
+cikis: "ema_fast < ema_fast[1] and rsi14 < rsi14[1]"
+stop: null
+hedef: {tip: puan, deger: 5}
+stop_eklendi: false
+parametreler: {ema_long: 500, target_points: 5}
+deneme_sayisi_kaynakta: 6
+rapor: {pf: null, sharpe: 3.1, getiri: 123.0, mdd: null, islem: null, wr: 61, maliyet_dahil: true}
+varyantlar:
+  - ad: "1 Dakikalik RSI(30/70) + RSI SMA + Kisa EMA Varyanti (Yorum #3)"
+    not: "1m NQ grafikte RSI < 30 iken RSI'in SMA'si ve fiyat kisa EMA'si yukari donunce long girilir, RSI > 70 karsi bolgeye ulasinca cikilir (%61 win rate)."
+spec_durumu: eksik
+belirsiz:
+  - "QuantConnect tartisma sayfasindaki (David E, Mayis 2023) aciklamadan okundu: 5m NQ Mini barlarinda EMA egimi, RSI egimi, Momentum egimi ve Ultimate Oscillator egimi (MACD histogram egimi elenmis) ile 500 EMA trend yonu kullanilir (500 EMA pozitifken long icin 1 bar sinyal, short icin ust uste 2 bar sinyal gerekir). Ancak gomulu backtest kodundaki kesin periyot sayilari metinde yazmadigi icin spec_durumu: eksik olarak isaretlendi."
+---
+id: O3-012
+ad: "MACD and RSI Strategy (73% win rate)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.quantifiedstrategies.com/macd-and-rsi-strategy/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SMH, XLP)
+gostergeler:
+  macd_std: {f: macd, src: close, fast: 12, slow: 26, sig: 9}
+  rsi14: {f: rsi, src: close, n: 14}
+ozel_kod: true
+giris: "macd_std.macd > macd_std.sinyal and rsi14 < 30"
+cikis: " rsi14 > 70"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: 235, wr: 73, maliyet_dahil: true}
+spec_durumu: gizli
+belirsiz:
+  - "QuantifiedStrategies makalesinde SMH ETF (2001-2026) uzerinde 235 islemde %73 kazanma orani ve islem basina %0.88 ortalama getiri (%0.03 komisyon/kayma dahil) raporlanmistir."
+  - "Ancak makalede MACD ve RSI ile birlikte kullanilan 3. ortalama geri donus (mean reversion) filtresinin ve kesin periyotlarin ucretli urun olarak satildigi ('You can buy the strategy here') belirtildigi icin spec_durumu: gizli olarak isaretlendi."
+---
+id: O3-013
+ad: "Turnaround Tuesday (SPY)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.quantifiedstrategies.com/turnaround-tuesday-strategy/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+ozel_kod: true
+giris: "close <= close[1] * 0.99"
+cikis: "false"
+stop: {tip: yuzde, deger: 2}
+hedef: null
+zaman_stop: {bar: 1}
+stop_eklendi: false
+parametreler: {monday_drop_pct: 1.0, hold_days: 1, stop_loss_pct: 2.0}
+deneme_sayisi_kaynakta: 4
+rapor: {pf: null, sharpe: null, getiri: 1.8, mdd: null, islem: 212, wr: 56, maliyet_dahil: true}
+varyantlar:
+  - ad: "Kurgu 2: Pazartesi Kirmizi Mum + IBS < 0.2"
+    giris: "close < open and (close - low) / (high - low) < 0.2"
+    cikis: "false"
+    not: "Pazartesi kapanista girilir, Sali kapanista cikilir (270 islem, CAGR %2.7, Win Rate %57, ort. islem %0.33)."
+  - ad: "Kurgu 3: Pazartesi < Cuma Kapanis + IBS < 0.5 + 4 Gun Tutma"
+    giris: "close < close[1] and (close - low) / (high - low) < 0.5"
+    cikis: "false"
+    not: "Pazartesi kapanista girilir, 4 islem gunu sonra kapanista cikilir (495 islem, CAGR %6.5, Win Rate %60, ort. islem %0.45)."
+  - ad: "Kurgu 4: Pazartesi < Cuma Kapanis + IBS < 0.5 + Close > High[1] veya 4 Gun Cikis"
+    giris: "close < close[1] and (close - low) / (high - low) < 0.5"
+    cikis: "close > high[1]"
+    not: "Kapanis onceki gunun yuksegini gecince veya 4 islem gunu sonunda cikilir (495 islem, CAGR %7.0, Win Rate %69, ort. islem %0.46)."
+spec_durumu: tam
+belirsiz:
+  - "Takvim filtresi (ozel_kod: true): Giris sinyali yalniz Pazartesi gunleri (dayofweek == 1) degerlendirilir. Ana kurguda Pazartesi kapanisi Cuma kapanisindan en az %1 dusukse (close <= close[1] * 0.99) Pazartesi kapanisinda alinarak Sali kapanisinda (1 bar sonra) satilir."
+---
+id: O3-016
+ad: "Gap down + 25 MA filtresi (S&P 500 gun ici)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.quantifiedstrategies.com/gap-trading-strategies/", sayfa: null}
+tarz: day
+tf: 5m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Vadeli / ETF (S&P 500 E-mini ES, SPY)
+gostergeler:
+  sma25_1d: {f: sma, src: close, n: 25, tf: 1D}
+  close_1d: {f: close, tf: 1D, kaydir: 1}
+ozel_kod: true
+giris: "open <= close_1d * 0.9985 and open >= close_1d * 0.993 and open > mtf(\"1D\", sma25_1d)"
+cikis: "high >= close_1d"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {min_gap_down_pct: 0.15, max_gap_down_pct: 0.70, sma_days: 25}
+deneme_sayisi_kaynakta: 4
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: 777, wr: null, maliyet_dahil: belirtilmemis}
+varyantlar:
+  - ad: "Swing Gap Down + IBS <= 0.25 + RSI(5) <= 45 Stratejisi"
+    not: "Gunluk grafikte S&P 500 en az %0.15 asagi gap yapmali, dunku IBS <= 0.25 ve dunku 5-gunluk RSI <= 45 olmali; bugunku acilista long girilir, kapanis dunku kapanistan yuksek oldugunda (close > close[1]) kapanista cikilir (PF 1.8, islem basina ort. %0.48 kazanc)."
+spec_durumu: dakikalik
+belirsiz:
+  - "Gun ici bosluk doldurma (gap fill) kurallari (ozel_kod: true): 2011-2021 5 dakikalik surekli E-mini S&P 500 vadeli verisinde seans acilisinda dunku kapanisa gore -%0.15 ile -%0.70 arasinda asagi bosluk (gap down) olusmali ve bugunku acilis fiyati son 25 gunluk kapanis ortalamasinin (SMA25) uzerinde olmalidir. Acilista long girilir, bosluk doldugunda (fiyat dunku kapanisa ulastiginda) veya seans sonunda kapatilir (islem basina ort. %0.06 getiri)."
+---
+id: O3-018
+ad: "VRT Levels - hacim tabanli destek/direnc kirilim+reddi"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://reddit.com/r/algotrading/comments/1tbgqmn/my_strategy_outperformed_the_sp_500_over_3_years/", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: ABD Hisse / Endeks (S&P 500)
+gostergeler:
+  atr14: {f: atr, n: 14}
+ozel_kod: true
+giris: "close > open"
+cikis: "false"
+stop: {tip: atr, n: 14, carpan: 3.0}
+hedef: {tip: rr, deger: 2.0}
+zaman_stop: {bar: 60}
+stop_eklendi: false
+parametreler: {stop_atr_mult: 3.0, target_rr: 2.0, max_bars_in_trade: 60}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: 92.56, mdd: null, islem: null, wr: 35, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Reddit sayfasina dogrudan erisim engellendi (erisim_engeli: true); arama motoru indeksinden strateji ozeti kurtarildi."
+  - "Kurtarilan kurallar: Hacim tabanli ileriye donuk destek/direnc seviyeleri (VRT Levels) uzerinde kirilim (breakout) ve reddedilme (rejection) girisleri; 3 ATR stop-loss, 2R kar hedefi (6 ATR), maksimum 60 bar pozisyonda kalma suresi (zaman_stop: 60), iz suren stop yok, lookahead bias yok. 3 yillik testte +%92.56 getiri, %35 kazanma orani ve S&P 500'un 1/3'u kadar drawdown raporlanmistir; ancak VRT Levels hesaplama formulu sayfa engeli nedeniyle okunamadi."
+---
+id: O3-022
+ad: "DAX Value Area gunluk bias sistemi"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://nexusfi.com/showthread.php?t=44951", sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 15m
+mtf: 1D
+tf_varsayim: true
+yazar_piyasasi: Endeks (DAX)
+gostergeler: {}
+ozel_kod: true
+giris: "close > open"
+cikis: "close < open"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "NexusFi (Futures.io) sayfasina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde onbellek metni bulunamadi."
+---
+id: O3-023
+ad: "London Session ORB - GBP (mekanik kirilim gunlugu)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://nexusfi.com/showthread.php?t=36245", sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Forex (GBP pariteleri)
+gostergeler: {}
+ozel_kod: true
+giris: "close > open"
+cikis: "close < open"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "NexusFi (Futures.io) sayfasina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde onbellek metni bulunamadi."
+---
+id: O3-025
+ad: "Bollinger Prism - NQ reversal (PF 2.78)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.elitetrader.com/et/threads/nq-reversal-strategy-backtest-reached-profit-factor-2-78.389985/", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Vadeli (NQ - Nasdaq 100 Futures)
+gostergeler:
+  bb20: {f: bb, src: close, n: 20, mult: 2.0}
+  rsi14: {f: rsi, src: close, n: 14}
+ozel_kod: true
+giris: "close < bb20.alt and rsi14 < 30"
+cikis: "close > bb20.orta"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 2.78, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: gizli
+belirsiz:
+  - "NinjaTrader gosterge saticisi ninZa.co tarafindan acilan tanitim basligidir: NQ 150 Tick, 200 Tick ve ninZaRenko 18/3 grafiklerinde ticari kapali kaynakli 'Superior RSI' ve 'Bollinger Reversal Pro' gostergelerinin kombinasyonunu kullanir; gosterge formulleri ve sayisal kurallar paylasilmadigi icin spec_durumu: gizli olarak isaretlendi."
+---
+id: O3-027
+ad: "Mean Reversion Strategy Journal - Buy Sell Bands (ABD hisseleri)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://elitetrader.com/et/threads/mean-reversion-strategy-journal.363044/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
+gostergeler:
+  wma50: {f: wma, src: close, n: 50}
+ozel_kod: true
+giris: "low < wma50"
+cikis: "high > wma50"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {wma50.n: 50, max_positions: 15, position_size_pct: 10.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: gizli
+belirsiz:
+  - "EliteTrader sponsoru StockChartist (Jared) tarafindan paylasilan gunluk (1D) long-only hisse senedi gunlugudur: Orta cizgi 50 gunluk WMA'dir; alt banttan 1 tick asagida limit alim emriyle girilir ve her gun kapanis sonrasi guncellenen 50 WMA'nin 1 tick uzerindeki limit satim emriyle cikilir (stop-loss kullanilmaz, islem basina %10 portfoy, maks 15 pozisyon)."
+  - "Ancak alt/ust bantlarin ('Buy Sell Bands' - tarihsel volatilite tabanli ozel bant) ve 'Range Strength Indicator' eklentisinin formulleri ticari/kapali kaynakli oldugu ve hisse seciminde ihtiyari filtreler kullanildigi icin spec_durumu: gizli olarak isaretlendi."
+---
+id: O3-030
+ad: "75%+ win rate trend stratejisi (Jim Brown kitabindan) - EURUSD"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingheroes.com/75-win-rate-trading-strategy/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  ema50: {f: ema, src: close, n: 50}
+  ema100: {f: ema, src: close, n: 100}
+  wma240: {f: wma, src: close, n: 240}
+ozel_kod: true
+giris: "ema50 > ema100 and ema100 > wma240 and close > ema50"
+cikis: "false"
+stop: null
+hedef: {tip: rr, deger: 1.0}
+stop_eklendi: false
+parametreler: {risk_pct: 1.0, target_rr: 1.0}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: 42.0, mdd: 3.0, islem: 84, wr: 75.0, maliyet_dahil: belirtilmemis}
+spec_durumu: gizli
+belirsiz:
+  - "Hugh Kimura'nin Jim Brown'a ait 'MT4/MT5 & TradingView High Probability Forex Trading Method' kitabini EURUSD 1D (2003-2022) uzerinde test ettigi yazidir: 3 hareketli ortalama siraya dizildiginde (yukari trendde kisa > orta > uzun) fiyat ortalamalardan birinden sekip kitaba ozel gosterge yesil nokta yaktiginda mum kapanisinda long girilir; stop-loss son swing dibinin altina konur, kar hedefi 1R'dir."
+  - "Blog yazisinda hareketli ortalama periyotlari ve ozel gostergenin (Jim Brown QMP Filter: MACD(12,26,9) + QQE(1,8,3) ve 50 EMA, 100 EMA, 240 LWMA) detaylari kitabi satin almaya yonlendirmek icin gizli tutuldugu ('You'll have to buy the book to get all of his trading methods... and download the custom indicators') ve swing stop/MA sekmesi ihtiyari oldugu icin spec_durumu: gizli olarak isaretlendi."
+---
+id: O3-031
+ad: "RSI Divergence swing - 27 parite gunluk"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingheroes.com/rsi-strategy-for-swing-trading/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (27 Parite)
+gostergeler:
+  rsi14: {f: rsi, src: close, n: 14}
+ozel_kod: true
+giris: "low < low[1] and rsi14 > rsi14[1]"
+cikis: "false"
+stop: null
+hedef: {tip: rr, deger: 1.0}
+stop_eklendi: false
+parametreler: {rsi14.n: 14, rsi_ob: 70, rsi_os: 30, risk_pct: 1.0, target_rr: 1.0}
+deneme_sayisi_kaynakta: 27
+rapor: {pf: null, sharpe: null, getiri: 235.29, mdd: null, islem: 373, wr: 78.74, maliyet_dahil: belirtilmemis}
+spec_durumu: ihtiyari
+belirsiz:
+  - "Hugh Kimura tarafindan 27 Forex paritesi 1D grafikte Forex Tester ile manuel olarak test edilen RSIDive v2 stratejisidir (toplam 373 islem, ortalama %78.74 win rate, +%235.29 birikimli getiri / yillik ort. ~%13)."
+  - "Kurallar yoruma dayali (discretionary) oldugu icin spec_durumu: ihtiyari olarak isaretlendi: 1) RSI(14) 30 altina (asiri satim) indikten sonra fiyatta daha dusuk dip (lower low), RSI'da daha yuksek dip (higher low) olusmalidir. 2) Guclu trendlerden kacinilir, iki tepe/dip arasinda goz karari 'iyi ayrilma' (good separation) aranir ve islem yonunde 'guclu bir mum' ile RSI kivrildiginda ('hooks') girilir. 3) Stop-loss son fiyat salinim dibinin diger tarafina konur, kar hedefi 1R'dir."
+---
+id: O3-032
+ad: "RSI50 stratejisi - EURUSD gunluk"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingheroes.com/rsi-trading-strategy-results/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  rsi14: {f: rsi, src: close, n: 14}
+ozel_kod: true
+giris: "cross_over(rsi14, 50)"
+cikis: "false"
+stop: null
+hedef: {tip: rr, deger: 1.0}
+stop_eklendi: false
+parametreler: {rsi14.n: 14, rsi_mid: 50, risk_pct: 1.0, target_rr: 1.0}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: null, getiri: 26.05, mdd: null, islem: 55, wr: 71.0, maliyet_dahil: belirtilmemis}
+varyantlar:
+  - ad: "RSICross (Vanilla RSI 70/30 Kanal Icine Donus) Stratejisi"
+    giris: "cross_over(rsi14, 30)"
+    cikis: "false"
+    not: "Ayni yazida test edilen 1. strateji: RSI(14) 30 altindan tekrar 30 uzerine kapattiginda long girilir, stop son swing dibi, hedef 1R (EURUSD 1D, 102 islem, %44 win rate, -%11.38 getiri)."
+spec_durumu: ihtiyari
+belirsiz:
+  - "Hugh Kimura tarafindan EURUSD 1D grafikte (6032 gun) Forex Tester ile manuel test edilen RSI50 v1 stratejisidir: 1) Fiyatta goz karari 'guclu bir trend' aranir ('This strategy is a bit more subjective because it can be tough to know when price is trending'). 2) RSI(14) bir sure 50'nin altinda kaldiktan sonra 50 seviyesinin uzerinde kapattiginda long girilir. 3) Stop-loss son kucuk fiyat saliniminin (minor price swing) altina konur, kar hedefi 1R'dir. Trend ve minor swing tanimlari subjektif oldugu icin spec_durumu: ihtiyari."
+---
+id: O3-033
+ad: "RSIDive (RSI uyumsuzlugu) - EURUSD gunluk"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingheroes.com/rsi-trading-strategy-results/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  rsi14: {f: rsi, src: close, n: 14}
+ozel_kod: true
+giris: "low < low[1] and rsi14 > rsi14[1]"
+cikis: "false"
+stop: null
+hedef: {tip: rr, deger: 1.0}
+stop_eklendi: false
+parametreler: {rsi14.n: 14, rsi_ob: 70, rsi_os: 30, risk_pct: 1.0, target_rr: 1.0}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: null, getiri: 12.8, mdd: null, islem: 26, wr: 73.0, maliyet_dahil: belirtilmemis}
+spec_durumu: ihtiyari
+belirsiz:
+  - "Hugh Kimura'nin RSIDive v2 planinin EURUSD 1D (6032 gun) uzerindeki tekil manuel backtest sonucudur (26 islem, %73 kazanma orani, +%12.8 getiri, maks ardisik kazanc 7, maks ardisik kayip 2)."
+  - "Giris icin RSI(14) < 30 sonrasi fiyat-RSI pozitif uyumsuzlugu, 'guclu trendlerden kacinma', 'tepeler/dipler arasinda iyi ayrilma', 'islem yonunde guclu mum' ve 'son fiyat swing dibinin altina stop + 1R hedef' kurallari yoruma dayali oldugu icin spec_durumu: ihtiyari."
+---
+id: O3-034
+ad: "Trending Pin Bar v2 - EURUSD H4"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.tradingheroes.com/backtesting-results-tpb-eurusd-h4/", sayfa: null}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler: {}
+ozel_kod: true
+giris: "(min(open, close) - low) >= 0.667 * (high - low)"
+cikis: "false"
+stop: null
+hedef: {tip: rr, deger: 1.0}
+stop_eklendi: false
+parametreler: {pin_tail_ratio: 0.667, stop_buffer_pips: 5, min_rr: 1.0, risk_pct: 1.0}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: 446.13, mdd: null, islem: null, wr: 78.0, maliyet_dahil: belirtilmemis}
+spec_durumu: ihtiyari
+belirsiz:
+  - "Hugh Kimura tarafindan EURUSD 4H grafikte (Ocak 2001 - Agustos 2018) Forex Tester ile manuel test edilen Trending Pin Bar v2 stratejisidir (%78 win rate, %446.13 bilesik getiri)."
+  - "Yazar kurallarin ihtiyari oldugunu acikca belirtmektedir ('you need to get a feel for the price action before the Pin Bar and use your discretion before you enter a trade'): 1) Pin bar oncesinde trend yonunde guclu momentum aranir. 2) Pin bar kuyrugu toplam boyun yaklasik 2/3'u olmalidir. 3) Pin bar onceki bir destek/direnc (S/R) seviyesinde olusmali veya konsolidasyon alanindan disari taşmalidir. 4) Stop-loss pin barin ~5 pip altina/ustune konur; kar hedefi bir sonraki ana destek/direnc seviyesidir (en az 1R bosluk olmali, referans S/R yoksa 1R + 5 pip). Destek/direnc ve konsolidasyon cizimi goz karari oldugu icin spec_durumu: ihtiyari."
+---
+id: A1-018
+ad: "HYSTERIAN BIST:SISE TRADE ALGORITHM"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://tr.tradingview.com/script/DuPtf4A6", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: BIST Hisse (SISE)
+gostergeler: {}
+ozel_kod: true
+giris: "close > open"
+cikis: "close < open"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "TradingView sayfasina dogrudan erisim engellendi (erisim_engeli: true)."
+  - "GitHub, Scribd, TradeSearcher ve arama motoru indeksinde DuPtf4A6 / HYSTERIAN BIST:SISE scriptinin ayna kopyasi bulunamadi."
+---
+id: A5-012
+ad: "Self-Imposed Limits to Arbitrage"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://paperswithbacktest.com/strategies/self-imposed-limits-to-arbitrage", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: "Hisse (Cift Pay Sinifli Hisseler - HSBC, Royal Dutch/Shell, 3Com/Palm)"
+gostergeler: {}
+ozel_kod: true
+giris: "close < close[1]"
+cikis: "close >= close[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {max_position_volume_days: 100}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: 1.97, getiri: 7.4, mdd: 5.0, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "PapersWithBacktest strateji sayfasina dogrudan erisim engellendi (erisim_engeli: true); PWB katalog metrikleri (Sharpe 1.97, Yillik Getiri %7.4, MDD %5.0, Gunluk) ve Philip Z. Maymin'in (2011, Journal of Applied Finance 21:2, 88-105) makale ozeti philipmaymin.com aynasindan okundu."
+  - "Makale ayni sirketin iki farkli pay sinifi (orn. HSBC, Royal Dutch-Shell) arasindaki goreceli hacim ile goreceli fiyat arasindaki negatif iliskiyi ve 100 gunluk islem hacmi pozisyon sinirini inceler; ancak PWB'deki somut giris/cikis formulu sayfa engeli nedeniyle okunamadi."
+---
+id: A5-013
+ad: "Trading Volume Effects of Moving Average Heuristics"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://paperswithbacktest.com/strategies/trading-volume-effects-of-moving-average-heuristics", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Hisse
+gostergeler:
+  sma50: {f: sma, src: close, n: 50}
+  sma200: {f: sma, src: close, n: 200}
+ozel_kod: true
+giris: "cross_over(close, sma200) or cross_over(sma50, sma200)"
+cikis: "cross_under(close, sma200) or cross_under(sma50, sma200)"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {sma50.n: 50, sma200.n: 200}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "PapersWithBacktest strateji sayfasina dogrudan erisim engellendi (erisim_engeli: true)."
+  - "Kaynak makale (Thomas Etheber, Andreas Hackethal & Steffen Meyer, 2014, SSRN 2517005) bireysel yatirimcilarin 50 ve 200 gunluk hareketli ortalama kesisimleri etrafindaki islem hacmi ve getiri etkilerini inceler; ancak PWB'de uygulanan spesifik portfoy kurallari sayfa engeli nedeniyle dogrulanamadi."
+---
+id: A5-014
+ad: "Seasonality, Trend-following, and Mean reversion in Bitcoin"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://paperswithbacktest.com/strategies/seasonality-trend-following-and-mean-reversion-in-bitcoin", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTCUSD)
+gostergeler:
+  hh10: {f: highest, src: close, n: 10}
+  ll10: {f: lowest, src: close, n: 10}
+giris: "close >= hh10 or close <= ll10"
+cikis: "false"
+stop: null
+hedef: null
+zaman_stop: {bar: 1}
+stop_eklendi: false
+parametreler: {lookback_days: 10, hold_days: 1}
+deneme_sayisi_kaynakta: 11
+rapor: {pf: null, sharpe: 1.58, getiri: 33.0, mdd: 34.04, islem: null, wr: null, maliyet_dahil: false}
+varyantlar:
+  - ad: "Yalniz MAX10 (10 Gunluk Zirvede Trend Takibi) Bacagi"
+    giris: "close >= hh10"
+    cikis: "false"
+    not: "BTC son 10 gunun en yuksek kapanisina ulastiginda 1 gunlugune long acilir (20, 30, 40, 50 gunluk periyotlar da test edilmistir)."
+  - ad: "Yalniz MIN10 (10 Gunluk Dipte Ortalamaya Donus) Bacagi"
+    giris: "close <= ll10"
+    cikis: "false"
+    not: "BTC son 10 gunun en dusuk kapanisina ulastiginda 1 gunlugune long acilir."
+  - ad: "Gun Ici 2 Saatlik Mevsimsellik (22:00 - 00:00 UTC) Bacagi"
+    not: "A6-019 kartindaki strateji: Her gun 22:00 UTC'de long acilip 00:00 UTC'de kapatilir."
+spec_durumu: tam
+belirsiz:
+  - "PapersWithBacktest URL'sine dogrudan erisim engellendi; ancak makalenin yazarlarina (Matúš Padyšák & Radovan Vojtko, Quantpedia) ait iki tam metin aynasindan (quantpedia.com/strategies/intraday-seasonality-in-bitcoin ve quantpedia.com/revisiting-trend-following-and-mean-reversion-strategies-in-bitcoin/) makaledeki birlesik MIN10 + MAX10 stratejisinin ve 2 saatlik mevsimsellik stratejisinin tum kurallari eksiksiz okundu."
+---
+id: A5-016
+ad: "Stock Market Predictability in the MENA: Evidence from New Variance Ratio Tests and Technical Trade Analysis"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://paperswithbacktest.com/strategies/stock-market-predictability-in-the-mena-evidence-from-new-variance-ratio-tests-and-technical-trade-analysis", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Hisse Endeksleri (MENA Bolgesi)
+gostergeler:
+  sma_short: {f: sma, src: close, n: 1}
+  sma_long: {f: sma, src: close, n: 50}
+  hh_trb: {f: highest, src: close, n: 50, kaydir: 1}
+  ll_trb: {f: lowest, src: close, n: 50, kaydir: 1}
+ozel_kod: true
+giris: "sma_short > sma_long"
+cikis: "sma_short <= sma_long"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {vma_short: 1, vma_long: 50, trb_days: 50}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "PapersWithBacktest sayfasina ve Trinity College Dublin PDF aynasina (IIIS Discussion Paper No. 92) dogrudan erisim engellendi (erisim_engeli: true)."
+  - "Arama motoru indeksinden kurtarilan bilgilere gore makalede MENA borsalarinda Variable Moving Average (VMA: kisa VMA > uzun VMA iken long) ve Trading Range Break (TRB: H gunluk zirve kirilimi) kurallari test edilmektedir; ancak PWB'de secilen kesin (short, long, H, bant) parametre kombinasyonu dogrulanamadi."
+---
+id: A5-020
+ad: "Finding Consistent Trends with Strong Momentum - RSI for Trend-Following and Momentum Strategies"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://paperswithbacktest.com/strategies/finding-consistent-trends-with-strong-momentum-rsi-for-trend-following-and-momentum-strategies", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse ve ETF (S&P 500, SPY)
+gostergeler:
+  rsi14: {f: rsi, src: close, n: 14}
+  min_rsi100: {f: lowest, src: rsi14, n: 100}
+  max_rsi100: {f: highest, src: rsi14, n: 100}
+giris: "min_rsi100 >= 40 and max_rsi100 > 70"
+cikis: "min_rsi100 < 40 and max_rsi100 <= 70"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {rsi14.n: 14, lookback_n: 100, bull_range_low: 40, bull_momentum_high: 70}
+deneme_sayisi_kaynakta: 25
+rapor: {pf: null, sharpe: null, getiri: 5.93, mdd: 12.9, islem: 12, wr: 83.0, maliyet_dahil: false}
+varyantlar:
+  - ad: "Arthur Hill Tekil RSI Bull Range Cikis Varyanti (N in {25, 50, 75, 100, 125})"
+    giris: "min_rsi100 >= 40 and max_rsi100 > 70"
+    cikis: "cross_under(rsi14, 40)"
+    not: "CXO Advisory aynasinda S&P 500 hisseleri (1998-2018) uzerinde N=25, 50, 75, 100, 125 gunluk pencerelerde test edilmis; Bull Range-Momentum sinyallerinde %45-%58 basari orani ve 1.84-2.40 kar/zarar orani raporlanmistir."
+spec_durumu: tam
+belirsiz:
+  - "PapersWithBacktest URL'sine dogrudan erisim engellendi; ancak Arthur Hill'in (Aralik 2018) makalesinin tam kurallari CXO Advisory (cxoadvisory.com/technical-trading/combining-rsi-range-and-rsi-momentum-for-stocks/) ve QuantifiedStrategies (quantifiedstrategies.com/rsi-range-momentum-trading-strategy/) aynalarindan eksiksiz okundu."
+  - "Kurallar: 14 gunluk RSI uzerinde son N=100 gunde (75-125 gun optimal) RSI hic 40'in altina dusmemisse (RSI Bull Range: min_rsi100 >= 40) ve ayni N gunde en yuksek RSI 70'i asmissa (RSI Bull Momentum: max_rsi100 > 70) long girilir; her iki kosul da bozuldugunda (veya RSI 40 altina indiginde) cikilir."
+---
+id: A5-022
+ad: "Trend-based Forecast of Cryptocurrency Returns"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://paperswithbacktest.com/strategies/trend-based-forecast-of-cryptocurrency-returns", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (~3000 Kripto Para)
+gostergeler:
+  sma3: {f: sma, src: close, n: 3}
+  sma5: {f: sma, src: close, n: 5}
+  sma10: {f: sma, src: close, n: 10}
+  sma20: {f: sma, src: close, n: 20}
+  sma50: {f: sma, src: close, n: 50}
+ozel_kod: true
+giris: "sma3 > close and sma10 > close"
+cikis: "sma3 < close"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "PapersWithBacktest ve RePEc sayfalarina dogrudan erisim engellendi (erisim_engeli: true)."
+  - "Kaynak makale (Xilong Tan & Yubo Tao, 2023, Economic Modelling, Vol. 124, 106323) ~3000 kripto para uzerinde farkli gecikmeli hareketli ortalamalarla (Han, Zhou & Zhu 2016 / CTREND yontemi) kesitsel getiri tahmini ve portfoy olusturma kurallarini inceler; ancak PWB'de kullanilan spesifik MA gecikmeleri ve dilim (decile/quintile) esikleri sayfa engeli nedeniyle okunamadi."
+---
+id: A5-023
+ad: "Signal Prediction in cryptocurrency tradeoperations: a machine learning-based approach"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://paperswithbacktest.com/strategies/signal-prediction-in-cryptocurrency-tradeoperations-a-machine-learning-based-approach", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTC, ETH, BNB, ADA, XRP)
+gostergeler: {}
+ozel_kod: true
+giris: "close > close[1]"
+cikis: "close < close[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 6
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: 54.0, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "PapersWithBacktest sayfasina dogrudan erisim engellendi (erisim_engeli: true); makale bilgileri (Toledo & Souza, 2022, SSRN 4062476 / IEEE RASSE) PMC (PMC11112015 Tablo 1) literatur incelemesinden kurtarildi."
+  - "Strateji makine ogrenmesi siniflandiricilarina (Logistic Regression, LR-PCA, LightGBM, LightGBM-PCA, XGBoost, XGBoost-PCA) dayandigi icin standart ifade diline cevrilemez (kural geregi spec_durumu: eksik ve ozel_kod: true)."
+---
+id: A5-024
+ad: "Impact of Earnings Announcements for Dow Jones Index Stocks"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://paperswithbacktest.com/strategies/impact-of-earnings-announcements-for-dow-jones-index-stocks", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Dow Jones Endeks Hisseleri)
+gostergeler: {}
+ozel_kod: true
+giris: "close > 0"
+cikis: "close > 0"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "PapersWithBacktest sayfasina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde bu stratejiye ait onbellek metni bulunamadi."
+  - "Ayrica strateji sirket bilanco/kar aciklama tarihleri (earnings announcements) olay verisine dayandigi icin salt fiyat serisiyle (OHLCV) karta cevrilemez (spec_durumu: eksik, ozel_kod: true)."
+---
+id: A6-020
+ad: "Market Sentiment and an Overnight Anomaly"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://quantpedia.com/strategies/market-sentiment-and-an-overnight-anomaly", sayfa: null}
+tarz: day
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler:
+  sma20: {f: sma, src: close, n: 20}
+ozel_kod: true
+giris: "close > sma20"
+cikis: "false"
+stop: null
+hedef: null
+zaman_stop: {bar: 1}
+stop_eklendi: false
+parametreler: {sma_period: 20, spy_weight: 0.333, vix_weight: 0.333, bms_weight: 0.333}
+deneme_sayisi_kaynakta: 4
+rapor: {pf: null, sharpe: 2.12, getiri: 15.58, mdd: 10.97, islem: 3828, wr: 33, maliyet_dahil: false}
+varyantlar:
+  - ad: "10 Gunluk ve 50 Gunluk Hareketli Ortalama Varyantlari"
+    not: "10 gunluk MA ile Sharpe 1.80, 50 gunluk MA ile Sharpe 1.78 elde edilmistir."
+spec_durumu: eksik
+belirsiz:
+  - "Vojtko & Hanicová (Quantpedia) makalesi ve QuantConnect Python kodu tam olarak okundu; ancak stratejinin 3 esit agirlikli sinyalinden biri harici haber/duyarlilik verisi olan 'Brain Market Sentiment' (BMS_GLOBAL) gostergesidir (haber/alternatif veri gerektirdigi icin kural geregi spec_durumu: eksik ve ozel_kod: true)."
+  - "Tam kurallar: Her gun kapanista (QC kodunda 15:44'te sinyal hesaplanip MarketOnClose ile alinarak ertesi sabah MarketOnOpen ile satilir, yani gece boyu tutulur) 3 kosul kontrol edilir: 1) SPY > SMA(SPY, 20) ise +1/3 agirlik, 2) VIX < SMA(VIX, 20) ise +1/3 agirlik, 3) BMS > SMA(BMS, 20) ise +1/3 agirlik ile SPY long acilir ve ertesi sabah acilista kapatilir."
+---
+id: A7-002
+ad: "RSI asiri alim/satim Forex sistemi (PF 2.41)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.elitetrader.com/et/threads/improved-trading-strategy-results-profit-factor-increased-to-2-41.382680/", sayfa: null}
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Forex (Major ve Minor Pariteler)
+gostergeler:
+  rsi14: {f: rsi, src: close, n: 14}
+ozel_kod: true
+giris: "rsi14 < 30"
+cikis: "rsi14 > 70"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 2
+rapor: {pf: 2.41, sharpe: 1.07, getiri: null, mdd: 29.53, islem: 12684, wr: 59.93, maliyet_dahil: true}
+spec_durumu: eksik
+belirsiz:
+  - "EliteTrader kullanicisi Prospergain tarafindan yalnizca MT5 backtest performans sonuclari (2008-2024, 12684 islem, PF 1.83'ten 2.41'e, Sharpe 0.84'ten 1.07'ye, Win Rate %59.93, MDD %29.53) paylasilmis; mevcut stratejiye RSI asiri alim/satim filtresi eklendigi belirtilmis ancak ana stratejinin giris/cikis kurallari, zaman dilimi ve RSI parametreleri aciklanmamistir."
+---
+id: A7-005
+ad: "Long-only ABD hisseleri dakikalik gun ici (Level4)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.elitetrader.com/et/threads/analyzing-backtesting-results.387769/", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (OTC Haric Tum ABD Hisseleri)
+gostergeler: {}
+ozel_kod: true
+giris: "close > open"
+cikis: "close < open"
+stop: {tip: yuzde, deger: 1.51}
+hedef: null
+stop_eklendi: false
+parametreler: {max_open_positions: 16}
+deneme_sayisi_kaynakta: 5
+rapor: {pf: null, sharpe: null, getiri: 16.2, mdd: 8.8, islem: 161, wr: 73.9, maliyet_dahil: false}
+spec_durumu: eksik
+belirsiz:
+  - "EliteTrader kullanicisi Level4 tarafindan 3-7 Kasim 2025 haftasi icin (04:00-20:00 ET pre/after-market dahil, 1m barlar, 0 komisyon) yalnizca backtest istatistikleri paylasilmis, stratejinin giris ve cikis kurallari hic yazilmamistir."
+---
+id: A7-006
+ad: "Kripto 50 parite long-only gosterge tarayici sistemi"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://www.elitetrader.com/et/threads/automated-trading-feedback.382851/", sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Kripto (50 Parite)
+gostergeler: {}
+ozel_kod: true
+giris: "close > open"
+cikis: "close < open"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "EliteTrader 382851 basligina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde onbellek kopyasi bulunamadi."
+---
+id: B3-001
+ad: "RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://quantifiedstrategies.substack.com/p/rsi-mean-reversion-trading-strategy", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (QQQ)
+gostergeler:
+  rsi2: {f: rsi, src: close, n: 2}
+giris: "rsi2 < 10"
+cikis: "close > high[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {rsi2.n: 2, rsi_giris_esik: 10}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: null, getiri: 10.01, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+varyantlar:
+  - ad: "RSI(2) < 5 Varyanti"
+    giris: "rsi2 < 5"
+    cikis: "close > high[1]"
+    not: "Islem basina ortalama kazanc artar ancak piyasada kalma suresi ve toplam getiri duser."
+  - ad: "Ikinci Gostergeli Gelistirilmis Varyant (Ucretli / Gizli Filtre)"
+    not: "RSI(2) < 10 ile birlikte aciklanmayan ikinci bir gosterge eklendiginde 232 islem, %75 win rate, PF 3.0 (3.15), CAGR %12.7 (%12.75), MDD %19.5, Sharpe 2.85."
+spec_durumu: tam
+belirsiz:
+  - "Substack URL'sine dogrudan erisim engellendi ancak yazarin ana sitesindeki birebir aynasindan (quantifiedstrategies.com/rsi-mean-reversion-trading-strategy/) okundu: Temel QQQ RSI(2) stratejisinde RSI(2) < 10 oldugunda kapanista long girilir ve bugunku kapanis dunku yuksegin uzerine ciktiginda (close > high[1]) cikilir (CAGR %10.01)."
+---
+id: B3-002
+ad: "RSI Pullback Strategy (SPY)"
+kart_yazari: argon
+kaynak: {dosya: "strateji_listesi (2).xlsx", url: "https://quantifiedstrategies.substack.com/p/rsi-pullback-strategy", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler:
+  rsi2: {f: rsi, src: close, n: 2}
+ozel_kod: true
+giris: "rsi2 < 15"
+cikis: "rsi2 > 20"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: 2.8, sharpe: null, getiri: 3.9, mdd: 10.0, islem: 184, wr: 78.0, maliyet_dahil: belirtilmemis}
+spec_durumu: gizli
+belirsiz:
+  - "Substack URL'sine dogrudan erisim engellendi ancak yazarin ana sitesindeki birebir aynasindan (quantifiedstrategies.com/rsi-pullback-strategy/ ve tradingstrategiesdaily.com/p/mastering-rsi-pullbacks) okundu."
+  - "SPY (1993-2026) uzerinde 184 islem, islem basina %0.7 kazanc, %78 win rate, PF 2.8, CAGR %3.9, %8 exposure ve %10 MDD raporlanmistir; ancak strateji kurallari yalnizca ucretli uyelere acik oldugu ('These trading rules are for members only') icin spec_durumu: gizli olarak isaretlendi."
+---
+ozet: {paket: T2_parti7, kart_sayisi: 40, tam: 7, eksik: 18, gizli: 5, dakikalik: 5, ihtiyari: 5, sadece_short: 0, okunamayan_url: [A7-007, O3-018, O3-022, O3-023, A1-018, A5-012, A5-013, A5-016, A5-022, A5-023, A5-024, A7-006]}
