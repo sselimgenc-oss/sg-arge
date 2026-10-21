@@ -77,6 +77,13 @@
       "title": "ozel_kod azaltma: tam/dakikalik ozel_kod kartlari (88) ifade diline ya da kutuphaneye tasima",
       "status": "atandi",
       "spec": "Issue #1 GOREV -> Sonnet T8"
+    },
+    {
+      "id": "T9",
+      "owner": "tarayici (kullanicinin bilgisayarindaki Claude)",
+      "title": "YENIDEN.csv'deki 47 kaynagin kodunu kaynak/<ID>.md olarak kopyalamak",
+      "status": "atandi",
+      "spec": "kaynak/GOREV_TARAYICI.md"
     }
   ],
   "done": [
