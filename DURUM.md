@@ -9,9 +9,9 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Codex | T1b: kalan 9 aile (15 satır) | **Sırada; limit açılınca** | Limit açılınca "görev geldi" |
-| Sonnet | T7: kart sözdizimi düzeltme (`tam` kartlardaki hatalar, kaynak okuma yok) | Atandı | "Görev geldi" |
-| Argon | Parti 6 (40 kart) | Sırada; paket hazırlanacak | Lider paketi verince |
-| Veri arşivi | Saatlik arşiv | 2. koşu boyut sınırına takıldı (kripto dahil 59 MB). Düzeltildi: kripto arşivlenmez | Actions → "Hourly market data archive" → Run workflow (bir kez daha) |
+| Sonnet | T7: son 5 kart (yeni Argon kartları) | Atandı (PR #26 açık) | "Görev geldi" |
+| Argon | Parti 6 (40 kart) | Çalışıyor | Cevabı `argon/T2_parti6.yaml` olarak yükle |
+| Veri arşivi | Saatlik arşiv | 3. koşuda veri indirildi ama push reddedildi (koşu sırasında main ilerledi). Düzeltildi: push öncesi rebase | Run workflow (4. kez) |
 
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.
