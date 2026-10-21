@@ -1,5 +1,7 @@
 # Tartışma 002: Kullanıcının amacı (lidere brifing)
 
+> **KAPANDI (2026-10-21):** Kullanıcı amacını doğrudan lidere yazdı → `docs/HEDEF.md`. Ekip bu dosyayı doldurmak zorunda değil; ek bilgisi olan yine yazabilir.
+
 Lider (Opus 5.5) kullanıcının amacını ilk elden bilmiyor. Elinde yalnızca `docs/DEVIR.md`'deki özet var. Kullanıcıyla doğrudan konuşmuş her ekip üyesi, bildiğini **kendi dosyasına** yazar:
 `tartisma/002_hedef_<model>.md` (örn. `002_hedef_sonnet.md`, `002_hedef_codex.md`). Commit etiketi `[Claude-Mod]` / `[Codex-Sol]`. Kendi dalından PR açılır.
 

@@ -2,26 +2,11 @@
   "version": 2,
   "lead": "auditor (sselimgenc, Opus 5.5)",
   "turn": "codex-worker",
-  "phase": "1-dogrulama",
+  "phase": "1-dogrulama + 0-triyaj",
   "updated": "2026-10-21",
   "heartbeat_minutes": 15,
   "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider + kullanici onayli)",
   "queue": [
-    {
-      "id": "T0",
-      "owner": "herkes (claude-moderator, codex-worker, sol-6.1)",
-      "title": "Kullanicinin amacini lidere bildir: tartisma/002_hedef_<model>.md",
-      "status": "ready",
-      "spec": "tartisma/002_kullanici_hedefi.md",
-      "priority": "T1a/T2'den once"
-    },
-    {
-      "id": "T1a",
-      "owner": "codex-worker",
-      "title": "Veri + referans motor + 2 aile pilotu (C01,C19,C02,C09,C15,C17), replikasyon ve 2015-2019 on donem testi",
-      "status": "ready",
-      "spec": "docs/GOREV_T1.md"
-    },
     {
       "id": "T4",
       "owner": "codex-worker",
@@ -31,9 +16,16 @@
       "priority": "yuksek, T1a ile paralel"
     },
     {
+      "id": "T1a",
+      "owner": "codex-worker",
+      "title": "Veri + referans motor + 2 aile pilotu (C01,C19,C02,C09,C15,C17), replikasyon ve 2015-2019 on donem testi",
+      "status": "ready",
+      "spec": "docs/GOREV_T1.md"
+    },
+    {
       "id": "T2",
       "owner": "claude-moderator",
-      "title": "B seviyesi PDF'lerden kural kartlari, KATALOG tamamlama (kod yok)",
+      "title": "Tum ~316 strateji icin YAML kart + triyaj (asama 0), partiler halinde; parti 1 = PDF B seviyesi",
       "status": "ready",
       "spec": "docs/GOREV_T2.md"
     },
@@ -50,6 +42,20 @@
       "title": "Kalan 9 aile yeniden uretim",
       "status": "blocked-awaiting-T1a-review",
       "spec": "docs/GOREV_T1.md"
+    },
+    {
+      "id": "T5",
+      "owner": "codex-worker",
+      "title": "YAML yorumlayici + asama 1 hizli tarama (VectorBT)",
+      "status": "blocked-awaiting-T1a-and-T2p1",
+      "spec": "docs/GOREV_T5.md"
+    },
+    {
+      "id": "T6",
+      "owner": "codex-worker",
+      "title": "Asama 2 tam dogrulama + results/SONUC.md (basarili/basarisiz listesi)",
+      "status": "blocked-awaiting-T5",
+      "spec": "docs/HEDEF.md"
     }
   ],
   "done": [
@@ -58,6 +64,12 @@
       "owner": "auditor",
       "title": "Eleme kriterleri denetimi -> v0.3",
       "ref": "tartisma/001_cevap_opus.md"
+    },
+    {
+      "id": "T0",
+      "owner": "kullanici",
+      "title": "Kullanici amacini dogrudan lidere bildirdi",
+      "ref": "docs/HEDEF.md"
     }
   ],
   "user_decisions_pending": [
@@ -68,5 +80,6 @@
   "decisions": [
     "2026-10-21 kullanici: portfoy MDD ust siniri %15 onaylandi",
     "2026-10-21 kullanici: saatlik veri ucretsiz internet kaynaklarindan (yfinance 1h ~730 gun, Binance data-api)"
-  ]
+  ],
+  "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz."
 }

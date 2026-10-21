@@ -8,6 +8,8 @@ Eşikler evrensel yasa değil, kural-ı pratik (Pardo, Bailey & López de Prado,
 2. Eksik veri/doğrulanamama başarısızlık değildir. Durumlar ayrı: **Geçti / Koşullu / Doğrulanamaz / Reddedildi**.
 3. Rapor rakamı kanıt sayılmaz; her aday bizim motorumuzda yeniden üretilir.
 
+Uygulama ortamı (sinyal zamanı, boyut, stop, evren, veri, dönem) tüm stratejiler için ortaktır: `docs/EVRENSEL_KURALLAR.md`. Huni: aşama 0 triyaj → aşama 1 tarama (geçiş kuralı `docs/GOREV_T5.md`) → aşama 2 bu dosyadaki testler 3-10.
+
 ## Kanıt seviyeleri
 A: OOS + stres testli rapor (Codex Algo 21; OOS'u seçim sonrası olduğu için fiilen "A-") · B: çok piyasalı backtest, OOS/stres yok, optimizasyon izi · C: yalnız yayıncı beyanı.
 
@@ -20,7 +22,7 @@ A: OOS + stres testli rapor (Codex Algo 21; OOS'u seçim sonrası olduğu için 
 5. **Walk-forward:** anchored + rolling, purge/embargo; karar birleşik OOS ve pozitif dönem oranına göre (tek pencere değil). Kapı: OOS işlem >= 30 ve OOS işlem başı ortalama R > 0; WFE (OOS/IS Sharpe) raporlanır. OOS PF < 1,1 yumuşak uyarı.
 6. **Parametre platosu:** 2-3 boyutlu komşuluk; komşu medyan OOS, pozitif hücre oranı, optimum sınırda mı. Kapı = plato kararlılığı.
 7. **Block bootstrap Monte Carlo:** CAGR, PF, Sharpe, MDD, kayıp serisi, risk-of-ruin dağılımı; kapı alt güven sınırına dayanır, nokta tahmine değil. Beklenen MDD ~ backtest MDD x 1,5-2.
-8. **DSR/PBO (canlı kapısı):** N alt sınırı: Codex Algo 44, Reddit/Voltran/Paper_Test 256 + iterasyonlar; bilinmeyen kısım için N, 2N, 5N'de raporlanır, kötümser olan esas. Deneme sayısına PDF varyantları + bizim taramalarımız + reddedilenler dahil; korele varyantlar kümelenip "etkin bağımsız deneme" ayrıca raporlanır. PBO az örneklemde (60-100 işlem) sert kapı değil **uyarı**.
+8. **DSR/PBO (canlı kapısı):** N alt sınırı: Codex Algo 44, Reddit/Voltran/Paper_Test 256 + iterasyonlar; bilinmeyen kısım için N, 2N, 5N'de raporlanır, kötümser olan esas. Kendi taramamız da deneme sayar: aşama 1'de test edilen (strateji × piyasa) çiftlerinin toplamı (~316 × 4) DSR'ın N'ine eklenir. Deneme sayısına PDF varyantları + bizim taramalarımız + reddedilenler dahil; korele varyantlar kümelenip "etkin bağımsız deneme" ayrıca raporlanır. PBO az örneklemde (60-100 işlem) sert kapı değil **uyarı**.
 9. **Örneklem/anlamlılık:** >= 100 işlem (swing >= 60); t-stat > 2 yalnız canlı kapısında (çoklu test düzeltmesi DSR ile, t > 3 ayrıca aranmaz); tek enstrüman/yıla bağımlılık yok (en iyi işlem/enstrüman çıkarılınca pozitif).
 10. **Aşırı uyum alarmı:** PF > 4, Sharpe > 2-3, getiri > %500 veya "hedefe ulaşana dek iterasyon" (Voltran v1→v3) → ek doğrulama zorunlu (3-8 hepsi sıkı; 3b geçilmeden paper yok).
 
