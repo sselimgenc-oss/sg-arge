@@ -41,6 +41,7 @@ hedef:
   carpan: 12.0
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
 parametreler:
   ema_confirm_period: 1
   ema_fast_period: 14
@@ -70,4 +71,5 @@ belirsiz:
   saat filtresi, (2) ARMED: 1 ile 3 adet (long_pullback_max_candles=3) düşüş (counter-trend) geri çekilme mumunun tamamlanmasını bekleme, (3) WINDOW_OPEN: 2 bar boyunca (long_entry_window_periods=2) window_offset_multiplier=1.0
   ile hesaplanan volatilite kanal kırılım seviyesini izleme (ters sinyalde sıfırlanır), (4) ENTRY: üst kırılım seviyesi aşıldığında Long giriş, 2.5 * ATR stop-loss ve 12.0 * ATR take-profit (OCA)'
 - 'short kuralı var: Kodda short parametreleri (short_pullback_max_candles=3, short_entry_window_periods=2) tanımlanmış ancak varsayılan olarak devre dışı bırakılmıştır (SHORT strategy currently disabled)'
+- "ozel_kod_nedeni: durum_makinesi (4 fazli durum makinesi (SCANNING/ARMED/WINDOW_OPEN))"
 kart_yazari: argon

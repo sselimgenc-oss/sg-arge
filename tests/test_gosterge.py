@@ -196,7 +196,7 @@ def test_compute_kaydir_and_unknown_indicator():
     df = frame(range(1, 11))
     assert ind.compute(df, {"f": "sma", "src": "close", "n": 3, "kaydir": 1}).iloc[3] == 2.0
     with pytest.raises(ind.UnknownIndicator):
-        ind.compute(df, {"f": "sar"})
+        ind.compute(df, {"f": "cdl_hammer"})
 
 
 def test_source_expression_and_build_env():
@@ -349,3 +349,24 @@ def test_pivot_cards_building_blocks_match_previous_day_ohlc():
     assert (env["tx"].loc[day2_bars] == day1["high"].max()).all()
     assert env["tx"].loc["2024-01-01"].isna().all()  # no previous day yet
     assert env["adam"].loc["2024-01-01"].isna().all()
+
+
+def test_fisher_rsi_is_tanh_of_scaled_rsi():
+    df = frame(np.cumsum(np.random.default_rng(2).normal(0, 1, 120)) + 100)
+    out = ind.fisher_rsi(df, n=14)
+    rsi14 = ind.rsi(df, n=14)
+    expected = (np.exp(2 * 0.1 * (rsi14 - 50)) - 1) / (np.exp(2 * 0.1 * (rsi14 - 50)) + 1)  # the Freqtrade formula
+    assert (out.dropna() - expected.dropna()).abs().max() < 1e-12
+    assert out.dropna().between(-1, 1).all()
+
+
+def test_sar_basic_behaviour():
+    up = np.linspace(100, 140, 40)
+    df = frame(up, high=up + 1, low=up - 1)
+    out = ind.sar(df)
+    assert out.iloc[0] != out.iloc[0]                       # first bar has no value
+    assert (out.iloc[2:] < df["low"].iloc[2:]).all()         # long: SAR stays under the lows
+    crash = np.concatenate([up, np.linspace(140, 90, 40)])
+    df2 = frame(crash, high=crash + 1, low=crash - 1)
+    out2 = ind.sar(df2)
+    assert out2.iloc[-1] > df2["high"].iloc[-1]              # flipped above price after the reversal

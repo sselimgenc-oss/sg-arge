@@ -37,6 +37,7 @@ hedef:
   carpan: 3.0
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   short_tema_fast: 10
   short_tema_slow: 80
@@ -61,3 +62,4 @@ belirsiz:
 - 'Jesse.Trade sayfasından yazarın (saleh) strateji açıklaması ve backtest raporu okundu: 30 dakikalık grafikte TEMA(10) > TEMA(80) yukarı kesişimi + 4 saatlik grafikte TEMA(20) > TEMA(70) trend teyidi
   + ADX > 40 ve CMO filtresi ile 3x kaldıraçlı Long girilir; 4 ATR stop loss ve 3 ATR kar hedefi uygulanır'
 - 'short kuralı var: TEMA kesişimi ve 4h trend filtresi aşağı döndüğünde short açılır'
+- "ozel_kod_nedeni: tanim_belirsiz (TEMA ve CMO onayi: CMO esigi ve TEMA 20/70 (4H) kartta yok; gostergeler'deki 'wma' yer tutucu)"

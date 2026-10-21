@@ -27,6 +27,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
 ozel_kod: true
+ozel_kod_nedeni: sinyal_bari_referansi
 ters_sinyal: true
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
@@ -37,4 +38,5 @@ belirsiz:
 - Yazarın test penceresi çok kısa (2023-07-02/07-12 (10 gün)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
 - "T7 sozdizimi: ozgun stop/hedef metni: 'stop: giris - (sinyal_bari_yuksek - giris) ; hedef: sinyal_bari_yuksek' (sinyal barinin yukseklerine bagli; A1 ile giris sonraki barda oldugundan sinyal bari referansi dil disi: elle kodlanacak)"
+- "ozel_kod_nedeni: sinyal_bari_referansi (stop = giris - (sinyal_bari_yuksek - giris), hedef = sinyal_bari_yuksek; A1 ile giris sonraki barda oldugundan sinyal bari degeri dilde yok)"
 bias_varsayim: false

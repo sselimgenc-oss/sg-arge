@@ -27,6 +27,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Andean Oscillator (up1/up2/dn1/dn2 üstel zarflar) + 1D yüksek/düşük döngüsel onayı: ozel_kod'
@@ -35,4 +36,5 @@ belirsiz:
 - Yazarın test penceresi çok kısa (2023-08-06/09-03 (4 hafta)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
 - "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: lowest(low,5) ; hedef: giris + 1.5*(giris - stop)' (sinyal barinda sabitlenen degerler: elle kodlanacak)"
+- "ozel_kod_nedeni: ozel_gosterge (Andean Oscillator (ustel zarflar) ve 1D yuksek/dusuk dongusel onayi)"
 bias_varsayim: false

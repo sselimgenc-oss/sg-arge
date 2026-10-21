@@ -22,7 +22,7 @@ cikis: cross_under(close, vwap_val)
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   ema.n: 20
 deneme_sayisi_kaynakta: 1
@@ -40,3 +40,4 @@ belirsiz:
 - 'PyneSys aynasından (https://wild.pynesys.io/scripts/emperorbtc-s-vwap-strategy-wmJ1ovZQ, yazar: vaidab) EmperorBTC''nin popüler kripto VWAP stratejisi okundu: Fiyat seans VWAP''ını yukarı kırıp 20 EMA
   üzerinde kaldığında Long girilir; VWAP altına inişte çıkılır'
 - 'short kuralı var: Fiyat VWAP ve 20 EMA altına indiğinde short açılır'
+- "T8: ozel_kod true -> false (yalniz kutuphane gostergeleri (vwap, ema); vwap UTC gunu basinda sifirlanir (oturum VWAP'i), 30m kart yalniz kripto testine gider); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

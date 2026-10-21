@@ -36,6 +36,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
 parametreler:
   STAtrMult: 2.75
   nATR: 12
@@ -67,3 +68,4 @@ belirsiz:
   L_stoploss (HMA dip noktası) seviyesidir; hedefler risk mesafesinin (L_Entry - L_Stoploss) 0.5x, 1x, 2x, 3x ve 4x katlarıdır veya fiyat HMA(60) altına kırdığında çıkılır'
 - 'short kuralı var: HMA(60) tepe karesi (MA_Max / S_stoploss) + kırmızı Donchian Trend Ribbon + SuperTrend aşağı kırılımında (ShortTrigger) short açılır'
 - "T7 sozdizimi: 'st.yon' -> 'st.dir' (kutuphane Supertrend yonu: +1 yukselis, -1 dusus; kartin yon==1 ifadesi yukselis olarak okundu, onay gerekir)"
+- "ozel_kod_nedeni: durum_makinesi (HMA dip donus ucgeni, Donchian trend seridi ve DYNO Long_Entry/Long_Exit durum makinesi)"

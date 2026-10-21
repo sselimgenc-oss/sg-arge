@@ -24,6 +24,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: renko
 parametreler:
   RenkoBoxSize_pips: 10.0
   ema_fast.n: 21
@@ -44,4 +45,5 @@ belirsiz:
 - 'Özel kod mantığı: 10 pip Renko grafikte fiyat EMA(21) ve EMA(50) üzerindeyken tuğla rengi kırmızıdan yeşile dönüp 2 ardışık yeşil tuğla kapandığında (3. yeşil tuğla açılışında) Long açılır; SL dönüşteki
   son kırmızı tuğlanın düşüğü veya son anlamlı diptir; çıkış ters renkli (kırmızı) tuğla kapanışında veya 20-30 pip izsüren stop ile yapılır'
 - 'short kuralı var: Fiyat EMA(21) ve EMA(50) altındayken yeşilden kırmızıya dönüp 2 ardışık kırmızı tuğla kapandığında short açılır'
+- "ozel_kod_nedeni: renko (10 pip Renko tuglalari (zaman bazli bar degil))"
 kart_yazari: argon

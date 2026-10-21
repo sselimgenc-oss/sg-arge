@@ -28,6 +28,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 parametreler:
   signal_ema.n: 33
   channel_ema.n: 55
@@ -50,4 +51,5 @@ belirsiz:
   pip SL kanalın altına düşüyorsa) hemen girilir, aşırı volatilite nedeniyle fiyat kanaldan >40 pip uzaktaysa EMA(33, close) seviyesine bekleyen limit emir (Delayed Entry) bırakılır; çıkış için 3 seçenek
   sunulmuştur: (1) 40 pip sabit TP ve 20-25 pipte BE, (2) 210 pip esnek TP ve seans sonunda kapatma, (3) ters sinyalde kapatıp tersine dönme'
 - 'short kuralı var: cross_under(ema33_close, ema55_low) olduğunda aynı normal/gecikmeli giriş ve SL/TP kurallarıyla short açılır'
+- "ozel_kod_nedeni: bekleyen_emir (fiyat kanaldan >40 pip uzaksa EMA(33)'e bekleyen limit emir (Delayed Entry), pip bazli 3 cikis secenegi)"
 kart_yazari: argon

@@ -42,6 +42,8 @@ zaman_stop:
   bar: 23
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [JP225]
+ozel_kod_nedeni: seans_saat
 parametreler:
   ma_period: 34
   sd_mult: 0.5
@@ -70,3 +72,5 @@ belirsiz:
   günün aynı 15 dakikalık dilimi ortalamasının %60''ından az hacim. Seans saati 11:15-15:00 arasında sonraki bar açılışında Long açılır; stop-loss 4 ATR, kâr hedefi 3.5 ATR ve saat 17:00 sunucu saatinde
   gün sonu tüm pozisyonlar kapatılır'
 - Yalnızca Long yönlü bir stratejidir (short kuralı yoktur)
+- "ozel_kod_nedeni: seans_saat (sunucu saati 11:15-15:00 penceresi, 17:00 zorunlu kapanis, ayni 15 dk dilimin 20 gunluk tick hacmi ortalamasi)"
+- "piyasa_kisiti: ['JP225'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

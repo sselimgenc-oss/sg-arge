@@ -23,6 +23,8 @@ zaman_stop:
   bar: 780
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [XAUUSD]
+ozel_kod_nedeni: seans_saat
 parametreler:
   session_start_london: 08:00
   filter_type: NR4
@@ -45,3 +47,5 @@ belirsiz:
   seans açılışında (08:00) açılış fiyatı kaydedilir ve açılış + offset seviyesine Buy Stop, açılış - offset seviyesine Sell Stop konulur, (3) Biri dolduğunda diğeri iptal edilir (OCO); stop-loss ters emir
   seviyesidir, (4) Seans başlangıcından 13 saat sonra (780 dakika) tüm pozisyonlar kapatılarak gün sonu taşınmaz'
 - 'short kuralı var: Fiyat session_open - offset seviyesine düştüğünde Sell Stop tetiklenerek short açılır'
+- "ozel_kod_nedeni: seans_saat (gunluk NR4/NR7 filtresi + seans acilisi (session_open) ofseti ile stop emirleri)"
+- "piyasa_kisiti: ['XAUUSD'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

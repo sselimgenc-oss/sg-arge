@@ -16,6 +16,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [FX]
 ozel_kod_nedeni: seans_saat
 parametreler:
   entry_day: 1
@@ -37,4 +38,5 @@ belirsiz:
 - 'Özel kod mantığı (takvim/saat stratejisi): Teknik gösterge kullanmaz; her Pazartesi sunucu saatiyle 11:00''de (New York 04:00, GMT+2/GMT+3) spread <= 1.5 pip ve marjin seviyesi >= %300 ise Long açar
   ve aynı gün 23:00 sunucu saatinde (12 saat sonra, swap saatinden önce) kapatır; stop-loss ve kâr al hedefi yoktur'
 - "ozel_kod_nedeni: seans_saat (Pazartesi 11:00 sunucu saati giris, 23:00 kapanis, spread ve marjin filtresi)"
+- "piyasa_kisiti: ['FX'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
 kart_yazari: argon

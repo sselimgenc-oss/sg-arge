@@ -32,6 +32,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Nadaraya-Watson zarfı (h=8, mult=3, 499 bar MAE) listede yok: ozel_kod'
@@ -39,4 +40,5 @@ belirsiz:
 - Yazarın test penceresi çok kısa (2023-08-15/10-20), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
 - "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: low - 0.5*SMA(TR,14) ; hedef: giris + 1.5*(giris - stop)' (sinyal barinda sabitlenen degerler: elle kodlanacak)"
+- "ozel_kod_nedeni: ozel_gosterge (Nadaraya-Watson zarfi (h=8, 499 bar MAE))"
 bias_varsayim: false

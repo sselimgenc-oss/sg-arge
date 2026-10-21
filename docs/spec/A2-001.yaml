@@ -37,6 +37,7 @@ hedef:
   carpan: 4.5
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [GER40]
 ozel_kod_nedeni: seans_saat
 parametreler:
   vol_fast.n: 50
@@ -67,4 +68,5 @@ belirsiz:
   dar high-low aralığına sahip bar); sonraki bar açılışında Long açılır ve 23:00 sunucu saatinde açık pozisyon kapatılır'
 - 3. koşuldaki 252-barlık ortalama tick hacmi üst eşiğinin sayısal varsayılan değeri ve ATR periyodu açıklama metninde yazmayıp .mq5 kaynak dosyasındadır (ATR periyodu 14 varsayıldı)
 - "ozel_kod_nedeni: seans_saat (sunucu saati 18:00-21:00 penceresi, 23:00 zorunlu kapanis, tick hacmi; 252 barlik hacim esigi sayisal degeri kartta yok)"
+- "piyasa_kisiti: ['GER40'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
 kart_yazari: argon

@@ -38,6 +38,7 @@ rapor:
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 belirsiz:
 - '5m zaman dilimi: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Zaman bazlı ROI tablosu (roi_tablosu) ve sabit %10 stop şemada yok: şema uzantısı'
@@ -45,6 +46,7 @@ belirsiz:
 - Fork içeriği resmi depodakiyle karşılaştırılmadı; kural resmi depo koduna dayanıyor
 - 'SAR, Fisher RSI, CDLHAMMER (TA-Lib çekiç mum), Stoch(slowk) listede yok/eksik: ozel_kod'
 - 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy002.py'
+- "ozel_kod_nedeni: ozel_gosterge (TA-Lib CDLHAMMER mum formasyonu; yalniz bu kartta gerekli)"
 roi_tablosu:
   0: 0.05
   20: 0.04

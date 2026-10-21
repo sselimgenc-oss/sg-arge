@@ -26,6 +26,8 @@ hedef:
   deger: 1.0
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [NSE]
+ozel_kod_nedeni: seans_saat
 parametreler:
   periods: 14
   Ksmooth: 3
@@ -54,3 +56,5 @@ belirsiz:
 - 'Özel kod mantığı (AFL kodundan): myStochK = StochK(14, 3); myStochD = StochD(14, 3, 3); TradeStartTime ile TradeEndTime arasında Buy = Cross(myStochK, myStochD) AND Cross(myStochK, Oversold) (Oversold=20)
   olduğunda Long açılır; Sell = Short OR TimeNum() >= SquareOffTime ile kapatılır; ApplyStop ile %1 StopLoss ve %1 Target uygulanır'
 - 'short kuralı var: Short = Cross(myStochD, myStochK) AND Cross(Overbought, myStochK) (Overbought=80) olduğunda short açılır, Cover = Buy OR TimeNum() >= SquareOffTime'
+- "ozel_kod_nedeni: seans_saat (TradeStartTime/TradeEndTime penceresi ve SquareOffTime gun sonu kapanisi (AFL))"
+- "piyasa_kisiti: ['NSE'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

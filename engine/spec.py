@@ -49,6 +49,7 @@ OZEL_NEDENLERI = (
     "ml",                  # machine learning / training
     "tick_veri",           # tick or sub-minute data
     "durum_bilgisi",       # exit depends on how the entry was triggered
+    "sinyal_bari_referansi",  # stop/target frozen at values of the signal bar (not expressible: entry fills at the next bar)
 )
 
 
@@ -195,6 +196,9 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
         nedeni = card.get("ozel_kod_nedeni")
         if nedeni not in OZEL_NEDENLERI:
             issues.append(Issue("ozel_kod_nedeni", f"ozel_kod kartta gecerli ozel_kod_nedeni yok: {nedeni!r} (gecerli: {', '.join(OZEL_NEDENLERI)})"))
+    kisit = card.get("piyasa_kisiti")
+    if kisit is not None and not (isinstance(kisit, list) and kisit and all(isinstance(t, str) and t.strip() and t == t.upper() for t in kisit)):
+        issues.append(Issue("piyasa_kisiti", f"piyasa_kisiti bos olmayan, BUYUK HARFLI metin listesi olmali: {kisit!r}"))
     if not ozel and card.get("ozel_kod_nedeni"):
         issues.append(Issue("ozel_kod_nedeni_gereksiz", "ozel_kod: false kartta ozel_kod_nedeni olmamali"))
     if ozel:

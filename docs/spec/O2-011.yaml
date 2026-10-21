@@ -26,6 +26,7 @@ hedef:
   carpan: 0.35
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tick_veri
 parametreler:
   InpBurstWindowSeconds: 4
   InpZScoreThreshold: 3.0
@@ -48,3 +49,4 @@ belirsiz:
 - 'MQL5 CodeBase sayfasından yazarın (Ali Rajput) kodu okundu: 4 saniyelik hareketli penceredeki fiyat değişiminin z-skoru 3.0 standart sapmayı aştığında patlama yönünde (Momentum) Long girilir; Stop Loss
   0.55 ATR, Take Profit 0.35 ATR olarak belirlenir ve InpMaxHoldSeconds süresinde kapanmayan işlemler zorunlu kapatılır'
 - 'short kuralı var: Z-skoru aşağı yönde -3.0 aşıldığında short açılır'
+- "ozel_kod_nedeni: tick_veri (4 saniyelik pencerede fiyat z-skoru; 1 dk verisiyle test edilemez)"

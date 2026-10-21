@@ -17,6 +17,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [ABD]
+ozel_kod_nedeni: renko
 parametreler:
   NumBricksForEntry: 2
   DollarStopAmtPerShare: 0.2
@@ -39,3 +41,5 @@ belirsiz:
   Long açılır; ardışık 2 kırmızı tuğla (SequenceCount <= -2) oluştuğunda pozisyon kapatılıp short''a dönülür (AllowReversal=true); ayrıca hisse başına maksimum açık kârdan $0.20 geri çekilmede (DollarStopAmtPerShare
   = 0.20) iz süren dolar stopu uygulanır'
 - 'short kuralı var: SequenceCount <= -2 (ardışık 2 kırmızı Renko tuğlası) olduğunda short pozisyona geçilir ve hisse başına $0.20 iz süren stop uygulanır'
+- "ozel_kod_nedeni: renko (2 Renko tuglasi dizisi (SequenceCount) ve dolar iz suren stop)"
+- "piyasa_kisiti: ['ABD'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"

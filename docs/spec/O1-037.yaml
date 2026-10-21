@@ -58,6 +58,8 @@ varyantlar:
   cikis: 1R'de %50 kısmi kâr + başabaş (BE) stop sonrası kalan %50 pozisyonu 2R hedefte kapatma
 stop_eklendi: false
 ozel_kod: true
+piyasa_kisiti: [FX]
+ozel_kod_nedeni: bekleyen_emir
 parametreler:
   ema8.n: 8
   ema13.n: 13
@@ -89,3 +91,5 @@ belirsiz:
   çekilir, kalan %50 pozisyon ya 2R hedefte ya da son 3 mumun en düşüğünün 3 pip altında (lowest(low, 3)[1] - 3 pip) iz süren stopla kapatılır'
 - 'short kuralı var: 1H EMA(8) < EMA(21) ve 5M EMA(8) < EMA(13) < EMA(21) iken fiyat EMA(8)''e değip EMA(21) üstünde kapanmadan önceki 5 barın en düşüğünün 3 pip altına Sell Stop konulur, SL tetik barı
   high + 3 pip'
+- "ozel_kod_nedeni: bekleyen_emir (5 barlik yuksegin 3 pip ustune Buy Stop, basabas ve kismi cikis)"
+- "piyasa_kisiti: ['FX'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
