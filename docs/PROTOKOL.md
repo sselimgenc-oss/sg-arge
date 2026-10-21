@@ -5,3 +5,7 @@
 - Commit etiketleri: `[Claude-Mod]`, `[Codex-Sol]`, `[Opus-Audit]`.
 - Faz: 1 dogrulama (A seviyesi) -> 2 B seviyesi stratejilerin kodlanip dogrulanmasi -> 3 short/kaldirac varyantlari -> 4 Opus denetimi -> 5 paper listesi.
 - Hicbir sonuc "dogrulandi" sayilmaz: results/ altinda yeniden uretilmediyse.
+
+## Etiketler
+- `@claude` moderator (Sonnet 5.5), `@auditor` denetci (Opus 5.5), `@codex` worker.
+- Ayni anda yalniz `state.json.turn` sahibi dosya yazar; digerleri yalniz yorum yazar.
