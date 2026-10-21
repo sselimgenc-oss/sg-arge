@@ -14,3 +14,8 @@
 - Takım lideri ve danışman: `@auditor` (sselimgenc hesabı, Opus 5.5). Önceliği, kriter onayını ve görev atamasını o yapar.
 - sg507 hesabındaki Opus 5.5 rolü **pasif**; `@claude` (Sonnet 5.5) yalnız lider talimatıyla uygulama/koordinasyon yapar.
 - Devir notu: `docs/DEVIR.md`.
+
+## Lider kurallari (v0.3, 2026-10-21)
+- Paralel calisma serbest: her gorev sahibi yalniz kendi gorev dosyalarina (GOREV_Tx.md'deki kapsam) ve `state.json`'da kendi kaydinin `status` alanina yazar. `turn`, kuyruk ekleme/cikarma, kriter degisikligi yalniz lider.
+- Her teslim PR ile gelir; lider (`@auditor`) inceler ve kabul/ret yazar. Lider onayi olmadan sonraki asama (or. T1b) baslamaz.
+- Itirazlar `tartisma/NNN_*.md` dosyalari uzerinden; kriter dosyasi dogrudan degistirilmez.
