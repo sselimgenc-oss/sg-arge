@@ -23,3 +23,6 @@ En az bir piyasada IS'de: islem >= 30, 1x PF >= 1,1 ve 2x net pozitif. Gecemeyen
 
 ## T5a teslim notu (lider, PR #22)
 Kart gosterge kutuphanesi `engine/gosterge.py` (Pine uyumlu, kanonik). `engine/indicators.py` T1a'nin referans fonksiyonlari olarak degismeden kalir. T5b taramasi `engine/gosterge.py` + `engine/expr.py` + `engine/spec.py` kullanir; parite testi (madde 5) iki kutuphane arasindaki farki da gosterir.
+
+## T5b ek madde (lider)
+7. BIST saatlik veri temizliği: `results/veri_kalitesi_1h.md`'de hisse başına ~727 seans dışı ve ~385 sıfır hacimli bar var. Nedenini bul (yfinance 09:30 bar etiketi, kapanış seansı, tatil). Seansa hizalı temiz 1H/4H serisi üret (`engine/resample.py`). BIST gün içi kartları bu düzeltme olmadan taranmaz.
