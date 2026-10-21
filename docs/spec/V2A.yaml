@@ -3,7 +3,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 deneme_sayisi_kaynakta: 3
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - v1->v3 üç iterasyonla hedefe ulaşana dek geliştirilmiş (deneme_sayisi_kaynakta=3, DSR'de sayılmalı)
 - 'Pozisyon boyutu ADX''e bağlı (1.15x/0.95x): EVRENSEL_KURALLAR A6 gereği yok sayılır'
@@ -13,6 +13,7 @@ belirsiz:
 - 'Gün içi 1H: BIST/ABD/emtia saatlik veri ~730 gün -> en fazla Koşullu'
 - 1D/HTF_Bias formülü hiçbir raporda tanımlı değil; Voltran raporundaki HTF kuralı varsayıldı (Supertrend(10,2.5)=+1 veya kapanış>=EMA21*0.985)
   -> lider onayı
+- "T8: ozel_kod true -> false (confluence_puan seri olarak yazildi (mantiksal terim * agirlik); OTT kutuphanede); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 parametreler: {}
 id: V2A
 ad: VOLTRAN-2A saatlik adaptif kanal (TOTT) + seans kırılım (v3)
@@ -66,6 +67,9 @@ gostergeler:
   atr14:
     f: atr
     n: 14
+  confluence_puan:
+    f: "seri"
+    ifade: "35 * (ott.dir == 1) + 25 * (close >= hh10 * 0.992) + 20 * (adx14 > 15) + 15 * (close > ema34) + 10 * (volume >= vol_sma20 * 0.95)"
 giris: (st_htf.dir == 1 or close_1d >= ema21h * 0.985) and confluence_puan >= 70 and dmi14.plus >= dmi14.minus * 0.95
 cikis: ott.dir == -1 and close < ema34
 rapor:

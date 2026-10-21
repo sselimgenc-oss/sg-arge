@@ -31,7 +31,7 @@ gostergeler:
     src: low
     n: 2
 giris: atr14 > hhv_atr14[1] and close > sma100 and high >= hh15[1] + 0.50
-cikis: close < ll2[1] or close < entry_price - 2.0
+cikis: close < ll2[1] or close < giris_fiyati - 2.0
 stop:
   tip: puan
   deger: 2.0
@@ -40,7 +40,7 @@ iz_suren:
   tip: fiyat_adim
   deger: 2.0
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   ATRLength: 14
   HighestATRLookback: 14
@@ -63,3 +63,4 @@ belirsiz:
   thinkorswim dokümantasyonundan tam kod okundu
 - 'Özel kod mantığı: ATR(14) değeri son 14 günün en yüksek ATR değerini aştığında (volatilite patlaması), hisse 100 günlük basit hareketli ortalamanın (SMA 100) üzerindeyse ve fiyat son 15 günün en yüksek
   seviyesinin $0.50 üzerine çıktığında Buy Stop ile Long girilir; $2.00 iz süren stop veya son 2 günün en düşüğü (lowest(low, 2)[1]) kırıldığında çıkılır'
+- "T8: ozel_kod true -> false ('entry_price' -> 'giris_fiyati'; sabit 2.0 USD fiyat farki kartta oldugu gibi); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

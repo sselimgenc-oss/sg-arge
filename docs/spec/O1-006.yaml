@@ -29,6 +29,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   MovPeriod: 4
   MottX1: 80
@@ -49,3 +50,4 @@ belirsiz:
 - 'Özel kod mantığı: 4 barlık VAR hareketli ortalaması MOV(C, 4, VAR), 80 barlık en yüksek ve en düşük fiyatlar üzerinden hesaplanan OTT(HHV(H, 80), 2, 1.4) ve OTT(LLV(L, 80), 2, 1.4) çizgileri ile bu çizgilerin
   ara ortalamalarından oluşan 5 MOTT bandını yukarı kestiğinde AL (CrossAbove), aşağı kestiğinde SAT (CrossBelow) üretilir'
 - Zaman dilimi C# kodunda [Parameter(SymbolPeriod.Day)] olarak tanımlanmıştır (1D)
+- "ozel_kod_nedeni: tanim_belirsiz (5 MOTT bandinin (OTT(HHV)/OTT(LLV) ve ara ortalamalar) ayrintili formulu kartta yok)"

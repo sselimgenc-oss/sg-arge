@@ -20,6 +20,7 @@ hedef:
   deger: 1.0
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 parametreler:
   InpFractalLeft: 5
   InpFractalRight: 5
@@ -56,4 +57,5 @@ belirsiz:
   kârda SL +%0.025''e (BreakEven) çekilir; +%0.20 ile +%1.00 kâr arasında %0.20 mesafeli izsüren stop uygulanır; pozisyon -%1.00 zarara düşerse (Salvage) TP seviyesi girişin -%0.15 altına çekilir'
 - 'Kod-açıklama çelişkisi: InpPendingExpiryHours=15 parametresi ile zaman damgası hesaplansa da emir gönderiminde ORDER_TIME_GTC kullanıldığı için saat bazlı bekleyen emir iptali kodda çalışmamaktadır'
 - 'short kuralı var: Onaylanmış swing low (solunda 5 ve sağında 5 bardan kesin düşük) bulunduğunda swing_low * (1 + 0.0010) seviyesine Sell Stop konur'
+- "ozel_kod_nedeni: bekleyen_emir (swing high'in altina Buy Stop, BE/izsuren/Salvage durum kurallari)"
 kart_yazari: argon

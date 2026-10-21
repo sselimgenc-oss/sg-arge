@@ -11,6 +11,7 @@ Cards carry entry/exit rules as text. This module parses them with Python's
 * ``and`` / ``or`` / ``not``
 * calls to whitelisted functions: ``cross_over``, ``cross_under``, ``mtf``,
   ``ay_islem_gunu_bastan``, ``ay_islem_gunu_sondan``, ``haftanin_gunu``,
+  ``yeni_gun``, ``valuewhen``, ``highestsince``, ``lowestsince``,
   ``max``, ``min``, ``abs``
 
 Evaluation is vectorised over pandas Series. NaN comparisons are False.
@@ -35,6 +36,10 @@ FUNCTIONS = frozenset(
         "ay_islem_gunu_bastan",
         "ay_islem_gunu_sondan",
         "haftanin_gunu",
+        "yeni_gun",
+        "valuewhen",
+        "highestsince",
+        "lowestsince",
         "max",
         "min",
         "abs",
@@ -248,6 +253,20 @@ class _Evaluator:
             if self.index is None:
                 raise ExprError("haftanin_gunu needs an index")
             return takvim.haftanin_gunu(self.index)
+        if name == "yeni_gun":
+            if self.index is None or args:
+                raise ExprError("yeni_gun() takes no arguments and needs an index")
+            return takvim.yeni_gun(self.index)
+        if name in ("valuewhen", "highestsince", "lowestsince"):
+            if len(args) != 2:
+                raise ExprError(f"{name} expects (condition, series)")
+            cond = _as_bool(_as_series(args[0], self.index), self.index)
+            series = _as_series(args[1], self.index).astype(float)
+            if name == "valuewhen":
+                return series.where(cond).ffill()
+            group = cond.astype(int).cumsum()
+            running = series.groupby(group).cummax() if name == "highestsince" else series.groupby(group).cummin()
+            return running.where(group > 0)
         if name in ("max", "min"):
             if len(args) != 2:
                 raise ExprError(f"{name} expects 2 arguments")

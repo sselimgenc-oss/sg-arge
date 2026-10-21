@@ -24,7 +24,7 @@ cikis: cross_under(ema5, ema20)
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   fast_ema: 5
   slow_ema: 20
@@ -42,3 +42,4 @@ belirsiz:
 - TradeSearcher aynasından (https://tradesearcher.ai/strategies/1541-ema-slope-ema-cross-strategy-by-chartart) strateji kuralları ve backtest özeti okundu
 - Hızlı EMA (5) ve Yavaş EMA (20) kesişimine her iki ortalamanın eğiminin (slope) pozitif olması şartı eklenerek sahte sinyaller filtrelenir
 - 'short kuralı var: cross_under(ema5, ema20) ve her iki eğim negatif olduğunda short açılır'
+- "T8: ozel_kod true -> false (yalniz EMA); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

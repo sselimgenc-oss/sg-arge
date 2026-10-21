@@ -3,12 +3,13 @@ stop: null
 hedef: null
 stop_eklendi: false
 deneme_sayisi_kaynakta: null
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - 'PMax listede yok: ozel_kod (MAVG=EMA(hl2,10), 2.7*ATR(10) bant)'
 - 1D/HTF_Bias formülü hiçbir raporda tanımlı değil; Voltran raporundaki HTF kuralı varsayıldı (Supertrend(10,2.5)=+1 veya kapanış>=EMA21*0.985)
   -> lider onayı
 - 'Gün içi 1H: BIST/ABD/emtia saatlik veri yalnız ~730 gün -> en fazla Koşullu'
+- "T8: ozel_kod true -> false (PMax kutuphanede); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 parametreler: {}
 id: P03
 ad: '4H Sweet Spot (1D/4H/1H) PMax + ADX rejim (aynı strateji: R6)'

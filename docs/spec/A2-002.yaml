@@ -30,6 +30,7 @@ hedef:
   deger: 1.9
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 parametreler:
   InpBandPeriod: 9
   bb_dev: 2.0
@@ -57,4 +58,5 @@ belirsiz:
   yeniler'
 - 'short kuralı var: Stochastic sinyal çizgisi önceki barda dip yapıp yukarı döndüğünde (stoch_d > stoch_d[1] and stoch_d[1] < stoch_d[2]) ve open[3] > bb9.lower[3] olduğunda dünün düşüğüne (mtf(1D, low[1]))
   Sell Stop konur'
+- "ozel_kod_nedeni: bekleyen_emir (onceki gun yuksegine Buy Stop (9 bar gecerli) ve close-to-close Stochastic + agirlikli fiyat Bollinger)"
 kart_yazari: argon

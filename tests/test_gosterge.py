@@ -260,3 +260,92 @@ def test_agrees_with_t1a_reference_functions_after_warmup():
         diff = (reference.iloc[start:] - card.iloc[start:]).abs().max()
         assert diff < 1e-6, f"{name}: max diff {diff}"
     assert (ref.true_range(df).iloc[1:] - ind.true_range(df).iloc[1:]).abs().max() == 0
+
+
+# ------------------------------------------------------------------ T8 additions
+def test_heikinashi_hand_computed():
+    df = pd.DataFrame(
+        {"open": [10.0, 11.0], "high": [12.0, 13.0], "low": [9.0, 10.0], "close": [11.0, 12.0], "volume": [1.0, 1.0]},
+        index=pd.date_range("2024-01-01", periods=2),
+    )
+    out = ind.heikinashi(df)
+    # bar 0: ha_close (10+12+9+11)/4 = 10.5, ha_open (10+11)/2 = 10.5
+    assert out["close"].iloc[0] == 10.5 and out["open"].iloc[0] == 10.5
+    # bar 1: ha_close (11+13+10+12)/4 = 11.5, ha_open (10.5+10.5)/2 = 10.5, high = max(13, 10.5, 11.5), low = min(10, 10.5, 11.5)
+    assert out["close"].iloc[1] == 11.5 and out["open"].iloc[1] == 10.5
+    assert out["high"].iloc[1] == 13.0 and out["low"].iloc[1] == 10.0
+
+
+def test_ha_option_computes_indicator_on_heikin_ashi_candles():
+    rng = np.random.default_rng(5)
+    close = 100 + np.cumsum(rng.normal(0, 1, 200))
+    df = frame(close, high=close + 1, low=close - 1, open_=close + rng.normal(0, 0.3, 200))
+    plain = ind.compute(df, {"f": "sma", "src": "close", "n": 5})
+    on_ha = ind.compute(df, {"f": "sma", "src": "close", "n": 5, "ha": True})
+    expected = ind.heikinashi(df)["close"].rolling(5).mean()
+    assert (on_ha.dropna() - expected.dropna()).abs().max() < 1e-12
+    assert not np.allclose(plain.dropna(), on_ha.dropna())
+
+
+def test_ut_bot_constant_range_and_flip():
+    close = np.full(40, 100.0)
+    df = frame(close, high=close + 1, low=close - 1)
+    stop = ind.ut_bot(df, carpan=1.0, n=10).dropna()
+    assert stop.eq(98.0).all()  # ATR = 2, k = 1: first stop 100 - 2, never moves while price is flat
+    rising = np.concatenate([np.linspace(100, 160, 50), np.linspace(160, 90, 40)])
+    df2 = frame(rising, high=rising + 1, low=rising - 1)
+    out = ind.ut_bot(df2, carpan=2.0, n=10)
+    assert out.iloc[40] < rising[40]            # support below price in the uptrend
+    assert out.iloc[-1] > rising[-1]            # flipped above price after the crash
+    assert out.dropna().diff().dropna().iloc[:30].ge(0).all()  # trailing stop only rises while long
+
+
+def test_alphatrend_regimes():
+    n = 120
+    up = np.linspace(100, 200, n)
+    df = frame(up, high=up + 1, low=up - 1, volume=np.full(n, 100.0))
+    out = ind.alphatrend(df, n=14, carpan=1.0).dropna()
+    assert (out <= df["low"].reindex(out.index)).all()       # bullish branch: support below the low
+    assert out.diff().dropna().ge(0).all()                    # never falls while MFI >= 50
+    down = np.linspace(200, 100, n)
+    dn = ind.alphatrend(frame(down, high=down + 1, low=down - 1, volume=np.full(n, 100.0)), n=14, carpan=1.0).dropna()
+    assert dn.diff().dropna().le(0).all()                     # bearish branch: resistance only falls
+    assert (dn >= frame(down, high=down + 1, low=down - 1)["high"].reindex(dn.index)).all()
+
+
+def test_seri_derived_series_and_bool_arithmetic():
+    df = frame([1, 2, 3, 2, 1, 2, 3, 4])
+    env = ind.build_env(df, {
+        "sma2": {"f": "sma", "src": "close", "n": 2},
+        "ust": {"f": "seri", "ifade": "(close > sma2) * 2 - 1"},
+        "ikinci": {"f": "seri", "ifade": "ust * 10"},
+    })
+    # close = 1,2,3,2,1,2,3,4; SMA2 = nan,1.5,2.5,2.5,1.5,1.5,2.5,3.5; a NaN comparison is False, so the warm-up bar is -1
+    assert env["ust"].tolist() == [-1, 1, 1, -1, -1, 1, 1, 1]
+    assert env["ikinci"].tolist() == [-10, 10, 10, -10, -10, 10, 10, 10]
+    with pytest.raises(ValueError):
+        ind.build_env(df, {"x": {"f": "seri", "ifade": "close", "n": 3}})
+
+
+def test_pivot_cards_building_blocks_match_previous_day_ohlc():
+    """The PHL1/PHL2 construction (valuewhen/highestsince/lowestsince/yeni_gun) yields the previous day's close/high/low."""
+    idx = pd.date_range("2024-01-01 08:00", periods=48, freq="h")
+    rng = np.random.default_rng(11)
+    close = 100 + np.cumsum(rng.normal(0, 1, 48))
+    df = pd.DataFrame({"open": close, "high": close + 1, "low": close - 1, "close": close, "volume": 1.0}, index=idx)
+    env = ind.build_env(df, {
+        "yeni": {"f": "seri", "ifade": "yeni_gun()"},
+        "adam": {"f": "seri", "ifade": "valuewhen(yeni, close[1])"},
+        "tx": {"f": "seri", "ifade": "valuewhen(yeni, highestsince(yeni, high)[1])"},
+        "rx": {"f": "seri", "ifade": "valuewhen(yeni, lowestsince(yeni, low)[1])"},
+    })
+    day1 = df.loc["2024-01-01"]
+    day2_bars = df.loc["2024-01-02"].index
+    first_day2 = day2_bars[0]
+    assert env["adam"].loc[first_day2] == day1["close"].iloc[-1]
+    assert env["tx"].loc[first_day2] == day1["high"].max()
+    assert env["rx"].loc[first_day2] == day1["low"].min()
+    # values persist through the rest of the day
+    assert (env["tx"].loc[day2_bars] == day1["high"].max()).all()
+    assert env["tx"].loc["2024-01-01"].isna().all()  # no previous day yet
+    assert env["adam"].loc["2024-01-01"].isna().all()

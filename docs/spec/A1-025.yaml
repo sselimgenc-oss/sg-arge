@@ -18,6 +18,7 @@ hedef:
   deger: 1.0
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 parametreler:
   entry_dip_mult: 0.99
   target_mult: 1.01
@@ -39,4 +40,5 @@ belirsiz:
   piyasa fiyatından kapatılır'
 - 'Kod-açıklama çelişkisi: Makale metninde ve TradeStation kodunda %1 kâr hedefi emri pozisyon açılır açılmaz konurken, Pine Script v6 kodunda ''if sendPT == true and session.isfirstbar_regular and not
   beSent'' koşulu nedeniyle %1 limit çıkış emri yalnızca ertesi günün ilk seans barında gönderilmektedir'
+- "ozel_kod_nedeni: bekleyen_emir (Pazartesi acilisinin %1 altina Buy Limit (bar ici dolum), haftada en fazla 1 kez; motor yalniz sonraki acilis dolumu bilir)"
 kart_yazari: argon

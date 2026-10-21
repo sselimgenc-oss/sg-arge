@@ -3,11 +3,12 @@ stop: null
 hedef: null
 stop_eklendi: false
 deneme_sayisi_kaynakta: null
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - 'OTT (Optimized Trend Tracker) listede yok: ozel_kod; TOTT==1 yön tanımı metinde formüle edilmemiş, Özbilgiç OTT standart mantığı varsayılır'
 - Başlangıç stopu ayrıca yok; zirveden 2.5*ATR iz süren stop işlem açılışından itibaren varsayıldı
 - Rapordaki PF değeri tavanlanmış görünüyor (birçok satırda birebir 5,80); ölçüm/raporlama tavanı olabilir, PF'ye güvenilmez
+- "T8: ozel_kod true -> false (OTT artik kutuphanede); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 parametreler:
   ott_fast.n: 14
   ott_fast.yuzde: 0.8

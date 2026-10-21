@@ -25,7 +25,7 @@ gostergeler:
     f: atr
     n: 14
 giris: close > ema200 and cross_over(macd_ind.macd, macd_ind.signal)
-cikis: close < trailing_atr_stop
+cikis: null
 stop:
   tip: atr
   n: 14
@@ -36,7 +36,7 @@ iz_suren:
   n: 14
   carpan: 2.0
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   trend_ema: 200
   macd_fast: 12
@@ -57,3 +57,4 @@ spec_durumu: tam
 belirsiz:
 - LuxAlgo kütüphanesinden (https://www.luxalgo.com/library/indicator/2jDHQAJc-macd-strategy-with-trailing-atr-stop/) strateji mantığı okundu
 - Fiyat 200 EMA üzerindeyken MACD yukarı kesişiminde (12, 26, 9) Long girilir; en yüksek fiyattan 2.0*ATR(14) mesafede iz süren stop (trailing ATR stop) uygulanır ve bu stop kırıldığında çıkılır
+- "T8: ozel_kod true -> false (cikis metni 'close < trailing_atr_stop' iz_suren alaninda yapisal olarak var; cikis yalniz iz suren stop); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

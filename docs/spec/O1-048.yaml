@@ -26,6 +26,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
 parametreler:
   StochPeriods: 18
   StochK: 2
@@ -57,3 +58,4 @@ belirsiz:
 - 'short kuralı var: highest[2](StochSignal) > 90 iken cross_under(StochSignal, StochMain) ile Stoch = 1 kurulur, StochCounter > 1 sonrası ikinci cross_under(StochSignal, StochMain) ile short açılır; RSI[2]
   5 seviyesini 4 kez test ettikten sonra cross_under(RSI[2], 5) ile çıkılır'
 - "T7 sozdizimi: 'lowest(stoch18.k, 2)[2] < 10' ifadesi birebir (stoch18.k[2] < 10 or stoch18.k[3] < 10) olarak yazildi (2 barlik pencere, 2 bar geriden)"
+- "ozel_kod_nedeni: durum_makinesi (2 asamali kurulum/tetik durum makinesi (Stoch = -1 ve sayac))"

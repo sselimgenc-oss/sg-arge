@@ -21,6 +21,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 parametreler:
   rsi_length: 10
   rsi_overbought: 80
@@ -39,3 +40,4 @@ belirsiz:
 - 'Composer Atlas ve Composer.trade dokümantasyonundan kurgu mantığı okundu (yazar: Simon97)'
 - 'Özel kod mantığı: 3 katmanlı RSI(10) tahsisat algoritması; dış katmanda 11 piyasa enstrümanının RSI(10) uç değerleri taranır, aşırı uç yoksa Teknoloji (TQQQ/TECL) ile KMLM (Managed Futures Trend ETF)
   göreceli gücüne göre risk-on büyüme veya defansif (KMLM / SQQQ / TLT) moduna geçilir'
+- "ozel_kod_nedeni: portfoy_rotasyonu (kaldiracli ETF'ler arasi tahsisat; D4 geregi kaldirac fazina ertelendi)"

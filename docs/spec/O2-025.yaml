@@ -33,6 +33,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 parametreler:
   trend_sma_len: 200
   rsi_len: 10
@@ -55,3 +56,4 @@ belirsiz:
 - 'Özel kod mantığı (Kaldıraçlı ETF Taktiksel Varlık Dağılımı): (1) TQQQ > SMA(TQQQ, 200) ise TQQQ tutulur; ancak RSI(TQQQ, 10) > 79 aşırı ısınma gösterirse UVXY (volatilite sıçraması) tutulur, (2) TQQQ
   < SMA(TQQQ, 200) ise aşırı satım sıçramaları aranır: RSI(TQQQ, 10) < 31 ise TECL (3x tech), değilse ve RSI(SOXL, 10) < 30 ise SOXL (3x semis) tutulur, (3) Diğer durumlarda TQQQ < SMA(TQQQ, 20) iken SQQQ
   (3x ters) veya BSV (kısa vadeli tahvil) arasında momentumu güçlü olan seçilir'
+- "ozel_kod_nedeni: portfoy_rotasyonu (kaldiracli ETF'ler arasi tahsisat; D4 geregi kaldirac fazina ertelendi)"

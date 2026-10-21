@@ -7,7 +7,7 @@ stop:
 hedef: null
 stop_eklendi: false
 deneme_sayisi_kaynakta: null
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - Referans endeks (XU030/SPY/BTC) gerekli; emtia için endeks tanımsız -> lider kararı (filtre emtiada devre dışı mı?)
 - 'Öncül ralli ''+%8 ila +%25'' aralığı: üst sınır anlamsız (>%25 neden dışlansın?); yalnız >=%8 varsayıldı, lider onayı'
@@ -15,6 +15,7 @@ belirsiz:
 - 'Episodic Pivot bilanço/haber kaynaklı: veri yok, yalnız gap+hacim ile yaklaşıldı'
 - Kısmi kâr/başabaş şema uzantısı
 - Rapordaki PF değeri tavanlanmış görünüyor (birçok satırda birebir 5,80); ölçüm/raporlama tavanı olabilir, PF'ye güvenilmez
+- "T8: ozel_kod true -> false (RVOL kutuphanede, endeks serileri benchmark ile); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 parametreler: {}
 id: R01
 ad: Qullamaggie breakout continuation + episodic pivot

@@ -19,6 +19,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: desen
 parametreler:
   swing_length: 10
 deneme_sayisi_kaynakta: 1
@@ -36,3 +37,4 @@ belirsiz:
 - 'Özel kod mantığı: Otomatik tepe/dip pivot noktalarından (swing highs/lows) çıpalanan dinamik VWAP çizgisi kullanılır; fiyat bu dinamik çıpalı VWAP çizgisini yukarı kırdığında Long açılır, aşağı kırdığında
   kapatılır / short''a geçilir'
 - 'short kuralı var: cross_under(close, dynamic_avwap) olduğunda short pozisyona dönülür'
+- "ozel_kod_nedeni: desen (pivot noktalarina cipalanan dinamik Anchored VWAP)"

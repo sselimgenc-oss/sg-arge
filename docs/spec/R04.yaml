@@ -6,7 +6,7 @@ stop:
 hedef: null
 stop_eklendi: false
 deneme_sayisi_kaynakta: null
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - 'RVOL listede yok: ozel_kod (volume/sma(volume,14))'
 - 1D/HTF_Bias formülü hiçbir raporda tanımlı değil; Voltran raporundaki HTF kuralı varsayıldı (Supertrend(10,2.5)=+1 veya kapanış>=EMA21*0.985)
@@ -14,6 +14,7 @@ belirsiz:
 - Özgün makale seans açılış aralığı (ilk 5 dk) kullanır; rapor 6-bar kırılımı uyarlamış
 - 'Rapor: ''ABD25 PF 1.10, net -%6.2; emtia net -%3.7'' -> kısmi başarı, Sharpe 0.30'
 - 'Gün içi 1H: BIST/ABD/emtia saatlik veri ~730 gün -> en fazla Koşullu'
+- "T8: ozel_kod true -> false (RVOL kutuphanede); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 parametreler: {}
 id: R04
 ad: Stocks in Play (Zarattini) RVOL açılış kırılımı

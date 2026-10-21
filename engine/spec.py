@@ -35,6 +35,21 @@ BASE_NAMES = frozenset({"open", "high", "low", "close", "volume"})
 RUNTIME_NAMES = frozenset({"giris", "giris_fiyati", "giris_stop", "giris_hedef", "bars_since_entry", "endeks_close", "stop_mesafesi", "giris_modu"})
 REQUIRED = ("id", "ad", "kaynak", "tarz", "tf", "gostergeler", "giris", "cikis", "spec_durumu", "belirsiz", "ozel_kod")
 EXPR_FIELDS = ("giris", "cikis")
+EXIT_FIELDS = ("stop", "hedef", "iz_suren", "zaman_stop")  # structured exits: a card may rely on them alone
+OZEL_NEDENLERI = (
+    "bekleyen_emir",       # stop/limit entries, fills inside a bar (engine fills at next open only)
+    "seans_saat",          # exchange/server clock windows, session open/close, spread or margin filters
+    "desen",               # pivot/pattern recognition (double bottom, ABC, zigzag, fractal levels)
+    "durum_makinesi",      # multi-stage state machines
+    "ozel_gosterge",       # indicator not in the library and used by fewer than two translatable cards
+    "cok_enstruman",       # needs other instruments' data (correlation, rotation inputs)
+    "portfoy_rotasyonu",   # allocation between instruments (Composer), leverage phase
+    "tanim_belirsiz",      # rule text does not define a needed formula
+    "renko",               # non-time bars
+    "ml",                  # machine learning / training
+    "tick_veri",           # tick or sub-minute data
+    "durum_bilgisi",       # exit depends on how the entry was triggered
+)
 
 
 @dataclass
@@ -133,12 +148,24 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
         issues.append(Issue("gostergeler_tipi", "gostergeler bir sozluk olmali"))
         gost = {}
     ozel = bool(card.get("ozel_kod"))
+    seen: list[str] = []
     for name, spec in gost.items():
         if not isinstance(spec, dict) or "f" not in spec:
             issues.append(Issue("gosterge_tipi", f"gosterge '{name}' {{f: ...}} sozlugu olmali"))
             continue
-        if spec["f"] not in _ind.REGISTRY:
+        if spec["f"] == _ind.SERI:
+            ifade = spec.get("ifade")
+            try:
+                parsed = _expr.parse(ifade)
+            except (_expr.ExprError, TypeError) as exc:
+                issues.append(Issue("seri_ifade", f"seri '{name}': ifade ayristirilamadi: {exc}"))
+            else:
+                known = set(seen) | BASE_NAMES
+                for bad in sorted(parsed.names - known):
+                    issues.append(Issue("seri_tanimsiz_ad", f"seri '{name}': '{bad}' bu seriden once tanimli degil"))
+        elif spec["f"] not in _ind.REGISTRY:
             issues.append(Issue("tanimsiz_gosterge", f"gosterge '{name}': '{spec['f']}' kutuphanede yok", ciddi=not ozel))
+        seen.append(name)
         if "tf" in spec and not TF_RE.match(str(spec["tf"])):
             issues.append(Issue("gosterge_tf", f"gosterge '{name}': tf gecersiz: {spec['tf']}"))
     defined = set(gost)
@@ -155,11 +182,21 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
                     _check_expression(item, f"{block}.{sub}", defined, gost, issues, runtime=True)
 
     if card.get("spec_durumu") == "tam":
+        has_exit = any(card.get(key) for key in EXIT_FIELDS)
         for key in EXPR_FIELDS:
             value = card.get(key)
             if not isinstance(value, str) or not value.strip():
-                # lider kurali: bos ifade yalniz ozel_kod kartlarda, mantik `belirsiz`'de
+                # lider kurali: bos ifade yalniz ozel_kod kartlarda, mantik `belirsiz`'de;
+                # istisna: cikisi yalniz yapisal stop/hedef/iz_suren/zaman_stop olan kart
+                if key == "cikis" and has_exit:
+                    continue
                 issues.append(Issue("tam_bos_ifade", f"durum 'tam' ama {key} bos", ciddi=not ozel))
+    if ozel and card.get("spec_durumu") in ("tam", "dakikalik"):
+        nedeni = card.get("ozel_kod_nedeni")
+        if nedeni not in OZEL_NEDENLERI:
+            issues.append(Issue("ozel_kod_nedeni", f"ozel_kod kartta gecerli ozel_kod_nedeni yok: {nedeni!r} (gecerli: {', '.join(OZEL_NEDENLERI)})"))
+    if not ozel and card.get("ozel_kod_nedeni"):
+        issues.append(Issue("ozel_kod_nedeni_gereksiz", "ozel_kod: false kartta ozel_kod_nedeni olmamali"))
     if ozel:
         # ozel_kod kartlarda ifade ozel gostergelere (kutuphanede olmayan adlara) baglanabilir;
         # bu adlar bilgi amaclidir. Sozdizimi hatalari ve gecersiz alanlar hata olarak kalir.

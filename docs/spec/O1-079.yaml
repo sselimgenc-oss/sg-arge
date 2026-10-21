@@ -30,7 +30,7 @@ stop:
   deger: 3.0
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   long_term_sma: 50
   short_term_sma: 5
@@ -50,3 +50,4 @@ belirsiz:
 - NinjaTrader sayfasının referans verdiği Eylül 2014 Stocks & Commodities makalesi ('Finding The Golden Triangle' - Charlotte Hudgin) ve thinkorswim (GoldenTriangleLE) incelemesinden kurallar okundu
 - 'Özel kod mantığı: Yükselen 50 günlük SMA üzerinde seyreden hisse, 50 SMA''ya doğru geri çekilip (pullback) oradan yukarı sıçradığında (Golden Triangle desteği), kısa vadeli ortalama ve ortalama üzeri
   hacim teyidiyle Long girilir; 50 SMA altına kapanışta çıkılır'
+- "T8: ozel_kod true -> false (yalniz SMA/hacim); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"

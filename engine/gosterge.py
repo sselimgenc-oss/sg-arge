@@ -16,6 +16,8 @@ volume) and returns a Series or a DataFrame with named columns. Conventions:
 * Trend indicators (``supertrend``, ``pmax``, ``ott``) expose ``dir`` where
   **+1 is bullish and -1 is bearish** (Pine's ``ta.supertrend`` uses the
   opposite sign; cards use +1 = bullish).
+* ``ha: true`` in a card spec computes the indicator on Heikin Ashi candles.
+* ``{f: seri, ifade: "<expression>"}`` defines a derived series from earlier names.
 * ``tf`` in a card spec evaluates the indicator on a higher timeframe and maps
   it back using only the previous *completed* higher-timeframe bar.
 * ``kaydir: k`` lags the result by k bars.
@@ -411,6 +413,81 @@ def pmax(df: pd.DataFrame, src: str = "hl2", ma: str = "ema", n: int = 10, atr_n
     )
 
 
+def heikinashi(df: pd.DataFrame) -> pd.DataFrame:
+    """Heikin Ashi candles (open, high, low, close); ha_open is seeded with (open + close) / 2."""
+    o, h, l, c = (_col(df, name) for name in ("open", "high", "low", "close"))
+    ha_close = (o + h + l + c) / 4
+    ha_open = np.full(len(df), np.nan)
+    closes, opens = ha_close.to_numpy(), o.to_numpy()
+    raw_close = c.to_numpy()
+    for i in range(len(df)):
+        if i == 0:
+            ha_open[i] = (opens[i] + raw_close[i]) / 2
+        else:
+            ha_open[i] = (ha_open[i - 1] + closes[i - 1]) / 2
+    ha_open_s = pd.Series(ha_open, index=df.index)
+    return pd.DataFrame(
+        {
+            "open": ha_open_s,
+            "high": pd.concat([h, ha_open_s, ha_close], axis=1).max(axis=1),
+            "low": pd.concat([l, ha_open_s, ha_close], axis=1).min(axis=1),
+            "close": ha_close,
+        }
+    )
+
+
+def alphatrend(df: pd.DataFrame, n: int = 14, carpan: float = 1.0, momentum: str = "mfi") -> pd.Series:
+    """AlphaTrend (K. Ozbilgic): trailing support/resistance chosen by MFI/RSI >= 50.
+
+    ATR is SMA(true range, n) as in the original script (not Wilder). Pine seeds the
+    recursion with nz()=0; here it is seeded with the first candidate value so the
+    warm-up does not create a fake cross.
+    """
+    tr_sma = true_range(df).rolling(int(n)).mean()
+    up_t = _col(df, "low") - tr_sma * float(carpan)
+    down_t = _col(df, "high") + tr_sma * float(carpan)
+    strength = mfi(df, int(n)) if momentum == "mfi" else rsi(df, "close", int(n))
+    bullish = (strength >= 50).to_numpy()
+    valid = (strength.notna() & tr_sma.notna()).to_numpy()
+    up, down = up_t.to_numpy(), down_t.to_numpy()
+    out = np.full(len(df), np.nan)
+    prev = np.nan
+    for i in range(len(df)):
+        if not valid[i]:
+            continue
+        if bullish[i]:
+            value = prev if (not np.isnan(prev) and up[i] < prev) else up[i]
+        else:
+            value = prev if (not np.isnan(prev) and down[i] > prev) else down[i]
+        out[i] = value
+        prev = value
+    return pd.Series(out, index=df.index)
+
+
+def ut_bot(df: pd.DataFrame, carpan: float = 1.0, n: int = 10) -> pd.Series:
+    """UT Bot ATR trailing stop (HPotter / QuantNomad); ATR is Wilder (Pine ``ta.atr``)."""
+    close = _col(df, "close").to_numpy()
+    loss = float(carpan) * atr(df, n).to_numpy()
+    out = np.full(len(close), np.nan)
+    prev, prev_close = 0.0, np.nan
+    for i in range(len(close)):
+        if np.isnan(loss[i]):
+            prev_close = close[i]
+            continue
+        c, last = close[i], prev_close
+        if c > prev and last > prev:
+            value = max(prev, c - loss[i])
+        elif c < prev and last < prev:
+            value = min(prev, c + loss[i])
+        elif c > prev:
+            value = c - loss[i]
+        else:
+            value = c + loss[i]
+        out[i] = value
+        prev, prev_close = value, c
+    return pd.Series(out, index=df.index)
+
+
 def rvol(df: pd.DataFrame, n: int = 14) -> pd.Series:
     """Relative volume: volume / SMA(volume, n), the current bar included."""
     vol = _col(df, "volume")
@@ -439,6 +516,7 @@ REGISTRY: dict[str, Callable[..., pd.Series | pd.DataFrame]] = {
     "vwap": vwap, "kama": kama, "ichimoku": ichimoku, "supertrend": supertrend, "roc": roc,
     "zscore": zscore, "highest": highest, "lowest": lowest, "ott": ott, "pmax": pmax, "rvol": rvol,
     "stdev": stdev, "var": var, "rrs": rrs, "atr_ratio": atr_ratio,
+    "heikinashi": heikinashi, "alphatrend": alphatrend, "ut_bot": ut_bot,
     "open": _price("open"), "high": _price("high"), "low": _price("low"), "close": _price("close"), "volume": _price("volume"),
 }
 
@@ -449,7 +527,11 @@ COLUMNS: dict[str, tuple[str, ...] | None] = {
     "ichimoku": ("tenkan", "kijun", "span_a", "span_b"), "supertrend": ("line", "dir"),
     "ott": ("ma", "ott", "dir", "long_stop", "short_stop", "up", "dn"),
     "pmax": ("pmax", "ma", "dir", "long_stop", "short_stop"),
+    "heikinashi": ("open", "high", "low", "close"),
 }
+
+# Meta indicator evaluated by build_env, not a function of the frame: {f: seri, ifade: "<expression>"}
+SERI = "seri"
 
 
 # --------------------------------------------------------- multi-timeframe
@@ -499,6 +581,9 @@ def compute(df: pd.DataFrame, spec: Mapping[str, Any], *, benchmarks: Mapping[st
     func = REGISTRY[name]
     tf = params.pop("tf", None)
     lag = int(params.pop("kaydir", 0) or 0)
+    on_ha = bool(params.pop("ha", False))
+    if on_ha:
+        df = heikinashi(df).join(df["volume"]) if "volume" in df.columns else heikinashi(df)
     bench_name = params.pop("benchmark", None)
     if bench_name is not None:
         if not benchmarks or bench_name not in benchmarks:
@@ -521,6 +606,12 @@ def build_env(df: pd.DataFrame, gostergeler: Mapping[str, Mapping[str, Any]], *,
         env["endeks_close"] = _col(benchmarks["endeks"], "close").reindex(df.index, method="ffill")
     for key, spec in gostergeler.items():
         spec = dict(spec)
+        if spec.get("f") == SERI:
+            if set(spec) - {"f", "ifade"}:
+                raise ValueError(f"seri '{key}' supports only 'ifade'")
+            result = _expr.parse(spec["ifade"]).evaluate(env, index=df.index)
+            env[key] = pd.Series(result, index=df.index) if not isinstance(result, pd.Series) else result
+            continue
         if isinstance(spec.get("src"), str) and spec["src"] not in OHLCV and spec["src"] not in _NAMED_SOURCES:
             spec["src"] = source(df, spec["src"], extra=env)
         env[key] = compute(df, spec, benchmarks=benchmarks)

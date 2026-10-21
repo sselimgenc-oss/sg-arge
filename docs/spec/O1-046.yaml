@@ -33,6 +33,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: desen
 parametreler:
   CP: 113
   fractal_window: 227
@@ -59,3 +60,4 @@ belirsiz:
   ve 5 piplik MFE iz süren stop (TGL = 5)'
 - 'short kuralı var: close[113] <= lowest[227](close) ile tanımlanan LOL fraktal desteği aşağı kırıldığında (cross_under(close, LOL)) short açılır (hedef 30 pip, Donchian stop highest[20](high)[1], iz süren
   stop 5 pip)'
+- "ozel_kod_nedeni: desen (113 bar geriden fraktal seviye HIL, saat penceresi 10:00-23:00, pip hedef/iz suren)"

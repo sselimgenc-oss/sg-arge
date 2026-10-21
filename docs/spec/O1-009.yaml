@@ -29,6 +29,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   MovPeriod: 4
   MottX1: 80
@@ -48,3 +49,4 @@ belirsiz:
 - Algo Kütüphanesi MatriksIq C# kodundan (Akın Hünerli) formül ve varsayılan parametreler eksiksiz okundu
 - 'Özel kod mantığı: MOV(C, 4, VAR) ortalamasının, HHV(H, 80) ve LLV(L, 80) üzerine kurulan OTT(2, 1.4) kanalları ile ara çizgilerinden oluşan 5 MOTT bandı ile kesişiminde Al/Sat emri gönderilir'
 - 'short kuralı var: CrossBelow şartı gerçekleştiğinde pozisyon kapatılır / açığa satılır'
+- "ozel_kod_nedeni: tanim_belirsiz (5 MOTT bandinin ayrintili formulu kartta yok)"

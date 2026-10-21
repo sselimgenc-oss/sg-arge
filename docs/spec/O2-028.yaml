@@ -21,6 +21,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 parametreler:
   heat_rsi_len: 10
   heat_threshold: 80
@@ -37,3 +38,4 @@ spec_durumu: tam
 belirsiz:
 - 'Composer.trade topluluk stratejisi sayfasından ve backtest kaydından okundu: SVIX (kısa vadeli ters VIX getirisi) ve XXXX (4x kaldıraçlı endeks) ile KMLM (trend takipçisi) arasında kısa vadeli RSI göstergesine
   göre dinamik anahtarlama yapar'
+- "ozel_kod_nedeni: portfoy_rotasyonu (kaldiracli ETF'ler arasi tahsisat; D4 geregi kaldirac fazina ertelendi)"

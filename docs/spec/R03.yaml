@@ -3,7 +3,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 deneme_sayisi_kaynakta: null
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - 'RRS (benchmark) listede yok: ozel_kod'
 - Referans endeks (XU030/SPY/BTC) gerekli; emtia için endeks tanımsız -> lider kararı (filtre emtiada devre dışı mı?)
@@ -11,6 +11,7 @@ belirsiz:
   -> lider onayı
 - 'Gün içi 1H: BIST/ABD/emtia saatlik veri ~730 gün -> en fazla Koşullu'
 - 'Raporun kendi Sharpe''ı 0.88: hedef altında'
+- "T8: ozel_kod true -> false (RRS kutuphanede); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 parametreler: {}
 id: R03
 ad: RealDayTrading göreceli güç (RRS) 1H momentum

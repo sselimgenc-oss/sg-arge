@@ -123,6 +123,28 @@ def test_non_tam_findings_do_not_fail_the_run(tmp_path):
     assert spec.main([str(cards)]) == 0
 
 
+def test_seri_gosterge_validation(tmp_path):
+    # note: the YAML writer sorts keys, so "a1" is read before "ema20" and "z1" after it
+    ok = {**GOOD["gostergeler"], "z1": {"f": "seri", "ifade": "close > ema20"}}
+    assert not {"seri_ifade", "seri_tanimsiz_ad"} & codes(result_for(tmp_path, gostergeler=ok))
+    early = {**GOOD["gostergeler"], "a1": {"f": "seri", "ifade": "close > ema20"}}
+    assert "seri_tanimsiz_ad" in codes(result_for(tmp_path, gostergeler=early))
+    assert "seri_ifade" in codes(result_for(tmp_path, gostergeler={**GOOD["gostergeler"], "s2": {"f": "seri", "ifade": "close ** 2"}}))
+
+
+def test_ozel_kod_nedeni_required_and_validated(tmp_path):
+    assert "ozel_kod_nedeni" in codes(result_for(tmp_path, ozel_kod=True))
+    assert "ozel_kod_nedeni" in codes(result_for(tmp_path, ozel_kod=True, ozel_kod_nedeni="baska"))
+    assert "ozel_kod_nedeni" not in codes(result_for(tmp_path, ozel_kod=True, ozel_kod_nedeni="bekleyen_emir"))
+    assert "ozel_kod_nedeni_gereksiz" in codes(result_for(tmp_path, ozel_kod=False, ozel_kod_nedeni="bekleyen_emir"))
+
+
+def test_tam_card_may_exit_only_through_structured_stop(tmp_path):
+    only_stop = result_for(tmp_path, cikis=None, iz_suren={"tip": "atr_zirve", "n": 14, "carpan": 2.0})
+    assert "tam_bos_ifade" not in codes(only_stop)
+    assert "tam_bos_ifade" in codes(result_for(tmp_path, cikis=None))
+
+
 REPO_SPEC = Path(__file__).resolve().parents[1] / "docs" / "spec"
 
 
@@ -134,12 +156,12 @@ def test_repository_cards_load_and_report_renders():
     assert "Durum dagilimi" in report and "Kutuphanede olmayan gosterge adlari" in report
 
 
-def _synthetic_ohlcv(periods: int = 3000, seed: int = 1):
+def _synthetic_ohlcv(periods: int = 3000, seed: int = 1, freq: str = "h"):
     import numpy as np
     import pandas as pd
 
     rng = np.random.default_rng(seed)
-    index = pd.date_range("2022-01-03", periods=periods, freq="h")
+    index = pd.bdate_range("2012-01-02", periods=periods) if freq == "B" else pd.date_range("2022-01-03", periods=periods, freq=freq)
     close = 100 + np.cumsum(rng.normal(0, 0.5, periods))
     return pd.DataFrame(
         {
@@ -153,22 +175,27 @@ def _synthetic_ohlcv(periods: int = 3000, seed: int = 1):
     )
 
 
+def _frame_for(card_tf: str):
+    """Daily history for swing cards, weekly for 1W, hourly for intraday cards."""
+    if card_tf == "1W":
+        return _synthetic_ohlcv(2600, freq="B").resample("W").agg(
+            {"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"}
+        ).dropna()
+    if card_tf in ("1D", "1M"):
+        return _synthetic_ohlcv(2600, freq="B")
+    return _synthetic_ohlcv()
+
+
 @pytest.mark.skipif(not REPO_SPEC.is_dir(), reason="docs/spec not present")
 def test_repository_cards_evaluate_on_synthetic_data():
     """Every non-ozel `tam`/`dakikalik` card must not only parse but run: indicators
-    compute and giris/cikis evaluate to boolean Series on synthetic OHLCV."""
+    compute, none is all-NaN (a NaN trap would silence the strategy), and giris/cikis
+    evaluate to boolean Series on synthetic OHLCV of a suitable length."""
+    import numpy as np
     import pandas as pd
 
     from engine import expr, gosterge
 
-    frame = _synthetic_ohlcv()
-    benchmarks = {"endeks": _synthetic_ohlcv(seed=2)}
-    runtime = {
-        "giris": pd.Series(100.0, index=frame.index), "giris_fiyati": pd.Series(100.0, index=frame.index),
-        "giris_stop": pd.Series(98.0, index=frame.index), "giris_hedef": pd.Series(104.0, index=frame.index),
-        "bars_since_entry": pd.Series(3.0, index=frame.index), "stop_mesafesi": pd.Series(2.0, index=frame.index),
-        "giris_modu": "A",
-    }
     failures = []
     checked = 0
     for result in spec.validate_directory(REPO_SPEC):
@@ -177,8 +204,21 @@ def test_repository_cards_evaluate_on_synthetic_data():
             continue
         if not (card.get("giris") or card.get("cikis")):
             continue
+        frame = _frame_for(card["tf"])
+        benchmarks = {"endeks": _synthetic_ohlcv(len(frame), seed=2, freq="B" if card["tf"] in ("1D", "1M") else "h")}
+        benchmarks["endeks"].index = frame.index
+        runtime = {
+            "giris": pd.Series(100.0, index=frame.index), "giris_fiyati": pd.Series(100.0, index=frame.index),
+            "giris_stop": pd.Series(98.0, index=frame.index), "giris_hedef": pd.Series(104.0, index=frame.index),
+            "bars_since_entry": pd.Series(3.0, index=frame.index), "stop_mesafesi": pd.Series(2.0, index=frame.index),
+            "giris_modu": "A",
+        }
         try:
             env = gosterge.build_env(frame, card["gostergeler"], benchmarks=benchmarks)
+            for name in card["gostergeler"]:
+                values = env[name]
+                frame_ok = values.notna().to_numpy().any() if isinstance(values, (pd.Series, pd.DataFrame)) else True
+                assert frame_ok, f"gosterge '{name}' tamamen NaN (kart kendini sessizlestirir)"
             env.update(runtime)
             for key in ("giris", "cikis"):
                 if card.get(key):

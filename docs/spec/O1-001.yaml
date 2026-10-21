@@ -30,7 +30,7 @@ rapor:
   wr: null
   maliyet_dahil: belirtilmemiş
 spec_durumu: tam
-ozel_kod: true
+ozel_kod: false
 belirsiz:
 - 'AlphaTrend formülü sayfadan okunamadı: Kıvanç Özbilgiç orijinali (ATR*coeff bantları, MFI/RSI(AP)>=50 yönlü) ve varsayılan coeff=1, AP=14 (B1-002 kaydı)
   varsayıldı -> lider onayı'
@@ -38,4 +38,5 @@ belirsiz:
 - 'Long: AlphaTrend''in 2 bar öncesini yukarı kesmesi; kısa taraf yok sayıldı'
 - Backtest sonucu yayımlanmamış (yalnız popülerlik)
 - Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+- "T8: ozel_kod true -> false (alphatrend kutuphaneye eklendi); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
 bias_varsayim: false

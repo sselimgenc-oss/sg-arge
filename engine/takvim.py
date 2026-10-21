@@ -48,3 +48,9 @@ def ay_islem_gunu_sondan(index: pd.DatetimeIndex, k: int) -> pd.Series:
 def haftanin_gunu(index: pd.DatetimeIndex) -> pd.Series:
     """Weekday as int, Monday=0 .. Sunday=6."""
     return pd.Series(_dates(index).weekday.to_numpy(), index=index)
+
+
+def yeni_gun(index: pd.DatetimeIndex) -> pd.Series:
+    """True on the first bar of each calendar date, including the very first bar of the data."""
+    dates = pd.Series(_dates(index), index=index)
+    return (dates != dates.shift(1)).astype(bool)

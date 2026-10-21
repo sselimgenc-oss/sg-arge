@@ -20,6 +20,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 parametreler:
   ema.n: 100
   rr_target: 2.0
@@ -38,4 +39,5 @@ belirsiz:
   Stop Loss konur; emir tetiklenmeden daha düşük yeni bir kırmızı mum kapanırsa Buy Stop ve SL yeni kırmızı mumun high/low seviyelerine taşınır; TP stop mesafesinin 2 katıdır (2R, 1:2 veya 1:3 R:R)'
 - Mumun high/low seviyesinin kaç pip üstüne/altına buffer bırakıldığı ve 'güçlü trend' filtresinin ek mekanik koşulu metinde belirtilmemiştir
 - 'short kuralı var: Fiyat EMA(100) altındayken yeşil geri çekilme mumunun (close > open) düşüğünün altına Sell Stop, yükseğinin üstüne SL ve 2R TP konur'
+- "ozel_kod_nedeni: bekleyen_emir (kirmizi mum yuksegine Buy Stop, her yeni kirmizi mumda emir ve SL tasima)"
 kart_yazari: argon

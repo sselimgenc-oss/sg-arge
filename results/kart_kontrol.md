@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
-Kart sayisi: 203 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 112
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **26**; ayrica `dakikalik` (yalniz kripto testi) hazir: **7**
+Kart sayisi: 203 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 110
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **49**; ayrica `dakikalik` (yalniz kripto testi) hazir: **7**
 
 
 ## Durum dagilimi
@@ -25,9 +25,7 @@ Yok.
 
 | gosterge | kart sayisi | kartlar |
 |---|---|---|
-| alphatrend | 1 | O1-001 |
 | chandelier | 1 | A3-002a |
-| heikinashi | 1 | A3-010a |
 | zlsma | 1 | A3-002a |
 
 ## Ayristirilamayan giris/cikis ifadeleri
@@ -47,29 +45,22 @@ Toplam: 7 (durum `tam` olanlar once)
 | ad | kullanim |
 |---|---|
 | major_trend_bull | 6 |
-| ha_close | 4 |
 | mott_b1 | 4 |
 | mott_b2 | 4 |
 | mott_b3 | 4 |
 | mott_b4 | 4 |
 | mott_b5 | 4 |
 | close_tqqq | 4 |
-| xATRTrailingStop | 4 |
 | orb_high | 3 |
 | fisher_rsi | 3 |
-| tdi_green | 3 |
-| tdi_red | 3 |
+| ha_close | 2 |
 | ha_open | 2 |
 | sar | 2 |
 | fastd | 2 |
 | fastk | 2 |
-| alphatrend | 2 |
 | mov_var | 2 |
 | ott_opt2 | 2 |
 | session_time | 2 |
-| pvt1 | 2 |
-| pvt2 | 2 |
-| willr3 | 2 |
 | most | 2 |
 | strend | 2 |
 | sott1_bull | 2 |
@@ -85,14 +76,12 @@ Toplam: 7 (durum `tam` olanlar once)
 | tsi_val | 2 |
 | hma60 | 2 |
 | bull_power | 2 |
-| box_bot | 2 |
 | candle_color | 2 |
 | daily_open | 2 |
 | server_time | 2 |
 | linreg_val | 2 |
 | dynamic_avwap | 2 |
 | lorentzian_skor | 2 |
-| ml_skor | 2 |
 | InpEntryHour | 1 |
 | InpEntryWindowMin | 1 |
 | InpMaxSpreadPts | 1 |
@@ -133,8 +122,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | stosk_ott | 1 |
 | ott_llv | 1 |
 | stosk_ott_sat | 1 |
-| di | 1 |
-| de | 1 |
 | ott2_bull | 1 |
 | ott3_bull | 1 |
 | stoc1_bull | 1 |
@@ -172,7 +159,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | wae_explosion | 1 |
 | wae_trend_up | 1 |
 | wae_trend_down | 1 |
-| box_top | 1 |
 | cr3 | 1 |
 | im2 | 1 |
 | lr25 | 1 |
@@ -183,14 +169,13 @@ Toplam: 7 (durum `tam` olanlar once)
 | cam_r3 | 1 |
 | cam_s4 | 1 |
 | low_ref | 1 |
-| entry_price | 1 |
 | blue | 1 |
 | pink | 1 |
 | pullback_confirmed | 1 |
 | trendline_breakout | 1 |
 | previous_swing_high | 1 |
-| green | 1 |
-| ha_candle | 1 |
+| tdi_green | 1 |
+| tdi_red | 1 |
 | avg_vol_slot | 1 |
 | tick_vol | 1 |
 | burst_zscore | 1 |
@@ -201,13 +186,10 @@ Toplam: 7 (durum `tam` olanlar once)
 | risk_on_kmlm | 1 |
 | risk_off_kmlm | 1 |
 | sqz_off | 1 |
-| trailing_atr_stop | 1 |
 | orb_low | 1 |
 | order_block_boga | 1 |
-| weekly_trend | 1 |
-| confluence_puan | 1 |
 
 ## Diger kartlarda sorun sayisi
 
-`tam` olmayan 78 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
+`tam` olmayan 92 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
 
