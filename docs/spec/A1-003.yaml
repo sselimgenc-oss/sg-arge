@@ -1,0 +1,67 @@
+id: A1-003
+ad: CAC40 Trend Following on 10-sec Timeframe
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/cac40-trend-following-10sec
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 10s
+mtf: 10m
+tf_varsayim: false
+yazar_piyasasi: Endeks (CAC40)
+gostergeler:
+  atr1:
+    f: atr
+    n: 1
+  atr6:
+    f: atr
+    n: 6
+  hh5:
+    f: highest
+    src: high
+    n: 5
+    kaydir: 1
+  st_10s:
+    f: supertrend
+    n: 4
+    carpan: 4
+  st_1m:
+    f: supertrend
+    n: 10
+    carpan: 3
+    tf: 1m
+ozel_kod: true
+giris: cross_over(atr1, atr6) and close < hh5 - 6 and close >= st_10s
+cikis: close < st_10s
+stop:
+  tip: puan
+  deger: 35
+hedef:
+  tip: puan
+  deger: 80
+stop_eklendi: false
+parametreler:
+  capital: 1000
+  stop_loss: 35
+  target_profit: 80
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 113
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'ProRealCode sayfasina dogrudan erisim engellendi (erisim_engeli: true); kodun bir kismi arama motoru indeksinden kurtarildi (Yazar: WE ARE SOCIETY, 1 Nisan 2025).'
+- 'Kurtarilan kod parcalari: timeframe (10 second), DEFPARAM cumulateOrders = False, capital = 1000; 10s''de supertrend[4,4] <= close ise trend10s = 1; 1m''de supertrend[3,10] <= close ise trend1m = 1;
+  ayrica 3m (trend3m) ve 10m supertrend[3,...] filtreleri vardir.'
+- 'Giris kosulu: if journee = 1 and (AverageTrueRange[1](close) crosses over AverageTrueRange[6](close)) and (close < highest[5][1] - 6) and trend3m = 1 ... then BUY n contract at market; set target profit
+  80; set stop loss 35.'
+- Ayrica Pazartesi/saat bazli erken cikis kural (dayofweek = 1 and longonmarket and (close - tradeprice) >= -1) ve sellshort kurallari mevcuttur ancak journee ve ust zaman dilimi kosullarinin tamami sayfa
+  engeli nedeniyle okunamadi.
+- 'lider: 10 saniyelik bar; tick/saniye verisi yok -> Dogrulanamaz (veri yok)'

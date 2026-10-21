@@ -1,0 +1,39 @@
+id: P3-020
+ad: RSI Strategy [PrimeAutomation]
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/RiQzLLoh-RSI-Strategy-PrimeAutomation/
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemis
+gostergeler:
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+ozel_kod: true
+giris: cross_over(rsi14, 30)
+cikis: cross_under(rsi14, 70)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  rsi14.n: 14
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'TradingView sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
+- GitHub, Scribd ve TradeSearcher aynalarinda PrimeAutomation tarafindan yayimlanan RiQzLLoh scripti bulunamadi; RSI periyodu, esik degerleri ve cikis/stop parametreleri dogrulanamadi.

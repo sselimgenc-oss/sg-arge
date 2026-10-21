@@ -1,0 +1,52 @@
+id: A6-015
+ad: Double Bottom Country ETF Trading
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://quantpedia.com/technical-analysis-report-methodology-double-bottom-country-trading-strategy/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD / Ulke ETF (24 iShares MSCI + SPY)
+gostergeler: {}
+ozel_kod: true
+giris: close <= close[1]
+cikis: 'false'
+stop:
+  tip: yuzde
+  deger: 3
+hedef:
+  tip: yuzde
+  deger: 6
+iz_suren:
+  tip: yuzde_zirve
+  deger: 3
+stop_eklendi: false
+parametreler:
+  rolling_period: 30
+  min_distance: 30
+  max_distance: 1000
+  max_percentage: 0.02
+  stop_loss_pct: 3.0
+  take_profit_pct: 6.0
+  max_positions_opened: 4
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: 0.468
+  getiri: 7.786
+  mdd: 30.4
+  islem: 204
+  wr: 53
+  maliyet_dahil: true
+spec_durumu: tam
+belirsiz:
+- Quantpedia makalesindeki (Cyril Dujava & Filip Kalus) tam QuantConnect Python kodundan cikarilmistir; yalniz long calisir (trade_long = True, trade_short = False).
+- 'Adim adim ikili dip (Double Bottom) algoritmasi (ozel_kod: true): 1) 24 ulke ETF''i (EWA, EWO, EWK, EWZ, EWC, FXI, EWQ, EWG, EWH, EWI, EWJ, EWM, EWW, EWN, EWS, EZA, EWY, EWP, EWD, EWL, EWT, THD, EWU,
+  SPY) gunluk kapanislarla izlenir. 2) Ayda bir kez son 1000 gunluk veri uzerinde rolling_period = 30 (toplam 61 gunluk merkezli pencere, dolayisiyla bir yerel dip en az 30 gun sonra teyit edilir) ve aralarinda
+  en az 30 takvim gunu mesafe olan yerel destek (Support) dipleri bulunur. 3) Aralarindaki mesafe 30 ile 1000 gun arasinda olan, dikey fiyat farki abs(Support_j / Support_i - 1) <= 0.02 (%2) olan ve aradaki
+  tum destek noktalarinin daha yuksek dip seviyesinden (higher_bottom) asagi dusmedigi ciftler ''Double_Bottom'' olarak isaretlenir. 4) Son Double_Bottom olustuktan bugune kadar fiyat bu seviyenin altina
+  hic inmemisse, o fiyata (limit_price = Double_Bottom) limit alim emri konur (en fazla 4 eszamanli acik pozisyon). 5) Emir gerceklestiginde %6 kar al (BUY_TP) ve %3 stop-loss (BUY_SL) konur; fiyat giris
+  limit fiyatinin uzerine ciktikca stop-loss yeni zirvenin %3 altina (Price * 0.97) yukari tasinir.'

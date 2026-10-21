@@ -1,0 +1,41 @@
+id: P3-017
+ad: Kirk65 UTBot Strategy Fixed
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/cbPurhXs-Kirk65-UTBot-Strategy-Fixed/
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Kripto
+gostergeler:
+  atr10:
+    f: atr
+    n: 10
+ozel_kod: true
+giris: close > atr10
+cikis: close < atr10
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  key_value: 1
+  atr_period: 10
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'TradingView sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
+- 'GitHub, Medium ve diger aynalarda UT Bot Alerts / Strategy (QuantNomad / HPotter tabanli) incelendi: xATR = atr(atr_period), nLoss = key_value * xATR iz suren stop cizgisi (xATRTrailingStop) uzerine
+  kurulu; close bu cizgiyi yukari kestiginde long giris, asagi kestiginde cikis/short yapilir.'
+- Kirk65 tarafindan yapilan Fixed surumundeki spesifik varsayilan input degerleri (key_value, atr_period, varsa ek filtre veya TP/SL) kaynak sayfadan okunamadi.

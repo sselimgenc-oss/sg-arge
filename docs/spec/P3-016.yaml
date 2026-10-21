@@ -1,0 +1,50 @@
+id: P3-016
+ad: 2-Period RSI strategy (with filter)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/iHSFQFog/
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemis
+gostergeler:
+  sma200:
+    f: sma
+    src: close
+    n: 200
+  sma5:
+    f: sma
+    src: close
+    n: 5
+  rsi2:
+    f: rsi
+    src: close
+    n: 2
+ozel_kod: true
+giris: close > sma200 and rsi2 < 10
+cikis: close > sma5 or rsi2 > 70
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  sma200.n: 200
+  sma5.n: 5
+  rsi2.n: 2
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'TradingView sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
+- Scribd, TradeSearcher ve GitHub aynalari tarandi; iHSFQFog kodlu spesifik script bulunamadi. Standart Larry Connors 2-periyot RSI + trend filtresi (SMA200/EMA200 uzerinde RSI(2) < 10 giris, SMA(5) uzeri
+  kapanis veya RSI(2) > 70 cikis) referans olarak yazildi; kaynak scriptteki kesin filtre ve esik degerleri dogrulanamadi.
