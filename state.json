@@ -68,7 +68,7 @@
       "id": "T7",
       "owner": "claude-moderator",
       "title": "Kart sozdizimi duzeltme: kart_kontrol.md'deki tam kart hatalari (kaynak okuma yok)",
-      "status": "PR acik: tam kartlarda 0 hata, 41 kart duzeltildi, lider incelemesi bekleniyor",
+      "status": "PR #26 guncel: 5 yeni kart da duzeltildi, tam hatasi 0, 87 test yesil; lider incelemesi bekliyor",
       "spec": "Issue #1 GOREV -> Sonnet T7"
     }
   ],

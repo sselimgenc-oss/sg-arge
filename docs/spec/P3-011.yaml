@@ -20,11 +20,11 @@ gostergeler:
     src: close
     fast: 12
     slow: 26
-    sig: 9
+    signal: 9
   atr14:
     f: atr
     n: 14
-giris: close > ema200 and cross_over(macd_ind.line, macd_ind.signal)
+giris: close > ema200 and cross_over(macd_ind.macd, macd_ind.signal)
 cikis: close < trailing_atr_stop
 stop:
   tip: atr

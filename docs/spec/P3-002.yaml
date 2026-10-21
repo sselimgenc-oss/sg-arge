@@ -20,6 +20,7 @@ cikis: cross_under(close, ema20)
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: false
 parametreler:
   ema.n: 20
 deneme_sayisi_kaynakta: 1
