@@ -1,0 +1,65 @@
+id: A3-003
+ad: Sector-Momentum-Pullback (NSE, RSI pullback + ATR iz süren stop)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/gaurav3331/Sector-Momentum-Pullback-Strategy-NSE-Backtest
+  sayfa: A3-003
+tarz: swing
+tf: 1D
+mtf: 1W
+tf_varsayim: false
+yazar_piyasasi: NSE hisse (Hindistan)
+gostergeler:
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+  rsi14_hafta:
+    f: rsi
+    src: close
+    n: 14
+    tf: 1W
+  rsi14_ay:
+    f: rsi
+    src: close
+    n: 14
+    tf: 1M
+  sektor_aylik_rsi:
+    f: rsi
+    src: endeks_close
+    n: 14
+    tf: 1M
+  atr14:
+    f: atr
+    n: 14
+giris: sektor_aylik_rsi > 55 and rsi14_ay > 60 and rsi14_hafta > 58 and cross_over(rsi14, 50)
+cikis: 'iz_suren: en yüksek kapanış - 4*ATR14'
+stop:
+  tip: atr
+  n: 14
+  carpan: 4
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 2.43
+  sharpe: 0.9
+  getiri: CAGR %21.8 (Nifty %14.7)
+  mdd: -%47.8 (özet) / -%39.9
+  islem: 1069
+  wr: '%47.5'
+  maliyet_dahil: hayır (cost=0.0)
+spec_durumu: tam
+ozel_kod: true
+belirsiz:
+- 'Sektör endeksi gerekli: BIST sektör endeksleri / ABD sektör ETF''leri / kripto-emtia için tanımsız; kaynak yoksa piyasa endeksi (README: Nifty 50) kullanır
+  -> lider kararı'
+- 'Aylık tf: şema 1M tf desteği gerekir'
+- Maliyetsiz (cost=0.0), hayatta kalma yanlılığı, örneklem içi parametreler (yazarın kendi uyarısı); MDD -%40..-%48
+- Pozisyon boyutu/sıralama (60g momentum) A6 gereği yok sayılır
+iz_suren:
+  tip: atr_kapanis_zirve
+  n: 14
+  carpan: 4
+bias_varsayim: false

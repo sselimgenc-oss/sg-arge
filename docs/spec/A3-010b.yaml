@@ -1,0 +1,53 @@
+id: A3-010b
+ad: Freqtrade Strategy002
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/OnChainVibe/freqtrade-strategies
+  sayfa: A3-010
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler:
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+  bb:
+    f: bb
+    src: typical
+    n: 20
+    carpan: 2.0
+giris: rsi14 < 30 and stoch_slowk < 20 and bb_typical_alt > close and cdl_hammer == 100
+cikis: sar > close and fisher_rsi > 0.3
+stop:
+  tip: yuzde
+  deger: 10
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: ort. kâr %2.67
+  mdd: '-'
+  islem: 158
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: dakikalik
+ozel_kod: true
+belirsiz:
+- '5m zaman dilimi: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- 'Zaman bazlı ROI tablosu (roi_tablosu) ve sabit %10 stop şemada yok: şema uzantısı'
+- 'Test penceresi ~1 ay (2017-11/2018-01), maliyet yok: kanıt değeri çok düşük'
+- Fork içeriği resmi depodakiyle karşılaştırılmadı; kural resmi depo koduna dayanıyor
+- 'SAR, Fisher RSI, CDLHAMMER (TA-Lib çekiç mum), Stoch(slowk) listede yok/eksik: ozel_kod'
+- 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy002.py'
+roi_tablosu:
+  0: 0.05
+  20: 0.04
+  30: 0.03
+  60: 0.01
+bias_varsayim: false

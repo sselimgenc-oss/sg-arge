@@ -1,0 +1,41 @@
+id: A3-002h
+ad: geraked NWERSIASF
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/geraked/tradingview
+  sayfa: A3-002
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: USDJPY
+gostergeler:
+  rsi5:
+    f: rsi
+    src: close
+    n: 5
+    ma: rma
+giris: low[1] < nw_alt[1] and close > open and close < nw_alt + 0.5*(nw_ust - nw_alt) and rsi5[1] < 30
+cikis: 'stop: low - 0.5*SMA(TR,14) ; hedef: giris + 1.5*(giris - stop)'
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.327
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 97
+  wr: '%50.52'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: dakikalik
+ozel_kod: true
+belirsiz:
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- 'Nadaraya-Watson zarfı (h=8, mult=3, 499 bar MAE) listede yok: ozel_kod'
+- 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/NWERSIASF.pine'
+- Yazarın test penceresi çok kısa (2023-08-15/10-20), maliyet/kayma belirtilmemiş
+- Kaynak long/short; temel mod long-only
+bias_varsayim: false

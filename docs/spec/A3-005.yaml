@@ -1,0 +1,37 @@
+id: A3-005
+ad: Indice-Trading-Strategy (EMA200 + range filtresi, Pine)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/junaid-mahmood/Indice-Trading-Strategy
+  sayfa: A3-005
+tarz: day
+tf: 45m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks (S&P 500)
+gostergeler:
+  ema200:
+    f: ema
+    src: close
+    n: 200
+giris: close ema200 yönünde and range_filtre
+cikis: stop %, hedef % (değerler README'de yok)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: '%12.55'
+  mdd: '%4.87'
+  islem: null
+  wr: '%69.81'
+  maliyet_dahil: evet, %0.075 komisyon
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Range filtresi parametreleri (Swing Source/Period, aralık çarpanı) ve stop/TP yüzdeleri README'de yok; Pine dosyası yolu bilinmiyor -> eksik
+- 'İşlem sayısı ve PF yok; 45 dakika: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+bias_varsayim: false

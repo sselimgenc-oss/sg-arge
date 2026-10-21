@@ -1,0 +1,37 @@
+id: O1-027
+ad: PMax Explorer STRATEGY & SCREENER
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/nHGK4Qtp/
+  sayfa: O1-027
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Çoklu (20 sembol)
+gostergeler:
+  pmax:
+    f: pmax
+giris: PMax al dönüşü (onaylı reversal)
+cikis: PMax sat dönüşü
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Backtest metriği yok / yazar sonucu (yazarın bildirimi, doğrulanmamış)
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+- PMax parametreleri (MA tipi/uzunluk, ATR çarpanı) xlsx'te yok; P03/P04'teki PMax(10,2.7) başka strateji, varsayılmadı
+- 'Tür/zaman dilimi belirtilmemiş: 1D varsayıldı'
+bias_varsayim: false

@@ -1,0 +1,34 @@
+id: O1-031
+ad: Trendline Breaks with Multi Fibonacci Supertrend Strategy (TMFS)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/aVzNdTMg-Trendline-Breaks-with-Multi-Fibonacci-Supertrend-Strategy
+  sayfa: O1-031
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: belirtilmemiş
+gostergeler: {}
+giris: trend_cizgisi_kirilimi and cok_fibonacci_supertrend_uyumu
+cikis: TP/SL (yüzde, ATR veya RR), isteğe bağlı iz süren TP
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.924
+  sharpe: null
+  getiri: +%1,517
+  mdd: '-'
+  islem: null
+  wr: '>%35 (yazar: ''win rate exceeding 35%'')'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- 'Satış/pazarlama sayfası: enstrüman, dönem, işlem sayısı, maliyet yok'
+- 'LuxAlgo Trendlines with Breaks + Multi Fibonacci Supertrend: ozel_kod'
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+bias_varsayim: false

@@ -1,0 +1,35 @@
+id: O1-030
+ad: Uhl MA System - Strategy Analysis
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/4S9Yz3DB-Uhl-MA-System-Strategy-Analysis/
+  sayfa: O1-030
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex/Kripto/ABD hisse
+gostergeler: {}
+giris: cross_over(cts, cma)
+cikis: cross_under(cts, cma)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.834
+  sharpe: null
+  getiri: EURUSD $0.08 / BTCUSD $4371.57 / AMD $16.09 / AAPL -$28.17
+  mdd: '-'
+  islem: 99
+  wr: '%35.35 / %32.98 / %29.47 / %28.09'
+  maliyet_dahil: hayır (spread yok)
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+- CMA/CTS (Uhl) formülleri xlsx'te yok (length 100)
+- Maliyetsiz; AAPL'de PF 0.894, net negatif; yazar sonucu ilgi çekici bulmuyor
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+bias_varsayim: false

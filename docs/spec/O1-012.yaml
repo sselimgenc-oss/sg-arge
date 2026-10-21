@@ -1,0 +1,34 @@
+id: O1-012
+ad: Yükselen Formasyon Stratejisi
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Yukselen-Formasyon-Stratejisi
+  sayfa: O1-012
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: BIST/VİOP/Kripto
+gostergeler: {}
+giris: formasyon onayı (ikili/üçlü dip, yükselen üçgen, bayrak)
+cikis: (yarı hedef - onay)/onay*100 kâr al; zarar durdur
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: gizli
+ozel_kod: true
+belirsiz:
+- 'Sayfada açıkça: ''Bu stratejide backtest yapılamaz.'' Yalnız Matriks deneme ortamında test edilebilir'
+- 'Formasyon tanıma Matriks ''olaylar'' modülü: dışarıda yeniden üretilemez -> Doğrulanamaz (spesifikasyon yok)'
+- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+bias_varsayim: false

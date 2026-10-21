@@ -1,0 +1,36 @@
+id: O1-035
+ad: ORB Heikin Ashi SPY 5min Correlation Strategy
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/QpJvYDzb-ORB-Heikin-Ashi-SPY-5min-Correlation
+  sayfa: O1-035
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD
+gostergeler: {}
+giris: açılış aralığı yukarı kırılımı and HA yönü yukarı and rvol > eşik
+cikis: belirtilmemiş
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Backtest metriği yok / yazar sonucu (yazarın bildirimi, doğrulanmamış)
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+- Açılış aralığı süresi, RVOL eşiği, çıkış kuralı belirtilmemiş
+- Long+short; yalnız long kolu
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+bias_varsayim: false

@@ -1,0 +1,36 @@
+id: A3-002g
+ad: geraked MLCEL_MACD
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/geraked/tradingview
+  sayfa: A3-002
+tarz: day
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: EURUSD
+gostergeler: {}
+giris: mlcel_yeni_al_sinyali and macd_100_200_50_boga
+cikis: 'stop: lowest(low,7) ; hedef: giris + 3*(giris - stop)'
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 2.101
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 47
+  wr: '%51.0'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: tam
+ozel_kod: true
+belirsiz:
+- 'MLCEL (Lorentzian benzeri ML tahmini, 351 satır Pine) + MACD(100,200,50): ozel_kod, elle port'
+- Sadece 47 işlem
+- 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/MLCEL_MACD.pine'
+- Yazarın test penceresi çok kısa (2022-06-16/2023-09-21), maliyet/kayma belirtilmemiş
+- Kaynak long/short; temel mod long-only
+bias_varsayim: false

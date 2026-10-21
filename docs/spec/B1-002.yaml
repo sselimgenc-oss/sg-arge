@@ -1,0 +1,38 @@
+id: B1-002
+ad: AlphaTrend Strategy (TradingView, Kıvanç Özbilgiç)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/3wdQu7P3-AlphaTrend-Strategy
+  sayfa: B1-002
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTCUSDT günlük örnek)
+gostergeler:
+  alphatrend:
+    f: alphatrend
+    n: 14
+    carpan: 1.0
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 41
+  wr: null
+  maliyet_dahil: evet, %0.1 komisyon + 100 tick kayma
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Giriş/çıkış kuralı xlsx'te belirtilmemiş; O1-001'deki 'cross(AlphaTrend, AlphaTrend[2])' aynı gösterge için varsayılabilir -> lider kararı
+- Varsayılan 14/1 (coeff=1, AP=14) kayıtta; AlphaTrend listede yok
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+bias_varsayim: false

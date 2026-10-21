@@ -1,0 +1,35 @@
+id: B2-001
+ad: Opening-Range Breakout (TradingView, vadeli)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://pl.tradingview.com/script/8vjWAdLN-Opening-Range-Breakout/
+  sayfa: B2-001
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli
+gostergeler: {}
+giris: stop_buy(aralik_ust) ; aralik_genisligi >= %0.35
+cikis: 'stop: aralığın %50''si ; hedef R/R 1.1 ; seans sonu kapanış'
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.178
+  sharpe: null
+  getiri: $154.141,18 toplam
+  mdd: $18.624,36
+  islem: null
+  wr: '%50.91'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Açılış aralığı süresi/saati belirtilmemiş; kural kodda, sayfa okunamadı
+- Yazar varsayılan tarih aralığını zayıf buluyor, 'Entire History' öneriyor
+- 'Long+short; 1-5 dk: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+bias_varsayim: false

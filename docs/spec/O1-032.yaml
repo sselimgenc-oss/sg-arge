@@ -1,0 +1,35 @@
+id: O1-032
+ad: Scalping Support Resistance Strategy
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/gp332Dao-Scalping-Support-Resistance-Strategy
+  sayfa: O1-032
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTC)
+gostergeler: {}
+giris: destek/direnç çizgisinin kırılımı ; çizgi = (H+L+C)/3'ün minimumu
+cikis: girdi olarak verilen TP ve SL yüzdeleri
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Backtest metriği yok / yazar sonucu (yazarın bildirimi, doğrulanmamış)
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+- TP/SL yüzde değerleri ve zaman dilimi belirtilmemiş
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+bias_varsayim: false

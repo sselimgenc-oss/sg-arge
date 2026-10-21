@@ -1,0 +1,33 @@
+id: A3-012
+ad: freqtrade/freqtrade-strategies (resmi örnek depo)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/freqtrade/freqtrade-strategies
+  sayfa: A3-012
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Toplu depo (onlarca strateji), kayıt yalnız popülerlik ölçütü; Strategy001-005 A3-010/A3-011 kartlarında; diğerleri tek tek incelenmedi
+- 'Kapsam kararı lider: hepsi mi, seçmeli mi'
+bias_varsayim: false

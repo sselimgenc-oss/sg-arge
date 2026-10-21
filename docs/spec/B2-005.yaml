@@ -1,0 +1,35 @@
+id: B2-005
+ad: Athena Momentum Squeeze - Short, Lean, and Mean
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://in.tradingview.com/script/Oy4huVQ2-Athena-Momentum-Squeeze-Short-Lean-an
+  sayfa: B2-005
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli (MNQ)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 3.382
+  sharpe: null
+  getiri: null
+  mdd: $123
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Giriş/çıkış kuralları, işlem sayısı, maliyet belirtilmemiş
+- PF yalnız ~6 haftalık dönemden; Aralık 2019'dan beri PF 1.3
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+bias_varsayim: false

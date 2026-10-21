@@ -1,0 +1,34 @@
+id: A3-013
+ad: NostalgiaForInfinity (NFI)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/iterativv/NostalgiaForInfinity
+  sayfa: A3-013
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- 'Binlerce satırlık çok koşullu Freqtrade stratejisi: YAML ifade diliyle ifade edilemez'
+- '5 dakika zorunlu: kripto dışı testte Doğrulanamaz'
+- Sonuçlar commit yorumlarında, sayısal metrik okunmadı
+bias_varsayim: false

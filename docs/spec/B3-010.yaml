@@ -1,0 +1,46 @@
+id: B3-010
+ad: RSI-2 Larry Connors (ProRealCode)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/rsi-2-strategy-larry-connors/
+  sayfa: B3-010
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: CAC40 endeksi
+gostergeler:
+  sma5:
+    f: sma
+    src: close
+    n: 5
+  sma200:
+    f: sma
+    src: close
+    n: 200
+  rsi2:
+    f: rsi
+    src: close
+    n: 2
+giris: close > sma200 and close < sma5 and rsi2 < 10
+cikis: close > sma5
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.56
+  sharpe: null
+  getiri: +%125,2 (CAC40, 1996-2016)
+  mdd: '%15,63'
+  islem: 361
+  wr: '%63,43 (uzun %72,09)'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: tam
+ozel_kod: false
+belirsiz:
+- Kaynak long/short; temel mod long-only olduğundan yalnız long kolu karta alındı
+- Endeks üzerinde test (işlem edilebilir enstrüman değil); 1 dk grafikte yorumcu 'felaket' demiş
+- Kaynak sayfa (quantifiedstrategies/quantconnect/prorealcode) bu ortamda erişilemedi; yalnız xlsx özeti
+bias_varsayim: false

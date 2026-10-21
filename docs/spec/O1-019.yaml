@@ -1,0 +1,48 @@
+id: O1-019
+ad: EMA 25/68 BIST30 Futures
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/Tbh1KPxq/
+  sayfa: O1-019
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: VİOP (BIST30 vadeli)
+gostergeler:
+  ema25:
+    f: ema
+    src: close
+    n: 25
+  ema68:
+    f: ema
+    src: close
+    n: 68
+  ema160:
+    f: ema
+    src: close
+    n: 160
+giris: cross_over(ema25, ema68) ; sonraki 4 barda kesişim mumu yükseği kırılır and close > ema160
+cikis: trailing stop (tamamlanmış bar) veya 17:45 bar kapanışı
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+- İz süren stop parametreleri xlsx'te yok; seans-sonu 17:45 BIST'e özgü
+- 'Maliyet: bacak başı %0,020 komisyon + %5 vergi = %0,021 (kaynak varsayılanı)'
+- Sayfada performans sayısı yok; yazar eğitim/araştırma amaçlı
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+bias_varsayim: false
