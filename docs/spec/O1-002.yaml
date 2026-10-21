@@ -1,0 +1,36 @@
+id: O1-002
+ad: FIRSATÇITRENDİFLİSİSTEMANILBy (Fırsatçı Trend + IF'li sistem)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algokutuphanesi.com/Sistem/Detay/Matriks/FIRSATÇITRENDİFLİSİSTEMANILBy
+  sayfa: O1-002
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: BIST/VİOP
+gostergeler: {}
+giris: mov(c,opt1) > ott(c,opt1,opt2)*(1+opt3) and stosk+1000 > ott(stosk) and h > ott(hhv(h,10)) and h > ref(hhv(h,20),-1) and saat in 10:03-17:58
+cikis: ters koşul
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Backtest sonucu yayımlanmamış (yalnız popülerlik)
+- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
+- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+- 'Saat koşulu 10:03-17:58 (BIST seansı): diğer piyasalarda tanımsız'
+- 'Zaman dilimi ''gün içi'' belirsiz: 1H varsayıldı'
+bias_varsayim: false

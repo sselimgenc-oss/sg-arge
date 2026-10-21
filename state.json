@@ -26,7 +26,7 @@
       "id": "T2",
       "owner": "claude-moderator",
       "title": "YAML kart + triyaj: parti 1 (PDF B seviyesi) ve xlsx tek partiler 3,5,7,9 (docs/spec/PARTILER.csv)",
-      "status": "parti-1 kabul (PR #11); parti 3 hazir (PARTILER.csv)",
+      "status": "parti-3 PR acik (59 kart; 30 eksik, cogu engelli hostlardan: TradingView/Matriks), lider incelemesi bekleniyor",
       "spec": "docs/GOREV_T2.md"
     },
     {

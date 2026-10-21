@@ -1,0 +1,35 @@
+id: O1-003
+ad: PHL1 YİĞİT KAYNAK
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL1-YİGİT-KAYNAK
+  sayfa: O1-003
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: BIST/VİOP
+gostergeler: {}
+giris: mov(c,1,s) > DI ; DI = 2*YGT - onceki_gun_dusuk ; YGT = (onceki_kapanis + onceki_yuksek + onceki_dusuk)/3
+cikis: close < DE ; DE tanımı yok
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Backtest sonucu yayımlanmamış (yalnız popülerlik)
+- 'DE seviyesinin formülü xlsx''te yok (DI''nin simetriği olabilir: 2*YGT - önceki gün yüksek; doğrulanamadı)'
+- '''Günlük altı periyotlar'': tf belirsiz, 1H varsayıldı'
+- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+bias_varsayim: false

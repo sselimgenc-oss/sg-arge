@@ -1,0 +1,41 @@
+id: A3-007
+ad: Backtesting.py örnek SmaCross(10,20)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/kernc/backtesting.py
+  sayfa: A3-007
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: GOOG (örnek veri)
+gostergeler:
+  sma10:
+    f: sma
+    src: close
+    n: 10
+  sma20:
+    f: sma
+    src: close
+    n: 20
+giris: cross_over(sma10, sma20)
+cikis: cross_under(sma10, sma20)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 2.13
+  sharpe: 0.66
+  getiri: '%589.35 (al-tut %703.46)'
+  mdd: -%33.08
+  islem: 93
+  wr: '%53.76'
+  maliyet_dahil: evet, komisyon 0.002
+spec_durumu: tam
+ozel_kod: false
+belirsiz:
+- Çerçeve demosu, strateji önerisi değil; al-tut getirisinin altında
+- 'Long-only: README''de long/short (ters kesişimde short) olabilir, long kolu alındı'
+bias_varsayim: false

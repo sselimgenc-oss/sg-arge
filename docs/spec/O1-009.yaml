@@ -1,0 +1,34 @@
+id: O1-009
+ad: MOTT 4 Kurgu Stratejisi
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4-Kurgu-Stratejisi
+  sayfa: O1-009
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: BIST/VİOP
+gostergeler: {}
+giris: mov(c,opt1)'in ott(hhv)/ara bant/ott(llv) seviyelerinden birini yukarı kesmesi
+cikis: aşağı kesişimler (kodda)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Backtest sonucu yayımlanmamış (yalnız popülerlik)
+- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
+- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+bias_varsayim: false

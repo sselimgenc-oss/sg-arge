@@ -1,0 +1,37 @@
+id: A3-002e
+ad: geraked ABSAR
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/geraked/tradingview
+  sayfa: A3-002
+tarz: day
+tf: 2H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: EURUSD
+gostergeler: {}
+giris: abc_zigzag_deseni(prd=8, fib 0.382-0.618, hata %5) and sma_bulutu_trend == 1
+cikis: 'stop/hedef: kaynak koddaki longSl/longTp (TP katsayısı 2.0)'
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 2.004
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 31
+  wr: '%64.5'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: tam
+ozel_kod: true
+belirsiz:
+- 'ZigZag/ABC deseni + 6 ortalamalı trend bulutu: ozel_kod; SL/TP seviyeleri Pine''ın son bölümünde (satır 235-271), karta işlenmedi: manuel port'
+- 'Sadece 31 işlem: istatistiksel olarak anlamsız'
+- '2H bar: 1H''den yeniden örneklenir'
+- 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/ABSAR.pine'
+- Yazarın test penceresi çok kısa (2022-01-02/2023-09-01), maliyet/kayma belirtilmemiş
+- Kaynak long/short; temel mod long-only
+bias_varsayim: false

@@ -1,0 +1,35 @@
+id: O1-029
+ad: Grover Llorens Activator Strategy Analysis
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/VuYM89Tw-Grover-Llorens-Activator-Strategy-An
+  sayfa: O1-029
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex/Kripto/ABD hisse
+gostergeler: {}
+giris: cross_over(close, gl_activator)
+cikis: ters sinyal (sürekli long/short)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.036
+  sharpe: null
+  getiri: $86.63 (EURUSD) / $2010.64 (BTCUSD) / $17.86 (AMD)
+  mdd: $76.67 / $5738.01 / $10.37
+  islem: null
+  wr: '%37.65 / %38.23 / %36.27'
+  maliyet_dahil: hayır
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Kaynak sayfa (tradingview.com) bu ortamda erişilemedi (proxy engeli); kural yalnız xlsx özetinden alındı
+- Gösterge formülü (length 480, mult 14) xlsx'te yok
+- Yazar sonucu zayıf buluyor, spread eklenince EURUSD negatife dönüyor; maliyetsiz
+- 'Sürekli long/short: yalnız long kolu'
+bias_varsayim: false

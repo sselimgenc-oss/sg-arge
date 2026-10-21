@@ -1,0 +1,35 @@
+id: A4-009
+ad: Volume Spikes in Oil Futures (embedded backtest)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantconnect.com/terminal/cache/embedded_backtest_19dce81c99a5fcc437
+  sayfa: A4-009
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD vadeli (petrol)
+gostergeler: {}
+giris: dakika_hacmi > 6 * haftalik_referans and dakika_hacmi > 2 * en_cok_islem_gorenin and close > open
+cikis: kar %10 veya ters sinyal
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: 3.609
+  getiri: +%46,851 net; CAGR %253,783
+  mdd: '%16.3'
+  islem: 189
+  wr: '%50'
+  maliyet_dahil: evet, toplam komisyon $466,83
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Haftalık referans hacmi ve 'rejim dışı 3x' tanımı belirsiz; kayıt vadeli kontrat rolling'ine bağlı
+- Test ~3,5 ay; yıllıklandırma şişirilmiş; aşırı uyum riski (yazar uyarısı)
+- 'Long+short; yalnız long kolu: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- Kaynak sayfa (quantifiedstrategies/quantconnect/prorealcode) bu ortamda erişilemedi; yalnız xlsx özeti
+bias_varsayim: false

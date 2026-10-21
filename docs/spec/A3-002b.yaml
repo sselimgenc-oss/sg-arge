@@ -1,0 +1,49 @@
+id: A3-002b
+ad: geraked 3MAF
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/geraked/tradingview
+  sayfa: A3-002
+tarz: day
+tf: 30m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: EURUSD
+gostergeler:
+  ema20:
+    f: ema
+    src: close
+    n: 20
+  ema50:
+    f: ema
+    src: close
+    n: 50
+  ema100:
+    f: ema
+    src: close
+    n: 100
+giris: ema20 > ema50 and ema50 > ema100 and low > ema100 and low < ema20 and down_fractal(n=2)
+cikis: 'stop: ema50 if low > ema50 else ema100 ; hedef: giris + 1*(giris - stop)'
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.399
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 172
+  wr: '%76.7'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: dakikalik
+ozel_kod: true
+belirsiz:
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- 'Williams fraktal (n=2, genişletilmiş sınırlar) listede yok: ozel_kod'
+- 'Giriş sinyal barının kapanışında: A1 gereği sonraki açılış'
+- 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/3MAF.pine'
+- Yazarın test penceresi çok kısa (2023-01-02/07-13), maliyet/kayma belirtilmemiş
+- Kaynak long/short; temel mod long-only
+bias_varsayim: false

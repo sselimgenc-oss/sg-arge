@@ -21,3 +21,62 @@ T8-05,MTF Range Flip HTF market structure bias,swing,1D,tam,false,4,Paper_Test_8
 T8-06,"TOTT/OTT tek bantlı (Twin Optimized Trend Tracker, saatlik kurgu)",day,1H,tam,true,6,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.6
 T8-07,StackLight MTF momentum stack + Stochastic,day,1H,tam,false,4,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.7
 T8-08,Lorentzian Classification (k-NN ML),swing,1D,eksik,true,6,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.8
+A3-002a,geraked CEZLSMA,day,1m,dakikalik,true,6,https://github.com/geraked/tradingview
+A3-002b,geraked 3MAF,day,30m,dakikalik,true,6,https://github.com/geraked/tradingview
+A3-002c,geraked CP1,day,1m,dakikalik,false,6,https://github.com/geraked/tradingview
+A3-002d,geraked BBRSI,day,5m,dakikalik,false,5,https://github.com/geraked/tradingview
+A3-002e,geraked ABSAR,day,2H,tam,true,6,https://github.com/geraked/tradingview
+A3-002f,geraked DHLAOS,day,5m,dakikalik,true,6,https://github.com/geraked/tradingview
+A3-002g,geraked MLCEL_MACD,day,4H,tam,true,5,https://github.com/geraked/tradingview
+A3-002h,geraked NWERSIASF,day,15m,dakikalik,true,5,https://github.com/geraked/tradingview
+A3-002i,geraked LRCUTB,day,15m,dakikalik,true,6,https://github.com/geraked/tradingview
+A3-003,"Sector-Momentum-Pullback (NSE, RSI pullback + ATR iz süren stop)",swing,1D,tam,true,4,https://github.com/gaurav3331/Sector-Momentum-Pullback-Strategy-NSE-Backtest
+A3-004,"Pairs_Trading (gün içi eş-bütünleşme, M1)",day,1m,eksik,false,4,https://github.com/Neuvox512/Pairs_Trading
+A3-005,"Indice-Trading-Strategy (EMA200 + range filtresi, Pine)",day,45m,eksik,false,2,https://github.com/junaid-mahmood/Indice-Trading-Strategy
+A3-007,"Backtesting.py örnek SmaCross(10,20)",swing,1D,tam,false,2,https://github.com/kernc/backtesting.py
+A3-008a,"stratestic MA Crossover(20,150)",swing,1D,tam,false,3,https://github.com/diogomatoschaves/stratestic
+A3-008b,"stratestic MACD(26,12,9)",swing,1D,tam,false,4,https://github.com/diogomatoschaves/stratestic
+A3-008c,stratestic Momentum(30),swing,1D,eksik,false,3,https://github.com/diogomatoschaves/stratestic
+A3-009a,Systematic-Trading-Backtester: MA 20/50,swing,1D,tam,false,3,https://github.com/shresth711/Systematic-Trading-Strategy-Backtester-
+A3-009b,Systematic-Trading-Backtester: Bollinger ortalamaya dönüş,swing,1D,tam,false,1,https://github.com/shresth711/Systematic-Trading-Strategy-Backtester-
+A3-009c,Systematic-Trading-Backtester: 252 günlük momentum,swing,1D,tam,false,1,https://github.com/shresth711/Systematic-Trading-Strategy-Backtester-
+A3-010a,Freqtrade Strategy001,day,5m,dakikalik,true,6,https://github.com/OnChainVibe/freqtrade-strategies
+A3-010b,Freqtrade Strategy002,day,5m,dakikalik,true,6,https://github.com/OnChainVibe/freqtrade-strategies
+A3-010c,Freqtrade Strategy003,day,5m,dakikalik,true,6,https://github.com/OnChainVibe/freqtrade-strategies
+A3-010d,Freqtrade Strategy004,day,5m,dakikalik,false,6,https://github.com/OnChainVibe/freqtrade-strategies
+A3-011a,pandianmn fork: Strategy001 (A3-010a ile aynı kural varsayımı),day,5m,dakikalik,false,3,https://github.com/pandianmn/freqtrade-strategies
+A3-011b,pandianmn fork: Strategy002 (A3-010b ile aynı kural varsayımı),day,5m,dakikalik,false,3,https://github.com/pandianmn/freqtrade-strategies
+A3-011c,pandianmn fork: Strategy003 (A3-010c ile aynı kural varsayımı),day,5m,dakikalik,false,3,https://github.com/pandianmn/freqtrade-strategies
+A3-011d,pandianmn fork: Strategy004 (A3-010d ile aynı kural varsayımı),day,5m,dakikalik,false,3,https://github.com/pandianmn/freqtrade-strategies
+A3-011e,pandianmn fork: Strategy005 (resmi depo kodu),day,5m,dakikalik,true,5,https://github.com/pandianmn/freqtrade-strategies
+A3-012,freqtrade/freqtrade-strategies (resmi örnek depo),day,5m,eksik,false,2,https://github.com/freqtrade/freqtrade-strategies
+A3-013,NostalgiaForInfinity (NFI),day,5m,eksik,true,3,https://github.com/iterativv/NostalgiaForInfinity
+A3-014,"nateemma/strategies (MomentumRegimeBasket15mFast, ML stratejileri)",day,15m,eksik,true,3,https://github.com/nateemma/strategies
+A4-009,Volume Spikes in Oil Futures (embedded backtest),day,1m,eksik,false,4,https://www.quantconnect.com/terminal/cache/embedded_backtest_19dce81c99a5fcc437
+A5-009,XLP mean reversion (IBS + 25 günlük bant) (10 Best Swing #7),swing,1D,tam,false,3,https://www.quantifiedstrategies.com/swing-trading-strategies/
+B1-002,"AlphaTrend Strategy (TradingView, Kıvanç Özbilgiç)",swing,1D,eksik,true,3,https://www.tradingview.com/script/3wdQu7P3-AlphaTrend-Strategy
+B2-001,"Opening-Range Breakout (TradingView, vadeli)",day,1m,eksik,false,4,https://pl.tradingview.com/script/8vjWAdLN-Opening-Range-Breakout/
+B2-005,"Athena Momentum Squeeze - Short, Lean, and Mean",day,15m,eksik,false,4,https://in.tradingview.com/script/Oy4huVQ2-Athena-Momentum-Squeeze-Short-Lean-an
+B3-010,RSI-2 Larry Connors (ProRealCode),swing,1D,tam,false,3,https://www.prorealcode.com/prorealtime-trading-strategies/rsi-2-strategy-larry-connors/
+O1-001,AlphaTrend Strategy (Matriks),belirsiz,1D,tam,true,5,https://algokutuphanesi.com/Sistem/Detay/Matriks/AlphaTrend-Strategy
+O1-002,FIRSATÇITRENDİFLİSİSTEMANILBy (Fırsatçı Trend + IF'li sistem),day,1H,eksik,true,5,https://algokutuphanesi.com/Sistem/Detay/Matriks/FIRSATÇITRENDİFLİSİSTEMANILBy
+O1-003,PHL1 YİĞİT KAYNAK,day,1H,eksik,false,4,https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL1-YİGİT-KAYNAK
+O1-004,PHL2 YIGITBOX,swing,1H,eksik,true,5,https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL2YIGITBOX
+O1-005,ROTT-SOTT,belirsiz,1D,eksik,true,3,https://algokutuphanesi.com/Sistem/Detay/Matriks/ROTT-SOTT
+O1-006,MOTT-4B Kurgu,belirsiz,1D,eksik,true,3,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4B-Kurgu
+O1-007,SÜPERTRENDMOSTOPTİMİZASYONLU,belirsiz,1D,eksik,true,4,https://algokutuphanesi.com/Sistem/Detay/Matriks/SÜPERTRENDMOSTOPTİMİZASYONLU
+O1-008,Anıl Özekşi Sistem 1,belirsiz,1D,eksik,true,4,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Anil-Özekşi-Sistem-1
+O1-009,MOTT 4 Kurgu Stratejisi,belirsiz,1D,eksik,true,3,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4-Kurgu-Stratejisi
+O1-010,FirsatciTrend 4Bölge LONG,belirsiz,1D,eksik,true,5,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/FirsatciTrend-4Bölge-LONG
+O1-011,SuperTrendVadeliStratejisi,day,5m,eksik,false,6,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/SuperTrendVadeliStratejisi
+O1-012,Yükselen Formasyon Stratejisi,day,5m,gizli,true,3,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Yukselen-Formasyon-Stratejisi
+O1-013,OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG,belirsiz,1D,eksik,true,4,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG
+O1-019,EMA 25/68 BIST30 Futures,day,15m,eksik,false,5,https://www.tradingview.com/script/Tbh1KPxq/
+O1-027,PMax Explorer STRATEGY & SCREENER,belirsiz,1D,eksik,true,4,https://www.tradingview.com/script/nHGK4Qtp/
+O1-029,Grover Llorens Activator Strategy Analysis,day,1H,eksik,true,4,https://www.tradingview.com/script/VuYM89Tw-Grover-Llorens-Activator-Strategy-An
+O1-030,Uhl MA System - Strategy Analysis,day,15m,eksik,true,4,https://www.tradingview.com/script/4S9Yz3DB-Uhl-MA-System-Strategy-Analysis/
+O1-031,Trendline Breaks with Multi Fibonacci Supertrend Strategy (TMFS),belirsiz,1D,eksik,true,3,https://www.tradingview.com/script/aVzNdTMg-Trendline-Breaks-with-Multi-Fibonacci-Supertrend-Strategy
+O1-032,Scalping Support Resistance Strategy,day,1m,eksik,false,4,https://www.tradingview.com/script/gp332Dao-Scalping-Support-Resistance-Strategy
+O1-033,Scalping with Bill Williams Alligator,day,1m,eksik,true,5,https://www.tradingview.com/script/b2ShO5Fv-Scalping-with-Bill-Williams-Alligator
+O1-034,[Sniper] SuperTrend + SSL Hybrid + QQE MOD,day,15m,eksik,true,4,https://www.tradingview.com/script/6w9Jchj6/
+O1-035,ORB Heikin Ashi SPY 5min Correlation Strategy,day,5m,eksik,false,5,https://www.tradingview.com/script/QpJvYDzb-ORB-Heikin-Ashi-SPY-5min-Correlation

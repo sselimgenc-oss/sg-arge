@@ -1,0 +1,39 @@
+id: O1-011
+ad: SuperTrendVadeliStratejisi
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algokutuphanesi.com/Sistem/Detay/MatriksIq/SuperTrendVadeliStratejisi
+  sayfa: O1-011
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: VİOP/Binance Futures
+gostergeler:
+  st:
+    f: supertrend
+giris: cross_over(close, supertrend)
+cikis: cross_under(close, supertrend)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: false
+belirsiz:
+- Backtest sonucu yayımlanmamış (yalnız popülerlik)
+- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
+- SuperTrend ATR periyodu/çarpanı sayfadan okunamadı (kod parametresi)
+- 'Varsayılan 5 dk; açığa satış opsiyonel: yalnız long'
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+bias_varsayim: false

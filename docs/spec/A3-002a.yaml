@@ -1,0 +1,45 @@
+id: A3-002a
+ad: geraked CEZLSMA
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/geraked/tradingview
+  sayfa: A3-002
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: EURJPY
+gostergeler:
+  zlsma:
+    f: zlsma
+    src: close
+    n: 50
+  chand:
+    f: chandelier
+    atr_n: 1
+    carpan: 2
+giris: dir_flip_to_1 and close > zlsma
+cikis: cross_under(close, zlsma) or close <= chandelier_long_stop
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 5.392
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 457
+  wr: '%70.2'
+  maliyet_dahil: belirtilmemiş
+spec_durumu: dakikalik
+ozel_kod: true
+belirsiz:
+- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- 'Chandelier Exit ATR periyodu 1 (= bar aralığı) ve çarpan 2; ZLSMA = lsma + (lsma - linreg(lsma,50)): ikisi listede yok: ozel_kod'
+- 'PF > 3 ve 30 günden kısa pencere: aşırı uyum alarmı'
+- 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/CEZLSMA.pine'
+- Yazarın test penceresi çok kısa (2023-07-02/07-12 (10 gün)), maliyet/kayma belirtilmemiş
+- Kaynak long/short; temel mod long-only
+bias_varsayim: false

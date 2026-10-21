@@ -1,0 +1,35 @@
+id: O1-013
+ad: OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algokutuphanesi.com/Sistem/Detay/MatriksIq/OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG
+  sayfa: O1-013
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: VİOP/BIST spot/Kripto
+gostergeler: {}
+giris: OTT ve StochasticSlow alım bölgesinde + HOTT/HHV teyidi
+cikis: kodda ters koşul
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Backtest sonucu yayımlanmamış (yalnız popülerlik)
+- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
+- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+- Yalnız LONG; HOTT/LOTT listede yok
+bias_varsayim: false

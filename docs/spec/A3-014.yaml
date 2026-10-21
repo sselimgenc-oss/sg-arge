@@ -1,0 +1,34 @@
+id: A3-014
+ad: nateemma/strategies (MomentumRegimeBasket15mFast, ML stratejileri)
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/nateemma/strategies
+  sayfa: A3-014
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- 'Anomali/sinir ağı/sklearn tabanlı: eğitim gerektirir, YAML''a dönmez'
+- Yazar kendi sinyal tahmin stratejilerinin al-tut gerisinde kaldığını belirtiyor
+- Rakamlar belirli stratejiye bağlanmamış
+bias_varsayim: false

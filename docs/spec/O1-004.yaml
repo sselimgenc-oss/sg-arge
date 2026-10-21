@@ -1,0 +1,36 @@
+id: O1-004
+ad: PHL2 YIGITBOX
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL2YIGITBOX
+  sayfa: O1-004
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: BIST/VİOP
+gostergeler: {}
+giris: phl2_kutu_ust yukarı kırılımı
+cikis: phl2_kutu_alt aşağı kırılımı
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Backtest sonucu yayımlanmamış (yalnız popülerlik)
+- PHL2 kutu seviyelerinin formülü xlsx'te yok
+- '60/120/180 dk: 2H/3H bar 1H''den yeniden örneklenmeli'
+- Yazar vade geçiş boşlukları için XU030 spot önerir
+- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+bias_varsayim: false

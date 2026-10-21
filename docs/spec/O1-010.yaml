@@ -1,0 +1,36 @@
+id: O1-010
+ad: FirsatciTrend 4Bölge LONG
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algokutuphanesi.com/Sistem/Detay/MatriksIq/FirsatciTrend-4Bölge-LONG
+  sayfa: O1-010
+tarz: belirsiz
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: BIST/VİOP/Binance
+gostergeler: {}
+giris: bölgeye göre OTT/Stokastik koşulları (kodda)
+cikis: kodda tanımlı
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: eksik
+ozel_kod: true
+belirsiz:
+- Backtest sonucu yayımlanmamış (yalnız popülerlik)
+- 'Parametreler (opt1..optN) kullanıcı optimizasyonuna bırakılmış, değerleri yok: yazarın varsayılanı bilinmiyor'
+- Kaynak sayfa (algokutuphanesi.com) bu ortamda erişilemedi (proxy engeli); formül/parametreler (opt1..optN) okunamadı, yalnız xlsx özeti var
+- 'Yazar: ''Parametreler örnek olarak verilmiştir. Lütfen optimizasyon yapmadan çalıştırmayınız.'''
+- 4 trend bölgesi için ayrı parametre setleri
+bias_varsayim: false

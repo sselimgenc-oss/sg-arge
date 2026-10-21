@@ -1,0 +1,58 @@
+id: A3-010a
+ad: Freqtrade Strategy001
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://github.com/OnChainVibe/freqtrade-strategies
+  sayfa: A3-010
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler:
+  ema20:
+    f: ema
+    src: close
+    n: 20
+  ema50:
+    f: ema
+    src: close
+    n: 50
+  ema100:
+    f: ema
+    src: close
+    n: 100
+  ha:
+    f: heikinashi
+giris: cross_over(ema20, ema50) and ha_close > ema20 and ha_open < ha_close
+cikis: cross_over(ema50, ema100) and ha_close < ema20 and ha_open > ha_close
+stop:
+  tip: yuzde
+  deger: 10
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: ort. kâr %2.39
+  mdd: '-'
+  islem: 287
+  wr: null
+  maliyet_dahil: belirtilmemiş
+spec_durumu: dakikalik
+ozel_kod: true
+belirsiz:
+- '5m zaman dilimi: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- 'Zaman bazlı ROI tablosu (roi_tablosu) ve sabit %10 stop şemada yok: şema uzantısı'
+- 'Test penceresi ~1 ay (2017-11/2018-01), maliyet yok: kanıt değeri çok düşük'
+- Fork içeriği resmi depodakiyle karşılaştırılmadı; kural resmi depo koduna dayanıyor
+- 'Heikin Ashi listede yok: ozel_kod'
+- 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy001.py'
+roi_tablosu:
+  0: 0.05
+  20: 0.04
+  30: 0.03
+  60: 0.01
+bias_varsayim: false
