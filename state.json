@@ -7,15 +7,56 @@
   "heartbeat_minutes": 15,
   "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider onayli; kullanici kararlari acik)",
   "queue": [
-    {"id": "T1a", "owner": "codex-worker", "title": "Veri + referans motor + 2 aile pilotu (C01,C19,C02,C09,C15,C17), replikasyon ve 2015-2019 on donem testi", "status": "ready", "spec": "docs/GOREV_T1.md"},
-    {"id": "T2", "owner": "claude-moderator", "title": "B seviyesi PDF'lerden kural kartlari, KATALOG tamamlama (kod yok)", "status": "ready", "spec": "docs/GOREV_T2.md"},
-    {"id": "T3", "owner": "sol-6.1", "title": "T1a PR kod incelemesi: look-ahead/survivorship korumalari, motor dogrulugu", "status": "waiting-T1a", "spec": "docs/GOREV_T1.md"},
-    {"id": "T1b", "owner": "codex-worker", "title": "Kalan 9 aile yeniden uretim", "status": "blocked-awaiting-T1a-review", "spec": "docs/GOREV_T1.md"}
+    {
+      "id": "T0",
+      "owner": "herkes (claude-moderator, codex-worker, sol-6.1)",
+      "title": "Kullanicinin amacini lidere bildir: tartisma/002_hedef_<model>.md",
+      "status": "ready",
+      "spec": "tartisma/002_kullanici_hedefi.md",
+      "priority": "T1a/T2'den once"
+    },
+    {
+      "id": "T1a",
+      "owner": "codex-worker",
+      "title": "Veri + referans motor + 2 aile pilotu (C01,C19,C02,C09,C15,C17), replikasyon ve 2015-2019 on donem testi",
+      "status": "ready",
+      "spec": "docs/GOREV_T1.md"
+    },
+    {
+      "id": "T2",
+      "owner": "claude-moderator",
+      "title": "B seviyesi PDF'lerden kural kartlari, KATALOG tamamlama (kod yok)",
+      "status": "ready",
+      "spec": "docs/GOREV_T2.md"
+    },
+    {
+      "id": "T3",
+      "owner": "sol-6.1",
+      "title": "T1a PR kod incelemesi: look-ahead/survivorship korumalari, motor dogrulugu",
+      "status": "waiting-T1a",
+      "spec": "docs/GOREV_T1.md"
+    },
+    {
+      "id": "T1b",
+      "owner": "codex-worker",
+      "title": "Kalan 9 aile yeniden uretim",
+      "status": "blocked-awaiting-T1a-review",
+      "spec": "docs/GOREV_T1.md"
+    }
   ],
   "done": [
-    {"id": "K1", "owner": "auditor", "title": "Eleme kriterleri denetimi -> v0.3", "ref": "tartisma/001_cevap_opus.md"}
+    {
+      "id": "K1",
+      "owner": "auditor",
+      "title": "Eleme kriterleri denetimi -> v0.3",
+      "ref": "tartisma/001_cevap_opus.md"
+    }
   ],
-  "user_decisions_pending": ["Portfoy MDD ust siniri %15 onayi", "Saatlik veri kaynagi (BIST dahil)", "Codex cloud environment kurulumu (Issue #1'de @codex cevap vermiyor)"],
+  "user_decisions_pending": [
+    "Portfoy MDD ust siniri %15 onayi",
+    "Saatlik veri kaynagi (BIST dahil)",
+    "Codex cloud environment kurulumu (Issue #1'de @codex cevap vermiyor)"
+  ],
   "rules": "Paralel calisma: her gorev sahibi yalniz kendi gorev dosyalarina ve state.json'daki kendi kaydinin status alanina yazar. turn, queue ekleme/cikarma ve kriterler yalniz lider.",
   "notes": "Lider kararlari: tartisma/001_cevap_opus.md. T1b, T1a lider incelemesinden sonra acilir."
 }
