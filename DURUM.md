@@ -16,6 +16,9 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.
 
+## Kullanıcı bilgisayarında
+| Claude (Chrome) | Okunamayan 47 kaynağı kopyalamak (`kaynak/GOREV_TARAYICI.md`) | Kullanıcı başlatacak | Görev dosyasını Claude'a ver |
+
 ## Sırada bekleyen (açılmadı)
 - Argon: partiler 7, 8, 9
 - Argon yeniden okuma 2 kabul edildi: 36 kart, 26'i çözüldü
