@@ -1,0 +1,67 @@
+id: A1-027
+ad: Bjorgum Double Tap
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/rLkjr2sQ-Bjorgum-Double-Tap/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Kripto / Hisse / Forex
+gostergeler:
+  piv_high:
+    f: highest
+    src: high
+    n: 50
+  piv_low:
+    f: lowest
+    src: low
+    n: 50
+  atr14:
+    f: atr
+    n: 14
+  swing_low5:
+    f: lowest
+    src: low
+    n: 5
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  tol: 15.0
+  len: 50
+  fib: 100.0
+  stopPer: 0
+  offset: 30
+  atrStop: false
+  atrLength: 14
+  atrMult: 1.0
+  lookback: 5
+  dLong: true
+  dShort: true
+  FLIP: true
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.9
+  sharpe: 0.15
+  getiri: 52.0
+  mdd: 21.0
+  islem: null
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz:
+- TradingView URL doğrudan açılmadı ancak Scribd arşivinden birebir Pine Script v5 kaynak kodu ve TradeSearcher üzerinden 40 backtest ortalaması okundu
+- 'Karar zaman dilimi kodda sabit değil, grafik zaman dilimini kullanır (tf: 1D varsayıldı)'
+- 'Özel kod mantığı (İkili Dip / Double Bottom): highestbars(50) == 0 ve lowestbars(50) == 0 olduğunda yön değiştiren 5x3 boyutlu bir pivot matrisinde son 4 ekstrem [y1 (önceki tepe), y2 (1. dip), y3 (boyun
+  çizgisi/ara tepe), y4 (2. dip)] izlenir; y1 > y3 iken 2. dip (y4), 1. dibin (y2) formasyon yüksekliğinin (y3 - max(y2,y4)) ±%15 (tol=15) bandı içindeyse ve kapanış boyun çizgisini yukarı kırarsa (close
+  > y3 and close[1] <= y3) Long girilir'
+- 'Stop ve hedef: stopPer=0 varsayılanında stop=min(y2, y4) (iki dipten düşüğü), hedef=y3 + (y3 - min(y2,y4)) * (fib/100) (boyun çizgisinden %100 formasyon yüksekliği projeksiyonu); atrStop=true yapılırsa
+  hedefe ulaşıldığında lowest(5) - 1.0 * atr(14) izsüren stop devreye girer'
+- 'Kod içi tutarsızlık: Kullanıcı girdisi olarak atrLength=14 tanımlanmış ancak 207. satırda ta.atr(14) sabit 14 ile çağrılmıştır'
+- 'short kuralı var: dShort=true ve FLIP=true varsayılanıyla İkili Tepe (Double Top) boyun çizgisi aşağı kırılımında (close < y3) short açılır ve açık long varsa tersine döner'
+kart_yazari: argon

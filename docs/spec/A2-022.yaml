@@ -1,0 +1,47 @@
+id: A2-022
+ad: Lets Automate a Simple Renko Strategy!
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/531783-lets-automate-a-simple-renko-strategy
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  ema21:
+    f: ema
+    src: close
+    n: 21
+  ema50:
+    f: ema
+    src: close
+    n: 50
+giris: close > ema21 and close > ema50 and close > open and close[1] > open[1] and close[2] < open[2]
+cikis: close < open
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  RenkoBoxSize_pips: 10.0
+  ema_fast.n: 21
+  ema_slow.n: 50
+  trailing_sl_pips: 25
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- Karar grafiği M1 verisinden üretilen 10 pip Renko (M2 çevrimdışı grafik, 1 saatin altında / bar-dışı)
+- 'Özel kod mantığı: 10 pip Renko grafikte fiyat EMA(21) ve EMA(50) üzerindeyken tuğla rengi kırmızıdan yeşile dönüp 2 ardışık yeşil tuğla kapandığında (3. yeşil tuğla açılışında) Long açılır; SL dönüşteki
+  son kırmızı tuğlanın düşüğü veya son anlamlı diptir; çıkış ters renkli (kırmızı) tuğla kapanışında veya 20-30 pip izsüren stop ile yapılır'
+- 'short kuralı var: Fiyat EMA(21) ve EMA(50) altındayken yeşilden kırmızıya dönüp 2 ardışık kırmızı tuğla kapandığında short açılır'
+kart_yazari: argon

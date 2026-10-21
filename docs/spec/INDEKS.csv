@@ -80,3 +80,43 @@ O1-032,Scalping Support Resistance Strategy,day,1m,eksik,false,4,https://www.tra
 O1-033,Scalping with Bill Williams Alligator,day,1m,eksik,true,5,https://www.tradingview.com/script/b2ShO5Fv-Scalping-with-Bill-Williams-Alligator
 O1-034,[Sniper] SuperTrend + SSL Hybrid + QQE MOD,day,15m,eksik,true,4,https://www.tradingview.com/script/6w9Jchj6/
 O1-035,ORB Heikin Ashi SPY 5min Correlation Strategy,day,5m,eksik,false,5,https://www.tradingview.com/script/QpJvYDzb-ORB-Heikin-Ashi-SPY-5min-Correlation
+A1-016,VIOP Scalping - ATR SNIPER,day,,eksik,false,2,https://www.tradingview.com/script/R0CTM8NR-VIOP-Scalping-ATR-SNIPER/
+A1-017,VIOP Scalping - Original,day,,eksik,false,2,https://www.tradingview.com/script/4BcYQ0Ns-VIOP-Scalping-Original/
+A1-019,BIST30 to S&P 500 ATR Momentum Rider,swing,1D,eksik,false,2,https://www.tradingview.com/script/jd1KSVn7/
+A1-020,Antony.N4A - NQ ORB Quartile Str v6.3,day,5m,gizli,true,3,https://de.tradingview.com/script/uUtBQ59O-Antony-N4A-NQ-ORB-Quartile-Str-v6-3
+A1-022,Slight Swing Momentum Strategy,swing,1D,eksik,true,3,https://it.tradingview.com/script/6l9kcw7j
+A1-023,ORB Breakout Strategy (chartsquare),day,5m,eksik,true,3,https://ru.tradingview.com/script/VJ9ZHgNB-ORB-Breakout-Strategy
+A1-024,TrendMaster Pro 2.3 with Alerts,day,,eksik,false,2,https://www.tradingview.com/script/mVkDf8qh-TrendMaster-Pro-2-3-with-Alerts/
+A1-025,TASC 2026.03 One Percent A Week,swing,1D,tam,true,3,https://www.tradingview.com/script/nVECqIQx-TASC-2026-03-One-Percent-A-Week/
+A1-027,Bjorgum Double Tap,swing,1D,tam,true,6,https://www.tradingview.com/script/rLkjr2sQ-Bjorgum-Double-Tap/
+A1-029,SPX Trading Strategy for ThinkorSwim,day,10m,eksik,true,6,https://usethinkscript.com/threads/spx-trading-strategy-for-thinkorswim.5087/
+A2-001,GER40 Evening Coil,day,1h,tam,true,2,https://www.mql5.com/en/code/78380
+A2-002,Stochastic Daily Breakout for Gold,day,1h,tam,true,3,https://www.mql5.com/en/code/77900
+A2-003,Buy GBPJPY Every Monday,day,1h,tam,true,1,https://www.mql5.com/en/code/77835
+A2-004,SessionReopenEA,day,1h,eksik,true,3,https://www.mql5.com/en/code/77060
+A2-005,GDS Renko RSI + MACD 4-Mode Demo EA,day,1m,eksik,true,4,https://www.mql5.com/en/code/78581
+A2-006,Price Action Intraday Trading - Expert for MT5,day,15m,eksik,true,5,https://www.mql5.com/en/code/68704
+A2-007,Pro MA Crossover EA for MT5,swing,1D,tam,false,2,https://www.mql5.com/en/code/70916
+A2-009,The Playground Series v1 to V4,day,,eksik,true,4,https://www.mql5.com/en/code/68125
+A2-010,ICE (Impulse Confirmation Engine),day,15m,eksik,false,1,https://www.mql5.com/en/code/69651
+A2-011,APEX VELOCITY,day,5m,eksik,true,5,https://www.mql5.com/en/code/78275
+A2-012,ORB Risk Managed - Opening Range Breakout,day,1m,eksik,true,5,https://www.mql5.com/en/code/77967
+A2-013,Opening Range Breakout with NR4 / NR7 Contraction Filters,day,1m,eksik,true,5,https://www.mql5.com/en/code/78259
+A2-014,Gold MT5 Fractal Breakout EA,swing,1h,tam,true,4,https://www.mql5.com/en/code/78308
+A2-015,EMA Cross Scalper M15 (XAUUSD),day,15m,dakikalik,true,3,https://www.mql5.com/en/code/77180
+A2-016,RSI Exhaustion Reversal - EURUSD,day,5m,sadece_short,true,4,https://www.mql5.com/en/code/77738
+A2-017,ZoneUS30,swing,,eksik,true,2,https://www.mql5.com/en/code/77748
+A2-018,TMS for M30 charts,day,30m,ihtiyari,true,4,https://www.forexfactory.com/thread/526735-tms-for-m30-charts
+A2-019,"Williams%R, SAR X-over 15 minute candles",day,15m,dakikalik,true,3,https://www.forexfactory.com/thread/989455-williamsr-sar-x-over-15-minute-candles
+A2-020,Quantum London Trading,day,1m,dakikalik,true,5,https://www.forexfactory.com/thread/551382-quantum-london-trading
+A2-021,Magic 100,day,1h,tam,true,3,https://www.forexfactory.com/thread/989445-magic-100
+A2-022,Lets Automate a Simple Renko Strategy!,day,1m,dakikalik,true,3,https://www.forexfactory.com/thread/531783-lets-automate-a-simple-renko-strategy
+A2-023,Up and under price pattern,day,30m,ihtiyari,true,4,https://www.forexfactory.com/thread/444458-up-and-under-price-pattern
+A2-024,Most Famous Blessing 3.9.6 EA and Setfiles,day,1h,eksik,true,2,https://www.forexfactory.com/thread/792598-most-famous-blessing-396-ea-and-setfiles
+A2-025,"The Equilibrium, a key to success!",day,,eksik,true,1,https://www.forexfactory.com/thread/727775-the-equilibrium-a-key-to-success
+A2-026,v2v dynamic trading system,day,1m,eksik,true,1,https://www.forexfactory.com/thread/901713-v2v-dynamic-trading-system
+A2-027,Happs Trading System,swing,4h,eksik,true,2,https://www.forexfactory.com/thread/259419-happs-trading-system
+A2-028,TCO Trader EA,day,1h,eksik,true,3,https://www.forexfactory.com/thread/430840-tco-trader-ea
+A2-029,Simple Zigzag + Fibonacci Strategy,swing,1h,eksik,true,5,https://www.forexfactory.com/thread/987910-simple-zigzag-fibonacci-strategy
+A2-030,Channel MA Short-Term System,day,15m,dakikalik,true,3,https://www.forexfactory.com/thread/707474-channel-ma-short-term-system
+A3-001,XAUUSD Pullback Window (4 fazlı durum makinesi),day,5m,dakikalik,true,3,https://github.com/ilahuerta-IA/backtrader-pullback-window-xauusd

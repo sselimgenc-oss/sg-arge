@@ -1,0 +1,35 @@
+id: A1-020
+ad: Antony.N4A - NQ ORB Quartile Str v6.3
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://de.tradingview.com/script/uUtBQ59O-Antony-N4A-NQ-ORB-Quartile-Str-v6-3
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: 15m
+tf_varsayim: false
+yazar_piyasasi: Endeks Vadeli (NQ)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: gizli
+belirsiz:
+- Kaynak kodu kapalı/korumalı (invite-only / protected Pine Script)
+- 'URL okunamadı: TradingView sayfası erişime kapalı'
+- Karar zaman dilimi 5m (1 saatin altında, dakikalık); 09:30-09:45 ORB çeyrek dilim (quartile) giriş/çıkış kuralları kapalı kodda
+erisim_engeli: true
+kart_yazari: argon

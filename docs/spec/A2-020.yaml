@@ -1,0 +1,48 @@
+id: A2-020
+ad: Quantum London Trading
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/551382-quantum-london-trading
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (GBPUSD)
+gostergeler:
+  quantum_low:
+    f: lowest
+    src: low
+    n: 300
+  quantum_high:
+    f: highest
+    src: high
+    n: 300
+giris: low == quantum_low
+cikis: high == quantum_high
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  start_time_gmt: 05:00
+  max_basket_trades: 40
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: hayir
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi M1 (1 saatin altında)
+- 'REPAINT: Quantum göstergesi (ZigZag/kanal ekstrem kutuları) geçmişe dönük grafik yenilendiğinde veya zaman dilimi değiştirildiğinde repaint yapar (18. ve 20. mesajlarda teyit edilmiştir)'
+- 'Özel kod mantığı (Grid / Sepet): 05:00 GMT (Frankfurt açılışı öncesi) sonrasında Quantum göstergesi mavi kutu (yeni dip) çizdiğinde takip eden M1 mumunun açılışında Long açılır; her yeni mavi kutuda
+  artan lotlarla (1-12: 0.01, 13-21: 0.02, 22-29: 0.05, 30-36: 0.13, 37-39: 0.34, 40: 0.89 lot) sepete yeni Long eklenir; kırmızı kutu (yeni tepe) oluştuğunda sonraki mum açılışında sepetteki tüm işlemler
+  kapatılır; stop-loss yoktur'
+- Quantum.mq4 içindeki varsayılan eintDepth3 (kanal periyodu) sayısal değeri ilk mesaj metninde yazmayıp ekli .mq4/.tpl dosyasındadır
+- 'short kuralı var: 05:00 GMT sonrası kırmızı kutularda kademeli short sepeti açılır ve ilk mavi kutuda tüm sepet kapatılır'
+kart_yazari: argon

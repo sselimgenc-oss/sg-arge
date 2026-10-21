@@ -1,0 +1,39 @@
+id: A2-019
+ad: Williams%R, SAR X-over 15 minute candles
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/989455-williamsr-sar-x-over-15-minute-candles
+  sayfa: null
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  wpr.n: 16
+  wpr_midline: -50
+  sar.step: 0.02
+  sar.max: 0.2
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi M15 (1 saatin altında, bazen M5)
+- 'Özel kod mantığı: NY seans açılışında (08:00-11:00 EST, Salı-Perşembe) Parabolic SAR(0.02, 0.2) noktası fiyatın üstünden altına geçtiğinde (bullish crossover) ve Williams %R(16) > -50 olduğunda (konsolidasyon
+  varsa direnç kırılımı beklenerek) Long açılır; SL önceki swing low''un birkaç pip altına konur; sabit TP yoktur, stop ihtiyari olarak taşınır'
+- 'short kuralı var: Parabolic SAR fiyatın üstüne geçtiğinde ve Williams %R(16) < -50 olduğunda short açılır, SL önceki swing high''ın birkaç pip üstüne konur'
+kart_yazari: argon

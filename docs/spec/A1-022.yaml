@@ -1,0 +1,35 @@
+id: A1-022
+ad: Slight Swing Momentum Strategy
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://it.tradingview.com/script/6l9kcw7j
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: 1W
+tf_varsayim: false
+yazar_piyasasi: Hisse
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- URL doğrudan okunamadı (TradingView erişim engeli); yalnızca ikincil önbellek özeti (TradeSearcher) okunabildi
+- Önbellek özetine göre hareketli ortalamalar, kesişim sinyalleri, hacim analizi, A1/A2/A3/XG koşulları ve haftalık eğim (weekly slope) kullanıyor ancak tam Pine Script formülleri ve çıkış kuralları belirsiz
+- Haftalık eğim (mtf 1W) hesabında request.security lookahead kullanımı varsa REPAINT riski kontrol edilmeli
+erisim_engeli: true
+kart_yazari: argon

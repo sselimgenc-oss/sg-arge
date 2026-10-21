@@ -1,0 +1,39 @@
+id,ad,url,neden
+A3-004,"Pairs_Trading (gün içi eş-bütünleşme, M1)",https://github.com/Neuvox512/Pairs_Trading,sonnet: kaynak sitesi Sonnet ortaminda engelli
+A4-009,Volume Spikes in Oil Futures (embedded backtest),https://www.quantconnect.com/terminal/cache/embedded_backtest_19dce81c99a5fcc437,sonnet: kaynak sitesi Sonnet ortaminda engelli
+B1-002,"AlphaTrend Strategy (TradingView, Kıvanç Özbilgiç)",https://www.tradingview.com/script/3wdQu7P3-AlphaTrend-Strategy,sonnet: kaynak sitesi Sonnet ortaminda engelli
+B2-001,"Opening-Range Breakout (TradingView, vadeli)",https://pl.tradingview.com/script/8vjWAdLN-Opening-Range-Breakout/,sonnet: kaynak sitesi Sonnet ortaminda engelli
+B2-005,"Athena Momentum Squeeze - Short, Lean, and Mean",https://in.tradingview.com/script/Oy4huVQ2-Athena-Momentum-Squeeze-Short-Lean-an,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-002,FIRSATÇITRENDİFLİSİSTEMANILBy (Fırsatçı Trend + IF'li sistem),https://algokutuphanesi.com/Sistem/Detay/Matriks/FIRSATÇITRENDİFLİSİSTEMANILBy,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-003,PHL1 YİĞİT KAYNAK,https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL1-YİGİT-KAYNAK,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-004,PHL2 YIGITBOX,https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL2YIGITBOX,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-005,ROTT-SOTT,https://algokutuphanesi.com/Sistem/Detay/Matriks/ROTT-SOTT,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-006,MOTT-4B Kurgu,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4B-Kurgu,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-007,SÜPERTRENDMOSTOPTİMİZASYONLU,https://algokutuphanesi.com/Sistem/Detay/Matriks/SÜPERTRENDMOSTOPTİMİZASYONLU,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-008,Anıl Özekşi Sistem 1,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Anil-Özekşi-Sistem-1,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-009,MOTT 4 Kurgu Stratejisi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4-Kurgu-Stratejisi,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-010,FirsatciTrend 4Bölge LONG,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/FirsatciTrend-4Bölge-LONG,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-011,SuperTrendVadeliStratejisi,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/SuperTrendVadeliStratejisi,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-013,OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-019,EMA 25/68 BIST30 Futures,https://www.tradingview.com/script/Tbh1KPxq/,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-027,PMax Explorer STRATEGY & SCREENER,https://www.tradingview.com/script/nHGK4Qtp/,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-029,Grover Llorens Activator Strategy Analysis,https://www.tradingview.com/script/VuYM89Tw-Grover-Llorens-Activator-Strategy-An,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-030,Uhl MA System - Strategy Analysis,https://www.tradingview.com/script/4S9Yz3DB-Uhl-MA-System-Strategy-Analysis/,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-031,Trendline Breaks with Multi Fibonacci Supertrend Strategy (TMFS),https://www.tradingview.com/script/aVzNdTMg-Trendline-Breaks-with-Multi-Fibonacci-Supertrend-Strategy,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-032,Scalping Support Resistance Strategy,https://www.tradingview.com/script/gp332Dao-Scalping-Support-Resistance-Strategy,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-033,Scalping with Bill Williams Alligator,https://www.tradingview.com/script/b2ShO5Fv-Scalping-with-Bill-Williams-Alligator,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-034,[Sniper] SuperTrend + SSL Hybrid + QQE MOD,https://www.tradingview.com/script/6w9Jchj6/,sonnet: kaynak sitesi Sonnet ortaminda engelli
+O1-035,ORB Heikin Ashi SPY 5min Correlation Strategy,https://www.tradingview.com/script/QpJvYDzb-ORB-Heikin-Ashi-SPY-5min-Correlation,sonnet: kaynak sitesi Sonnet ortaminda engelli
+A2-004,SessionReopenEA,https://www.mql5.com/en/code/77060,argon: varsayilan parametreler icin .mq5 kaynak kodu okunmali
+A2-006,Price Action Intraday Trading - Expert for MT5,https://www.mql5.com/en/code/68704,argon: varsayilan parametreler icin .mq5 kaynak kodu okunmali
+A2-011,APEX VELOCITY,https://www.mql5.com/en/code/78275,argon: varsayilan parametreler icin .mq5 kaynak kodu okunmali
+A2-012,ORB Risk Managed - Opening Range Breakout,https://www.mql5.com/en/code/77967,argon: varsayilan parametreler icin .mq5 kaynak kodu okunmali
+A2-013,Opening Range Breakout with NR4 / NR7 Contraction Filters,https://www.mql5.com/en/code/78259,argon: varsayilan parametreler icin .mq5 kaynak kodu okunmali
+A1-016,VIOP Scalping - ATR SNIPER,https://www.tradingview.com/script/R0CTM8NR-VIOP-Scalping-ATR-SNIPER/,"argon: TradingView okunamadi; ayna (Scribd, TradeSearcher, GitHub) aranmali"
+A1-017,VIOP Scalping - Original,https://www.tradingview.com/script/4BcYQ0Ns-VIOP-Scalping-Original/,"argon: TradingView okunamadi; ayna (Scribd, TradeSearcher, GitHub) aranmali"
+A1-019,BIST30 to S&P 500 ATR Momentum Rider,https://www.tradingview.com/script/jd1KSVn7/,"argon: TradingView okunamadi; ayna (Scribd, TradeSearcher, GitHub) aranmali"
+A1-020,Antony.N4A - NQ ORB Quartile Str v6.3,https://de.tradingview.com/script/uUtBQ59O-Antony-N4A-NQ-ORB-Quartile-Str-v6-3,"argon: TradingView okunamadi; ayna (Scribd, TradeSearcher, GitHub) aranmali"
+A1-022,Slight Swing Momentum Strategy,https://it.tradingview.com/script/6l9kcw7j,"argon: TradingView okunamadi; ayna (Scribd, TradeSearcher, GitHub) aranmali"
+A1-023,ORB Breakout Strategy (chartsquare),https://ru.tradingview.com/script/VJ9ZHgNB-ORB-Breakout-Strategy,"argon: TradingView okunamadi; ayna (Scribd, TradeSearcher, GitHub) aranmali"
+A1-024,TrendMaster Pro 2.3 with Alerts,https://www.tradingview.com/script/mVkDf8qh-TrendMaster-Pro-2-3-with-Alerts/,"argon: TradingView okunamadi; ayna (Scribd, TradeSearcher, GitHub) aranmali"
+A2-010,ICE (Impulse Confirmation Engine),https://www.mql5.com/en/code/69651,"argon: TradingView okunamadi; ayna (Scribd, TradeSearcher, GitHub) aranmali"

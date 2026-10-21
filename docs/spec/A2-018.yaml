@@ -1,0 +1,55 @@
+id: A2-018
+ad: TMS for M30 charts
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/526735-tms-for-m30-charts
+  sayfa: null
+tarz: day
+tf: 30m
+mtf: 4h
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler:
+  ema200:
+    f: ema
+    src: close
+    n: 200
+  ema21:
+    f: ema
+    src: close
+    n: 21
+  stoch:
+    f: stoch
+    k: 14
+    d: 3
+    smooth: 3
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  tdi_oversold: 32
+  tdi_overbought: 68
+  stoch_min_long: 50
+  stoch_max_long: 75
+  stoch_min_short: 25
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: ihtiyari
+belirsiz:
+- Karar zaman dilimi M30 (1 saatin altında)
+- 'İhtiyari (discretionary) kurallar içerir: Frankfurt/Londra/NY açılışlarında destek/direnç (S/R) bölgesinde, Daily Open Line (DOL) ve EMA(200) uzağında, uyumsuzluk (divergence/hidden divergence) veya
+  trend çizgisi kırılımı/mum formasyonu eşliğinde TDI yeşil çizginin kırmızıyı yukarı kesmesi (TDI > 32), APB (Heikin Ashi) mum renginin aynı olması ve Stochastic > 50 (ve < 75) olmasıyla Long girilir;
+  mekanik bir çıkış ve stop-loss kuralı tanımlanmamıştır'
+- 'short kuralı var: S/R direncinde TDI aşağı kesişimi (TDI < 68), kırmızı APB mumu ve Stochastic < 50 (ve > 25) ile short girilir'
+- 'lider: ihtiyari (discretionary) kurallar; mekanik test edilemez -> Dogrulanamaz'
+kart_yazari: argon

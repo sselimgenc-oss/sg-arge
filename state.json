@@ -11,7 +11,7 @@
       "id": "T4",
       "owner": "codex-worker",
       "title": "Saatlik veri katmani + haftalik arsiv (yfinance 730 gun kayan pencere)",
-      "status": "ready",
+      "status": "done (PR #12); arsiv workflow'u kullanici tarafindan elle tetiklenecek",
       "spec": "docs/GOREV_T4.md",
       "priority": "yuksek, T1a ile paralel"
     },
@@ -19,22 +19,22 @@
       "id": "T1a",
       "owner": "codex-worker",
       "title": "Veri + referans motor + 2 aile pilotu (C01,C19,C02,C09,C15,C17), replikasyon ve 2015-2019 on donem testi",
-      "status": "ready",
+      "status": "atandi (@codex, Issue #1)",
       "spec": "docs/GOREV_T1.md"
     },
     {
       "id": "T2",
       "owner": "claude-moderator",
       "title": "YAML kart + triyaj: parti 1 (PDF B seviyesi) ve xlsx tek partiler 3,5,7,9 (docs/spec/PARTILER.csv)",
-      "status": "parti-3 PR acik (59 kart; 30 eksik, cogu engelli hostlardan: TradingView/Matriks), lider incelemesi bekleniyor",
+      "status": "parti 1 ve 3 kabul (PR #11, #13); parti 5 atandi",
       "spec": "docs/GOREV_T2.md"
     },
     {
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
       "title": "YAML kart + triyaj: xlsx cift partiler 2,4,6,8",
-      "status": "ready (parti 2 paketi hazir)",
-      "spec": "argon/PAKET_T2_parti2.md"
+      "status": "parti 2 kabul (lider duzeltmeli); parti 4 + yeniden okuma paketleri hazir",
+      "spec": "argon/PAKET_T2_parti4.md, argon/PAKET_T2_yeniden.md"
     },
     {
       "id": "T3",
@@ -83,6 +83,24 @@
       "owner": "claude-moderator",
       "title": "22 kart (PDF B seviyesi), 5/5 ornek kaynakla tutarli",
       "ref": "PR #11"
+    },
+    {
+      "id": "T4",
+      "owner": "codex-worker",
+      "title": "Saatlik veri katmani",
+      "ref": "PR #12"
+    },
+    {
+      "id": "T2-p3",
+      "owner": "claude-moderator",
+      "title": "59 kart",
+      "ref": "PR #13"
+    },
+    {
+      "id": "T2-p2",
+      "owner": "argon",
+      "title": "40 kart, 11 durum duzeltmesi",
+      "ref": "docs/spec/INDEKS.csv"
     }
   ],
   "user_decisions_pending": [],

@@ -1,0 +1,41 @@
+id: A2-012
+ad: ORB Risk Managed - Opening Range Breakout
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/77967
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (US100 / Nasdaq 100)
+gostergeler:
+  atr14:
+    f: atr
+    n: 14
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  session_open_server: '16:30'
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- Karar ve aralık hesaplama verisi M1 (1 saatin altında); ABD seans açılışı (16:30 GMT+3) sonrası ilk dakikaların high/low aralığını (Opening Range) M1 verisinden çıkarır
+- 'Özel kod mantığı: Açılış aralığının üstüne Buy Stop, altına Sell Stop (OCO) konur; günde en fazla 1 işlem açılır; ATR filtresiyle aşırı dar/geniş aralıklı günler atlanır; SL aralık genişliğinin bir kesri,
+  TP ise R çarpanıdır; seans sonunda tüm pozisyonlar kapatılır'
+- Aralık uzunluğu (dakika), SL aralık kesri, TP R çarpanı ve ATR filtre eşiklerinin sayısal varsayılanları açıklama metninde yazmayıp .mq5 dosyasındadır
+- 'short kuralı var: Açılış aralığının altına konan Sell Stop tetiklendiğinde short açılır ve Buy Stop silinir'
+- 'lider: varsayilan parametreler .mq5 icinde, okunmadi'
+kart_yazari: argon

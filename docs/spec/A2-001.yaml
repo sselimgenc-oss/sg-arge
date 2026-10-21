@@ -1,0 +1,68 @@
+id: A2-001
+ad: GER40 Evening Coil
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/78380
+  sayfa: null
+tarz: day
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (GER40 / DAX)
+gostergeler:
+  atr14:
+    f: atr
+    n: 14
+  roc1:
+    f: roc
+    src: close
+    n: 1
+  vol_sma50:
+    f: sma
+    src: volume
+    n: 50
+  vol_sma252:
+    f: sma
+    src: volume
+    n: 252
+giris: volume >= vol_sma50
+cikis: null
+stop:
+  tip: atr
+  n: 14
+  carpan: 3.5
+hedef:
+  tip: atr
+  n: 14
+  carpan: 4.5
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  vol_fast.n: 50
+  vol_slow.n: 252
+  ret_fast.n: 10
+  ret_slow.n: 100
+  vol_ratio_max: 1.6
+  nr7_lookback: 13
+  nr_window: 7
+  sl_atr_mult: 3.5
+  tp_atr_mult: 4.5
+  entry_start_hour: 18
+  entry_end_hour: 21
+  exit_hour: 23
+deneme_sayisi_kaynakta: 5552
+rapor:
+  pf: 2.07
+  sharpe: null
+  getiri: 376.5
+  mdd: 10.5
+  islem: 465
+  wr: 62.6
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz:
+- 'Özel kod mantığı: Pazartesi-Cuma sunucu saatiyle (GMT+2 kış / GMT+3 yaz) 18:00-21:00 arasında kapanan H1 barında 4 koşul birlikte sağlanmalıdır: (1) son 10 saatlik getirinin standart sapması < 1.6 *
+  son 100 saatlik getirinin standart sapması, (2) tick hacmi >= 50 barlık ortalama tick hacmi, (3) son 252 barın ortalama tick hacmi < sabit eşik, (4) son 13 bardan en az biri NR7 (kendi son 7 barının en
+  dar high-low aralığına sahip bar); sonraki bar açılışında Long açılır ve 23:00 sunucu saatinde açık pozisyon kapatılır'
+- 3. koşuldaki 252-barlık ortalama tick hacmi üst eşiğinin sayısal varsayılan değeri ve ATR periyodu açıklama metninde yazmayıp .mq5 kaynak dosyasındadır (ATR periyodu 14 varsayıldı)
+kart_yazari: argon

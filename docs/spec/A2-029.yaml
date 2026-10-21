@@ -1,0 +1,42 @@
+id: A2-029
+ad: Simple Zigzag + Fibonacci Strategy
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/987910-simple-zigzag-fibonacci-strategy
+  sayfa: null
+tarz: swing
+tf: 1h
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Forex / Sentetik Endeks
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  zigzag_depth: 12
+  zigzag_deviation: 5
+  zigzag_backstep: 3
+  fib_entry_level: 0.782
+  fib_partial_tp: 0.382
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'REPAINT: ZigZag göstergesi gelecek barlara göre son bacağı yeniden çizer (repaint yapar)'
+- Karar zaman dilimi metinde sabitlenmemiştir (örnek grafiklerde H1, M30, H4, D1 kullanılmış; ilk örnekler EURCHF H1 olduğu için 1h varsayıldı)
+- 'Özel kod mantığı: ZigZag(12,5,3) ile bir Tepe (H) ve Dip (L) belirlendikten sonra fiyatın Tepeyi yukarı kırıp yeni bir Yüksek Tepe (HH) yapması beklenir; L ile HH arasına çekilen Fibonacci düzeltmesinin
+  %78.2 (0.782) seviyesine fiyat geri çekildiğinde Long girilir'
+- Stop-loss seviyesi ve tam çıkış kuralı tanımlanmamıştır (yalnızca bir örnekte %38.2 Fib seviyesinde kısmi kâr alındığı ve stop-loss'un kullanıcıya bağlı olduğu belirtilmiştir)
+- 'short kuralı var: Dip (L) ve Tepe (H) sonrası fiyat Dibi aşağı kırıp LL yaptığında, LL ile H arasına çekilen Fibonacci %78.2 düzeltme seviyesinde short girilir'
+kart_yazari: argon

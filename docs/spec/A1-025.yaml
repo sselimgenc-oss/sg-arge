@@ -1,0 +1,42 @@
+id: A1-025
+ad: TASC 2026.03 One Percent A Week
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingview.com/script/nVECqIQx-TASC-2026-03-One-Percent-A-Week/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: 1W
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (TQQQ)
+gostergeler: {}
+giris: low <= mtf(1W, open) * 0.99
+cikis: high >= entry_price * 1.01
+stop: null
+hedef:
+  tip: yuzde
+  deger: 1.0
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  entry_dip_mult: 0.99
+  target_mult: 1.01
+  breakeven_trigger_mult: 0.995
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- TradingView URL doğrudan açılmadı ancak resmi TASC Mart 2026 Traders' Tips sayfasından (PineCodersTASC) birebir Pine Script v6 kodu okundu
+- 'Özel kod mantığı: Pazartesi normal seans açılış fiyatının (wOpen) %1 altına (wOpen * 0.99) haftada en fazla 1 kez çalışacak Buy Limit emri konur; pozisyon açıldıktan sonra low < entry_price * 0.995 (-%0.5
+  geri çekilme) görülürse kâr al limiti başabaş seviyesine (entry_price) çekilir; aksi halde %1 kâr hedefinde (entry_price * 1.01) veya Cuma seans kapanışında (dayofweek.friday ve session.islastbar_regular)
+  piyasa fiyatından kapatılır'
+- 'Kod-açıklama çelişkisi: Makale metninde ve TradeStation kodunda %1 kâr hedefi emri pozisyon açılır açılmaz konurken, Pine Script v6 kodunda ''if sendPT == true and session.isfirstbar_regular and not
+  beSent'' koşulu nedeniyle %1 limit çıkış emri yalnızca ertesi günün ilk seans barında gönderilmektedir'
+kart_yazari: argon

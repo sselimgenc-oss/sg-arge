@@ -1,0 +1,43 @@
+id: A2-013
+ad: Opening Range Breakout with NR4 / NR7 Contraction Filters
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/code/78259
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Emtia (XAUUSD)
+gostergeler:
+  atr_d1:
+    f: atr
+    n: 14
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  session_start_london: 08:00
+  exit_after_minutes: 780
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- EA doğrudan M1 ve D1 verisini okuyarak gün içi seans kırılımını M1 üzerinde yürütür (1 saatin altında)
+- 'Özel kod mantığı (Toby Crabel ORB): Londra 08:00 seans açılış fiyatı (session_open) kaydedilir; önceki D1 barı seçilen daralma filtresini (None, NR4, NR7, Inside day + NR4, 3-bar NR) geçerse session_open
+  + offset seviyesine Buy Stop, session_open - offset seviyesine Sell Stop (OCO) konur; offset Crabel stretch veya D1 ATR çarpanıyla hesaplanır; SL karşı emir seviyesidir (2 * offset); başlangıçtan 13 saat
+  (780 dk) sonra açık pozisyon kapatılır'
+- Varsayılan daralma filtresi seçimi, ATR çarpanı, stretch periyodu ve TP çarpanı açıklama metninde sayısal olarak belirtilmemiştir (.mq5 içindedir)
+- 'short kuralı var: session_open - offset seviyesindeki Sell Stop tetiklendiğinde short açılır, SL session_open + offset seviyesidir'
+- 'lider: varsayilan parametreler .mq5 icinde, okunmadi'
+kart_yazari: argon
