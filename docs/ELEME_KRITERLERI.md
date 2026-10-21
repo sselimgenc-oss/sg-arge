@@ -1,6 +1,6 @@
 # Paper Trading Aday Eleme Kriterleri (v0.3)
 
-Durum: Claude-Mod önerisi + Codex görüşü (Issue #1) + **lider/denetçi (Opus) kararları** (`tartisma/001_cevap_opus.md`). Lider onaylı; yalnız "Kullanıcı kararları" bölümü açık.
+Durum: Claude-Mod önerisi + Codex görüşü (Issue #1) + **lider/denetçi (Opus) kararları** (`tartisma/001_cevap_opus.md`). Lider ve kullanıcı onaylı (2026-10-21).
 Eşikler evrensel yasa değil, kural-ı pratik (Pardo, Bailey & López de Prado, Harvey-Liu-Zhu, Davey, Carver).
 
 ## İlkeler
