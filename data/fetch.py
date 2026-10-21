@@ -22,7 +22,7 @@ QUALITY_PATH = ROOT / "results" / "veri_kalitesi_1h.md"
 BINANCE_KLINES_URL = "https://data-api.binance.vision/api/v3/klines"
 BINANCE_START = pd.Timestamp("2017-01-01", tz="UTC")
 DAILY_START = "2015-01-01"
-REQUIRED_UNIVERSE_COLUMNS = {"symbol", "market", "source"}
+REQUIRED_UNIVERSE_COLUMNS = {"sembol", "piyasa", "kaynak", "not"}
 OHLCV_COLUMNS = ["open", "high", "low", "close", "volume"]
 
 
@@ -43,17 +43,41 @@ def load_universe(path: Path = UNIVERSE_PATH) -> list[Asset]:
     missing = REQUIRED_UNIVERSE_COLUMNS.difference(table.columns)
     if missing:
         raise ValueError(f"evren.csv missing columns: {sorted(missing)}")
-    if table["symbol"].duplicated().any():
-        duplicate = table.loc[table["symbol"].duplicated(), "symbol"].tolist()
+    if table["sembol"].duplicated().any():
+        duplicate = table.loc[table["sembol"].duplicated(), "sembol"].tolist()
         raise ValueError(f"duplicate universe symbols: {duplicate}")
     assets = [
-        Asset(row.symbol.strip(), row.market.strip(), row.source.strip().lower())
+        Asset(row.sembol.strip(), row.piyasa.strip(), row.kaynak.strip().lower())
         for row in table.itertuples(index=False)
     ]
     unsupported = sorted({asset.source for asset in assets} - {"yfinance", "binance"})
     if unsupported:
         raise ValueError(f"unsupported sources: {unsupported}")
     return assets
+
+
+def update_universe_notes(
+    successful: set[str],
+    failures: dict[str, str],
+    path: Path = UNIVERSE_PATH,
+) -> None:
+    """Keep leader notes while reflecting the latest per-symbol fetch state."""
+
+    table = pd.read_csv(path, dtype=str).fillna("")
+    for index, row in table.iterrows():
+        symbol = row["sembol"]
+        retained = [
+            part.strip()
+            for part in row["not"].split(";")
+            if part.strip() and not part.strip().lower().startswith("eksik:")
+        ]
+        if symbol in failures:
+            reason = " ".join(failures[symbol].split())[:200]
+            retained.append(f"eksik: {reason}")
+        elif symbol not in successful:
+            continue
+        table.at[index, "not"] = "; ".join(retained)
+    table.to_csv(path, index=False)
 
 
 def _utc_index(index: pd.Index) -> pd.DatetimeIndex:
@@ -291,6 +315,8 @@ def fetch_asset(asset: Asset, interval: str, *, append: bool) -> tuple[Path, pd.
 def run(interval: str, *, append: bool) -> int:
     manifest_rows: list[dict[str, object]] = []
     quality_rows: list[dict[str, object]] = []
+    successful: set[str] = set()
+    failure_reasons: dict[str, str] = {}
     failures = 0
     for asset in load_universe():
         directory = DATA_DIR / ("hourly" if interval == "1h" else "daily")
@@ -300,6 +326,7 @@ def run(interval: str, *, append: bool) -> int:
             manifest_rows.append(
                 _manifest_row(asset, interval, path, frame, status="ok")
             )
+            successful.add(asset.symbol)
             if interval == "1h":
                 quality_rows.append(
                     {
@@ -313,6 +340,7 @@ def run(interval: str, *, append: bool) -> int:
             print(f"OK {asset.symbol}: {len(frame)} rows")
         except Exception as exc:  # continue the universe and record each failure
             failures += 1
+            failure_reasons[asset.symbol] = str(exc)
             retained = _read_archive(path) if path.exists() else None
             manifest_rows.append(
                 _manifest_row(
@@ -325,6 +353,7 @@ def run(interval: str, *, append: bool) -> int:
                 )
             )
             print(f"ERROR {asset.symbol}: {exc}")
+    update_universe_notes(successful, failure_reasons)
     update_manifest(manifest_rows)
     if interval == "1h":
         write_quality_report(quality_rows)

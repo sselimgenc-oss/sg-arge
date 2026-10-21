@@ -12,6 +12,7 @@ from data.fetch import (
     normalize_ohlcv,
     quality_metrics,
     update_manifest,
+    update_universe_notes,
 )
 
 
@@ -58,11 +59,35 @@ def test_merge_archive_prefers_new_value_at_same_timestamp() -> None:
 def test_load_universe_rejects_duplicate_symbols(tmp_path: Path) -> None:
     path = tmp_path / "evren.csv"
     path.write_text(
-        "symbol,market,source\nTHYAO.IS,BIST30,yfinance\nTHYAO.IS,BIST30,yfinance\n",
+        "sembol,piyasa,kaynak,not\nTHYAO.IS,BIST30,yfinance,\nTHYAO.IS,BIST30,yfinance,\n",
         encoding="utf-8",
     )
     with pytest.raises(ValueError, match="duplicate"):
         load_universe(path)
+
+
+def test_project_universe_has_leader_approved_counts() -> None:
+    assets = load_universe()
+    counts = pd.Series([asset.market for asset in assets]).value_counts().to_dict()
+
+    assert counts == {"BIST30": 30, "ABD25": 27, "KRIPTO25": 25, "EMTIA": 6}
+    assert all(asset.symbol.endswith(".IS") for asset in assets if asset.market == "BIST30")
+    assert all(asset.symbol.endswith("USDT") for asset in assets if asset.market == "KRIPTO25")
+
+
+def test_universe_notes_preserve_reference_and_refresh_missing_state(tmp_path: Path) -> None:
+    path = tmp_path / "evren.csv"
+    path.write_text(
+        "sembol,piyasa,kaynak,not\nSPY,ABD25,yfinance,referans; eksik: eski hata\n"
+        "KOZAL.IS,BIST30,yfinance,\n",
+        encoding="utf-8",
+    )
+
+    update_universe_notes({"SPY"}, {"KOZAL.IS": "sembol bulunamadı\nikinci satır"}, path)
+
+    table = pd.read_csv(path).fillna("").set_index("sembol")
+    assert table.loc["SPY", "not"] == "referans"
+    assert table.loc["KOZAL.IS", "not"] == "eksik: sembol bulunamadı ikinci satır"
 
 
 def test_crypto_quality_counts_missing_hours_and_zero_volume() -> None:

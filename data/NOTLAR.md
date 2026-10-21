@@ -1,5 +1,6 @@
 # Veri zaman damgası ve arşiv notları
 
+- Evren 2026-10 itibarıyla lider tarafından seçildi; bugünkü büyük şirketler → survivorship yanlılığı; PDF'teki 28/25/25/6 listesiyle birebir olmayabilir.
 - Bütün Parquet dosyaları UTC, timezone-aware `timestamp` indeksine sahiptir.
 - Zaman damgası **bar başlangıcını** ifade eder. Binance `/api/v3/klines` için bu doğrudan `open_time` alanıdır. Yfinance saatlik indeksleri de interval başlangıç etiketidir; indirilen ilk arşivde THYAO.IS seans hizası kalite raporuyla ayrıca doğrulanmalıdır.
 - Yfinance günlük barları borsanın seans tarihini temsil eder; karşılaştırılabilir saklama için UTC gece yarısına yerleştirilir. Gün içi saat anlamı taşımaz.

@@ -11,7 +11,7 @@
       "id": "T4",
       "owner": "codex-worker",
       "title": "Saatlik veri katmani + haftalik arsiv (yfinance 730 gun kayan pencere)",
-      "status": "in-progress",
+      "status": "review",
       "spec": "docs/GOREV_T4.md",
       "priority": "yuksek, T1a ile paralel"
     },
