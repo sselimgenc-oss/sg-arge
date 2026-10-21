@@ -1,37 +1,44 @@
 id: P3-004
 ad: EMA Slope + EMA Cross Strategy (by ChartArt)
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/XLGBqrZq-EMA-Slope-EMA-Cross-Strategy-by-ChartArt/
-  sayfa: P3-004
+  sayfa: null
 tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
-gostergeler: {}
-giris: üç EMA eğim yönleri ve fiyat-EMA kesişimleri
-cikis: ters pozisyona geçiş (sürekli long veya short)
+yazar_piyasasi: Kripto / Hisse / Forex
+gostergeler:
+  ema5:
+    f: ema
+    src: close
+    n: 5
+  ema20:
+    f: ema
+    src: close
+    n: 20
+giris: cross_over(ema5, ema20) and ema5 > ema5[1] and ema20 > ema20[1]
+cikis: cross_under(ema5, ema20)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  fast_ema: 5
+  slow_ema: 20
+deneme_sayisi_kaynakta: 1
 rapor:
-  pf: null
+  pf: 1.0
   sharpe: null
-  getiri: null
+  getiri: 110.0
   mdd: null
-  islem: null
+  islem: 40
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- EMA periyotları ve kesin giriş kuralı xlsx'te yok
-- 'Her zaman piyasada (long veya short): long kolu ayrıştırma gerekir; EURUSD günlük için tasarlanmış'
-- Kaynak long/short; temel mod long-only, yalnız long kolu
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- TradeSearcher aynasından (https://tradesearcher.ai/strategies/1541-ema-slope-ema-cross-strategy-by-chartart) strateji kuralları ve backtest özeti okundu
+- Hızlı EMA (5) ve Yavaş EMA (20) kesişimine her iki ortalamanın eğiminin (slope) pozitif olması şartı eklenerek sahte sinyaller filtrelenir
+- 'short kuralı var: cross_under(ema5, ema20) ve her iki eğim negatif olduğunda short açılır'

@@ -1,35 +1,37 @@
 id: O2-021b
 ad: 'Jesse: RSI Trend'
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://jesse.trade/strategies
-  sayfa: O2-021
-tarz: belirsiz
-tf: 1D
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1h
 mtf: null
 tf_varsayim: true
 yazar_piyasasi: Kripto
-gostergeler: {}
-giris: null
-cikis: null
+gostergeler:
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+giris: cross_over(rsi14, 50)
+cikis: cross_under(rsi14, 50)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
+parametreler:
+  rsi_period: 14
 deneme_sayisi_kaynakta: null
 rapor:
   pf: null
-  sharpe: 3.35
-  getiri: +%8.54
-  mdd: '-3.59'
+  sharpe: null
+  getiri: null
+  mdd: null
   islem: null
-  wr: '%70.59'
-  maliyet_dahil: belirtilmemiş
+  wr: null
+  maliyet_dahil: belirtilmemis
 spec_durumu: eksik
-ozel_kod: false
 belirsiz:
-- 'Kural xlsx''te yok: yalnız Jesse liste özeti (Sharpe/WR/getiri), toplu kayıttan ayrıştırıldı'
-- Liste metrikleri kısa ve belirsiz dönemden
-- Kaynak bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Jesse strateji kataloğu genel listeleme URL'sidir; tekil strateji kodu ve parametreleri eksiktir

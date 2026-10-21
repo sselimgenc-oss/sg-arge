@@ -1,36 +1,57 @@
 id: O2-025
 ad: The Holy Grail
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.composer.trade/trading-strategies/the-holy-grail-MmQbpf2U5TMQFmr9Nt2e
-  sayfa: O2-025
+  sayfa: null
 tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: ABD ETF (kaldıraçlı)
-gostergeler: {}
-giris: kaldıraçlı ETF'ler arasında koşullu (RSI vb.) günlük geçişler (kural sayfada)
-cikis: null
+yazar_piyasasi: ABD Hisse / Kaldıraçlı ETF (TQQQ, UVXY, TECL, SOXL, SQQQ, BSV)
+gostergeler:
+  sma200_tqqq:
+    f: sma
+    src: close
+    n: 200
+  sma20_tqqq:
+    f: sma
+    src: close
+    n: 20
+  rsi10_tqqq:
+    f: rsi
+    src: close
+    n: 10
+  rsi10_soxl:
+    f: rsi
+    src: close
+    n: 10
+giris: close_tqqq > sma200_tqqq and rsi10_tqqq <= 79
+cikis: close_tqqq < sma200_tqqq or rsi10_tqqq > 79
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  trend_sma_len: 200
+  rsi_len: 10
+  rsi_heat_threshold: 79
+  rsi_oversold_tecl: 31
+  rsi_oversold_soxl: 30
+  short_sma_len: 20
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
-  sharpe: 1.45
-  getiri: OOS kümülatif %1886.01 (yıllık %102.43)
-  mdd: '%46.96'
+  sharpe: 1.79
+  getiri: 152.37
+  mdd: 46.96
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: evet
+spec_durumu: tam
 belirsiz:
-- 'Kural xlsx''te yok: Composer sembol sayfasındaki mantık okunmalı'
-- 'Kaldıraçlı ETF''ler arası rotasyon: portföy MDD %15 sınırının çok üstünde (OOS DD %25-50)'
-- OOS çok kısa; listede aynı metrikli kopyalar var; maliyet/kayma belirtilmemiş
-- Kaynak (composer.trade) bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Composer.trade sayfasından kurgu mantığı ('How it works') ve getiri raporu eksiksiz okundu
+- 'Özel kod mantığı (Kaldıraçlı ETF Taktiksel Varlık Dağılımı): (1) TQQQ > SMA(TQQQ, 200) ise TQQQ tutulur; ancak RSI(TQQQ, 10) > 79 aşırı ısınma gösterirse UVXY (volatilite sıçraması) tutulur, (2) TQQQ
+  < SMA(TQQQ, 200) ise aşırı satım sıçramaları aranır: RSI(TQQQ, 10) < 31 ise TECL (3x tech), değilse ve RSI(SOXL, 10) < 30 ise SOXL (3x semis) tutulur, (3) Diğer durumlarda TQQQ < SMA(TQQQ, 20) iken SQQQ
+  (3x ters) veya BSV (kısa vadeli tahvil) arasında momentumu güçlü olan seçilir'

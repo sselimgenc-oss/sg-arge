@@ -1,21 +1,23 @@
 id: O2-001
 ad: JP225 Opening Range Break Strategy
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://forex-station.com/jp225-opening-range-break-strategy-t8476395.html
-  sayfa: O2-001
+  sayfa: null
+erisim_engeli: true
 tarz: day
-tf: 1m
+tf: 5m
 mtf: null
-tf_varsayim: false
-yazar_piyasasi: Nikkei 225 CFD (JP225)
+tf_varsayim: true
+yazar_piyasasi: Endeks CFD (JP225)
 gostergeler: {}
-giris: 09:05-10:00 JST; 5 dk açılış aralığı kırılmış and (önceki gün H/L/C veya 2 günlük anchored VWAP destek olmuş) and close > vwap ; dirence R:R >= 1:1
-  ; tatil günü değil
-cikis: geri çekilme dibi kırılırsa veya yeni zirvede veya 11:00 JST
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -23,17 +25,11 @@ rapor:
   sharpe: null
   getiri: null
   mdd: null
-  islem: 20
-  wr: '%70'
-  maliyet_dahil: belirtilmemiş
-spec_durumu: ihtiyari
-ozel_kod: false
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
 belirsiz:
-- '''Destek olmuş'' ve ''dirence karşı R:R'' yoruma dayalı; yazar ''stop seviyesi takdire bağlı'' diyor: mekanik test edilemez -> Doğrulanamaz'
-- 'Piyasaya özgü seans/saat kuralı: yalnız o piyasada test edilir; diğer piyasalarda Doğrulanamaz (piyasa özgü); bu piyasa (Nikkei/CFD) evrenimizde yok'
-- Yalnız 20 işlem; PF/DD/maliyet yok; yazar istatistiksel doğrulamanın yetersiz olduğunu belirtiyor
-- Yalnız long kuralları yayınlanmış
-- Kaynak kod yok (.zip, derlenmiş)
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-bias_varsayim: false
-erisim_engeli: true
+- Forex-Station sayfası erişim engeli (Cloudflare bot koruması) nedeniyle okunamadı
+- 'Yazarın (funchi) Nikkei 225 endeksinde gün içi açılış aralığı kırılımı kurallarını paylaştığı arama özetinden anlaşılmakta ancak tam saat dilimleri ve SL/TP parametreleri okunamadığı için spec_durumu:
+  eksik olarak sınıflandırıldı'

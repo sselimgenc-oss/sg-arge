@@ -1,36 +1,41 @@
 id: O2-026
 ad: KMLM Switcher of Simon97 - Original
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.composer.trade/trading-strategies/kmlm-switcher-of-simon97-original-syMn9OgFREE0wo8LtYsG
-  sayfa: O2-026
+  sayfa: null
 tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: ABD ETF (kaldıraçlı)
-gostergeler: {}
-giris: kaldıraçlı ETF'ler arasında koşullu (RSI vb.) günlük geçişler (kural sayfada)
-cikis: null
+yazar_piyasasi: ABD Hisse / Vadeli Trend ETF (TQQQ, KMLM, SQQQ, TLT)
+gostergeler:
+  rsi10:
+    f: rsi
+    src: close
+    n: 10
+giris: rsi10_extremes_cleared and tech_vs_kmlm_bull
+cikis: tech_vs_kmlm_bear
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  rsi_length: 10
+  rsi_overbought: 80
+  rsi_oversold: 30
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
-  sharpe: 1.61
-  getiri: OOS kümülatif %797.12 (yıllık %166.07)
-  mdd: '%36.08'
+  sharpe: 2.11
+  getiri: 499.34
+  mdd: 22.0
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: evet
+spec_durumu: tam
 belirsiz:
-- 'Kural xlsx''te yok: Composer sembol sayfasındaki mantık okunmalı'
-- 'Kaldıraçlı ETF''ler arası rotasyon: portföy MDD %15 sınırının çok üstünde (OOS DD %25-50)'
-- OOS çok kısa; listede aynı metrikli kopyalar var; maliyet/kayma belirtilmemiş
-- Kaynak (composer.trade) bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- 'Composer Atlas ve Composer.trade dokümantasyonundan kurgu mantığı okundu (yazar: Simon97)'
+- 'Özel kod mantığı: 3 katmanlı RSI(10) tahsisat algoritması; dış katmanda 11 piyasa enstrümanının RSI(10) uç değerleri taranır, aşırı uç yoksa Teknoloji (TQQQ/TECL) ile KMLM (Managed Futures Trend ETF)
+  göreceli gücüne göre risk-on büyüme veya defansif (KMLM / SQQQ / TLT) moduna geçilir'

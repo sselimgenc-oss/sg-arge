@@ -1,30 +1,50 @@
 id: P3-011
 ad: MACD Strategy with trailing ATR stop
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/2jDHQAJc-MACD-Strategy-with-trailing-ATR-stop/
-  sayfa: P3-011
-tarz: belirsiz
+  sayfa: null
+tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
+yazar_piyasasi: Kripto / Hisse / Forex
 gostergeler:
-  macd:
+  ema200:
+    f: ema
+    src: close
+    n: 200
+  macd_ind:
     f: macd
+    src: close
     fast: 12
     slow: 26
-    signal: 9
+    sig: 9
   atr14:
     f: atr
     n: 14
-giris: MACD sinyalleri
-cikis: ATR iz süren stop
-stop: null
+giris: close > ema200 and cross_over(macd_ind.line, macd_ind.signal)
+cikis: close < trailing_atr_stop
+stop:
+  tip: atr
+  n: 14
+  carpan: 2.0
 hedef: null
+iz_suren:
+  tip: atr_zirve
+  n: 14
+  carpan: 2.0
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  trend_ema: 200
+  macd_fast: 12
+  macd_slow: 26
+  macd_sig: 9
+  atr_period: 14
+  atr_mult: 2.0
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -32,12 +52,8 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- Açıklama sayfası okunmadı; MACD sinyal tanımı ve ATR çarpanı yok
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- LuxAlgo kütüphanesinden (https://www.luxalgo.com/library/indicator/2jDHQAJc-macd-strategy-with-trailing-atr-stop/) strateji mantığı okundu
+- Fiyat 200 EMA üzerindeyken MACD yukarı kesişiminde (12, 26, 9) Long girilir; en yüksek fiyattan 2.0*ATR(14) mesafede iz süren stop (trailing ATR stop) uygulanır ve bu stop kırıldığında çıkılır

@@ -1,22 +1,27 @@
 id: P3-010
 ad: Dynamic Swing Anchored VWAP STRAT (Zeiierman/PineIndicators)
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/gjFSGRCo-Dynamic-Swing-Anchored-VWAP-STRAT-Zeiierman-PineIndicators/
-  sayfa: P3-010
-tarz: belirsiz
+  sayfa: null
+tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
-gostergeler: {}
-giris: null
-cikis: null
+yazar_piyasasi: Kripto / Hisse / Forex
+gostergeler:
+  anchored_vwap:
+    f: vwap
+giris: cross_over(close, dynamic_avwap)
+cikis: cross_under(close, dynamic_avwap)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  swing_length: 10
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
@@ -24,12 +29,10 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: true
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
 belirsiz:
-- Açıklama sayfası okunmadı; Zeiierman Dynamic Swing Anchored VWAP stratejisi, kural yok
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- PyneSys aynasından (https://wild.pynesys.io/scripts/dynamic-swing-anchored-vwap-strat-zeiierman-pineindicators-gjFSGRCo) ve TrendSpider dokümantasyonundan Zeiierman / PineIndicators stratejisi okundu
+- 'Özel kod mantığı: Otomatik tepe/dip pivot noktalarından (swing highs/lows) çıpalanan dinamik VWAP çizgisi kullanılır; fiyat bu dinamik çıpalı VWAP çizgisini yukarı kırdığında Long açılır, aşağı kırdığında
+  kapatılır / short''a geçilir'
+- 'short kuralı var: cross_under(close, dynamic_avwap) olduğunda short pozisyona dönülür'

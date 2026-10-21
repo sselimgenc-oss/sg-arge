@@ -1,36 +1,37 @@
 id: P3-013
 ad: ORB Strategy [LuciTech]
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.tradingview.com/script/10yYqaY7-ORB-Strategy-LuciTech/
-  sayfa: P3-013
+  sayfa: null
 tarz: day
-tf: 1H
+tf: 5m
 mtf: null
-tf_varsayim: true
-yazar_piyasasi: Belirtilmemiş
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (TQQQ) / Kripto
 gostergeler: {}
-giris: null
-cikis: null
+giris: cross_over(close, orb_high)
+cikis: cross_under(close, orb_low)
 stop: null
 hedef: null
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  orb_minutes: 15
+  rr_ratio: 1.5
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: null
   sharpe: null
-  getiri: null
+  getiri: 68.0
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
-spec_durumu: eksik
-ozel_kod: false
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
 belirsiz:
-- 'Açıklama sayfası okunmadı; ORB [LuciTech]: aralık süresi, kırılım ve çıkış kuralı yok'
-- 'Seans açılışına bağlı: kripto 7/24 tanımsız'
-- Yayınlanmış metrik yok (Strategy Tester sonuçları kullanıcının sembol/zaman dilimine bağlı)
-- Kaynak (tradingview.com) bu ortamda erişilemedi; script açık ama kod okunamadı
-bias_varsayim: false
-erisim_engeli: true
+- Karar zaman dilimi 5m (1 saatin altında)
+- 'PyneSys (https://wild.pynesys.io/scripts/orb-strategy-lucitech-10yYqaY7) ve TradeThatSwing incelemesinden TradesLuci (LuciTech) stratejisi okundu: 15 dakikalık seans açılış aralığının (ORB) üzerine mum
+  kapandığında Long girilir; hedef 1.5R, stop ters aralık seviyesidir'
+- 'short kuralı var: Fiyat ORB alt bandını aşağı kırdığında short girilir'

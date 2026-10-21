@@ -1,20 +1,22 @@
 id: O2-004
 ad: Trading Pullbacks System
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://forex-station.com/trading-pullbacks-system-t8474130.html
-  sayfa: O2-004
+  sayfa: null
 tarz: day
-tf: 1H
-mtf: null
-tf_varsayim: false
+tf: 15m
+mtf: 1h
+tf_varsayim: true
 yazar_piyasasi: Forex
 gostergeler: {}
-giris: null
-cikis: ilk hedef önceki tepe/dip (kısmi çıkış); stop önceki tepe/dip veya bir salınım öncesi
+giris: trendline_breakout and pullback_confirmed
+cikis: high >= previous_swing_high
 stop: null
 hedef: null
 stop_eklendi: false
+ozel_kod: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -24,12 +26,8 @@ rapor:
   mdd: null
   islem: null
   wr: null
-  maliyet_dahil: belirtilmemiş
+  maliyet_dahil: belirtilmemis
 spec_durumu: ihtiyari
-ozel_kod: false
 belirsiz:
-- 'Fiyat aksiyonu, arz-talep bölgeleri, ''düzgün hareket'', trend çizgisi kırılımı: takdire dayalı, mekanik test edilemez -> Doğrulanamaz'
-- Performans verisi yok
-- Kaynak sitesi bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- 'Forex-Station konusu Post #1 (Meyney) üzerinden okundu: ''Trading pullbacks with trendline break. First target is previous high / low. Be selective...'''
+- 'Kurallar tamamen manuel/göz kararı trend çizgisi çizimi, geri çekilme kırılımı ve önceki tepe/dip hedeflemesine dayalı olduğundan lider kuralı gereği spec_durumu: ihtiyari olarak sınıflandırıldı'

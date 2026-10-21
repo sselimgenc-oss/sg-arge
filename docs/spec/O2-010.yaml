@@ -1,56 +1,72 @@
 id: O2-010
 ad: JPN225 QuietDrift (The Nikkei EA That Only Buys When Volume Is Quiet)
+kart_yazari: argon
 kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.mql5.com/en/code/78027
-  sayfa: O2-010
+  sayfa: null
 tarz: day
 tf: 15m
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: JPN225 CFD (Nikkei)
+yazar_piyasasi: Endeks CFD (JPN225 / Nikkei 225)
 gostergeler:
   sma34:
     f: sma
     src: close
     n: 34
-  sd34:
+  stdev34:
     f: stdev
     src: close
     n: 34
+  macd_ind:
+    f: macd
+    src: close
+    fast: 12
+    slow: 26
+    sig: 9
   atr14:
     f: atr
     n: 14
-giris: sunucu saati 11:00-14:59 and close > sma34 + 0.5 * stdev34 and macd_hist_atr < 0.2 and tick_hacim < 0.6 * normal ; sonraki bar açılışında al
-cikis: SL 4*ATR, TP 3.5*ATR, 17:00 zorunlu kapanış
+giris: close > sma34 + 0.5 * stdev34 and macd_ind.hist / atr14 < 0.2 and tick_vol < 0.6 * avg_vol_slot and server_time >= 111500 and server_time <= 150000
+cikis: server_time >= 170000
 stop:
   tip: atr
   n: 14
-  carpan: 4
+  carpan: 4.0
 hedef:
   tip: atr
   n: 14
   carpan: 3.5
+zaman_stop:
+  bar: 23
 stop_eklendi: false
-parametreler: {}
-deneme_sayisi_kaynakta: null
+ozel_kod: true
+parametreler:
+  ma_period: 34
+  sd_mult: 0.5
+  macd_atr_ratio_max: 0.2
+  volume_threshold_pct: 0.6
+  volume_avg_days: 20
+  entry_start_server: '11:15'
+  entry_end_server: '15:00'
+  flat_server: '17:00'
+  sl_atr_mult: 4.0
+  tp_atr_mult: 3.5
+deneme_sayisi_kaynakta: 1
 rapor:
   pf: 1.68
-  sharpe: null
-  getiri: +%87.8 (+$8.782, 10k hesap); yıllık basit %18.5
-  mdd: '%8.5'
+  sharpe: 1.17
+  getiri: 87.8
+  mdd: 8.5
   islem: 309
-  wr: '%61.8 (191/309)'
-  maliyet_dahil: temel maliyet belirtilmemiş; 2x ücret PF 1.50, ek kayma PF 1.30
-spec_durumu: eksik
-ozel_kod: false
+  wr: 61.8
+  maliyet_dahil: evet
+spec_durumu: dakikalik
 belirsiz:
-- MACD histogramı 'ATR biriminde' (ATR periyodu? MACD parametreleri?), 'normal tick hacmi' (ortalama penceresi?) xlsx'te yok
-- 'Tick hacmi CFD''ye özgü; spot/hisse verisinde yok: yerine volume kullanmak stratejiyi değiştirir'
-- 'Piyasaya özgü seans/saat kuralı: yalnız o piyasada test edilir; diğer piyasalarda Doğrulanamaz (piyasa özgü); bu piyasa (Nikkei/CFD) evrenimizde yok'
-- Dönem 2022-Ekim 2026; başlıkta 2021 (çelişkili)
-- Yazar kendi stres testleri var (iyi örnek), 309 işlem tümü long
-- '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- Kaynak kod ücretsiz (mql5.com) ama bu ortamda erişilemedi
-bias_varsayim: false
-erisim_engeli: true
+- Karar zaman dilimi M15 (1 saatin altında)
+- MQL5 CodeBase sayfasından yazarın (Tomasz Wojciech Forszpaniak) açık kaynak kodu eksiksiz okundu
+- 'Özel kod mantığı: Kapanan son barda 3 koşul aranır: (1) Fiyat yukarı meyilli: close > SMA(34) + 0.5*StdDev(34), (2) Momentum aşırı gergin değil: MACD histogram / ATR(14) < 0.2, (3) Hacim sakin: son 20
+  günün aynı 15 dakikalık dilimi ortalamasının %60''ından az hacim. Seans saati 11:15-15:00 arasında sonraki bar açılışında Long açılır; stop-loss 4 ATR, kâr hedefi 3.5 ATR ve saat 17:00 sunucu saatinde
+  gün sonu tüm pozisyonlar kapatılır'
+- Yalnızca Long yönlü bir stratejidir (short kuralı yoktur)
