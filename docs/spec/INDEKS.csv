@@ -1,0 +1,23 @@
+id,ad,tarz,tf,spec_durumu,ozel_kod,belirsiz_sayisi,kaynak
+P01,Twin OTT (TOTT) çift bantlı trend sistemi,swing,1D,tam,true,3,Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf bölüm 2.1
+P02,Kevin Davey Donchian + ADX rejim filtreli kırılım,swing,1D,tam,false,2,Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf bölüm 2.2
+P03,4H Sweet Spot (1D/4H/1H) PMax + ADX rejim (aynı strateji: R6),day,1H,tam,true,3,Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf bölüm 2.3
+P04,VOLTRAN-R2 intraday hibrit (RRS göreceli güç + RVOL ORB) (aynı strateji: S8/R8),day,1H,tam,true,5,Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf bölüm 2.4
+R01,Qullamaggie breakout continuation + episodic pivot,swing,1D,tam,true,6,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf bölüm 2.1
+R02,IBS < 0.30 + 25 günlük volatilite bandı ortalamaya dönüş,swing,1D,tam,false,3,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf bölüm 2.2
+R03,RealDayTrading göreceli güç (RRS) 1H momentum,day,1H,tam,true,5,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf bölüm 2.3
+R04,Stocks in Play (Zarattini) RVOL açılış kırılımı,day,1H,tam,true,5,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf bölüm 2.4
+R05,Dual Signal Trend Sentinel: 65 günlük Z-skor rejimi,swing,1D,tam,true,4,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf bölüm 2.5
+R07,VOLTRAN-R1 swing hibrit (Qullamaggie + Z-skor + IBS dip avcısı),swing,1D,tam,true,4,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf bölüm 2.7
+V1A,VOLTRAN-1A swing kırılım ve rejim motoru (v3),swing,1D,tam,false,5,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf bölüm 2
+V1B,VOLTRAN-1B SMC + ML geri çekilme motoru (v3),swing,1D,tam,true,5,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf bölüm 2
+V2A,VOLTRAN-2A saatlik adaptif kanal (TOTT) + seans kırılım (v3),day,1H,tam,true,6,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf bölüm 2
+V2B,VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3),day,1H,tam,false,5,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf bölüm 2
+T8-01,TrendShift Supertrend + ADX rejim adaptif,swing,1D,tam,false,4,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.1
+T8-02,TrendLock MTF Supertrend + Donchian kırılımı,swing,1D,tam,false,6,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.2
+T8-03,SMC Pro BTC - ICT order block + FVG [DOE],swing,1D,eksik,true,6,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.3
+T8-04,ORB Pro seans kırılımı (rapor uyarlaması: 10 bar Donchian),swing,1D,tam,false,5,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.4
+T8-05,MTF Range Flip HTF market structure bias,swing,1D,tam,false,4,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.5
+T8-06,"TOTT/OTT tek bantlı (Twin Optimized Trend Tracker, saatlik kurgu)",day,1H,tam,true,6,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.6
+T8-07,StackLight MTF momentum stack + Stochastic,day,1H,tam,false,4,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.7
+T8-08,Lorentzian Classification (k-NN ML),swing,1D,eksik,true,6,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf bölüm 3.8

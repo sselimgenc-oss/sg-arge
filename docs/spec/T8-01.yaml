@@ -1,0 +1,74 @@
+tf_varsayim: false
+stop: null
+hedef: null
+stop_eklendi: false
+deneme_sayisi_kaynakta: null
+ozel_kod: false
+belirsiz:
+- 'Raporda 8 stratejinin 256''lık havuzdan seçildiği belirtiliyor: seçim yanlılığı (DSR''de N>=256)'
+- Sonuçlar 1W->1D ve 4H/1D->1H iki kurguda raporlanmış; kartta ana kurgu 1W->1D, 1H varyantı 'varyantlar' altında
+- '''cross_over(st.dir, 0)'' trend dönüş anı: yorumlayıcı st.dir -1''den +1''e geçişi tanımalı'
+- Saatlik varyantta stop 2.6*ATR
+parametreler: {}
+id: T8-01
+ad: TrendShift Supertrend + ADX rejim adaptif
+kaynak:
+  dosya: Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf
+  url: null
+  sayfa: bölüm 3.1
+tarz: swing
+tf: 1D
+mtf: 1W
+varyantlar:
+- tf: 1H
+  mtf: 4H/1D
+yazar_piyasasi: Kripto/Endeks (blitz_locked, TradingView)
+gostergeler:
+  st:
+    f: supertrend
+    n: 10
+    carpan: 2.6
+  st_w:
+    f: supertrend
+    n: 10
+    carpan: 2.5
+    tf: 1W
+  ema8w:
+    f: ema
+    src: close
+    n: 8
+    tf: 1W
+  ema21w:
+    f: ema
+    src: close
+    n: 21
+    tf: 1W
+  close_1w:
+    f: close
+    tf: 1W
+  dmi14:
+    f: dmi
+    n: 14
+  adx14:
+    f: adx
+    n: 14
+  atr14:
+    f: atr
+    n: 14
+giris: (st_w.dir == 1 or (close_1w >= ema21w * 0.985 and ema8w > ema21w)) and cross_over(st.dir, 0) and dmi14.plus > dmi14.minus and adx14 > 16
+cikis: st.dir == -1 or (st_w.dir == -1 and close < giris_fiyati)
+iz_suren:
+  tip: atr_zirve
+  n: 14
+  carpan: 2.8
+cooldown_bar: 3
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: evet, %0,1; kart başına sayı Paper_Test_8 Tablo 3'te (PDF bölüm 4), çıkarılmadı
+spec_durumu: tam
+bias_varsayim: false
