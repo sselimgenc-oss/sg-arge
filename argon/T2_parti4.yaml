@@ -1,0 +1,1080 @@
+id: O1-036
+ad: Gold ORB Strategy (15-min Range, 5-min Entry)
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.tradingview.com/script/oYW9gdag-Gold-ORB-Strategy-15-min-Range-5-min-Entry/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: 15m
+tf_varsayim: false
+yazar_piyasasi: Emtia (XAUUSD)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- TradingView URL'si erişim engeli nedeniyle okunamadı ve web/Scribd/GitHub/PyneSys üzerinde ayna kopyası bulunamadı
+- Başlıktan 15 dakikalık açılış aralığı (ORB) kırılımına 5 dakikalık grafikte giriş yapıldığı anlaşılıyor ancak seans saati, filtreler ve SL/TP parametreleri belirsiz
+---
+id: O1-037
+ad: Simple and Profitable Scalping Strategy (ForexSignals TV)
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.tradingview.com/script/x4za4NFZ-Simple-and-Profitable-Scalping-Strategy-ForexSignals-TV/', sayfa: null}
+tarz: day
+tf: 5m
+mtf: 1h
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler:
+  ema8: {f: ema, src: close, n: 8}
+  ema13: {f: ema, src: close, n: 13}
+  ema21: {f: ema, src: close, n: 21}
+  ema8_1h: {f: ema, src: close, n: 8, tf: 1h}
+  ema21_1h: {f: ema, src: close, n: 21, tf: 1h}
+  close_1h: {f: close, tf: 1h}
+  hh5: {f: highest, src: high, n: 5}
+  ll3: {f: lowest, src: low, n: 3}
+giris: mtf(1h, ema8_1h > ema21_1h and close_1h > ema8_1h) and ema8 > ema13 and ema13 > ema21 and low[1] <= ema8[1] and close[1] >= ema21[1] and high > hh5[1]
+cikis: close < ll3[1]
+stop: null
+hedef: null
+kismi_kar: {gun: null, tetik_atr: null, oran: 0.5, kalan_stop: breakeven}
+varyantlar:
+- ad: Sabit 2R Hedef Varyantı
+  cikis: 1R'de %50 kısmi kâr + başabaş (BE) stop sonrası kalan %50 pozisyonu 2R hedefte kapatma
+stop_eklendi: false
+ozel_kod: true
+parametreler: {ema8.n: 8, ema13.n: 13, ema21.n: 21, ema8_1h.n: 8, ema21_1h.n: 21, hh5.n: 5, ll3.n: 3, buffer_pips: 3, tp1_rr: 1.0, tp2_rr: 2.0}
+deneme_sayisi_kaynakta: 2
+rapor: {pf: null, sharpe: null, getiri: 128.5, mdd: 6.75, islem: 353, wr: 63.0, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- TradingView sayfası doğrudan açılmadı; stratejinin orijinal kaynağı olan ForexSignals TV resmi YouTube videosu (https://www.youtube.com/watch?v=zhEukjCzXwM) ve FrameworkFX 11 aylık backtest videosu (https://www.youtube.com/watch?v=m1RiTkwY9_g) transkriptlerinden tüm kurallar eksiksiz okundu
+- Karar zaman dilimi 5m (1 saatin altında); üst zaman dilimi (anchor chart) 1h
+- 'Özel kod mantığı: (1) 1H grafikte EMA(8) > EMA(21) olmalı ve fiyat her iki EMA''nın üzerinde seyretmeli, (2) 5M grafikte EMA(8) > EMA(13) > EMA(21) yukarı yelpaze açmalı, (3) Fiyat geri çekilip 5M EMA(8)''e değmeli (low <= ema8) ancak EMA(21) altında kapanış yapmamalı (tetik barı), (4) Tetik barından önceki 5 mumun en yüksek seviyesinin (highest(high, 5)[1]) 3 pip üzerine Buy Stop emri konulur (emir tetiklenmeden önce mum EMA(21) altında kapanırsa emir iptal edilir), (5) İlk stop-loss tetik barının en düşüğünün (low) 3 pip altına konulur; 1:1 R:R (1R) seviyesinde pozisyonun %50''si kapatılıp stop girişe (breakeven) çekilir, kalan %50 pozisyon ya 2R hedefte ya da son 3 mumun en düşüğünün 3 pip altında (lowest(low, 3)[1] - 3 pip) iz süren stopla kapatılır'
+- 'short kuralı var: 1H EMA(8) < EMA(21) ve 5M EMA(8) < EMA(13) < EMA(21) iken fiyat EMA(8)''e değip EMA(21) üstünde kapanmadan önceki 5 barın en düşüğünün 3 pip altına Sell Stop konulur, SL tetik barı high + 3 pip'
+---
+id: O1-038
+ad: KPL Swing Strategy
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.tradingview.com/script/4mz6xvnK/', sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Hisse / Kripto
+gostergeler:
+  res20: {f: highest, src: high, n: 20}
+  sup20: {f: lowest, src: low, n: 20}
+giris: cross_over(close, res20[1])
+cikis: cross_under(close, sup20[1])
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {'no': 20, res20.n: 20, sup20.n: 20}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: 692, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+- 'TradingView sayfası doğrudan açılmadı; aynı script ID''li (4mz6xvnK, yazar: ceyhun) PyneSys aynası (https://wild.pynesys.io/scripts/kpl-swing-strategy-4mz6xvnK) ve Kamalesh Langote''nin orijinal AmiBroker AFL kodu (https://www.scribd.com/document/341758649/KPL-Swing-Trading-System) üzerinden okundu'
+- Kodda tsl = iff(avn == 1, sup, res) ile 20 barlık en düşük seviye (sup20[1]) hem iz süren stop hem de short'a dönüş (reversal) seviyesi olarak çalışır
+- 'short kuralı var: cross_under(close, sup20[1]) olduğunda (close < tsl) short pozisyona dönülür'
+---
+id: O1-039
+ad: Laguerre RSI by KivancOzbilgic STRATEGY
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.tradingview.com/script/vWG3tMJh-Laguerre-RSI-by-KivancOzbilgic-STRATEGY/', sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Hisse / Kripto / Forex
+gostergeler: {}
+giris: cross_over(lrsi, 0.2)
+cikis: cross_under(lrsi, 0.8)
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {alpha: 0.2, gamma: 0.8, oversold: 0.2, overbought: 0.8}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+- TradingView sayfası doğrudan açılmadı; Kıvanç Özbilgiç'in paylaştığı Laguerre RSI formülü ve strateji kuralları Algo Kütüphanesi aynasından (https://algokutuphanesi.com/Sistem/Detay/Matriks/LAGUERRE-RSI) okundu
+- 'Zaman dilimi kaynakta sabitlenmemiştir; varsayılan 1D alındı (tf_varsayim: true)'
+- 'Özel kod mantığı (John Ehlers Laguerre RSI, varsayılan alpha=0.2, gamma=1-alpha=0.8): L0 = alpha*close + (1-alpha)*L0[1]; L1 = -(1-alpha)*L0 + L0[1] + (1-alpha)*L1[1]; L2 = -(1-alpha)*L1 + L1[1] + (1-alpha)*L2[1]; L3 = -(1-alpha)*L2 + L2[1] + (1-alpha)*L3[1]; cu = max(L0-L1, 0) + max(L1-L2, 0) + max(L2-L3, 0); cd = max(L1-L0, 0) + max(L2-L1, 0) + max(L3-L2, 0); lrsi = cu / (cu + cd). Giriş: lrsi 0.2 seviyesini yukarı kestiğinde (cross_over(lrsi, 0.2)) Long; Çıkış: lrsi 0.8 seviyesini aşağı kestiğinde (cross_under(lrsi, 0.8)) pozisyon kapatılır / short açılır'
+- 'short kuralı var: cross_under(lrsi, 0.8) olduğunda short pozisyona geçilir'
+---
+id: O1-040
+ad: Pathfinder DAX 4H
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/pathfinder-dax-4h/', sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 4h
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {startTime: 80000, periodFirstMA: 5, periodSecondMA: 10, periodThirdMA: 3}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- ProRealCode sayfası erişim engeli nedeniyle tam okunamadı; arama önbelleğinden yalnızca başlık parametreleri (Reiner, V6, DEFPARAM CUMULATEORDERS = true, ONCE startTime = 80000, ONCE periodFirstMA = 5, ONCE periodSecondMA = 10, ONCE periodThirdMA = 3, SET STOP %LOSS stoppLoss, SET TARGET %PROFIT takeProfit) kurtarılabildi
+- signalline hesaplaması, günlük/haftalık çoklu zaman dilimi filtreleri ve tam giriş/çıkış denklemleri sayfa engeli nedeniyle eksiktir
+---
+id: O1-041
+ad: Optimization moving average crossing strategy with 'machine learning'
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/optimization-ma-cross-machine-learning/', sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  wafr: {f: ema, src: close, n: 30}
+  wafr_v2: {f: ema, src: close, n: 30}
+giris: cross_over(wafr, wafr_v2)
+cikis: null
+stop: {tip: yuzde, deger: 1.0}
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {Period: 15, Period2: 15, smooth_ema.n: 30, start_time: 80000, end_time: 113000, flat_after: 160000, stop_pct: 1.0}
+deneme_sayisi_kaynakta: 4900
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- 'Kodda MAType (0..69) ve MATypeV2 (0..69) değişkenleri sabitlenmemiş olup 70 farklı hareketli ortalama tipi (SMA, EMA, WMA, Wilder, Triangular, EndPoint, TimeSeries, Hull, ZeroLag, DEMA, TEMA, Adaptive, Ehrenberg, Decycler, Ehlers SuperSmoother, Butterworth, Gaussian, Laguerre, Kaufman, T3, VIDYA, McGinley vb.) arasından 70x70 = 4900 kombinasyonun kullanıcı tarafından optimize edilerek seçilmesini gerektirir (örnek yorumda EURUSD 5m için MAType=10 ve MATypeV2=30 anılmıştır); sabit bir varsayılan MA çifti olmadığından spec_durumu: eksik olarak sınıflandırıldı'
+- 'Özel kod mantığı: Seçilen MAType(Period=15) çıktısı AFR ve MATypeV2(Period2=15) çıktısı AFRv2 üzerine 30 barlık EMA uygulanır (wAFR = EMA[30](AFR), wAFRv2 = EMA[30](AFRv2)). Saat 08:00 ile 11:30 arasında günde en fazla 1 işlem (OTD) şartıyla cross_over(wAFR, wAFRv2) olduğunda Long açılır; saat 16:00''da (Defparam Flatafter = 160000) kapatılır, stop-loss TSL = round(100/10000*close) (%1)'
+- 'short kuralı var: 08:00-11:30 arasında günde tek işlem şartıyla cross_under(wAFR, wAFRv2) olduğunda short açılır'
+---
+id: O1-042
+ad: Smoothed Bollinger% Strategy Daily
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/smoothed-bollinger-strategy-daily/', sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks / Hisse / Forex
+gostergeler:
+  st: {f: supertrend, n: 10, carpan: 3.0}
+giris: cross_over(percb, lo) and st.yon == 1
+cikis: cross_under(percb, hi) or st.yon == -1
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {period: 18, TeAv: 8, afwh: 1.6, afwl: 1.6, afwper: 63}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- Strateji sayfası erişim engeli nedeniyle doğrudan açılamadı; ancak stratejinin dayandığı ProRealCode göstergesi (https://www.prorealcode.com/prorealtime-indicators/smoothed-bollinger-b-indicator/, Sylvain Vervoort SVE_BBb.itf) ve strateji arama özetinden gösterge formülü okundu
+- 'SVE Bollinger %b formülü: haOpen = ((Open[1]+High[1]+Low[1]+Close[1])/4 + haOpen[1])/2; haC = ((Open+High+Low+Close)/4 + haOpen + max(high,haOpen) + min(low,haOpen))/4; TMA1 = TEMA[8](haC); TMA2 = TEMA[8](TMA1); ZlHA = 2*TMA1 - TMA2; percb = (TEMA[8](ZlHA) + 2*STD[18](TEMA[8](ZlHA)) - WMA[18](TEMA[8](ZlHA))) / (4*STD[18](TEMA[8](ZlHA))) * 100; hi = 50 + 1.6*STD[63](percb); lo = 50 - 1.6*STD[63](percb)'
+- 'Strateji sayfasındaki Supertrend trend filtresinin kesin parametreleri ve stop/çıkış satırları sayfa engeli nedeniyle doğrulanamadığından spec_durumu: eksik olarak işaretlendi'
+---
+id: O1-043
+ad: Navigator DAX Trading Strategy 4H
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/navigator-dax-trading-strategy-4h/', sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 4h
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler:
+  stoch10: {f: stoch, k: 10, d: 13, smooth: 22}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {stoch.k: 10, stoch.d: 13, stoch.smooth: 22}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- Ana strateji sayfası erişim engeli nedeniyle okunamadı; ekli PDF grafiği (https://www.prorealcode.com/wp-content/uploads/2017/05/Navigator-DAX-4H-200-Einheiten.pdf) ve arama özetinden 4H DAX üzerinde Stochastic (10, 13, 22), günlük mum formasyonu ve FOMC (ayın 1. ve 3. Çarşamba günü) filtresi kullanıldığı görüldü ancak ProBuilder kaynak kodu okunamadı
+---
+id: O1-044
+ad: ALEX AutoTradingBot INDEX
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/alex-autotradingbot-index/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Endeks CFD
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- ProRealCode URL'si erişim engeli nedeniyle okunamadı ve web üzerinde önbellek/ayna kopyası bulunamadı
+---
+id: O1-045
+ad: VECTORIAL DAX (M5)
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/vectorial-dax-m5/', sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler:
+  mma10: {f: ema, src: close, n: 10}
+  mmb20: {f: ema, src: close, n: 20}
+  atr25: {f: atr, n: 25}
+giris: angle >= 45 and pente > trigger and pente < 0
+cikis: null
+stop: null
+hedef: {tip: yuzde, deger: 4.25}
+iz_suren: {tip: atr_zirve, n: 25, carpan: 7.5}
+zaman_stop: {bar: 950}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {PeriodeA: 10, nbChandelierA: 15, PeriodeB: 20, nbChandelierB: 35, lag: 5, trigger_ema.n: 25, angle_buy_min: 45, angle_short_max: -37, tp_long_pct: 4.25, tp_short_pct: 1.25, atrtrailingperiod: 25, trailingstoplong: 7.5, trailingstopshort: 4.0, BarLong: 950, BarShort: 650, start_time: 80000, end_time: 220000}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: evet}
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi M5 (1 saatin altında)
+- 'Özel kod mantığı (ProBuilder kaynak kodundan): (1) Saat filtresi CtimeA: 08:00 <= time <= 22:00, (2) Açı vektörü: MMA = EMA[10](close), ADJASUROPPO = (MMA - MMA[15]*pipsize) / 15, ANGLE = ATAN(ADJASUROPPO), CondBuy1 = ANGLE >= 45, (3) Eğim vektörü: MMB = EMA[20](close), pente = (MMB - MMB[35]*pipsize) / 35, trigger = EMA[25](pente) (PeriodeB + lag = 20 + 5 = 25), CondBuy2 = (pente > trigger) and (pente < 0), (4) Long Giriş: CondBuy1 and CondBuy2 and CtimeA, (5) Çıkış: %4.25 Take Profit (SET TARGET %PROFIT 4.25), ATR(25)*7.5 tabanlı iz süren stop (TGL) ve işlem zarardayken (POSITIONPERF < 0) 950 bar sonra kapatan zombi zaman stopu (BarLong = 950)'
+- 'short kuralı var: ANGLE <= -37 ve cross_under(pente, trigger) ve pente > -1 olduğunda short açılır (hedef %1.25, ATR iz süren çarpan 4, zararda zaman stopu 650 bar)'
+---
+id: O1-046
+ad: Fractal breakout intraday Strategy EUR/USD 1H
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/fractal-breakout-intraday-strategy-eurusd-1h/', sayfa: null}
+tarz: day
+tf: 1h
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  hh227: {f: highest, src: close, n: 227}
+  ll227: {f: lowest, src: close, n: 227}
+  dc_low20: {f: lowest, src: low, n: 20}
+  dc_high20: {f: highest, src: high, n: 20}
+giris: cross_over(close, hil)
+cikis: close <= dc_low20[1]
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {CP: 113, fractal_window: 227, DC: 20, TGL_pips: 5, TGS_pips: 5, target_pips: 30, start_time: 100000, end_time: 230000}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+- 'Özel kod mantığı (ProBuilder kaynak kodundan, yazar: Ale): (1) CP=113 parametresiyle 113 bar önceki kapanış son 227 barın (2*CP+1) en yüksek kapanışıysa (close[113] >= highest[227](close)) üst fraktal seviyesi HIL = close[113] olarak güncellenir (geçmişe dönük olduğundan repaint yapmaz), (2) Saat 10:00 ile 23:00 arasında (time >= 100000 and time < 230000) ve piyasada short pozisyon yokken close HIL seviyesini yukarı kestiğinde (close crosses over HIL) 1 kontrat Long açılır, (3) Çıkış: 30 pip sabit kar hedefi (set target pprofit 30), 20 barlık Donchian alt bandı stopu (laststop = lowest[20](low)[1]) ve 5 piplik MFE iz süren stop (TGL = 5)'
+- 'short kuralı var: close[113] <= lowest[227](close) ile tanımlanan LOL fraktal desteği aşağı kırıldığında (cross_under(close, LOL)) short açılır (hedef 30 pip, Donchian stop highest[20](high)[1], iz süren stop 5 pip)'
+---
+id: O1-047
+ad: Kama & Sma Trading System DAX mtf
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/kama-sma-trading-system-dax-mtf/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: 1h
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler:
+  kama15: {f: kama, src: close, n: 15}
+  sma22: {f: sma, src: close, n: 22}
+giris: null
+cikis: null
+stop: {tip: yuzde, deger: 1.0}
+hedef: {tip: yuzde, deger: 1.0}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {kama_period: 15, kama_fast: 2, kama_slow: 30, sma_period: 22, tp_pct: 1.0, sl_pct: 1.0, trailing_pct: 0.25}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- ProRealCode sayfası erişim engeli nedeniyle doğrudan açılamadı; arama özetlerinden 1h, 15m ve 5m çoklu zaman diliminde (MTF) KAMA(15, 2, 30), SMA(22, TypicalPrice) ve Supertrend kullanıldığı, %1 TP, %1 SL ve %0.25 iz süren stop içerdiği görüldü ancak tam MTF giriş/çıkış kodu okunamadı
+---
+id: O1-048
+ad: Stochastic Gold Trader
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/stochastic-gold-trader/', sayfa: null}
+tarz: swing
+tf: 1h
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Emtia (XAUUSD)
+gostergeler:
+  stoch18: {f: stoch, k: 18, d: 6, smooth: 2}
+  rsi2: {f: rsi, src: close, n: 2}
+giris: cross_over(stoch18.k, stoch18.d) and lowest(stoch18.k, 2)[2] < 10
+cikis: cross_over(rsi2, 95)
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {StochPeriods: 18, StochK: 2, StochD: 6, StochUpperLimit: 90, StochLowerLimit: 10, StochConsolidationPeriod: 2, RSIPeriods: 2, RSIUpperLimit: 95, RSILowerLimit: 5, RSILimit: 4}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+- 'Yazar yorumlarda stratejiyi Gold H1 ve H2 grafiklerinde test ettiğini belirtmiştir; karar zaman dilimi 1h alındı (tf_varsayim: true)'
+- 'Özel kod mantığı (ProBuilder kaynak kodundan, 2 aşamalı durum makinesi): (1) Kurulum (Arming): StochSignal = Stochastic[18,2](close), StochMain = SMA[6](StochSignal). Stoch == 0 iken lowest[2](StochSignal) < 10 şartıyla cross_over(StochSignal, StochMain) gerçekleşirse Stoch = -1 yapılır ve StochCounter = 0 sıfırlanır (her barda StochCounter + 1 artar), (2) Tetikleme (Long Giriş): Piyasada pozisyon yokken, Stoch == -1 ve StochCounter > 1 (en az 2 bar konsolidasyon) sonrasında tekrar cross_over(StochSignal, StochMain) gerçekleştiğinde Long açılır (Not: Yazarın kodunda ''Stoch -1'' yazım hatası vardır, yorumlarda ''Stoch = -1'' olması gerektiği teyit edilmiştir), (3) Çıkış: İşlem boyunca RSI[2]''nin 95 altına her kesişinde RSICounter 1 artırılır (eğer son 8 barın en yüksek RSI[2] değeri bir önceki kesişteki LastRSI değerinden küçükse RSICounterAdj = 1 düşülür); cross_over(RSI[2], 95) olduğunda RSICounter >= (4 - RSICounterAdj) ise Long pozisyon kapatılır'
+- 'short kuralı var: highest[2](StochSignal) > 90 iken cross_under(StochSignal, StochMain) ile Stoch = 1 kurulur, StochCounter > 1 sonrası ikinci cross_under(StochSignal, StochMain) ile short açılır; RSI[2] 5 seviyesini 4 kez test ettikten sonra cross_under(RSI[2], 5) ile çıkılır'
+---
+id: O1-049
+ad: Oil 10min 'hammernegated' pattern strategy
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/oil-10min-hammernegated-pattern-strategy/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 10m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Emtia (Crude Oil)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- ProRealCode sayfası erişim engeli nedeniyle okunamadı; arama özetinden 10 dakikalık ham petrol grafiğinde üst zaman dilimi 'hammer negated' mum formasyonu ile Standart Sapma (STD) ve Bollinger BandWidth filtreleri kullanıldığı anlaşılıyor ancak ProBuilder kodu erişilemez durumda
+---
+id: O1-050
+ad: EURUSD 15-minutes timeframe Dhigh / Dlow Strategy
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/', sayfa: null}
+tarz: day
+tf: 15m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  dhigh0: {f: high, tf: 1D}
+  dlow0: {f: low, tf: 1D}
+giris: mm > surachat and cross_over(close, milieu)
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {mm_tema.n: 56, surachat_tma.n: 10, contracts_long: 4, contracts_short: 3, tp1_pips: 18, tp2_pips: 20, tp3_pips: 40, trailingstop_pips: 33, sl_pips: 200, start_time: 0, end_time: 200000}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi 15m (1 saatin altında)
+- 'Özel kod mantığı (ProBuilder kaynak kodundan): (1) Cumartesi/Pazar hariç saat 00:00-20:00 arasında çalışır, (2) MM = Average[56, 3](totalprice) (totalprice=(O+H+L+C)/4 üzerine 56 periyot TEMA), Newhighest = max(DHigh(0), DHigh(1)), Newlowest = min(DLow(0), DLow(1)), Milieu = (Newhighest + Newlowest) / 2, Surachat = Average[10, 4]((Newhighest + Milieu) / 2) (10 periyot Triangular MA), Survente = Average[10, 4]((Newlowest + Milieu) / 2), (3) Long Giriş: MM > Surachat ve cross_over(close, Milieu) olduğunda 4 kontrat Long açılır, (4) Çıkış: +18 pip, +20 pip ve +40 pip seviyelerinde 1''er kontrat kısmi kâr (limit emir), 33 pip MFE iz süren stop ve 200 pip ana stop-loss (SET STOP pLOSS 200)'
+- 'İçsel gün içi güncellenme notu: DHigh(0) ve DLow(0) cari günün o ana kadarki en yüksek/düşük değerini kullanır'
+- 'short kuralı var: MM < Survente ve cross_under(close, Milieu) olduğunda 3 kontrat short açılır (+40 pip ve +78 pip kısmi kâr, 33 pip iz süren stop, 200 pip SL)'
+---
+id: O1-051
+ad: Brent Oil 5 minutes trading strategy
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/brent-oil-5-minutes-trading-strategy/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Emtia (Brent Oil)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- ProRealCode URL'si erişim engeli nedeniyle okunamadı ve web üzerinde önbellek/ayna kopyası bulunamadı
+---
+id: O1-052
+ad: Wing's Resistance Breacher (DAX-30m)
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/wings-resistance-breacher-dax-30m/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 30m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- ProRealCode URL'si erişim engeli nedeniyle okunamadı ve web üzerinde önbellek/ayna kopyası bulunamadı
+---
+id: O1-053
+ad: Open Range Breakout DAX 5/15M
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/open-range-breakout-dax-515m/', sayfa: null}
+tarz: day
+tf: 5m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Endeks CFD (DAX)
+gostergeler:
+  dclose1: {f: close, tf: 1D, kaydir: 1}
+giris: cross_over(tema5, orb_high)
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {tema.n: 5, orb_start: 90000, orb_end: 93000, long_window1_start: 93000, long_window1_end: 113000, long_window2_start: 130000, long_window2_end: 171500, short_window_start: 93000, short_window_end: 150000, flat_after: 173000, max_long_per_day: 1, max_short_per_day: 1, rr_ratio: 1.0}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi 5m veya 15m (1 saatin altında)
+- 'Özel kod mantığı (ProBuilder kaynak kodundan): (1) Saat 09:00-09:30 arasındaki açılış aralığının en yüksek (DailyHigh / orb_high) ve en düşük (DailyLow / orb_low) seviyeleri kaydedilir, (2) Sinyal çizgisi signal = TEMA[5](close) olarak hesaplanır, (3) Saat 09:30-11:30 veya 13:00-17:15 pencerelerinde (11:30-13:00 öğle arasında işlem açılmaz) günde en fazla 1 Long işlem (TradeCounterLong == 0) şartıyla cross_over(signal, DailyHigh) gerçekleştiğinde Long açılır, (4) Stop-loss sl = DailyHigh - DailyLow (açılış aralığı genişliği kadar), Take-profit tp = sl (1:1 R:R) ve akşam 17:30''da (DEFPARAM FlatAfter = 173000) açık pozisyon kapatılır'
+- 'short kuralı var: Saat 09:30-15:00 arasında günde en fazla 1 short şartıyla cross_under(TEMA[5](close), DailyLow) ve close < DClose(1) olduğunda short açılır (SL ve TP = DailyHigh - DailyLow)'
+---
+id: O1-054
+ad: End Of Day – YEN M15
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.prorealcode.com/prorealtime-trading-strategies/end-of-day-yen-m15/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (USDJPY)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- Ana strateji sayfası erişim engeli nedeniyle okunamadı; forum tartışma parçalarından (Doctrading) gün sonu belirli bir M15 mumunda c1 = (open - close >= X*pipsize) şartıyla limit emir girildiği görülse de saat, pip eşiği ve SL/TP parametreleri sayfa engeli nedeniyle eksiktir
+---
+id: O1-055
+ad: Intraday Profit Maker (Best with Automation)
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.wisestocktrader.com/indicators/4853-intraday-profit-maker-best-with-automation-for-amibroker-afl', sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Hisse / Endeks Vadeli (Hindistan NSE)
+gostergeler:
+  hh12: {f: highest, src: high, n: 12}
+  ll12: {f: lowest, src: low, n: 12}
+  ll40: {f: lowest, src: low, n: 40}
+giris: low == ll12
+cikis: high == hh12
+stop: null
+hedef: {tip: yuzde, deger: 0.5}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {nBars: 12, farback: 100, nPivs: 2, fibo_zig_pct: 0.325, tar1_pct: 0.5, tar2_pct: 0.92, tar3_pct: 1.79, sl_llv_bars: 40}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- 'Karar zaman dilimi kodda sabitlenmemiştir (gün içi 5m/15m grafik, varsayılan 5m alındı, tf_varsayim: true)'
+- 'Kod ile açıklama çelişkisi: Açıklama metninde ''Modified version of MACD'' yazmasına karşın AmiBroker AFL kodunda hiçbir MACD hesaplaması yoktur; al/sat sinyalleri doğrudan ''Pivot Finder for Amibroker'' bloğundaki 12 barlık tepe/dip pivotlarından (Buy = aLPivs == 1; Sell = aHPivs == 1;) üretilir'
+- 'REPAINT: AFL kodundaki pivot döngüsü son bardan (curBar = BarCount - 1) geriye doğru çalışır ve HHVBars(H, 12) / LLVBars(L, 12) kullanarak pivot onaylandığında sinyali geçmişteki tepe/dip barına (curPivBarIdx = curBar - aLLVBars[curBar]) geriye dönük yazar; ayrıca Fibonacci seviyeleri için gelecek barları kullanan PeakBars(H, 0.325, 1) ve TroughBars(L, 0.325, 1) (ZigZag) fonksiyonları kullanılmıştır'
+- 'Özel kod mantığı: nBars=12 periyotluk yerel dip pivotunda (aLPivs == 1) Buy, yerel tepe pivotunda (aHPivs == 1) Sell üretilir; yorum panosundaki genişletilmiş sürümde hedefler tar1 = +0.50%, tar2 = +0.92%, tar3 = +1.79% ve stop-loss slPrice = HighestSince(Buy, LLV(L, 40)) olarak tanımlanmıştır'
+- 'short kuralı var: aHPivs == 1 (12 barlık tepe pivotu) oluştuğunda Sell / Short sinyali üretilir'
+---
+id: O1-056
+ad: Intraday Stochastic Trading System
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://www.wisestocktrader.com/indicators/5858-intraday-stochastic-trading-system-for-amibroker-afl', sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Hisse / Endeks Vadeli (Hindistan NSE)
+gostergeler:
+  stoch14: {f: stoch, k: 14, d: 3, smooth: 3}
+giris: cross_over(stoch14.k, stoch14.d) and cross_over(stoch14.k, 20)
+cikis: cross_under(stoch14.k, stoch14.d) and cross_under(stoch14.k, 80)
+stop: {tip: yuzde, deger: 1.0}
+hedef: {tip: yuzde, deger: 1.0}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {periods: 14, Ksmooth: 3, Dsmooth: 3, Overbought: 80, Oversold: 20, StopLoss_pct: 1.0, Target_pct: 1.0, TradeStartTime: 93000, TradeEndTime: 143000, SquareOffTime: 151500}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- WiseStockTrader sayfası Cloudflare engeli nedeniyle doğrudan açılmadı; aynı AFL kodunun MarketSecrets aynasından (https://marketsecrets.in/script-library/amibroker-afl-script-library/afl-for-intraday-stochastic-trading-system/) tam kod okundu
+- 'Karar zaman dilimi gün içi (varsayılan 5m alındı, tf_varsayim: true)'
+- 'Özel kod mantığı (AFL kodundan): myStochK = StochK(14, 3); myStochD = StochD(14, 3, 3); TradeStartTime ile TradeEndTime arasında Buy = Cross(myStochK, myStochD) AND Cross(myStochK, Oversold) (Oversold=20) olduğunda Long açılır; Sell = Short OR TimeNum() >= SquareOffTime ile kapatılır; ApplyStop ile %1 StopLoss ve %1 Target uygulanır'
+- 'short kuralı var: Short = Cross(myStochD, myStochK) AND Cross(Overbought, myStochK) (Overbought=80) olduğunda short açılır, Cover = Buy OR TimeNum() >= SquareOffTime'
+---
+id: O1-058
+ad: /ES Futures Trading Strategy on ThinkorSwim
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://usethinkscript.com/threads/es-futures-trading-strategy-on-thinkorswim.987/', sayfa: null}
+tarz: day
+tf: 512t
+mtf: 1600t
+tf_varsayim: false
+yazar_piyasasi: Endeks Vadeli (/ES)
+gostergeler:
+  ema8: {f: ema, src: close, n: 8}
+  ema13: {f: ema, src: close, n: 13}
+  ema21: {f: ema, src: close, n: 21}
+  atr14: {f: atr, n: 14}
+giris: wt_cross_up and ema8 > ema13 and ema13 > ema21
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {wt_channel_len: 10, wt_avg_len: 21, wt_ob1: 60, wt_ob2: 53, wt_os1: -60, wt_os2: -53, slim_fast_ema: 8, slim_med_ema: 13, slim_slow_ema: 21, displace_atr_len: 14, displace_atr_mult: 2.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: ihtiyari
+belirsiz:
+- Strateji 512, 1000 ve 1600 tick Heikin Ashi grafiklerinde elle çizilen seans öncesi (premarket) destek/direnç bölgeleri, Fractal Energy (FE) okuması, WaveTrend osilatörü (10, 21) ve Slim Ribbon (EMA 8/13/21) kombinasyonuna dayanır
+- 'Yazar (#12 mesajında) girişi ''elle çizilen S&R + düşük FE okuması + Al/Sat oku'' olarak tanımlamış, maksimum FE eşiğini nasıl mekanikleştireceğini henüz bilmediğini ve mekanik bir çıkış/stop-loss kuralı olmadığını belirtmiştir; kurallar yoruma dayalı olduğundan spec_durumu: ihtiyari olarak sınıflandırıldı'
+- 'short kuralı var: Direnç bölgesinde WaveTrend aşırı alım kesişimi ve Slim Ribbon aşağı diziliminde short aranır'
+---
+id: O1-059
+ad: Relative Volume Strategy and Momentum Scanner
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://usethinkscript.com/threads/relative-volume-strategy-and-momentum-scanner-for-thinkorswim.3002/', sayfa: null}
+tarz: day
+tf: 1m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: ABD Düşük Float Hisse (Small Cap)
+gostergeler:
+  ema9: {f: ema, src: close, n: 9}
+  vwap_val: {f: vwap}
+  rvol60: {f: rvol, n: 60}
+giris: close > vwap_val and low <= ema9 and close > ema9 and rvol60 >= 1.4
+cikis: close < vwap_val
+stop: {tip: yuzde, deger: 5.0}
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {min_price: 0.5, max_price: 15.0, min_pct_change: 10.0, min_volume: 500000, max_float: 70000000, daily_candle_gain_pct: 4.0, unusual_vol_pct: 40.0, unusual_vol_len: 60, ema.n: 9, sl_pct: 5.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: ihtiyari
+belirsiz:
+- Sistem bir hisse tarayıcısı (Fiyat $0.5-$15, Değişim >= %10, Hacim >= 500K, Float <= 70M, Günlük close >= open*1.04, 60 günlük ortalamanın %40 üstünde olağandışı hacim) ve görsel 1m grafik takibinden oluşur
+- 'Yazar (#1, #8, #9 mesajlarında) açılış sonrası en yüksek göreceli hacimli (RV1) ve haber katalizörlü 3 hissenin seçilmesini, grafikte göz kararı ''rounding bottom, VWAP kırılımı veya bullish flag/pennant'' formasyonu aranmasını, 9 EMA geri çekilmesinde girilip ~%5 stop konulmasını ve hisse VWAP üzerinde kaldıkça tutulup öznel fiyat hedefine ulaşınca satılmasını önermektedir; formasyon ve hedef seçimi yoruma dayalı olduğundan spec_durumu: ihtiyari olarak sınıflandırıldı'
+---
+id: O1-060
+ad: Strategy Based on EMAs, TSI, MACD, and Premarket Highs/Lows
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://usethinkscript.com/threads/strategy-based-on-emas-tsi-macd-and-premarket-highs-lows-for-thinkorswim.10866/', sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / Opsiyon
+gostergeler:
+  ema5: {f: ema, src: close, n: 5}
+  ema12: {f: ema, src: close, n: 12}
+  ema34: {f: ema, src: close, n: 34}
+  ema50: {f: ema, src: close, n: 50}
+  macd_ind: {f: macd, src: close, fast: 10, slow: 22, sig: 8}
+giris: ema5 > ema12 and close > premarket_high and tsi_val > macd_ind.signal and tsi_val > tsi_val[2] and low <= ema5 * 1.0025
+cikis: close < open and close < ema5 and low < low[4] and close < ema12 and (cross_under(ema5, ema12) or tsi_val < tsi_val[1] * 0.91 or cross_under(tsi_val, macd_ind.signal))
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {EMA1: 5, EMA2: 12, EMA3: 34, EMA4: 50, EMA200: 200, EMASepThrHld_5m: 0.2, EntryPullBackFactor: 0.0025, TkPftFactor: 0.01, TSI_LongLength: 25, TSI_ShortLength: 13, TSI_SignalLength: 8, MACD_FastLength: 10, MACD_SlowLength: 22, MACD_Length: 8, PreMarketStartTime: 700, PreMarketEndTime: 929, StartTime: 930, EndTime: 1600, LastCandleStop_min: 5}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi 5m (1 saatin altında); ayrıca kodda 1m, 2m, 3m, 10m, 15m, 30m için ayrı EMASepThrHld eşikleri tanımlıdır
+- 'Kod ile açıklama çelişkileri (kod esas alındı): (1) Açıklamada ''Low > Pre-Market High'' yazarken kodda PreMarketBull = close > Pre_Market_High olarak kodlanmıştır, (2) Açıklamada ''TSI > 10 and trending up'' yazarken kodda ''> 10'' şartı yorum satırına alınmış ve yalnızca TSIBull = TSIRound > TSIRound[2] bırakılmıştır, (3) Açıklamada ''MACD Trending Up'' yazarken kodda MACDAverage > MACDAverage[1] yorum satırına alınmış ve yerine MACDBull = TSIRound > MACDAverage (TSI değerinin MACD sinyal çizgisinden büyük olması) yazılmıştır'
+- 'Özel kod mantığı (ThinkScript v10.4 kodundan): Seans 09:30-15:00 EST arasında LongBuyInd = TradingDay and (EMA5 > EMA12) and (EMAPctBullRound > 0.2 and EMAPctBullRound >= EMAPctBullRound[1]) and (TSIRound > MACDAverage) and (TSIRound > TSIRound[2]) and (close > Pre_Market_High); önceki 1 veya 2 barda LongBuyInd aktifken cari barda da aktifse ve fiyat EMA5*1.0025 seviyesine geri çekilirse (low <= EMA5 * 1.0025) EMA5*1.0025 fiyattan Long girilir; LongSellInd şartı gerçekleştiğinde veya saat 15:55 EST''de (EndDay) kapatılır'
+- 'short kuralı var: EMA5 < EMA12, EMAPctBearRound < -0.2, TSIRound < MACDAverage, TSIRound < TSIRound[2] ve close < Pre_Market_Low sonrası high >= EMA5 * 0.9975 geri çekilmesinde short açılır'
+---
+id: O1-061
+ad: Chewie's Super Trend, Hull Average, Donchian Trend Ribbon Trading System
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://usethinkscript.com/threads/chewies-super-trend-hull-average-donchian-trend-ribbon-trading-system-for-thinkorswim.10894/', sayfa: null}
+tarz: day
+tf: 4m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks Vadeli (/ES)
+gostergeler:
+  st: {f: supertrend, n: 12, carpan: 2.75}
+  ema10: {f: ema, src: close, n: 10}
+  ema20: {f: ema, src: close, n: 20}
+  ema200: {f: ema, src: close, n: 200}
+  dc20: {f: donchian, n: 20}
+giris: st.yon == 1 and st.yon[1] == -1 and close > hma60
+cikis: close < hma60 or st.yon == -1
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {STAtrMult: 2.75, nATR: 12, HMA_Length: 60, HMA_lookback: 3, Donchian_len: 20, EMA1: 10, EMA2: 20, lengthAvgEXP: 200, LinRegLength: 80, EMAlength_LR: 20, target_multiples: '0.5R, 1R, 2R, 3R, 4R'}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi 4m (yazarın /ES backtest grafiği 4 dakikalık, 1 saatin altında)
+- 'REPAINT: Konu başlığında ''Repaints'' etiketi vardır; kodda Hull Moving Average (HMA 60) tepe/dip dönüş noktaları plot MA_Max = if HMA[-1] < HMA and HMA > HMA[1] ve plot MA_Min = if HMA[-1] > HMA and HMA < HMA[1] şeklinde 1 bar gelecekteki HMA[-1] değerini kullanarak hesaplanır'
+- 'Özel kod mantığı: (1) HMA(60, HL2) dip dönüş üçgeni (MA_Min) oluşup son dip değeri L_stoploss olarak kaydedilir, (2) Donchian Trend Ribbon (20) yeşil (alıcı) renkte olmalı, (3) Fiyat Hull tabanlı SuperTrend(nATR=12, STAtrMult=2.75) üst bandını yukarı kırdığında (LongTrigger) Long girilir (kod içinde ayrıca LinReg(80) ve EMA(LinReg, 20) tabanlı DYNO Long_Entry / Long_Exit durum makinesi de yer alır), (4) Stop-loss L_stoploss (HMA dip noktası) seviyesidir; hedefler risk mesafesinin (L_Entry - L_Stoploss) 0.5x, 1x, 2x, 3x ve 4x katlarıdır veya fiyat HMA(60) altına kırdığında çıkılır'
+- 'short kuralı var: HMA(60) tepe karesi (MA_Max / S_stoploss) + kırmızı Donchian Trend Ribbon + SuperTrend aşağı kırılımında (ShortTrigger) short açılır'
+---
+id: O1-062
+ad: High and Low Reversals Indicator + Intraday Strategy
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://usethinkscript.com/threads/high-and-low-reversals-indicator-intraday-strategy-for-thinkorswim.49/', sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler: {}
+giris: cross_over(close, lod_bar_high)
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {session: RTH}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- 'REPAINT: Mobius tarafından yazılan ThinkScript kodu highestAll(LOD_x) ve isNaN(c[-1]) kullanır; gün içinde yeni bir gün içi dip (LOD) veya tepe (HOD) oluştuğunda önceki sinyaller ve yatay çizgiler geçmiş grafikten silinip yeni seviyeye taşınır (#7 mesajında teyit edilmiştir)'
+- 'Özel kod mantığı: Normal seans (RTH) içinde günün en düşük seviyesini (LOD) yapan mumun en yüksek fiyatı (LOD_h) izlenir; sonraki mumlardan biri LOD_h seviyesini yukarı kırdığında (close crosses above LOD_h) ArrowUP (Long) sinyali üretilir ve stop-loss LOD_h altına kapanış olarak belirlenir'
+- 'Kazanan işlemler için kar hedefi veya mekanik çıkış kuralı tanımlanmamıştır (yazar #4 mesajında çıkış için EMA ve pivot gibi başka göstergelere baktığını belirtmiştir); çıkış kuralı eksik olduğundan öncelik sırasına göre (eksik > dakikalik) spec_durumu: eksik verildi'
+- 'short kuralı var: Günün en yüksek seviyesini (HOD) yapan mumun en düşüğü (HOD_l) aşağı kırıldığında (close crosses below HOD_l) short sinyali üretilir'
+---
+id: O1-063
+ad: Renko Bar Based Trading System
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://usethinkscript.com/threads/renko-bar-based-trading-system-for-thinkorswim.3252/', sayfa: null}
+tarz: day
+tf: 10r
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / Endeks Vadeli
+gostergeler:
+  rsi13: {f: rsi, src: close, n: 13}
+  bb20: {f: bb, src: close, n: 20, std: 2.0}
+  macd_ fast: {f: macd, src: close, fast: 13, slow: 26, sig: 9}
+giris: wae_trend_up > wae_explosion and bull_power > 0 and bmp > 0 and rsi13 < 65
+cikis: wae_trend_down > 0 or bull_power < 0 or cross_over(rsi13, 70)
+stop: null
+hedef: null
+varyantlar:
+- ad: 'Post #20 irishgold Mekanik Renko Strateji Uyarlaması'
+  giris: RTH (09:35-15:50) içinde Waddah Attar Explosion (sensitivity=100, fast=13, slow=26, channel=20, mult=2.0, deadZone=0.2) trendUp > explosionLine ve trendUp > deadZone ve RayBullPower(HULL, 13) > 0 ve BalanceOfMarketPower(HULL, 13) > 0 ve RSI(13) < 65
+  cikis: trendDown > 0 veya BullPower < 0 veya trendUp <= explosionLine veya cross_over(RSI(13), 70) veya saat 15:50 EOD çıkışı
+stop_eklendi: false
+ozel_kod: true
+parametreler: {hull_len: 13, st_atr_mult: 1.7, st_nATR: 4, wae_sensitivity: 100, wae_fast: 13, wae_slow: 26, wae_channel: 20, wae_mult: 2.0, rsi.n: 13}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: ihtiyari
+belirsiz:
+- 'Yazar (rad14733) #1, #8 ve #14 numaralı mesajlarda paylaştığı Renko çalışma alanının kesin ''Al/Sat'' kuralları içermediğini, göstergelerin (SuperTrend(4, 1.7), HMA(13), Waddah Attar Explosion, BalanceOfMarketPower, ErgodicOsc, Ray Bear/Bull Power) yatırımcının piyasa hissiyatını (''feel'') yorumlaması için bir arada kullanıldığını açıkça belirtmiştir; bu nedenle öncelik sırasına göre spec_durumu: ihtiyari verildi'
+- 'Konunun #20 numaralı mesajında ''irishgold'' adlı kullanıcı bu göstergelerden mekanik bir ThinkScript Strategy uyarlaması (10-tick Renko, RTH 09:35-15:50, WAE + BullPower + BMP + RSI(13) < 65) üretmiştir; bu mekanik kurgu giris/cikis ve varyantlar alanına işlenmiştir'
+---
+id: O1-064
+ad: Try this NQ Strategy + Code
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://usethinkscript.com/threads/try-this-nq-strategy-code-for-thinkorswim.1958/', sayfa: null}
+tarz: day
+tf: 1m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Endeks Vadeli (NQ)
+gostergeler:
+  ema20: {f: ema, src: close, n: 20}
+  dopen: {f: open, tf: 1D}
+giris: close[1] > ema20[1] and high >= high[1] + 0.25
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {ema20.n: 20, entry_offset_ticks: 1, tick_size: 0.25, target_points: 100.0, target_ticks: 400}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- Karar zaman dilimi 1m (1 saatin altında)
+- 'Özel kod mantığı (AlgoTrader77): 1 dakikalık NQ grafiğinde EMA(20) kullanılır (paylaşılan kodda setHiding(if close > open(period=''DAY'') then 0 else 1) ile günlük açılış üzerinde görünür kılınmıştır); bir mum EMA(20) üzerinde kapandığında (close[1] > ema20[1]), bir sonraki mum o sinyal mumunun en yükseğini 1 tick (0.25 puan) yukarı kırdığında (high >= high[1] + 0.25) Long girilir; stop-loss sinyal mumunun diğer ucuna (low[1]) konulur, kar hedefi 100 NQ puanıdır (400 tick)'
+- 'short kuralı var: Mum EMA(20) altında kapandığında (close[1] < ema20[1]), o mumun en düşüğünün 1 tick (0.25 puan) altına kırılımda short girilir; stop-loss sinyal mumunun en yükseği (high[1]), hedef 100 puan'
+---
+id: O1-065
+ad: Camarilla Pivot Points Day Trading System
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://usethinkscript.com/threads/camarilla-pivot-points-day-trading-system-for-thinkorswim.12988/', sayfa: null}
+tarz: day
+tf: 5m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / Endeks Vadeli
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {aggregationPeriod: DAY, length: 1, r3_s3_mult: 0.275, r4_s4_mult: 0.55, r4a_s4a_mult: 0.549}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: ihtiyari
+belirsiz:
+- Paylaşılan ThinkScript kodu yalnızca Thor Young'ın 'A Complete Day Trading System' kitabına dayalı Camarilla Pivot seviyelerini (seans öncesi verili w/PMD ve verisiz w/o PMD otomatik seçimiyle R1..R6, S1..S6, R4a/S4a) ve Floor Pivotlarını (CP, FR3, FR4, FS3, FS4) çizen bir destek/direnç göstergesidir
+- 'Kodda veya konu metninde mekanik al/sat emir kuralları yoktur; pivot seviyelerinde hacim-fiyat analizi (VPA / Market Phase) ve mum tepkilerine göre ihtiyari (discretionary) işlem yapıldığından spec_durumu: ihtiyari olarak sınıflandırıldı'
+---
+id: O1-066
+ad: Accumulation/Distribution Range Breakout Strategy NT8 - August 2018 S&C
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/accumulation-distribution-range-breakout-strategy/', sayfa: null}
+tarz: swing
+tf: 1W
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (S&P 100)
+gostergeler:
+  hh4: {f: highest, src: high, n: 4}
+  ll4: {f: lowest, src: low, n: 4}
+  vol_sma4: {f: sma, src: volume, n: 4}
+giris: close > box_top and box_bot > box_bot[12] and vol_sma4[4] > 1.0 * vol_sma4[8]
+cikis: close < box_bot
+stop: null
+hedef: null
+varyantlar:
+- ad: Range Pullback Varyantı
+  giris: close < box_top and box_bot > box_bot[12] and vol_sma4[4] > vol_sma4[8]
+  cikis: close > box_top (kar al) veya close < box_bot (stop)
+- ad: ADX / ATR Konsolidasyon Varyantları
+  aciklama: Makalede ayrıca Range_ < 0.75*Range_[4] yerine ADX(4) < 25 ve ATR(4) < 0.75*ATR(4)[4] kullanılan Breakout ve Pullback varyantları test edilmiştir
+stop_eklendi: false
+ozel_kod: true
+parametreler: {Length: 4, ConsolidationFactor: 0.75, VolRatio: 1.0, VolAvg: 4, VolDelay: 4, BotLookback: 12}
+deneme_sayisi_kaynakta: 6
+rapor: {pf: null, sharpe: null, getiri: 50.76, mdd: 9.24, islem: 1244, wr: 45.0, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+- NinjaTrader sayfasındaki .zip bağlantısının dayandığı Ağustos 2018 Stocks & Commodities makalesi ('Detecting Accumulation And Distribution' - Domenico D'Errico & Antonio Zaffino) Scribd aynasından (https://www.scribd.com/document/436895252/Detecting-Accumulation-and-Distribution-Stocks-Commodities-August-2018) tam kod ve backtest tablosuyla okundu
+- 'Özel kod mantığı (EasyLanguage kodundan): Haftalık (1W) grafikte Range_ = Highest(High, 4) - Lowest(Low, 4); eğer Range_ < 0.75 * Range_[4] ise daralma (konsolidasyon) kutusu güncellenir: box_top = Highest(High, 4) ve box_bot = Lowest(Low, 4) (koşul sağlanmadığı barlarda son box_top ve box_bot değerleri korunur). Giriş: close > box_top ve box_bot > box_bot[12] (yükselen dipler/birikim) ve Average(Volume, 4)[4] > 1.0 * Average(Volume, 4)[8] olduğunda sonraki bar açılışında Long girilir. Çıkış: close < box_bot olduğunda (aktif konsolidasyon kutusunun alt bandı iz süren stop gibi çalışır) pozisyon kapatılır'
+- Yalnızca Long kuralları tanımlanmıştır (S&P 100 hisselerinde birikim kırılımı)
+---
+id: O1-067
+ad: Renko Trading Strategy NT8 - December 2019 S&C
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/renko-trading-strategy-nt8/', sayfa: null}
+tarz: day
+tf: 2r
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / Forex
+gostergeler: {}
+giris: close > open and close[1] > open[1]
+cikis: close < open and close[1] < open[1]
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {NumBricksForEntry: 2, DollarStopAmtPerShare: 0.2, AllowReversal: true}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+- NinjaTrader sayfasının referans verdiği Aralık 2019 Stocks & Commodities Traders' Tips sayfası (https://traders.com/Documentation/FEEDbk_docs/2019/12/TradersTips.html, John Devcic 'Using Renko Charts') üzerinden tam strateji kodu okundu
+- 'Karar zaman dilimi gün içi 2-Renko (veya Adaptive ATR Renko) tuğla grafiğidir (1 saatin altında / bar bazlı olduğundan spec_durumu: dakikalik)'
+- 'Özel kod mantığı: Renko grafiğinde ardışık yükseliş/düşüş tuğlaları sayılır (SequenceCount); ardışık 2 yeşil tuğla (SequenceCount >= NumBricksForEntry, NumBricksForEntry=2) oluştuğunda sonraki bar açılışında Long açılır; ardışık 2 kırmızı tuğla (SequenceCount <= -2) oluştuğunda pozisyon kapatılıp short''a dönülür (AllowReversal=true); ayrıca hisse başına maksimum açık kârdan $0.20 geri çekilmede (DollarStopAmtPerShare = 0.20) iz süren dolar stopu uygulanır'
+- 'short kuralı var: SequenceCount <= -2 (ardışık 2 kırmızı Renko tuğlası) olduğunda short pozisyona geçilir ve hisse başına $0.20 iz süren stop uygulanır'
+---
+id: O1-068
+ad: MACD Cross Over
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/macd-cross-over/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemiş
+gostergeler:
+  macd_std: {f: macd, src: close, fast: 12, slow: 26, sig: 9}
+giris: cross_over(macd_std.line, macd_std.signal)
+cikis: cross_under(macd_std.line, macd_std.signal)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- NinjaTrader Ecosystem sayfasında yalnızca 'A cross over strategy using the MACD indicator' açıklaması yer almakta olup C# kaynak kodu yalnızca indirilebilir .zip (MACD_Cross_Over_NT8.zip) içinde bulunduğundan okunamadı
+- 'Ek filtre, stop-loss, kar hedefi ve varsayılan periyotlar .zip içerisinden doğrulanamadığından spec_durumu: eksik olarak işaretlendi'
+---
+id: O1-069
+ad: Woodies CCI Autotrader
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/woodies-cci-autotrader-2/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Endeks Vadeli / Forex
+gostergeler:
+  cci14: {f: cci, n: 14}
+  cci6: {f: cci, n: 6}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- NinjaTrader Ecosystem sayfasında yalnızca 'This is a port of the Woodies CCI Autotrader strategy by snaphook. This strategy uses a newer version of the CCI_Forecaster indicator...' açıklaması yer almakta olup C# kaynak kodu indirilebilir .zip (WoodiesCCI_NT8.zip) içinde bulunduğundan okunamadı
+- 'Hangi Woodies CCI formasyonlarının (Zero Line Reject, Trend Line Break, Hook from Extremes vb.) aktif olduğu ve stop/hedef parametreleri .zip içerisinden okunamadığından spec_durumu: eksik verildi'
+---
+id: O1-070
+ad: Divergencesystem Strategy
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/divergencesystem-strategy-2/', sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ETF / Endeks (DXJ / Nikkei 225, FXY, SPY)
+gostergeler:
+  sma25: {f: sma, src: close, n: 25}
+  roc3: {f: roc, src: close, n: 3}
+  stoch25: {f: stoch, k: 25, d: 3, smooth: 3}
+giris: im2[3] > 75 and im2 < im2[3] and im2 > 25 and cr3 < 0.8 and (lr25 >= lr25[1] or close > sma25)
+cikis: bars_since_entry >= 11 or (bars_since_entry > 3 and close < entry_close * 0.985 and stoch25.k > 10) or (bars_since_entry > 7 and close < highest_close_since_entry * 0.985)
+stop: {tip: yuzde, deger: 1.5}
+hedef: null
+iz_suren: {tip: yuzde_zirve, deger: 1.5}
+zaman_stop: {bar: 11}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {SEC2: FXY, SEC3: SPY, STD: 25, OB: 90, OS: 10, D1_roc: 3, D2_ma_lr: 25, DIVDAYS: 50, IMDAYS: 50, CR3CR: 0.8, DIVCRIT: 75, DIVSHORT: 25, LAG: 3, STP_pct: 1.5, EXIT_days: 11}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+- NinjaTrader sayfasının referans verdiği Temmuz 2017 Stocks & Commodities Traders' Tips sayfasından (https://technical.traders.com/content/TTlink.asp?mo=07&yr=2017, Markos Katsanos 'Trading The Nikkei') tam strateji kodu okundu
+- 'Özel kod mantığı (Piyasalararası Regresyon Uyumsuzluğu): Ana enstrüman (DXJ / Nikkei) için RS1 = ROC(Close, 3), Data2 (FXY - Yen ETF) için RS2 = ROC(Close_FXY, 3) ve Data3 (SPY) için RS3 = ROC(Close_SPY, 3) hesaplanır. CR2 = Correlation(RS1, RS2, 50), CR3 = Correlation(RS1, RS3, 50). 50 barlık doğrusal regresyon eğimi b2 = CR2 * StdDev(RS1, 50) / (StdDev(RS2, 50) + 0.001), kesim noktası a2 = SMA(RS1, 50) - b2 * SMA(RS2, 50), tahmin PRED2 = b2 * RS2 + a2 ve uyumsuzluk DIV2 = PRED2 - RS1 bulunur. IM2 = SMA(DIV2 - Lowest(DIV2, 50), 2) * 100 / (SMA(Highest(DIV2, 50) - Lowest(DIV2, 50), 2) + 0.01) olarak normalize edilir. Long Giriş: IM2[3] > 75 ve IM2 < IM2[3] ve IM2 > 25 ve CR3 < 0.8 ve (LinRegSlope(Close, 25) >= LinRegSlope(Close, 25)[1] veya Close > SMA(Close, 25)). Çıkış: (1) İşlemde 3 bardan fazla kalındıysa ve Close < GirisFiyati * (1 - 0.015) ve Stoch(25, 3) > 10 ise başlangıç stopu, (2) İşlemde 7 bardan fazla kalındıysa ve Close < Highest(Close, BarsSinceEntry) * (1 - 0.015) ise iz
+  süren stop, (3) BarsSinceEntry >= 11 barda zaman stopu'
+- 'short kuralı var: IM2[3] < 25 ve IM2 > IM2[3] ve IM2 < 75 ve CR3 < 0.8 ve (LR <= LR[1] veya Close < SMA(Close, 25)) olduğunda short açılır (3 bar sonra %1.5 stop + Stoch < 90, 7 bar sonra %1.5 iz süren stop, 11 bar zaman stopu)'
+---
+id: O1-071
+ad: Adx Breakouts Strategy
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/adx-breakouts-strategy-2/', sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
+gostergeler:
+  adx14: {f: adx, n: 14}
+  hh15: {f: highest, src: high, n: 15}
+giris: adx14 >= 40 and high > hh15[1]
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {Length: 14, Smoothing: 14, ADXlvl: 40, BreakOutOffset: 0.5}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- NinjaTrader sayfasındaki .zip dosyası ve Mart 2016 Stocks & Commodities Traders' Tips sayfası (https://traders.com/Documentation/FEEDbk_docs/2016/03/TradersTips.html, Ken Calhoun 'ADX Breakouts') doğrudan erişim engeline takıldı; arama motoru önbelleğinden parametreler (Length=14, Smoothing=14, ADX Trigger Level ADXlvl=40) ve giriş emri ('Buy next bar at Close + BreakOutOffset Stop') kurtarıldı
+- 'Makale kurgusundaki çıkış/iz süren stop satırları sayfa engeli nedeniyle tam doğrulanamadığından spec_durumu: eksik olarak sınıflandırıldı'
+---
+id: O1-072
+ad: Automated Strategy for trading NQ
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/automated-strategy-for-trading-nq/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Endeks Vadeli (NQ)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- NinjaTrader Ecosystem sayfasında yalnızca 'NQ automated trading strategy using EMAs, ADX, MACD, RSI, VWAP, Bollinger Bands, and more to optimize trend-following and mean-reversion trades' açıklaması bulunmakta olup C# kaynak kodu indirilebilir .zip (NQ_Strategy.zip) içinde yer aldığından okunamadı
+---
+id: O1-073
+ad: LargeTrades Strategy NT8
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/largetrades-strategy-nt8/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Endeks Vadeli
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- 'Verilen URL ana sayfaya yönlenmektedir; güncel sayfa (largetrades-strategy-nt8-update) erişim engeline takılmış olup strateji büyük hacimli emir akışı (order flow / large print volume filter) verisine dayandığından ve .zip kaynak kodu okunamadığından spec_durumu: eksik olarak sınıflandırıldı'
+---
+id: O1-074
+ad: Camarillapoints ATS
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/camarillapoints-ats/', sayfa: null}
+erisim_engeli: true
+tarz: day
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Hisse / Endeks / Forex
+gostergeler: {}
+giris: cross_over(close, cam_s3) or cross_over(close, cam_r4)
+cikis: cross_under(close, cam_r3) or cross_under(close, cam_s4)
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- 'NinjaTrader sayfası ve referans verdiği Mart 2013 Stocks & Commodities Traders'' Tips sayfası (https://traders.com/documentation/feedbk_docs/2013/03/traderstips.html) erişim engeline takıldı; Slawomir Bobrowski''nin Mart 2013 S&C makale özetinden (https://traders.com/documentation/feedbk_docs/2013/03/bobrowski.html) sistemin çoklu zaman dilimli Camarilla pivot seviyelerine (S3/S4 desteklerinden dönüş ve R4/R5 kırılımı) dayandığı okundu ancak NinjaScript C# kodundaki kesin parametreler okunamadığından spec_durumu: eksik verildi'
+---
+id: O1-075
+ad: MeanReversal Strategy NT8
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/meanreversal-strategy-nt8/', sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY, NASDAQ 100)
+gostergeler:
+  zs10: {f: zscore, src: close, n: 10}
+  sma10: {f: sma, src: close, n: 10}
+  sma100: {f: sma, src: close, n: 100}
+giris: cross_under(zs10, -1.0) and sma10 > sma100
+cikis: cross_over(zs10, -0.5) or cross_under(sma10, sma100)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {ZScoreLength: 10, FastAvgLength: 10, SlowAvgLength: 100, EntryLevel: 1.0, ExitLevel: 0.5}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+- NinjaTrader sayfasının referans verdiği Mayıs 2019 Stocks & Commodities Traders' Tips sayfasından (https://traders.com/Documentation/FEEDbk_docs/2019/05/TradersTips.html, Anthony Garner 'Steady As They Go') tam strateji kodu okundu
+- 'short kuralı var: cross_over(zs10, 1.0) and sma10 < sma100 olduğunda short açılır; cross_under(zs10, 0.5) or cross_over(sma10, sma100) olduğunda kapatılır'
+---
+id: O1-076
+ad: Mean Reversion Swing Trading Strategy
+kart_yazari: argon
+kaynak: {dosya: strateji_listesi (2).xlsx, url: 'https://ninjatraderecosystem.com/user-app-share-download/mean-reversion-swing-trading-strategy-2/', sayfa: null}
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
+gostergeler:
+  hh20: {f: highest, src: high, n: 20}
+  ll20: {f: lowest, src: low, n: 20}
+  sma50: {f: sma, src: close, n: 50}
+giris: close > sma50 and high >= low_ref + 0.50
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {ChanLength: 20, MALength: 50, StopDollars: 1.0, EntryOffset: 0.5, RetracePct: 50.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+- 'NinjaTrader sayfası ve Ocak 2017 Stocks & Commodities Traders'' Tips sayfası (https://traders.com/Documentation/FEEDbk_docs/2017/01/TradersTips.html, Ken Calhoun Aralık 2016 ''Mean-Reversion Swing Trading'') doğrudan erişim engeline takıldı; arama motoru önbelleğinden strateji girdileri (inputs: ChanLength(20), StopDollars(1), MALength(50)) ve geri çekilme dip fiyatının $0.50 üzerine Buy Stop emri (''buy on a stop 50 cents above the retracement price'') kurtarıldı'
+- 'Özel kod mantığı: Fiyat 20 günlük kanalın (ChanLength=20) üst bandını kırdıktan sonra 50 günlük SMA (MALength=50) üzerinde kalmaya devam ederek 20 günlük aralığın en az %50''si kadar geri çekilir (LowRef) ve ardından LowRef + $0.50 seviyesine Buy Stop konulur; StopDollars=1 ($1.00) stop-loss uygulanır. Tam çıkış/kar al satırları sayfa engeli nedeniyle doğrulanamadığından spec_durumu: eksik olarak işaretlendi'
+---
+ozet: {paket: T2_parti4, kart_sayisi: 40, tam: 7, eksik: 19, gizli: 0, dakikalik: 10, ihtiyari: 4, sadece_short: 0, okunamayan_url: [O1-036, O1-040, O1-042, O1-043, O1-044, O1-047, O1-049, O1-051, O1-052, O1-054, O1-068, O1-069, O1-071, O1-072, O1-073, O1-074, O1-076]}
