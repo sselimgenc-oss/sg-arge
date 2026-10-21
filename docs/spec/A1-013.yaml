@@ -1,0 +1,50 @@
+id: A1-013
+ad: Strategy 3 CANDLES with CAC40
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://prorealcode.com/prorealtime-trading-strategies/strategy-3-candles-cac40
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks (CAC40)
+gostergeler:
+  sma11:
+    f: sma
+    src: close
+    n: 11
+ozel_kod: true
+giris: open[2] > close[1] and close[1] > close and (open[2] - close) > 10
+cikis: 'false'
+stop:
+  tip: puan
+  deger: 70
+hedef:
+  tip: puan
+  deger: 75
+stop_eklendi: false
+parametreler:
+  target_pips: 75
+  stop_pips: 70
+  breakeven_step: 30
+  uno_pips: 10
+  due_pips: 25
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'ProRealCode sayfasina dogrudan erisim engellendi (erisim_engeli: true); kodun buyuk kismi arama indeksinden kurtarildi (Yazar: Stanko, 1m CAC40).'
+- 'Kurtarilan kod parcalari: DEFPARAM CumulateOrders = False; timeEnterBefore = time >= 083000; timeEnterAfter = time <= 213000; POH = Time > 104500 and Time < 141500; UNO = (open[2] - close) > 10*pipsize;
+  IF Not onmarket AND POH AND (open[2] > close[1]) AND (close[1] > close) AND ... THEN BUY 1 CONTRACT AT MARKET ENDIF; DUE = (close - open[2]) > 25*pipsize; IF timeEnterAfter AND timeEnterBefore AND (open[2]
+  < close[1]) ...; Target 75 pips (yorumlarda 72), Stop 70 pips (yorumlarda 69), breakeven 30 pipte bir guncellenir (yorumlarda M8 = average[11](close) filtresi eklenmistir).'
+- IF satirinin sonundaki kosul ve breakeven dongusunun tam satirlari sayfa engeli nedeniyle eksiktir.

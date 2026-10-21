@@ -1,0 +1,43 @@
+id: A1-005
+ad: DOW Breakout 15Min
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://prorealcode.com/prorealtime-trading-strategies/dow-breakout-15min/?pnum=3
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks (Dow Jones)
+gostergeler: {}
+ozel_kod: true
+giris: close > open
+cikis: close < open
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  StartHour: 101500
+  LimitHour: 150000
+  FlatAfter: 153000
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 1700
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'ProRealCode DOW Breakout 15Min sayfasina dogrudan erisim engellendi (erisim_engeli: true); stratejinin dayandigi ana CAC40 Breakout kodu okundu ve DOW sayfasindaki bazi parametreler arama indeksinden
+  kurtarildi.'
+- 'Ana algoritma (Breakout ProOrder): StartHour''dan itibaren gun ici HighLevel = Highest(High) ve LowLevel = Lowest(Low) takip edilir; DaySpread = HighLevel - LowLevel <= MaxAmplitude iken (HighLevel -
+  Close) >= DaySpread * PourcentageMin / 100 oldugunda BuyTreshold = HighLevel - OrderDistance, (Close - LowLevel) >= DaySpread * PourcentageMin / 100 oldugunda SellTreshold = LowLevel + OrderDistance atanir.
+  (BuyTreshold - SellTreshold) >= MinAmplitude ise BuyTreshold STOP ile long, SellTreshold STOP ile short girilir (gunde en fazla 1 long ve 1 short). Pozisyon FlatAfter''da kapatilir, stop MaxAmplitude
+  puandir.'
+- 'Kurtarilan DOW saatleri (UK saati): StartHour = 101500, LimitHour = 150000, DEFPARAM FlatAfter = 153000 (veya 203000), PositionSize = max(1, 1 + ROUND((strategyprofit - 1000) / 1000)). Ancak DOW icin
+  optimize edilen MaxAmplitude, MinAmplitude, OrderDistance ve PourcentageMin sayisal degerleri sayfa engeli nedeniyle okunamadi (CAC40 baz degerleri: 58, 11, 4, 30).'

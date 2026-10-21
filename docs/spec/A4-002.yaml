@@ -1,0 +1,38 @@
+id: A4-002
+ad: Simple TQQQ RSI mean reversion
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.composer.trade/trading-strategies/simple-tqqq-rsi-mean-reversion-4hcYKZBIjhZo3Yg0NTQk
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (TQQQ / UVXY)
+gostergeler:
+  rsi10:
+    f: rsi
+    src: close
+    n: 10
+giris: rsi10 <= 79
+cikis: rsi10 > 79
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  rsi10.n: 10
+  rsi_ust_esik: 79
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: 1.24
+  getiri: 80.72
+  mdd: 58.04
+  islem: null
+  wr: null
+  maliyet_dahil: true
+spec_durumu: tam
+belirsiz:
+- 'Composer senfonisi her gun TQQQ uzerinde 10 gunluk RSI hesaplar: TQQQ RSI(10) <= 79 iken %100 TQQQ tasir; TQQQ RSI(10) > 79 oldugunda (asiri isinma) TQQQ''dan cikip %100 UVXY (ProShares Ultra VIX Short-Term
+  Futures ETF) pozisyonuna gecer.'

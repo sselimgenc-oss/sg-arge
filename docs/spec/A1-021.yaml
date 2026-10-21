@@ -1,0 +1,34 @@
+id: A1-021
+ad: Pivot Master LITE
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://cn.tradingview.com/script/RKd6izP4-Pivot-Master-LITE
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemis
+gostergeler: {}
+ozel_kod: true
+giris: close > open
+cikis: close < open
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'TradingView sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
+- GitHub, Scribd ve TradeSearcher aynalarinda RKd6izP4 (Pivot Master LITE) scripti bulunamadi.

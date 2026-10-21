@@ -1,0 +1,46 @@
+id: A5-015
+ad: Reversal in Cryptocurrency Returns
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://paperswithbacktest.com/strategies/reversal-in-cryptocurrency-returns
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1W
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler:
+  roc8:
+    f: roc
+    src: close
+    n: 8
+  roc10:
+    f: roc
+    src: close
+    n: 10
+ozel_kod: true
+giris: roc8 < 0
+cikis: roc8 > 0
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  horizon_weeks_1: 8
+  horizon_weeks_2: 10
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'PapersWithBacktest sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
+- 'ResearchGate aynasinda makale ozeti bulundu (''Reversal in Cryptocurrency Returns'', Mayis 2026): kripto para getirilerinde 8 ve 10 haftalik ufuklarda, ozellikle orta olcekli (midsize) ve nispeten yuksek
+  volatiliteli varliklarda yogunlasan anlamli getiri tersine donusu (reversal) belgelenmektedir. Ancak kesitsel portfoy dilimleri (quintile/decile), piyasa degeri ve volatilite esikleri sayfa engeli nedeniyle
+  okunamadi.'

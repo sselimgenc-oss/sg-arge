@@ -1,0 +1,40 @@
+id: A4-003
+ad: Overbought or Oversold SPY else UVXY
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.composer.trade/trading-strategies/overbought-or-oversold-spy-else-uvxy-C8QUEQBKayzmaSBz7MAZ
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY / UVXY)
+gostergeler:
+  rsi10:
+    f: rsi
+    src: close
+    n: 10
+ozel_kod: true
+giris: rsi10 < 30
+cikis: rsi10 > 80
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  rsi10.n: 10
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Composer C8QUEQBKayzmaSBz7MAZ sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
+- Ayni serideki erisilebilen Composer varyantlarinda (Overbought or Oversold SPY else UVXY | Now let's make it weird ve SPY Overbought UVXY Test) SPY 10-gunluk RSI degeri izlenerek asiri alimda (orn. RSI(10)
+  > 68 veya 80) UVXY'ye, asiri satimda UPRO/SPY'a, diger durumda BIL/sepete gecildigi gorulmektedir; ancak C8QUEQBKayzmaSBz7MAZ ID'li senfoninin kesin esik sayilari dogrulanamadi.

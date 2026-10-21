@@ -46,3 +46,27 @@ O1-072,Automated Strategy for trading NQ,https://ninjatraderecosystem.com/user-a
 O1-073,LargeTrades Strategy NT8,https://ninjatraderecosystem.com/user-app-share-download/largetrades-strategy-nt8/,argon parti 4: kaynak okunamadi
 O1-074,Camarillapoints ATS,https://ninjatraderecosystem.com/user-app-share-download/camarillapoints-ats/,argon parti 4: kaynak okunamadi
 O1-076,Mean Reversion Swing Trading Strategy,https://ninjatraderecosystem.com/user-app-share-download/mean-reversion-swing-trading-strategy-2/,argon parti 4: kaynak okunamadi
+P3-016,2-Period RSI strategy (with filter),https://www.tradingview.com/script/iHSFQFog/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+P3-017,Kirk65 UTBot Strategy Fixed,https://www.tradingview.com/script/cbPurhXs-Kirk65-UTBot-Strategy-Fixed/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+P3-018,Long-Only Opening Range Breakout (ORB) with Pivot Points,https://www.tradingview.com/script/6kDE9bLA-Long-Only-Opening-Range-Breakout-ORB-with-Pivot-Points/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+P3-019,EMA Cross Strategy,https://www.tradingview.com/script/fAxX6kbm-EMA-Cross-Strategy/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+P3-020,RSI Strategy [PrimeAutomation],https://www.tradingview.com/script/RiQzLLoh-RSI-Strategy-PrimeAutomation/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-001,DAX 15Min - False Breakout / SuperTrend,https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-003,CAC40 Trend Following on 10-sec Timeframe,https://www.prorealcode.com/prorealtime-trading-strategies/cac40-trend-following-10sec,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-005,DOW Breakout 15Min,https://prorealcode.com/prorealtime-trading-strategies/dow-breakout-15min/?pnum=3,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-007,Morning CAC40,https://www.prorealcode.com/prorealtime-trading-strategies/morning-cac40/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-011,DAX40 H1 Long Trend System,https://www.prorealcode.com/prorealtime-trading-strategies/dax40-h1-long-trend-system/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-013,Strategy 3 CANDLES with CAC40,https://prorealcode.com/prorealtime-trading-strategies/strategy-3-candles-cac40,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-014,Blue Monday DAX,https://www.prorealcode.com/prorealtime-trading-strategies/blue-monday-dax/?pnum=1,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-021,Pivot Master LITE,https://cn.tradingview.com/script/RKd6izP4-Pivot-Master-LITE,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A1-026,LongBuyLongSell 90% profit Excellent Win Rate Strategy,https://www.tradingview.com/script/0zX3PYZi-LongBuyLongSell-90-profit-Excellent-Win-Rate-Strategy-indicator/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A4-001,Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion,https://www.composer.trade/trading-strategies/short-term-momentum-that-works-20-with-macro-filter-mean-reversion-dsPSLcRMdQldkyolwGon,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A4-003,Overbought or Oversold SPY else UVXY,https://www.composer.trade/trading-strategies/overbought-or-oversold-spy-else-uvxy-C8QUEQBKayzmaSBz7MAZ,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A4-005,SPY RSI 30 Test,https://www.composer.trade/trading-strategies/spy-rsi-30-test-kUp65lDEQCokq8CqK8Us,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A4-007,Enhanced Short-Term Mean Reversion Algorithm,https://www.quantconnect.com/forum/discussion/3327/enhanced-short-term-mean-reversion-algorithm/p1,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A4-008,RSI Extremes Intraday E-mini (embedded backtest),https://www.quantconnect.com/terminal/cache/embedded_backtest_e51cb798772bb2ad23d4d52e535ed3f7.html,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A4-010,"Intraday Mean Reversion BTCUSD (r/algotrading yaklasimi, embedded backtest)",https://www.quantconnect.com/terminal/cache/embedded_backtest_b5e5be2775f2e65fb530bae2c5fc8486.html,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A5-015,Reversal in Cryptocurrency Returns,https://paperswithbacktest.com/strategies/reversal-in-cryptocurrency-returns,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A5-021,The 8-K Trading Gap,https://paperswithbacktest.com/strategies/the-k-trading-gap,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A6-012,Better Tests with Oversampling (3 mum fiyat aksiyonu),https://financial-hacker.com/better-tests-with-oversampling/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz
+A6-016,Building and Testing Trend-Following Strategies on One-Minute SPY Data,https://quantpedia.com/building-and-testing-trend-following-strategies-on-one-minute-spy-data/,argon parti 6: kaynak okunamadi -> D3b Dogrulanamaz

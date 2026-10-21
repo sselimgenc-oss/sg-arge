@@ -1,0 +1,45 @@
+id: A4-007
+ad: Enhanced Short-Term Mean Reversion Algorithm
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantconnect.com/forum/discussion/3327/enhanced-short-term-mean-reversion-algorithm/p1
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
+gostergeler:
+  roc5:
+    f: roc
+    src: close
+    n: 5
+    kaydir: 1
+ozel_kod: true
+giris: roc5 < 0
+cikis: roc5 > 0
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  coarse_size: 50
+  min_price: 5.0
+  reversion_days: 5
+  skip_days: 1
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'QuantConnect tartisma sayfasina dogrudan erisim engellendi (erisim_engeli: true); kurallarin ana hatlari arama motoru indeksinden kurtarildi (Yazar: Jing Wu, Ocak 2018).'
+- 'Kurtarilan kurallar: Aylik evren seciminde fiyati > 5$ ve temel verisi olan en yuksek dolar hacimli 50 hisse secilir, Fine asamada EV/EBITDA > 0 olanlar filtrelenir. Gunluk kapanista yeniden dengeleme
+  yapilir: en son gun atlanarak 5 gunluk ortalama geri donus getirisi hesaplanir, asiri momentum hisseleri filtrelenir ve en dusuk getirili hisselere esit agirlikli long, en yuksek getirili hisselere short
+  girilir. Asiri momentum filtresinin kesin yuzdelik/standart sapma esigi sayfa engeli nedeniyle okunamadi.'

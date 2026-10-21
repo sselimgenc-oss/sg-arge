@@ -1,0 +1,40 @@
+id: A4-001
+ad: Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.composer.trade/trading-strategies/short-term-momentum-that-works-20-with-macro-filter-mean-reversion-dsPSLcRMdQldkyolwGon
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF
+gostergeler:
+  rsi10:
+    f: rsi
+    src: close
+    n: 10
+ozel_kod: true
+giris: rsi10 < 30
+cikis: rsi10 > 70
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Composer.trade strateji sayfasina dogrudan erisim engellendi (erisim_engeli: true); arama motoru indeksinden genel yapi kurtarildi.'
+- 'Kurtarilan kurallar: Gunluk yeniden dengelenen taktik ETF stratejisi; 1) Makro rejimi (''weather'') skor kartlariyla okur, 2) Atak (SOXX - yari iletkenler) veya defans (TLT, GLD, XLU) sepetleri ile volatilite/doviz
+  korumasi (VIXM) arasinda secim yapar, 3) Kisa vadeli RSI ile asiri alim/satim (mean reversion front-runner) dali calistirir, 4) Short/koruma oncesinde bankalarin sigortacilari yenip yenmedigini (EUFN
+  > KIE) kontrol eder. Kesin RSI periyotlari ve dal esikleri sayfa engeli nedeniyle okunamadi.'

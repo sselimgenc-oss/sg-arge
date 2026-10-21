@@ -33,7 +33,7 @@
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
       "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart)",
-      "status": "parti 2, 4, yeniden kabul; sirada yeniden2 (Argon limitte)",
+      "status": "parti 2,4,6 + yeniden 1,2 kabul; sirada parti 7",
       "spec": "argon/PAKET_*.md"
     },
     {
@@ -75,7 +75,7 @@
       "id": "T8",
       "owner": "claude-moderator",
       "title": "ozel_kod azaltma: tam/dakikalik ozel_kod kartlari (88) ifade diline ya da kutuphaneye tasima",
-      "status": "2/2 PR acik: dakikalik 41 kart (4 cevrildi, 37 ozel_kod_nedeni); piyasa_kisiti 25 kart; lider incelemesi bekleniyor",
+      "status": "done (PR #33, #35)",
       "spec": "Issue #1 GOREV -> Sonnet T8"
     },
     {
@@ -84,6 +84,13 @@
       "title": "YENIDEN.csv'deki 47 kaynagin kodunu kaynak/<ID>.md olarak kopyalamak",
       "status": "iptal (kullanici karari): 47 kart Dogrulanamaz (kaynak erisilemedi)",
       "spec": "kaynak/GOREV_TARAYICI.md"
+    },
+    {
+      "id": "T10",
+      "owner": "claude-moderator",
+      "title": "Argon kartlarini standarda getirme (her Argon partisinden sonra): T7 sozdizimi + T8 ozel_kod triyaji + piyasa_kisiti",
+      "status": "atandi: parti 6",
+      "spec": "Issue #1 GOREV -> Sonnet T10"
     }
   ],
   "done": [
@@ -158,6 +165,18 @@
       "owner": "claude-moderator",
       "title": "kart sozdizimi: tam kartlarda 0 hata, T5b'ye hazir 26+7",
       "ref": "PR #26"
+    },
+    {
+      "id": "T8",
+      "owner": "claude-moderator",
+      "title": "ozel_kod azaltma; hazir 49+11; TA-Lib referans",
+      "ref": "PR #33, #35"
+    },
+    {
+      "id": "T2-p6",
+      "owner": "argon",
+      "title": "40 kart (24 okunamadi)",
+      "ref": "argon/T2_parti6.yaml"
     }
   ],
   "user_decisions_pending": [],
