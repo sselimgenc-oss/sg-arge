@@ -17,7 +17,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.
 
 ## Kullanıcı bilgisayarında
-| Claude (Chrome) | Okunamayan 47 kaynağı kopyalamak (`kaynak/GOREV_TARAYICI.md`) | Kullanıcı başlatacak | Görev dosyasını Claude'a ver |
+| — | T9 iptal: okunamayan 47 kaynak **Doğrulanamaz (kaynak erişilemedi)** olarak raporlanacak | Kapandı | Yok |
 
 ## Sırada bekleyen (açılmadı)
 - Argon: partiler 7, 8, 9

@@ -72,6 +72,9 @@ belirsiz: ["çıkış kuralı yazmıyor"]
 - **`ozel_kod: true` kartlar** aşama 1 taramasında atlanır. Tarama bittikten sonra T5b'de, raporlanan kanıt kalitesi ve kaynak kodun açık olması sırasıyla elle kodlanır. Kaynak kodu karta bağlı olmalı.
 - **Çok kısa yazar testleri** (10 gün ile birkaç ay arası pencere): rapor rakamı kanıt sayılmaz, yalnız bizim testimiz geçerli.
 
+### D3b. Erişilemeyen kaynaklar (kullanıcı kararı)
+`docs/spec/YENIDEN.csv`'de kalan ve Argon tarafından da okunamayan kartlar sonuç raporunda **Doğrulanamaz (kaynak erişilemedi)** olarak yer alır. Reddedilmiş sayılmaz; site ve neden raporda belirtilir.
+
 ### D4. Lider kararları (T2 parti 5 sonrası)
 - **Kapanış dolumu (MOC) istisnası:** Kaynak açıkça "kapanışta al/sat" diyorsa ve karar zaman dilimi günlükse kartta `dolum: kapanis` yazılır. Bu kartlar iki şekilde test edilir: (a) sinyal barının kapanışından dolum, maliyet **2x baz** (kapanış seansı/MOC emri kayması için); (b) A1 (ertesi açılış). Rapor ikisini de verir. Karar (a)'ya göre verilir ama (b) negatifse **Koşullu**. Gün içi kartlarda istisna yok. Gerekçe: BIST kapanış seansı ve ABD MOC emirleri bu dolumu canlıda uygulanabilir kılar. Sinyal kapanıştan birkaç dakika önceki fiyatla hesaplanır, fark kayma olarak maliyete yansır.
 - **Takvim ilkeli:** ifade diline `ay_islem_gunu_bastan(k)`, `ay_islem_gunu_sondan(k)`, `haftanin_gunu` eklenir (T5). Bu kartlar `ozel_kod` sayılmaz.
