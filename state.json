@@ -59,9 +59,9 @@
     },
     {
       "id": "T6",
-      "owner": "codex-worker",
+      "owner": "claude-moderator (T6a) / codex-worker (T6b)",
       "title": "Asama 2 tam dogrulama + results/SONUC.md (basarili/basarisiz listesi)",
-      "status": "tanimlandi (docs/GOREV_T6.md); Codex T1b'den sonra",
+      "status": "T6a Sonnet'e atandi; T6b Codex T1b'den sonra",
       "spec": "docs/GOREV_T6.md"
     },
     {
@@ -89,7 +89,7 @@
       "id": "T10",
       "owner": "claude-moderator",
       "title": "Argon kartlarini standarda getirme (her Argon partisinden sonra): T7 sozdizimi + T8 ozel_kod triyaji + piyasa_kisiti",
-      "status": "parti 7-9 toplu: Sonnet limiti yenilenince",
+      "status": "parti 7-9 toplu: T6a'dan sonra",
       "spec": "Issue #1 GOREV -> Sonnet T10"
     }
   ],

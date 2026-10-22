@@ -10,7 +10,7 @@ Son güncelleme: 2026-10-22 gece, lider (Opus)
 ## Bugün ilk yapılacaklar
 1. Codex limiti açıldıysa: "görev geldi" (T1b), Issue #1'deki son Codex görevi.
 2. Argon: parti 8 paketini yapıştır, cevabı `T2_parti8.yaml` adıyla yükle.
-3. Sonnet'in limiti yenilendiyse haber ver: T10 (Argon parti 7-9 toplu standart) + `kismi_kar` desteği.
+3. ~~Sonnet limiti~~ yenilendi → T6a verildi.
 
 ## Kural
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
@@ -19,7 +19,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Codex | T1b: kalan 9 aile (15 satır) | **Sırada; limit açılınca** | Limit açılınca "görev geldi" |
-| Sonnet | Dinleniyor: limit %92. Yenilenince T10 (Argon parti 7-8-9 toplu standart) | Bekliyor | Limit yenilenince haber ver |
+| Sonnet | **T6a: piyasa betası testleri** (BIST USD + rastgele giriş) + `kismi_kar` desteği | Atandı | "Görev geldi" |
 | Argon | Parti 8 (40 kart) | Sırada | `argon/PAKET_T2_parti8.md`'yi yapıştır; cevabı `T2_parti8.yaml` adıyla yükle |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
 
