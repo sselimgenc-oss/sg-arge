@@ -23,7 +23,7 @@ Amaç: ~316 stratejinin hepsi **aynı koşullarda** test edilsin, sonuçları ka
 | Emtia | 6 ETF | yfinance 2015 → | yfinance 1h, ~730 gün |
 
 - Strateji hangi piyasa için yazılmış olursa olsun (forex dahil) **4 piyasanın hepsinde** çalıştırılır; yazarın piyasası raporda ayrıca belirtilir. Forex verisi kapsam dışı.
-- **Zaman dilimi:** 1H ve üstü → doğal zaman diliminde. **1H altı (1m-30m)** → yalnız kripto (Binance) doğal zaman diliminde; BIST/ABD/emtia için **Doğrulanamaz (dakikalık veri yok)**. Zaman dilimi değiştirilerek "uyarlama" yapılmaz.
+- **Zaman dilimi:** 1H ve üstü → doğal zaman diliminde. **1H altı (1m-30m)** → yalnız kripto (Binance) doğal zaman diliminde; BIST/ABD/emtia için **Doğrulanamaz (dakikalık veri yok)**. Dakikalık stratejiler scalp diye elenmez (kullanıcı kararı 2026-10-22). Zaman dilimi değiştirilerek "uyarlama" yapılmaz.
 - Zaman dilimi belirtilmemişse: swing → 1D, day → 1H; kartta `tf_varsayim: true`.
 
 ## C. Dönemler

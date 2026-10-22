@@ -91,6 +91,13 @@
       "title": "Argon kartlarini standarda getirme (her Argon partisinden sonra): T7 sozdizimi + T8 ozel_kod triyaji + piyasa_kisiti",
       "status": "parti 7-9 toplu: T6a'dan sonra",
       "spec": "Issue #1 GOREV -> Sonnet T10"
+    },
+    {
+      "id": "T5b-2",
+      "owner": "(T6a'dan sonra atanacak)",
+      "title": "Dakikalik + gun ici kartlarin kripto taramasi (Binance 1m-1H)",
+      "status": "sirada",
+      "spec": "docs/GOREV_T5.md"
     }
   ],
   "done": [
@@ -210,7 +217,9 @@
     "2026-10-21 kullanici: portfoy MDD ust siniri %15 onaylandi",
     "2026-10-21 kullanici: saatlik veri ucretsiz internet kaynaklarindan (yfinance 1h ~730 gun, Binance data-api)",
     "2026-10-21 kullanici: Codex environment kuruldu; Sonnet manuel tetiklenecek",
-    "2026-10-21 kullanici: okunamayan kaynaklar icin tarayici yolu yok; YENIDEN.csv kartlari Dogrulanamaz (kaynak erisilemedi)"
+    "2026-10-21 kullanici: okunamayan kaynaklar icin tarayici yolu yok; YENIDEN.csv kartlari Dogrulanamaz (kaynak erisilemedi)",
+    "2026-10-22 kullanici: dakikalik (1H alti) stratejiler elenmez; yalniz kriptoda (Binance) dogal zaman diliminde test edilir. BIST/ABD/emtia icin dakikalik veri aranmaz.",
+    "2026-10-22 kullanici: Argon yalniz isci (kaynak okuma, kopyalama, liste); karar/denetim rolu yok, ciktisi her zaman denetlenir."
   ],
   "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz.",
   "triggers": {
