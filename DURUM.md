@@ -18,8 +18,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Codex | **T6b: ikinci aşama tam doğrulama** (OOS, ön dönem, stres, plato, bootstrap, DSR) + Codex Algo satırlarına rastgele giriş testi. Model: güçlü | Atandı | "Görev geldi" |
-| Sonnet | Parti 12: güncellenmiş liste PDF'inden 13 kart (PDF'teki kural özetleri; internet gerekmez) | Atandı | "Görev geldi" |
+| Codex | **T13: sonuç raporu üreticisi** (`SONUC.md`). Model: Terra | Atandı | "Görev geldi" |
+| Sonnet | **T12: kripto gün içi/dakikalık tarama** + roi_tablosu + parti 11 düzeltme | Atandı | "Görev geldi" |
 | Argon | **T11: tarihsel endeks bileşenleri** (BIST30 dönemsel, ABD en büyük 25; survivorship düzeltmesi için) | Atandı | `argon/PAKET_T11_tarihsel_evren.md`'yi yapıştır; iki CSV'yi `argon/`a yükle |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
 
