@@ -210,7 +210,9 @@
       "ref": "argon/T2_parti8.yaml"
     }
   ],
-  "user_decisions_pending": [],
+  "user_decisions_pending": [
+    "Paper_Test_8'in bahsettigi '256 stratejilik 3 PDF' ve kullanicinin elindeki diger isimli strateji PDF'leri repoya yuklenmeli"
+  ],
   "rules": "Paralel calisma: her gorev sahibi yalniz kendi gorev dosyalarina ve state.json'daki kendi kaydinin status alanina yazar. turn, queue ekleme/cikarma ve kriterler yalniz lider.",
   "notes": "Lider kararlari: tartisma/001_cevap_opus.md. T1b, T1a lider incelemesinden sonra acilir.",
   "decisions": [
