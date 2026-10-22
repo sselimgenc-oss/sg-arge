@@ -8,9 +8,9 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 |---|---:|---:|---:|
 | Geçti | 2 | 2 | 0 |
 | Koşullu | 1 | 1 | 0 |
-| Bekliyor | 58 | 23 | 35 |
-| Reddedildi | 83 | 83 | 0 |
-| Doğrulanamaz | 271 | 117 | 154 |
+| Bekliyor | 49 | 13 | 36 |
+| Reddedildi | 93 | 93 | 0 |
+| Doğrulanamaz | 270 | 117 | 153 |
 | Ertelendi | 3 | 2 | 1 |
 | Kapsam dışı | 4 | 2 | 2 |
 | **Toplam** | **422** | 230 | 192 |
@@ -53,23 +53,16 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 | A3-011c | pandianmn fork: Strategy003 (A3-010c ile aynı kural varsayımı) | - | asama1: tarama bekliyor (alias: A3-010c) |
 | A3-011d | pandianmn fork: Strategy004 (A3-010d ile aynı kural varsayımı) | - | asama1: tarama bekliyor (alias: A3-010d) |
 | A3-011e | pandianmn fork: Strategy005 (resmi depo kodu) | - | asama1: tarama bekliyor |
-| A4-002 | Simple TQQQ RSI mean reversion | ABD25/1D | asama2a: bekliyor |
-| A4-003 | Overbought or Oversold SPY else UVXY | ABD25/1D | asama2a: bekliyor |
-| A4-005 | SPY RSI 30 Test | ABD25/1D | asama2a: bekliyor |
 | A6-003 | Simple Ideas for a Mean Reversion Strategy with Good Results | - | asama1: tarama bekliyor |
-| A6-004 | Mean Reversion Entry Timing | ABD25/1D | asama2a: bekliyor |
+| A6-019 | Overnight Seasonality in Bitcoin | - | asama1: tarama bekliyor |
 | A6-022 | How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin | - | asama1: tarama bekliyor |
-| B3-014 | Cross-Sectional Equity Mean Reversion (Quantpedia #13) | ABD25/1D | asama2a: bekliyor |
 | G003 | Reinforced Smooth Scalp (Freqtrade, hyperopt parametreleri) | - | asama1: tarama bekliyor |
 | M008 | RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks | - | asama1: tarama bekliyor |
 | M010 | RSI Volatility Spread | - | asama1: tarama bekliyor |
 | M013 | Simple H4 Mobile Trading System | - | asama1: tarama bekliyor |
 | M016 | One Percent a Week Strategy (TQQQ) | - | asama1: tarama bekliyor |
-| M017 | RSI 2 Portfolio (Composer Symphony) | ABD25/1D | asama2a: bekliyor |
-| M020a | The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp) | ABD25/1D | asama2a: bekliyor |
 | M027 | Renko Automated Trading System | - | asama1: tarama bekliyor |
 | M036 | A Mean Reversion Strategy with 2.11 Sharpe (QQQ with Dynamic SMA300 Stop) | - | asama1: tarama bekliyor |
-| M050 | Short-Term Reversal Effect in Stocks (Quantpedia #013) | ABD25/1D | asama2a: bekliyor (alias: B3-014) |
 | O1-003 | PHL1 YİĞİT KAYNAK | - | asama1: tarama bekliyor |
 | O1-004 | PHL2 YIGITBOX | - | asama1: tarama bekliyor |
 | O1-011 | SuperTrendVadeliStratejisi | - | asama1: tarama bekliyor |
@@ -79,8 +72,6 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 | O1-039 | Laguerre RSI by KivancOzbilgic STRATEGY | - | asama1: tarama bekliyor |
 | O1-064 | Try this NQ Strategy + Code | - | asama1: tarama bekliyor |
 | O2-005 | Trading Made Simple | - | asama1: tarama bekliyor |
-| O2-025 | The Holy Grail | ABD25/1D | asama2a: bekliyor |
-| O2-027 | TQQQ For The Long Term (Reddit Post Link) | ABD25/1D | asama2a: bekliyor |
 | P03 | 4H Sweet Spot (1D/4H/1H) PMax + ADX rejim (aynı strateji: R6) | - | asama1: tarama bekliyor |
 | P04 | VOLTRAN-R2 intraday hibrit (RRS göreceli güç + RVOL ORB) (aynı strateji: S8/R8) | - | asama1: tarama bekliyor |
 | P3-008 | Strategy based on Squeeze Momentum Indicator [LazyBear] | - | asama1: tarama bekliyor |
@@ -128,7 +119,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | O3-014 | 3 Days Down Overnight (S&P 500) | ABD25/1D | PF_1x<1.1, net_2x<=0 |
 | O3-015 | IBS (Internal Bar Strength) SPY – IBS<0.2 al / >0.8 sat | ABD25/1D | net_2x<=0 |
 
-### Aşama 2a (rastgele seçim/giriş testi, piyasa betası): 41
+### Aşama 2a (rastgele seçim/giriş testi, piyasa betası): 45
 
 | ID | Strateji | Piyasa/tf | Alt neden |
 |---|---|---|---|
@@ -138,17 +129,21 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | A3-009a | Systematic-Trading-Backtester: MA 20/50 | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.174, ortR p=0.015 (esik 0.05) |
 | A3-009b | Systematic-Trading-Backtester: Bollinger ortalamaya dönüş | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.184, ortR p=0.005 (esik 0.05) |
 | A3-009c | Systematic-Trading-Backtester: 252 günlük momentum | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.577, ortR p=0.642 (esik 0.05) |
+| A4-003 | Overbought or Oversold SPY else UVXY | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.022, CAGR p=0.087 (esit 0.05) |
+| A4-005 | SPY RSI 30 Test | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.766, CAGR p=0.761 (esit 0.05) |
 | A5-009 | XLP mean reversion (IBS + 25 günlük bant) (10 Best Swing #7) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.716, ortR p=0.736 (esik 0.05) |
 | A6-001 | Double 7's Strategy | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.881, ortR p=0.567 (esik 0.05) |
 | B1-002 | AlphaTrend Strategy (TradingView, Kıvanç Özbilgiç) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.502, ortR p=0.055 (esik 0.05) |
 | B3-001 | RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.303, ortR p=0.219 (esik 0.05) |
 | B3-005 | Triple RSI Strategy (90.36% win rate) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.736, ortR p=0.756 (esik 0.05) |
 | B3-010 | RSI-2 Larry Connors (ProRealCode) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.289, ortR p=0.060 (esik 0.05) |
+| B3-014 | Cross-Sectional Equity Mean Reversion (Quantpedia #13) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.816, CAGR p=0.806 (esit 0.05) |
 | M006 | RSI Double-Bottom for Amibroker (AFL) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.383, ortR p=0.055 (esik 0.05) |
 | M011 | Double 7's Strategy (Larry Connors) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.881, ortR p=0.567 (esik 0.05) (alias: A6-001) |
 | M012b | 5 Swing Trading Strategies for Beginners - Strategy 2: Turnaround Tuesday | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.154, ortR p=0.229 (esik 0.05) (alias: O3-001) |
 | M014 | Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.522, ortR p=0.249 (esik 0.05) |
 | M037 | What Is the Best RSI Oversold Level? We Tested 1 Through 50 | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.502, ortR p=0.368 (esik 0.05) |
+| M050 | Short-Term Reversal Effect in Stocks (Quantpedia #013) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.816, CAGR p=0.806 (esit 0.05) (alias: B3-014) |
 | O1-001 | AlphaTrend Strategy (Matriks) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.498, ortR p=0.070 (esik 0.05) |
 | O1-038 | KPL Swing Strategy | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.652, ortR p=0.383 (esik 0.05) |
 | O1-066 | Accumulation/Distribution Range Breakout Strategy NT8 - August 2018 S&C | ABD25/1W | null'u gecemedi (piyasa betasi) - PF p=0.279, ortR p=0.313 (esik 0.05) |
@@ -174,10 +169,12 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | V1A | VOLTRAN-1A swing kırılım ve rejim motoru (v3) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.632, ortR p=0.169 (esik 0.05) |
 | V1B | VOLTRAN-1B SMC + ML geri çekilme motoru (v3) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.249, ortR p=0.045 (esik 0.05) |
 
-### Aşama 2b (OOS, stres, plato, bootstrap): 27
+### Aşama 2b (OOS, stres, plato, bootstrap): 33
 
 | ID | Strateji | Piyasa/tf | Alt neden |
 |---|---|---|---|
+| A4-002 | Simple TQQQ RSI mean reversion | ABD25/1D | bootstrap MDD>%15 |
+| A6-004 | Mean Reversion Entry Timing | ABD25/1D | bootstrap MDD>%15 |
 | C01 | Haftalik yonlu gunluk geri cekilme (wd_pullback_risk, Codex Algo 21) | BIST30/1D | null, OOS ortR<=0, 2x PF<1.2, bootstrap MDD>%15 |
 | C02 | Haftalik yonlu gunluk CCI devam (wd_cci_continuation_risk, Codex Algo 21) | BIST30/1D | null, OOS ortR<=0, bootstrap MDD>%15 |
 | C03 | Codex Algo 21: wd_flow_confirmation_risk | BIST30 | null, OOS ortR<=0 |
@@ -202,11 +199,15 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | G011 | PowerX - RSI + Stochastic + MACD (Freqtrade powerxhopt) | ABD25/1D | OOS ortR<=0 |
 | M012e | 5 Swing Trading Strategies for Beginners - Strategy 5: New Highs with Low IBS | ABD25/1D | 2x PF<1.2, 3x net<=0 (alias: O3-003) |
 | M015 | Larry Connors' Cumulative RSI Strategy | ABD25/1D | 2x PF<1.2 |
+| M017 | RSI 2 Portfolio (Composer Symphony) | ABD25/1D | bootstrap MDD>%15 |
+| M020a | The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp) | ABD25/1D | OOS ortR<=0, bootstrap MDD>%15 |
 | M038 | Best Time Frame for Candlestick Patterns (3 Candlestick Patterns Strategy on SPY) | ABD25/1D | 2x PF<1.2 |
+| O2-025 | The Holy Grail | ABD25/1D | bootstrap MDD>%15 |
+| O2-027 | TQQQ For The Long Term (Reddit Post Link) | ABD25/1D | bootstrap MDD>%15 |
 | O3-003 | Buy when S&P 500 makes new intraday high (10 Best Swing #3) | ABD25/1D | 2x PF<1.2, 3x net<=0 |
 | P3-011 | MACD Strategy with trailing ATR stop | KRIPTO25/1D | OOS ortR<=0 |
 
-## Doğrulanamaz (271)
+## Doğrulanamaz (270)
 
 <details><summary><b>kaynak erisilemedi</b> (117)</summary>
 
@@ -374,36 +375,6 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 </details>
 
-<details><summary><b>ozel kod (seans_saat)</b> (23)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| A1-004 | ADX strategy with NASDAQ 30-minutes timeframe | - |
-| A1-010 | Monday in Dax40 with 1% | - |
-| A1-015 | Late lunch trade DAX40 strategy | - |
-| A2-001 | GER40 Evening Coil | - |
-| A2-003 | Buy GBPJPY Every Monday | - |
-| A2-004 | SessionReopenEA | - |
-| A2-012 | ORB Risk Managed - Opening Range Breakout | - |
-| A2-013 | Opening Range Breakout with NR4 / NR7 Contraction Filters | - |
-| A2-015 | EMA Cross Scalper M15 (XAUUSD) | - |
-| A2-019 | Williams%R, SAR X-over 15 minute candles | - |
-| A6-019 | Overnight Seasonality in Bitcoin | - |
-| A6-023 | Attention Prop Traders: first half hour predicts last half hour | - |
-| A7-001 | NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan) | - |
-| M004 | Beat the Market: Intraday Momentum Strategy for S&P500 ETF (SPY) | - |
-| M005 | Intraday Momentum for ES and NQ (Noise Area 90-Day Variant) | - |
-| O1-053 | Open Range Breakout DAX 5/15M | - |
-| O1-056 | Intraday Stochastic Trading System | - |
-| O1-060 | Strategy Based on EMAs, TSI, MACD, and Premarket Highs/Lows | - |
-| O2-007 | Another simple system - Time-Frame 15 | - |
-| O2-010 | JPN225 QuietDrift (The Nikkei EA That Only Buys When Volume Is Quiet) | - |
-| O3-009 | Stocks in Play – 5 dk ORB + Relative Volume (Zarattini/Barbon/Aziz) | - |
-| O3-016 | Gap down + 25 MA filtresi (S&P 500 gun ici) | - |
-| P3-013 | ORB Strategy [LuciTech] | - |
-
-</details>
-
 <details><summary><b>kaynakta sinyal tanimi yok</b> (22)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
@@ -430,6 +401,35 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | O1-062 | High and Low Reversals Indicator + Intraday Strategy | - |
 | T8-03 | SMC Pro BTC - ICT order block + FVG [DOE] | - |
 | T8-08 | Lorentzian Classification (k-NN ML) | - |
+
+</details>
+
+<details><summary><b>ozel kod (seans_saat)</b> (22)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| A1-004 | ADX strategy with NASDAQ 30-minutes timeframe | - |
+| A1-010 | Monday in Dax40 with 1% | - |
+| A1-015 | Late lunch trade DAX40 strategy | - |
+| A2-001 | GER40 Evening Coil | - |
+| A2-003 | Buy GBPJPY Every Monday | - |
+| A2-004 | SessionReopenEA | - |
+| A2-012 | ORB Risk Managed - Opening Range Breakout | - |
+| A2-013 | Opening Range Breakout with NR4 / NR7 Contraction Filters | - |
+| A2-015 | EMA Cross Scalper M15 (XAUUSD) | - |
+| A2-019 | Williams%R, SAR X-over 15 minute candles | - |
+| A6-023 | Attention Prop Traders: first half hour predicts last half hour | - |
+| A7-001 | NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan) | - |
+| M004 | Beat the Market: Intraday Momentum Strategy for S&P500 ETF (SPY) | - |
+| M005 | Intraday Momentum for ES and NQ (Noise Area 90-Day Variant) | - |
+| O1-053 | Open Range Breakout DAX 5/15M | - |
+| O1-056 | Intraday Stochastic Trading System | - |
+| O1-060 | Strategy Based on EMAs, TSI, MACD, and Premarket Highs/Lows | - |
+| O2-007 | Another simple system - Time-Frame 15 | - |
+| O2-010 | JPN225 QuietDrift (The Nikkei EA That Only Buys When Volume Is Quiet) | - |
+| O3-009 | Stocks in Play – 5 dk ORB + Relative Volume (Zarattini/Barbon/Aziz) | - |
+| O3-016 | Gap down + 25 MA filtresi (S&P 500 gun ici) | - |
+| P3-013 | ORB Strategy [LuciTech] | - |
 
 </details>
 

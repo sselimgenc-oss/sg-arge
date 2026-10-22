@@ -1,9 +1,9 @@
-# Asama 2b tam dogrulama (T6b)
+# Asama 2b tam dogrulama (T6b/T24)
 
 OOS, on donem, 2x/3x/+1 bar stres, kaynak merkezli parametre platosu, 20 gunluk block bootstrap ve DSR birlikte raporlanir.
 DSR paper trading icin bilgi; canliya geciste kotumser (5N) deger icin 0,95 kapisi uygulanir.
 
-Satir: 29 | Kosullu: 7 | Reddedildi: 22
+Satir: 36 | Kosullu: 7 | Reddedildi: 29
 
 | ID | Piyasa | OOS islem/ortR | 2x PF | 3x net | +1 net | Plato + | Boot MDD95 | DSR 5N | Karar | Gerekce |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|---|
@@ -36,11 +36,21 @@ Satir: 29 | Kosullu: 7 | Reddedildi: 22
 | M015 | ABD25 | 130/0.038 | 1.28 | 2.7% | 7.8% | 100% | 5.6% | 0.021 | Kosullu | on donem negatif, survivorship yanliligi |
 | M038 | ABD25 | 620/0.072 | 1.31 | 16.4% | 33.0% | 100% | 10.3% | 0.407 | Kosullu | survivorship yanliligi |
 | O3-003 | ABD25 | 279/0.050 | 1.12 | -4.0% | 15.5% | 100% | 6.5% | 0.089 | Reddedildi | 2x PF<1.2, 3x net<=0 |
+| A4-002 | ABD25 | 17/0.248 | 2.61 | 1548.0% | 2027.9% | 100% | 91.6% | 0.200 | Reddedildi | bootstrap MDD>%15 |
+| A6-004 | ABD25 | 273/0.071 | 1.68 | 43.1% | 27.5% | 100% | 15.8% | 0.250 | Reddedildi | bootstrap MDD>%15 |
+| M017 | ABD25 | 445/0.155 | 1.40 | 79.7% | 92.1% | 100% | 29.5% | 0.298 | Reddedildi | bootstrap MDD>%15 |
+| M020a | ABD25 | 43/-0.074 | 2.66 | 231.5% | 210.9% | 92% | 53.6% | 0.127 | Reddedildi | OOS ortR<=0, bootstrap MDD>%15 |
+| M020a | KRIPTO25 | 28/0.191 | 1.30 | 335.0% | 475.1% | 100% | 85.4% | 0.072 | Reddedildi | bootstrap MDD>%15 |
+| O2-025 | ABD25 | 46/0.506 | 2.11 | 20792.7% | 6807.4% | 100% | 85.0% | 0.794 | Reddedildi | bootstrap MDD>%15 |
+| O2-027 | ABD25 | 33/0.369 | 2.03 | 13103.0% | 3087.0% | 100% | 81.9% | 0.718 | Reddedildi | bootstrap MDD>%15 |
 
 ## Yontem notlari
 
+- Rotasyon kartlari (T23, `metrik: PF+CAGR`): ortR yerine CAGR; `oos_ort_r`/`on_ort_r` sutunlari donem CAGR'i tasir. Asama 2'de dolum ertesi acilistir (Composer kartlarinin kapanis dolumu yalniz Asama 1 bilgisidir). Plato: `rotasyon:` blogu ve kullandigi gostergelerin her sayisal parametresi (pencere, esik, N) tek tek +-%20; hucre = PF>1 ve getiri>0. `evren: enstruman` = adli ETF'ler (survivorship notu yok).
 - BIST fiyatlari USDTRY ile ayni gun USD'ye cevrilir.
 - Plato merkezleri kaynak sinyal degerleridir; en iyi hucre secilmez ve stratejiye geri yazilmaz.
 - DSR N = kaynak denemesi (yoksa 1) + tarama.csv satirlari + 21 Codex satiri.
+- Gun ici platoda her sayisal parametre merkez etrafinda tek tek -%20/+%20 denenir; stres ve plato `--isci` ile paraleldir.
+- Gun ici bootstrap/DSR oncesinde ozkaynak UTC gun sonu degerlerine indirgenir; block uzunlugu 20 gundur. Gun ici DSR N tum gun ici kart-piyasa-tf tarama satirlarini kapsar.
 - DSR'da denemeler arasi SR varyansi bilinmedigi icin stratejinin kendi SR standart hatasi kullanildi (yaklasim).
 - BIST/ABD guncel evrenleri survivorship yanliligi nedeniyle en fazla `Kosullu` olabilir; `--evren pit` (T11) ile ABD tam, BIST 2020 sonrasi duzeltilir.

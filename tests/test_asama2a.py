@@ -180,3 +180,11 @@ def test_intraday_end_to_end_reads_tarama_archive_and_writes_null_result(
     row = output.iloc[0]
     assert row["id"] == "I5" and row["tf"] == "5m" and row["null_tekrar"] == 3
     assert row["islem"] >= 5 and row["karar"] in ("Gecti (null)", "Reddedildi (piyasa betasi)")
+
+
+def test_kart_ids_run_keeps_the_other_cards_rows() -> None:
+    existing = pd.DataFrame([{"id": "A", "piyasa": "ABD25", "tf": "1D", "karar": "eski"},
+                             {"id": "B", "piyasa": "ABD25", "tf": "1D", "karar": "koru"}])
+    fresh = pd.DataFrame([{"id": "A", "piyasa": "ABD25", "tf": "1D", "karar": "yeni"}])
+    merged = asama2a.merge_selected_results(existing, fresh, {"1D", "1W"}, {"A"})
+    assert sorted(zip(merged["id"], merged["karar"])) == [("A", "yeni"), ("B", "koru")]
