@@ -54,15 +54,15 @@
       "id": "T5",
       "owner": "claude-moderator",
       "title": "YAML yorumlayici + asama 1 hizli tarama (VectorBT)",
-      "status": "T5b-1 done (PR #39); ilk tarama kosuluyor",
+      "status": "T5b-1 done; ilk tarama kosuldu (tartisma/005): 35/42 kart asama 2 adayi",
       "spec": "docs/GOREV_T5.md"
     },
     {
       "id": "T6",
       "owner": "codex-worker",
       "title": "Asama 2 tam dogrulama + results/SONUC.md (basarili/basarisiz listesi)",
-      "status": "blocked-awaiting-T5",
-      "spec": "docs/HEDEF.md"
+      "status": "tanimlandi (docs/GOREV_T6.md); Codex T1b'den sonra",
+      "spec": "docs/GOREV_T6.md"
     },
     {
       "id": "T7",

@@ -1,6 +1,16 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-21 ~23:00 UTC, lider (Opus)
+Son güncelleme: 2026-10-22 gece, lider (Opus)
+
+## Sabah özeti (kullanıcı için)
+- **İlk geniş tarama yapıldı.** 42 günlük/haftalık strateji 4 piyasada test edildi: 35'i ikinci aşamaya kaldı, 4'ü elendi, 3'ü motor desteği eksik olduğu için beklemede. Ayrıntı: `results/tarama_ozet.md`, değerlendirme: `tartisma/005_tarama1_lider_degerlendirme.md`.
+- **Önemli uyarı:** 2020-2024'te BIST (TL) medyan +%1.037, kripto +%332 yükseldi. Bu ortamda uzun pozisyonla trend izleyen her strateji iyi görünüyor. "35 strateji geçti" sonucu henüz bir şey kanıtlamıyor.
+- **Lider kararı:** İkinci aşamaya iki sert test eklendi: BIST USD bazında test edilecek, ve her strateji "rastgele giriş" sınamasını geçmek zorunda. Bu sınamada strateji, aynı çıkış kurallarıyla rastgele zamanlarda girmekten belirgin şekilde iyi olmalı; değilse kârı piyasanın yükselişinden geliyordur. Görev tanımı: `docs/GOREV_T6.md` (Codex, T1b'den sonra).
+
+## Bugün ilk yapılacaklar
+1. Codex limiti açıldıysa: "görev geldi" (T1b), Issue #1'deki son Codex görevi.
+2. Argon: parti 8 paketini yapıştır, cevabı `T2_parti8.yaml` adıyla yükle.
+3. Sonnet'in limiti yenilendiyse haber ver: T10 (Argon parti 7-9 toplu standart) + `kismi_kar` desteği.
 
 ## Kural
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
@@ -16,15 +26,12 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.
 
-## Kullanıcı bilgisayarında
-| — | T9 iptal: okunamayan 47 kaynak **Doğrulanamaz (kaynak erişilemedi)** olarak raporlanacak | Kapandı | Yok |
-
 ## Sırada bekleyen (açılmadı)
-- Argon: partiler 7, 8, 9
+- Argon: partiler 8, 9 (parti 7 alındı, 12 kaynak okunamadı)
 - Argon yeniden okuma 2 kabul edildi: 36 kart, 26'i çözüldü
-- Codex: T1b, sonra T6 (tam doğrulama). T5b Sonnet'e geçti. **Ek:** BIST saatlik verisinde hisse başına ~727 seans dışı ve ~385 sıfır hacimli bar var (`results/veri_kalitesi_1h.md`). Yahoo 09:30 etiketi ve kapanış seansı olabilir. BIST 1H/4H testlerinden önce çözülecek.
+- Codex: T1b, sonra T6 (tam doğrulama, `docs/GOREV_T6.md`). T5b Sonnet'e geçti. **Ek:** BIST saatlik verisinde hisse başına ~727 seans dışı ve ~385 sıfır hacimli bar var (`results/veri_kalitesi_1h.md`). Yahoo 09:30 etiketi ve kapanış seansı olabilir. BIST 1H/4H testlerinden önce çözülecek.
 - T5a kabul edildi (PR #22). T7 kabul edildi (PR #26): `tam` kartlarda 0 sözdizimi hatası; taramaya hazır 26 tam + 7 dakikalık kart. T8 tamamlandı (PR #33, #35): hazır kart **49 tam + 11 dakikalık**; göstergeler TA-Lib ile 1e-7 içinde doğrulandı.
 
 ## İlerleme
-- Kart: 285 (283 strateji + C01/C02 parite kartı). Doğrulanamaz (kaynak erişilemedi): 83. T5b-1 tarama motoru kabul edildi (PR #39); ilk tarama lider tarafından çalıştırılıyor.
+- Kart: 285 (283 strateji + C01/C02 parite kartı). Doğrulanamaz (kaynak erişilemedi): 83. T5b-1 tarama motoru kabul edildi (PR #39); ilk tarama yapıldı: 42 kart, 35 aşama 2 adayı (`tartisma/005`).
 - Backtest: 6 / 21 Codex Algo satırı (T1a)
