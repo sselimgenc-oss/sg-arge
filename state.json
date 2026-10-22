@@ -124,8 +124,22 @@
       "id": "T13",
       "owner": "codex-worker",
       "title": "Sonuc raporu ureticisi (SONUC.md, sonuc.csv) — model: Terra",
-      "status": "atandi",
+      "status": "done (PR #63)",
       "spec": "docs/GOREV_T12_T13.md"
+    },
+    {
+      "id": "T14",
+      "owner": "codex-worker",
+      "title": "Point-in-time evren altyapisi (survivorship) — model Terra",
+      "status": "atandi",
+      "spec": "docs/GOREV_T14_T15.md"
+    },
+    {
+      "id": "T15",
+      "owner": "codex-worker",
+      "title": "Motor: bekleyen emir (stop/limit giris) — model Sol",
+      "status": "T14'ten sonra",
+      "spec": "docs/GOREV_T14_T15.md"
     }
   ],
   "done": [
