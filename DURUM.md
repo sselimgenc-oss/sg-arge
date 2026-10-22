@@ -19,8 +19,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Codex | **T6b: ikinci aşama tam doğrulama** (OOS, ön dönem, stres, plato, bootstrap, DSR) + Codex Algo satırlarına rastgele giriş testi. Model: güçlü | Atandı | "Görev geldi" |
-| Sonnet | T10 parti 7-8 **tamam** (PR #52): hazır 63 tam + 12 dakikalık. Sıradaki iş rastgele giriş sonuçlarından sonra | Boşta | Yok |
-| Argon | **Parti 11** (28 kaynak, md listeleri) | Sırada | `argon/PAKET_T2_parti11.md`'yi yapıştır; cevabı `T2_parti11.yaml` adıyla yükle. Sonra parti 12 |
+| Sonnet | Parti 12: güncellenmiş liste PDF'inden 13 kart (PDF'teki kural özetleri; internet gerekmez) | Atandı | "Görev geldi" |
+| Argon | **Parti 11** (28 kaynak, md listeleri) | Sırada | `argon/PAKET_T2_parti11.md`'yi yapıştır; cevabı `T2_parti11.yaml` adıyla yükle. Parti 12 Sonnet'e geçti |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
 
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
