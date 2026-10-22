@@ -337,3 +337,15 @@ M054,11,argon,0,"2021 PF 2,2; sekiz yıllık PF 1,59; başlık 4.449 görüntül
 M055,11,argon,0,"%0,5 slippage ile yıllık %95 / DD %49 / WR %50; Rank>99 sürümünde yıllık %107 / DD %27 / W",,md_liste,https://community.portfolio123.com/t/testimonial/17867
 M056,11,argon,0,"RSI: +%25,12/Sharpe1,34/WR%67,8/DD%8,45; MACD: +%23,89/Sharpe1,56/WR%71,1/DD%6,23; EMA: +%",,md_liste,https://github.com/ErikKerkvliet/FreqtradeHyperOpt
 M057,11,argon,0,"2.600+ NSE hissesi, 2 yıllık swing; bildirilen PF **1,20**",,md_liste,https://github.com/AaryavGangrade/nse-pattern-scanner
+G001,12,argon,0,KISS — Keep It Simple and Stupid,,guncellenmis_liste_pdf,https://www.prorealcode.com/prorealtime-trading-strategies/keep-simple-stupid-strategy/
+G002,12,argon,0,VWAP–RSI Scalper FINAL v1,,guncellenmis_liste_pdf,https://www.tradingview.com/script/S9hY3huK-VWAP-RSI-Scalper-FINAL-v1/
+G003,12,argon,0,Reinforced Smooth Scalp,,guncellenmis_liste_pdf,https://github.com/IvanLetteri/AITA---Strategies/blob/main/reinforced-smooth-scalp-berlinguyinca/reinforced-smoothscalp-results.txt
+G004,12,argon,0,TIS BTC Momentum + Confluencia,,guncellenmis_liste_pdf,https://www.tradingview.com/script/k9nauxnv-TIS-BTC-ESTRATEGIA-Momentum-Confluencia/
+G005,12,argon,0,XLP Mean Reversion w/ Twist,,guncellenmis_liste_pdf,https://www.wealth-lab.com/Strategy/DesignPublished?strategyID=78
+G006,12,argon,0,AutoTune Filter,,guncellenmis_liste_pdf,https://financial-hacker.com/the-autotune-filter/
+G007,12,argon,0,Crude Oil Tuesday/Thursday Pullback,,guncellenmis_liste_pdf,https://www.linkedin.com/posts/quantifiedstrategies_crude-oil-trading-strategies-backtest-activity-7473374012308381697-Z8iI
+G008,12,argon,0,Holy Thursday Sprint,,guncellenmis_liste_pdf,https://www.linkedin.com/posts/quantifiedstrategies_trading-activity-7443606957179154432-_BsV
+G009,12,argon,0,Pre-Easter Week,,guncellenmis_liste_pdf,https://www.linkedin.com/posts/quantifiedstrategies_trading-activity-7443606957179154432-_BsV
+G010,12,argon,0,OPEX Week Long,,guncellenmis_liste_pdf,https://www.linkedin.com/posts/quantifiedstrategies_quantifiedstrategies-activity-7440715064598405121-4a_l
+G011,12,argon,0,PowerX — RSI + Stochastic + MACD,,guncellenmis_liste_pdf,https://github.com/IvanLetteri/AITA---Strategies/blob/main/rsi-stoch-macd/powerx-results.txt
+G012,12,argon,0,Riding Bollinger Bands,,guncellenmis_liste_pdf,https://github.com/IvanLetteri/AITA---Strategies/blob/main/bb_riding/btst_bb_riding_hopt_results.txt

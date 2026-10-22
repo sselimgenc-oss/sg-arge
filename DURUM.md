@@ -27,6 +27,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.
 
 ## Sırada bekleyen (açılmadı)
+- Argon parti 11 (28 kaynak, md listeleri) ve parti 12 (12 strateji, güncellenmiş liste PDF'i).
+- **Kullanıcıdan:** repoda olmayan strateji PDF'leri (Paper_Test_8'in "256 stratejilik 3 PDF" dediği kaynaklar dahil) `kaynak_pdf/` klasörüne yüklenmeli.
 - T5b-2: dakikalık ve gün içi kartların kripto taraması (Binance). Kullanıcı kararı: dakikalıklar yalnız kriptoda test edilir, elenmez.
 - Argon: tüm partiler tamam (parti 8: 22 gizli, 10 okunamadı)
 - Argon yeniden okuma 2 kabul edildi: 36 kart, 26'i çözüldü
