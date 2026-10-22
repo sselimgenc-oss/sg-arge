@@ -210,15 +210,19 @@ def run_card_market(
     prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
     plan, annualization = prepared.plan, prepared.annualization
     out: dict[str, Any] = {}
-    first, second = prepared.run(1.0), prepared.run(2.0)
+    # intraday books: frames and signals come straight from ``prepare`` (normalised, aligned), so skip the engine's
+    # defensive copies (T30; 25 symbols x 5m is ~1.5 GB of them). Daily scans keep the original path.
+    trusted = card["tf"] not in DAILY_TFS
+    first, second = prepared.run(1.0, trusted_inputs=trusted), prepared.run(2.0, trusted_inputs=trusted)
     m1, m2 = _metrics(first, annualization), _metrics(second, annualization)
     out.update(
         islem=m1["islem"], PF_1x=m1["pf"], PF_2x=m2["pf"], net_1x=m1["getiri"], net_2x=m2["getiri"],
         sharpe=m1["sharpe"], mdd=m1["mdd"], maruziyet=m1["maruziyet"],
     )
     if plan.dolum_kapanis:
-        variant_b = _metrics(prepared.run(1.0, close_fill=False), annualization)
+        variant_b = _metrics(prepared.run(1.0, close_fill=False, trusted_inputs=trusted), annualization)
         out.update(PF_1x_b=variant_b["pf"], net_1x_b=variant_b["getiri"], islem_b=variant_b["islem"])
+    prepared.runtime_cache.clear()
     out["stop_eklendi"] = plan.stop_eklendi
     out["trades"] = first.trades
     return out
@@ -530,6 +534,33 @@ def write_summary(
                   "- BIST 1H yalnız kalite kapısı (seans dışı=0, fiyatı değişen sıfır hacim <%1/sembol) geçerse hesaplanır; aksi halde `veri_kalitesi` (Dogrulanamaz).",
                   "- Gercek (OOS) sonuclar ve 2018-2019 kripto donemi bu taramada gorulmez."]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def bos_bellek() -> float | None:
+    """Bytes the OS can still hand out (``MemAvailable``); None where /proc/meminfo is missing."""
+    try:
+        for line in Path("/proc/meminfo").read_text().splitlines():
+            if line.startswith("MemAvailable:"):
+                return float(line.split()[1]) * 1024
+    except OSError:
+        pass
+    return None
+
+
+def veri_baytlari(data: dict[str, pd.DataFrame]) -> int:
+    return int(sum(frame.memory_usage(index=True).sum() for frame in data.values()))
+
+
+def bellek_isci(requested: int, data: dict[str, pd.DataFrame], *, is_basina: float) -> int:
+    """Worker count capped by free memory: ``max(1, min(requested, floor(0.8 * free / one_worker_peak)))``.
+
+    One worker's peak is ``is_basina`` x the market's bar data (measured: a card peaks at ~2.5x the bar data
+    - signals plus engine arrays; a forked null-test worker shares that and adds ~1x). The 20 % margin keeps a
+    7 GB GitHub runner from being pushed over by the parent process and the OS."""
+    free = bos_bellek()
+    if free is None:
+        return max(1, requested)
+    return max(1, min(requested, int(0.8 * free // max(is_basina * veri_baytlari(data), 1))))
 
 
 def parse_args() -> argparse.Namespace:

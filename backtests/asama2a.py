@@ -39,6 +39,7 @@ from engine.portfolio import calculate_metrics  # noqa: E402
 BASE_SEED = 20261022
 CALIBRATION_REPS = 6
 MAX_ENTRY_FACTOR = 8.0
+NULL_WORKER_DATA_FACTOR = 1.0  # a forked null worker adds about the size of the bar data (T30 measurement)
 PF_CAP = 1e9  # an infinite PF (no losing trade) is capped so percentiles stay finite
 PASS_PERCENTILE = 95.0
 BORDERLINE_P = (0.03, 0.10)
@@ -208,7 +209,8 @@ def evaluate_pair(task: dict[str, Any]) -> dict[str, Any]:
         prepared = tarama.prepare(card, data, market, benchmark=benchmark, start=start, end=end)
         if isinstance(prepared, rot.RotationPrepared):
             return evaluate_rotation(task, base, prepared)
-        first, second = prepared.run(1.0), prepared.run(2.0)
+        intraday = card["tf"] not in tarama.DAILY_TFS  # daily rows keep the engine's defensive copies (locked regression)
+        first, second = prepared.run(1.0, trusted_inputs=intraday), prepared.run(2.0, trusted_inputs=intraday)
         m1, m2 = (calculate_metrics(r, annualization=prepared.annualization) for r in (first, second))
         real_pf, real_ortr, real_count = trade_stats(first.trades)
         base.update(islem=m1["islem"], PF_1x=m1["pf"], PF_2x=m2["pf"], net_1x=m1["getiri"], net_2x=m2["getiri"],
@@ -226,12 +228,14 @@ def evaluate_pair(task: dict[str, Any]) -> dict[str, Any]:
             return base
         seed = BASE_SEED ^ zlib.crc32(f"{card['id']}|{market}".encode())
         reps = task["reps"]
-        result = null_distribution(prepared, first.trades, reps, seed, task.get("null_workers", 1))
+        null_workers = tarama.bellek_isci(task.get("null_workers", 1), data, is_basina=NULL_WORKER_DATA_FACTOR)
+        result = null_distribution(prepared, first.trades, reps, seed, null_workers)
         p_pf, p_ortr = p_value(real_pf, result["pf"]), p_value(real_ortr, result["ortr"])
         if max(p_pf, p_ortr) >= BORDERLINE_P[0] and max(p_pf, p_ortr) <= BORDERLINE_P[1]:
             reps = task["reps_high"]
-            result = null_distribution(prepared, first.trades, reps, seed + 1, task.get("null_workers", 1))
+            result = null_distribution(prepared, first.trades, reps, seed + 1, null_workers)
             p_pf, p_ortr = p_value(real_pf, result["pf"]), p_value(real_ortr, result["ortr"])
+        prepared.runtime_cache.clear()  # engine arrays of the real run (shared with the forked null workers)
         pf95 = float(np.nanpercentile(result["pf"], PASS_PERCENTILE))
         ortr95 = float(np.nanpercentile(result["ortr"], PASS_PERCENTILE))
         passed = bool(real_pf > pf95 and real_ortr > ortr95)

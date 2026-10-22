@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import bisect
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from typing import Callable
 
 import numpy as np
@@ -408,7 +408,9 @@ def run_portfolio(
         if exit_builder is not None:
             built = exit_builder(symbol, date, price, initial_stop, target)
             if built is not None:
-                runtime_exit = built.reindex(index_of[symbol]).fillna(False).to_numpy().astype(bool)
+                runtime_exit = (  # lazy rules (kart_sinyal.LazyExit) already match the symbol's bars
+                    built if hasattr(built, "entry_loc") else built.reindex(index_of[symbol]).fillna(False).to_numpy().astype(bool)
+                )
         positions[symbol] = Position(
             symbol=symbol, entry_date=date, entry_price=price, quantity=quantity,
             stop=initial_stop, initial_stop=initial_stop, initial_risk=initial_risk,
@@ -500,7 +502,7 @@ def run_portfolio(
             pending.pop(order.symbol, None)
             open_position(order.symbol, date, open_price, order.signal_atr, order.stop_dist,
                           order.target_dist, order.stop_pct, order.target_pct,
-                          int(index_of[order.symbol].get_indexer([order.signal_date])[0]))
+                          int(index_of[order.symbol].get_loc(order.signal_date)))
 
         # A pending stop/limit order becomes active only after its signal bar.
         # It fills before protective stops are evaluated, so a stop touched on
@@ -536,7 +538,7 @@ def run_portfolio(
             pending.pop(symbol, None)
             open_position(symbol, date, fill_price, order.signal_atr, order.stop_dist,
                           order.target_dist, order.stop_pct, order.target_pct,
-                          int(index_of[symbol].get_indexer([order.signal_date])[0]))
+                          int(index_of[symbol].get_loc(order.signal_date)))
             if symbol in positions and fill_price != open_price:
                 intrabar_fills.add(symbol)
 
@@ -705,7 +707,7 @@ def run_portfolio(
     equity_points[final_date] = cash
     exposure_points[final_date] = 0.0
 
-    trade_frame = pd.DataFrame([asdict(trade) for trade in trades])
+    trade_frame = pd.DataFrame([vars(trade) for trade in trades])  # asdict() would deep-copy every field
     equity = pd.Series(equity_points, name="equity", dtype=float).sort_index()
     exposure = pd.Series(exposure_points, name="exposure", dtype=float).sort_index()
     return BacktestResult(
