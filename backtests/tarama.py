@@ -118,9 +118,13 @@ class Prepared:
         extra_delay_bars: int = 0,
         trusted_inputs: bool = False,
         trades_only: bool = False,
+        **engine_extra: Any,
     ):
-        """One portfolio run; ``close_fill`` defaults to the card's own fill mode, ``signals`` may replace the plan's."""
+        """One portfolio run; ``close_fill`` defaults to the card's own fill mode, ``signals`` may replace the plan's.
+
+        ``engine_extra`` goes to ``run_portfolio`` unchanged (paper trading: ``record_state``, ``initial_capital``)."""
         kwargs = dict(self.plan.engine_kwargs)
+        kwargs.update(engine_extra)
         fill = self.plan.dolum_kapanis if close_fill is None else close_fill
         kwargs["fill_at_close"] = fill
         cost = self.base_cost * multiplier * (MOC_COST_FACTOR if fill else 1.0)

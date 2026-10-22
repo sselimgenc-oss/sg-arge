@@ -254,6 +254,7 @@ class CodexPrepared:
         signal_params: dict[str, float] | None = None,
         trusted_inputs: bool = False,
         trades_only: bool = False,
+        **engine_extra: Any,
     ) -> BacktestResult:
         computed = (
             {symbol: self.config.signal_function(frame, self.config.market, **signal_params)
@@ -273,6 +274,7 @@ class CodexPrepared:
             trusted_inputs=trusted_inputs,
             trades_only=trades_only,
             runtime_cache=self.runtime_cache if trusted_inputs else None,
+            **engine_extra,
         )
 
 
