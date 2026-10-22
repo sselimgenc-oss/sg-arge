@@ -1,0 +1,32 @@
+id: M025
+ad: MQL5 Code 8970 (EURUSD M5)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.mql5.com/en/code/8970
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- Kaynak URL'ye (https://www.mql5.com/en/code/8970) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında bu kod numarasına ait sayfa/kod aynası bulunamadı.

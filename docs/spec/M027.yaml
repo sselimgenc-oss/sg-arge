@@ -1,0 +1,50 @@
+id: M027
+ad: Renko Automated Trading System
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.prorealcode.com/prorealtime-trading-strategies/renko-automated-trading-system/
+  sayfa: null
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks (DAX)
+gostergeler: {}
+giris: (totalbricksup[1] == 0 or totalbricksup[1] == 1) and totalbricksup >= 2
+cikis: (totalbricksdown[1] == 0 or totalbricksdown[1] == 1) and totalbricksdown >= 2
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  bricksize: 22
+  BIfirst: 1
+  stop_loss_points: 120
+varyantlar:
+- bricksize: 18
+  pf: 1.4
+  getiri: 12.52
+  islem: 830
+  wr: 41.98
+- bricksize: 17
+  getiri: 12.61
+  islem: 916
+  wr: 40.94
+deneme_sayisi_kaynakta: 50
+rapor:
+  pf: 1.25
+  sharpe: null
+  getiri: 7.71
+  mdd: null
+  islem: 692
+  wr: 41.47
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- '15 dakikalık bar kapanışları üzerinde sentetik Renko tuğlası hesaplama ve sinyal mantığı (ozel_kod: true): 1) İlk barda (barindex == BIfirst, varsayılan 1) upbrick = close ve downbrick = close - bricksize
+  (bricksize=22 puan) olarak başlatılır. 2) Her 15m barda eğer close >= upbrick + bricksize ise: newbricksup = round(((close - upbrick) / bricksize) - 0.5); diffup = newbricksup * bricksize; downbrick =
+  downbrick + diffup; upbrick = upbrick + diffup; totalbricksup = totalbricksup + newbricksup; totalbricksdown = 0. Eğer (totalbricksup[1] == 0 veya totalbricksup[1] == 1) ve totalbricksup >= 2 ise (en
+  az 2 yükseliş tuğlası oluştuğunda) sonraki bar açılışında long (buy at market) girilir. 3) Eğer close <= downbrick - bricksize ise: newbricksdown = round(((downbrick - close) / bricksize) - 0.5); diffdown
+  = newbricksdown * bricksize; upbrick = upbrick - diffdown; downbrick = downbrick - diffdown; totalbricksdown = totalbricksdown + newbricksdown; totalbricksup = 0. Eğer (totalbricksdown[1] == 0 veya totalbricksdown[1]
+  == 1) ve totalbricksdown >= 2 ise long kapatılıp short (sellshort at market) açılır. 4) Ayrıca 120 puanlık sabit stop-loss (set stop ploss 120) uygulanır.'

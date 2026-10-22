@@ -1,0 +1,48 @@
+id: M021
+ad: Intraday Application of Hidden Markov Models
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.quantconnect.com/research/17900/intraday-application-of-hidden-markov-models/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Top 10 Market Cap)
+gostergeler:
+  roc1:
+    f: roc
+    src: close
+    n: 1
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  n_components: 3
+  n_iter: 100
+  random_state: 100
+  roc_n: 1
+  roc_window_size: 150
+  bar_minutes: 5
+  universe_top_n: 10
+  position_weight: 0.1
+deneme_sayisi_kaynakta: 63
+rapor:
+  pf: null
+  sharpe: 1.9
+  getiri: null
+  mdd: 14.0
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Strateji makine öğrenmesi / olasılıksal gizli durum modeli (3 bileşenli Gaussian Hidden Markov Model - GaussianHMM) kullandığı için standart gösterge diliyle karta çevrilemez (spec_durumu: eksik, ozel_kod:
+  true).'
+- 'Algoritma adımları: 1) Piyasa değerine göre en büyük 10 ABD hissesi seçilir. 2) 1 dakikalık veriler 5 dakikalık barlara konsolide edilir ve 1-barlık değişim oranı (ROC(1)) için 150 barlık kayan pencere
+  tutulur. 3) Her ay başında her hisse için son 150 adet 5 dakikalık getiri üzerinde hmmlearn GaussianHMM(n_components=3, n_iter=100, random_state=100) modeli eğitilir. 4) Her 5 dakikalık barda son getiri
+  için durum olasılıkları (post_prob = model.predict_proba) hesaplanır; eğer post_prob[2] > post_prob[0] ise portföyün %10''u ile long pozisyon tutulur, aksi halde %-10 ağırlıkla short pozisyona geçilir.'

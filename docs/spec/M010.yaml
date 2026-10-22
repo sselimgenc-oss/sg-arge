@@ -1,0 +1,46 @@
+id: M010
+ad: RSI Volatility Spread
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://cdn.tradestation.com/uploads/RSI-Volatility-Spread.pdf
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (IXC, IXJ, EWU, EWD, SPY)
+gostergeler:
+  atr_sec:
+    f: atr
+    n: 14
+  rsi_atr_sec:
+    f: rsi
+    src: atr_sec
+    n: 50
+giris: avg_spread_diff < 0 and rsi_atr_mkt > rsi_atr_sec
+cikis: avg_spread_diff > 0
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  RSILen: 50
+  ATRLen: 14
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- TradeStation PDF bağlantısı doğrudan açılmadığı için Alexandra Guevara'nın yazdığı 'RSI Volatility Spread' (TradeStation Labs Report) belgesinin Scribd aynasından (https://www.scribd.com/document/721162939/ATR-RSI-Spread)
+  kurallar çıkarıldı.
+- 'Çapraz varlık volatilite spreadi hesaplama adımları (ozel_kod: true): 1) İşlem gören menkul kıymetin ATR''sinin 50 periyotluk RSI''ı (rsi_atr_sec = RSI(ATR(security, ATRLen), RSILen)) ve piyasa endeksinin
+  (S&P 500) ATR''sinin 50 periyotluk RSI''ı (rsi_atr_mkt = RSI(ATR(SP500, ATRLen), RSILen)) hesaplanır (RSILen=50). 2) RSISpread = rsi_atr_sec / rsi_atr_mkt olarak bulunur. 3) AvgSpread = EMA(RSISpread,
+  RSILen) ve AvgSpreadDiff = RSISpread - AvgSpread hesaplanır. 4) Long Giriş: AvgSpreadDiff < 0 ve rsi_atr_mkt > rsi_atr_sec (piyasa volatilite RSI''ı hisse volatilite RSI''ından büyük) olduğunda al. 5)
+  Long Çıkış: AvgSpreadDiff > 0 olduğunda sat.'

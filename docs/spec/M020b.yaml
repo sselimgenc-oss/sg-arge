@@ -1,0 +1,54 @@
+id: M020b
+ad: 'The 30-Minute Stock Trader - Strategy 2: Mean-Reversion Long (Laurens Bensdorp)'
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.turingtrader.com/2020/01/30-minute-stock-trader/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (All US Stocks / S&P 1500 / Russell 3000)
+gostergeler:
+  sma150:
+    f: sma
+    src: close
+    n: 150
+  adx7:
+    f: adx
+    n: 7
+  atr10:
+    f: atr
+    n: 10
+  rsi3:
+    f: rsi
+    src: close
+    n: 3
+giris: close > sma150 and adx7 > 45 and (atr10 / close) > 0.04 and rsi3 < 30
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  SMA_DAYS: 150
+  adx_n: 7
+  MIN_ADX: 45
+  atr_n: 10
+  MIN_ATR_PCT: 4.0
+  rsi_n: 3
+deneme_sayisi_kaynakta: 3
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'TuringTrader makalesinde Mean-Reversion Long kuralları metin olarak özetlenmiş, fbertram/TuringTrader GitHub C# kodundan (Bensdorp_30MinStockTrader.cs) aday filtreleri (Close > SMA(150), ADX(7) > 45,
+  10 günlük TrueRange/Close ortalaması > %4, RSI(3) aşırı satım) çıkarılmıştır; ancak GitHub dosyasına doğrudan erişim engeli nedeniyle limit emir yüzdesi, ATR stop çarpanı, kâr hedefi ve zaman stopu gün
+  sayısı tam doğrulanamadığından spec_durumu: eksik bırakıldı.'

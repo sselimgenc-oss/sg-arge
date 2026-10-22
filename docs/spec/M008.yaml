@@ -1,0 +1,61 @@
+id: M008
+ad: 'RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks'
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://alvarezquanttrading.com/blog/rsi2-strategy-double-returns-with-a-simple-rule-change/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
+gostergeler:
+  sma100:
+    f: sma
+    src: close
+    n: 100
+  rsi2:
+    f: rsi
+    src: close
+    n: 2
+  hv100:
+    f: stdev
+    src: close
+    n: 100
+giris: close > 1 and close > sma100 and rsi2 < 10
+cikis: rsi2 > 50
+zaman_stop:
+  bar: 10
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  sma100.n: 100
+  rsi2.n: 2
+  rsi_entry: 10
+  rsi_exit: 50
+  limit_discount_pct: 5.0
+  max_hold_days: 10
+  max_positions: 10
+  min_price: 1.0
+  min_dollar_vol_21d: 500000
+varyantlar:
+- aciklama: 'Cherry-picked varyant: RSI2 < 15 giriş eşiği'
+- aciklama: 'Baz strateji: Mevcut Russell 3000 hisseleri (1947 işlem)'
+deneme_sayisi_kaynakta: 142
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 1947
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- 'Limit emir ve evren/sıralama mantığı (ozel_kod: true): 1) Evren: Geçmişte Russell 3000 endeksinde yer almış ancak işlem gününde endeksten çıkmış (ex-index) hisseler. 2) Likidite: İşlem fiyatı > 1$ ve
+  21 günlük ortalama (Close * Volume) > 500.000$. 3) Kurulum: Close > SMA(100) ve RSI(2) < 10 gerçekleştiğinde ertesi gün için son kapanışın %5 altına (Close * 0.95) 1 gün geçerli alış limit emri verilir.
+  4) En fazla 10 açık pozisyon taşınır; birden fazla aday varsa 100 günlük tarihsel volatiliteye (yüksekten düşüğe) göre sıralanır. 5) Çıkış: RSI(2) > 50 olduğunda veya 10 işlem günü sonunda ertesi sabah
+  açılışta çıkılır.'

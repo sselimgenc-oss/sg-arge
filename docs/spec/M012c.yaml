@@ -1,0 +1,35 @@
+id: M012c
+ad: '5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry'
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler:
+  low5:
+    f: lowest
+    src: low
+    n: 5
+giris: close < low5[1]
+cikis: close > high[1]
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  low5.n: 5
+deneme_sayisi_kaynakta: 5
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 8.0
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz: []
