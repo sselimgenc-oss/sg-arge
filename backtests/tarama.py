@@ -27,7 +27,7 @@ from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
 from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
 from data.bist_1h import normalize_market_1h, quality_gate as bist_1h_quality_gate  # noqa: E402
 from engine import gosterge, rotasyon  # noqa: E402
-from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan  # noqa: E402
+from engine.kart_sinyal import EndeksYok, MotorDestegiYok, PipsPiyasaDisi, build_plan  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
 from engine.resample import resample_hourly  # noqa: E402
 from engine.spec import normalize_timeframe  # noqa: E402
@@ -179,7 +179,7 @@ def prepare(
     in_period = {s: f for s, f in data.items() if not f.loc[(f.index >= start) & (f.index <= end)].empty}
     if not in_period:
         raise ValueError(f"{market}: donemde veri yok")
-    plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark)
+    plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark, market=market)
     if pit_universe is not None:
         plan.signals = filter_entry_signals(plan.signals, pit_universe, market)
     if card["tf"] not in DAILY_TFS:
@@ -426,6 +426,9 @@ def scan(
                 continue
             except EndeksYok:
                 rows.append(_empty(card, market, "Dogrulanamaz", f"endeks_yok:{market}"))
+                continue
+            except PipsPiyasaDisi:
+                rows.append(_empty(card, market, "Dogrulanamaz", "pips_yalniz_FX8"))
                 continue
             except rotasyon.RotasyonVeriYok as exc:
                 rows.append(_empty(card, market, "Dogrulanamaz", f"{exc.reason}:{','.join(exc.symbols)}"))

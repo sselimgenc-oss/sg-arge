@@ -10,7 +10,7 @@ import pytest
 import yaml
 
 from backtests import tarama
-from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan, desteklenmeyen_alan, needs_benchmark
+from engine.kart_sinyal import EndeksYok, MotorDestegiYok, PipsPiyasaDisi, build_plan, desteklenmeyen_alan, needs_benchmark
 from engine.portfolio import run_portfolio
 from strategies.wd_cci_continuation_risk import signals as cci_signals
 from strategies.wd_pullback_risk import signals as pullback_signals
@@ -167,13 +167,32 @@ def test_runtime_exit_builder_uses_entry_state() -> None:
 def test_unsupported_and_benchmark_cards_are_reported_not_ignored() -> None:
     assert desteklenmeyen_alan({"giris": "close > 1", "kismi_kar": {"gun": 4}}) is None
     assert desteklenmeyen_alan({"giris": "close > 1", "iz_suren": {"tip": "fiyat_adim", "deger": 2}}) == "iz_suren.fiyat_adim"
-    assert desteklenmeyen_alan({"giris": "close > 1", "stop": {"tip": "pips", "deger": 30}}) == "stop.pips"
+    assert desteklenmeyen_alan({"giris": "close > 1", "stop": {"tip": "pips", "deger": 30}}) is None
     assert desteklenmeyen_alan({"giris": "close > 1", "roi_tablosu": {"0": 0.1}}) is None
     assert needs_benchmark(card("A3-003"))
     with pytest.raises(MotorDestegiYok):
         build_plan(card("O1-078"), {"X": synthetic(1)}, week_end="FRI")
     with pytest.raises(EndeksYok):
         tarama.run_card_market(card("A3-003"), {"X": synthetic(1)}, "BIST30", benchmark=None)
+
+
+def test_pips_are_price_distances_for_eurusd_and_usdjpy() -> None:
+    item = {"id": "PIP", "gostergeler": {}, "giris": "close > 0", "cikis": None,
+            "stop": {"tip": "pips", "deger": 30}, "hedef": {"tip": "pips", "deger": 50}}
+    plan = build_plan(item, {"EURUSD=X": synthetic(1), "USDJPY=X": synthetic(2)}, week_end="FRI", market="FX8")
+
+    assert plan.signals["EURUSD=X"]["stop_dist"].iloc[-1] == pytest.approx(0.003)
+    assert plan.signals["EURUSD=X"]["target_dist"].iloc[-1] == pytest.approx(0.005)
+    assert plan.signals["USDJPY=X"]["stop_dist"].iloc[-1] == pytest.approx(0.3)
+    assert plan.signals["USDJPY=X"]["target_dist"].iloc[-1] == pytest.approx(0.5)
+    with pytest.raises(PipsPiyasaDisi):
+        build_plan(item, {"EURUSD=X": synthetic(1)}, week_end="FRI", market="ABD25")
+
+
+def test_o2_005_builds_a_plan_for_fx8() -> None:
+    plan = build_plan(card("O2-005"), {"EURUSD=X": synthetic(3)}, week_end="FRI", market="FX8")
+    assert "stop_dist" in plan.signals["EURUSD=X"]
+    assert plan.signals["EURUSD=X"]["stop_dist"].iloc[-1] == pytest.approx(0.003)
 
 
 def test_pending_entry_card_builds_level_and_engine_arguments() -> None:

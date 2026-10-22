@@ -96,7 +96,8 @@ Hepsi `engine/portfolio.py` + `engine/kart_sinyal.py` ile uygulanir; tum emirler
 - **`dolum: kapanis`**: (a) sinyal barinin kapanisindan dolum, maliyet 2x baz; (b) A1 (sonraki acilis, baz maliyet). Tarama karari (a)'ya gore verir, (b) tablo olarak raporlanir, (b) negatifse not duser.
 - **Calisma zamani adlari** (`giris_fiyati`, `giris`, `giris_stop`, `giris_hedef`, `bars_since_entry`, `stop_mesafesi`) yalniz `cikis` ve stop ifadelerinde; `bars_since_entry` dolum barinda 0'dir. `cikis` bunlari kullaniyorsa her pozisyon icin giriste yeniden hesaplanir.
 - **`mtf("1W", x)`** = x'in onceki tamamlanmis haftalik barin son degeri. **`hizalama: etiket`** (gosterge alani, yalniz haftalik `tf`): hafta takvimsel bitis gununde (borsa Cuma, kripto Pazar) tamamlanmis sayilir ve o gunun kapanisinda kullanilabilir (T1a referans hizalamasi; C01/C02 paritesi icin).
-- **Desteklenmeyenler** (`motor_destegi_yok:<alan>` olarak atlanir): `kismi_kar`, `roi_tablosu`, `stop.pips`, `iz_suren.fiyat_adim`, `giris_modu`.
+- **`stop/hedef: {tip: pips, deger}`:** yalnız FX8'de desteklenir; JPY içeren paritelerde 1 pip = `0,01`, diğerlerinde `0,0001` fiyat birimidir. FX8 dışındaki pips kartları `Dogrulanamaz (pips_yalniz_FX8)` olur.
+- **Desteklenmeyenler** (`motor_destegi_yok:<alan>` olarak atlanir): `kismi_kar`, `roi_tablosu`, `iz_suren.fiyat_adim`, `giris_modu`.
 - **Endeks**: `endeks_close` / `benchmark: endeks` ABD icin SPY, kripto icin BTCUSDT; BIST30 ve emtiada endeks serisi olmadigindan o piyasalarda Dogrulanamaz (`endeks_yok`).
 
 ### D6. `kismi_kar` ve asama 2a testleri (T6a, Sonnet; lider onayina acik)
