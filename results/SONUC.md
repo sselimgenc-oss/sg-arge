@@ -8,8 +8,8 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 |---|---:|---:|---:|
 | Geçti | 2 | 2 | 0 |
 | Koşullu | 3 | 1 | 2 |
-| Bekliyor | 15 | 9 | 6 |
-| Reddedildi | 121 | 95 | 26 |
+| Bekliyor | 6 | 1 | 5 |
+| Reddedildi | 130 | 103 | 27 |
 | Doğrulanamaz | 274 | 119 | 155 |
 | Ertelendi | 3 | 2 | 1 |
 | Kapsam dışı | 4 | 2 | 2 |
@@ -34,21 +34,12 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 
 | ID | Strateji | Piyasa/tf | Bekleyen aşama |
 |---|---|---|---|
-| A1-025 | TASC 2026.03 One Percent A Week | - | asama1: tarama bekliyor |
 | A3-002a | geraked CEZLSMA | - | asama1: tarama bekliyor |
 | A3-002c | geraked CP1 | - | asama1: tarama bekliyor |
 | A3-002d | geraked BBRSI | - | asama1: tarama bekliyor |
 | A3-002f | geraked DHLAOS | - | asama1: tarama bekliyor |
-| A6-003 | Simple Ideas for a Mean Reversion Strategy with Good Results | - | asama1: tarama bekliyor |
-| A6-019 | Overnight Seasonality in Bitcoin | - | asama1: tarama bekliyor |
-| M008 | RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks | - | asama1: tarama bekliyor |
-| M010 | RSI Volatility Spread | - | asama1: tarama bekliyor |
 | M013 | Simple H4 Mobile Trading System | - | asama1: tarama bekliyor |
-| M016 | One Percent a Week Strategy (TQQQ) | - | asama1: tarama bekliyor |
-| M036 | A Mean Reversion Strategy with 2.11 Sharpe (QQQ with Dynamic SMA300 Stop) | - | asama1: tarama bekliyor |
-| O1-039 | Laguerre RSI by KivancOzbilgic STRATEGY | - | asama1: tarama bekliyor |
 | O1-064 | Try this NQ Strategy + Code | - | asama1: tarama bekliyor |
-| P3-008 | Strategy based on Squeeze Momentum Indicator [LazyBear] | - | asama1: tarama bekliyor |
 
 ## Önerilen portföy
 
@@ -67,7 +58,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 ## Reddedildi
 
-### Aşama 1 (hızlı tarama): 38
+### Aşama 1 (hızlı tarama): 40
 
 | ID | Strateji | Piyasa/tf | Alt neden |
 |---|---|---|---|
@@ -88,6 +79,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | A3-011e | pandianmn fork: Strategy005 (resmi depo kodu) | KRIPTO25/5m | PF_1x<1.1, net_2x<=0 |
 | A4-004 | RSI 82 | ABD25/1D | islem<30 |
 | A5-020 | Finding Consistent Trends with Strong Momentum - RSI for Trend-Following and Momentum Strategies | ABD25/1D | islem<30 |
+| A6-019 | Overnight Seasonality in Bitcoin | KRIPTO25/1H | PF_1x<1.1, net_2x<=0 |
 | A6-022 | How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin | ABD25/1H | PF_1x<1.1, net_2x<=0 |
 | G003 | Reinforced Smooth Scalp (Freqtrade, hyperopt parametreleri) | KRIPTO25/15m | PF_1x<1.1, net_2x<=0 |
 | G008 | Holy Thursday Sprint | ABD25/1D | islem<30, PF_1x<1.1, net_2x<=0 |
@@ -96,6 +88,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | M012a | 5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS | ABD25/1D | net_2x<=0 (alias: O3-002) |
 | M012c | 5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry | ABD25/1D | net_2x<=0 |
 | M012d | 5 Swing Trading Strategies for Beginners - Strategy 4: Volatility Contraction | ABD25/1D | PF_1x<1.1, net_2x<=0 |
+| M016 | One Percent a Week Strategy (TQQQ) | ABD25/1D | PF_1x<1.1, net_2x<=0 |
 | O1-011 | SuperTrendVadeliStratejisi | KRIPTO25/5m | PF_1x<1.1, net_2x<=0 |
 | O1-017 | Sistem 2: RSI ortalama kesisimi (VIOP30 5 dk, long) | KRIPTO25/5m | PF_1x<1.1, net_2x<=0 |
 | O3-002 | Overnight swing strategy in the S&P 500 (10 Best Swing #2) | ABD25/1D | net_2x<=0 |
@@ -110,11 +103,12 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | R04 | Stocks in Play (Zarattini) RVOL açılış kırılımı | ABD25/1H | PF_1x<1.1, net_2x<=0 |
 | V2A | VOLTRAN-2A saatlik adaptif kanal (TOTT) + seans kırılım (v3) | ABD25/1H | PF_1x<1.1, net_2x<=0 |
 
-### Aşama 2a (rastgele seçim/giriş testi, piyasa betası): 49
+### Aşama 2a (rastgele seçim/giriş testi, piyasa betası): 54
 
 | ID | Strateji | Piyasa/tf | Alt neden |
 |---|---|---|---|
-| A2-002 | Stochastic Daily Breakout for Gold | EMTIA/1H | null'u gecemedi (piyasa betasi) - PF p=0.234, ortR p=0.234 (esik 0.05) |
+| A1-025 | TASC 2026.03 One Percent A Week | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.234, ortR p=0.269 (esik 0.05) |
+| A2-002 | Stochastic Daily Breakout for Gold | EMTIA/1H | null'u gecemedi (piyasa betasi) - PF p=0.279, ortR p=0.269 (esik 0.05) |
 | A2-021 | Magic 100 | ABD25/1H | null'u gecemedi (piyasa betasi) - PF p=0.856, ortR p=0.597 (esik 0.05) |
 | A3-007 | Backtesting.py örnek SmaCross(10,20) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.716, ortR p=0.965 (esik 0.05) |
 | A3-008a | stratestic MA Crossover(20,150) | KRIPTO25/1D | null'u gecemedi (piyasa betasi) - PF p=0.692, ortR p=0.483 (esik 0.05) |
@@ -126,12 +120,15 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | A4-005 | SPY RSI 30 Test | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.766, CAGR p=0.761 (esit 0.05) |
 | A5-009 | XLP mean reversion (IBS + 25 günlük bant) (10 Best Swing #7) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.716, ortR p=0.736 (esik 0.05) |
 | A6-001 | Double 7's Strategy | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.881, ortR p=0.567 (esik 0.05) |
+| A6-003 | Simple Ideas for a Mean Reversion Strategy with Good Results | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.184, ortR p=0.164 (esik 0.05) |
 | B1-002 | AlphaTrend Strategy (TradingView, Kıvanç Özbilgiç) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.502, ortR p=0.055 (esik 0.05) |
 | B3-001 | RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.303, ortR p=0.219 (esik 0.05) |
 | B3-005 | Triple RSI Strategy (90.36% win rate) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.736, ortR p=0.756 (esik 0.05) |
 | B3-010 | RSI-2 Larry Connors (ProRealCode) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.289, ortR p=0.060 (esik 0.05) |
 | B3-014 | Cross-Sectional Equity Mean Reversion (Quantpedia #13) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.816, CAGR p=0.806 (esit 0.05) |
 | M006 | RSI Double-Bottom for Amibroker (AFL) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.383, ortR p=0.055 (esik 0.05) |
+| M008 | RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.453, ortR p=0.388 (esik 0.05) |
+| M010 | RSI Volatility Spread | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.214, ortR p=0.015 (esik 0.05) |
 | M011 | Double 7's Strategy (Larry Connors) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.881, ortR p=0.567 (esik 0.05) (alias: A6-001) |
 | M012b | 5 Swing Trading Strategies for Beginners - Strategy 2: Turnaround Tuesday | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.154, ortR p=0.229 (esik 0.05) (alias: O3-001) |
 | M014 | Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.522, ortR p=0.249 (esik 0.05) |
@@ -141,6 +138,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | O1-003 | PHL1 YİĞİT KAYNAK | ABD25/1H | null'u gecemedi (piyasa betasi) - PF p=0.542, ortR p=0.448 (esik 0.05) |
 | O1-027 | PMax Explorer STRATEGY & SCREENER | ABD25/1H | null'u gecemedi (piyasa betasi) - PF p=0.647, ortR p=0.512 (esik 0.05) |
 | O1-038 | KPL Swing Strategy | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.652, ortR p=0.383 (esik 0.05) |
+| O1-039 | Laguerre RSI by KivancOzbilgic STRATEGY | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.308, ortR p=0.333 (esik 0.05) |
 | O1-066 | Accumulation/Distribution Range Breakout Strategy NT8 - August 2018 S&C | ABD25/1W | null'u gecemedi (piyasa betasi) - PF p=0.279, ortR p=0.313 (esik 0.05) |
 | O1-075 | MeanReversal Strategy NT8 | EMTIA/1D | null'u gecemedi (piyasa betasi) - PF p=0.438, ortR p=0.637 (esik 0.05) |
 | O1-079 | Golden Triangle Strategy | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.264, ortR p=0.129 (esik 0.05) |
@@ -164,7 +162,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | V1A | VOLTRAN-1A swing kırılım ve rejim motoru (v3) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.632, ortR p=0.169 (esik 0.05) |
 | V1B | VOLTRAN-1B SMC + ML geri çekilme motoru (v3) | ABD25/1D | null'u gecemedi (piyasa betasi) - PF p=0.249, ortR p=0.045 (esik 0.05) |
 
-### Aşama 2b (OOS, stres, plato, bootstrap): 34
+### Aşama 2b (OOS, stres, plato, bootstrap): 36
 
 | ID | Strateji | Piyasa/tf | Alt neden |
 |---|---|---|---|
@@ -196,11 +194,13 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | M015 | Larry Connors' Cumulative RSI Strategy | ABD25/1D | 2x PF<1.2 |
 | M017 | RSI 2 Portfolio (Composer Symphony) | ABD25/1D | bootstrap MDD>%15 |
 | M020a | The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp) | ABD25/1D | OOS ortR<=0, bootstrap MDD>%15 |
+| M036 | A Mean Reversion Strategy with 2.11 Sharpe (QQQ with Dynamic SMA300 Stop) | ABD25/1D | 2x PF<1.2, 3x net<=0 |
 | M038 | Best Time Frame for Candlestick Patterns (3 Candlestick Patterns Strategy on SPY) | ABD25/1D | 2x PF<1.2 |
 | O1-004 | PHL2 YIGITBOX | EMTIA/1H | 2x PF<1.2, 3x net<=0, bootstrap MDD>%15 |
 | O2-025 | The Holy Grail | ABD25/1D | bootstrap MDD>%15 |
 | O2-027 | TQQQ For The Long Term (Reddit Post Link) | ABD25/1D | bootstrap MDD>%15 |
 | O3-003 | Buy when S&P 500 makes new intraday high (10 Best Swing #3) | ABD25/1D | 2x PF<1.2, 3x net<=0 |
+| P3-008 | Strategy based on Squeeze Momentum Indicator [LazyBear] | KRIPTO25/1D | OOS ortR<=0 |
 | P3-011 | MACD Strategy with trailing ATR stop | KRIPTO25/1D | OOS ortR<=0 |
 
 ## Doğrulanamaz (274)
