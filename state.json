@@ -238,14 +238,14 @@
       "id": "T27",
       "owner": "claude-moderator",
       "title": "Paper trade altyapisi (sinyal, defter, parite, rapor)",
-      "status": "atandi",
+      "status": "atandi (panel entegrasyonu eklendi)",
       "spec": "docs/GOREV_T27.md"
     },
     {
       "id": "T28",
       "owner": "codex-worker",
       "title": "PR kontrol is akisi (CI + parite)",
-      "status": "atandi",
+      "status": "done (PR #92)",
       "spec": "docs/GOREV_T28.md",
       "model": "Terra"
     }
