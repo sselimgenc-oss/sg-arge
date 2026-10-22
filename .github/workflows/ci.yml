@@ -1,0 +1,90 @@
+name: PR kontrolu
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Run unit and specification tests
+        run: |
+          python -m pytest -q
+          python -m engine.spec --kontrol docs/spec/
+
+  parite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pr/requirements.txt
+      - name: Install pinned dependencies
+        run: pip install -r pr/requirements.txt
+      - name: Download one shared daily data set
+        working-directory: pr
+        run: |
+          python data/fetch.py --interval 1d --allow-partial
+          python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+          rsync -a --delete data/daily/ ../main/data/daily/
+      - name: Seed identical stage-2 inputs
+        env:
+          PR_RESULTS: ${{ runner.temp }}/parite-pr
+          MAIN_RESULTS: ${{ runner.temp }}/parite-main
+        run: |
+          mkdir -p "$PR_RESULTS" "$MAIN_RESULTS"
+          for file in tarama.csv asama2a.csv asama2b.csv tarama_rotasyon.csv; do
+            if [ -f "main/results/$file" ]; then
+              cp "main/results/$file" "$PR_RESULTS/$file"
+              cp "main/results/$file" "$MAIN_RESULTS/$file"
+            fi
+          done
+      - name: Run the same scan on PR and main
+        env:
+          PR_RESULTS: ${{ runner.temp }}/parite-pr
+          MAIN_RESULTS: ${{ runner.temp }}/parite-main
+          KARTLAR: C01,C09,G011,M015,C07,R01
+        run: |
+          (cd pr && python backtests/tarama.py --kart-ids "$KARTLAR" --birlestir --results-dir "$PR_RESULTS")
+          (cd main && python backtests/tarama.py --kart-ids "$KARTLAR" --birlestir --results-dir "$MAIN_RESULTS")
+      - name: Run the same stage-2b check on PR and main
+        env:
+          PR_RESULTS: ${{ runner.temp }}/parite-pr
+          MAIN_RESULTS: ${{ runner.temp }}/parite-main
+        run: |
+          (cd pr && python backtests/asama2b.py --kart-ids R01 --codex-ids C07 --null-tekrar 200 --bootstrap-tekrar 200 --results-dir "$PR_RESULTS")
+          (cd main && python backtests/asama2b.py --kart-ids R01 --codex-ids C07 --null-tekrar 200 --bootstrap-tekrar 200 --results-dir "$MAIN_RESULTS")
+      - name: Compare shared outputs
+        id: compare
+        continue-on-error: ${{ contains(github.event.pull_request.body, '[parite-farki-bekleniyor]') }}
+        env:
+          PR_RESULTS: ${{ runner.temp }}/parite-pr
+          MAIN_RESULTS: ${{ runner.temp }}/parite-main
+        run: python pr/backtests/ci_parite.py --pr-results "$PR_RESULTS" --main-results "$MAIN_RESULTS"
+      - name: Report intentionally allowed parity difference
+        if: ${{ steps.compare.outcome == 'failure' && contains(github.event.pull_request.body, '[parite-farki-bekleniyor]') }}
+        run: echo "::warning::Parite farki PR govdesindeki [parite-farki-bekleniyor] etiketi nedeniyle kabul edildi."
