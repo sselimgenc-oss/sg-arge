@@ -29,7 +29,9 @@ jobs:
       - name: Install pinned dependencies
         run: pip install -r requirements.txt
       - name: Download daily bars
-        run: python data/fetch.py --interval 1d --allow-partial
+        run: |
+          python data/fetch.py --interval 1d --allow-partial
+          python data/fetch.py --interval 1d --rotasyon --allow-partial  # T23: ETFs of the rotation (gecis) cards
       - name: Download USDTRY
         run: python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
       - name: Run tests

@@ -53,7 +53,7 @@ def open_risk_series(result: BacktestResult) -> pd.Series:
     if not trades.empty:
         for trade in trades.itertuples():
             held = (risk.index >= pd.Timestamp(trade.entry_date).normalize()) & (risk.index < pd.Timestamp(trade.exit_date).normalize())
-            risk[held] += float(trade.initial_risk)
+            risk[held] += float(np.nan_to_num(trade.initial_risk))  # rotation books have no per-trade stop: their risk is the book MDD
     return risk / equity
 
 
@@ -193,6 +193,7 @@ def write_report(
         "- Stres gunleri: aday piyasalarindaki tum sembollerin esit agirlikli gunluk getirisinin (BIST USD) piyasalar arasi ortalamasinin en kotu %5'lik gunleri. BIST/emtia icin tek bir endeks serisi yok.",
         "- Bootstrap: 20 gunluk dairesel block, `asama2b.block_bootstrap`. OOS ornegi kisadir; OOS bootstrap'i gevsek okunmalidir.",
         "- PF gunluk getirilerden hesaplanir (islem bazli PF degil).",
+        "- Rotasyon kitaplari (T23) islem basina stop tasimaz: acik risk sutununa 0 katki verirler; riskleri MDD ve bootstrap MDD95 ile olculur.",
         "- Acik risk islem listesinden turetilir; veri sonunda acik kalan pozisyonlar listede yoktur ve gunluk ozkaynak degisimi orani oynatir (tavan giris aninda motorda uygulanir).",
     ]
     (results_dir / "portfoy.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -209,6 +210,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    tarama.FIXED_DATA_DIR = args.data_dir
     candidates, source = select_candidates(args.results_dir)
     if candidates.empty:
         raise SystemExit("Gecti/Kosullu aday yok")

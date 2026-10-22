@@ -28,7 +28,9 @@ jobs:
       - name: Download daily bars
         env:
           EVREN: ${{ inputs.evren }}
-        run: python data/fetch.py --interval 1d --allow-partial --evren "$EVREN"
+        run: |
+          python data/fetch.py --interval 1d --allow-partial --evren "$EVREN"
+          python data/fetch.py --interval 1d --rotasyon --allow-partial  # T23: ETFs of the rotation (gecis) cards
       - name: Download USDTRY
         run: python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
       - name: Run tests
