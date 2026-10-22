@@ -44,7 +44,7 @@ RESULTS_DIR = ROOT / "results"
 
 LEDGER_COLUMNS = {
     "emirler": ["sinyal_tarihi", "satir", "sembol", "tip", "referans_fiyat", "adet_gosterge", "stop", "hedef"],
-    "dolumlar": ["tarih", "satir", "sembol", "tip", "fiyat", "adet", "maliyet", "neden", "referans_fiyat", "kayma_pct"],
+    "dolumlar": ["tarih", "satir", "sembol", "tip", "fiyat", "adet", "maliyet", "neden", "referans_fiyat", "kayma_pct", "stop"],
     "pozisyonlar": ["tarih", "satir", "sembol", "giris_tarihi", "giris_fiyati", "adet", "stop", "hedef", "son_kapanis", "acik_kar"],
     "ozkaynak": ["tarih", "satir", "ozkaynak"],
     "alarmlar": ["tarih", "tip", "satir", "mesaj"],
@@ -222,17 +222,16 @@ def _day(value: Any) -> str:
     return pd.Timestamp(value).strftime("%Y-%m-%d")
 
 
-def _kayma(order_rows: pd.DataFrame, satir: str, fill: dict[str, Any]) -> tuple[float, float]:
-    """(reference price, slippage %) of a fill against the order the previous evening's signal produced; (nan, nan) for stop/target exits."""
+def _kayma(order_rows: pd.DataFrame, satir: str, fill: dict[str, Any], signal_day: str | None) -> tuple[float, float]:
+    """(reference price, slippage %) of a fill against the order of the signal bar just before it; (nan, nan) for stop/target exits."""
     tip = {"giris": "giris", "kismi": "kismi", "cikis": "cikis"}[fill["tip"]]
-    if order_rows.empty or fill["neden"] in {"stop", "gap_stop", "target", "gap_target", "roi"}:
+    if order_rows.empty or signal_day is None or fill["neden"] in {"stop", "gap_stop", "target", "gap_target", "roi"}:
         return float("nan"), float("nan")
     candidates = order_rows[(order_rows["satir"] == satir) & (order_rows["sembol"] == fill["sembol"]) & (order_rows["tip"] == tip)
-                            & (order_rows["sinyal_tarihi"] < _day(fill["tarih"]))
-                            & (order_rows["sinyal_tarihi"] >= _day(pd.Timestamp(fill["tarih"]) - pd.Timedelta(days=7)))]
+                            & (order_rows["sinyal_tarihi"] == signal_day)]
     if candidates.empty:
         return float("nan"), float("nan")
-    reference = float(candidates.sort_values("sinyal_tarihi").iloc[-1]["referans_fiyat"])
+    reference = float(candidates.iloc[-1]["referans_fiyat"])
     price = float(fill["fiyat"])
     return reference, (price / reference - 1.0 if tip == "giris" else reference / price - 1.0)
 
@@ -284,10 +283,12 @@ def calistir(
         for fill in result.fills:
             if fill.get("neden") == "end_of_test":
                 continue  # the engine closes every position at the end of a run; that is not a trade
-            reference, slip = _kayma(existing_orders, etiket, {**fill, "neden": fill.get("neden", "")})
+            bars = veri.frames[satir.piyasa].get(fill["sembol"])
+            before = bars.index[bars.index < pd.Timestamp(fill["tarih"])] if bars is not None else []
+            reference, slip = _kayma(existing_orders, etiket, {**fill, "neden": fill.get("neden", "")}, _day(before[-1]) if len(before) else None)
             fill_rows.append({
                 "tarih": _day(fill["tarih"]), "satir": etiket, "sembol": fill["sembol"], "tip": fill["tip"], "fiyat": fill["fiyat"],
-                "adet": fill["adet"], "maliyet": fill["maliyet"], "neden": fill.get("neden", ""), "referans_fiyat": reference, "kayma_pct": slip,
+                "adet": fill["adet"], "maliyet": fill["maliyet"], "neden": fill.get("neden", ""), "referans_fiyat": reference, "kayma_pct": slip, "stop": fill.get("stop"),
             })
         for pos in result.open_positions:
             position_rows.append({
@@ -365,7 +366,7 @@ def rapor_yaz(portfoy: Portfoy, ozet: dict[str, Any], defter: Path = LEDGER_DIR,
         "Sanal defter; gerçek para ve aracı kurum bağlantısı yoktur. Sinyal ve dolumlar backtest motoruyla aynı yoldan üretilir (`paper/gunluk.py`).", "",
         "## Portföy", "", "| Sanal sermaye | Özkaynak | Getiri | MDD | MDD uyarı / durdur |", "|---:|---:|---:|---:|---|",
         f"| {sermaye:,.0f} USD | {ozet['ozkaynak']:,.0f} USD | {ozet['ozkaynak'] / sermaye - 1:.2%} | {ozet['mdd']:.2%} | "
-        f"%{portfoy.alarm.get('mdd_uyari', 0.10):.0%} / %{portfoy.alarm.get('mdd_durdur', 0.15):.0%} |", "",
+        f"{portfoy.alarm.get('mdd_uyari', 0.10):.0%} / {portfoy.alarm.get('mdd_durdur', 0.15):.0%} |", "",
         "## Satırlar: gerçekleşen ve backtest OOS beklentisi", "",
         "| Satır | Ağırlık | Kapanmış işlem | Gerçekleşen PF | Net (USD) | Açık poz. | Backtest OOS getiri | OOS işlem | OOS ortR | Bootstrap MDD95 |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
