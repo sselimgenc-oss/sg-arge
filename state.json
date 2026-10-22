@@ -47,7 +47,7 @@
       "id": "T1b",
       "owner": "codex-worker",
       "title": "Kalan 9 aile yeniden uretim",
-      "status": "review (15 satir, 9 aile; replikasyon ve on donem teslim edildi)",
+      "status": "done (PR #49); tartisma/007",
       "spec": "docs/GOREV_T1.md"
     },
     {
@@ -61,7 +61,7 @@
       "id": "T6",
       "owner": "claude-moderator (T6a) / codex-worker (T6b)",
       "title": "Asama 2 tam dogrulama + results/SONUC.md (basarili/basarisiz listesi)",
-      "status": "T6a kod+PR hazir (kismi_kar, BIST USD, null model; gercek kosu Actions 'Asama 2a' elle); T6b Codex T1b'den sonra",
+      "status": "T6a done (PR #47), lider kosusu suruyor; T6b Codex'e T6a sonuclarindan sonra",
       "spec": "docs/GOREV_T6.md"
     },
     {
@@ -208,6 +208,18 @@
       "owner": "argon",
       "title": "40 kart (22 gizli, 10 okunamadi)",
       "ref": "argon/T2_parti8.yaml"
+    },
+    {
+      "id": "T6a",
+      "owner": "claude-moderator",
+      "title": "BIST USD + null model + kismi_kar; motor hizlandirma (T1a birebir)",
+      "ref": "PR #47"
+    },
+    {
+      "id": "T1b",
+      "owner": "codex-worker",
+      "title": "15 satir; 21/21 tamam",
+      "ref": "PR #49, tartisma/007"
     }
   ],
   "user_decisions_pending": [
@@ -221,7 +233,8 @@
     "2026-10-21 kullanici: Codex environment kuruldu; Sonnet manuel tetiklenecek",
     "2026-10-21 kullanici: okunamayan kaynaklar icin tarayici yolu yok; YENIDEN.csv kartlari Dogrulanamaz (kaynak erisilemedi)",
     "2026-10-22 kullanici: dakikalik (1H alti) stratejiler elenmez; yalniz kriptoda (Binance) dogal zaman diliminde test edilir. BIST/ABD/emtia icin dakikalik veri aranmaz.",
-    "2026-10-22 kullanici: Argon yalniz isci (kaynak okuma, kopyalama, liste); karar/denetim rolu yok, ciktisi her zaman denetlenir."
+    "2026-10-22 kullanici: Argon yalniz isci (kaynak okuma, kopyalama, liste); karar/denetim rolu yok, ciktisi her zaman denetlenir.",
+    "2026-10-22 kullanici: 256'lik havuz kullanici tarafindan zaten elenmis; repodaki ~392 strateji esastir"
   ],
   "goal": "docs/HEDEF.md: tum stratejileri evrensel kurallar ve kurumsal kriterlerle backtest edip basarili/basarisiz listesi. Paper sonraki faz.",
   "triggers": {
