@@ -47,4 +47,5 @@ belirsiz:
 - Quantum.mq4 içindeki varsayılan eintDepth3 (kanal periyodu) sayısal değeri ilk mesaj metninde yazmayıp ekli .mq4/.tpl dosyasındadır
 - 'short kuralı var: 05:00 GMT sonrası kırmızı kutularda kademeli short sepeti açılır ve ilk mavi kutuda tüm sepet kapatılır'
 - "ozel_kod_nedeni: durum_makinesi (kademeli lot artan sepet (grid) ve repaint eden Quantum gostergesi)"
+- "T20: motorda kalmadi. Artan lotlu sepet (grid: ayni yonde 40'a kadar kademeli pozisyon) ve repaint eden Quantum gostergesi; motor sembol basina tek pozisyon tutar, gostergenin periyodu kaynakta yok"
 kart_yazari: argon

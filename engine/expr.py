@@ -12,7 +12,7 @@ Cards carry entry/exit rules as text. This module parses them with Python's
 * calls to whitelisted functions: ``cross_over``, ``cross_under``, ``mtf``,
   ``ay_islem_gunu_bastan``, ``ay_islem_gunu_sondan``, ``haftanin_gunu``,
   ``yeni_gun``, ``ay_gunu``, ``paskalya``, ``valuewhen``, ``highestsince``, ``lowestsince``,
-  ``max``, ``min``, ``abs``
+  ``max``, ``min``, ``abs``, ``eger(kosul, a, b)`` (if/else)
 
 Evaluation is vectorised over pandas Series. NaN comparisons are False.
 """
@@ -45,6 +45,7 @@ FUNCTIONS = frozenset(
         "max",
         "min",
         "abs",
+        "eger",
     }
 )
 
@@ -277,6 +278,14 @@ class _Evaluator:
             group = cond.astype(int).cumsum()
             running = series.groupby(group).cummax() if name == "highestsince" else series.groupby(group).cummin()
             return running.where(group > 0)
+        if name == "eger":
+            if len(args) != 3:
+                raise ExprError("eger expects (condition, if_true, if_false)")
+            cond = _as_bool(args[0], self.index)
+            if isinstance(cond, pd.Series) or any(isinstance(a, pd.Series) for a in args[1:]):
+                cond = _as_series(cond, self.index).astype(bool)
+                return pd.Series(np.where(cond, _as_series(args[1], self.index), _as_series(args[2], self.index)), index=cond.index)
+            return args[1] if cond else args[2]
         if name in ("max", "min"):
             if len(args) != 2:
                 raise ExprError(f"{name} expects 2 arguments")

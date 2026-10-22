@@ -13,6 +13,7 @@ belirsiz:
 - 'Üç stratejinin birleşimi: seçim yanlılığı/aşırı uyum riski yüksek'
 - "T7 sozdizimi: cikis 'MOD_A: ...; MOD_B: ...' giris_modu calisma zamani degiskeniyle yazildi (A = dip avcisi, B = trend/kirilim); anlam ayni"
 - "ozel_kod_nedeni: durum_bilgisi (cikis giris motoruna (MOD_A/MOD_B) bagli: giris_modu calisma zamani durumu)"
+- "T20: motorda kalmadi. Cikis giris moduna (MOD_A/MOD_B) bagli; iz_suren ve kismi_kar yalniz MOD_B icin gecerli (pozisyon basina mod). Motorda pozisyon bazli 'giris_modu' yok; ayrica 1W_Bias tanimi lider onayi bekliyor (bias_varsayim). Ayri is"
 parametreler: {}
 id: R07
 ad: VOLTRAN-R1 swing hibrit (Qullamaggie + Z-skor + IBS dip avcısı)

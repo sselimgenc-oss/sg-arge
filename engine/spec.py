@@ -100,6 +100,12 @@ def _check_expression(text: Any, field_name: str, defined: set[str], gost: dict[
         issues.append(Issue("ifade_ayristirilamadi", f"{field_name}: {exc} :: {text[:120]}"))
         return
     allowed = defined | BASE_NAMES | (RUNTIME_NAMES if runtime else set())
+    if runtime:
+        # signal-bar references (docs/EVRENSEL_KURALLAR.md D10): sinyal_<ad> is the value of an OHLC column or
+        # indicator on the bar that raised the entry signal; stop/hedef levels resolved at the fill are named below.
+        allowed = allowed | {"stop_seviyesi", "hedef_seviyesi"} | {
+            f"sinyal_{name}" for name in (defined | BASE_NAMES)
+        }
     for name in sorted(parsed.names - allowed):
         issues.append(Issue("tanimsiz_ad", f"{field_name}: tanimsiz ad '{name}'"))
     bare = parsed.names - {n for n, _ in parsed.attrs}
@@ -187,7 +193,7 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
             validity = entry_order.get("gecerlilik_bar")
             if isinstance(validity, bool) or not isinstance(validity, int) or validity < 1:
                 issues.append(Issue("giris_emri_gecerlilik", "giris_emri.gecerlilik_bar pozitif tam sayi olmali"))
-    for block, sub in (("stop", "secenekler"), ("stop", "ifade"), ("hedef", "ifade"), ("kar_kilidi", "stop"), ("kismi_kar", "tetik"), ("kismi_kar", "kalan_stop")):
+    for block, sub in (("stop", "secenekler"), ("stop", "ifade"), ("hedef", "ifade"), ("kar_kilidi", "stop"), ("kar_kilidi", "tetik_seviye"), ("kismi_kar", "tetik"), ("kismi_kar", "kalan_stop")):
         value = card.get(block)
         if isinstance(value, dict):
             target = value.get(sub)

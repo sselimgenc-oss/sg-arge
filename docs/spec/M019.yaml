@@ -70,3 +70,4 @@ belirsiz:
   > NormStoch * Enough (Enough=1.042, MaxForecast=0.33) hesaplanır. 4) Buy = Close > Open AND PlusForecast AND UpFive AND MFI(3) > 0 AND FLSK < Thirty (41) AND Day() > BuyDay (9). 5) Sell: Held = BarsSince(Buy)
   > 3 ve PositionScore < SellPoint (6400) düşüşü veya Held > MinHold (14) performans filtresi / FLSK > Fifty (48) koşuluyla çıkılır; Short = 0, Cover = 0 (yalnız long).'
 - "T10: ozel_kod_nedeni: durum_makinesi (AFL: ExRem sinyal temizleme, MinHold/SellPoint/Forecast durumlari)"
+- "T20: motorda kalmadi. AFL kodu PositionScore (portfoy siralamasi), ExRem/BarsSince zincirleri ve ForeNmSth3 3 barlik tahmin fonksiyonunu kullanir; tahmin formulu kartta yok"

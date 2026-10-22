@@ -18,13 +18,16 @@ gostergeler:
 giris: close > ema30 and close > open and high > high[1] and low < low[1]
 cikis: null
 kar_kilidi:
-  tetik_fibo: 150
-  yeni_stop_fibo: 100
-stop: null
-hedef: null
+  tetik_seviye: sinyal_high + 0.5 * (sinyal_high - sinyal_low)
+  stop: sinyal_high
+stop:
+  tip: seviye
+  ifade: sinyal_low
+hedef:
+  tip: seviye
+  ifade: sinyal_high + (sinyal_high - sinyal_low)
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: sinyal_bari_referansi
+ozel_kod: false
 piyasa_kisiti: [FX]
 parametreler:
   ema30.n: 30
@@ -50,4 +53,4 @@ belirsiz:
   şekilde (R = high - low): Stop-Loss = low (Fibo 0), Take-Profit = high + R (Fibo 200) olarak konur. 3) Fiyat high + 0.5 * R (Fibo 150) seviyesine ulaştığında Stop-Loss high (Fibo 100 / başabaş) seviyesine
   çekilir.'
 - 'Short kuralı: EMA(30) altında Bearish Engulfing bar oluştuğunda sonraki bar açılışında short girilir; Fibo 0 (high) SL, Fibo 200 (low - R) TP, Fibo 150''de SL Fibo 100''e çekilir.'
-- "T10: ozel_kod_nedeni: sinyal_bari_referansi (stop/hedef/kar kilidi sinyal barinin Fibonacci seviyelerine bagli)"
+- "T20: sinyal bari Fibonacci seviyeleri D10 seviye ifadeleriyle yazildi: Fibo 0 = sinyal_low (stop), Fibo 100 = sinyal_high, Fibo 200 = sinyal_high + R (hedef), Fibo 150'de stop Fibo 100'e (kar kilidi)"

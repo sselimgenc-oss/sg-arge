@@ -18,13 +18,31 @@ gostergeler:
     f: rsi
     src: atr_sec
     n: 50
+  atr_mkt:
+    f: atr
+    n: 14
+    veri: endeks
+  rsi_atr_mkt:
+    f: rsi
+    src: atr_mkt
+    n: 50
+  rsi_spread:
+    f: seri
+    ifade: rsi_atr_sec / rsi_atr_mkt
+  avg_spread:
+    f: ema
+    src: rsi_spread
+    n: 50
+  avg_spread_diff:
+    f: seri
+    ifade: rsi_spread - avg_spread
 giris: avg_spread_diff < 0 and rsi_atr_mkt > rsi_atr_sec
 cikis: avg_spread_diff > 0
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: cok_enstruman
+ozel_kod: false
+piyasa_kisiti: [ABD]
 parametreler:
   RSILen: 50
   ATRLen: 14
@@ -45,4 +63,4 @@ belirsiz:
   (S&P 500) ATR''sinin 50 periyotluk RSI''ı (rsi_atr_mkt = RSI(ATR(SP500, ATRLen), RSILen)) hesaplanır (RSILen=50). 2) RSISpread = rsi_atr_sec / rsi_atr_mkt olarak bulunur. 3) AvgSpread = EMA(RSISpread,
   RSILen) ve AvgSpreadDiff = RSISpread - AvgSpread hesaplanır. 4) Long Giriş: AvgSpreadDiff < 0 ve rsi_atr_mkt > rsi_atr_sec (piyasa volatilite RSI''ı hisse volatilite RSI''ından büyük) olduğunda al. 5)
   Long Çıkış: AvgSpreadDiff > 0 olduğunda sat.'
-- "T10: ozel_kod_nedeni: cok_enstruman (S&P 500 ATR'sinin RSI'i ile hisse ATR RSI'i arasi spread ve ortalama spread farki)"
+- "T20: S&P 500 ATR serisi piyasa endeksi (benchmark SPY) olarak okunur: atr_mkt {veri: endeks}; islem gorulen enstrumanla tek-enstrumanli (long) islem, ikinci bacak yok. piyasa_kisiti [ABD]: kaynagin endeksi S&P 500, diger piyasalarda esdeger endeks serisi yok"

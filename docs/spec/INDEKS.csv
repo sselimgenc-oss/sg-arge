@@ -5,7 +5,7 @@ A1-004,ADX strategy with NASDAQ 30-minutes timeframe,day,30m,dakikalik,true,4,ht
 A1-005,DOW Breakout 15Min,day,15m,eksik,true,4,https://prorealcode.com/prorealtime-trading-strategies/dow-breakout-15min/?pnum=3
 A1-006,SCALPING CAC40 10 SECONDS,day,10s,eksik,true,6,https://www.prorealcode.com/prorealtime-trading-strategies/scalping-cac40-10-seconds/
 A1-007,Morning CAC40,day,15m,eksik,true,2,https://www.prorealcode.com/prorealtime-trading-strategies/morning-cac40/
-A1-009,1% per week on NASDAQ100,swing,5m,dakikalik,true,3,https://www.prorealcode.com/prorealtime-trading-strategies/1-per-week-on-nasdaq100/
+A1-009,1% per week on NASDAQ100,swing,5m,dakikalik,false,3,https://www.prorealcode.com/prorealtime-trading-strategies/1-per-week-on-nasdaq100/
 A1-010,Monday in Dax40 with 1%,swing,4H,tam,true,3,https://www.prorealcode.com/prorealtime-trading-strategies/monday-in-dax40
 A1-011,DAX40 H1 Long Trend System,day,1H,eksik,true,3,https://www.prorealcode.com/prorealtime-trading-strategies/dax40-h1-long-trend-system/
 A1-013,Strategy 3 CANDLES with CAC40,day,1m,eksik,true,4,https://prorealcode.com/prorealtime-trading-strategies/strategy-3-candles-cac40
@@ -20,31 +20,31 @@ A1-021,Pivot Master LITE,day,15m,eksik,true,3,https://cn.tradingview.com/script/
 A1-022,Slight Swing Momentum Strategy,swing,1D,eksik,false,2,https://it.tradingview.com/script/6l9kcw7j
 A1-023,ORB Breakout Strategy (chartsquare),day,5m,eksik,false,3,https://ru.tradingview.com/script/VJ9ZHgNB-ORB-Breakout-Strategy
 A1-024,TrendMaster Pro 2.3 with Alerts,day,5m,eksik,false,2,https://www.tradingview.com/script/mVkDf8qh-TrendMaster-Pro-2-3-with-Alerts/
-A1-025,TASC 2026.03 One Percent A Week,swing,1D,tam,true,4,https://www.tradingview.com/script/nVECqIQx-TASC-2026-03-One-Percent-A-Week/
+A1-025,TASC 2026.03 One Percent A Week,swing,1D,tam,false,4,https://www.tradingview.com/script/nVECqIQx-TASC-2026-03-One-Percent-A-Week/
 A1-026,LongBuyLongSell 90% profit Excellent Win Rate Strategy,day,15m,eksik,true,3,https://www.tradingview.com/script/0zX3PYZi-LongBuyLongSell-90-profit-Excellent-Win-Rate-Strategy-indicator/
-A1-027,Bjorgum Double Tap,swing,1D,tam,true,7,https://www.tradingview.com/script/rLkjr2sQ-Bjorgum-Double-Tap/
+A1-027,Bjorgum Double Tap,swing,1D,tam,true,8,https://www.tradingview.com/script/rLkjr2sQ-Bjorgum-Double-Tap/
 A1-029,SPX Trading Strategy for ThinkorSwim,day,10m,eksik,true,6,https://usethinkscript.com/threads/spx-trading-strategy-for-thinkorswim.5087/
 A2-001,GER40 Evening Coil,day,1H,tam,true,4,https://www.mql5.com/en/code/78380
-A2-002,Stochastic Daily Breakout for Gold,day,1H,tam,true,4,https://www.mql5.com/en/code/77900
+A2-002,Stochastic Daily Breakout for Gold,day,1H,tam,false,4,https://www.mql5.com/en/code/77900
 A2-003,Buy GBPJPY Every Monday,day,1H,tam,true,3,https://www.mql5.com/en/code/77835
 A2-004,SessionReopenEA,day,1H,tam,true,5,https://www.mql5.com/en/code/77060
 A2-005,GDS Renko RSI + MACD 4-Mode Demo EA,day,1m,eksik,true,4,https://www.mql5.com/en/code/78581
-A2-006,Price Action Intraday Trading - Expert for MT5,day,15m,dakikalik,true,5,https://www.mql5.com/en/code/68704
+A2-006,Price Action Intraday Trading - Expert for MT5,day,15m,dakikalik,true,6,https://www.mql5.com/en/code/68704
 A2-007,Pro MA Crossover EA for MT5,swing,1D,tam,false,2,https://www.mql5.com/en/code/70916
 A2-009,The Playground Series v1 to V4,day,,eksik,true,4,https://www.mql5.com/en/code/68125
 A2-010,ICE (Impulse Confirmation Engine),day,5m,eksik,false,2,https://www.mql5.com/en/code/69651
 A2-011,APEX VELOCITY,day,5m,dakikalik,true,5,https://www.mql5.com/en/code/78275
 A2-012,ORB Risk Managed - Opening Range Breakout,day,1m,dakikalik,true,5,https://www.mql5.com/en/code/77967
 A2-013,Opening Range Breakout with NR4 / NR7 Contraction Filters,day,1m,dakikalik,true,5,https://www.mql5.com/en/code/78259
-A2-014,Gold MT5 Fractal Breakout EA,swing,1H,tam,true,5,https://www.mql5.com/en/code/78308
+A2-014,Gold MT5 Fractal Breakout EA,swing,1H,tam,true,6,https://www.mql5.com/en/code/78308
 A2-015,EMA Cross Scalper M15 (XAUUSD),day,15m,dakikalik,true,5,https://www.mql5.com/en/code/77180
 A2-016,RSI Exhaustion Reversal - EURUSD,day,5m,sadece_short,true,4,https://www.mql5.com/en/code/77738
 A2-017,ZoneUS30,swing,,eksik,true,2,https://www.mql5.com/en/code/77748
 A2-018,TMS for M30 charts,day,30m,ihtiyari,true,4,https://www.forexfactory.com/thread/526735-tms-for-m30-charts
 A2-019,"Williams%R, SAR X-over 15 minute candles",day,15m,dakikalik,true,5,https://www.forexfactory.com/thread/989455-williamsr-sar-x-over-15-minute-candles
-A2-020,Quantum London Trading,day,1m,dakikalik,true,6,https://www.forexfactory.com/thread/551382-quantum-london-trading
-A2-021,Magic 100,day,1H,tam,true,4,https://www.forexfactory.com/thread/989445-magic-100
-A2-022,Lets Automate a Simple Renko Strategy!,day,1m,dakikalik,true,4,https://www.forexfactory.com/thread/531783-lets-automate-a-simple-renko-strategy
+A2-020,Quantum London Trading,day,1m,dakikalik,true,7,https://www.forexfactory.com/thread/551382-quantum-london-trading
+A2-021,Magic 100,day,1H,tam,false,4,https://www.forexfactory.com/thread/989445-magic-100
+A2-022,Lets Automate a Simple Renko Strategy!,day,1m,dakikalik,true,5,https://www.forexfactory.com/thread/531783-lets-automate-a-simple-renko-strategy
 A2-023,Up and under price pattern,day,30m,ihtiyari,true,4,https://www.forexfactory.com/thread/444458-up-and-under-price-pattern
 A2-024,Most Famous Blessing 3.9.6 EA and Setfiles,day,1h,eksik,true,2,https://www.forexfactory.com/thread/792598-most-famous-blessing-396-ea-and-setfiles
 A2-025,"The Equilibrium, a key to success!",day,,eksik,true,1,https://www.forexfactory.com/thread/727775-the-equilibrium-a-key-to-success
@@ -52,13 +52,13 @@ A2-026,v2v dynamic trading system,day,1m,eksik,true,1,https://www.forexfactory.c
 A2-027,Happs Trading System,swing,4h,eksik,true,2,https://www.forexfactory.com/thread/259419-happs-trading-system
 A2-028,TCO Trader EA,day,1h,eksik,true,3,https://www.forexfactory.com/thread/430840-tco-trader-ea
 A2-029,Simple Zigzag + Fibonacci Strategy,swing,1h,eksik,true,5,https://www.forexfactory.com/thread/987910-simple-zigzag-fibonacci-strategy
-A2-030,Channel MA Short-Term System,day,15m,dakikalik,true,4,https://www.forexfactory.com/thread/707474-channel-ma-short-term-system
-A3-001,XAUUSD Pullback Window (4 fazlı durum makinesi),day,5m,dakikalik,true,4,https://github.com/ilahuerta-IA/backtrader-pullback-window-xauusd
+A2-030,Channel MA Short-Term System,day,15m,dakikalik,false,4,https://www.forexfactory.com/thread/707474-channel-ma-short-term-system
+A3-001,XAUUSD Pullback Window (4 fazlı durum makinesi),day,5m,dakikalik,true,5,https://github.com/ilahuerta-IA/backtrader-pullback-window-xauusd
 A3-002a,geraked CEZLSMA,day,1m,dakikalik,true,7,https://github.com/geraked/tradingview
-A3-002b,geraked 3MAF,day,30m,dakikalik,true,9,https://github.com/geraked/tradingview
-A3-002c,geraked CP1,day,1m,dakikalik,true,8,https://github.com/geraked/tradingview
+A3-002b,geraked 3MAF,day,30m,dakikalik,false,6,https://github.com/geraked/tradingview
+A3-002c,geraked CP1,day,1m,dakikalik,false,7,https://github.com/geraked/tradingview
 A3-002d,geraked BBRSI,day,5m,dakikalik,false,5,https://github.com/geraked/tradingview
-A3-002e,geraked ABSAR,day,2H,tam,true,9,https://github.com/geraked/tradingview
+A3-002e,geraked ABSAR,day,2H,tam,true,10,https://github.com/geraked/tradingview
 A3-002f,geraked DHLAOS,day,5m,dakikalik,true,8,https://github.com/geraked/tradingview
 A3-002g,geraked MLCEL_MACD,day,4H,tam,true,7,https://github.com/geraked/tradingview
 A3-002h,geraked NWERSIASF,day,15m,dakikalik,true,7,https://github.com/geraked/tradingview
@@ -90,7 +90,7 @@ A4-002,Simple TQQQ RSI mean reversion,swing,1D,tam,true,2,https://www.composer.t
 A4-003,Overbought or Oversold SPY else UVXY,swing,1D,eksik,true,3,https://www.composer.trade/trading-strategies/overbought-or-oversold-spy-else-uvxy-C8QUEQBKayzmaSBz7MAZ
 A4-004,RSI 82,swing,1D,tam,true,2,https://www.composer.trade/trading-strategies/rsi-82-cmAlgPGN7BvS47DC6i0d
 A4-005,SPY RSI 30 Test,swing,1D,eksik,true,2,https://www.composer.trade/trading-strategies/spy-rsi-30-test-kUp65lDEQCokq8CqK8Us
-A4-006,Opening Range Breakout for Stocks in Play,day,5m,dakikalik,true,4,https://www.quantconnect.com/forum/discussion/18444/opening-range-breakout-for-stocks-in-play/
+A4-006,Opening Range Breakout for Stocks in Play,day,5m,dakikalik,true,5,https://www.quantconnect.com/forum/discussion/18444/opening-range-breakout-for-stocks-in-play/
 A4-007,Enhanced Short-Term Mean Reversion Algorithm,swing,1D,eksik,true,3,https://www.quantconnect.com/forum/discussion/3327/enhanced-short-term-mean-reversion-algorithm/p1
 A4-008,RSI Extremes Intraday E-mini (embedded backtest),day,5m,eksik,true,2,https://www.quantconnect.com/terminal/cache/embedded_backtest_e51cb798772bb2ad23d4d52e535ed3f7.html
 A4-009,Volume Spikes in Oil Futures (embedded backtest),day,5m,eksik,true,2,https://www.quantconnect.com/terminal/cache/embedded_backtest_19dce81c99a5fcc437
@@ -107,14 +107,14 @@ A5-022,Trend-based Forecast of Cryptocurrency Returns,swing,1D,eksik,true,3,http
 A5-023,Signal Prediction in cryptocurrency tradeoperations: a machine learning-based approach,swing,1D,eksik,true,3,https://paperswithbacktest.com/strategies/signal-prediction-in-cryptocurrency-tradeoperations-a-machine-learning-based-approach
 A5-024,Impact of Earnings Announcements for Dow Jones Index Stocks,swing,1D,eksik,true,3,https://paperswithbacktest.com/strategies/impact-of-earnings-announcements-for-dow-jones-index-stocks
 A6-001,Double 7's Strategy,swing,1D,tam,false,2,https://alvarezquanttrading.com/blog/double-7s-strategy/
-A6-003,Simple Ideas for a Mean Reversion Strategy with Good Results,swing,1D,tam,true,3,https://alvarezquanttrading.com/blog/simple-ideas-for-a-mean-reversion-strategy-with-good-results/
+A6-003,Simple Ideas for a Mean Reversion Strategy with Good Results,swing,1D,tam,false,3,https://alvarezquanttrading.com/blog/simple-ideas-for-a-mean-reversion-strategy-with-good-results/
 A6-004,Mean Reversion Entry Timing,swing,1D,tam,true,3,https://alvarezquanttrading.com/blog/mean-reversion-entry-timing/
 A6-009,"Trading the Channel (Inside Channel, Kaufman)",swing,1D,tam,true,3,https://financial-hacker.com/trading-the-channel/
 A6-010,The Gap Momentum System,swing,1D,tam,false,3,https://financial-hacker.com/the-gap-momentum-system/
 A6-011,Better Strategies 5: A Short-Term Machine Learning System,day,1H,eksik,true,3,https://financial-hacker.com/build-better-strategies-part-5-developing-a-machine-learning-system/
 A6-012,Better Tests with Oversampling (3 mum fiyat aksiyonu),day,1H,eksik,true,3,https://financial-hacker.com/better-tests-with-oversampling/
 A6-014,Trend trading system with Market Meanness Index (Why 90% of Backtests Fail),swing,1D,tam,true,3,https://financial-hacker.com/why-90-of-backtests-fail/
-A6-015,Double Bottom Country ETF Trading,swing,1D,tam,true,3,https://quantpedia.com/technical-analysis-report-methodology-double-bottom-country-trading-strategy/
+A6-015,Double Bottom Country ETF Trading,swing,1D,tam,true,4,https://quantpedia.com/technical-analysis-report-methodology-double-bottom-country-trading-strategy/
 A6-016,Building and Testing Trend-Following Strategies on One-Minute SPY Data,day,1m,eksik,true,3,https://quantpedia.com/building-and-testing-trend-following-strategies-on-one-minute-spy-data/
 A6-017,Can Weakening Morning Order Flow Predict SPY Reversals?,day,1m,eksik,true,3,https://quantpedia.com/can-weakening-morning-order-flow-predict-spy-reversals/
 A6-019,Overnight Seasonality in Bitcoin,day,1H,tam,true,2,https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin
@@ -162,22 +162,22 @@ M004,Beat the Market: Intraday Momentum Strategy for S&P500 ETF (SPY),day,30m,da
 M005,Intraday Momentum for ES and NQ (Noise Area 90-Day Variant),day,30m,dakikalik,true,3,https://www.quantitativo.com/p/intraday-momentum-for-es-and-nq
 M006,RSI Double-Bottom for Amibroker (AFL),swing,1D,tam,false,2,https://www.wisestocktrader.com/indicators/371-rsi-double-bottom-for-amibroker-afl
 M007,ForexFactory Post 8694795 Swing Strategy,swing,1D,eksik,true,2,https://www.forexfactory.com/thread/post/8694795
-M008,RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks,swing,1D,tam,true,2,https://alvarezquanttrading.com/blog/rsi2-strategy-double-returns-with-a-simple-rule-change/
+M008,RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks,swing,1D,tam,false,2,https://alvarezquanttrading.com/blog/rsi2-strategy-double-returns-with-a-simple-rule-change/
 M009,5-Year SPY Put Credit Spread Backtest,swing,1D,eksik,true,2,https://optionalpha.com/blog/spy-put-credit-spread-backtest
-M010,RSI Volatility Spread,swing,1D,tam,true,3,https://cdn.tradestation.com/uploads/RSI-Volatility-Spread.pdf
+M010,RSI Volatility Spread,swing,1D,tam,false,3,https://cdn.tradestation.com/uploads/RSI-Volatility-Spread.pdf
 M011,Double 7's Strategy (Larry Connors),swing,1D,tam,false,2,https://tradingstrategy.ai/docs/programming/old-strategies/double-7.html
 M012a,5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS,swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
 M012b,5 Swing Trading Strategies for Beginners - Strategy 2: Turnaround Tuesday,swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
 M012c,5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry,swing,1D,tam,false,1,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
 M012d,5 Swing Trading Strategies for Beginners - Strategy 4: Volatility Contraction,swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
 M012e,5 Swing Trading Strategies for Beginners - Strategy 5: New Highs with Low IBS,swing,1D,tam,false,1,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
-M013,Simple H4 Mobile Trading System,swing,4H,tam,true,3,https://www.forexfactory.com/thread/830795-simple-h4-mobile-trading-system
+M013,Simple H4 Mobile Trading System,swing,4H,tam,false,3,https://www.forexfactory.com/thread/830795-simple-h4-mobile-trading-system
 M014,Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation),swing,1D,tam,false,2,https://www.elitetrader.com/et/threads/larry-connors-2-day-rsi-holy-grail-adapting-a-strategy-to-deliver-30-annual-return-since-1999.379926/
 M015,Larry Connors' Cumulative RSI Strategy,swing,1D,tam,false,2,https://www.elitetrader.com/et/threads/larry-connors-cumulative-rsi-26-annual-return-now-with-sensitivity-analysis.379982/
-M016,One Percent a Week Strategy (TQQQ),swing,1D,tam,true,2,https://www.wealth-lab.com/Discussion/8011
+M016,One Percent a Week Strategy (TQQQ),swing,1D,tam,false,2,https://www.wealth-lab.com/Discussion/8011
 M017,RSI 2 Portfolio (Composer Symphony),swing,1D,eksik,true,2,https://www.composer.trade/trading-strategies/rsi-2-portfolio-DszXqIWmqcC8lxiliUsf
 M018,TradingView Script LHKOdUOs,swing,1D,eksik,true,2,https://www.tradingview.com/script/LHKOdUOs/
-M019,FullStochastic with Filters - Buy&Sell for Amibroker (AFL),swing,1D,tam,true,3,https://www.wisestocktrader.com/indicators/3565-fullstochastic-with-filters-buy-sell-for-amibroker-afl
+M019,FullStochastic with Filters - Buy&Sell for Amibroker (AFL),swing,1D,tam,true,4,https://www.wisestocktrader.com/indicators/3565-fullstochastic-with-filters-buy-sell-for-amibroker-afl
 M020a,The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp),swing,1W,tam,true,3,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
 M020b,The 30-Minute Stock Trader - Strategy 2: Mean-Reversion Long (Laurens Bensdorp),swing,1D,eksik,true,2,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
 M020c,The 30-Minute Stock Trader - Strategy 3: Mean-Reversion Short (Laurens Bensdorp),swing,1D,sadece_short,true,1,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
@@ -187,7 +187,7 @@ M023,Quadrant 2.0 DAX 5 min,day,5m,eksik,true,2,https://www.prorealcode.com/wp-c
 M024,MQL5 Code 8688 (EURUSD M1 Day Trade),day,1m,eksik,true,2,https://www.mql5.com/en/code/8688
 M025,MQL5 Code 8970 (EURUSD M5),day,5m,eksik,true,2,https://www.mql5.com/en/code/8970
 M026,A simple RKD Expert Advisor based on a specified custom RKD indicator (autoRKD_EA),day,1H,eksik,true,2,https://www.mql5.com/en/code/126
-M027,Renko Automated Trading System,day,15m,dakikalik,true,2,https://www.prorealcode.com/prorealtime-trading-strategies/renko-automated-trading-system/
+M027,Renko Automated Trading System,day,15m,dakikalik,false,2,https://www.prorealcode.com/prorealtime-trading-strategies/renko-automated-trading-system/
 M028,TradingView Script Qh7OYDvf (BTC/Crypto 5m),day,5m,eksik,true,2,https://www.tradingview.com/script/Qh7OYDvf/
 M029,Geometric Grid Machine 3Commas (HYPEUSDT 15m),day,15m,eksik,true,2,https://www.tradingview.com/script/8N8DT3Pv-Geometric-Grid-Machine-3Commas/
 M030,BNB Grid Bot Long Strategy,day,15m,eksik,false,2,https://www.tradingview.com/script/9pHwOZsM-BNB-Grid-Bot-Long-Strategy/
@@ -246,7 +246,7 @@ O1-033,Scalping with Bill Williams Alligator,day,5m,eksik,false,2,https://www.tr
 O1-034,[Sniper] SuperTrend + SSL Hybrid + QQE MOD,day,5m,eksik,true,2,https://www.tradingview.com/script/6w9Jchj6/
 O1-035,ORB Heikin Ashi SPY 5min Correlation Strategy,day,5m,eksik,true,1,https://www.tradingview.com/script/QpJvYDzb-ORB-Heikin-Ashi-SPY-5min-Correlation
 O1-036,"Gold ORB Strategy (15-min Range, 5-min Entry)",day,5m,eksik,true,2,https://www.tradingview.com/script/oYW9gdag-Gold-ORB-Strategy-15-min-Range-5-min-Entry/
-O1-037,Simple and Profitable Scalping Strategy (ForexSignals TV),day,5m,dakikalik,true,6,https://www.tradingview.com/script/x4za4NFZ-Simple-and-Profitable-Scalping-Strategy-ForexSignals-TV/
+O1-037,Simple and Profitable Scalping Strategy (ForexSignals TV),day,5m,dakikalik,false,6,https://www.tradingview.com/script/x4za4NFZ-Simple-and-Profitable-Scalping-Strategy-ForexSignals-TV/
 O1-038,KPL Swing Strategy,swing,1D,tam,false,3,https://www.tradingview.com/script/4mz6xvnK/
 O1-039,Laguerre RSI by KivancOzbilgic STRATEGY,swing,1D,tam,true,5,https://www.tradingview.com/script/vWG3tMJh-Laguerre-RSI-by-KivancOzbilgic-STRATEGY/
 O1-040,Pathfinder DAX 4H,swing,4h,eksik,true,2,https://www.prorealcode.com/prorealtime-trading-strategies/pathfinder-dax-4h/
@@ -255,9 +255,9 @@ O1-042,Smoothed Bollinger% Strategy Daily,swing,1D,eksik,true,3,https://www.pror
 O1-043,Navigator DAX Trading Strategy 4H,swing,4h,eksik,true,1,https://www.prorealcode.com/prorealtime-trading-strategies/navigator-dax-trading-strategy-4h/
 O1-044,ALEX AutoTradingBot INDEX,day,5m,eksik,false,2,https://www.prorealcode.com/prorealtime-trading-strategies/alex-autotradingbot-index/
 O1-045,VECTORIAL DAX (M5),day,5m,dakikalik,true,5,https://www.prorealcode.com/prorealtime-trading-strategies/vectorial-dax-m5/
-O1-046,Fractal breakout intraday Strategy EUR/USD 1H,day,1H,tam,true,4,https://www.prorealcode.com/prorealtime-trading-strategies/fractal-breakout-intraday-strategy-eurusd-1h/
+O1-046,Fractal breakout intraday Strategy EUR/USD 1H,day,1H,tam,true,5,https://www.prorealcode.com/prorealtime-trading-strategies/fractal-breakout-intraday-strategy-eurusd-1h/
 O1-047,Kama & Sma Trading System DAX mtf,day,5m,eksik,true,1,https://www.prorealcode.com/prorealtime-trading-strategies/kama-sma-trading-system-dax-mtf/
-O1-048,Stochastic Gold Trader,swing,1H,tam,true,5,https://www.prorealcode.com/prorealtime-trading-strategies/stochastic-gold-trader/
+O1-048,Stochastic Gold Trader,swing,1H,tam,true,6,https://www.prorealcode.com/prorealtime-trading-strategies/stochastic-gold-trader/
 O1-049,Oil 10min 'hammernegated' pattern strategy,day,10m,eksik,true,1,https://www.prorealcode.com/prorealtime-trading-strategies/oil-10min-hammernegated-pattern-strategy/
 O1-050,EURUSD 15-minutes timeframe Dhigh / Dlow Strategy,day,15m,dakikalik,true,5,https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/
 O1-051,Brent Oil 5 minutes trading strategy,day,5m,eksik,false,2,https://www.prorealcode.com/prorealtime-trading-strategies/brent-oil-5-minutes-trading-strategy/
@@ -272,13 +272,13 @@ O1-060,"Strategy Based on EMAs, TSI, MACD, and Premarket Highs/Lows",day,5m,daki
 O1-061,"Chewie's Super Trend, Hull Average, Donchian Trend Ribbon Trading System",day,4m,dakikalik,true,6,https://usethinkscript.com/threads/chewies-super-trend-hull-average-donchian-trend-ribbon-trading-system-for-thinkorswim.10894/
 O1-062,High and Low Reversals Indicator + Intraday Strategy,day,5m,eksik,true,4,https://usethinkscript.com/threads/high-and-low-reversals-indicator-intraday-strategy-for-thinkorswim.49/
 O1-063,Renko Bar Based Trading System,day,10r,ihtiyari,true,2,https://usethinkscript.com/threads/renko-bar-based-trading-system-for-thinkorswim.3252/
-O1-064,Try this NQ Strategy + Code,day,1m,dakikalik,true,5,https://usethinkscript.com/threads/try-this-nq-strategy-code-for-thinkorswim.1958/
+O1-064,Try this NQ Strategy + Code,day,1m,dakikalik,false,5,https://usethinkscript.com/threads/try-this-nq-strategy-code-for-thinkorswim.1958/
 O1-065,Camarilla Pivot Points Day Trading System,day,5m,ihtiyari,true,2,https://usethinkscript.com/threads/camarilla-pivot-points-day-trading-system-for-thinkorswim.12988/
 O1-066,Accumulation/Distribution Range Breakout Strategy NT8 - August 2018 S&C,swing,1W,tam,false,4,https://ninjatraderecosystem.com/user-app-share-download/accumulation-distribution-range-breakout-strategy/
-O1-067,Renko Trading Strategy NT8 - December 2019 S&C,day,2r,dakikalik,true,6,https://ninjatraderecosystem.com/user-app-share-download/renko-trading-strategy-nt8/
+O1-067,Renko Trading Strategy NT8 - December 2019 S&C,day,2r,dakikalik,true,7,https://ninjatraderecosystem.com/user-app-share-download/renko-trading-strategy-nt8/
 O1-068,MACD Cross Over,day,1D,eksik,false,3,https://ninjatraderecosystem.com/user-app-share-download/macd-cross-over/
 O1-069,Woodies CCI Autotrader,day,5m,eksik,true,2,https://ninjatraderecosystem.com/user-app-share-download/woodies-cci-autotrader-2/
-O1-070,Divergencesystem Strategy,swing,1D,tam,true,4,https://ninjatraderecosystem.com/user-app-share-download/divergencesystem-strategy-2/
+O1-070,Divergencesystem Strategy,swing,1D,kapsam_disi,false,5,https://ninjatraderecosystem.com/user-app-share-download/divergencesystem-strategy-2/
 O1-071,Adx Breakouts Strategy,swing,1D,eksik,true,2,https://ninjatraderecosystem.com/user-app-share-download/adx-breakouts-strategy-2/
 O1-072,Automated Strategy for trading NQ,day,5m,eksik,false,2,https://ninjatraderecosystem.com/user-app-share-download/automated-strategy-for-trading-nq/
 O1-073,LargeTrades Strategy NT8,day,1m,eksik,true,1,https://ninjatraderecosystem.com/user-app-share-download/largetrades-strategy-nt8/
@@ -295,7 +295,7 @@ O2-004,Trading Pullbacks System,day,15m,ihtiyari,true,2,https://forex-station.co
 O2-005,Trading Made Simple,swing,1H,tam,false,5,https://www.forexfactory.com/thread/291622-trading-made-simple
 O2-006,Pivot Trading,day,15m,ihtiyari,true,1,https://www.forexfactory.com/thread/588764-pivot-trading
 O2-007,Another simple system - Time-Frame 15,day,15m,dakikalik,true,5,https://www.forexfactory.com/thread/345586-another-simple-system-time-frame-15
-O2-008,Highest Open / Lowest Open Trade,day,15m,dakikalik,true,2,https://www.forexfactory.com/thread/590623-highest-open-lowest-open-trade
+O2-008,Highest Open / Lowest Open Trade,day,15m,dakikalik,true,3,https://www.forexfactory.com/thread/590623-highest-open-lowest-open-trade
 O2-009,M1 Countertrend Scalping Strategy,day,1m,ihtiyari,true,2,https://www.forexfactory.com/thread/1190104-m1-countertrend-scalping-strategy
 O2-010,JPN225 QuietDrift (The Nikkei EA That Only Buys When Volume Is Quiet),day,15m,dakikalik,true,6,https://www.mql5.com/en/code/78027
 O2-011,PulseStrike Scalper - Statistical Burst Detection EA,day,1m,dakikalik,true,4,https://www.mql5.com/en/code/77167
@@ -361,7 +361,7 @@ P3-006,[STRATEGY][UL]Price Divergence Strategy v1.0,swing,1D,eksik,true,1,https:
 P3-007,Heikin Ashi Supertrend,swing,1D,tam,false,4,https://www.tradingview.com/script/9z16eauD-Heikin-Ashi-Supertrend/
 P3-008,Strategy based on Squeeze Momentum Indicator [LazyBear],swing,1D,tam,true,4,https://www.tradingview.com/script/qp9BoNyS-Strategy-based-on-Squeeze-Momentum-Indicator-LazyBear/
 P3-009,Delta-RSI Strategy (with filters),swing,1D,eksik,false,2,https://www.tradingview.com/script/0OdCms2T-Delta-RSI-Strategy-with-filters/
-P3-010,Dynamic Swing Anchored VWAP STRAT (Zeiierman/PineIndicators),swing,1D,tam,true,4,https://www.tradingview.com/script/gjFSGRCo-Dynamic-Swing-Anchored-VWAP-STRAT-Zeiierman-PineIndicators/
+P3-010,Dynamic Swing Anchored VWAP STRAT (Zeiierman/PineIndicators),swing,1D,tam,true,5,https://www.tradingview.com/script/gjFSGRCo-Dynamic-Swing-Anchored-VWAP-STRAT-Zeiierman-PineIndicators/
 P3-011,MACD Strategy with trailing ATR stop,swing,1D,tam,false,3,https://www.tradingview.com/script/2jDHQAJc-MACD-Strategy-with-trailing-ATR-stop/
 P3-013,ORB Strategy [LuciTech],day,5m,dakikalik,true,5,https://www.tradingview.com/script/10yYqaY7-ORB-Strategy-LuciTech/
 P3-014,EmperorBTC's VWAP Strategy,day,30m,dakikalik,false,4,https://www.tradingview.com/script/wmJ1ovZQ-EmperorBTC-s-VWAP-Strategy/
@@ -389,7 +389,7 @@ R02,IBS < 0.30 + 25 günlük volatilite bandı ortalamaya dönüş,swing,1D,tam,
 R03,RealDayTrading göreceli güç (RRS) 1H momentum,day,1H,tam,false,6,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf
 R04,Stocks in Play (Zarattini) RVOL açılış kırılımı,day,1H,tam,false,6,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf
 R05,Dual Signal Trend Sentinel: 65 günlük Z-skor rejimi,swing,1D,tam,false,5,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf
-R07,VOLTRAN-R1 swing hibrit (Qullamaggie + Z-skor + IBS dip avcısı),swing,1D,tam,true,6,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf
+R07,VOLTRAN-R1 swing hibrit (Qullamaggie + Z-skor + IBS dip avcısı),swing,1D,tam,true,7,Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf
 T8-01,TrendShift Supertrend + ADX rejim adaptif,swing,1D,tam,false,4,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf
 T8-02,TrendLock MTF Supertrend + Donchian kırılımı,swing,1D,tam,false,6,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf
 T8-03,SMC Pro BTC - ICT order block + FVG [DOE],swing,1D,eksik,true,6,Paper_Test_8_Lider_Strateji_Ozet_ve_Backtest_Raporu.pdf

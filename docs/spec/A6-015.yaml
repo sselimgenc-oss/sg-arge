@@ -52,3 +52,4 @@ belirsiz:
   hic inmemisse, o fiyata (limit_price = Double_Bottom) limit alim emri konur (en fazla 4 eszamanli acik pozisyon). 5) Emir gerceklestiginde %6 kar al (BUY_TP) ve %3 stop-loss (BUY_SL) konur; fiyat giris
   limit fiyatinin uzerine ciktikca stop-loss yeni zirvenin %3 altina (Price * 0.97) yukari tasinir.'
 - "T10: ozel_kod_nedeni: desen (ikili dip (double bottom) deseni, aylik yeniden tarama, 24 ulke ETF evreni; giris/cikis alanlari yer tutucu)"
+- "T20: motorda kalmadi. Aylik yeniden tarama, 24 ulke ETF evreni (evrenimizde yok), gecmise donuk merkezli yerel dip teyidi ve limit alim emri; evren disi"

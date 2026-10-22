@@ -559,6 +559,68 @@ def rrs(df: pd.DataFrame, n: int = 12, benchmark: pd.DataFrame | None = None) ->
     return ((_col(df, "close") - _col(df, "close").shift(n)) - expected) / asset_atr
 
 
+def williams_fractal(df: pd.DataFrame, n: int = 2) -> pd.DataFrame:
+    """Williams fractals as written in geraked's Pine (3MAF): ``up``/``down`` flag the pivot bar ``n`` bars back.
+
+    The flag is only known on the bar ``n`` bars after the pivot (it is evaluated on the current bar from
+    ``high[n]``/``low[n]`` and later bars), so it carries no look-ahead.  The "extended" variant allows up to
+    four earlier bars equal to/above the pivot before the ``n`` strictly worse ones, as in the source.
+    """
+    def flags(values: pd.Series, strict_after: str) -> pd.Series:
+        better = (lambda a, b: a > b) if strict_after == "gt" else (lambda a, b: a < b)
+        orequal = (lambda a, b: a >= b) if strict_after == "gt" else (lambda a, b: a <= b)
+        lag = {k: values.shift(k) for k in range(0, 2 * n + 5)}
+        pivot = lag[n]
+        front = pd.Series(True, index=values.index)
+        for i in range(1, n + 1):
+            front &= better(lag[n - i], pivot)
+        back = pd.Series(False, index=values.index)
+        for extra in range(0, 5):
+            variant = pd.Series(True, index=values.index)
+            for j in range(1, extra + 1):
+                variant &= orequal(lag[n + j], pivot)
+            for i in range(1, n + 1):
+                variant &= better(lag[n + i + extra], pivot)
+            back |= variant
+        return (front & back & pivot.notna()).fillna(False)
+
+    return pd.DataFrame({"up": flags(_col(df, "high"), "lt"), "down": flags(_col(df, "low"), "gt")}, index=df.index)
+
+
+def renko_sayac(df: pd.DataFrame, kutu: float = 1.0, ilk_bar: int = 1) -> pd.DataFrame:
+    """Close-based synthetic Renko brick counter (ProBuilder style, M027): ``up``/``down`` brick runs.
+
+    Bricks of size ``kutu`` form only when a bar closes beyond the current brick edge, so each value uses the
+    closes up to that bar only.  The counters persist until a brick forms in the opposite direction; the
+    initial brick is anchored at the close of the bar at (0-based) position ``ilk_bar``.
+    """
+    if kutu <= 0:
+        raise ValueError("kutu must be positive")
+    close = _col(df, "close").to_numpy(dtype=float)
+    up = np.zeros(len(close))
+    down = np.zeros(len(close))
+    upbrick = downbrick = np.nan
+    total_up = total_down = 0
+    for i, price in enumerate(close):
+        if i == ilk_bar:
+            upbrick, downbrick = price, price - kutu
+        elif i > ilk_bar and np.isfinite(price):
+            if price >= upbrick + kutu:
+                bricks = int(np.floor((price - upbrick) / kutu))
+                upbrick += bricks * kutu
+                downbrick += bricks * kutu
+                total_up += bricks
+                total_down = 0
+            elif price <= downbrick - kutu:
+                bricks = int(np.floor((downbrick - price) / kutu))
+                upbrick -= bricks * kutu
+                downbrick -= bricks * kutu
+                total_down += bricks
+                total_up = 0
+        up[i], down[i] = total_up, total_down
+    return pd.DataFrame({"up": up, "down": down}, index=df.index)
+
+
 def _price(name: str) -> Callable[..., pd.Series]:
     return lambda df: _col(df, name)
 
@@ -569,6 +631,7 @@ REGISTRY: dict[str, Callable[..., pd.Series | pd.DataFrame]] = {
     "vwap": vwap, "kama": kama, "ichimoku": ichimoku, "supertrend": supertrend, "roc": roc,
     "zscore": zscore, "highest": highest, "lowest": lowest, "ott": ott, "pmax": pmax, "rvol": rvol,
     "stdev": stdev, "var": var, "rrs": rrs, "atr_ratio": atr_ratio,
+    "williams_fractal": williams_fractal, "renko_sayac": renko_sayac,
     "heikinashi": heikinashi, "alphatrend": alphatrend, "ut_bot": ut_bot, "sar": sar, "fisher_rsi": fisher_rsi,
     "open": _price("open"), "high": _price("high"), "low": _price("low"), "close": _price("close"), "volume": _price("volume"),
 }
@@ -581,6 +644,7 @@ COLUMNS: dict[str, tuple[str, ...] | None] = {
     "ott": ("ma", "ott", "dir", "long_stop", "short_stop", "up", "dn"),
     "pmax": ("pmax", "ma", "dir", "long_stop", "short_stop"),
     "heikinashi": ("open", "high", "low", "close"),
+    "williams_fractal": ("up", "down"), "renko_sayac": ("up", "down"),
 }
 
 # Meta indicator evaluated by build_env, not a function of the frame: {f: seri, ifade: "<expression>"}
@@ -660,6 +724,16 @@ def compute(
     func = REGISTRY[name]
     tf = params.pop("tf", None)
     lag = int(params.pop("kaydir", 0) or 0)
+    own_data = params.pop("veri", None)
+    if own_data is not None:
+        # indicator of another instrument's own bars (e.g. the market index ATR), then aligned to ``df``'s calendar
+        if not benchmarks or own_data not in benchmarks:
+            raise ValueError(f"veri '{own_data}' not provided")
+        if tf or alignment:
+            raise ValueError("veri cannot be combined with tf/hizalama")
+        other = func(benchmarks[own_data], **params)
+        result = other.reindex(df.index, method="ffill")
+        return result.shift(lag) if lag else result
     on_ha = bool(params.pop("ha", False))
     if on_ha:
         df = heikinashi(df).join(df["volume"]) if "volume" in df.columns else heikinashi(df)

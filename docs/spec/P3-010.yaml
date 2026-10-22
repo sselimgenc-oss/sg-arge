@@ -38,3 +38,4 @@ belirsiz:
   kapatılır / short''a geçilir'
 - 'short kuralı var: cross_under(close, dynamic_avwap) olduğunda short pozisyona dönülür'
 - "ozel_kod_nedeni: desen (pivot noktalarina cipalanan dinamik Anchored VWAP)"
+- "T20: motorda kalmadi. Zeiierman dinamik cipali VWAP: cipanin pivotta mi onayda mi basladigi ve swing_length=10'un pivot tanimi kaynaktan dogrulanamadi (kaynak okunamadi); tahmin yazilmadi"

@@ -63,3 +63,4 @@ belirsiz:
   stop 5 pip)'
 - "ozel_kod_nedeni: desen (113 bar geriden fraktal seviye HIL, saat penceresi 10:00-23:00, pip hedef/iz suren)"
 - "piyasa_kisiti: ['FX'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- "T20: motorda kalmadi. FX, pip cinsinden hedef/iz suren (stop tipi pips motorda yok) ve 10:00-23:00 seans penceresi (seans saati paketi); piyasa_kisiti FX"

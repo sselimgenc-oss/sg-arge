@@ -58,3 +58,4 @@ belirsiz:
 - 'short kuralı var: EMA(20) < EMA(50) düşüş trendinde direnç seviyelerinde Ayı Pin Barı, Engulfing veya Inside Bar aşağı kırılımında short açılır'
 - "ozel_kod_nedeni: desen (pin bar / engulfing / inside bar mum formasyonlari ve 'destek seviyesinde' kosulu (destek tanimi yok))"
 - "piyasa_kisiti: ['FX'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- "T20: motorda kalmadi. 'Destek seviyesinde' kosulunun tanimi kaynakta yok (SRLookback=20 yalniz parametre adi); pin bar/engulfing/inside bar tanimlari ise standart, ama destek tanimi olmadan sinyal eksik kalir"

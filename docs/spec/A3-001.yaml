@@ -72,4 +72,5 @@ belirsiz:
   ile hesaplanan volatilite kanal kırılım seviyesini izleme (ters sinyalde sıfırlanır), (4) ENTRY: üst kırılım seviyesi aşıldığında Long giriş, 2.5 * ATR stop-loss ve 12.0 * ATR take-profit (OCA)'
 - 'short kuralı var: Kodda short parametreleri (short_pullback_max_candles=3, short_entry_window_periods=2) tanımlanmış ancak varsayılan olarak devre dışı bırakılmıştır (SHORT strategy currently disabled)'
 - "ozel_kod_nedeni: durum_makinesi (4 fazli durum makinesi (SCANNING/ARMED/WINDOW_OPEN))"
+- "T20: motorda kalmadi. 4 fazli durum makinesi (SCANNING/ARMED/WINDOW_OPEN/ENTRY); EMA egim acisi, ATR bandi ve saat filtresi parametreleri kartta yok, kaynak kodu (sunrise_ogle_xauusd.py) okunmadi. Kaynak okunursa ayri is (genel 'sonra/ardisik' durum ilkeli gerekir)"
 kart_yazari: argon
