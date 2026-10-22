@@ -3,6 +3,9 @@ name: Asama 2b tam dogrulama (T6b)
 on:
   workflow_dispatch:
     inputs:
+      tf:
+        description: "Kart zaman dilimleri (virgulle): 1D,1W gunluk | 1H,30m,15m,5m gun ici"
+        default: "1D,1W"
       null_tekrar:
         description: "C01-C21 null model tekrar sayisi"
         default: "500"
@@ -12,6 +15,9 @@ on:
       codex_ids:
         description: "Codex satirlari (virgulle; bos = C01-C21)"
         default: ""
+      isci:
+        description: "Gun ici stres/plato isci sayisi (0 = CPU sayisi)"
+        default: "0"
 
 permissions:
   contents: write
@@ -28,21 +34,36 @@ jobs:
           cache: pip
       - name: Install pinned dependencies
         run: pip install -r requirements.txt
-      - name: Download daily bars
+      - name: Download bars for the requested timeframes
+        env:
+          ASAMA2B_TF: ${{ inputs.tf }}
         run: |
-          python data/fetch.py --interval 1d --allow-partial
-          python data/fetch.py --interval 1d --rotasyon --allow-partial  # T23: ETFs of the rotation (gecis) cards
-      - name: Download USDTRY
-        run: python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+          set -e
+          IFS=',' read -ra TFS <<< "$ASAMA2B_TF"
+          NEED_DAILY=0
+          for tf in "${TFS[@]}"; do
+            case "$tf" in
+              1D|1W) NEED_DAILY=1 ;;
+              1H) python data/fetch.py --interval 1h --append --allow-partial ;;
+              30m|15m|5m) python data/fetch.py --interval "$tf" --baslangic 2017-01-01 --allow-partial ;;
+            esac
+          done
+          if [ "$NEED_DAILY" = 1 ]; then
+            python data/fetch.py --interval 1d --allow-partial
+            python data/fetch.py --interval 1d --rotasyon --allow-partial  # T23: ETFs of the rotation (gecis) cards
+            python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+          fi
       - name: Run tests
         run: python -m pytest -q
       - name: Run stage 2b
         env:
+          ASAMA2B_TF: ${{ inputs.tf }}
           NULL_TEKRAR: ${{ inputs.null_tekrar }}
           BOOTSTRAP_TEKRAR: ${{ inputs.bootstrap_tekrar }}
           CODEX_IDS: ${{ inputs.codex_ids }}
+          ASAMA2B_ISCI: ${{ inputs.isci }}
         run: |
-          args=(--null-tekrar "$NULL_TEKRAR" --bootstrap-tekrar "$BOOTSTRAP_TEKRAR")
+          args=(--tf "$ASAMA2B_TF" --null-tekrar "$NULL_TEKRAR" --bootstrap-tekrar "$BOOTSTRAP_TEKRAR" --isci "$ASAMA2B_ISCI")
           if [ -n "$CODEX_IDS" ]; then args+=(--codex-ids "$CODEX_IDS"); fi
           python backtests/asama2b.py "${args[@]}"
       - name: Commit results

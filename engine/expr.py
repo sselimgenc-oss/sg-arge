@@ -10,7 +10,7 @@ Cards carry entry/exit rules as text. This module parses them with Python's
 * comparisons ``< <= > >= == !=`` (chains allowed)
 * ``and`` / ``or`` / ``not``
 * calls to whitelisted functions: ``cross_over``, ``cross_under``, ``mtf``,
-  ``ay_islem_gunu_bastan``, ``ay_islem_gunu_sondan``, ``haftanin_gunu``,
+  ``ay_islem_gunu_bastan``, ``ay_islem_gunu_sondan``, ``haftanin_gunu``, ``saat_utc``, ``dakika``,
   ``yeni_gun``, ``ay_gunu``, ``paskalya``, ``valuewhen``, ``highestsince``, ``lowestsince``,
   ``max``, ``min``, ``abs``, ``eger(kosul, a, b)`` (if/else), ``barssince(kosul)``
 
@@ -36,6 +36,8 @@ FUNCTIONS = frozenset(
         "ay_islem_gunu_bastan",
         "ay_islem_gunu_sondan",
         "haftanin_gunu",
+        "saat_utc",
+        "dakika",
         "yeni_gun",
         "ay_gunu",
         "paskalya",
@@ -257,6 +259,10 @@ class _Evaluator:
             if self.index is None:
                 raise ExprError("haftanin_gunu needs an index")
             return takvim.haftanin_gunu(self.index)
+        if name in ("saat_utc", "dakika"):
+            if self.index is None or args:
+                raise ExprError(f"{name}() takes no arguments and needs an index")
+            return getattr(takvim, name)(self.index)
         if name == "ay_gunu":
             if self.index is None or args:
                 raise ExprError("ay_gunu() takes no arguments and needs an index")

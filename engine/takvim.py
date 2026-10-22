@@ -50,6 +50,18 @@ def haftanin_gunu(index: pd.DatetimeIndex) -> pd.Series:
     return pd.Series(_dates(index).weekday.to_numpy(), index=index)
 
 
+def saat_utc(index: pd.DatetimeIndex) -> pd.Series:
+    """Opening hour of each bar in UTC (0-23). Naive indexes are treated as UTC."""
+    utc = index.tz_convert("UTC") if index.tz is not None else index
+    return pd.Series(utc.hour.to_numpy(), index=index)
+
+
+def dakika(index: pd.DatetimeIndex) -> pd.Series:
+    """Opening minute of each bar in UTC (0-59). Naive indexes are treated as UTC."""
+    utc = index.tz_convert("UTC") if index.tz is not None else index
+    return pd.Series(utc.minute.to_numpy(), index=index)
+
+
 def yeni_gun(index: pd.DatetimeIndex) -> pd.Series:
     """True on the first bar of each calendar date, including the very first bar of the data."""
     dates = pd.Series(_dates(index), index=index)

@@ -117,7 +117,7 @@ A6-014,Trend trading system with Market Meanness Index (Why 90% of Backtests Fai
 A6-015,Double Bottom Country ETF Trading,swing,1D,tam,true,4,https://quantpedia.com/technical-analysis-report-methodology-double-bottom-country-trading-strategy/
 A6-016,Building and Testing Trend-Following Strategies on One-Minute SPY Data,day,1m,eksik,true,3,https://quantpedia.com/building-and-testing-trend-following-strategies-on-one-minute-spy-data/
 A6-017,Can Weakening Morning Order Flow Predict SPY Reversals?,day,1m,eksik,true,3,https://quantpedia.com/can-weakening-morning-order-flow-predict-spy-reversals/
-A6-019,Overnight Seasonality in Bitcoin,day,1H,tam,true,2,https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin
+A6-019,Overnight Seasonality in Bitcoin,day,1H,tam,false,3,https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin
 A6-020,Market Sentiment and an Overnight Anomaly,day,1D,eksik,true,3,https://quantpedia.com/strategies/market-sentiment-and-an-overnight-anomaly
 A6-021,Pairs Trading with Country ETFs,swing,1D,sadece_short,true,2,https://quantpedia.com/strategies/pairs-trading-with-country-etfs
 A6-022,How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin,swing,1H,tam,false,2,https://quantpedia.com/how-to-design-a-simple-multi-timeframe-trend-strategy-on-bitcoin/

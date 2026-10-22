@@ -13,9 +13,11 @@ import argparse
 import copy
 import itertools
 import math
+import multiprocessing
 import re
 import sys
 import zlib
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 from statistics import NormalDist
@@ -43,8 +45,12 @@ IS_END = pd.Timestamp("2024-09-30", tz="UTC")
 OOS_START = pd.Timestamp("2024-10-01", tz="UTC")
 PRE_END = pd.Timestamp("2019-12-31", tz="UTC")
 PLATEAU_FACTORS = (0.6, 0.8, 1.0, 1.2, 1.4)
+INTRADAY_PLATEAU_FACTORS = (0.8, 1.0, 1.2)
+INTRADAY_TFS = ("1H", "30m", "15m", "5m")
 BOOTSTRAP_BLOCK = 20
 RISK_BUDGET = 0.15
+
+_CARD_WORK_STATE: dict[str, Any] = {}
 
 OUTPUT_COLUMNS = [
     "id", "piyasa", "kaynak", "para", "null_tekrar", "null_pf_p95", "null_ortr_p95",
@@ -133,7 +139,10 @@ def deflated_sharpe_ratio(returns: pd.Series | np.ndarray, trials: int) -> float
     return probabilistic_sharpe_ratio(values, sr_std * expected_max)
 
 
-def plateau_summary(cells: list[tuple[tuple[float, ...], float, float]]) -> dict[str, Any]:
+def plateau_summary(
+    cells: list[tuple[tuple[float, ...], float, float]],
+    factors: tuple[float, ...] = PLATEAU_FACTORS,
+) -> dict[str, Any]:
     """Summarise (factor tuple, PF, net return) cells without choosing parameters."""
     if not cells:
         raise ValueError("plateau requires at least one cell")
@@ -146,12 +155,28 @@ def plateau_summary(cells: list[tuple[tuple[float, ...], float, float]]) -> dict
         "cells": len(cells),
         "median_pf": float(np.nanmedian(pfs)),
         "positive_rate": float(np.mean(nets > 0)),
-        "best_on_edge": any(factor in (PLATEAU_FACTORS[0], PLATEAU_FACTORS[-1]) for factor in best_factors),
+        "best_on_edge": any(factor in (factors[0], factors[-1]) for factor in best_factors),
     }
 
 
-def _numeric_parameter_paths(card: dict[str, Any]) -> list[tuple[tuple[str, ...], float]]:
-    """At most two source parameters: ``parametreler``, else indicator n/multiplier."""
+def _plateau_factor_cells(parameter_count: int, intraday: bool) -> list[tuple[float, ...]]:
+    """Daily keeps its Cartesian grid; intraday varies every parameter ±20% one at a time."""
+    if parameter_count == 0:
+        return []
+    if not intraday:
+        return list(itertools.product(PLATEAU_FACTORS, repeat=parameter_count))
+    center = (1.0,) * parameter_count
+    cells = [center]
+    for position in range(parameter_count):
+        for factor in (0.8, 1.2):
+            cell = list(center)
+            cell[position] = factor
+            cells.append(tuple(cell))
+    return cells
+
+
+def _numeric_parameter_paths(card: dict[str, Any], limit: int | None = 2) -> list[tuple[tuple[str, ...], float]]:
+    """Source parameters (optionally limited): ``parametreler``, else indicator n/multiplier."""
     found: list[tuple[tuple[str, ...], float]] = []
     params = card.get("parametreler") or {}
     for key, value in params.items():
@@ -165,7 +190,7 @@ def _numeric_parameter_paths(card: dict[str, Any]) -> list[tuple[tuple[str, ...]
                 value = spec.get(key)
                 if isinstance(value, (int, float)) and not isinstance(value, bool) and value > 0:
                     found.append((("gostergeler", str(indicator), key), float(value)))
-    return found[:2]
+    return found if limit is None else found[:limit]
 
 
 def _mutate_card(card: dict[str, Any], parameters: list[tuple[tuple[str, ...], float]], factors: tuple[float, ...]) -> dict[str, Any]:
@@ -195,6 +220,9 @@ def _mutate_card(card: dict[str, Any], parameters: list[tuple[tuple[str, ...], f
                         for field in ("n", "carpan", "yuzde", "fast", "slow", "signal"):
                             if field in spec and isinstance(spec[field], (int, float)) and float(spec[field]) == center:
                                 spec[field] = replacement
+                if name in ("hold_hours", "hold_bars") and isinstance(changed.get("zaman_stop"), dict):
+                    if float(changed["zaman_stop"].get("bar", -1)) == center:
+                        changed["zaman_stop"]["bar"] = replacement
             pattern = re.compile(rf"(?<![\w.]){re.escape(format(center, 'g'))}(?![\w.])")
             for field in ("giris", "cikis"):
                 if isinstance(changed.get(field), str):
@@ -259,9 +287,15 @@ def prepare_codex(config: RowConfig, data: dict[str, pd.DataFrame], start: pd.Ti
     return CodexPrepared(config, frames, start, end, SimpleNamespace(signals=signals), annualization)
 
 
-def trial_count(card: dict[str, Any] | None, results_dir: Path) -> int:
+def trial_count(card: dict[str, Any] | None, results_dir: Path, *, intraday: bool = False) -> int:
     source = (card or {}).get("deneme_sayisi_kaynakta") or 1
-    scan_rows = len(pd.read_csv(results_dir / "tarama.csv")) if (results_dir / "tarama.csv").exists() else 0
+    if not (results_dir / "tarama.csv").exists():
+        scan_rows = 0
+    else:
+        scan = pd.read_csv(results_dir / "tarama.csv")
+        scan_rows = int(scan["tf"].astype(str).isin(INTRADAY_TFS).sum()) if intraday and "tf" in scan else len(scan)
+    if intraday:
+        return max(1, scan_rows)
     return max(1, int(source) + scan_rows + len(ROWS))
 
 
@@ -287,6 +321,8 @@ def decide(row: dict[str, Any]) -> tuple[str, str]:
         conditional.append("on donem negatif")
     if row.get("oos_islem", 0) < 30:
         conditional.append("OOS ornek<30")
+    if row.get("_intraday_no_pre", False):
+        conditional.append("on donem yok")
     if row.get("piyasa") == "BIST30" and row.get("evren") == "pit":
         conditional.append("survivorship: 2015-2019 PIT evren yok")  # T11: BIST30 lists only from 2020
     elif row.get("piyasa") in ("BIST30", "ABD25") and row.get("evren") not in ("pit", "enstruman"):  # named ETFs have no universe
@@ -304,8 +340,22 @@ def _metrics(result: BacktestResult, annualization: int) -> dict[str, Any]:
     return calculate_metrics(result, annualization=annualization)
 
 
-def _bootstrap_and_dsr(result: BacktestResult, annualization: int, n: int, repetitions: int, seed: int) -> dict[str, float]:
-    returns = result.equity.pct_change().dropna()
+def _validation_returns(result: BacktestResult, daily_equity: bool = False) -> pd.Series:
+    """Returns used by bootstrap/DSR; intraday equity is reduced to one close per UTC day."""
+    equity = result.equity.resample("1D").last().dropna() if daily_equity else result.equity
+    return equity.pct_change().dropna()
+
+
+def _bootstrap_and_dsr(
+    result: BacktestResult,
+    annualization: int,
+    n: int,
+    repetitions: int,
+    seed: int,
+    *,
+    daily_equity: bool = False,
+) -> dict[str, float]:
+    returns = _validation_returns(result, daily_equity)
     boot = block_bootstrap(returns, repetitions=repetitions, seed=seed, annualization=annualization)
     return {
         "bootstrap_mdd_p95": boot["mdd_p95"],
@@ -381,10 +431,32 @@ def evaluate_codex(
     return row
 
 
+def _card_stage2_worker(job: tuple[str, Any]) -> tuple[str, Any, dict[str, Any]]:
+    """Run one stress/plateau cell from fork-shared card data."""
+    kind, value = job
+    prepared: tarama.Prepared = _CARD_WORK_STATE["prepared"]
+    if kind == "stress":
+        multiplier, delay = value
+        result = prepared.run(multiplier, extra_delay_bars=delay)
+    else:
+        factors = value
+        variant = _mutate_card(_CARD_WORK_STATE["card"], _CARD_WORK_STATE["parameters"], factors)
+        result = tarama.prepare(
+            variant,
+            _CARD_WORK_STATE["data"],
+            _CARD_WORK_STATE["market"],
+            benchmark=_CARD_WORK_STATE["benchmark"],
+            start=IS_START,
+            end=IS_END,
+            pit_universe=_CARD_WORK_STATE["pit_universe"],
+        ).run()
+    return kind, value, _metrics(result, prepared.annualization)
+
+
 def evaluate_card(
     card: dict[str, Any], market: str, data: dict[str, pd.DataFrame], benchmark: pd.DataFrame | None,
     stage2a_row: pd.Series, *, results_dir: Path, bootstrap_reps: int, data_hash: str,
-    pit_universe: PITUniverse | None = None,
+    pit_universe: PITUniverse | None = None, workers: int = 1,
 ) -> dict[str, Any]:
     row = {column: np.nan for column in OUTPUT_COLUMNS}
     row.update(
@@ -394,6 +466,8 @@ def evaluate_card(
         p_ortr=stage2a_row.get("p_ortr"), null_gecti=True, data_hash=data_hash, git_sha=_git_sha(),
     )
     row["metrik"] = "PF+ortR"
+    tf = card["tf"]
+    intraday = tf in INTRADAY_TFS
     seed = BASE_SEED ^ zlib.crc32(f"{card['id']}|{market}".encode())
     prepared = tarama.prepare(card, data, market, benchmark=benchmark, start=IS_START, end=IS_END, pit_universe=pit_universe)
     if isinstance(prepared, rot.RotationPrepared):
@@ -401,25 +475,59 @@ def evaluate_card(
     real = prepared.run()
     final = max(frame.index.max() for frame in data.values())
     oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final, pit_universe=pit_universe).run()
-    pre_start = pd.Timestamp("2018-01-01" if market == "KRIPTO25" else "2015-01-01", tz="UTC")
-    pre = tarama.prepare(card, data, market, benchmark=benchmark, start=pre_start, end=PRE_END, pit_universe=pit_universe).run()
-    oos_m, pre_m = _metrics(oos, prepared.annualization), _metrics(pre, prepared.annualization)
+    pre = None
+    if intraday and market != "KRIPTO25":
+        row["_intraday_no_pre"] = True
+    else:
+        pre_start = pd.Timestamp(
+            "2017-01-01" if intraday and market == "KRIPTO25" else
+            "2018-01-01" if market == "KRIPTO25" else "2015-01-01",
+            tz="UTC",
+        )
+        try:
+            pre = tarama.prepare(
+                card, data, market, benchmark=benchmark, start=pre_start, end=PRE_END,
+                pit_universe=pit_universe,
+            ).run()
+        except ValueError as exc:
+            if intraday and market == "KRIPTO25" and "donemde veri yok" in str(exc):
+                row.update(karar="Dogrulanamaz", neden="on donem verisi yok (2017-2019)")
+                return row
+            raise
+    oos_m = _metrics(oos, prepared.annualization)
+    pre_m = _metrics(pre, prepared.annualization) if pre is not None else {"islem": 0, "ortalama_r": np.nan, "getiri": np.nan}
     row.update(
         oos_islem=oos_m["islem"], oos_ort_r=oos_m["ortalama_r"], oos_net=oos_m["getiri"],
         on_islem=pre_m["islem"], on_ort_r=pre_m["ortalama_r"], on_net=pre_m["getiri"],
-        stres_pf_2x=_metrics(prepared.run(2), prepared.annualization)["pf"],
-        stres_net_3x=_metrics(prepared.run(3), prepared.annualization)["getiri"],
-        stres_net_gecikme=_metrics(prepared.run(extra_delay_bars=1), prepared.annualization)["getiri"],
     )
-    parameters = _numeric_parameter_paths(card)
+
+    factors_grid = INTRADAY_PLATEAU_FACTORS if intraday else PLATEAU_FACTORS
+    parameters = _numeric_parameter_paths(card, limit=None if intraday else 2)
+    plateau_jobs = _plateau_factor_cells(len(parameters), intraday)
+    jobs: list[tuple[str, Any]] = [
+        ("stress", (2.0, 0)), ("stress", (3.0, 0)), ("stress", (1.0, 1)),
+        *(("plateau", factors) for factors in plateau_jobs),
+    ]
+    _CARD_WORK_STATE.update(
+        prepared=prepared, card=card, parameters=parameters, data=data, market=market,
+        benchmark=benchmark, pit_universe=pit_universe,
+    )
+    parallel_workers = workers if intraday else 1  # daily execution order/output is a locked regression
+    if parallel_workers > 1 and len(jobs) > 1:
+        with ProcessPoolExecutor(
+            max_workers=min(parallel_workers, len(jobs)), mp_context=multiprocessing.get_context("fork")
+        ) as pool:
+            completed = list(pool.map(_card_stage2_worker, jobs))
+    else:
+        completed = [_card_stage2_worker(job) for job in jobs]
+    stress = {value: metrics for kind, value, metrics in completed if kind == "stress"}
+    row.update(
+        stres_pf_2x=stress[(2.0, 0)]["pf"], stres_net_3x=stress[(3.0, 0)]["getiri"],
+        stres_net_gecikme=stress[(1.0, 1)]["getiri"],
+    )
     if parameters:
-        cells = []
-        for factors in itertools.product(PLATEAU_FACTORS, repeat=len(parameters)):
-            variant = _mutate_card(card, parameters, factors)
-            result = tarama.prepare(variant, data, market, benchmark=benchmark, start=IS_START, end=IS_END, pit_universe=pit_universe).run()
-            metrics = _metrics(result, prepared.annualization)
-            cells.append((factors, metrics["pf"], metrics["getiri"]))
-        plateau = plateau_summary(cells)
+        cells = [(value, metrics["pf"], metrics["getiri"]) for kind, value, metrics in completed if kind == "plateau"]
+        plateau = plateau_summary(cells, factors_grid)
         row.update(
             plato_parametreleri=",".join(".".join(path) for path, _ in parameters), plato_hucre=plateau["cells"],
             plato_pf_medyan=plateau["median_pf"], plato_pozitif_oran=plateau["positive_rate"],
@@ -427,7 +535,12 @@ def evaluate_card(
         )
     else:
         row.update(plato_parametreleri="parametre_yok", plato_hucre=1, plato_pf_medyan=_metrics(real, prepared.annualization)["pf"], plato_pozitif_oran=float(_metrics(real, prepared.annualization)["getiri"] > 0), plato_en_iyi_kenarda=False)
-    row.update(**_bootstrap_and_dsr(real, prepared.annualization, trial_count(card, results_dir), bootstrap_reps, seed))
+    daily_annualization = 365 if market == "KRIPTO25" else 252
+    row.update(**_bootstrap_and_dsr(
+        real, daily_annualization if intraday else prepared.annualization,
+        trial_count(card, results_dir, intraday=intraday), bootstrap_reps, seed,
+        daily_equity=intraday,
+    ))
     row["evren"] = "pit" if pit_universe is not None else "sabit"
     row["karar"], row["neden"] = decide(row)
     return row
@@ -473,14 +586,34 @@ def evaluate_rotation_card(
     return row
 
 
-def load_card_candidates(results_dir: Path, card_dir: Path, only: set[str] | None) -> list[tuple[dict[str, Any], str, pd.Series]]:
+def load_card_candidates(
+    results_dir: Path,
+    card_dir: Path,
+    only: set[str] | None,
+    timeframes: set[str] | None = None,
+) -> list[tuple[dict[str, Any], str, pd.Series]]:
     path = results_dir / "asama2a.csv"
     if not path.exists():
         return []
     table = pd.read_csv(path)
     table = table[table["karar"] == "Gecti (null)"]
     cards = {card["id"]: card for card in (yaml.safe_load(path.read_text(encoding="utf-8")) for path in card_dir.glob("*.yaml"))}
-    return [(cards[row.id], row.piyasa, pd.Series(row._asdict())) for row in table.itertuples() if row.id in cards and (not only or row.id in only)]
+    return [
+        (cards[row.id], row.piyasa, pd.Series(row._asdict()))
+        for row in table.itertuples()
+        if row.id in cards
+        and (not only or row.id in only)
+        and (timeframes is None or str(row.tf) in timeframes)
+        and cards[row.id].get("tf") == str(row.tf)
+    ]
+
+
+def merge_selected_results(existing: pd.DataFrame, fresh: pd.DataFrame, selected_ids: set[str]) -> pd.DataFrame:
+    """Replace selected card/Codex rows while leaving unselected daily/PIT results untouched."""
+    if existing.empty:
+        return fresh
+    kept = existing[~existing["id"].astype(str).isin(selected_ids)]
+    return pd.concat([kept, fresh], ignore_index=True).reindex(columns=OUTPUT_COLUMNS)
 
 
 def write_outputs(table: pd.DataFrame, results_dir: Path, card_input_missing: bool) -> None:
@@ -488,7 +621,7 @@ def write_outputs(table: pd.DataFrame, results_dir: Path, card_input_missing: bo
     table.reindex(columns=OUTPUT_COLUMNS).to_csv(results_dir / "asama2b.csv", index=False, float_format="%.6g")
     counts = table["karar"].value_counts().to_dict() if not table.empty else {}
     lines = [
-        "# Asama 2b tam dogrulama (T6b)", "",
+        "# Asama 2b tam dogrulama (T6b/T24)", "",
         "OOS, on donem, 2x/3x/+1 bar stres, kaynak merkezli parametre platosu, 20 gunluk block bootstrap ve DSR birlikte raporlanir.",
         "DSR paper trading icin bilgi; canliya geciste kotumser (5N) deger icin 0,95 kapisi uygulanir.", "",
         f"Satir: {len(table)} | " + " | ".join(f"{key}: {value}" for key, value in sorted(counts.items())), "",
@@ -510,6 +643,8 @@ def write_outputs(table: pd.DataFrame, results_dir: Path, card_input_missing: bo
               "Plato: `rotasyon:` blogu ve kullandigi gostergelerin her sayisal parametresi (pencere, esik, N) tek tek +-%20; hucre = PF>1 ve getiri>0. `evren: enstruman` = adli ETF'ler (survivorship notu yok).", "- BIST fiyatlari USDTRY ile ayni gun USD'ye cevrilir.",
               "- Plato merkezleri kaynak sinyal degerleridir; en iyi hucre secilmez ve stratejiye geri yazilmaz.",
               "- DSR N = kaynak denemesi (yoksa 1) + tarama.csv satirlari + 21 Codex satiri.",
+              "- Gun ici platoda her sayisal parametre merkez etrafinda tek tek -%20/+%20 denenir; stres ve plato `--isci` ile paraleldir.",
+              "- Gun ici bootstrap/DSR oncesinde ozkaynak UTC gun sonu degerlerine indirgenir; block uzunlugu 20 gundur. Gun ici DSR N tum gun ici kart-piyasa-tf tarama satirlarini kapsar.",
               "- DSR'da denemeler arasi SR varyansi bilinmedigi icin stratejinin kendi SR standart hatasi kullanildi (yaklasim).",
               "- BIST/ABD guncel evrenleri survivorship yanliligi nedeniyle en fazla `Kosullu` olabilir; `--evren pit` (T11) ile ABD tam, BIST 2020 sonrasi duzeltilir."]
     (results_dir / "asama2b_ozet.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -519,48 +654,72 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kartlar", type=Path, default=ROOT / "docs" / "spec")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
+    parser.add_argument("--veri-kok", type=Path, default=ROOT / "data", help="hourly/30m/15m/5m archive root")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
+    parser.add_argument("--tf", default="1D,1W", help="comma separated timeframes: 1D,1W,1H,30m,15m,5m")
     parser.add_argument("--null-tekrar", type=int, default=500)
     parser.add_argument("--null-tekrar-yuksek", type=int, default=1000)
     parser.add_argument("--bootstrap-tekrar", type=int, default=1000)
     parser.add_argument("--kart-ids", default="")
     parser.add_argument("--codex-ids", default=",".join(ROWS))
     parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
+    parser.add_argument("--isci", type=int, default=0, help="stress/plateau worker processes (0 = CPU count)")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     tarama.FIXED_DATA_DIR = args.data_dir
+    timeframes = {value.strip() for value in args.tf.split(",") if value.strip()}
+    supported = set(tarama.DAILY_TFS) | set(INTRADAY_TFS)
+    invalid = timeframes.difference(supported)
+    if invalid:
+        raise SystemExit(f"desteklenmeyen tf: {','.join(sorted(invalid))}")
     only_cards = {value.strip() for value in args.kart_ids.split(",") if value.strip()} or None
     codex_ids = [value.strip() for value in args.codex_ids.split(",") if value.strip()]
+    if not timeframes.intersection(tarama.DAILY_TFS):
+        codex_ids = []
     unknown = set(codex_ids).difference(ROWS)
     if unknown:
         raise SystemExit(f"bilinmeyen Codex satiri: {sorted(unknown)}")
     card_input_missing = not (args.results_dir / "asama2a.csv").exists()
-    cards = load_card_candidates(args.results_dir, args.kartlar, only_cards)
-    markets = sorted({ROWS[row_id].market for row_id in codex_ids} | {market for _, market, _ in cards})
+    cards = load_card_candidates(args.results_dir, args.kartlar, only_cards, timeframes)
+    keys = {("1D", ROWS[row_id].market) for row_id in codex_ids} | {
+        (card["tf"], market) for card, market, _ in cards
+    }
     data, hashes, benchmarks = {}, {}, {}
     pit_universe = load_pit_universe() if args.evren == "pit" else None
-    for market in markets:
-        data[market], hashes[market], _ = _load_market(market, args.data_dir, args.evren)
-    if "BIST30" in data:
+    for tf, market in sorted(keys):
+        directory = args.data_dir if tf in tarama.DAILY_TFS else args.veri_kok / tarama.TF_DIR[tf]
+        data[(tf, market)], hashes[(tf, market)], _ = _load_market(
+            market, directory, args.evren if tf in tarama.DAILY_TFS else "sabit"
+        )
+    if any(tf in tarama.DAILY_TFS and market == "BIST30" for tf, market in keys):
         fx_path = args.data_dir / "USDTRY_X.parquet"
         if not fx_path.exists():
             raise SystemExit(f"{fx_path} yok: BIST T6b USD fiyat gerektirir")
-        data["BIST30"] = asama2a.usd_frames(data["BIST30"], normalize_ohlcv(pd.read_parquet(fx_path)))
-    for market, symbol in tarama.BENCHMARK_SYMBOL.items():
-        if market in data:
-            benchmarks[market] = data[market].get(symbol)
-            if benchmarks[market] is None and (args.data_dir / f"{symbol}.parquet").exists():
-                benchmarks[market] = normalize_ohlcv(pd.read_parquet(args.data_dir / f"{symbol}.parquet"))
+        rate = normalize_ohlcv(pd.read_parquet(fx_path))
+        for tf, market in keys:
+            if tf in tarama.DAILY_TFS and market == "BIST30":
+                data[(tf, market)] = asama2a.usd_frames(data[(tf, market)], rate)
+    for tf, market in keys:
+        symbol = tarama.BENCHMARK_SYMBOL.get(market)
+        if symbol:
+            directory = args.data_dir if tf in tarama.DAILY_TFS else args.veri_kok / tarama.TF_DIR[tf]
+            benchmarks[(tf, market)] = data[(tf, market)].get(symbol)
+            if benchmarks[(tf, market)] is None and (directory / f"{symbol}.parquet").exists():
+                benchmarks[(tf, market)] = normalize_ohlcv(pd.read_parquet(directory / f"{symbol}.parquet"))
     rows: list[dict[str, Any]] = []
     tasks: list[tuple[str, Callable[[], dict[str, Any]]]] = []
     for row_id in codex_ids:
         config = ROWS[row_id]
-        tasks.append((row_id, lambda config=config: evaluate_codex(config, data[config.market], results_dir=args.results_dir, null_reps=args.null_tekrar, null_reps_high=args.null_tekrar_yuksek, bootstrap_reps=args.bootstrap_tekrar, data_hash=hashes[config.market], pit_universe=pit_universe)))
+        key = ("1D", config.market)
+        tasks.append((row_id, lambda config=config, key=key: evaluate_codex(config, data[key], results_dir=args.results_dir, null_reps=args.null_tekrar, null_reps_high=args.null_tekrar_yuksek, bootstrap_reps=args.bootstrap_tekrar, data_hash=hashes[key], pit_universe=pit_universe)))
+    workers = args.isci or multiprocessing.cpu_count()
     for card, market, stage2a_row in cards:
-        tasks.append((card["id"], lambda card=card, market=market, stage2a_row=stage2a_row: evaluate_card(card, market, data[market], benchmarks.get(market), stage2a_row, results_dir=args.results_dir, bootstrap_reps=args.bootstrap_tekrar, data_hash=hashes[market], pit_universe=pit_universe)))
+        key = (card["tf"], market)
+        card_pit = pit_universe if card["tf"] in tarama.DAILY_TFS else None
+        tasks.append((card["id"], lambda card=card, market=market, stage2a_row=stage2a_row, key=key, card_pit=card_pit: evaluate_card(card, market, data[key], benchmarks.get(key), stage2a_row, results_dir=args.results_dir, bootstrap_reps=args.bootstrap_tekrar, data_hash=hashes[key], pit_universe=card_pit, workers=workers)))
     for number, (name, task) in enumerate(tasks, 1):
         try:
             row = task()
@@ -570,6 +729,14 @@ def main() -> int:
         rows.append(row)
         print(f"[{number}/{len(tasks)}] {name}: {row['karar']}", flush=True)
     table = pd.DataFrame(rows).reindex(columns=OUTPUT_COLUMNS)
+    selected_ids = set(codex_ids)
+    for path in args.kartlar.glob("*.yaml"):
+        candidate = yaml.safe_load(path.read_text(encoding="utf-8"))
+        if candidate.get("tf") in timeframes and (only_cards is None or candidate["id"] in only_cards):  # --kart-ids keeps the other rows
+            selected_ids.add(candidate["id"])
+    output_path = args.results_dir / "asama2b.csv"
+    if output_path.exists():
+        table = merge_selected_results(pd.read_csv(output_path), table, selected_ids)
     write_outputs(table, args.results_dir, card_input_missing)
     print(f"{len(table)} satir: " + ", ".join(f"{key}={value}" for key, value in table["karar"].value_counts().items()))
     return 0

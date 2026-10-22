@@ -152,3 +152,9 @@ Sembolleri birbirine gore secen kartlar (`engine/rotasyon.py`, `engine/portfolio
 - **Asama 2b:** gunluk kartlarla ayni kapilar ve `decide()`. OOS/on donem kapisi ortR yerine donem CAGR isaretidir (`oos_ort_r`, `on_ort_r` CAGR tasir); on donem verisi yoksa (ETF 2015-2019'da yok) satir `on_veri_yok` ile **Kosullu: on donem Dogrulanamaz**. Plato: `rotasyon:` blogunun ve gostergelerinin her sayisal parametresi (pencere, esik, N, `n_oran`, literal sabitler) **tek tek +-%20** (tamsayilar yuvarlanir); `plato_pozitif_oran` = (PF>1 ve getiri>0) hucre orani. Bootstrap MDD95 <= %15 ve DSR ayni. `gecis` kartlarinda `evren: enstruman` (adli ETF listesi; survivorship notu yok).
 - **PIT:** `--evren pit` kesitsel/sirali kartlarda secimi (null dahil) PIT uyeligine baglar; uyelikten cikmis sembol secilmez.
 - **Portfoy:** rotasyon kitaplari islem basina `initial_risk` tasimadigi icin acik risk sutununa 0 katki verir; riskleri MDD ve bootstrap MDD95 ile olculur.
+
+### D14. UTC saat ve gun ici takvim ilkelleri (T24, Codex)
+- **`saat_utc()`** barin acilis zamaninin UTC saatini (0-23), **`dakika()`** UTC dakikasini (0-59) verir. Zaman dilimli indeksler once UTC'ye cevrilir; zaman dilimsiz indeksler UTC kabul edilir.
+- **`haftanin_gunu()`** mevcut anlamiyla 0=Pazartesi, ..., 6=Pazar degerini verir. Uc ilkel de yalniz bar etiketini okur, gelecek bar kullanmaz.
+- A1 degismez: saat kosulu kapanmis sinyal barinda degerlendirilir ve emir sonraki bar acilisinda dolar. Ornegin 22:00 UTC acilisinda dolum icin saatlik kart `saat_utc() == 21` sinyali uretir.
+- Bu ilkeller yalniz UTC'ye gore tanimli ve evrenimizde verisi bulunan kurallari acar (A6-019). DAX/ABD vadeli/doviz gibi piyasaya ve seansa ozgu kartlar `Dogrulanamaz (piyasa ozgu)` kalir.
