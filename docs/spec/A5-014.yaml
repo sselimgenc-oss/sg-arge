@@ -1,0 +1,55 @@
+id: A5-014
+ad: Seasonality, Trend-following, and Mean reversion in Bitcoin
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://paperswithbacktest.com/strategies/seasonality-trend-following-and-mean-reversion-in-bitcoin
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTCUSD)
+gostergeler:
+  hh10:
+    f: highest
+    src: close
+    n: 10
+  ll10:
+    f: lowest
+    src: close
+    n: 10
+giris: close >= hh10 or close <= ll10
+cikis: 'false'
+stop: null
+hedef: null
+zaman_stop:
+  bar: 1
+stop_eklendi: false
+parametreler:
+  lookback_days: 10
+  hold_days: 1
+deneme_sayisi_kaynakta: 11
+rapor:
+  pf: null
+  sharpe: 1.58
+  getiri: 33.0
+  mdd: 34.04
+  islem: null
+  wr: null
+  maliyet_dahil: false
+varyantlar:
+- ad: Yalniz MAX10 (10 Gunluk Zirvede Trend Takibi) Bacagi
+  giris: close >= hh10
+  cikis: 'false'
+  not: BTC son 10 gunun en yuksek kapanisina ulastiginda 1 gunlugune long acilir (20, 30, 40, 50 gunluk periyotlar da test edilmistir).
+- ad: Yalniz MIN10 (10 Gunluk Dipte Ortalamaya Donus) Bacagi
+  giris: close <= ll10
+  cikis: 'false'
+  not: BTC son 10 gunun en dusuk kapanisina ulastiginda 1 gunlugune long acilir.
+- ad: Gun Ici 2 Saatlik Mevsimsellik (22:00 - 00:00 UTC) Bacagi
+  not: 'A6-019 kartindaki strateji: Her gun 22:00 UTC''de long acilip 00:00 UTC''de kapatilir.'
+spec_durumu: tam
+belirsiz:
+- PapersWithBacktest URL'sine dogrudan erisim engellendi; ancak makalenin yazarlarina (Matúš Padyšák & Radovan Vojtko, Quantpedia) ait iki tam metin aynasindan (quantpedia.com/strategies/intraday-seasonality-in-bitcoin
+  ve quantpedia.com/revisiting-trend-following-and-mean-reversion-strategies-in-bitcoin/) makaledeki birlesik MIN10 + MAX10 stratejisinin ve 2 saatlik mevsimsellik stratejisinin tum kurallari eksiksiz okundu.

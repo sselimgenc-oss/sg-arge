@@ -1,0 +1,56 @@
+id: A5-016
+ad: 'Stock Market Predictability in the MENA: Evidence from New Variance Ratio Tests and Technical Trade Analysis'
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://paperswithbacktest.com/strategies/stock-market-predictability-in-the-mena-evidence-from-new-variance-ratio-tests-and-technical-trade-analysis
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Hisse Endeksleri (MENA Bolgesi)
+gostergeler:
+  sma_short:
+    f: sma
+    src: close
+    n: 1
+  sma_long:
+    f: sma
+    src: close
+    n: 50
+  hh_trb:
+    f: highest
+    src: close
+    n: 50
+    kaydir: 1
+  ll_trb:
+    f: lowest
+    src: close
+    n: 50
+    kaydir: 1
+ozel_kod: true
+giris: sma_short > sma_long
+cikis: sma_short <= sma_long
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  vma_short: 1
+  vma_long: 50
+  trb_days: 50
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'PapersWithBacktest sayfasina ve Trinity College Dublin PDF aynasina (IIIS Discussion Paper No. 92) dogrudan erisim engellendi (erisim_engeli: true).'
+- 'Arama motoru indeksinden kurtarilan bilgilere gore makalede MENA borsalarinda Variable Moving Average (VMA: kisa VMA > uzun VMA iken long) ve Trading Range Break (TRB: H gunluk zirve kirilimi) kurallari
+  test edilmektedir; ancak PWB''de secilen kesin (short, long, H, bant) parametre kombinasyonu dogrulanamadi.'

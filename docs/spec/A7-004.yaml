@@ -1,0 +1,43 @@
+id: A7-004
+ad: S&P500-VIX diverjans stratejisi (Scherman, BI makalesi)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.elitetrader.com/et/threads/strategy-with-75-win-ratio-and-3-to-1-profit-potential-count-me-as-a-skeptic.382581/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Endeks / ETF (S&P 500, ES, SPY, SPXL)
+gostergeler:
+  bb30:
+    f: bb
+    src: close
+    n: 30
+    mult: 2.0
+ozel_kod: true
+giris: close < close[1] and close >= bb30.alt
+cikis: close > bb30.orta or close < bb30.alt
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  bb_n: 30
+  bb_std: 2.0
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 3.16
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: 75.3
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Ivan Scherman''in Business Insider makalesinde anlatilan S&P 500 - VIX uyumsuzluk stratejisidir: 1) S&P 500 bir duzeltme (correction) yapip ilk dibini olusturdugunda VIX yukari sicrar. 2) S&P 500 ilk
+  dibin altinda ikinci bir daha dusuk dip (lower low) yaptiginda VIX onceki tepesini gecemezse (lower high - pozitif diverjans) kurumsal put/hedge talebinin azaldigi anlasilir. 3) S&P 500 fiyati 30 gunluk
+  hareketli ortalamanin 2 standart sapma altindaki alt Bollinger bandinin altina inmemis olmalidir (close >= bb30.alt). 4) Gun kapanisinda long girilir; fiyat 30 gunluk ortalamanin uzerine ciktiginda (close
+  > bb30.orta) karla, alt Bollinger bandinin altinda kapattiginda (close < bb30.alt) zararla cikilir.'
+- 'Ancak ''duzeltme'' (correction) ve iki dip/tepe arasindaki pencere/esik uzunlugu mekanik olarak tanimlanmadigi icin spec_durumu: eksik olarak isaretlendi.'

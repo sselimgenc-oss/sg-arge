@@ -9,8 +9,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Codex | T1b: kalan 9 aile (15 satır) | **Sırada; limit açılınca** | Limit açılınca "görev geldi" |
-| Sonnet | **T5b-1: günlük kartların hızlı taraması** (ilk geniş eleme) | Atandı | "Görev geldi" |
-| Argon | Parti 7 (40 kart) | Sırada | `argon/PAKET_T2_parti7.md`'yi yapıştır; cevabı `argon/T2_parti7.yaml` adıyla yükle |
+| Sonnet | Dinleniyor: limit %92. Yenilenince T10 (Argon parti 7-8-9 toplu standart) | Bekliyor | Limit yenilenince haber ver |
+| Argon | Parti 8 (40 kart) | Sırada | `argon/PAKET_T2_parti8.md`'yi yapıştır; cevabı `T2_parti8.yaml` adıyla yükle |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
 
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
@@ -26,5 +26,5 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 - T5a kabul edildi (PR #22). T7 kabul edildi (PR #26): `tam` kartlarda 0 sözdizimi hatası; taramaya hazır 26 tam + 7 dakikalık kart. T8 tamamlandı (PR #33, #35): hazır kart **49 tam + 11 dakikalık**; göstergeler TA-Lib ile 1e-7 içinde doğrulandı.
 
 ## İlerleme
-- Kart: 243 / ~316. Taramaya hazır: **51 tam** + 11 dakikalık. Doğrulanamaz (kaynak erişilemedi): 71
+- Kart: 285 (283 strateji + C01/C02 parite kartı). Doğrulanamaz (kaynak erişilemedi): 83. T5b-1 tarama motoru kabul edildi (PR #39); ilk tarama lider tarafından çalıştırılıyor.
 - Backtest: 6 / 21 Codex Algo satırı (T1a)

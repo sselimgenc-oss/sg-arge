@@ -1,0 +1,57 @@
+id: O2-023
+ad: Intraday Trading Strategy for Futures Contract NQ
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantconnect.com/forum/discussion/15192
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli (NQ Mini)
+gostergeler:
+  ema500:
+    f: ema
+    src: close
+    n: 500
+  ema_fast:
+    f: ema
+    src: close
+    n: 14
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+  roc14:
+    f: roc
+    src: close
+    n: 14
+ozel_kod: true
+giris: ema500 > ema500[1] and ema_fast > ema_fast[1] and rsi14 > rsi14[1] and roc14 > roc14[1]
+cikis: ema_fast < ema_fast[1] and rsi14 < rsi14[1]
+stop: null
+hedef:
+  tip: puan
+  deger: 5
+stop_eklendi: false
+parametreler:
+  ema_long: 500
+  target_points: 5
+deneme_sayisi_kaynakta: 6
+rapor:
+  pf: null
+  sharpe: 3.1
+  getiri: 123.0
+  mdd: null
+  islem: null
+  wr: 61
+  maliyet_dahil: true
+varyantlar:
+- ad: '1 Dakikalik RSI(30/70) + RSI SMA + Kisa EMA Varyanti (Yorum #3)'
+  not: 1m NQ grafikte RSI < 30 iken RSI'in SMA'si ve fiyat kisa EMA'si yukari donunce long girilir, RSI > 70 karsi bolgeye ulasinca cikilir (%61 win rate).
+spec_durumu: eksik
+belirsiz:
+- 'QuantConnect tartisma sayfasindaki (David E, Mayis 2023) aciklamadan okundu: 5m NQ Mini barlarinda EMA egimi, RSI egimi, Momentum egimi ve Ultimate Oscillator egimi (MACD histogram egimi elenmis) ile
+  500 EMA trend yonu kullanilir (500 EMA pozitifken long icin 1 bar sinyal, short icin ust uste 2 bar sinyal gerekir). Ancak gomulu backtest kodundaki kesin periyot sayilari metinde yazmadigi icin spec_durumu:
+  eksik olarak isaretlendi.'

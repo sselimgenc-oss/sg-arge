@@ -1,0 +1,53 @@
+id: O3-013
+ad: Turnaround Tuesday (SPY)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantifiedstrategies.com/turnaround-tuesday-strategy/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+ozel_kod: true
+giris: close <= close[1] * 0.99
+cikis: 'false'
+stop:
+  tip: yuzde
+  deger: 2
+hedef: null
+zaman_stop:
+  bar: 1
+stop_eklendi: false
+parametreler:
+  monday_drop_pct: 1.0
+  hold_days: 1
+  stop_loss_pct: 2.0
+deneme_sayisi_kaynakta: 4
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 1.8
+  mdd: null
+  islem: 212
+  wr: 56
+  maliyet_dahil: true
+varyantlar:
+- ad: 'Kurgu 2: Pazartesi Kirmizi Mum + IBS < 0.2'
+  giris: close < open and (close - low) / (high - low) < 0.2
+  cikis: 'false'
+  not: Pazartesi kapanista girilir, Sali kapanista cikilir (270 islem, CAGR %2.7, Win Rate %57, ort. islem %0.33).
+- ad: 'Kurgu 3: Pazartesi < Cuma Kapanis + IBS < 0.5 + 4 Gun Tutma'
+  giris: close < close[1] and (close - low) / (high - low) < 0.5
+  cikis: 'false'
+  not: Pazartesi kapanista girilir, 4 islem gunu sonra kapanista cikilir (495 islem, CAGR %6.5, Win Rate %60, ort. islem %0.45).
+- ad: 'Kurgu 4: Pazartesi < Cuma Kapanis + IBS < 0.5 + Close > High[1] veya 4 Gun Cikis'
+  giris: close < close[1] and (close - low) / (high - low) < 0.5
+  cikis: close > high[1]
+  not: Kapanis onceki gunun yuksegini gecince veya 4 islem gunu sonunda cikilir (495 islem, CAGR %7.0, Win Rate %69, ort. islem %0.46).
+spec_durumu: tam
+belirsiz:
+- 'Takvim filtresi (ozel_kod: true): Giris sinyali yalniz Pazartesi gunleri (dayofweek == 1) degerlendirilir. Ana kurguda Pazartesi kapanisi Cuma kapanisindan en az %1 dusukse (close <= close[1] * 0.99)
+  Pazartesi kapanisinda alinarak Sali kapanisinda (1 bar sonra) satilir.'

@@ -1,0 +1,47 @@
+id: O1-017
+ad: 'Sistem 2: RSI ortalama kesisimi (VIOP30 5 dk, long)'
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.bilgeyatirimci.com/i/sistem-tester-performans-testi-back-test-yaparken-nelere-dikkat-etmeliyiz/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: BIST Vadeli (VIP-X030 / VIOP30)
+gostergeler:
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+  ma_rsi15:
+    f: sma
+    src: rsi14
+    n: 15
+  ma_rsi98:
+    f: sma
+    src: rsi14
+    n: 98
+giris: cross_over(ma_rsi15, ma_rsi98)
+cikis: cross_under(ma_rsi15, ma_rsi98)
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  rsi14.n: 14
+  ma_rsi15.n: 15
+  ma_rsi98.n: 98
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.07
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 311
+  wr: 37
+  maliyet_dahil: true
+spec_durumu: dakikalik
+belirsiz:
+- Egemen Ozturk (Bilge Yatirimci, 18 Temmuz 2019) tarafindan iDeal platformunda VIP-X030 5 dk periyotta optimize edilmis ornek long-only sistemdir.
+- Komisyon ve kaymalar oncesi 27175 puan (PF 1.30), komisyon ve kaymalar sonrasi 7635 puan net getiri (PF 1.07, 311 islem, %37 karli islem, 13 ardisik zararda -7025 puan) raporlanmistir.

@@ -1,0 +1,46 @@
+id: A6-023
+ad: 'Attention Prop Traders: first half hour predicts last half hour'
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://alphaarchitect.com/attention-prop-traders-the-first-half-hour-of-trading-predicts-the-last-half-hour/
+  sayfa: null
+tarz: day
+tf: 30m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+ozel_kod: true
+giris: close[11] > open[11]
+cikis: 'false'
+stop: null
+hedef: null
+zaman_stop:
+  bar: 1
+stop_eklendi: false
+parametreler:
+  first_half_hour_bar: 1
+  twelfth_half_hour_bar: 12
+  trade_half_hour_bar: 13
+deneme_sayisi_kaynakta: 3
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 6.34
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: false
+varyantlar:
+- ad: 'Strateji 2: 12. Yarim Saat (15:00-15:30) Sinyali'
+  giris: close[1] > open[1]
+  not: 12. yarim saat (15:00-15:30 ET) getirisi pozitifse (r_12 > 0) 15:30'da long girilir, 16:00'da cikilir.
+- ad: 'Strateji 3: 1. ve 12. Yarim Saat Ortak Sinyali (r_1 > 0 ve r_12 > 0)'
+  giris: close[11] > open[11] and close[1] > open[1]
+  not: Hem ilk yarim saat (09:30-10:00) hem de 12. yarim saat (15:00-15:30) pozitifse 15:30'da long girilir, 16:00'da cikilir.
+spec_durumu: dakikalik
+belirsiz:
+- 'Gao, Han, Li & Zhou (2014) ''Intraday Momentum: The First Half-Hour Return Predicts the Last Half-Hour Return'' makalesinin Jack Vogel (Alpha Architect) ozetidir (SPY 1999-2012).'
+- 'Saat bazli kural (ozel_kod: true): ABD seansinda 13 adet 30 dakikalik bar vardir. 1. yarim saat (09:30-10:00 ET, r_1) getirisi pozitifse saat 15:30 ET''de (son yarim saatin basinda) SPY long acilir ve
+  16:00 ET kapanisinda kapatilir. Makalede r_1 < 0 oldugunda son yarim saatte short acma kurali da yer alir.'

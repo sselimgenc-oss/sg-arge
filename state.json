@@ -33,7 +33,7 @@
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
       "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart)",
-      "status": "parti 2,4,6 + yeniden 1,2 kabul; sirada parti 7",
+      "status": "parti 2,4,6,7 + yeniden 1,2 kabul; sirada parti 8",
       "spec": "argon/PAKET_*.md"
     },
     {
@@ -54,7 +54,7 @@
       "id": "T5",
       "owner": "claude-moderator",
       "title": "YAML yorumlayici + asama 1 hizli tarama (VectorBT)",
-      "status": "T5a done; T5b-1 kod+PR hazir (sentetik veride dogrulandi); gercek tarama icin Actions 'Tarama asama 1' elle tetiklenecek",
+      "status": "T5b-1 done (PR #39); ilk tarama kosuluyor",
       "spec": "docs/GOREV_T5.md"
     },
     {
@@ -89,7 +89,7 @@
       "id": "T10",
       "owner": "claude-moderator",
       "title": "Argon kartlarini standarda getirme (her Argon partisinden sonra): T7 sozdizimi + T8 ozel_kod triyaji + piyasa_kisiti",
-      "status": "parti 6 done (PR #37); her Argon partisinden sonra tekrar",
+      "status": "parti 7-9 toplu: Sonnet limiti yenilenince",
       "spec": "Issue #1 GOREV -> Sonnet T10"
     }
   ],
@@ -183,6 +183,18 @@
       "owner": "claude-moderator",
       "title": "Argon parti 6 standart; hazir 51+11",
       "ref": "PR #37"
+    },
+    {
+      "id": "T5b-1",
+      "owner": "claude-moderator",
+      "title": "gunluk tarama motoru; lider dogrulamasi: T1a sonuclari birebir",
+      "ref": "PR #39"
+    },
+    {
+      "id": "T2-p7",
+      "owner": "argon",
+      "title": "40 kart (12 okunamadi)",
+      "ref": "argon/T2_parti7.yaml"
     }
   ],
   "user_decisions_pending": [],

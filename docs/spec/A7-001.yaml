@@ -1,0 +1,56 @@
+id: A7-001
+ad: NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.elitetrader.com/et/threads/i-backtested-37-famous-strategies-with-fees-on-most-lose-mechanically-after-costs-data-one-that-didnt.390197/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: 1H
+tf_varsayim: false
+yazar_piyasasi: Vadeli (NQ - Nasdaq 100 Futures)
+gostergeler:
+  ema20:
+    f: ema
+    src: close
+    n: 20
+  ema50_1h:
+    f: ema
+    src: close
+    n: 50
+    tf: 1H
+  atr14:
+    f: atr
+    n: 14
+ozel_kod: true
+giris: close > mtf("1H", ema50_1h) and low <= ema20 and close > ema20
+cikis: 'false'
+stop:
+  tip: atr
+  n: 14
+  carpan: 1.5
+hedef:
+  tip: rr
+  deger: 0.75
+stop_eklendi: false
+parametreler:
+  ema_fast_5m: 20
+  ema_trend_1h: 50
+  stop_atr_mult: 1.5
+  target_rr: 0.75
+deneme_sayisi_kaynakta: 106
+rapor:
+  pf: 1.25
+  sharpe: null
+  getiri: 17.5
+  mdd: null
+  islem: null
+  wr: 62.9
+  maliyet_dahil: true
+spec_durumu: dakikalik
+belirsiz:
+- EliteTrader kullanicisi realvasline tarafindan 37 unlu strateji (106 backtest) icinde komisyon sonrasi ayakta kalan tek strateji olarak paylasilmistir (~80 gunluk test, komisyon dahil ancak kayma/slippage
+  haric).
+- 'Kurallar (ozel_kod: true): 1) Yalniz NY seansinda islem yapilir. 2) 1H trend filtresi: fiyat 1 saatlik 50 EMA''nin uzerinde olmali (close > mtf("1H", ema50_1h); short icin altinda). 3) 5m grafikte fiyatin
+  20 EMA''ya geri cekilmesinde (pullback) trend yonunde girilir. 4) Stop-loss 1.5 * ATR (periyot belirtilmemis, 14 varsayildi), kar hedefi 0.75R (yani 1.125 * ATR).'

@@ -1,0 +1,56 @@
+id: A5-020
+ad: Finding Consistent Trends with Strong Momentum - RSI for Trend-Following and Momentum Strategies
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://paperswithbacktest.com/strategies/finding-consistent-trends-with-strong-momentum-rsi-for-trend-following-and-momentum-strategies
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse ve ETF (S&P 500, SPY)
+gostergeler:
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+  min_rsi100:
+    f: lowest
+    src: rsi14
+    n: 100
+  max_rsi100:
+    f: highest
+    src: rsi14
+    n: 100
+giris: min_rsi100 >= 40 and max_rsi100 > 70
+cikis: min_rsi100 < 40 and max_rsi100 <= 70
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  rsi14.n: 14
+  lookback_n: 100
+  bull_range_low: 40
+  bull_momentum_high: 70
+deneme_sayisi_kaynakta: 25
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 5.93
+  mdd: 12.9
+  islem: 12
+  wr: 83.0
+  maliyet_dahil: false
+varyantlar:
+- ad: Arthur Hill Tekil RSI Bull Range Cikis Varyanti (N in {25, 50, 75, 100, 125})
+  giris: min_rsi100 >= 40 and max_rsi100 > 70
+  cikis: cross_under(rsi14, 40)
+  not: CXO Advisory aynasinda S&P 500 hisseleri (1998-2018) uzerinde N=25, 50, 75, 100, 125 gunluk pencerelerde test edilmis; Bull Range-Momentum sinyallerinde %45-%58 basari orani ve 1.84-2.40 kar/zarar
+    orani raporlanmistir.
+spec_durumu: tam
+belirsiz:
+- PapersWithBacktest URL'sine dogrudan erisim engellendi; ancak Arthur Hill'in (Aralik 2018) makalesinin tam kurallari CXO Advisory (cxoadvisory.com/technical-trading/combining-rsi-range-and-rsi-momentum-for-stocks/)
+  ve QuantifiedStrategies (quantifiedstrategies.com/rsi-range-momentum-trading-strategy/) aynalarindan eksiksiz okundu.
+- 'Kurallar: 14 gunluk RSI uzerinde son N=100 gunde (75-125 gun optimal) RSI hic 40''in altina dusmemisse (RSI Bull Range: min_rsi100 >= 40) ve ayni N gunde en yuksek RSI 70''i asmissa (RSI Bull Momentum:
+  max_rsi100 > 70) long girilir; her iki kosul da bozuldugunda (veya RSI 40 altina indiginde) cikilir.'

@@ -1,0 +1,49 @@
+id: O3-032
+ad: RSI50 stratejisi - EURUSD gunluk
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingheroes.com/rsi-trading-strategy-results/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+ozel_kod: true
+giris: cross_over(rsi14, 50)
+cikis: 'false'
+stop: null
+hedef:
+  tip: rr
+  deger: 1.0
+stop_eklendi: false
+parametreler:
+  rsi14.n: 14
+  rsi_mid: 50
+  risk_pct: 1.0
+  target_rr: 1.0
+deneme_sayisi_kaynakta: 3
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 26.05
+  mdd: null
+  islem: 55
+  wr: 71.0
+  maliyet_dahil: belirtilmemis
+varyantlar:
+- ad: RSICross (Vanilla RSI 70/30 Kanal Icine Donus) Stratejisi
+  giris: cross_over(rsi14, 30)
+  cikis: 'false'
+  not: 'Ayni yazida test edilen 1. strateji: RSI(14) 30 altindan tekrar 30 uzerine kapattiginda long girilir, stop son swing dibi, hedef 1R (EURUSD 1D, 102 islem, %44 win rate, -%11.38 getiri).'
+spec_durumu: ihtiyari
+belirsiz:
+- 'Hugh Kimura tarafindan EURUSD 1D grafikte (6032 gun) Forex Tester ile manuel test edilen RSI50 v1 stratejisidir: 1) Fiyatta goz karari ''guclu bir trend'' aranir (''This strategy is a bit more subjective
+  because it can be tough to know when price is trending''). 2) RSI(14) bir sure 50''nin altinda kaldiktan sonra 50 seviyesinin uzerinde kapattiginda long girilir. 3) Stop-loss son kucuk fiyat saliniminin
+  (minor price swing) altina konur, kar hedefi 1R''dir. Trend ve minor swing tanimlari subjektif oldugu icin spec_durumu: ihtiyari.'

@@ -1,0 +1,37 @@
+id: A5-012
+ad: Self-Imposed Limits to Arbitrage
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://paperswithbacktest.com/strategies/self-imposed-limits-to-arbitrage
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Hisse (Cift Pay Sinifli Hisseler - HSBC, Royal Dutch/Shell, 3Com/Palm)
+gostergeler: {}
+ozel_kod: true
+giris: close < close[1]
+cikis: close >= close[1]
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  max_position_volume_days: 100
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: 1.97
+  getiri: 7.4
+  mdd: 5.0
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'PapersWithBacktest strateji sayfasina dogrudan erisim engellendi (erisim_engeli: true); PWB katalog metrikleri (Sharpe 1.97, Yillik Getiri %7.4, MDD %5.0, Gunluk) ve Philip Z. Maymin''in (2011, Journal
+  of Applied Finance 21:2, 88-105) makale ozeti philipmaymin.com aynasindan okundu.'
+- Makale ayni sirketin iki farkli pay sinifi (orn. HSBC, Royal Dutch-Shell) arasindaki goreceli hacim ile goreceli fiyat arasindaki negatif iliskiyi ve 100 gunluk islem hacmi pozisyon sinirini inceler;
+  ancak PWB'deki somut giris/cikis formulu sayfa engeli nedeniyle okunamadi.
