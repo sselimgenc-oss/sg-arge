@@ -280,3 +280,60 @@ P3-030,8,argon,2,AIB STOCKS and FUT,Belirsiz (Day/Swing),Collective2,https://col
 P3-031,8,argon,2,AEA Algo MES,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
 P3-032,8,argon,2,SQT Stocks Long Portfolio 2x,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
 P3-033,9,argon,2,Index Futures Trading,Belirsiz (Day/Swing),Collective2,https://collective2.eu/grid
+M001,10,argon,0,"SPX/SPY 0DTE; ilk 60 dakikanın üst kırılımında short put spread, alt kırılımında short cal",,md_liste,https://optionalpha.com/blog/opening-range-breakout-0dte-options-trading-strategy-explained
+M002,10,argon,0,"SPY; 1 dakikalık veriden 1 puanlık Kase bar; $200 hedef/stop, 100 hisse",,md_liste,https://cdn.tradestation.com/uploads/Key-Reversal-Patterns-Using-Kase-Bars.pdf
+M003,10,argon,0,ES; 5 dk; HalfTrend ve deviation-band yön/sinyal mantığı; tam thinkScript paylaşılmış,,md_liste,https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/
+M004,10,argon,0,"SPY; 1 dk veri, yarım saatte karar, EOD flat; 14 günlük saat-eşlemeli hareket bandı ve VWA",,md_liste,https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf
+M005,10,argon,0,"ES/NQ; Noise Area ailesi; 90 günlük bakış, %3 vol hedefi, azami 8x kaldıraç, kapanışta fla",,md_liste,https://www.quantitativo.com/p/intraday-momentum-for-es-and-nq
+M006,10,argon,0,Swing,,md_liste,https://www.wisestocktrader.com/indicators/371-rsi-double-bottom-for-amibroker-afl
+M007,10,argon,0,Swing,,md_liste,https://www.forexfactory.com/thread/post/8694795
+M008,10,argon,0,Swing,,md_liste,https://alvarezquanttrading.com/blog/rsi2-strategy-double-returns-with-a-simple-rule-change/
+M009,10,argon,0,Swing,,md_liste,https://optionalpha.com/blog/spy-put-credit-spread-backtest
+M010,10,argon,0,Swing,,md_liste,https://cdn.tradestation.com/uploads/RSI-Volatility-Spread.pdf
+M011,10,argon,0,Swing,,md_liste,https://tradingstrategy.ai/docs/programming/old-strategies/double-7.html
+M012,10,argon,0,Swing,,md_liste,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+M013,10,argon,0,830795-simple-h4-mobile-trading-system,,md_liste,https://www.forexfactory.com/thread/830795-simple-h4-mobile-trading-system
+M014,10,argon,0,larry-connors-2-day-rsi-holy-grail-adapting-a-strategy-to-deliver-30-annual-return-since-1999.379926,,md_liste,https://www.elitetrader.com/et/threads/larry-connors-2-day-rsi-holy-grail-adapting-a-strategy-to-deliver-30-annual-return-since-1999.379926/
+M015,10,argon,0,larry-connors-cumulative-rsi-26-annual-return-now-with-sensitivity-analysis.379982,,md_liste,https://www.elitetrader.com/et/threads/larry-connors-cumulative-rsi-26-annual-return-now-with-sensitivity-analysis.379982/
+M016,10,argon,0,8011,,md_liste,https://www.wealth-lab.com/Discussion/8011
+M017,10,argon,0,rsi-2-portfolio-dszxqiwmqcc8lxiliusf,,md_liste,https://www.composer.trade/trading-strategies/rsi-2-portfolio-DszXqIWmqcC8lxiliUsf
+M018,10,argon,0,lhkoduos,,md_liste,https://www.tradingview.com/script/LHKOdUOs/
+M019,10,argon,0,3565-fullstochastic-with-filters-buy-sell-for-amibroker-afl,,md_liste,https://www.wisestocktrader.com/indicators/3565-fullstochastic-with-filters-buy-sell-for-amibroker-afl
+M020,10,argon,0,30-minute-stock-trader,,md_liste,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
+M021,10,argon,0,En büyük 10 ABD hissesi; birkaç dakikalık barlar,,md_liste,https://www.quantconnect.com/research/17900/intraday-application-of-hidden-markov-models/
+M022,10,argon,0,DAX; 5 dk; 09:00-17:30,,md_liste,https://www.prorealcode.com/prorealtime-trading-strategies/quadrant-strategy/
+M023,10,argon,0,DAX; 5 dk; azami 145 dk tutuş,,md_liste,https://www.prorealcode.com/wp-content/uploads/2017/04/Quadrant-2.0-DAX-5-min.itf
+M024,10,argon,0,EURUSD; M1; day trade,,md_liste,https://www.mql5.com/en/code/8688
+M025,10,argon,0,EURUSD; M5,,md_liste,https://www.mql5.com/en/code/8970
+M026,10,argon,0,GBPUSD; H1 (M30-H2 öneriliyor),,md_liste,https://www.mql5.com/en/code/126
+M027,10,argon,0,DAX; 15 dk Renko; day trade,,md_liste,https://www.prorealcode.com/prorealtime-trading-strategies/renko-automated-trading-system/
+M028,10,argon,0,BTC/kripto; 5 dk,,md_liste,https://www.tradingview.com/script/Qh7OYDvf/
+M029,10,argon,0,HYPEUSDT perpetual; 15 dk,,md_liste,https://www.tradingview.com/script/8N8DT3Pv-Geometric-Grid-Machine-3Commas/
+M030,11,argon,0,BNB; kısa zamanlı grid,,md_liste,https://www.tradingview.com/script/9pHwOZsM-BNB-Grid-Bot-Long-Strategy/
+M031,11,argon,0,ADAUSDT spot; 3 dk,,md_liste,https://www.tradingview.com/script/XbtQXDMb-3Commas-Pullback-Sniper-Strategy/
+M032,11,argon,0,XAUTUSDT tokenleştirilmiş altın spot; 15 dk; grid/swing,,md_liste,https://www.tradingview.com/script/bjoh9PTd-XAU-Grid-Bot-Long-Strategy/
+M033,11,argon,0,BTC; çoklu zaman; gün içi/swing geçişi,,md_liste,https://www.tradingview.com/script/QMvHkvdQ-SMC-Pro-BTC-ICT-Order-Blocks-FVG-DOE/
+M034,11,argon,0,ES/NQ futures; M15 RTH; EOD flat,,md_liste,https://www.reddit.com/r/algotrading/comments/1sm6y5g/backtested_intraday_mean_reversion/
+M035,11,argon,0,MT5; H1; gün içi/kısa swing,,md_liste,https://github.com/SokeWang/Breakout-Trading-Strategy/blob/main/strategies/breakout/reports/experiments_summary_2025.md
+M036,11,argon,0,QQQ; günlük swing,,md_liste,https://www.reddit.com/r/algotrading/comments/1cwsco8/a_mean_reversion_strategy_with_211_sharpe/
+M037,11,argon,0,SPY; günlük,,md_liste,https://quantifiedstrategies.substack.com/p/what-is-the-best-rsi-oversold-level
+M038,11,argon,0,SPY; günlük; birkaç gün,,md_liste,https://quantifiedstrategies.substack.com/p/best-time-frame-for-candlestick-patterns
+M039,11,argon,0,QQQ; günlük,,md_liste,https://quantifiedstrategies.substack.com/p/we-combined-rsi-ema-and-vwap-on-qqq
+M040,11,argon,0,SPY; günlük,,md_liste,https://quantifiedstrategies.substack.com/p/a-simple-stochastic-pullback-strategy
+M041,11,argon,0,QQQ; günlük,,md_liste,https://quantifiedstrategies.substack.com/p/new-low-trading-strategy
+M042,11,argon,0,SSO; günlük; birkaç gün,,md_liste,https://quantifiedstrategies.substack.com/p/2-price-action-trading-strategies
+M043,11,argon,0,Altı enstrüman; 10 günlük swing,,md_liste,https://github.com/erhungn/volatility-regime-momentum
+M044,11,argon,0,43 kripto çifti; H4; swing,,md_liste,https://github.com/juriok/chart-pattern-backtester
+M045,11,argon,0,BTCUSD; H1 grafikte H4 Heikin Ashi,,md_liste,https://www.tradingview.com/script/f4SEwIH3-Optimized-Heikin-Ashi-Strategy-with-Buy-Sell-Options/
+M046,11,argon,0,BTCUSDT; H4,,md_liste,https://www.tradingview.com/script/O6E7WhRC-ELLIPSE-Bidirectional-Swing-Trading-Strategy-Strategy-Version/
+M047,11,argon,0,Altın; H1,,md_liste,https://www.tradingview.com/script/8b1AgVrV-Gold-Swing-More-Trades-50-SL-100-TP/
+M048,11,argon,0,ETHUSDT spot; H4,,md_liste,https://www.tradingview.com/script/9qFCuXqF-3Commas-Turtle-Strategy/
+M049,11,argon,0,BTCUSDT perpetual; H4,,md_liste,https://www.tradingview.com/script/eZsaqsZY-BTC-RSI-Strategy-3Commas/
+M050,11,argon,0,En büyük 100 ABD hissesi; haftalık,,md_liste,https://quantpedia.com/strategies/short-term-reversal-in-stocks
+M051,11,argon,0,"BTCUSDT 1 saat; **+%45,36, WR %100, Sharpe 2,63, DD %1,63**",,md_liste,https://jesse.trade/strategies/meanreversionrsi
+M052,11,argon,0,"2009: net $920,75; PF 1,14; WR %60,16; 251 işlem; DD %17,25; başlık 53 sayfa/380 abonelik",,md_liste,https://www.forexfactory.com/thread/post/3629700
+M053,11,argon,0,Sistem paketi **7.036 indirme**,,md_liste,https://forex-station.com/attach/file/3477006
+M054,11,argon,0,"2021 PF 2,2; sekiz yıllık PF 1,59; başlık 4.449 görüntülenme",,md_liste,https://nexusfi.com/showthread.php?p=858460&t=58030
+M055,11,argon,0,"%0,5 slippage ile yıllık %95 / DD %49 / WR %50; Rank>99 sürümünde yıllık %107 / DD %27 / W",,md_liste,https://community.portfolio123.com/t/testimonial/17867
+M056,11,argon,0,"RSI: +%25,12/Sharpe1,34/WR%67,8/DD%8,45; MACD: +%23,89/Sharpe1,56/WR%71,1/DD%6,23; EMA: +%",,md_liste,https://github.com/ErikKerkvliet/FreqtradeHyperOpt
+M057,11,argon,0,"2.600+ NSE hissesi, 2 yıllık swing; bildirilen PF **1,20**",,md_liste,https://github.com/AaryavGangrade/nse-pattern-scanner
