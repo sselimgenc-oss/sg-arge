@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-22 19:15 UTC, lider (Opus)
+Son güncelleme: 2026-10-22 20:30 UTC, lider (Opus)
 
 ## Özet (kullanıcı için)
 - **İlk Geçti:** tarihsel evrenle (PIT) C07 ve R01 tüm paper kapılarını geçti.
@@ -24,6 +24,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Lider | Gün içi kripto taraması (1H/30m/15m/5m, veri tam) | Koşuyor | Yok |
 
 ## Tamamlananlar (son)
+- T23 (Sonnet, PR #84): rotasyon kartları Aşama 2a (PF+CAGR null) / 2b / portföye bağlandı. T17 ile çakışmayı lider çözdü; günlük 2a/2b ve işlem paritesi birebir.
+- **Lider düzeltmesi:** T17 sonrası `asama2b` Codex satırları (C01-C21) `trusted_inputs` hatasıyla çöküyordu; `CodexPrepared.run` hızlı null yoluna uyarlandı, regresyon testi eklendi. C04/C07 sonuçları eskisiyle birebir.
 - T17 (Codex, PR #82): gün içi Aşama 2a null testi (`--tf`, `--isci`). Günlük null sonuçları ve işlem paritesi birebir.
 - T22 (Sonnet, PR #80): `engine/rotasyon.py` + D12; 13 kart taşındı, Composer paritesi korelasyon 1,0000. Pytest 247, motor paritesi birebir. A6-021 short fazına.
 - T21 (Sonnet, PR #78): 7 kart taşındı (A3-002a/f/h/i, A3-010b, O1-039, P3-008); 13 kart Argon T19'a. Parite birebir.
