@@ -32,8 +32,8 @@
     {
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
-      "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart)",
-      "status": "tamamlandi (parti 9 lider tarafindan kapsam_disi)",
+      "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart) + parti 10-11 (md listeleri, 57 kaynak)",
+      "status": "parti 10 sirada (md listelerindeki 57 kaynak gozden kacmisti)",
       "spec": "argon/PAKET_*.md"
     },
     {

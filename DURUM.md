@@ -20,7 +20,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 |---|---|---|---|
 | Codex | T1b: kalan 9 aile (15 satır) | **Sırada; limit açılınca** | Limit açılınca "görev geldi" |
 | Sonnet | **T6a: piyasa betası testleri** (BIST USD + rastgele giriş) + `kismi_kar` desteği | Atandı | "Görev geldi" |
-| Argon | **Kart işi bitti** (parti 9 tek kayıt: Collective2 liste sayfası, lider kapsam dışı yaptı) | Boşta | Yok |
+| Argon | **Parti 10** (29 kaynak, Markdown listelerinden; gözden kaçmıştı) | Sırada | `argon/PAKET_T2_parti10.md`'yi yapıştır; cevabı `T2_parti10.yaml` adıyla yükle. Sonra parti 11 (28) |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
 
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
