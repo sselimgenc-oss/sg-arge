@@ -19,11 +19,12 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Sonnet | **T27: paper trade altyapısı** (sinyal, sanal defter, parite, rapor; `docs/GOREV_T27.md`) | Atandı | "Görev geldi" |
-| Codex | **T28: PR kontrol iş akışı (CI: pytest + main/PR gerçek veri paritesi)** (`docs/GOREV_T28.md`), model **Terra**, küçük iş | Atandı | "Görev geldi" |
+| Codex | Boşta (limit ~%25'in altında; yeni iş limit yenilenince) | Bekliyor | Yok |
 | Argon | **T11b: BIST30 2015-2019 değişiklik tabloları** (küçültülmüş paket `argon/PAKET_T11b_bist_2015_2019.md`) | Limit 22:22'de açılır | Yeni paketi yapıştır; CSV'yi `argon/`a yükle |
 | Lider | T24 (#85) doğrulama + gün içi kripto taraması (5m) + rotasyon Aşama 2 gerçek koşu | Sürüyor | Yok |
 
 ## Tamamlananlar (son)
+- T28 (Codex, PR #92): `.github/workflows/ci.yml`. Her PR'da pytest + spec kontrolü + main/PR gerçek veri paritesi (C01/C09/G011/M015/C07/R01 tarama, R01/C07 asama2b). `[parite-farki-bekleniyor]` etiketiyle bilinçli fark.
 - **Rotasyon Aşama 2 (gerçek koşu, lider):** 2a'da 12 satırdan 7'si null'u geçti (A4-002, A6-004 ABD, M017, M020a ABD/KRİPTO, O2-025, O2-027). 2b'de 7'si de **Reddedildi**: bootstrap MDD95 > %15 (A6-004 %15,8 en yakını; diğerleri %29-92). Kaldıraçlı ETF stratejileri yüksek getiri ama kabul edilemez düşüş. `SONUC.md` yeniden üretildi.
 - Lider düzeltmesi: `asama2a.py --kart-ids` koşulmayan kartların satırlarını siliyordu; artık yalnız seçilen kartlar değişir (test eklendi).
 - T26 (Codex, PR #89): BIST 1H saat etiketi normalize edildi (Yahoo :30 → tam saat). Açılış barlarında fiyatı değişen sıfır hacim (%5-7) uydurmadan düzeltilemez; kalite kapısı kapalı, BIST 1H Doğrulanamaz kalır (veri düzelirse otomatik açılır).
