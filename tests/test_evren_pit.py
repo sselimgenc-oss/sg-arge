@@ -43,3 +43,16 @@ def test_no_pit_universe_is_bit_for_bit_identity() -> None:
     frame = synthetic(11, periods=30)
     signals = {"X": pd.DataFrame({"entry": [True] * len(frame), "exit": [False] * len(frame)}, index=frame.index)}
     assert filter_entry_signals(signals, None, "BIST30") is signals
+
+
+def test_t11b_early_bist_lists_join_the_2020_list(tmp_path) -> None:
+    early = tmp_path / "early.csv"
+    early.write_text("donem_baslangic,hisse_kodu,kaynak_url,not\n2019-10-01,KOZAL,u,n\n2019-10-01,AKBNK,u,n\n# ozet: x\n", encoding="utf-8")
+    late = tmp_path / "late.csv"
+    late.write_text("donem_baslangic,hisse_kodu,kaynak_url,not\n2015-01-02,bulunamadi,,\n2020-01-02,TRALT,u,n\n2020-01-02,GARAN,u,n\n", encoding="utf-8")
+    abd = tmp_path / "abd.csv"
+    abd.write_text("yil,ticker,kaynak_url,not\n", encoding="utf-8")
+    universe = load_pit_universe(late, abd, early)
+    assert universe.members("BIST30", "2019-12-01") == frozenset({"TRALT.IS", "AKBNK.IS"})  # old code KOZAL -> TRALT
+    assert universe.members("BIST30", "2020-02-01") == frozenset({"TRALT.IS", "GARAN.IS"})
+    assert universe.members("BIST30", "2019-09-01") is None

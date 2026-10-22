@@ -17,6 +17,9 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_BIST = ROOT / "argon" / "T11_bist30.csv"
+DEFAULT_BIST_ONCE = ROOT / "argon" / "T11b_bist30_2015_2019.csv"  # T11b: 2015-2019 lists from Borsa Istanbul notices
+# Old BIST codes in the 2015-2019 notices that trade under a new code today (same company; data layer uses the new one).
+BIST_RENAMES = {"KOZAL": "TRALT", "KOZAA": "TRMET"}
 DEFAULT_ABD = ROOT / "argon" / "T11_abd25.csv"
 DEFAULT_SYMBOLS = ROOT / "data" / "evren_pit_semboller.csv"
 LOGGER = logging.getLogger(__name__)
@@ -30,6 +33,8 @@ def _utc(value: object) -> pd.Timestamp:
 def normalize_symbol(symbol: object, market: str) -> str:
     """Map source notation to the same filenames/tickers used by the data layer."""
     value = str(symbol).strip().upper().replace(".", "-")
+    if market == "BIST30":
+        value = BIST_RENAMES.get(value, value)
     if market == "BIST30" and value and not value.endswith(".IS"):
         return f"{value}.IS"
     return value
@@ -61,10 +66,11 @@ class PITUniverse:
         return result | {symbol for _, values in snapshots for symbol in values}
 
 
-def _bist_snapshots(path: Path) -> tuple[tuple[pd.Timestamp, frozenset[str]], ...]:
-    if not path.exists():
+def _bist_snapshots(*paths: Path) -> tuple[tuple[pd.Timestamp, frozenset[str]], ...]:
+    tables = [pd.read_csv(path, dtype=str, comment="#").fillna("") for path in paths if path.exists()]
+    if not tables:
         return ()
-    table = pd.read_csv(path, dtype=str).fillna("")
+    table = pd.concat(tables, ignore_index=True)
     required = {"donem_baslangic", "hisse_kodu"}
     missing = required.difference(table.columns)
     if missing:
@@ -106,9 +112,16 @@ def _abd_snapshots(path: Path) -> tuple[tuple[int, frozenset[str]], ...]:
     return tuple(output)
 
 
-def load_pit_universe(bist_path: Path = DEFAULT_BIST, abd_path: Path = DEFAULT_ABD) -> PITUniverse:
-    """Load whichever historical lists are available; no file means no coverage."""
-    return PITUniverse(_bist_snapshots(bist_path), _abd_snapshots(abd_path))
+def load_pit_universe(
+    bist_path: Path = DEFAULT_BIST, abd_path: Path = DEFAULT_ABD, bist_early_path: Path | None = None
+) -> PITUniverse:
+    """Load whichever historical lists are available; no file means no coverage.
+
+    The default BIST list (2020+) is joined with the T11b 2015-2019 list; a custom ``bist_path`` gets it only when asked."""
+    if bist_early_path is None and bist_path == DEFAULT_BIST:
+        bist_early_path = DEFAULT_BIST_ONCE
+    bist_paths = (bist_path,) if bist_early_path is None else (bist_early_path, bist_path)
+    return PITUniverse(_bist_snapshots(*bist_paths), _abd_snapshots(abd_path))
 
 
 def filter_entry_signals(signals: dict[str, pd.DataFrame], universe: PITUniverse | None, market: str) -> dict[str, pd.DataFrame]:

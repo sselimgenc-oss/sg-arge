@@ -128,7 +128,7 @@ def test_pit_universe_lifts_survivorship_flag():
             "bootstrap_mdd_p95": 0.1, "on_islem": 50, "on_ort_r": 0.1}
     assert asama2b.decide({**base, "piyasa": "ABD25"})[0] == "Kosullu"
     assert asama2b.decide({**base, "piyasa": "ABD25", "evren": "pit"})[0] == "Gecti"
-    assert asama2b.decide({**base, "piyasa": "BIST30", "evren": "pit"})[0] == "Kosullu"
+    assert asama2b.decide({**base, "piyasa": "BIST30", "evren": "pit"})[0] == "Gecti"  # T11b: BIST lists from 2015
 
 
 def test_intraday_equity_is_sampled_once_per_utc_day_for_bootstrap() -> None:
