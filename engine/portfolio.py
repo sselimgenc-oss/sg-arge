@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import bisect
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Callable
 
 import numpy as np
@@ -75,6 +75,12 @@ class BacktestResult:
     exposure: pd.Series
     trades: pd.DataFrame
     max_open_positions: int
+    # Filled only with ``record_state=True`` (paper trading, T27): every fill, the book at the end of the run
+    # before the artificial ``end_of_test`` exit, the orders implied by signals of the last bar, and the last marked equity.
+    fills: list = field(default_factory=list)
+    open_positions: list = field(default_factory=list)
+    next_orders: list = field(default_factory=list)
+    marked_equity: float = float("nan")
 
 
 def _as_utc(value: pd.Timestamp | str) -> pd.Timestamp:
@@ -149,6 +155,7 @@ def run_portfolio(
     trusted_inputs: bool = False,
     trades_only: bool = False,
     runtime_cache: dict | None = None,
+    record_state: bool = False,
 ) -> BacktestResult:
     """Run shared-capital portfolio events without same-bar signal fills.
 
@@ -287,6 +294,8 @@ def run_portfolio(
     pending: dict[str, str] = {}
     pending_entries: dict[str, Order] = {}
     trades: list[Trade] = []
+    fill_log: list[dict] = []
+    order_log: list[dict] = []
     equity_points: dict[pd.Timestamp, float] = {}
     exposure_points: dict[pd.Timestamp, float] = {}
     max_open_positions = 0
@@ -335,16 +344,18 @@ def run_portfolio(
                 exit_reason=reason + ("+partial" if position.partial_done else ""),
             )
         )
+        if record_state:
+            fill_log.append({"tarih": date, "sembol": symbol, "tip": "cikis", "fiyat": price, "adet": position.quantity,
+                             "maliyet": exit_cost, "neden": reason})
         pending.pop(symbol, None)
         if locs[symbol][di] >= 0:
             last_exit_loc[symbol] = int(locs[symbol][di])
 
-    def open_position(symbol: str, date: pd.Timestamp, price: float, signal_atr: float,
-                      stop_dist: float, target_dist: float,
-                      stop_pct: float = float("nan"), target_pct: float = float("nan"), sig_loc: int = -1) -> None:
-        nonlocal cash, max_open_positions
+    def size_entry(symbol: str, price: float, signal_atr: float, stop_dist: float, target_dist: float,
+                   stop_pct: float, target_pct: float, sig_loc: int):
+        """Quantity and levels of an entry at ``price`` with the book as it is now (no side effects), or ``None``."""
         if symbol in positions or not np.isfinite(signal_atr) or signal_atr <= 0:
-            return
+            return None
         if np.isfinite(stop_pct):
             stop_dist = price * stop_pct
         if np.isfinite(target_pct):
@@ -357,19 +368,19 @@ def run_portfolio(
             if "target" in level_fns:
                 target_level = float(level_fns["target"](symbol, sig_loc, price, stop_level))
                 if not np.isfinite(target_level) or target_level <= price:
-                    return
+                    return None
                 target_dist = target_level - price
         if not np.isfinite(stop_dist) or stop_dist <= 0:
-            return
-        field = "close" if fill_at_close else "open"
-        portfolio_equity = equity_at(field)
+            return None
+        field_name = "close" if fill_at_close else "open"
+        portfolio_equity = equity_at(field_name)
         initial_stop = price - stop_dist
         risk_per_unit = price - initial_stop
         existing_risk = sum(
-            max(mark(held, field) - position.stop, 0.0) * position.quantity
+            max(mark(held, field_name) - position.stop, 0.0) * position.quantity
             for held, position in positions.items()
         )
-        gross = sum(position.quantity * mark(held, field) for held, position in positions.items())
+        gross = sum(position.quantity * mark(held, field_name) for held, position in positions.items())
         risk_budget = min(
             risk_per_trade * portfolio_equity,
             max(max_total_risk * portfolio_equity - existing_risk, 0.0),
@@ -378,7 +389,17 @@ def run_portfolio(
         cash_budget = max(cash / (1 + cost_rate), 0.0)
         quantity = min(risk_budget / risk_per_unit, gross_budget / price, cash_budget / price)
         if quantity <= 0 or not np.isfinite(quantity):
+            return None
+        return quantity, initial_stop, risk_per_unit, target_dist
+
+    def open_position(symbol: str, date: pd.Timestamp, price: float, signal_atr: float,
+                      stop_dist: float, target_dist: float,
+                      stop_pct: float = float("nan"), target_pct: float = float("nan"), sig_loc: int = -1) -> None:
+        nonlocal cash, max_open_positions
+        sized = size_entry(symbol, price, signal_atr, stop_dist, target_dist, stop_pct, target_pct, sig_loc)
+        if sized is None:
             return
+        quantity, initial_stop, risk_per_unit, target_dist = sized
         entry_cost = quantity * price * cost_rate
         cash -= quantity * price + entry_cost
         initial_risk = quantity * risk_per_unit
@@ -395,6 +416,9 @@ def run_portfolio(
             runtime_exit=runtime_exit, orig_quantity=quantity, sig_loc=sig_loc,
         )
         max_open_positions = max(max_open_positions, len(positions))
+        if record_state:
+            fill_log.append({"tarih": date, "sembol": symbol, "tip": "giris", "fiyat": price, "adet": quantity,
+                             "maliyet": entry_cost, "stop": initial_stop, "hedef": target})
 
     def take_partial(symbol: str, price: float) -> None:
         nonlocal cash
@@ -410,6 +434,9 @@ def run_portfolio(
         position.quantity -= sold
         position.partial_done = True
         position.stop = max(position.stop, float(partial_profit["stop_fn"](position.entry_price)))
+        if record_state:
+            fill_log.append({"tarih": dates[di], "sembol": symbol, "tip": "kismi", "fiyat": price, "adet": sold,
+                             "maliyet": part_cost, "stop": position.stop})
 
     def partial_due(symbol: str, loc: int) -> bool:
         position = positions[symbol]
@@ -433,6 +460,10 @@ def run_portfolio(
             atr_value, stop_dist, float(sig_target_dist[symbol][loc]),
             float(sig_stop_pct[symbol][loc]), float(sig_target_pct[symbol][loc]),
         )
+
+    def mark_last(symbol: str) -> float:
+        loc = int(index_of[symbol].searchsorted(dates[-1], side="right")) - 1
+        return float(price_arr[symbol]["close"][loc]) if loc >= 0 else float("nan")
 
     for di, date in enumerate(dates):
         # Null repetitions consume only the trade ledger. When the portfolio is
@@ -591,6 +622,9 @@ def run_portfolio(
                         Order(symbol, "partial", execute_date, date, float(sig_atr[symbol][loc]))
                     )
                     pending[symbol] = "partial"
+                elif record_state and target_loc >= len(index_of[symbol]):
+                    order_log.append({"sinyal_tarihi": date, "sembol": symbol, "tip": "kismi",
+                                      "referans_fiyat": float(price_arr[symbol]["close"][loc])})
             elif symbol in positions and exit_signal and (symbol not in pending or pending[symbol] == "partial"):
                 target_loc = loc + 1 + extra_delay_bars
                 if target_loc < len(index_of[symbol]) and index_of[symbol][target_loc] <= end:
@@ -598,6 +632,10 @@ def run_portfolio(
                     order = Order(symbol, "exit", execute_date, date, float(sig_atr[symbol][loc]))
                     scheduled.setdefault(execute_date, []).append(order)
                     pending[symbol] = "exit"
+                elif record_state and target_loc >= len(index_of[symbol]):
+                    order_log.append({"sinyal_tarihi": date, "sembol": symbol, "tip": "cikis",
+                                      "referans_fiyat": float(price_arr[symbol]["close"][loc]), "adet": positions[symbol].quantity,
+                                      "stop": positions[symbol].stop})
             elif symbol not in positions and entry_signal and (symbol not in pending or pending[symbol] == "pending_entry") and cooled_down(symbol):
                 if entry_order_type is not None:
                     level = float(sig_entry_level[symbol][loc])
@@ -618,6 +656,15 @@ def run_portfolio(
                                   stop_dist, target_dist, stop_pct, target_pct)
                     scheduled.setdefault(execute_date, []).append(order)
                     pending[symbol] = "entry"
+                elif record_state and target_loc >= len(index_of[symbol]):
+                    atr_value, stop_dist, target_dist, stop_pct, target_pct = sizing_at(symbol, loc)
+                    reference = float(price_arr[symbol]["close"][loc])
+                    sized = size_entry(symbol, reference, atr_value, stop_dist, target_dist, stop_pct, target_pct, int(loc))
+                    order_log.append({
+                        "sinyal_tarihi": date, "sembol": symbol, "tip": "giris", "referans_fiyat": reference,
+                        "adet": sized[0] if sized else 0.0, "stop": sized[1] if sized else float("nan"),
+                        "hedef": reference + sized[3] if sized and np.isfinite(sized[3]) and sized[3] > 0 else float("nan"),
+                    })
         for symbol, atr_value, stop_dist, target_dist, stop_pct, target_pct in close_fills:
             loc = locs[symbol][di]
             open_position(symbol, date, float(price_arr[symbol]["close"][loc]), atr_value,
@@ -630,6 +677,16 @@ def run_portfolio(
             exposure_points[date] = gross_close / marked_equity if marked_equity > 0 else np.nan
 
     final_date = dates[-1]
+    open_state = (
+        [
+            {"sembol": symbol, "giris_tarihi": position.entry_date, "giris_fiyati": position.entry_price, "adet": position.quantity,
+             "stop": position.stop, "hedef": position.target, "ilk_stop": position.initial_stop, "kismi_yapildi": position.partial_done,
+             "son_kapanis": mark_last(symbol)}
+            for symbol, position in sorted(positions.items())
+        ]
+        if record_state else []
+    )
+    marked_last = equity_points.get(final_date, float("nan"))
     for symbol in sorted(positions):
         loc = int(index_of[symbol].searchsorted(final_date, side="right")) - 1
         if loc < 0:
@@ -641,7 +698,10 @@ def run_portfolio(
     trade_frame = pd.DataFrame([asdict(trade) for trade in trades])
     equity = pd.Series(equity_points, name="equity", dtype=float).sort_index()
     exposure = pd.Series(exposure_points, name="exposure", dtype=float).sort_index()
-    return BacktestResult(initial_capital, equity, exposure, trade_frame, max_open_positions)
+    return BacktestResult(
+        initial_capital, equity, exposure, trade_frame, max_open_positions,
+        fills=fill_log, open_positions=open_state, next_orders=order_log, marked_equity=marked_last,
+    )
 
 
 def calculate_metrics(
