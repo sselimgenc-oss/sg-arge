@@ -1,16 +1,14 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-22 gece, lider (Opus)
+Son güncelleme: 2026-10-22 15:10 UTC, lider (Opus)
 
-## Sabah özeti (kullanıcı için)
-- **İlk geniş tarama yapıldı.** 42 günlük/haftalık strateji 4 piyasada test edildi: 35'i ikinci aşamaya kaldı, 4'ü elendi, 3'ü motor desteği eksik olduğu için beklemede. Ayrıntı: `results/tarama_ozet.md`, değerlendirme: `tartisma/005_tarama1_lider_degerlendirme.md`.
-- **Önemli uyarı:** 2020-2024'te BIST (TL) medyan +%1.037, kripto +%332 yükseldi. Bu ortamda uzun pozisyonla trend izleyen her strateji iyi görünüyor. "35 strateji geçti" sonucu henüz bir şey kanıtlamıyor.
-- **Lider kararı:** İkinci aşamaya iki sert test eklendi: BIST USD bazında test edilecek, ve her strateji "rastgele giriş" sınamasını geçmek zorunda. Bu sınamada strateji, aynı çıkış kurallarıyla rastgele zamanlarda girmekten belirgin şekilde iyi olmalı; değilse kârı piyasanın yükselişinden geliyordur. Görev tanımı: `docs/GOREV_T6.md` (Codex, T1b'den sonra).
-
-## Bugün ilk yapılacaklar
-1. Codex limiti açıldıysa: "görev geldi" (T1b), Issue #1'deki son Codex görevi.
-2. ~~Argon~~ kart işi bitti.
-3. ~~Sonnet limiti~~ yenilendi → T6a verildi.
+## Özet (kullanıcı için)
+- **Aşama 2b (son eleme) 1. koşu bitti:** 24 satır, **3 Koşullu**, 21 Reddedildi. Ayrıntı: `results/asama2b_ozet.md`.
+  - **C07 ABD (kanal+ADX):** en güçlü aday. OOS 94 işlem, 3x maliyette +%37. Tek şerh survivorship; T11 sonrası PIT evrenle yeniden koşulacak.
+  - **C04 BIST** ve **A6-010 Emtia:** zayıf. Ön dönem negatif, C04'te OOS örneği az.
+- BIST/ABD güncel evrenle en fazla Koşullu olabilir (kural). "Geçti" için T11 (Argon) tarihsel evren gerekli.
+- **2. koşu sürüyor:** R01 Koşullu, G011 Koşullu, G007 Reddedildi; M015, M038, O3-003 bekliyor.
+- Gün içi kripto taraması: veri (30m/15m/5m) lider ortamında iniyor.
 
 ## Kural
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
@@ -18,10 +16,15 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Codex | T15 **tamam** (PR #66). Limit 21:10'a kadar | Bekliyor | Limit açılınca haber ver |
-| Sonnet | **T12: kripto gün içi/dakikalık tarama** + roi_tablosu + parti 11 düzeltme | Atandı | "Görev geldi" |
-| Argon | **T11: tarihsel endeks bileşenleri** (BIST30 dönemsel, ABD en büyük 25; survivorship düzeltmesi için) | Atandı | `argon/PAKET_T11_tarihsel_evren.md`'yi yapıştır; iki CSV'yi `argon/`a yükle |
-| Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
+| Sonnet | **T16: eksik kart triyajı** (47 kart, `docs/GOREV_T16_T17.md`) | Atandı | "Görev geldi" |
+| Codex | **T17: gün içi null testi** (`docs/GOREV_T16_T17.md`), model **Sol** | Atandı | Limit 21:10'da açılınca "görev geldi" |
+| Argon | **T11: tarihsel endeks bileşenleri** (BIST30 dönemsel, ABD en büyük 25) | Atandı | `argon/PAKET_T11_tarihsel_evren.md`; iki CSV'yi `argon/`a yükle |
+| Lider | Aşama 2b 2. koşu + gün içi kripto taraması | Koşuyor | Yok |
+
+## Tamamlananlar (son)
+- T12 (Sonnet, PR #67): gün içi tarama, roi_tablosu, motor hızlandırma #2. C01/C09 gerçek veri paritesi birebir.
+- T15 (Codex, PR #66): bekleyen giriş emirleri. T14 (PR #65): PIT evren. T13 (PR #63): SONUC raporu.
+- asama2b: endeks serisi evren dışından okunur (R01 EndeksYok düzeltmesi, lider).
 
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.

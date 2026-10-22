@@ -1,9 +1,9 @@
 {
   "version": 2,
   "lead": "auditor (sselimgenc, Opus 5.5)",
-  "turn": "codex-worker",
+  "turn": "claude-moderator",
   "phase": "1-dogrulama + 0-triyaj",
-  "updated": "2026-10-21",
+  "updated": "2026-10-22T15:10Z",
   "heartbeat_minutes": 15,
   "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider + kullanici onayli)",
   "queue": [
@@ -117,7 +117,7 @@
       "id": "T12",
       "owner": "claude-moderator",
       "title": "Kripto gun ici/dakikalik tarama + roi_tablosu + parti 11 kart duzeltme",
-      "status": "kod+PR hazir (parti 11 duzeltme, roi_tablosu, gun ici tarama); gercek kosu Actions Tarama is akisi tf=1H,30m,15m,5m",
+      "status": "done (PR #67); gercek gun ici kosu lider ortaminda",
       "spec": "docs/GOREV_T12_T13.md"
     },
     {
@@ -140,6 +140,27 @@
       "title": "Motor: bekleyen emir (stop/limit giris) — model Sol",
       "status": "done (PR #66)",
       "spec": "docs/GOREV_T14_T15.md"
+    },
+    {
+      "id": "T16",
+      "owner": "claude-moderator",
+      "title": "eksik + ozel_kod:false 47 kart triyaji (varsayilanla tamamlanabilenleri tam'a terfi)",
+      "status": "atandi",
+      "spec": "docs/GOREV_T16_T17.md"
+    },
+    {
+      "id": "T17",
+      "owner": "codex-worker",
+      "title": "Gun ici adaylar icin null testi (asama2a --tf) — model Sol",
+      "status": "atandi (limit 21:10'da acilinca)",
+      "spec": "docs/GOREV_T16_T17.md"
+    },
+    {
+      "id": "T6b-kosu",
+      "owner": "opus-lead",
+      "title": "Asama 2b gercek kosu",
+      "status": "1. kosu 24 satir: Kosullu C04,C07,A6-010; 2. kosu (R01,G007,G011,M015,M038,O3-003) suruyor",
+      "spec": "docs/GOREV_T6.md"
     }
   ],
   "done": [
