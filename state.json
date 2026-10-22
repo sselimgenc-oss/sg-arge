@@ -215,7 +215,7 @@
       "id": "T24",
       "owner": "codex-worker",
       "title": "Gun ici Asama 2b + saat/gun ilkelleri (A6-019)",
-      "status": "teslim edildi (PR #85), lider incelemesi: main ile cakisma cozuldu, D13->D14",
+      "status": "done (PR #85)",
       "spec": "docs/GOREV_T24.md",
       "model": "Sol"
     },
@@ -223,7 +223,7 @@
       "id": "T25",
       "owner": "claude-moderator",
       "title": "Nihai sonuc raporu v2 (basarili/basarisiz listesi)",
-      "status": "teslim edildi, lider incelemesi bekliyor: sonuc_raporu.py v2 (kart basina tek durum, PIT/rotasyon/gun ici, standart alt neden), results/SONUC.md + SONUC.csv",
+      "status": "done (PR #88)",
       "spec": "docs/GOREV_T25.md"
     },
     {
@@ -233,6 +233,13 @@
       "status": "atandi",
       "spec": "docs/GOREV_T26.md",
       "model": "Terra"
+    },
+    {
+      "id": "T27",
+      "owner": "claude-moderator",
+      "title": "Paper trade altyapisi (sinyal, defter, parite, rapor)",
+      "status": "atandi",
+      "spec": "docs/GOREV_T27.md"
     }
   ],
   "done": [

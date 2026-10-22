@@ -18,12 +18,14 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T25: nihai sonuç raporu v2 (başarılı/başarısız listesi)** (`docs/GOREV_T25.md`) | Atandı | "Görev geldi" |
+| Sonnet | **T27: paper trade altyapısı** (sinyal, sanal defter, parite, rapor; `docs/GOREV_T27.md`) | Atandı | "Görev geldi" |
 | Codex | **T26: BIST 1H veri temizliği** (`docs/GOREV_T26.md`), model **Terra**. T24 PR #85 lider incelemesinde | Atandı | "Görev geldi" |
 | Argon | **T11b: BIST30 2015-2019 değişiklik tabloları** (küçültülmüş paket `argon/PAKET_T11b_bist_2015_2019.md`) | Limit 22:22'de açılır | Yeni paketi yapıştır; CSV'yi `argon/`a yükle |
 | Lider | T24 (#85) doğrulama + gün içi kripto taraması (5m) + rotasyon Aşama 2 gerçek koşu | Sürüyor | Yok |
 
 ## Tamamlananlar (son)
+- T25 (Sonnet, PR #88): `results/SONUC.md` + `SONUC.csv` başarılı/başarısız listesi (Geçti: C07, R01; Koşullu: A6-010).
+- T24 (Codex, PR #85): gün içi Aşama 2b + saat ilkeleri (D14), A6-019 taşındı. Lider: main ile çakışma çözüldü, `--kart-ids` satır silme hatası düzeltildi.
 - T23 (Sonnet, PR #84): rotasyon kartları Aşama 2a (PF+CAGR null) / 2b / portföye bağlandı. T17 ile çakışmayı lider çözdü; günlük 2a/2b ve işlem paritesi birebir.
 - **Lider düzeltmesi:** T17 sonrası `asama2b` Codex satırları (C01-C21) `trusted_inputs` hatasıyla çöküyordu; `CodexPrepared.run` hızlı null yoluna uyarlandı, regresyon testi eklendi. C04/C07 sonuçları eskisiyle birebir.
 - T17 (Codex, PR #82): gün içi Aşama 2a null testi (`--tf`, `--isci`). Günlük null sonuçları ve işlem paritesi birebir.
