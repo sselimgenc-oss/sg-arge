@@ -54,3 +54,35 @@ def yeni_gun(index: pd.DatetimeIndex) -> pd.Series:
     """True on the first bar of each calendar date, including the very first bar of the data."""
     dates = pd.Series(_dates(index), index=index)
     return (dates != dates.shift(1)).astype(bool)
+
+
+def ay_gunu(index: pd.DatetimeIndex) -> pd.Series:
+    """Day of the month (1-31) of each bar's date."""
+    return pd.Series(_dates(index).day.to_numpy(), index=index)
+
+
+def _easter_sunday(year: int) -> pd.Timestamp:
+    """Western (Gregorian) Easter Sunday, anonymous Gregorian algorithm."""
+    a = year % 19
+    b, c = divmod(year, 100)
+    d, e = divmod(b, 4)
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i, k = divmod(c, 4)
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l) // 451
+    month = (h + l - 7 * m + 114) // 31
+    day = (h + l - 7 * m + 114) % 31 + 1
+    return pd.Timestamp(year=year, month=month, day=day)
+
+
+def paskalya(index: pd.DatetimeIndex, k: int) -> pd.Series:
+    """True on bars whose date is ``k`` calendar days after Western Easter Sunday (k may be negative).
+
+    Holy Thursday is ``paskalya(-3)``, the Wednesday before it ``paskalya(-4)``, the Friday
+    of the week before Easter week ``paskalya(-9)``. A date without a bar (holiday) yields no signal.
+    """
+    dates = _dates(index)
+    targets = {_easter_sunday(year) + pd.Timedelta(days=int(k)) for year in range(dates.year.min(), dates.year.max() + 1)}
+    return pd.Series(dates.isin(list(targets)), index=index)

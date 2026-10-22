@@ -1,0 +1,41 @@
+id: G010
+ad: OPEX Week Long
+kart_yazari: claude
+kaynak:
+  dosya: day_trade_swing_trade_guncellenmis_strateji_listesi.pdf
+  url: https://www.linkedin.com/posts/quantifiedstrategies_quantifiedstrategies-activity-7440715064598405121-4a_l
+  sayfa: 7 (madde 25)
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (S&P 500)
+gostergeler: {}
+ozel_kod: false
+piyasa_kisiti:
+- ABD
+dolum: kapanis
+giris: haftanin_gunu() == 4 and ay_gunu() >= 8 and ay_gunu() <= 14
+cikis: haftanin_gunu() == 4 and ay_gunu() >= 15 and ay_gunu() <= 21
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: CAGR ~%2; haftalik ort. %0.2
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- yalniz PDF ozeti (kaynak sayfasina erisilemedi; sandbox yalniz raw.githubusercontent.com'a erisir)
+- 'PDF ozeti: aylik vade haftasi basinda al; vade cuma kapanisinda sat.'
+- 'Aylik vade cumasi = ayin 3. cumasi (ay gunu 15-21); vade haftasinin ''basi'' belirsiz: onceki cuma kapanisinda (ay gunu 8-14) giris varsayildi (Pazartesi acilisina en yakin, A1 dolum mantigi); dolum:
+  kapanis (D4)'
+- 'Cuma tatilinde vade persembe olur: o ay cikis sinyali bulunmaz (pozisyon bir sonraki 3. cumaya kadar tasinabilir); ilke ay_gunu() D7'
+- Kesin donem ve uygulama ayrintilari verilmemis

@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
-Kart sayisi: 326 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 121
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **63**; ayrica `dakikalik` (yalniz kripto testi) hazir: **12**
+Kart sayisi: 374 | `tam` kartlarda hata: **15** | sorun bildirilen kart: 150
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **69**; ayrica `dakikalik` (yalniz kripto testi) hazir: **13**
 
 
 ## Durum dagilimi
@@ -10,16 +10,48 @@ T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **63**; ayrica `d
 |---|---|
 | gizli | 29 |
 | ihtiyari | 14 |
-| sadece_short | 1 |
-| eksik | 123 |
-| dakikalik | 57 |
-| tam | 99 |
+| sadece_short | 2 |
+| eksik | 144 |
+| dakikalik | 62 |
+| tam | 120 |
 | kapsam_disi | 3 |
 
 ## `tam` kartlarda hatalar (T5'e engel)
 
-Yok.
-
+- **M006**
+  - [eksik_alan] zorunlu alan yok: ozel_kod
+  - [ozel_kod_tipi] ozel_kod bool olmali
+- **M008**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M010**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M011**
+  - [eksik_alan] zorunlu alan yok: ozel_kod
+  - [ozel_kod_tipi] ozel_kod bool olmali
+- **M012a**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M012b**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M012c**
+  - [eksik_alan] zorunlu alan yok: ozel_kod
+  - [ozel_kod_tipi] ozel_kod bool olmali
+- **M012d**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M012e**
+  - [eksik_alan] zorunlu alan yok: ozel_kod
+  - [ozel_kod_tipi] ozel_kod bool olmali
+- **M013**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M014**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M015**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M016**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M019**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
+- **M020a**
+  - [ozel_kod_nedeni] ozel_kod kartta gecerli ozel_kod_nedeni yok: None (gecerli: bekleyen_emir, seans_saat, desen, durum_makinesi, ozel_gosterge, cok_enstruman, portfoy_rotasyonu, tanim_belirsiz, renko, ml, tick_veri, durum_bilgisi, sinyal_bari_referansi)
 
 ## Kutuphanede olmayan gosterge adlari
 
@@ -45,6 +77,7 @@ Toplam: 7 (durum `tam` olanlar once)
 | ad | kullanim |
 |---|---|
 | major_trend_bull | 6 |
+| upper_bound | 4 |
 | mott_b1 | 4 |
 | mott_b2 | 4 |
 | mott_b3 | 4 |
@@ -52,6 +85,9 @@ Toplam: 7 (durum `tam` olanlar once)
 | mott_b5 | 4 |
 | close_tqqq | 4 |
 | orb_high | 3 |
+| halftrend | 2 |
+| avg_spread_diff | 2 |
+| spy_close | 2 |
 | mov_var | 2 |
 | ott_opt2 | 2 |
 | session_time | 2 |
@@ -113,6 +149,14 @@ Toplam: 7 (durum `tam` olanlar once)
 | stoch_slowk | 1 |
 | fisher_rsi | 1 |
 | sar | 1 |
+| up | 1 |
+| down | 1 |
+| rsi_atr_mkt | 1 |
+| range_sma25 | 1 |
+| range_min6 | 1 |
+| entry_price | 1 |
+| totalbricksup | 1 |
+| totalbricksdown | 1 |
 | ott_hhv | 1 |
 | stosk_ott | 1 |
 | ott_llv | 1 |
@@ -186,5 +230,5 @@ Toplam: 7 (durum `tam` olanlar once)
 
 ## Diger kartlarda sorun sayisi
 
-`tam` olmayan 103 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
+`tam` olmayan 117 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
 

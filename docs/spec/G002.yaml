@@ -1,0 +1,57 @@
+id: G002
+ad: VWAP-RSI Scalper FINAL v1
+kart_yazari: claude
+kaynak:
+  dosya: day_trade_swing_trade_guncellenmis_strateji_listesi.pdf
+  url: https://www.tradingview.com/script/S9hY3huK-VWAP-RSI-Scalper-FINAL-v1/
+  sayfa: 2 (madde 5)
+erisim_engeli: true
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli (ES, NQ, CL, GC)
+gostergeler:
+  rsi3:
+    f: rsi
+    src: close
+    n: 3
+  vwap:
+    f: vwap
+  atr14:
+    f: atr
+    n: 14
+ozel_kod: true
+ozel_kod_nedeni: seans_saat
+piyasa_kisiti:
+- ES
+- NQ
+- CL
+- GC
+giris: null
+cikis: null
+stop:
+  tip: atr
+  n: 14
+  carpan: 1.0
+hedef:
+  tip: atr
+  n: 14
+  carpan: 2.0
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.37
+  sharpe: null
+  getiri: null
+  mdd: <1%
+  islem: null
+  wr: 37-48
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- yalniz PDF ozeti (kaynak sayfasina erisilemedi; sandbox yalniz raw.githubusercontent.com'a erisir)
+- 'PDF ozeti: RSI(3) asiri alim/satim, VWAP ve EMA yon filtresi, seans filtresi, 1 ATR stop, 2 ATR hedef, gunde en fazla 3 islem; 3/5/15 dakika.'
+- RSI esikleri, EMA periyodu, seans saatleri ve ATR periyodu kaynakta yok; giris/cikis ifadesi yazilamadi (yer tutucu uydurulmadi)
+- 'Kanit duzeyi dusuk: yazarin ornek ozeti, sembol/donem/islem sayisi belirtilmemis'

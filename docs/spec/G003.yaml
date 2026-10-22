@@ -1,0 +1,70 @@
+id: G003
+ad: Reinforced Smooth Scalp (Freqtrade, hyperopt parametreleri)
+kart_yazari: claude
+kaynak:
+  dosya: day_trade_swing_trade_guncellenmis_strateji_listesi.pdf
+  url: https://github.com/IvanLetteri/AITA---Strategies/blob/main/reinforced-smooth-scalp-berlinguyinca/reinforced-smoothscalp-results.txt
+  sayfa: 4 (madde 10)
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (Binance USDT)
+gostergeler:
+  stochf:
+    f: stoch
+    k: 5
+    d: 3
+    smooth: 1
+  adx14:
+    f: adx
+    n: 14
+  cci20:
+    f: cci
+    n: 20
+  ema_high5:
+    f: ema
+    src: high
+    n: 5
+  sma50_75m:
+    f: sma
+    src: close
+    n: 50
+    tf: 75m
+ozel_kod: false
+giris: cross_over(stochf.k, stochf.d) and stochf.d < 19 and adx14 > 35 and sma50_75m < close and volume > 0
+cikis: open > ema_high5 and stochf.k > 57 and cci20 > 114 and adx14 < 100 and volume > 0
+stop:
+  tip: yuzde
+  deger: 34.7
+hedef: null
+stop_eklendi: false
+parametreler:
+  buy_adx: 35
+  buy_fastd: 19
+  sell_cci: 114
+  sell_fastk: 57
+  sell_adx: 100
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 1828.42
+  mdd: 38.78
+  islem: 7572
+  wr: 62.8
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+roi_tablosu:
+  0: 0.398
+  102: 0.11
+  269: 0.04
+  600: 0
+belirsiz:
+- 'Kod: https://raw.githubusercontent.com/IvanLetteri/AITA---Strategies/main/reinforced-smooth-scalp-berlinguyinca/ReinforcedSmoothScalp.py; parametreler sonuc dosyasindaki hyperopt JSON''undan (buy_adx
+  35, buy_fastd 19, sell_cci 114, sell_fastk 57, sell_adx 100; mfi/fastk giris ve fastd/mfi cikis kapali)'
+- '15m: 1H alti, yalniz kripto (Binance) testine gider; BIST/ABD/emtia Dogrulanamaz (dakikalik veri yok)'
+- 'Zaman bazli ROI tablosu (dakika) ve %34.7 sabit stop: roi_tablosu motorda desteklenmiyor (T5b-2''de gerekli)'
+- 'Ust periyot filtresi: freqtrade 5x zaman dilimi = 75m SMA50; tf: 75m ile onceki tamamlanmis 75m bari kullanilir (freqtrade resampled_merge benzeri)'
+- 'Parametreler tum donem uzerinde optimize edilmis (2017-08..2022-01): asiri uyum riski; PDF: seans sonu cikisi yok, ortalama kaybeden 14s19dk'
+- 'Freqtrade acilis dolumu: sinyal mumu kapanisinda, sonraki mum acilisinda (A1 ile uyumlu)'

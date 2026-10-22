@@ -360,3 +360,16 @@ V1A,VOLTRAN-1A swing kırılım ve rejim motoru (v3),swing,1D,tam,false,5,Voltra
 V1B,VOLTRAN-1B SMC + ML geri çekilme motoru (v3),swing,1D,tam,false,6,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
 V2A,VOLTRAN-2A saatlik adaptif kanal (TOTT) + seans kırılım (v3),day,1H,tam,false,7,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
 V2B,VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3),day,1H,tam,false,5,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
+G001,KISS - Keep It Simple and Stupid (DAX 5m),day,5m,eksik,true,5,https://www.prorealcode.com/prorealtime-trading-strategies/keep-simple-stupid-strategy/
+G002,VWAP-RSI Scalper FINAL v1,day,5m,eksik,true,4,https://www.tradingview.com/script/S9hY3huK-VWAP-RSI-Scalper-FINAL-v1/
+G003,"Reinforced Smooth Scalp (Freqtrade, hyperopt parametreleri)",day,15m,dakikalik,false,6,https://github.com/IvanLetteri/AITA---Strategies/blob/main/reinforced-smooth-scalp-berlinguyinca/reinforced-smoothscalp-results.txt
+G004,TIS BTC Momentum + Confluencia,swing,4H,eksik,false,6,https://www.tradingview.com/script/k9nauxnv-TIS-BTC-ESTRATEGIA-Momentum-Confluencia/
+G005,XLP Mean Reversion w/ Twist,swing,1D,eksik,true,3,https://www.wealth-lab.com/Strategy/DesignPublished?strategyID=78
+G006,AutoTune Filter (Financial Hacker),swing,1D,eksik,true,4,https://financial-hacker.com/the-autotune-filter/
+G007,Crude Oil Tuesday/Thursday Pullback,swing,1D,tam,false,5,https://www.linkedin.com/posts/quantifiedstrategies_crude-oil-trading-strategies-backtest-activity-7473374012308381697-Z8iI
+G008,Holy Thursday Sprint,swing,1D,tam,false,5,https://www.linkedin.com/posts/quantifiedstrategies_trading-activity-7443606957179154432-_BsV
+G009,Pre-Easter Week,swing,1D,tam,false,4,https://www.linkedin.com/posts/quantifiedstrategies_trading-activity-7443606957179154432-_BsV
+G010,OPEX Week Long,swing,1D,tam,false,5,https://www.linkedin.com/posts/quantifiedstrategies_quantifiedstrategies-activity-7440715064598405121-4a_l
+G011,PowerX - RSI + Stochastic + MACD (Freqtrade powerxhopt),swing,1D,tam,false,4,https://github.com/IvanLetteri/AITA---Strategies/blob/main/rsi-stoch-macd/powerx-results.txt
+G012,"Riding Bollinger Bands (Freqtrade bb_riding, hyperopt)",swing,1D,tam,false,4,https://github.com/IvanLetteri/AITA---Strategies/blob/main/bb_riding/btst_bb_riding_hopt_results.txt
+G013,Trend Trigger | EMA + MTF Stochastic (TradingView),day,1H,eksik,true,3,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
