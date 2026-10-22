@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import bisect
 from dataclasses import asdict, dataclass
 from typing import Callable
 
@@ -137,6 +138,7 @@ def run_portfolio(
     profit_lock: dict | None = None,
     exit_builder: Callable[..., pd.Series | None] | None = None,
     partial_profit: dict | None = None,
+    roi_table: dict[float, float] | None = None,
 ) -> BacktestResult:
     """Run shared-capital portfolio events without same-bar signal fills.
 
@@ -153,6 +155,10 @@ def run_portfolio(
       ``stop_fn(entry_price)`` returning the locked stop), ``exit_builder`` (position
       state dependent exit series, called as ``(symbol, entry_date, entry_price,
       initial_stop, target)``);
+    * ``roi_table``: Freqtrade ``minimal_roi`` ({minutes held: profit ratio}); from the bar
+      whose open time is at least that many minutes after the entry bar's open time, the
+      position exits once the bar reaches ``entry * (1 + ratio)`` (fills at the open on a
+      gap, else at that price). The stop is checked first (A3);
     * ``partial_profit``: ``gun`` (bars held), ``oran`` (fraction sold), ``trigger_atr`` or
       ``trigger_fn(entry_price, stop_distance)`` (price gain needed at the close) and
       ``stop_fn(entry_price)`` (stop for the remainder). Taken once; the fraction fills at
@@ -225,6 +231,8 @@ def run_portfolio(
     max_open_positions = 0
     last_exit_loc: dict[str, int] = {}
     di = 0  # index of the current date in ``dates``
+    roi_keys = sorted(roi_table) if roi_table else []
+    roi_values = [roi_table[key] for key in roi_keys]
 
     def mark(symbol: str, field: str) -> float:
         loc = locs[symbol][di]
@@ -400,6 +408,15 @@ def run_portfolio(
                 close_position(symbol, date, open_price, "gap_target")
             elif np.isfinite(position.target) and float(price_arr[symbol]["high"][loc]) >= position.target:
                 close_position(symbol, date, position.target, "target")
+            elif roi_keys:
+                elapsed = (date - position.entry_date).total_seconds() / 60.0
+                slot = bisect.bisect_right(roi_keys, elapsed) - 1
+                if slot >= 0:
+                    roi_price = position.entry_price * (1.0 + roi_values[slot])
+                    if open_price >= roi_price:
+                        close_position(symbol, date, open_price, "roi")
+                    elif float(price_arr[symbol]["high"][loc]) >= roi_price:
+                        close_position(symbol, date, roi_price, "roi")
 
         # A trailing stop calculated from today's close becomes active tomorrow.
         for symbol, position in positions.items():

@@ -27,6 +27,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 parametreler:
   fundamental_count: 100
   week_period_days: 5
@@ -57,3 +58,4 @@ belirsiz:
   son 5 günlük getiriye (roc5 = close / close[5] - 1) göre 100 hisse küçükten büyüğe sıralanır; en düşük performanslı 10 hisseye eşit ağırlıkla long girilir. 3) Bir sonraki haftalık dengelemede ilk 10''dan
   çıkan hisseler kapatılır. 4) Short kuralı: Aynı 100 hisse içinden son 1 aylık (21 işlem günü, roc21 = close / close[21] - 1) getirisi en yüksek olan 10 hisseye eşit ağırlıkla short girilir ve haftalık
   dengelenir.'
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (kesitsel siralama: en dusuk 5 gunluk getirili 10 hisse long, en yuksek 21 gunluk getirili 10 hisse short; giris/cikis alanlari yer tutucu)"

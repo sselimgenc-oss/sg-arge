@@ -155,7 +155,7 @@ def test_unsupported_and_benchmark_cards_are_reported_not_ignored() -> None:
     assert desteklenmeyen_alan({"giris": "close > 1", "kismi_kar": {"gun": 4}}) is None
     assert desteklenmeyen_alan({"giris": "close > 1", "iz_suren": {"tip": "fiyat_adim", "deger": 2}}) == "iz_suren.fiyat_adim"
     assert desteklenmeyen_alan({"giris": "close > 1", "stop": {"tip": "pips", "deger": 30}}) == "stop.pips"
-    assert desteklenmeyen_alan({"giris": "close > 1", "roi_tablosu": {"0": 0.1}}) == "roi_tablosu"
+    assert desteklenmeyen_alan({"giris": "close > 1", "roi_tablosu": {"0": 0.1}}) is None
     assert needs_benchmark(card("A3-003"))
     with pytest.raises(MotorDestegiYok):
         build_plan(card("O1-078"), {"X": synthetic(1)}, week_end="FRI")
@@ -223,3 +223,23 @@ def test_partial_profit_not_taken_below_trigger() -> None:
         partial_profit={"gun": 2, "oran": 0.4, "trigger_atr": 2.0, "stop_fn": lambda price: price},
     )
     assert not result.trades["exit_reason"].str.contains("partial").any()
+
+
+def test_roi_table_exits_by_elapsed_minutes_and_after_the_stop() -> None:
+    # entry day 1 open 100. ROI: 0 min -> 20%, 2 days (2880 min) -> 3%. High 104 on day 3 (elapsed 2 days) reaches 103.
+    frame = _flat_frame(highs=[101, 101, 101, 104, 101], lows=[99] * 5)
+    result = run_portfolio(
+        {"X": frame}, lambda f, m: None, market="ABD25", start=frame.index[0], end=frame.index[-1], cost_rate=0.0,
+        precomputed_signals={"X": _signals(frame, stop_dist=20.0)}, trail_mode=None,
+        roi_table={0.0: 0.20, 2880.0: 0.03},
+    )
+    trade = result.trades.iloc[0]
+    assert trade["exit_reason"] == "roi" and trade["exit_price"] == pytest.approx(103.0)
+    # the stop wins on a bar that touches both
+    both = _flat_frame(highs=[101, 101, 101, 104, 101], lows=[99, 99, 99, 90, 99])
+    stopped = run_portfolio(
+        {"X": both}, lambda f, m: None, market="ABD25", start=both.index[0], end=both.index[-1], cost_rate=0.0,
+        precomputed_signals={"X": _signals(both, stop_dist=5.0)}, trail_mode=None,
+        roi_table={0.0: 0.20, 2880.0: 0.03},
+    ).trades.iloc[0]
+    assert stopped["exit_reason"] == "stop"

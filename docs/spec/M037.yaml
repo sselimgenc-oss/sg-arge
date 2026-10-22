@@ -19,6 +19,7 @@ gostergeler:
     f: sma
     src: close
     n: 200
+ozel_kod: false
 giris: close > sma200 and rsi2 < 9
 cikis: close > high[1]
 stop: null
@@ -75,3 +76,4 @@ belirsiz:
 - Substack bağlantısının QuantifiedStrategies.com üzerindeki tam metin karşılığından (https://www.quantifiedstrategies.com/what-is-the-best-rsi-oversold-level-we-tested-1-through-50/) okundu. Makalede 1'den
   50'ye kadar tüm RSI(2) eşikleri test edilmiş ve örneklem büyüklüğü/verimlilik dengesinde tam dönem (1993-2026) öne çıkan eşik olarak RSI(2) < 9 seçilmiştir. Baz testte kısa vadeli tepki çıkışı (Quantified
   Strategies standart SPY şablonunda close > high[1]) kullanılmış, ayrıca RSI(2) > 50, RSI(2) > 70, 3 gün ve 5 gün tutuş çıkışları da açık olarak raporlanmıştır.
+- "T10: ozel_kod alani eklendi (false); ifade ortak dilde"
