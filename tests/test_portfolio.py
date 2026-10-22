@@ -91,3 +91,21 @@ def test_gap_through_stop_fills_at_first_available_open() -> None:
     assert trade["exit_date"] == frame.index[2]
     assert trade["exit_price"] == 95.0
     assert trade["exit_reason"] == "gap_stop"
+
+
+def test_maximum_holding_period_exits_at_next_open() -> None:
+    frame = _frame(lows=[99.0, 98.0, 99.0, 100.0, 101.0])
+    result = run_portfolio(
+        {"TEST": frame},
+        _entry_only,
+        market="ABD25",
+        start=frame.index[0],
+        end=frame.index[-1],
+        cost_rate=0.0,
+        time_stop_bars=3,
+    )
+
+    trade = result.trades.iloc[0]
+    assert trade["entry_date"] == frame.index[1]
+    assert trade["exit_date"] == frame.index[4]
+    assert trade["exit_reason"] == "signal"
