@@ -16,6 +16,6 @@ Algo trading. PDF'lerde ve listelerde yüzlerce strateji var; day trade ve swing
 1. **Aşama 0 - Triyaj ve kart (Sonnet, ucuz):** her strateji makinece okunur YAML karta çevrilir (`docs/spec/<id>.yaml`, şema `docs/EVRENSEL_KURALLAR.md`). Kuralı gizli/ücretli/üyelere özel olan → **Doğrulanamaz (spesifikasyon yok)**, backtest yok.
 2. **Aşama 1 - Hızlı tarama (Codex, VectorBT):** YAML'ı okuyan tek yorumlayıcı + ortak gösterge kütüphanesi; evrensel kurallar, yazar varsayılan parametreleri, 1x ve 2x maliyet, 4 piyasa. Açık kaybedenler **Reddedildi**.
 3. **Aşama 2 - Tam doğrulama (Codex, event-driven motor):** sağ kalanlara `ELEME_KRITERLERI.md` testleri 3-10.
-4. **Çıktı:** `results/SONUC.md` + `results/sonuc.csv`: her strateji için Geçti / Koşullu / Doğrulanamaz / Reddedildi ve gerekçe. Bu, kullanıcıya teslim edilecek "başarılı/başarısız" listesidir.
+4. **Çıktı:** `results/SONUC.md` + `results/SONUC.csv`: her strateji için Geçti / Koşullu / Doğrulanamaz / Reddedildi ve gerekçe. Bu, kullanıcıya teslim edilecek "başarılı/başarısız" listesidir.
 
 T1a (Codex Algo pilotu) motoru ve veri katmanını kurar; aşama 2'nin referans uygulamasıdır.
