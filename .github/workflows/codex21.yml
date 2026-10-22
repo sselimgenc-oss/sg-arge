@@ -20,8 +20,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Download daily bars
         run: python data/fetch.py --interval 1d --allow-partial
-      - name: Run T1a replication
-        run: python backtests/run_codex21.py --rows C01,C19,C02,C09,C15,C17
+      - name: Run all 21 replications
+        run: python backtests/run_codex21.py
       - name: Run tests
         run: python -m pytest -q
       - name: Commit reproducibility records

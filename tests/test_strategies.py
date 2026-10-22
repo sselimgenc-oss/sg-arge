@@ -3,8 +3,32 @@ import pandas as pd
 import pytest
 
 from strategies.common import completed_weekly_regime
+from strategies.wd_adx_breakout_risk import signals as adx_breakout_signals
+from strategies.wd_breakout_risk import signals as breakout_signals
 from strategies.wd_cci_continuation_risk import signals as cci_signals
+from strategies.wd_dmi_trend_risk import signals as dmi_signals
+from strategies.wd_dual_momentum_risk import signals as dual_momentum_signals
+from strategies.wd_flow_confirmation_risk import signals as flow_signals
+from strategies.wd_ichimoku_balance_risk import signals as ichimoku_signals
+from strategies.wd_kama_efficiency_risk import signals as kama_signals
+from strategies.wd_momentum_risk import signals as momentum_signals
 from strategies.wd_pullback_risk import signals as pullback_signals
+from strategies.wd_reversion_risk import signals as reversion_signals
+
+
+STRATEGIES = [
+    pullback_signals,
+    cci_signals,
+    flow_signals,
+    ichimoku_signals,
+    dmi_signals,
+    kama_signals,
+    adx_breakout_signals,
+    dual_momentum_signals,
+    breakout_signals,
+    momentum_signals,
+    reversion_signals,
+]
 
 
 def _market_frame(periods: int = 420) -> pd.DataFrame:
@@ -23,7 +47,7 @@ def _market_frame(periods: int = 420) -> pd.DataFrame:
     )
 
 
-@pytest.mark.parametrize("strategy", [pullback_signals, cci_signals])
+@pytest.mark.parametrize("strategy", STRATEGIES)
 def test_future_prices_do_not_change_historical_signals(strategy) -> None:
     original = _market_frame()
     cutoff = original.index[349]
@@ -33,6 +57,14 @@ def test_future_prices_do_not_change_historical_signals(strategy) -> None:
     expected = strategy(original, "ABD25").loc[:cutoff, ["entry", "exit"]]
     actual = strategy(changed, "ABD25").loc[:cutoff, ["entry", "exit"]]
     pd.testing.assert_frame_equal(expected, actual)
+
+
+@pytest.mark.parametrize("strategy", STRATEGIES)
+def test_strategy_signal_schema_and_types(strategy) -> None:
+    result = strategy(_market_frame(), "ABD25")
+    assert {"entry", "exit", "atr"}.issubset(result.columns)
+    assert result["entry"].dtype == bool
+    assert result["exit"].dtype == bool
 
 
 def test_partial_week_does_not_change_weekly_regime() -> None:
