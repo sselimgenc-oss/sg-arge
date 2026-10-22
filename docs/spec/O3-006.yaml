@@ -1,0 +1,41 @@
+id: O3-006
+ad: 'MACD-Histogram on the S&P 500 (10 Best Swing #8)'
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantifiedstrategies.com/swing-trading-strategies/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY, 77 Likit ETF, QLD)
+gostergeler:
+  macd_std:
+    f: macd
+    src: close
+    fast: 12
+    slow: 26
+    sig: 9
+giris: null
+cikis: close > close[1]
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 2
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 10.4
+  mdd: 19.0
+  islem: 6669
+  wr: null
+  maliyet_dahil: belirtilmemis
+varyantlar:
+- ad: QLD (2x Nasdaq-100 ETF) Backtesti (2007-2026)
+  not: QLD uzerinde 85 islem, islem basina ort. %2.2 kazanc, %10.4 CAGR (%5 exposure) ve %19 MDD.
+spec_durumu: gizli
+belirsiz:
+- 'Yazarin ilgili makalesinden (quantifiedstrategies.com/macd-histogram/) okundu: 77 ETF portfoyunde 6669 islem ureten ortalamaya donus stratejisidir; cikis kurali kapanisin bir onceki gunun kapanisindan
+  yuksek oldugu ilk gundur (close > close[1]), ancak MACD-Histogram uzerindeki giris kosulu yalnizca ucretli uyelere acik oldugu (''THIS SECTION IS FOR MEMBERS ONLY'') icin spec_durumu: gizli olarak isaretlendi.'

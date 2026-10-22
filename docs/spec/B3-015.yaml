@@ -1,0 +1,32 @@
+id: B3-015
+ad: Is there 1 Strategy that just works? (gunluk long-only ETF betigi)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://wl6.wealth-lab.com/Forum/Posts/Is-there-1-Strategy-that-just-works-28865
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Wealth-Lab (wl6.wealth-lab.com) forum sayfasina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde onbellek kopyasi bulunamadi.'

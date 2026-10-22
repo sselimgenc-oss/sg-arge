@@ -1,0 +1,36 @@
+id: P3-028
+ad: US Stock Momentum
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://collective2.eu/grid
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse ve Opsiyon (S&P 500 Hisseleri ve XSP/XLK Opsiyonlari)
+gostergeler: {}
+ozel_kod: true
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  portfolio_stocks: 10
+  rebalance_months: 1
+deneme_sayisi_kaynakta: 2
+rapor:
+  pf: 1.8
+  sharpe: 1.34
+  getiri: 81.0
+  mdd: 39.2
+  islem: 139
+  wr: 57.6
+  maliyet_dahil: true
+spec_durumu: gizli
+belirsiz:
+- 'Collective2 (#151894080, KDT95, 99$/ay) ucretli sinyal sayfasindan (collective2.com/details/151894080) okundu: S&P 500 icinden en yuksek momentumlu 10 hisseyi secen, ayda bir kez piyasa acilisinda yeniden
+  dengelenen (ort. tutma suresi 37.3 gun) ve ozel/kapali bir sektorel risk katmani (''proprietary tactical sector overlay'') kullanan sistemdir. Momentum suresinin ve sektorel filtrenin formulleri kapali
+  oldugu icin spec_durumu: gizli.'

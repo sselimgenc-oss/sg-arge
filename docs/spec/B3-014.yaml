@@ -1,0 +1,56 @@
+id: B3-014
+ad: 'Cross-Sectional Equity Mean Reversion (Quantpedia #13)'
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://quantpedia.com/quantopian-quantpedia-trading-strategy-series-cross-sectional-equity-mean-rever/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Piyasa Degeri En Yuksek 100 ABD Hissesi)
+gostergeler:
+  roc5:
+    f: roc
+    src: close
+    n: 5
+  roc21:
+    f: roc
+    src: close
+    n: 21
+ozel_kod: true
+giris: roc5 < 0
+cikis: null
+stop: null
+hedef: null
+zaman_stop:
+  bar: 5
+stop_eklendi: false
+parametreler:
+  universe_market_cap_top: 100
+  min_share_price: 1.0
+  lookback_long_days: 5
+  lookback_short_days: 21
+  long_count: 10
+  short_count: 10
+  rebalance_days: 5
+deneme_sayisi_kaynakta: 3
+rapor:
+  pf: null
+  sharpe: 1.09
+  getiri: 16.25
+  mdd: 52.94
+  islem: 43002
+  wr: 45.0
+  maliyet_dahil: true
+varyantlar:
+- ad: Quantopian OOS Testi (Matthew Lee, 2011-2016)
+  not: Aralik 2011 - Aralik 2016 orneklem disi donemde long/short versiyonu Sharpe 0.84 ve Beta 0.15 uretmistir.
+- ad: QuantConnect OOS Uygulamasi (2000-2026)
+  not: 0.5 bps islem maliyetiyle CAGR %14.96, MDD %62, Sharpe 0.5, Sortino 0.6, Win Rate %45, 43002 emir.
+spec_durumu: tam
+belirsiz:
+- 'Kesitsel hisse senedi ortalamaya donus kurallari (ozel_kod: true, Quantpedia #13 / Groot, Huij & Zhou, 2012): 1) Yatirim evreni piyasa degeri en yuksek 100 ABD hissesinden (fiyati >= 1$) olusur. 2) Portfoy
+  her hafta (5 islem gununde bir, zaman_stop: 5) yeniden dengelenir. 3) Long bacak: Son 1 haftada (5 islem gunu, roc5) en dusuk getiriye sahip 10 hisse esit agirlikli olarak long alinir. 4) Short bacak:
+  Son 1 ayda (21 islem gunu, roc21) en yuksek getiriye sahip 10 hisse esit agirlikli olarak short satilir.'

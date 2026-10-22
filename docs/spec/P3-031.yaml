@@ -1,0 +1,32 @@
+id: P3-031
+ad: AEA Algo MES
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://collective2.eu/grid
+  sayfa: null
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Vadeli (MES - Micro E-mini S&P 500 Futures)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 36.0
+  mdd: 17.7
+  islem: null
+  wr: null
+  maliyet_dahil: true
+spec_durumu: gizli
+belirsiz:
+- 'Collective2 (AEA_Algo) ucretli sinyal aboneligidir (collective2.com/lb/387 indeksinden okundu: MES vadeli kontratinda 8 ayda +%36.0 birikimli getiri, %17.7 MDD, 35.000$ onerilen baslangic sermayesi).
+  Algoritma kurallari kapali oldugu icin spec_durumu: gizli.'

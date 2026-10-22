@@ -1,0 +1,37 @@
+id: B3-004
+ad: Trend Following and Mean Reversion Strategy - Combined (QQQ)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://quantifiedstrategies.substack.com/p/trend-following-and-mean-reversion
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (QQQ, QLD)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 2
+rapor:
+  pf: 4.0
+  sharpe: null
+  getiri: 14.8
+  mdd: 28.0
+  islem: 109
+  wr: 67.0
+  maliyet_dahil: true
+varyantlar:
+- ad: 2x Kaldiracli QLD ETF Varyanti
+  not: Ayni kurallar 2x kaldiracli Nasdaq-100 ETF'i QLD uzerinde test edildiginde yillik bilesik getiri (CAGR) %28, maksimum drawdown %51 olarak raporlanmistir.
+spec_durumu: gizli
+belirsiz:
+- Substack URL'sine dogrudan erisim engellendi ancak yazarin ana sitesindeki birebir aynasindan (quantifiedstrategies.com/trend-following-and-mean-reversion-strategy-combined/ ve quantifiedstrategies.com/product/strategy87/)
+  okundu.
+- 'QQQ uzerinde %0.03 komisyon/kayma dahil 109 islemde %67 kazanma orani, islem basina ort. %4 kazanc, PF 4.0, %14.8 CAGR (%75 exposure) ve %28 MDD raporlanmistir; ancak strateji kurallari yalnizca ucretli
+  uyelere (veya 199$ tekil satisa) acik oldugu icin spec_durumu: gizli olarak isaretlendi.'

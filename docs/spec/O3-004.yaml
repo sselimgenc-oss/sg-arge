@@ -1,0 +1,35 @@
+id: O3-004
+ad: 'Monday/Tuesday trade in Nasdaq (10 Best Swing #4)'
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantifiedstrategies.com/swing-trading-strategies/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli / ETF (NQ - Nasdaq 100 Futures, QQQ)
+gostergeler: {}
+ozel_kod: true
+giris: (close - low) / (high - low) <= 0.1
+cikis: close > high[1]
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  ibs_max: 0.1
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: 4.13
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 86
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- Yazarin Nasdaq stratejileri makalesinden (quantifiedstrategies.com/nasdaq-trading-strategies/ Bolum 5) eksiksiz okundu.
+- 'Takvim filtresi (ozel_kod: true): 1) Bugun Pazartesi veya Sali olmali (dayofweek == 1 or dayofweek == 2). 2) IBS = (close - low) / (high - low) <= 0.1 olmali. 3) Kapanista long girilir ve kapanis dunku
+  yuksegin uzerine ciktigi ilk gun (Amibroker kodu: c > ref(h, -1), yani close > high[1]) pozisyondan cikilir (2006''dan beri NQ vadeli kontratta 86 islem, PF 4.13).'

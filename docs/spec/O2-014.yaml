@@ -1,0 +1,35 @@
+id: O2-014
+ad: MSC Gold Stable Pro
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/signals/2231030
+  sayfa: null
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Emtia / Forex (XAUUSD)
+gostergeler: {}
+giris: null
+cikis: null
+stop:
+  tip: yuzde
+  deger: 20.0
+hedef: null
+stop_eklendi: false
+parametreler:
+  hard_stop_usd_per_500: 90.0
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 3.17
+  sharpe: 0.28
+  getiri: 1532.36
+  mdd: 33.7
+  islem: 1179
+  wr: 82.1
+  maliyet_dahil: true
+spec_durumu: gizli
+belirsiz:
+- 'MQL5 canli sinyal aboneligi sayfasidir (Bui Huy Dat, 40$/ay, XAUUSD uzerinde %97 algoritmik islem, ort. tutma suresi 1 saat, 500$ bakiyede 90$ / %20 hesap bazli hard stop). Giris/cikis kurallari kapali
+  oldugu icin spec_durumu: gizli.'

@@ -1,0 +1,40 @@
+id: O3-017
+ad: RSI SPY trading strategy (RSI(2) on SPY)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantifiedstrategies.com/rsi2-on-spy/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler:
+  rsi2:
+    f: rsi
+    src: close
+    n: 2
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  rsi2.n: 2
+deneme_sayisi_kaynakta: 2
+rapor:
+  pf: 2.0
+  sharpe: null
+  getiri: null
+  mdd: 23.0
+  islem: 583
+  wr: 73.0
+  maliyet_dahil: belirtilmemis
+varyantlar:
+- ad: 'Ek Parametreli Gelistirilmis Varyant (Trading Strategy #5)'
+  not: Gizli tutulan bir ek filtre ile 405 islem, islem basina ort. %0.6 kazanc, %74 win rate, %20 exposure, %17 MDD ve PF 2.3.
+spec_durumu: gizli
+belirsiz:
+- 'Makalede (rsi2-on-spy/) temel strateji icin 583 islem, %73 win rate, ort. %0.48 kazanc, %23 MDD ve PF 2.0 raporlanmis; ancak hem temel stratejinin kesin RSI esikleri hem de gelistirilmis varyantin ek
+  gostergesi ucretli uyelik duvarinin (''These trading rules are for members only'') arkasinda oldugu icin spec_durumu: gizli olarak isaretlendi.'

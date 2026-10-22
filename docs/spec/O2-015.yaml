@@ -1,0 +1,31 @@
+id: O2-015
+ad: FXtrading
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.mql5.com/en/signals/2356441
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Forex ve Altin (NZDCAD, USDCAD, GBPUSD, AUDUSD, XAUUSD vb.)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 2.49
+  sharpe: 0.29
+  getiri: 1354.22
+  mdd: 14.09
+  islem: 383
+  wr: 72.58
+  maliyet_dahil: true
+spec_durumu: gizli
+belirsiz:
+- 'MQL5 canli sinyal aboneligi sayfasidir (Alexander Pavlenko, 30$/ay, coklu doviz paritelerinde %85 algoritmik islem, ort. tutma suresi 4 gun). Strateji kurallari aciklanmadigi icin spec_durumu: gizli.'

@@ -1,0 +1,33 @@
+id: P3-030
+ad: AIB STOCKS and FUT
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://collective2.eu/grid
+  sayfa: null
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Vadeli (MNQ, MES, M2K Micro Futures)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 2.96
+  sharpe: 1.41
+  getiri: 114.7
+  mdd: 46.0
+  islem: 850
+  wr: 93.5
+  maliyet_dahil: true
+spec_durumu: gizli
+belirsiz:
+- 'Collective2 (#150377786, Lighthouse, 196$/ay) ucretli sinyal sayfasindan (collective2.com/details/150377786) okundu: MNQ, MES ve M2K mikro endeks vadeli kontratlarinda islem yapar (850 islem, %93.5 kazanma
+  orani, ort. kazanc 138$, ort. kayip 680$, ort. tutma suresi 1.1 gun, +%114.7 CAGR, %46.0 MDD, PF 2.96, Sharpe 1.41; kullanici yorumlarinda martingale/ortalama maliyet yaklasimi kullandigi belirtilmistir).
+  Kurallari kapali oldugu icin spec_durumu: gizli.'

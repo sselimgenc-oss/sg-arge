@@ -1,0 +1,33 @@
+id: O1-016
+ad: Sistem 1 (piyasa sartlarina gore sekillenen sistem)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.bilgeyatirimci.com/i/sistem-tester-performans-testi-back-test-yaparken-nelere-dikkat-etmeliyiz/
+  sayfa: null
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: BIST Vadeli (VIP-X030 / VIOP30)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 3.56
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 90
+  wr: 63.0
+  maliyet_dahil: true
+spec_durumu: eksik
+belirsiz:
+- Egemen Ozturk (Bilge Yatirimci, 18 Temmuz 2019) makalesinde VIP-X030 5 dk periyotta Haziran 2018 - Temmuz 2019 donemi icin Sistem 1'in performans istatistikleri paylasilmistir (90 islem, %63 karli islem,
+  komisyon oncesi 66975 puan ve PF 4.97, komisyon/kayma sonrasi 59900 puan ve PF 3.56, maks ardisik zarar -2200 puan).
+- Ancak Sistem 2'nin (O1-017) aksine Sistem 1 icin yalnizca 'piyasayi degerlendiren ve piyasa sartlarina gore sekil alan bir sistem' tanimi yapilmis, kullanilan gostergeler ve giris/cikis kurallari aciklanmamistir.
