@@ -18,9 +18,9 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T30: gün içi tarama/Aşama 2 bellek ve hız** (`docs/GOREV_T30.md`) | Atandı | "Görev geldi" |
+| Sonnet | **T30: gün içi bellek/hız** (`docs/GOREV_T30.md`), ardından **T31: 13 kartın kaynağı** (`docs/GOREV_T31.md`, eski Argon T19) | Atandı | "Görev geldi" |
 | Codex | Boşta (limit doldu; yenilenince yeni iş) | Bekliyor | Limit açılınca haber ver |
-| Argon | **T19: 13 kartın kaynağını oku** (`argon/PAKET_T19_kaynak.md`) | Atandı | Paketi yapıştır; `T19_kaynaklar.md`'yi `argon/`a yükle |
+| Argon | **Kullanılmıyor** (kullanıcı kararı: ikinci talimata kadar; limit ekran görüntüsü gezintisiyle tükeniyor) | Beklemede | Yok |
 | Lider | T30/T19 teslimlerini bekliyor; A3-001/A3-002d/A3-002f 5m taraması T30 sonrası | Bekliyor | Yok |
 
 ## Tamamlananlar (son)
