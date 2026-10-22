@@ -29,6 +29,8 @@ from data.bist_1h import normalize_market_1h, quality_gate as bist_1h_quality_ga
 from engine import gosterge, rotasyon  # noqa: E402
 from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
+from engine.resample import resample_hourly  # noqa: E402
+from engine.spec import normalize_timeframe  # noqa: E402
 
 IS_START = pd.Timestamp("2020-01-01", tz="UTC")
 IS_END = pd.Timestamp("2024-09-30", tz="UTC")
@@ -38,9 +40,10 @@ MARKET_TOKEN = {"BIST30": "BIST", "ABD25": "ABD", "KRIPTO25": "KRIPTO", "EMTIA":
 BENCHMARK_SYMBOL = {"ABD25": "SPY", "KRIPTO25": "BTCUSDT"}  # BIST30/EMTIA: no index series yet
 MIN_TRADES, MIN_PF, PF_ALARM = 30, 1.1, 4.0
 DAILY_TFS = ("1D", "1W")
+RESAMPLED_HOURLY_TFS = ("2H", "4H")
 SUBHOURLY_TFS = ("1m", "5m", "15m", "30m")
-TF_DIR = {"1H": "hourly", "30m": "30m", "15m": "15m", "5m": "5m", "1m": "1m"}
-TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1H": 60}
+TF_DIR = {"1H": "hourly", "2H": "hourly", "4H": "hourly", "30m": "30m", "15m": "15m", "5m": "5m", "1m": "1m"}
+TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1H": 60, "2H": 120, "4H": 240}
 IS_FRACTION = 2 / 3  # EVRENSEL_KURALLAR C: hourly yfinance markets, first 2/3 in-sample, last 1/3 unseen
 MOC_COST_FACTOR = 2.0  # EVRENSEL_KURALLAR D4: close fills carry 2x base cost
 FIXED_DATA_DIR = ROOT / "data" / "daily"  # daily bars of the named instruments of rotation `gecis` cards
@@ -56,6 +59,7 @@ def load_cards(directory: Path, tf: str) -> list[dict[str, Any]]:
     cards = []
     for path in sorted(directory.glob("*.yaml")):
         card = yaml.safe_load(path.read_text(encoding="utf-8"))
+        card["tf"] = normalize_timeframe(card.get("tf"))
         if card.get("spec_durumu") in ("tam", "dakikalik") and not card.get("ozel_kod") and card.get("tf") in tf.split(","):
             cards.append(card)
     return cards
@@ -77,6 +81,12 @@ def annualization_for(tf: str, market: str) -> int:
         return 52
     if tf == "1D":
         return 365 if market == "KRIPTO25" else 252
+    # 2H/4H US/commodity bars include the closed short final session bucket.
+    # Preserve the established 1H factor for existing CI parity results.
+    if market != "KRIPTO25" and tf in RESAMPLED_HOURLY_TFS:
+        if market == "BIST30":
+            return {"2H": 4, "4H": 2}[tf] * 252
+        return {"2H": 4, "4H": 2}[tf] * 252
     per_day = 24 * 60 // TF_MINUTES[tf] if market == "KRIPTO25" else max(7 * 60 // TF_MINUTES[tf], 1)
     return per_day * (365 if market == "KRIPTO25" else 252)
 
@@ -153,6 +163,10 @@ def prepare(
 
         return rotasyon_asama2.prepare_rotation(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
     week_end = "SUN" if market == "KRIPTO25" else "FRI"
+    if card["tf"] in RESAMPLED_HOURLY_TFS:
+        data = {symbol: resample_hourly(frame, market=market, timeframe=card["tf"]) for symbol, frame in data.items()}
+        if benchmark is not None:
+            benchmark = resample_hourly(benchmark, market=market, timeframe=card["tf"])
     weekly_card = card["tf"] == "1W"
     if weekly_card:
         data = {symbol: weekly_frame(frame, week_end) for symbol, frame in data.items()}
@@ -493,7 +507,7 @@ def write_summary(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kartlar", type=Path, default=ROOT / "docs" / "spec")
-    parser.add_argument("--tf", default="1D", help="comma separated card timeframes, e.g. 1D,1W")
+    parser.add_argument("--tf", default="1D", help="comma separated card timeframes, e.g. 1D,1W,2H,4H")
     parser.add_argument("--kart-ids", default="", help="comma separated card ids (default: all)")
     parser.add_argument("--birlestir", action="store_true", help="merge into the existing results/tarama.csv (rescanned cards replace their rows)")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")

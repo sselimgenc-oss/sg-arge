@@ -7,7 +7,7 @@ kaynak:
   sayfa: null
 erisim_engeli: true
 tarz: swing
-tf: 4h
+tf: 4H
 mtf: 1D
 tf_varsayim: false
 yazar_piyasasi: Endeks CFD (DAX)
