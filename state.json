@@ -3,7 +3,7 @@
   "lead": "auditor (sselimgenc, Opus 5.5)",
   "turn": "claude-moderator",
   "phase": "1-dogrulama + 0-triyaj",
-  "updated": "2026-10-22T16:50Z",
+  "updated": "2026-10-22T22:10Z",
   "heartbeat_minutes": 15,
   "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider + kullanici onayli)",
   "queue": [
