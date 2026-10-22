@@ -145,7 +145,7 @@
       "id": "T16",
       "owner": "claude-moderator",
       "title": "eksik + ozel_kod:false 47 kart triyaji (varsayilanla tamamlanabilenleri tam'a terfi)",
-      "status": "atandi",
+      "status": "PR acildi: 50 kartin 50si eksik kaldi (sinyal tanimi kaynakta yok), terfi 0",
       "spec": "docs/GOREV_T16_T17.md"
     },
     {

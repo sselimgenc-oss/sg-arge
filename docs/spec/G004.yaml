@@ -52,3 +52,4 @@ belirsiz:
 - 'Boyutlandirma kaynaktaki ATR/%40 tavan kurali yok sayilir: evrensel A6 boyutlandirmasi'
 - 'Yazar sonucu komisyonsuz; ayni donemde al-tut %1.389 (strateji %201): al-tut''u geride birakmiyor'
 - Kaynak sayfa okunamadigi icin kart eksik kalir, taramaya girmez
+- "T16: sinyal tanimi eksik (SMA50 zaman dilimi, ATR periyodu, ters 2 ATR mum tanimi)"

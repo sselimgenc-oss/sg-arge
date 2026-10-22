@@ -38,3 +38,4 @@ belirsiz:
 - 'TradingView sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
 - GitHub, Scribd ve TradeSearcher aynalarinda PrimeAutomation tarafindan yayimlanan RiQzLLoh scripti bulunamadi; RSI periyodu, esik degerleri ve cikis/stop parametreleri dogrulanamadi.
 - "T10: ifade ortak dilde tam ve kutuphane gostergeleriyle yazildi (ozel_kod false); kaynak kodu okunamadigi icin kart yine de eksik, taramaya girmez"
+- "T16: sinyal tanimi eksik (RSI periyodu, esikler ve cikis)"

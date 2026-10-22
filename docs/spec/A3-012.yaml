@@ -30,4 +30,5 @@ ozel_kod: false
 belirsiz:
 - Toplu depo (onlarca strateji), kayıt yalnız popülerlik ölçütü; Strategy001-005 A3-010/A3-011 kartlarında; diğerleri tek tek incelenmedi
 - 'Kapsam kararı lider: hepsi mi, seçmeli mi'
+- "T16: sinyal tanimi eksik (toplu depo; tek bir strateji tanimi yok)"
 bias_varsayim: false

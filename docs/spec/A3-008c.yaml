@@ -31,4 +31,5 @@ belirsiz:
 - Momentum(30) giriş/çıkış kuralı README'de tanımlı değil (kütüphane kodunda)
 - Sharpe 0.925 optimize edilmiş en iyi değer (aşırı uyum)
 - 7x kaldıraçlı örnek -%100 (marjin çağrısı)
+- "T16: sinyal tanimi eksik (giris/cikis kurali kutuphane kodunda, kaynakta yok)"
 bias_varsayim: false

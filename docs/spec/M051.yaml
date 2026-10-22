@@ -37,3 +37,4 @@ spec_durumu: eksik
 belirsiz:
 - Jesse.Trade strateji detay sayfasına (https://jesse.trade/strategies/meanreversionrsi) erişim engeli nedeniyle ulaşılamadı; genel strateji listesi (https://jesse.trade/strategies) ve yazar profili (https://jesse.trade/u/saleh)
   okunabilmiş olsa da stratejinin Python kaynak kodu ve kesin RSI parametreleri detay sayfasında yer aldığından doğrulanamadı.
+- "T16: sinyal tanimi eksik (kesin RSI parametreleri ve kural kodu)"

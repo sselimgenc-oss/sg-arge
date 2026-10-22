@@ -31,3 +31,4 @@ spec_durumu: eksik
 belirsiz:
 - TradingView sayfası erişim engeli nedeniyle okunamadı ve web üzerinde ayna kopyası bulunamadı
 - 'Lider öncelik kuralına göre (eksik > dakikalik) giriş/çıkış kuralları eksik olduğundan 1H altında olsa bile spec_durumu: eksik verildi'
+- "T16: sinyal tanimi eksik (giris/cikis kurali ve gostergeler kaynakta okunamadi)"

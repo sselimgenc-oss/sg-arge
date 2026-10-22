@@ -41,3 +41,4 @@ spec_durumu: eksik
 belirsiz:
 - TradingView sayfası erişim engeli nedeniyle doğrudan okunamadı ve web üzerinde ayna kopyası bulunamadı
 - 'Başlıktan BIST30 vadeli kontratlarında EMA(25) ve EMA(68) kesişimi kullanıldığı anlaşılmakta ancak ek filtreler, seans saatleri ve SL/TP kuralları doğrulanamadığından spec_durumu: eksik olarak sınıflandırıldı'
+- "T16: sinyal tanimi eksik (ek filtreler, seans saatleri ve cikis kurali)"
