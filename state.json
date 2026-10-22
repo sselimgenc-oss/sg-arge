@@ -166,7 +166,7 @@
       "id": "T18",
       "owner": "claude-moderator",
       "title": "Kosullu adaylardan esit riskli portfoy + korelasyon analizi",
-      "status": "atandi",
+      "status": "PR acildi: backtests/portfoy.py + portfoy.yml; gercek kosu lider (veri gerekir)",
       "spec": "docs/GOREV_T18.md"
     },
     {

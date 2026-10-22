@@ -1,0 +1,50 @@
+name: Portfoy analizi (T18)
+
+on:
+  workflow_dispatch:
+    inputs:
+      evren:
+        description: "Evren: sabit ya da pit (asama2b_pit.csv varsa onu okur)"
+        default: "pit"
+      bootstrap_tekrar:
+        description: "Block bootstrap tekrar sayisi"
+        default: "1000"
+
+permissions:
+  contents: write
+
+jobs:
+  portfoy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Download daily bars
+        env:
+          EVREN: ${{ inputs.evren }}
+        run: python data/fetch.py --interval 1d --allow-partial --evren "$EVREN"
+      - name: Download USDTRY
+        run: python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Run portfolio analysis
+        env:
+          BOOTSTRAP_TEKRAR: ${{ inputs.bootstrap_tekrar }}
+        run: python backtests/portfoy.py --bootstrap-tekrar "$BOOTSTRAP_TEKRAR"
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/portfoy.md results/portfoy_korelasyon.csv
+          git diff --cached --quiet || git commit -m "chore: refresh portfolio analysis"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep 5
+          done
+          exit 1
