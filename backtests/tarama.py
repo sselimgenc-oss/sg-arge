@@ -24,6 +24,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
+from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
 from engine import gosterge  # noqa: E402
 from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
@@ -109,6 +110,7 @@ def prepare(
     benchmark: pd.DataFrame | None = None,
     start: pd.Timestamp = IS_START,
     end: pd.Timestamp = IS_END,
+    pit_universe: PITUniverse | None = None,
 ) -> Prepared:
     """Card timeframe frames (weekly for 1W cards), signals and engine arguments for one market."""
     week_end = "SUN" if market == "KRIPTO25" else "FRI"
@@ -121,6 +123,8 @@ def prepare(
     if not in_period:
         raise ValueError(f"{market}: donemde veri yok")
     plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark)
+    if pit_universe is not None:
+        plan.signals = filter_entry_signals(plan.signals, pit_universe, market)
     annualization = 52 if weekly_card else (365 if market == "KRIPTO25" else 252)
     return Prepared(in_period, plan, annualization, BASE_COST[market], market, start, end)
 
@@ -133,9 +137,10 @@ def run_card_market(
     benchmark: pd.DataFrame | None = None,
     start: pd.Timestamp = IS_START,
     end: pd.Timestamp = IS_END,
+    pit_universe: PITUniverse | None = None,
 ) -> dict[str, Any]:
     """Run one card on one market's data; returns the metric fields of a tarama row."""
-    prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end)
+    prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
     plan, annualization = prepared.plan, prepared.annualization
     out: dict[str, Any] = {}
     first, second = prepared.run(1.0), prepared.run(2.0)
@@ -172,9 +177,10 @@ def _empty(card: dict[str, Any], market: str, durum: str, neden: str) -> dict[st
     }
 
 
-def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path, *, merge: bool = False) -> pd.DataFrame:
+def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path, *, merge: bool = False, evren: str = "sabit") -> pd.DataFrame:
     git_sha = _git_sha()
-    market_data: dict[str, tuple[dict[str, pd.DataFrame], str, list[str]]] = {m: _load_market(m, data_dir) for m in MARKETS}
+    pit_universe = load_pit_universe() if evren == "pit" else None
+    market_data: dict[str, tuple[dict[str, pd.DataFrame], str, list[str]]] = {m: _load_market(m, data_dir, evren) for m in MARKETS}
     benchmarks: dict[str, pd.DataFrame | None] = {}
     for market, symbol in BENCHMARK_SYMBOL.items():
         loaded = market_data[market][0]
@@ -201,7 +207,7 @@ def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path, *, merg
                 rows.append(_empty(card, market, "Dogrulanamaz", "veri_yok"))
                 continue
             try:
-                result = run_card_market(card, data, market, benchmark=benchmarks.get(market))
+                result = run_card_market(card, data, market, benchmark=benchmarks.get(market), pit_universe=pit_universe)
             except MotorDestegiYok as exc:
                 rows.append(_empty(card, market, "Atlandi", f"motor_destegi_yok:{exc.field_name}"))
                 continue
@@ -292,6 +298,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--birlestir", action="store_true", help="merge into the existing results/tarama.csv (rescanned cards replace their rows)")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
+    parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
     return parser.parse_args()
 
 
@@ -301,7 +308,7 @@ def main() -> int:
     if args.kart_ids:
         wanted = {item.strip() for item in args.kart_ids.split(",") if item.strip()}
         cards = [card for card in cards if card["id"] in wanted]
-    table = scan(cards, args.data_dir, args.results_dir, merge=args.birlestir)
+    table = scan(cards, args.data_dir, args.results_dir, merge=args.birlestir, evren=args.evren)
     print(f"{len(cards)} kart, {len(table)} satir, {int((table['durum'] == 'Hesaplandi').sum())} hesaplandi, "
           f"{int(table['asama2_aday'].fillna(False).astype(bool).sum())} satir asama 2 adayi")
     return 0

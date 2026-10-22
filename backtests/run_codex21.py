@@ -19,6 +19,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from data.fetch import normalize_ohlcv  # noqa: E402
+from data.evren_pit import filter_entry_signals, load_pit_universe  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
 from strategies.wd_adx_breakout_risk import signals as adx_breakout_signals  # noqa: E402
 from strategies.wd_breakout_risk import signals as breakout_signals  # noqa: E402
@@ -122,8 +123,13 @@ def _git_sha() -> str:
     ).stdout.strip()
 
 
-def _symbols_for_market(market: str) -> list[str]:
+def _symbols_for_market(market: str, evren: str = "sabit") -> list[str]:
     universe = pd.read_csv(ROOT / "data" / "evren.csv", dtype=str).fillna("")
+    if evren == "pit":
+        extras = ROOT / "data" / "evren_pit_semboller.csv"
+        if not extras.exists():
+            raise FileNotFoundError(f"{extras} yok; once python data/evren_pit.py calistirin")
+        universe = pd.concat([universe, pd.read_csv(extras, dtype=str).fillna("")], ignore_index=True)
     selected = universe.loc[universe["piyasa"] == market]
     if market == "ABD25":
         selected = selected.loc[~selected["not"].str.lower().str.contains("referans")]
@@ -134,11 +140,11 @@ def _filename(symbol: str) -> str:
     return symbol.replace("/", "_").replace("=", "_") + ".parquet"
 
 
-def _load_market(market: str, data_dir: Path) -> tuple[dict[str, pd.DataFrame], str, list[str]]:
+def _load_market(market: str, data_dir: Path, evren: str = "sabit") -> tuple[dict[str, pd.DataFrame], str, list[str]]:
     loaded: dict[str, pd.DataFrame] = {}
     missing: list[str] = []
     digest = hashlib.sha256()
-    for symbol in _symbols_for_market(market):
+    for symbol in _symbols_for_market(market, evren):
         path = data_dir / _filename(symbol)
         if not path.exists():
             missing.append(symbol)
@@ -181,20 +187,23 @@ def _trade_path(results_dir: Path, config: RowConfig, period: str) -> Path:
     return results_dir / "trades" / f"{config.row_id}_{period}.csv"
 
 
-def run_rows(row_ids: list[str], data_dir: Path, results_dir: Path) -> pd.DataFrame:
+def run_rows(row_ids: list[str], data_dir: Path, results_dir: Path, *, evren: str = "sabit") -> pd.DataFrame:
     git_sha = _git_sha()
     outputs: list[dict[str, object]] = []
     cache: dict[str, tuple[dict[str, pd.DataFrame], str, list[str]]] = {}
+    pit_universe = load_pit_universe() if evren == "pit" else None
     scenarios = [("1x", 1.0, 0), ("2x", 2.0, 0), ("3x", 3.0, 0), ("gecikme_+1", 1.0, 1)]
     for row_id in row_ids:
         config = ROWS[row_id]
         if config.market not in cache:
-            cache[config.market] = _load_market(config.market, data_dir)
+            cache[config.market] = _load_market(config.market, data_dir, evren)
         market_data, data_hash, missing = cache[config.market]
         precomputed_signals = {
             symbol: config.signal_function(frame, config.market)
             for symbol, frame in market_data.items()
         }
+        if pit_universe is not None:
+            precomputed_signals = filter_entry_signals(precomputed_signals, pit_universe, config.market)
         for period, start, end in [
             ("replikasyon", REPLICATION_START, REPLICATION_END),
             ("on_donem", PREPERIOD_START, PREPERIOD_END),
@@ -359,6 +368,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--rows", default=",".join(ROWS), help="comma-separated row IDs")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
+    parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
     return parser.parse_args()
 
 
@@ -368,7 +378,7 @@ def main() -> int:
     unknown = sorted(set(row_ids).difference(ROWS))
     if unknown:
         raise SystemExit(f"unknown row IDs: {', '.join(unknown)}")
-    table = run_rows(row_ids, args.data_dir, args.results_dir)
+    table = run_rows(row_ids, args.data_dir, args.results_dir, evren=args.evren)
     calculated = int((table["durum"] == "Hesaplandi").sum())
     print(f"Wrote {len(table)} scenario rows ({calculated} calculated) to {args.results_dir}")
     return 0

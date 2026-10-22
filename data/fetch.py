@@ -38,7 +38,7 @@ class Asset:
         return f"{safe}.parquet"
 
 
-def load_universe(path: Path = UNIVERSE_PATH) -> list[Asset]:
+def load_universe(path: Path = UNIVERSE_PATH, *, pit: bool = False) -> list[Asset]:
     table = pd.read_csv(path, dtype=str).fillna("")
     missing = REQUIRED_UNIVERSE_COLUMNS.difference(table.columns)
     if missing:
@@ -50,6 +50,18 @@ def load_universe(path: Path = UNIVERSE_PATH) -> list[Asset]:
         Asset(row.sembol.strip(), row.piyasa.strip(), row.kaynak.strip().lower())
         for row in table.itertuples(index=False)
     ]
+    if pit:
+        extras_path = DATA_DIR / "evren_pit_semboller.csv"
+        if not extras_path.exists():
+            raise FileNotFoundError(f"{extras_path} yok; once python data/evren_pit.py calistirin")
+        extra = pd.read_csv(extras_path, dtype=str).fillna("")
+        missing = REQUIRED_UNIVERSE_COLUMNS.difference(extra.columns)
+        if missing:
+            raise ValueError(f"{extras_path} missing columns: {sorted(missing)}")
+        assets += [
+            Asset(row.sembol.strip(), row.piyasa.strip(), row.kaynak.strip().lower())
+            for row in extra.itertuples(index=False) if row.sembol.strip() not in {asset.symbol for asset in assets}
+        ]
     unsupported = sorted({asset.source for asset in assets} - {"yfinance", "binance"})
     if unsupported:
         raise ValueError(f"unsupported sources: {unsupported}")
@@ -312,13 +324,13 @@ def fetch_asset(asset: Asset, interval: str, *, append: bool) -> tuple[Path, pd.
     return path, combined
 
 
-def run(interval: str, *, append: bool, allow_partial: bool = False) -> int:
+def run(interval: str, *, append: bool, allow_partial: bool = False, evren: str = "sabit") -> int:
     manifest_rows: list[dict[str, object]] = []
     quality_rows: list[dict[str, object]] = []
     successful: set[str] = set()
     failure_reasons: dict[str, str] = {}
     failures = 0
-    for asset in load_universe():
+    for asset in load_universe(pit=evren == "pit"):
         directory = DATA_DIR / ("hourly" if interval == "1h" else "daily")
         path = directory / asset.filename
         try:
@@ -368,6 +380,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="merge downloads into an existing archive without duplicate timestamps",
     )
+    parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
     parser.add_argument(
         "--allow-partial",
         action="store_true",
@@ -379,5 +392,5 @@ def parse_args() -> argparse.Namespace:
 if __name__ == "__main__":
     arguments = parse_args()
     raise SystemExit(
-        run(arguments.interval, append=arguments.append, allow_partial=arguments.allow_partial)
+        run(arguments.interval, append=arguments.append, allow_partial=arguments.allow_partial, evren=arguments.evren)
     )
