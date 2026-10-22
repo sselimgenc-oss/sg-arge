@@ -38,3 +38,4 @@ belirsiz:
 - NinjaTrader Ecosystem sayfasında yalnızca 'A cross over strategy using the MACD indicator' açıklaması yer almakta olup C# kaynak kodu yalnızca indirilebilir .zip (MACD_Cross_Over_NT8.zip) içinde bulunduğundan
   okunamadı
 - 'Ek filtre, stop-loss, kar hedefi ve varsayılan periyotlar .zip içerisinden doğrulanamadığından spec_durumu: eksik olarak işaretlendi'
+- "T16: sinyal tanimi eksik (periyotlar ve filtreler .zip icindeki C# kodunda)"

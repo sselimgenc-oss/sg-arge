@@ -30,3 +30,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - Forex-Station dosya indirme bağlantısına (https://forex-station.com/attach/file/3477006) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında bu dosya ID'sine ait açıklama bulunamadı.
+- "T16: sinyal tanimi eksik (giris/cikis kurali ve gostergeler kaynakta okunamadi)"

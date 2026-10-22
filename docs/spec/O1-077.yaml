@@ -31,3 +31,4 @@ spec_durumu: eksik
 belirsiz:
 - NinjaTrader Ecosystem sayfası ana sayfaya yönlenmekte ve C# kaynak kodu .zip paketi içinde yer aldığından okunamadı
 - Başlıktan Nasdaq (NQ) vadeli kontratlarında en yüksek likidite saatlerinde (peak hours) otomatik işlem yaptığı anlaşılmakta ancak kurallar belirsizdir
+- "T16: sinyal tanimi eksik (kurallar .zip icindeki C# kodunda)"

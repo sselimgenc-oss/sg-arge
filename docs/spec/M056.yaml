@@ -37,3 +37,4 @@ spec_durumu: eksik
 belirsiz:
 - GitHub deposuna (https://github.com/ErikKerkvliet/FreqtradeHyperOpt) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında bu depoya ait önbellek/ayna bulunamadı; rapor metrikleri görev listesindeki
   açıklamadan alındı.
+- "T16: sinyal tanimi eksik (giris/cikis kurali ve gostergeler kaynakta okunamadi)"

@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
-Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 154
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **81**; ayrica `dakikalik` (yalniz kripto testi) hazir: **13**
+Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 152
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **87**; ayrica `dakikalik` (yalniz kripto testi) hazir: **17**
 
 
 ## Durum dagilimi
@@ -120,7 +120,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | up | 1 |
 | down | 1 |
 | rsi_atr_mkt | 1 |
-| entry_price | 1 |
 | totalbricksup | 1 |
 | totalbricksdown | 1 |
 | ott_hhv | 1 |

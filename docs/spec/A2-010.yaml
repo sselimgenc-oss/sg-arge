@@ -30,3 +30,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - MQL5 CodeBase 69651 sayfası yayından kaldırılmış veya erişime kapalıdır, arama motoru önbelleğinde de bulunmamaktadır
+- "T16: sinyal tanimi eksik (giris/cikis kurali ve gostergeler kaynakta okunamadi)"

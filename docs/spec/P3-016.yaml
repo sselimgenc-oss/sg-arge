@@ -49,3 +49,4 @@ belirsiz:
 - Scribd, TradeSearcher ve GitHub aynalari tarandi; iHSFQFog kodlu spesifik script bulunamadi. Standart Larry Connors 2-periyot RSI + trend filtresi (SMA200/EMA200 uzerinde RSI(2) < 10 giris, SMA(5) uzeri
   kapanis veya RSI(2) > 70 cikis) referans olarak yazildi; kaynak scriptteki kesin filtre ve esik degerleri dogrulanamadi.
 - "T10: ifade ortak dilde tam ve kutuphane gostergeleriyle yazildi (ozel_kod false); kaynak kodu okunamadigi icin kart yine de eksik, taramaya girmez"
+- "T16: sinyal tanimi eksik (kaynak scriptin esik ve filtre degerleri)"

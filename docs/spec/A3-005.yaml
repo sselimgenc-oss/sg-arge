@@ -34,4 +34,5 @@ ozel_kod: false
 belirsiz:
 - Range filtresi parametreleri (Swing Source/Period, aralık çarpanı) ve stop/TP yüzdeleri README'de yok; Pine dosyası yolu bilinmiyor -> eksik
 - 'İşlem sayısı ve PF yok; 45 dakika: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
+- "T16: sinyal tanimi eksik (range filtresi parametreleri, stop/TP yuzdeleri)"
 bias_varsayim: false
