@@ -223,7 +223,7 @@
       "id": "T25",
       "owner": "claude-moderator",
       "title": "Nihai sonuc raporu v2 (basarili/basarisiz listesi)",
-      "status": "atandi",
+      "status": "teslim edildi, lider incelemesi bekliyor: sonuc_raporu.py v2 (kart basina tek durum, PIT/rotasyon/gun ici, standart alt neden), results/SONUC.md + SONUC.csv",
       "spec": "docs/GOREV_T25.md"
     },
     {
