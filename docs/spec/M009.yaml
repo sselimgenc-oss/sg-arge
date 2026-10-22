@@ -17,6 +17,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   dte_entry: 30
   short_put_delta: 0.3
@@ -49,3 +50,4 @@ spec_durumu: eksik
 belirsiz:
 - 'Strateji teknik bir fiyat sinyali kullanmaz; açık pozisyon olmadığında sıralı olarak 30 DTE vadeli, 0.30 delta short put / 0.10 delta long put opsiyon kredi spreadi açar. Opsiyon zinciri ve delta/DTE
   verisi gerektirdiği için spot OHLCV üzerinde test edilemez (spec_durumu: eksik, ozel_kod: true).'
+- "T10: ozel_kod_nedeni: tanim_belirsiz (opsiyon spread stratejisi)"

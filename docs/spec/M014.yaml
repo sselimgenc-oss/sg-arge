@@ -24,7 +24,7 @@ cikis: close > high[1] or close < sma200
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   rsi2.n: 2
   sma200.n: 200
@@ -44,3 +44,4 @@ spec_durumu: tam
 belirsiz:
 - 'Portföy ve likidite filtreleri (ozel_kod: true): Yalnız large/mega cap ABD hisseleri; son 3 aydaki tüm seanslarda işlem görmüş ve pozisyon büyüklüğü son 3 aylık medyan günlük hacmin (ADV) %5''ini aşmayan
   hisseler alınır. Azami N=2 eşzamanlı pozisyon taşınır; N''den fazla sinyal varsa piyasa değerine göre küçükten büyüğe sıralanır.'
+- "T10: ozel_kod alani eklendi (false); evrensel portfoy kurallari (A6) uygulanir: ADV %5, azami 2 pozisyon ve piyasa degerine gore siralama yok sayilir"

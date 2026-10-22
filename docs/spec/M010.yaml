@@ -24,6 +24,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: cok_enstruman
 parametreler:
   RSILen: 50
   ATRLen: 14
@@ -44,3 +45,4 @@ belirsiz:
   (S&P 500) ATR''sinin 50 periyotluk RSI''ı (rsi_atr_mkt = RSI(ATR(SP500, ATRLen), RSILen)) hesaplanır (RSILen=50). 2) RSISpread = rsi_atr_sec / rsi_atr_mkt olarak bulunur. 3) AvgSpread = EMA(RSISpread,
   RSILen) ve AvgSpreadDiff = RSISpread - AvgSpread hesaplanır. 4) Long Giriş: AvgSpreadDiff < 0 ve rsi_atr_mkt > rsi_atr_sec (piyasa volatilite RSI''ı hisse volatilite RSI''ından büyük) olduğunda al. 5)
   Long Çıkış: AvgSpreadDiff > 0 olduğunda sat.'
+- "T10: ozel_kod_nedeni: cok_enstruman (S&P 500 ATR'sinin RSI'i ile hisse ATR RSI'i arasi spread ve ortalama spread farki)"

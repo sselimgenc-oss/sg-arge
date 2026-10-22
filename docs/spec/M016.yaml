@@ -21,6 +21,7 @@ hedef:
   deger: 1.0
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: bekleyen_emir
 parametreler:
   entry_dip_pct: 1.0
   profit_target_pct: 1.0
@@ -43,3 +44,4 @@ belirsiz:
   * 0.99) alış limit emri girilir (haftada en fazla 1 işlem). 2) Pozisyon açıldıktan sonra her gün kapanışta açık kâr/zarar yüzdesi (ProfitPctAsOf) kontrol edilir: eğer kapanışta zarar %-0,5''ten azsa (ProfitPct
   > -0.5%) ertesi gün için giriş fiyatının %1 üstüne (entry_price * 1.01) satış limit emri konur; eğer kapanışta açık zarar %-0,5 veya daha kötüyse (ProfitPct <= -0.5%) ertesi günkü satış limit emri giriş
   fiyatına (entry_price, %0 başabaş) çekilir. 3) Haftanın son işlem günü (Cuma) pozisyon hâlâ açıksa haftasonuna pozisyon taşımamak için seans kapanışında (MarketClose / MOC) kapatılır.'
+- "T10: ozel_kod_nedeni: bekleyen_emir (Pazartesi acilisinin %1 altina limit alim, dinamik basabas cikisi; 3x kaldiracli ETF (kaldirac fazi D4))"

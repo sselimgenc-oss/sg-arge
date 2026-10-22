@@ -15,7 +15,8 @@ gostergeler:
     f: lowest
     src: low
     n: 5
-giris: close < low5[1]
+    kaydir: 1
+giris: close < low5
 cikis: close > high[1]
 stop: null
 hedef: null
@@ -32,4 +33,7 @@ rapor:
   wr: null
   maliyet_dahil: evet
 spec_durumu: tam
-belirsiz: []
+belirsiz:
+- 'T10: ozel_kod alani eklendi (false); kaynak ''kapanista giris'' dedigi icin dolum: kapanis (D4); low5 gostergesi kaydir: 1 ile (onceki 5 gunun en dusugu), ifade low5[1] yerine'
+dolum: kapanis
+ozel_kod: false

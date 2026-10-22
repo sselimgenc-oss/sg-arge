@@ -25,6 +25,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
+piyasa_kisiti: [ABD]
 parametreler:
   noise_lookback_days: 14
   decision_interval_min: 30
@@ -61,3 +63,4 @@ belirsiz:
   Close_{t-1,16:00}) * (1 + sigma_{t,HH:MM}) ve LowerBound_{t,HH:MM} = min(Open_{t,09:30}, Close_{t-1,16:00}) * (1 - sigma_{t,HH:MM}). 3) Yalnız yarım saatlik kontrol noktalarında (HH:00 ve HH:30) Close
   > UpperBound ise long açılır (Close < LowerBound ise short açılır). 4) Long pozisyon, yarım saatlik kontrol noktasında Close < max(UpperBound, VWAP) olduğunda veya 16:00 seans kapanışında (EOD flat) kapatılır.
   5) Pozisyon büyüklüğü: 14 günlük günlük getiri standart sapması ile günlük %2 volatilite hedeflenir, kaldıraç azami 4x ile sınırlandırılır: min(4, 0.02 / stdev_14(daily_ret)).'
+- "T10: ozel_kod_nedeni: seans_saat (gun ici gurultu alani (noise area) ust siniri ve seans VWAP'i; 13 bar zaman cikisi)"

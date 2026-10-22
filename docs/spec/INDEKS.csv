@@ -155,41 +155,41 @@ G010,OPEX Week Long,swing,1D,tam,false,5,https://www.linkedin.com/posts/quantifi
 G011,PowerX - RSI + Stochastic + MACD (Freqtrade powerxhopt),swing,1D,tam,false,4,https://github.com/IvanLetteri/AITA---Strategies/blob/main/rsi-stoch-macd/powerx-results.txt
 G012,"Riding Bollinger Bands (Freqtrade bb_riding, hyperopt)",swing,1D,tam,false,4,https://github.com/IvanLetteri/AITA---Strategies/blob/main/bb_riding/btst_bb_riding_hopt_results.txt
 G013,Trend Trigger | EMA + MTF Stochastic (TradingView),day,1H,eksik,true,3,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
-M001,Opening Range Breakout (ORB) 0DTE Options Strategy,day,1m,eksik,true,3,https://optionalpha.com/blog/opening-range-breakout-0dte-options-trading-strategy-explained
-M002,Key Reversal Patterns Using Kase Bars,day,1m,eksik,true,2,https://cdn.tradestation.com/uploads/Key-Reversal-Patterns-Using-Kase-Bars.pdf
-M003,5min /ES Futures Strategy For ThinkOrSwim (HalfTrend with Deviation Bands),day,5m,dakikalik,true,2,https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/
-M004,Beat the Market: Intraday Momentum Strategy for S&P500 ETF (SPY),day,30m,dakikalik,true,2,https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf
-M005,Intraday Momentum for ES and NQ (Noise Area 90-Day Variant),day,30m,dakikalik,true,2,https://www.quantitativo.com/p/intraday-momentum-for-es-and-nq
-M006,RSI Double-Bottom for Amibroker (AFL),swing,1D,tam,false,1,https://www.wisestocktrader.com/indicators/371-rsi-double-bottom-for-amibroker-afl
-M007,ForexFactory Post 8694795 Swing Strategy,swing,1D,eksik,false,1,https://www.forexfactory.com/thread/post/8694795
-M008,RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks,swing,1D,tam,true,1,https://alvarezquanttrading.com/blog/rsi2-strategy-double-returns-with-a-simple-rule-change/
-M009,5-Year SPY Put Credit Spread Backtest,swing,1D,eksik,true,1,https://optionalpha.com/blog/spy-put-credit-spread-backtest
-M010,RSI Volatility Spread,swing,1D,tam,true,2,https://cdn.tradestation.com/uploads/RSI-Volatility-Spread.pdf
-M011,Double 7's Strategy (Larry Connors),swing,1D,tam,false,1,https://tradingstrategy.ai/docs/programming/old-strategies/double-7.html
-M012a,5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS,swing,1D,tam,true,1,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
-M012b,5 Swing Trading Strategies for Beginners - Strategy 2: Turnaround Tuesday,swing,1D,tam,true,1,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
-M012c,5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry,swing,1D,tam,false,0,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
-M012d,5 Swing Trading Strategies for Beginners - Strategy 4: Volatility Contraction,swing,1D,tam,true,1,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
-M012e,5 Swing Trading Strategies for Beginners - Strategy 5: New Highs with Low IBS,swing,1D,tam,false,0,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
-M013,Simple H4 Mobile Trading System,swing,4H,tam,true,2,https://www.forexfactory.com/thread/830795-simple-h4-mobile-trading-system
-M014,Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation),swing,1D,tam,true,1,https://www.elitetrader.com/et/threads/larry-connors-2-day-rsi-holy-grail-adapting-a-strategy-to-deliver-30-annual-return-since-1999.379926/
-M015,Larry Connors' Cumulative RSI Strategy,swing,1D,tam,true,1,https://www.elitetrader.com/et/threads/larry-connors-cumulative-rsi-26-annual-return-now-with-sensitivity-analysis.379982/
-M016,One Percent a Week Strategy (TQQQ),swing,1D,tam,true,1,https://www.wealth-lab.com/Discussion/8011
-M017,RSI 2 Portfolio (Composer Symphony),swing,1D,eksik,false,1,https://www.composer.trade/trading-strategies/rsi-2-portfolio-DszXqIWmqcC8lxiliUsf
-M018,TradingView Script LHKOdUOs,swing,1D,eksik,false,1,https://www.tradingview.com/script/LHKOdUOs/
-M019,FullStochastic with Filters - Buy&Sell for Amibroker (AFL),swing,1D,tam,true,2,https://www.wisestocktrader.com/indicators/3565-fullstochastic-with-filters-buy-sell-for-amibroker-afl
-M020a,The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp),swing,1W,tam,true,2,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
-M020b,The 30-Minute Stock Trader - Strategy 2: Mean-Reversion Long (Laurens Bensdorp),swing,1D,eksik,true,1,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
+M001,Opening Range Breakout (ORB) 0DTE Options Strategy,day,1m,eksik,true,4,https://optionalpha.com/blog/opening-range-breakout-0dte-options-trading-strategy-explained
+M002,Key Reversal Patterns Using Kase Bars,day,1m,eksik,true,3,https://cdn.tradestation.com/uploads/Key-Reversal-Patterns-Using-Kase-Bars.pdf
+M003,5min /ES Futures Strategy For ThinkOrSwim (HalfTrend with Deviation Bands),day,5m,dakikalik,true,3,https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/
+M004,Beat the Market: Intraday Momentum Strategy for S&P500 ETF (SPY),day,30m,dakikalik,true,3,https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf
+M005,Intraday Momentum for ES and NQ (Noise Area 90-Day Variant),day,30m,dakikalik,true,3,https://www.quantitativo.com/p/intraday-momentum-for-es-and-nq
+M006,RSI Double-Bottom for Amibroker (AFL),swing,1D,tam,false,2,https://www.wisestocktrader.com/indicators/371-rsi-double-bottom-for-amibroker-afl
+M007,ForexFactory Post 8694795 Swing Strategy,swing,1D,eksik,true,2,https://www.forexfactory.com/thread/post/8694795
+M008,RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks,swing,1D,tam,true,2,https://alvarezquanttrading.com/blog/rsi2-strategy-double-returns-with-a-simple-rule-change/
+M009,5-Year SPY Put Credit Spread Backtest,swing,1D,eksik,true,2,https://optionalpha.com/blog/spy-put-credit-spread-backtest
+M010,RSI Volatility Spread,swing,1D,tam,true,3,https://cdn.tradestation.com/uploads/RSI-Volatility-Spread.pdf
+M011,Double 7's Strategy (Larry Connors),swing,1D,tam,false,2,https://tradingstrategy.ai/docs/programming/old-strategies/double-7.html
+M012a,5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS,swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+M012b,5 Swing Trading Strategies for Beginners - Strategy 2: Turnaround Tuesday,swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+M012c,5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry,swing,1D,tam,false,1,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+M012d,5 Swing Trading Strategies for Beginners - Strategy 4: Volatility Contraction,swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+M012e,5 Swing Trading Strategies for Beginners - Strategy 5: New Highs with Low IBS,swing,1D,tam,false,1,https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+M013,Simple H4 Mobile Trading System,swing,4H,tam,true,3,https://www.forexfactory.com/thread/830795-simple-h4-mobile-trading-system
+M014,Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation),swing,1D,tam,false,2,https://www.elitetrader.com/et/threads/larry-connors-2-day-rsi-holy-grail-adapting-a-strategy-to-deliver-30-annual-return-since-1999.379926/
+M015,Larry Connors' Cumulative RSI Strategy,swing,1D,tam,false,2,https://www.elitetrader.com/et/threads/larry-connors-cumulative-rsi-26-annual-return-now-with-sensitivity-analysis.379982/
+M016,One Percent a Week Strategy (TQQQ),swing,1D,tam,true,2,https://www.wealth-lab.com/Discussion/8011
+M017,RSI 2 Portfolio (Composer Symphony),swing,1D,eksik,true,2,https://www.composer.trade/trading-strategies/rsi-2-portfolio-DszXqIWmqcC8lxiliUsf
+M018,TradingView Script LHKOdUOs,swing,1D,eksik,true,2,https://www.tradingview.com/script/LHKOdUOs/
+M019,FullStochastic with Filters - Buy&Sell for Amibroker (AFL),swing,1D,tam,true,3,https://www.wisestocktrader.com/indicators/3565-fullstochastic-with-filters-buy-sell-for-amibroker-afl
+M020a,The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp),swing,1W,tam,true,3,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
+M020b,The 30-Minute Stock Trader - Strategy 2: Mean-Reversion Long (Laurens Bensdorp),swing,1D,eksik,true,2,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
 M020c,The 30-Minute Stock Trader - Strategy 3: Mean-Reversion Short (Laurens Bensdorp),swing,1D,sadece_short,true,1,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
-M021,Intraday Application of Hidden Markov Models,day,5m,eksik,true,2,https://www.quantconnect.com/research/17900/intraday-application-of-hidden-markov-models/
-M022,Quadrant Strategy (DAX 5m),day,5m,eksik,false,1,https://www.prorealcode.com/prorealtime-trading-strategies/quadrant-strategy/
-M023,Quadrant 2.0 DAX 5 min,day,5m,eksik,false,1,https://www.prorealcode.com/wp-content/uploads/2017/04/Quadrant-2.0-DAX-5-min.itf
-M024,MQL5 Code 8688 (EURUSD M1 Day Trade),day,1m,eksik,false,1,https://www.mql5.com/en/code/8688
-M025,MQL5 Code 8970 (EURUSD M5),day,5m,eksik,false,1,https://www.mql5.com/en/code/8970
-M026,A simple RKD Expert Advisor based on a specified custom RKD indicator (autoRKD_EA),day,1H,eksik,false,1,https://www.mql5.com/en/code/126
-M027,Renko Automated Trading System,day,15m,dakikalik,true,1,https://www.prorealcode.com/prorealtime-trading-strategies/renko-automated-trading-system/
-M028,TradingView Script Qh7OYDvf (BTC/Crypto 5m),day,5m,eksik,false,1,https://www.tradingview.com/script/Qh7OYDvf/
-M029,Geometric Grid Machine 3Commas (HYPEUSDT 15m),day,15m,eksik,false,1,https://www.tradingview.com/script/8N8DT3Pv-Geometric-Grid-Machine-3Commas/
+M021,Intraday Application of Hidden Markov Models,day,5m,eksik,true,3,https://www.quantconnect.com/research/17900/intraday-application-of-hidden-markov-models/
+M022,Quadrant Strategy (DAX 5m),day,5m,eksik,true,2,https://www.prorealcode.com/prorealtime-trading-strategies/quadrant-strategy/
+M023,Quadrant 2.0 DAX 5 min,day,5m,eksik,true,2,https://www.prorealcode.com/wp-content/uploads/2017/04/Quadrant-2.0-DAX-5-min.itf
+M024,MQL5 Code 8688 (EURUSD M1 Day Trade),day,1m,eksik,true,2,https://www.mql5.com/en/code/8688
+M025,MQL5 Code 8970 (EURUSD M5),day,5m,eksik,true,2,https://www.mql5.com/en/code/8970
+M026,A simple RKD Expert Advisor based on a specified custom RKD indicator (autoRKD_EA),day,1H,eksik,true,2,https://www.mql5.com/en/code/126
+M027,Renko Automated Trading System,day,15m,dakikalik,true,2,https://www.prorealcode.com/prorealtime-trading-strategies/renko-automated-trading-system/
+M028,TradingView Script Qh7OYDvf (BTC/Crypto 5m),day,5m,eksik,true,2,https://www.tradingview.com/script/Qh7OYDvf/
+M029,Geometric Grid Machine 3Commas (HYPEUSDT 15m),day,15m,eksik,true,2,https://www.tradingview.com/script/8N8DT3Pv-Geometric-Grid-Machine-3Commas/
 M030,BNB Grid Bot Long Strategy,day,15m,eksik,false,1,https://www.tradingview.com/script/9pHwOZsM-BNB-Grid-Bot-Long-Strategy/
 M031,3Commas Pullback Sniper Strategy,day,5m,eksik,false,2,https://www.tradingview.com/script/XbtQXDMb-3Commas-Pullback-Sniper-Strategy/
 M032,XAU Grid Bot Long Strategy,swing,15m,eksik,false,1,https://www.tradingview.com/script/bjoh9PTd-XAU-Grid-Bot-Long-Strategy/

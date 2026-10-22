@@ -11,12 +11,15 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: Endeks (DAX)
 gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
 erisim_engeli: true
+piyasa_kisiti: [GER40]
 parametreler:
   session_start: 09:00
   session_end: '17:30'
@@ -32,3 +35,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - Kaynak URL'ye (https://www.prorealcode.com/prorealtime-trading-strategies/quadrant-strategy/) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında strateji koduna ait önbellek/ayna bulunamadı.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kural yok)"

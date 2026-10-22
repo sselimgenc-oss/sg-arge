@@ -89,7 +89,7 @@
       "id": "T10",
       "owner": "claude-moderator",
       "title": "Argon kartlarini standarda getirme (her Argon partisinden sonra): T7 sozdizimi + T8 ozel_kod triyaji + piyasa_kisiti",
-      "status": "parti 7-8 done (PR acik); parti 9-12 geldikce",
+      "status": "parti 7-8, 10 done (PR acik); parti 11 alininca, 9 yok",
       "spec": "Issue #1 GOREV -> Sonnet T10"
     },
     {

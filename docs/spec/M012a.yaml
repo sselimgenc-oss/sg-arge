@@ -11,19 +11,20 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD Hisse / ETF (SPY)
 gostergeler:
-  high10:
+  hh10:
     f: highest
     src: high
     n: 10
-  atr25:
-    f: atr
+  range25:
+    f: sma
+    src: high - low
     n: 25
-giris: close < high10 - 2.5 * range_sma25 and (close - low) / (high - low) < 0.3
+giris: close < hh10 - 2.5 * range25 and (close - low) / (high - low) < 0.3
 cikis: close > high[1]
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   high10.n: 10
   range_sma_n: 25
@@ -42,3 +43,6 @@ spec_durumu: tam
 belirsiz:
 - 'range_sma25 hesaplaması (ozel_kod: true): Son 25 günün (high - low) farkının basit hareketli ortalamasıdır (sma(high - low, 25)). Alt bant = highest(high, 10) - 2.5 * sma(high - low, 25). IBS = (close
   - low) / (high - low). Kapanış alt bandın altında ve IBS < 0.3 ise long girilir; close > high[1] olduğunda çıkılır.'
+- 'T10: ayni kural O3-002 (Strategy 1, ATR yerine sma(high-low,25) = O3-002 duzeltmesi)'
+alias_of: O3-002
+dolum: kapanis
