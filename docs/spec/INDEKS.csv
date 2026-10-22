@@ -85,13 +85,13 @@ A3-011e,pandianmn fork: Strategy005 (resmi depo kodu),day,5m,dakikalik,false,6,h
 A3-012,freqtrade/freqtrade-strategies (resmi örnek depo),day,5m,eksik,false,3,https://github.com/freqtrade/freqtrade-strategies
 A3-013,NostalgiaForInfinity (NFI),day,5m,eksik,true,3,https://github.com/iterativv/NostalgiaForInfinity
 A3-014,"nateemma/strategies (MomentumRegimeBasket15mFast, ML stratejileri)",day,15m,eksik,true,3,https://github.com/nateemma/strategies
-A4-001,Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion,swing,1D,eksik,true,3,https://www.composer.trade/trading-strategies/short-term-momentum-that-works-20-with-macro-filter-mean-reversion-dsPSLcRMdQldkyolwGon
-A4-002,Simple TQQQ RSI mean reversion,swing,1D,tam,true,2,https://www.composer.trade/trading-strategies/simple-tqqq-rsi-mean-reversion-4hcYKZBIjhZo3Yg0NTQk
-A4-003,Overbought or Oversold SPY else UVXY,swing,1D,eksik,true,3,https://www.composer.trade/trading-strategies/overbought-or-oversold-spy-else-uvxy-C8QUEQBKayzmaSBz7MAZ
-A4-004,RSI 82,swing,1D,tam,true,2,https://www.composer.trade/trading-strategies/rsi-82-cmAlgPGN7BvS47DC6i0d
-A4-005,SPY RSI 30 Test,swing,1D,eksik,true,2,https://www.composer.trade/trading-strategies/spy-rsi-30-test-kUp65lDEQCokq8CqK8Us
-A4-006,Opening Range Breakout for Stocks in Play,day,5m,dakikalik,true,5,https://www.quantconnect.com/forum/discussion/18444/opening-range-breakout-for-stocks-in-play/
-A4-007,Enhanced Short-Term Mean Reversion Algorithm,swing,1D,eksik,true,3,https://www.quantconnect.com/forum/discussion/3327/enhanced-short-term-mean-reversion-algorithm/p1
+A4-001,Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion,swing,1D,tam,true,2,https://www.composer.trade/trading-strategies/short-term-momentum-that-works-20-with-macro-filter-mean-reversion-dsPSLcRMdQldkyolwGon
+A4-002,Simple TQQQ RSI mean reversion,swing,1D,tam,false,2,https://www.composer.trade/trading-strategies/simple-tqqq-rsi-mean-reversion-4hcYKZBIjhZo3Yg0NTQk
+A4-003,Overbought or Oversold SPY else UVXY,swing,1D,tam,false,1,https://www.composer.trade/trading-strategies/overbought-or-oversold-spy-else-uvxy-C8QUEQBKayzmaSBz7MAZ
+A4-004,RSI 82,swing,1D,tam,false,2,https://www.composer.trade/trading-strategies/rsi-82-cmAlgPGN7BvS47DC6i0d
+A4-005,SPY RSI 30 Test,swing,1D,tam,false,1,https://www.composer.trade/trading-strategies/spy-rsi-30-test-kUp65lDEQCokq8CqK8Us
+A4-006,Opening Range Breakout for Stocks in Play,day,5m,dakikalik,true,6,https://www.quantconnect.com/forum/discussion/18444/opening-range-breakout-for-stocks-in-play/
+A4-007,Enhanced Short-Term Mean Reversion Algorithm,swing,1D,eksik,true,4,https://www.quantconnect.com/forum/discussion/3327/enhanced-short-term-mean-reversion-algorithm/p1
 A4-008,RSI Extremes Intraday E-mini (embedded backtest),day,5m,eksik,true,2,https://www.quantconnect.com/terminal/cache/embedded_backtest_e51cb798772bb2ad23d4d52e535ed3f7.html
 A4-009,Volume Spikes in Oil Futures (embedded backtest),day,5m,eksik,true,2,https://www.quantconnect.com/terminal/cache/embedded_backtest_19dce81c99a5fcc437
 A4-010,"Intraday Mean Reversion BTCUSD (r/algotrading yaklasimi, embedded backtest)",day,5m,eksik,true,2,https://www.quantconnect.com/terminal/cache/embedded_backtest_b5e5be2775f2e65fb530bae2c5fc8486.html
@@ -99,7 +99,7 @@ A5-009,XLP mean reversion (IBS + 25 günlük bant) (10 Best Swing #7),swing,1D,t
 A5-012,Self-Imposed Limits to Arbitrage,swing,1D,eksik,true,3,https://paperswithbacktest.com/strategies/self-imposed-limits-to-arbitrage
 A5-013,Trading Volume Effects of Moving Average Heuristics,swing,1D,eksik,true,3,https://paperswithbacktest.com/strategies/trading-volume-effects-of-moving-average-heuristics
 A5-014,"Seasonality, Trend-following, and Mean reversion in Bitcoin",swing,1D,tam,true,2,https://paperswithbacktest.com/strategies/seasonality-trend-following-and-mean-reversion-in-bitcoin
-A5-015,Reversal in Cryptocurrency Returns,swing,1W,eksik,true,3,https://paperswithbacktest.com/strategies/reversal-in-cryptocurrency-returns
+A5-015,Reversal in Cryptocurrency Returns,swing,1W,eksik,true,4,https://paperswithbacktest.com/strategies/reversal-in-cryptocurrency-returns
 A5-016,Stock Market Predictability in the MENA: Evidence from New Variance Ratio Tests and Technical Trade Analysis,swing,1D,eksik,true,3,https://paperswithbacktest.com/strategies/stock-market-predictability-in-the-mena-evidence-from-new-variance-ratio-tests-and-technical-trade-analysis
 A5-020,Finding Consistent Trends with Strong Momentum - RSI for Trend-Following and Momentum Strategies,swing,1D,tam,false,3,https://paperswithbacktest.com/strategies/finding-consistent-trends-with-strong-momentum-rsi-for-trend-following-and-momentum-strategies
 A5-021,The 8-K Trading Gap,swing,1D,eksik,true,3,https://paperswithbacktest.com/strategies/the-k-trading-gap
@@ -108,7 +108,7 @@ A5-023,Signal Prediction in cryptocurrency tradeoperations: a machine learning-b
 A5-024,Impact of Earnings Announcements for Dow Jones Index Stocks,swing,1D,eksik,true,3,https://paperswithbacktest.com/strategies/impact-of-earnings-announcements-for-dow-jones-index-stocks
 A6-001,Double 7's Strategy,swing,1D,tam,false,2,https://alvarezquanttrading.com/blog/double-7s-strategy/
 A6-003,Simple Ideas for a Mean Reversion Strategy with Good Results,swing,1D,tam,false,3,https://alvarezquanttrading.com/blog/simple-ideas-for-a-mean-reversion-strategy-with-good-results/
-A6-004,Mean Reversion Entry Timing,swing,1D,tam,true,3,https://alvarezquanttrading.com/blog/mean-reversion-entry-timing/
+A6-004,Mean Reversion Entry Timing,swing,1D,tam,false,3,https://alvarezquanttrading.com/blog/mean-reversion-entry-timing/
 A6-009,"Trading the Channel (Inside Channel, Kaufman)",swing,1D,tam,true,3,https://financial-hacker.com/trading-the-channel/
 A6-010,The Gap Momentum System,swing,1D,tam,false,3,https://financial-hacker.com/the-gap-momentum-system/
 A6-011,Better Strategies 5: A Short-Term Machine Learning System,day,1H,eksik,true,3,https://financial-hacker.com/build-better-strategies-part-5-developing-a-machine-learning-system/
@@ -119,7 +119,7 @@ A6-016,Building and Testing Trend-Following Strategies on One-Minute SPY Data,da
 A6-017,Can Weakening Morning Order Flow Predict SPY Reversals?,day,1m,eksik,true,3,https://quantpedia.com/can-weakening-morning-order-flow-predict-spy-reversals/
 A6-019,Overnight Seasonality in Bitcoin,day,1H,tam,true,2,https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin
 A6-020,Market Sentiment and an Overnight Anomaly,day,1D,eksik,true,3,https://quantpedia.com/strategies/market-sentiment-and-an-overnight-anomaly
-A6-021,Pairs Trading with Country ETFs,swing,1D,tam,true,2,https://quantpedia.com/strategies/pairs-trading-with-country-etfs
+A6-021,Pairs Trading with Country ETFs,swing,1D,sadece_short,true,2,https://quantpedia.com/strategies/pairs-trading-with-country-etfs
 A6-022,How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin,swing,1H,tam,false,2,https://quantpedia.com/how-to-design-a-simple-multi-timeframe-trend-strategy-on-bitcoin/
 A6-023,Attention Prop Traders: first half hour predicts last half hour,day,30m,dakikalik,true,3,https://alphaarchitect.com/attention-prop-traders-the-first-half-hour-of-trading-predicts-the-last-half-hour/
 A7-001,NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan),day,5m,dakikalik,true,3,https://www.elitetrader.com/et/threads/i-backtested-37-famous-strategies-with-fees-on-most-lose-mechanically-after-costs-data-one-that-didnt.390197/
@@ -138,7 +138,7 @@ B3-004,Trend Following and Mean Reversion Strategy - Combined (QQQ),swing,1D,giz
 B3-005,Triple RSI Strategy (90.36% win rate),swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/triple-rsi-strategy-9036-win-rate-2c5
 B3-009,Connors/Alvarez 2009 basit ortalamaya donus (ES+TY),swing,1D,eksik,true,3,https://algotr.substack.com/p/this-simple-2009-strategy-still-wins
 B3-010,RSI-2 Larry Connors (ProRealCode),swing,1D,tam,false,3,https://www.prorealcode.com/prorealtime-trading-strategies/rsi-2-strategy-larry-connors/
-B3-014,Cross-Sectional Equity Mean Reversion (Quantpedia #13),swing,1D,tam,true,2,https://quantpedia.com/quantopian-quantpedia-trading-strategy-series-cross-sectional-equity-mean-rever/
+B3-014,Cross-Sectional Equity Mean Reversion (Quantpedia #13),swing,1D,tam,false,2,https://quantpedia.com/quantopian-quantpedia-trading-strategy-series-cross-sectional-equity-mean-rever/
 B3-015,Is there 1 Strategy that just works? (gunluk long-only ETF betigi),swing,1D,eksik,true,2,https://wl6.wealth-lab.com/Forum/Posts/Is-there-1-Strategy-that-just-works-28865
 C01,"Haftalik yonlu gunluk geri cekilme (wd_pullback_risk, Codex Algo 21)",swing,1D,tam,false,2,Codex Algo 21 raporu
 C02,"Haftalik yonlu gunluk CCI devam (wd_cci_continuation_risk, Codex Algo 21)",swing,1D,tam,false,1,Codex Algo 21 raporu
@@ -175,10 +175,10 @@ M013,Simple H4 Mobile Trading System,swing,4H,tam,false,3,https://www.forexfacto
 M014,Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation),swing,1D,tam,false,2,https://www.elitetrader.com/et/threads/larry-connors-2-day-rsi-holy-grail-adapting-a-strategy-to-deliver-30-annual-return-since-1999.379926/
 M015,Larry Connors' Cumulative RSI Strategy,swing,1D,tam,false,2,https://www.elitetrader.com/et/threads/larry-connors-cumulative-rsi-26-annual-return-now-with-sensitivity-analysis.379982/
 M016,One Percent a Week Strategy (TQQQ),swing,1D,tam,false,2,https://www.wealth-lab.com/Discussion/8011
-M017,RSI 2 Portfolio (Composer Symphony),swing,1D,eksik,true,2,https://www.composer.trade/trading-strategies/rsi-2-portfolio-DszXqIWmqcC8lxiliUsf
+M017,RSI 2 Portfolio (Composer Symphony),swing,1D,tam,false,1,https://www.composer.trade/trading-strategies/rsi-2-portfolio-DszXqIWmqcC8lxiliUsf
 M018,TradingView Script LHKOdUOs,swing,1D,eksik,true,2,https://www.tradingview.com/script/LHKOdUOs/
 M019,FullStochastic with Filters - Buy&Sell for Amibroker (AFL),swing,1D,tam,true,4,https://www.wisestocktrader.com/indicators/3565-fullstochastic-with-filters-buy-sell-for-amibroker-afl
-M020a,The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp),swing,1W,tam,true,3,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
+M020a,The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp),swing,1D,tam,false,3,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
 M020b,The 30-Minute Stock Trader - Strategy 2: Mean-Reversion Long (Laurens Bensdorp),swing,1D,eksik,true,2,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
 M020c,The 30-Minute Stock Trader - Strategy 3: Mean-Reversion Short (Laurens Bensdorp),swing,1D,sadece_short,true,1,https://www.turingtrader.com/2020/01/30-minute-stock-trader/
 M021,Intraday Application of Hidden Markov Models,day,5m,eksik,true,3,https://www.quantconnect.com/research/17900/intraday-application-of-hidden-markov-models/
@@ -211,7 +211,7 @@ M046,ELLIPSE Bidirectional Swing Trading Strategy,swing,4H,eksik,false,2,https:/
 M047,Gold Swing More Trades 50 SL 100 TP,swing,1H,eksik,false,2,https://www.tradingview.com/script/8b1AgVrV-Gold-Swing-More-Trades-50-SL-100-TP/
 M048,3Commas Turtle Strategy (ETHUSDT H4),swing,4H,eksik,false,2,https://www.tradingview.com/script/9qFCuXqF-3Commas-Turtle-Strategy/
 M049,BTC RSI Strategy 3Commas,swing,4H,eksik,false,2,https://www.tradingview.com/script/eZsaqsZY-BTC-RSI-Strategy-3Commas/
-M050,Short-Term Reversal Effect in Stocks (Quantpedia #013),swing,1W,tam,true,2,https://quantpedia.com/strategies/short-term-reversal-in-stocks
+M050,Short-Term Reversal Effect in Stocks (Quantpedia #013),swing,1D,tam,false,2,https://quantpedia.com/strategies/short-term-reversal-in-stocks
 M051,MeanReversionRSI (Jesse.Trade),swing,1H,eksik,false,2,https://jesse.trade/strategies/meanreversionrsi
 M052,ForexFactory Post 3629700 Strategy,swing,1H,eksik,false,2,https://www.forexfactory.com/thread/post/3629700
 M053,Forex-Station Attachment 3477006 System Package,day,15m,eksik,false,2,https://forex-station.com/attach/file/3477006
@@ -312,10 +312,10 @@ O2-021b,Jesse: RSI Trend,swing,1h,eksik,false,2,https://jesse.trade/strategies
 O2-021c,Jesse: IchimokuCloud,swing,1h,eksik,false,2,https://jesse.trade/strategies
 O2-023,Intraday Trading Strategy for Futures Contract NQ,day,5m,eksik,true,2,https://www.quantconnect.com/forum/discussion/15192
 O2-024,"BeatTheMarketMomentum (SPY intraday momentum, embedded backtest)",day,1m,eksik,true,2,https://www.quantconnect.com/terminal/cache/embedded_backtest_fd22e7bd368af4d6bd31153c9f8c4dad.html
-O2-025,The Holy Grail,swing,1D,tam,true,3,https://www.composer.trade/trading-strategies/the-holy-grail-MmQbpf2U5TMQFmr9Nt2e
-O2-026,KMLM Switcher of Simon97 - Original,swing,1D,tam,true,3,https://www.composer.trade/trading-strategies/kmlm-switcher-of-simon97-original-syMn9OgFREE0wo8LtYsG
-O2-027,TQQQ For The Long Term (Reddit Post Link),swing,1D,tam,true,3,https://www.composer.trade/trading-strategies/tqqq-for-the-long-term-reddit-post-link-HukRwDJLlYPLMbrQbua5
-O2-028,SVIX/XXXX KMLM switcher (single pops) | BT 12/19/23 = 786/10.5,swing,1D,tam,true,2,https://www.composer.trade/trading-strategies/svixxxxx-kmlm-switcher-single-pops-bt-121923-786105-D9oE44Y87boHDOYQ9rPm
+O2-025,The Holy Grail,swing,1D,tam,false,3,https://www.composer.trade/trading-strategies/the-holy-grail-MmQbpf2U5TMQFmr9Nt2e
+O2-026,KMLM Switcher of Simon97 - Original,swing,1D,tam,false,3,https://www.composer.trade/trading-strategies/kmlm-switcher-of-simon97-original-syMn9OgFREE0wo8LtYsG
+O2-027,TQQQ For The Long Term (Reddit Post Link),swing,1D,tam,false,3,https://www.composer.trade/trading-strategies/tqqq-for-the-long-term-reddit-post-link-HukRwDJLlYPLMbrQbua5
+O2-028,SVIX/XXXX KMLM switcher (single pops) | BT 12/19/23 = 786/10.5,swing,1D,tam,false,2,https://www.composer.trade/trading-strategies/svixxxxx-kmlm-switcher-single-pops-bt-121923-786105-D9oE44Y87boHDOYQ9rPm
 O2-031,"je-suis-tm/quant-trading (London Breakout, Dual Thrust vb.)",day,1H,kapsam_disi,false,2,https://github.com/je-suis-tm/quant-trading
 O3-001,Monday reversal in the S&P 500 (10 Best Swing #1),swing,1D,tam,false,3,https://www.quantifiedstrategies.com/swing-trading-strategies/
 O3-002,Overnight swing strategy in the S&P 500 (10 Best Swing #2),swing,1D,tam,false,2,https://www.quantifiedstrategies.com/swing-trading-strategies/

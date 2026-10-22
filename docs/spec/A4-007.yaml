@@ -45,3 +45,4 @@ belirsiz:
   yapilir: en son gun atlanarak 5 gunluk ortalama geri donus getirisi hesaplanir, asiri momentum hisseleri filtrelenir ve en dusuk getirili hisselere esit agirlikli long, en yuksek getirili hisselere short
   girilir. Asiri momentum filtresinin kesin yuzdelik/standart sapma esigi sayfa engeli nedeniyle okunamadi.'
 - "T10: ozel_kod_nedeni: portfoy_rotasyonu (kesitsel sira ve long/short sepet)"
+- "T22: kaynak yeniden okundu (QuantConnect forumu, Jing Wu, Reider 'Enhancing Short-Term Mean-Reversion Strategies'); kod eki sayfa metninde yok. Kurallar: aylik evren (fiyat>5$, temel verisi olan en yuksek dolar hacimli 50 hisse, EV/EBITDA>0), son gunu atlayan 5 gunluk getiriye gore quintile, asiri momentum filtresi, dusuk oynaklik ucte biri, SPY 'velocity' ile kaldirac. Asiri momentum esigi ve velocity formulu verilmemis, EV/EBITDA temel veri ucretsiz kaynakta yok, long/short. Tahmin yapilmadi (T16): eksik kaldi."

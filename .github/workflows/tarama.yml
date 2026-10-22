@@ -41,6 +41,8 @@ jobs:
           done
           # the scan always loads the daily archive for the benchmark series
           python data/fetch.py --interval 1d --allow-partial
+          # T22: named ETFs of the portfolio-rotation (gecis) cards
+          python data/fetch.py --interval 1d --rotasyon --allow-partial
       - name: Run tests
         run: python -m pytest -q
       - name: Run scan

@@ -11,21 +11,53 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD Hisse / Kaldıraçlı ETF (TQQQ, UVXY, TECL, SOXL, BIL, SQQQ)
 gostergeler:
-  sma200_tqqq:
+  spy_close:
+    f: close
+    varlik: SPY
+  spy_sma200:
     f: sma
     src: close
     n: 200
-  rsi10_tqqq:
+    varlik: SPY
+  tqqq_rsi10:
     f: rsi
     src: close
     n: 10
-giris: close_tqqq > sma200_tqqq and rsi10_tqqq < 79
-cikis: close_tqqq < sma200_tqqq or rsi10_tqqq >= 79
+    varlik: TQQQ
+  spxl_rsi10:
+    f: rsi
+    src: close
+    n: 10
+    varlik: SPXL
+  spy_rsi10:
+    f: rsi
+    src: close
+    n: 10
+    varlik: SPY
+  tqqq_close:
+    f: close
+    varlik: TQQQ
+  tqqq_sma20:
+    f: sma
+    src: close
+    n: 20
+    varlik: TQQQ
+  sqqq_rsi10:
+    f: rsi
+    src: close
+    n: 10
+    varlik: SQQQ
+  tlt_rsi10:
+    f: rsi
+    src: close
+    n: 10
+    varlik: TLT
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: portfoy_rotasyonu
+ozel_kod: false
 parametreler:
   trend_sma: 200
   heat_rsi: 10
@@ -40,9 +72,51 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: evet
+dolum: kapanis
+piyasa_kisiti: [ABD]
+rotasyon:
+  kip: gecis
+  dengeleme:
+    tip: gun
+  agac:
+    eger: spy_close > spy_sma200
+    ise:
+      eger: tqqq_rsi10 > 79
+      ise:
+        tut: UVXY
+      degilse:
+        eger: spxl_rsi10 > 80
+        ise:
+          tut: UVXY
+        degilse:
+          tut: TQQQ
+    degilse:
+      eger: tqqq_rsi10 < 31
+      ise:
+        tut: TECL
+      degilse:
+        eger: spy_rsi10 < 30
+        ise:
+          tut: UPRO
+        degilse:
+          eger: tqqq_close < tqqq_sma20
+          ise:
+            sec:
+              adaylar:
+              - SQQQ
+              - TLT
+              skor: '{v}_rsi10'
+              yon: yuksek
+              n: 1
+          degilse:
+            eger: sqqq_rsi10 < 31
+            ise:
+              tut: SQQQ
+            degilse:
+              tut: TQQQ
 spec_durumu: tam
 belirsiz:
 - Reddit r/LETFs resmi başlığından (derecknielsen) ve Composer dokümantasyonundan okundu
 - 'Özel kod mantığı: 200 günlük hareketli ortalama üzerinde TQQQ tutulur; 10 günlük RSI > 79 aşırı ısınmada UVXY''ye geçilir; 200 günlük ortalama altında iken aşırı satımda TECL/SOXL dip sıçraması denenir,
   aksi halde BIL / SQQQ ile korunulur'
-- "ozel_kod_nedeni: portfoy_rotasyonu (kaldiracli ETF'ler arasi tahsisat; D4 geregi kaldirac fazina ertelendi)"
+- "T22: kural agaci Composer acik uc noktasindan (https://stagehand-api.composer.trade/api/v1/public/symphonies/HukRwDJLlYPLMbrQbua5/score) okundu ve rotasyon.agac olarak birebir cevrildi (esik, pencere ve varlik listesi kaynaktan; RSI Wilder, SMA/RSI gunluk kapanis uzerinden). Agac her bar degerlendirilir; hedef agirlik degisince emir verilir (EVRENSEL_KURALLAR D12). Kaldirac yok; kaldiracli ETF (TQQQ, UVXY vb.) enstruman sayilir. Composer sembolleri kapanista dolar (kendi backtest serisiyle gunluk getiri korelasyonu 1,0000 dogrulandi): D4 geregi dolum: kapanis; iki sekilde raporlanir (kapanis dolumu 2x maliyet | ertesi acilis)."

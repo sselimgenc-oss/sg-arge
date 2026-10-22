@@ -191,8 +191,8 @@ def test_all_ready_daily_cards_run_or_are_skipped_with_a_reason() -> None:
     assert len(cards) >= 40
     failures, ran, skipped = [], 0, 0
     for item in cards:
-        if item.get("alias_of"):
-            continue
+        if item.get("alias_of") or item.get("rotasyon"):
+            continue  # rotation books need named instruments / a larger universe: tests/test_rotasyon.py
         try:
             result = tarama.run_card_market(item, data, "ABD25", benchmark=benchmark)
             assert np.isfinite(result["net_1x"])

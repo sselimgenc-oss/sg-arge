@@ -11,14 +11,14 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD ETF (TQQQ / UVXY)
 gostergeler:
-  rsi10:
+  tqqq_rsi10:
     f: rsi
     src: close
     n: 10
-ozel_kod: true
-ozel_kod_nedeni: portfoy_rotasyonu
-giris: rsi10 <= 79
-cikis: rsi10 > 79
+    varlik: TQQQ
+ozel_kod: false
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -34,8 +34,20 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: true
+dolum: kapanis
+piyasa_kisiti: [ABD]
+rotasyon:
+  kip: gecis
+  dengeleme:
+    tip: gun
+  agac:
+    eger: tqqq_rsi10 > 79
+    ise:
+      tut: UVXY
+    degilse:
+      tut: TQQQ
 spec_durumu: tam
 belirsiz:
 - 'Composer senfonisi her gun TQQQ uzerinde 10 gunluk RSI hesaplar: TQQQ RSI(10) <= 79 iken %100 TQQQ tasir; TQQQ RSI(10) > 79 oldugunda (asiri isinma) TQQQ''dan cikip %100 UVXY (ProShares Ultra VIX Short-Term
   Futures ETF) pozisyonuna gecer.'
-- "T10: ozel_kod_nedeni: portfoy_rotasyonu (TQQQ <-> UVXY tahsisati; kaldiracli ETF, D4 geregi kaldirac fazina ertelendi)"
+- "T22: kural agaci Composer acik uc noktasindan (https://stagehand-api.composer.trade/api/v1/public/symphonies/4hcYKZBIjhZo3Yg0NTQk/score) okundu ve rotasyon.agac olarak birebir cevrildi (esik, pencere ve varlik listesi kaynaktan; RSI Wilder, SMA/RSI gunluk kapanis uzerinden). Agac her bar degerlendirilir; hedef agirlik degisince emir verilir (EVRENSEL_KURALLAR D12). Kaldirac yok; kaldiracli ETF (TQQQ, UVXY vb.) enstruman sayilir. Composer sembolleri kapanista dolar (kendi backtest serisiyle gunluk getiri korelasyonu 1,0000 dogrulandi): D4 geregi dolum: kapanis; iki sekilde raporlanir (kapanis dolumu 2x maliyet | ertesi acilis)."

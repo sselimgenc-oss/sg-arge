@@ -20,13 +20,20 @@ gostergeler:
     src: close
     n: 100
   hv100:
-    f: stdev
+    f: getiri_std
     src: close
     n: 100
-ozel_kod: true
-ozel_kod_nedeni: portfoy_rotasyonu
-giris: rsi2 < 10 and close > sma100 and sma100 > sma100[21]
-cikis: rsi2 > 60
+  endeks_sma200:
+    f: sma
+    src: close
+    n: 200
+    veri: endeks
+  endeks_close:
+    f: close
+    veri: endeks
+ozel_kod: false
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -58,9 +65,21 @@ varyantlar:
 - ad: 'Varyant 4-6: N-Gunluk En Dusuk Altinda Kapanis Cikisli (N-Day Low Exit) Kurgular'
   not: Ayni 3 giris yonteminin (Acilista Giris, low[1] Limit Giris, high[1] Stop Giris) cikis kurali olarak close < lowest(low, N)[1] (N in {2, 5, 10, 15, 20}) kullanilan versiyonlaridir (win rate ~%29,
     ortalama tutma 21 bar).
+rotasyon:
+  kip: sirali_giris
+  evren: piyasa
+  dengeleme:
+    tip: gun
+    her: 1
+  rejim: endeks_close > endeks_sma200
+  giris: rsi2 < 10 and close > sma100 and sma100 > sma100[21]
+  cikis: rsi2 > 60
+  skor: hv100
+  max_pozisyon: 7
+  min_evren: 8
 spec_durumu: tam
 belirsiz:
 - 'Ortak Setup Kurallari (ozel_kod: true): 1) S&P 500 hissesi ve SPX endeksi kendi 200-gunluk SMA''sinin uzerinde (SPX > SMA200), 2) Hisse Close > SMA(100), 3) SMA(100) > SMA(100)[21], 4) RSI(2) < X (X
   in {5, 10, 15, 20}; standart orta deger 10 secildi). Sinyaller 100-gunluk tarihsel volatiliteye (hv100) gore yuksekten dusuge siralanir, en fazla 7 pozisyon (%14.2 agirlik) acilir.'
 - Ana kartta 1. kurgu (Entry on Open - RSI Exit, RSI(2) > Y, Y in {20, 40, 60, 80}) tanimlanmis, diger 5 giris/cikis kombinasyonu varyantlar altina eklenmistir.
-- "T10: ozel_kod_nedeni: portfoy_rotasyonu (SPX>SMA200 rejim filtresi (ikinci enstruman) + hv100 siralamasi ve en fazla 7 pozisyon)"
+- "T22: kart kurali sirali_giris olarak kodlandi: endeks > SMA200 iken RSI(2)<10, kapanis>SMA100, SMA100>SMA100[21] saglayan hisseler giris adayidir; adaylar 100 gunluk tarihsel oynaklik (gunluk getiri std, `getiri_std`) azalan siraya konur, en fazla 7 pozisyon (esit agirlik 1/7), cikis RSI(2)>60. Not: onceki kartta hv100 fiyat stdev idi; oynaklik getiri std olarak duzeltildi (sembolleri karsilastirilabilir kilmak icin). Kaynak sayfa (alvarezquanttrading.com) bu oturumda 406 verdi; kural kartin Argon okumasindan. Giris/cikis orijinalde sonraki gun acilis (ana kurgu), burada A1 kurali ayni."

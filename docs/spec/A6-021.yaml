@@ -41,10 +41,10 @@ rapor:
 varyantlar:
 - ad: QuantConnect OOS Uygulamasi (2000-2026)
   not: 24 ulke ETF'i uzerinde 0.5 bps komisyonla CAGR %1.47, MDD %27, Sharpe -0.2, Win Rate %49.
-spec_durumu: tam
+spec_durumu: sadece_short
 belirsiz:
 - 'Ciftli istatistiksel arbitraj (pairs trading) kurallari (ozel_kod: true, Thomakos, Wang & Schizas): 1) 22-24 ulke ETF''i icin 120 islem gunluk olusum (formation) doneminde baslangic fiyati 1$''a normalize
   edilir (norm_a = price_a / price_a[0]). 2) Tum ikililer icin kareli sapmalarin toplami Distance = sum((norm_a - norm_b)^2) hesaplanir ve en kucuk mesafeli ilk 5 cift secilir. 3) Takip eden 20 islem gununde
   spread = norm_a - norm_b dizisinin 120 gunluk ortalamasi (mean) ve standart sapmasi (std) izlenir; fark 0.5 * std esigini astiginda ucuz kalan ETF long, pahali kalan ETF esit dolar tutariyla short acilir.
   4) Spread tekrar yakinsadiginda (abs(spread - mean) <= 0.5 * std) veya 20 islem gunu doldugunda pozisyon kapatilir.'
-- "T10: ozel_kod_nedeni: portfoy_rotasyonu (22-24 ETF arasi ikili secimi ve z-skoru)"
+- "T22: motora alinmadi. Strateji piyasa-notr ikili (pairs) kurgusudur: her ikilinin ucuz bacagi long, pahali bacagi esit tutarla SHORT acilir (Distance en kucuk ilk 5 cift, 120 gun olusum, 0,5 std esik); ucuz bacagi tek basina long tutmak kaynak stratejiyi degil yonlu bir ulke-ETF ortalamaya donus stratejisini test eder. Long-only temel modda (A5) anlamli bir test yok; short fazina (D4 kaldirac/short fazi) ertelendi. Karar liderde: istenirse yalniz-long ucuz bacak ayrica kodlanabilir. Ek: kart gosterge/giris alani (z20 < -0,5) kaynak kuralinin yaklasigidir, test edilmemeli."

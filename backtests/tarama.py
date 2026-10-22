@@ -25,7 +25,7 @@ if str(ROOT) not in sys.path:
 
 from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
 from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
-from engine import gosterge  # noqa: E402
+from engine import gosterge, rotasyon  # noqa: E402
 from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
 
@@ -137,6 +137,8 @@ def prepare(
     pit_universe: PITUniverse | None = None,
 ) -> Prepared:
     """Card timeframe frames (weekly for 1W cards), signals and engine arguments for one market."""
+    if card.get("rotasyon"):
+        raise MotorDestegiYok("rotasyon_asama2")  # rotation books run through run_rotation_market (T22)
     week_end = "SUN" if market == "KRIPTO25" else "FRI"
     weekly_card = card["tf"] == "1W"
     if weekly_card:
@@ -166,6 +168,8 @@ def run_card_market(
     pit_universe: PITUniverse | None = None,
 ) -> dict[str, Any]:
     """Run one card on one market's data; returns the metric fields of a tarama row."""
+    if card.get("rotasyon"):
+        return run_rotation_market(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
     prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
     plan, annualization = prepared.plan, prepared.annualization
     out: dict[str, Any] = {}
@@ -181,6 +185,79 @@ def run_card_market(
     out["stop_eklendi"] = plan.stop_eklendi
     out["trades"] = first.trades
     return out
+
+
+def pit_membership(pit_universe: PITUniverse | None, market: str, symbols: list[str], calendar: pd.DatetimeIndex) -> pd.DataFrame | None:
+    """symbol x date membership of the point-in-time index lists; dates without coverage keep every symbol."""
+    if pit_universe is None or market not in {"BIST30", "ABD25"}:
+        return None
+    table = pd.DataFrame(True, index=calendar, columns=symbols)
+    cache: dict[Any, frozenset[str] | None] = {}
+    for date in calendar:
+        key = date.year if market == "ABD25" else date
+        members = cache[key] if key in cache else cache.setdefault(key, pit_universe.members(market, date))
+        if members is not None:
+            table.loc[date] = [symbol in members for symbol in symbols]
+    return table
+
+
+def run_rotation_market(
+    card: dict[str, Any],
+    data: dict[str, pd.DataFrame],
+    market: str,
+    *,
+    benchmark: pd.DataFrame | None = None,
+    start: pd.Timestamp = IS_START,
+    end: pd.Timestamp = IS_END,
+    pit_universe: PITUniverse | None = None,
+) -> dict[str, Any]:
+    """Rotation card (``rotasyon:`` block, D12) on one market's universe; same metric fields as ``run_card_market``."""
+    week_end = "SUN" if market == "KRIPTO25" else "FRI"
+    kind = card["rotasyon"]["kip"]
+    if kind != "gecis" and any(spec.get("veri") == "endeks" for spec in card["gostergeler"].values()) and benchmark is None:
+        raise EndeksYok(market)
+    membership = None
+    if kind != "gecis":
+        membership = pit_membership(pit_universe, market, list(data), rotasyon._calendar(data))  # noqa: SLF001
+    weights = rotasyon.agirliklar(card, data, benchmark=benchmark, week_end=week_end, membership=membership)
+    annualization = annualization_for("1D", market)
+    close_fill = card.get("dolum") == "kapanis"  # D4: MOC exception, 2x base cost; variant (b) fills at the next open
+
+    def run(multiplier: float, *, close: bool):
+        cost = BASE_COST[market] * multiplier * (MOC_COST_FACTOR if close else 1.0)
+        return rotasyon.kos(
+            card, data, start=start, end=end, cost_rate=cost, benchmark=benchmark, week_end=week_end,
+            weights=weights, fill_at_close=close,
+        )
+
+    first, second = run(1.0, close=close_fill), run(2.0, close=close_fill)
+    m1, m2 = _metrics(first, annualization), _metrics(second, annualization)
+    out = {
+        "islem": m1["islem"], "PF_1x": m1["pf"], "PF_2x": m2["pf"], "net_1x": m1["getiri"], "net_2x": m2["getiri"],
+        "sharpe": m1["sharpe"], "mdd": m1["mdd"], "maruziyet": m1["maruziyet"], "stop_eklendi": False,
+        "trades": first.trades,
+    }
+    if close_fill:
+        variant_b = _metrics(run(1.0, close=False), annualization)
+        out.update(PF_1x_b=variant_b["pf"], net_1x_b=variant_b["getiri"], islem_b=variant_b["islem"])
+    return out
+
+
+def load_fixed_symbols(symbols: list[str], directory: Path) -> dict[str, pd.DataFrame]:
+    """Daily bars of the named instruments of a ``gecis`` card (data/fetch.py --rotasyon)."""
+    from data.fetch import normalize_ohlcv  # noqa: PLC0415
+
+    frames, missing = {}, []
+    for symbol in symbols:
+        path = directory / (symbol.replace("/", "_").replace("=", "_") + ".parquet")
+        frame = normalize_ohlcv(pd.read_parquet(path)) if path.exists() else pd.DataFrame()
+        if frame.empty:
+            missing.append(symbol)
+        else:
+            frames[symbol] = frame
+    if missing:
+        raise rotasyon.RotasyonVeriYok("veri_yok", missing)
+    return frames
 
 
 def _stage_decision(row: dict[str, Any]) -> tuple[bool, str]:
@@ -267,6 +344,12 @@ def scan(
                 rows.append(_empty(card, market, *skip))
                 continue
             data, data_hash, _missing = market_data(tf, market)
+            if (card.get("rotasyon") or {}).get("kip") == "gecis":
+                try:
+                    data = load_fixed_symbols(rotasyon.needed_symbols(card), directory_for(tf))
+                except rotasyon.RotasyonVeriYok as exc:
+                    rows.append(_empty(card, market, "Dogrulanamaz", f"{exc.reason}:{','.join(exc.symbols)}"))
+                    continue
             if not data:
                 rows.append(_empty(card, market, "Dogrulanamaz", "veri_yok"))
                 continue
@@ -286,6 +369,9 @@ def scan(
                 continue
             except EndeksYok:
                 rows.append(_empty(card, market, "Dogrulanamaz", f"endeks_yok:{market}"))
+                continue
+            except rotasyon.RotasyonVeriYok as exc:
+                rows.append(_empty(card, market, "Dogrulanamaz", f"{exc.reason}:{','.join(exc.symbols)}"))
                 continue
             except Exception as exc:  # noqa: BLE001 - one broken card must not stop the scan
                 rows.append(_empty(card, market, "Hata", f"{type(exc).__name__}: {exc}"[:200]))

@@ -46,3 +46,4 @@ belirsiz:
   volatiliteli varliklarda yogunlasan anlamli getiri tersine donusu (reversal) belgelenmektedir. Ancak kesitsel portfoy dilimleri (quintile/decile), piyasa degeri ve volatilite esikleri sayfa engeli nedeniyle
   okunamadi.'
 - "T10: ozel_kod_nedeni: portfoy_rotasyonu (kesitsel kripto sepet; dilim ve esikler okunamadi)"
+- "T22: kaynak yeniden okundu (https://paperswithbacktest.com/strategies/reversal-in-cryptocurrency-returns, Kiefer & Nowotny, Haziran 2026): 8-10 haftalik olusum penceresinde kaybedenleri al / kazananlari sat (LMW), Jegadeesh-Titman ust uste binen portfoyler, haftalik dengeleme, yuksek gecmis oynakligi kosullamasi, yedi evren. Dilim buyuklugu, oynaklik esigi, tutma suresi ve evren tanimlari sayfada yok (makale metni gerekli); long-short. Tahmin yapilmadi (T16): eksik kaldi."

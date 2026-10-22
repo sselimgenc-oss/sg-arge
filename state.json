@@ -194,7 +194,7 @@
       "id": "T22",
       "owner": "claude-moderator",
       "title": "Portfoy rotasyonu modulu (18 kart; 11 tam gunluk/haftalik)",
-      "status": "atandi",
+      "status": "teslim edildi, lider incelemesi bekliyor: engine/rotasyon.py + D12; 13 kart tasindi (9 Composer gecis, M020a/B3-014/M050/A6-004), A6-021 short fazina, A4-001 kodlanmadi, A4-007/A5-015 eksik; Composer parite korelasyon 1,0000",
       "spec": "docs/GOREV_T22.md"
     },
     {

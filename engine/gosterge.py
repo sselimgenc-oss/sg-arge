@@ -132,6 +132,16 @@ def stdev(df: pd.DataFrame, src: str = "close", n: int = 14, ddof: int = 0) -> p
     return source(df, src).rolling(int(n)).std(ddof=int(ddof))
 
 
+def getiri_ort(df: pd.DataFrame, src: str = "close", n: int = 10) -> pd.Series:
+    """Mean of the last ``n`` one-bar returns in percent (Composer ``moving-average-return``)."""
+    return (source(df, src).pct_change() * 100.0).rolling(int(n)).mean()
+
+
+def getiri_std(df: pd.DataFrame, src: str = "close", n: int = 10) -> pd.Series:
+    """Sample standard deviation of the last ``n`` one-bar returns in percent (Composer ``standard-deviation-return``)."""
+    return (source(df, src).pct_change() * 100.0).rolling(int(n)).std(ddof=1)
+
+
 def highest(df: pd.DataFrame, src: str = "high", n: int = 14) -> pd.Series:
     return source(df, src).rolling(int(n)).max()
 
@@ -775,7 +785,7 @@ REGISTRY: dict[str, Callable[..., pd.Series | pd.DataFrame]] = {
     "stdev": stdev, "var": var, "rrs": rrs, "atr_ratio": atr_ratio,
     "williams_fractal": williams_fractal, "renko_sayac": renko_sayac, "tr": tr, "linreg": linreg,
     "chandelier": chandelier, "andean": andean, "nadaraya_watson": nadaraya_watson, "laguerre_rsi": laguerre_rsi,
-    "cdl_hammer": cdl_hammer,
+    "cdl_hammer": cdl_hammer, "getiri_ort": getiri_ort, "getiri_std": getiri_std,
     "heikinashi": heikinashi, "alphatrend": alphatrend, "ut_bot": ut_bot, "sar": sar, "fisher_rsi": fisher_rsi,
     "open": _price("open"), "high": _price("high"), "low": _price("low"), "close": _price("close"), "volume": _price("volume"),
 }

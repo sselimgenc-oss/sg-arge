@@ -11,14 +11,14 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY / TQQQ / UVXY)
 gostergeler:
-  rsi10:
+  spy_rsi10:
     f: rsi
     src: close
     n: 10
-ozel_kod: true
-ozel_kod_nedeni: portfoy_rotasyonu
-giris: rsi10 <= 82
-cikis: rsi10 > 82
+    varlik: SPY
+ozel_kod: false
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -34,7 +34,19 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: true
+dolum: kapanis
+piyasa_kisiti: [ABD]
+rotasyon:
+  kip: gecis
+  dengeleme:
+    tip: gun
+  agac:
+    eger: spy_rsi10 > 82
+    ise:
+      tut: UVXY
+    degilse:
+      tut: TQQQ
 spec_durumu: tam
 belirsiz:
 - 'Capraz varlik sinyali (ozel_kod: true): Gunluk olarak SPY''in 10 gunluk RSI degeri (RSI(10)) kontrol edilir. SPY RSI(10) > 82 ise %100 UVXY tutulur; SPY RSI(10) <= 82 ise %100 TQQQ tutulur.'
-- "T10: ozel_kod_nedeni: portfoy_rotasyonu (SPY RSI sinyaliyle TQQQ <-> UVXY tahsisati; kaldiracli ETF, kaldirac fazina ertelendi)"
+- "T22: kural agaci Composer acik uc noktasindan (https://stagehand-api.composer.trade/api/v1/public/symphonies/cmAlgPGN7BvS47DC6i0d/score) okundu ve rotasyon.agac olarak birebir cevrildi (esik, pencere ve varlik listesi kaynaktan; RSI Wilder, SMA/RSI gunluk kapanis uzerinden). Agac her bar degerlendirilir; hedef agirlik degisince emir verilir (EVRENSEL_KURALLAR D12). Kaldirac yok; kaldiracli ETF (TQQQ, UVXY vb.) enstruman sayilir. Composer sembolleri kapanista dolar (kendi backtest serisiyle gunluk getiri korelasyonu 1,0000 dogrulandi): D4 geregi dolum: kapanis; iki sekilde raporlanir (kapanis dolumu 2x maliyet | ertesi acilis)."

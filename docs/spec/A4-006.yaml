@@ -62,3 +62,4 @@ belirsiz:
 - 'Short kurallari da vardir: Acilis 5m barinda Close < Open ise OpeningBar.Low seviyesine StopMarket short emri ve OpeningBar.Low + 0.1 * ATR(14, 1D) stop-loss konur.'
 - "T10: ozel_kod_nedeni: bekleyen_emir (acilis mumu yuksegine stop alim emri + evren secimi (1000 hisse, en yuksek RelVol 20))"
 - "T20: motorda kalmadi. Giris, 09:35'te 1000 hisselik evrenden en yuksek goreli hacimli 20'sinin secilmesine (cok sembollu siralama) ve seans saatine bagli; acilis mumu yuksegine stop alim T15 ile ifade edilebilir ama evren secimi ifade diliyle yazilamaz. ABD gun ici veri de yok. Portfoy rotasyonu/seans saati paketine tasindi"
+- "T22: bu is paketine girmedi (5 dakikalik ABD gun ici veri yok); kural Codex'in seans/rotasyon paketinde."
