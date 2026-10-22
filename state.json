@@ -105,6 +105,13 @@
       "title": "Parti 12 (G001-G013): guncellenmis liste PDF'indeki kural ozetlerinden kart (internet gerekmez; GitHub icin raw.githubusercontent)",
       "status": "done (PR acik): G001-G013 kartlari; takvim ilkelleri ay_gunu/paskalya (D7)",
       "spec": "Issue #1 GOREV -> Sonnet parti 12"
+    },
+    {
+      "id": "T11",
+      "owner": "argon (kullanici araciligiyla)",
+      "title": "Tarihsel endeks bilesenleri: BIST30 donemsel (2015-2026), ABD en buyuk 25 yil basi (survivorship duzeltmesi icin veri toplama)",
+      "status": "atandi",
+      "spec": "argon/PAKET_T11_tarihsel_evren.md"
     }
   ],
   "done": [
