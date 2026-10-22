@@ -15,19 +15,20 @@ gostergeler:
     f: highest
     src: high
     n: 10
-  atr25:
-    f: atr
+  range25:
+    f: sma
+    src: high - low
     n: 25
 ozel_kod: false
 dolum: kapanis
-giris: close < hh10 - 2.5 * atr25 and (close - low) / (high - low) < 0.3
+giris: close < hh10 - 2.5 * range25 and (close - low) / (high - low) < 0.3
 cikis: close > high[1]
 stop: null
 hedef: null
 stop_eklendi: false
 parametreler:
   hh10.n: 10
-  atr25.n: 25
+  range25.n: 25
   band_mult: 2.5
   ibs_max: 0.3
 deneme_sayisi_kaynakta: 2
@@ -41,7 +42,7 @@ rapor:
   maliyet_dahil: true
 varyantlar:
 - ad: 24 Saatlik / Ertesi Acilis Cikisli Overnight Varyanti (overnight-trading-strategy)
-  giris: close < hh10 - 2.5 * atr25 and (close - low) / (high - low) < 0.5
+  giris: close < hh10 - 2.5 * range25 and (close - low) / (high - low) < 0.5
   cikis: null
   not: SPY 10 gunluk zirvenin altindaki 25 gunluk (H-L) ortalama bandinin altinda kapattiginda ve IBS < 0.5 oldugunda kapanista long girilip ertesi acilista/kapanista (1 bar) cikilir (688 islem, islem basina
     ort. %0.31 kazanc).
@@ -50,4 +51,4 @@ belirsiz:
 - 'Yazarin alt makalelerinden (quantifiedstrategies.com/swing-trading-strategies-for-beginners/ Strateji 1 ve quantifiedstrategies.com/overnight-trading-strategy/) okundu: Son 10 gunun en yuksek seviyesinden
   (hh10), son 25 gunluk ortalama gunluk araligin (High - Low ortalamasi / ATR25) 2.5 kati cikarilarak alt bant hesaplanir; SPY bu bandin altinda kapattiginda ve IBS < 0.3 (overnight versiyonunda < 0.5)
   oldugunda long girilir, close > high[1] oldugunda cikilir (SPY 1993-2025: %8 CAGR, %18 exposure, %23 MDD).'
-- "T10: ozel_kod alani eklendi (false); kapanista giris (dolum: kapanis, D4). 25 gunluk ortalama gunluk aralik yerine ATR(25) kullanildi (kutuphane)"
+- "T10: ozel_kod alani eklendi (false); kapanista giris (dolum: kapanis, D4). lider: 25 gunluk ortalama aralik = sma(high - low, 25) (R02 ile ayni tanim; T10de kullanilan ATR(25) duzeltildi)"
