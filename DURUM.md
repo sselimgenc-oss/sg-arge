@@ -18,7 +18,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T30: gün içi bellek/hız** (`docs/GOREV_T30.md`), ardından **T31: 13 kartın kaynağı** (`docs/GOREV_T31.md`, eski Argon T19) | Atandı | "Görev geldi" |
+| Sonnet | **T30: gün içi bellek/hız** (`docs/GOREV_T30.md`). T31 iptal (kullanıcı kararı) | Atandı | "Görev geldi" |
 | Codex | **Pasif** (kullanıcı kararı: limit bitti; ikinci talimata kadar kullanılmıyor). T33 parti 1 tamam (PR #112: A1-027 yazıldı, A6-015/P3-010/M019 tanim_belirsiz); parti 2-4 (11 kart) denenmedi | Beklemede | Yok |
 | Argon | **Kullanılmıyor** (kullanıcı kararı: ikinci talimata kadar; limit ekran görüntüsü gezintisiyle tükeniyor) | Beklemede | Yok |
 | Lider | T30/T31 teslimlerini bekliyor; A3-001/A3-002d/A3-002f 5m taraması T30 sonrası; M013 (4H) için 1H→4H yeniden örnekleme değerlendirilecek | Bekliyor | Yok |
