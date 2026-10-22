@@ -39,6 +39,11 @@ class Position:
     bars_held: int = 0
     locked: bool = False
     runtime_exit: np.ndarray | None = None
+    orig_quantity: float = float("nan")
+    partial_done: bool = False
+    realized: float = 0.0
+    exit_cost_acc: float = 0.0
+    entry_cost_sold: float = 0.0
 
 
 @dataclass
@@ -131,6 +136,7 @@ def run_portfolio(
     cooldown_bars: int = 0,
     profit_lock: dict | None = None,
     exit_builder: Callable[..., pd.Series | None] | None = None,
+    partial_profit: dict | None = None,
 ) -> BacktestResult:
     """Run shared-capital portfolio events without same-bar signal fills.
 
@@ -146,7 +152,12 @@ def run_portfolio(
     * ``time_stop_bars``, ``cooldown_bars``, ``profit_lock`` (``trigger_atr`` and a
       ``stop_fn(entry_price)`` returning the locked stop), ``exit_builder`` (position
       state dependent exit series, called as ``(symbol, entry_date, entry_price,
-      initial_stop, target)``).
+      initial_stop, target)``);
+    * ``partial_profit``: ``gun`` (bars held), ``oran`` (fraction sold), ``trigger_atr`` or
+      ``trigger_fn(entry_price, stop_distance)`` (price gain needed at the close) and
+      ``stop_fn(entry_price)`` (stop for the remainder). Taken once; the fraction fills at
+      the next open (or the same close with ``fill_at_close``). The trade stays one row,
+      its ``exit_reason`` ends with ``+partial``.
     """
 
     if extra_delay_bars < 0:
@@ -172,13 +183,14 @@ def run_portfolio(
     all_dates = pd.DatetimeIndex([])
     for frame in clean_data.values():
         all_dates = all_dates.union(frame.index)
-    dates = list(all_dates[(all_dates >= start) & (all_dates <= end)])
+    window = all_dates[(all_dates >= start) & (all_dates <= end)]
+    dates = list(window)
     if not dates:
         raise ValueError("no bars in requested backtest period")
 
     # Array views: the event loop below runs on numpy positions, not pandas lookups.
     index_of = {symbol: clean_data[symbol].index for symbol in symbols}
-    locs = {symbol: index_of[symbol].get_indexer(pd.DatetimeIndex(dates)) for symbol in symbols}
+    locs = {symbol: index_of[symbol].get_indexer(window) for symbol in symbols}
     price_arr = {
         symbol: {field: clean_data[symbol][field].to_numpy(dtype=float) for field in ("open", "high", "low", "close")}
         for symbol in symbols
@@ -234,6 +246,8 @@ def run_portfolio(
         exit_cost = position.quantity * price * cost_rate
         cash += position.quantity * price - exit_cost
         net_pnl = (price - position.entry_price) * position.quantity - position.entry_cost - exit_cost
+        if position.partial_done:
+            net_pnl += position.realized
         trades.append(
             Trade(
                 symbol=symbol,
@@ -241,14 +255,14 @@ def run_portfolio(
                 exit_date=date,
                 entry_price=position.entry_price,
                 exit_price=price,
-                quantity=position.quantity,
+                quantity=position.orig_quantity,
                 initial_stop=position.initial_stop,
                 initial_risk=position.initial_risk,
-                entry_cost=position.entry_cost,
-                exit_cost=exit_cost,
+                entry_cost=position.entry_cost + (position.entry_cost_sold if position.partial_done else 0.0),
+                exit_cost=exit_cost + position.exit_cost_acc,
                 net_pnl=net_pnl,
                 r_multiple=net_pnl / position.initial_risk if position.initial_risk else np.nan,
-                exit_reason=reason,
+                exit_reason=reason + ("+partial" if position.partial_done else ""),
             )
         )
         pending.pop(symbol, None)
@@ -298,9 +312,34 @@ def run_portfolio(
             symbol=symbol, entry_date=date, entry_price=price, quantity=quantity,
             stop=initial_stop, initial_stop=initial_stop, initial_risk=initial_risk,
             entry_cost=entry_cost, target=target, signal_atr=signal_atr,
-            runtime_exit=runtime_exit,
+            runtime_exit=runtime_exit, orig_quantity=quantity,
         )
         max_open_positions = max(max_open_positions, len(positions))
+
+    def take_partial(symbol: str, price: float) -> None:
+        nonlocal cash
+        position = positions[symbol]
+        sold = position.quantity * float(partial_profit["oran"])
+        part_cost = sold * price * cost_rate
+        entry_share = position.entry_cost * float(partial_profit["oran"])
+        cash += sold * price - part_cost
+        position.realized = (price - position.entry_price) * sold - entry_share - part_cost
+        position.exit_cost_acc = part_cost
+        position.entry_cost_sold = entry_share
+        position.entry_cost -= entry_share
+        position.quantity -= sold
+        position.partial_done = True
+        position.stop = max(position.stop, float(partial_profit["stop_fn"](position.entry_price)))
+
+    def partial_due(symbol: str, loc: int) -> bool:
+        position = positions[symbol]
+        if partial_profit is None or position.partial_done or position.bars_held < int(partial_profit["gun"]):
+            return False
+        if "trigger_atr" in partial_profit:
+            trigger = float(partial_profit["trigger_atr"]) * position.signal_atr
+        else:
+            trigger = float(partial_profit["trigger_fn"](position.entry_price, position.entry_price - position.initial_stop))
+        return float(price_arr[symbol]["close"][loc]) - position.entry_price >= trigger
 
     def cooled_down(symbol: str) -> bool:
         if cooldown_bars <= 0 or symbol not in last_exit_loc:
@@ -321,7 +360,9 @@ def run_portfolio(
             if loc >= 0:
                 last_close[symbol] = float(price_arr[symbol]["close"][loc])
 
-        todays_orders = sorted(scheduled.pop(date, []), key=lambda order: (order.kind != "exit", order.symbol))
+        todays_orders = sorted(
+            scheduled.pop(date, []), key=lambda order: ({"exit": 0, "partial": 1}.get(order.kind, 2), order.symbol)
+        )
         for order in todays_orders:
             if pending.get(order.symbol) != order.kind:
                 continue
@@ -329,6 +370,11 @@ def run_portfolio(
             if loc < 0:
                 continue
             open_price = float(price_arr[order.symbol]["open"][loc])
+            if order.kind == "partial":
+                pending.pop(order.symbol, None)
+                if order.symbol in positions and not positions[order.symbol].partial_done:
+                    take_partial(order.symbol, open_price)
+                continue
             if order.kind == "exit":
                 pending.pop(order.symbol, None)
                 if order.symbol in positions:
@@ -393,10 +439,21 @@ def run_portfolio(
             if fill_at_close:
                 if position is not None and exit_signal:
                     close_position(symbol, date, float(price_arr[symbol]["close"][loc]), "signal")
+                elif position is not None:
+                    if partial_due(symbol, loc):
+                        take_partial(symbol, float(price_arr[symbol]["close"][loc]))
                 elif position is None and entry_signal and cooled_down(symbol):
                     close_fills.append((symbol, *sizing_at(symbol, loc)))
                 continue
-            if symbol in positions and exit_signal and symbol not in pending:
+            if symbol in positions and not exit_signal and symbol not in pending and partial_due(symbol, loc):
+                target_loc = loc + 1 + extra_delay_bars
+                if target_loc < len(index_of[symbol]) and index_of[symbol][target_loc] <= end:
+                    execute_date = index_of[symbol][target_loc]
+                    scheduled.setdefault(execute_date, []).append(
+                        Order(symbol, "partial", execute_date, date, float(sig_atr[symbol][loc]))
+                    )
+                    pending[symbol] = "partial"
+            elif symbol in positions and exit_signal and (symbol not in pending or pending[symbol] == "partial"):
                 target_loc = loc + 1 + extra_delay_bars
                 if target_loc < len(index_of[symbol]) and index_of[symbol][target_loc] <= end:
                     execute_date = index_of[symbol][target_loc]

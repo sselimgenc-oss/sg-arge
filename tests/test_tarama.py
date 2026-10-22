@@ -152,13 +152,13 @@ def test_runtime_exit_builder_uses_entry_state() -> None:
 
 
 def test_unsupported_and_benchmark_cards_are_reported_not_ignored() -> None:
-    assert desteklenmeyen_alan({"giris": "close > 1", "kismi_kar": {"gun": 4}}) == "kismi_kar"
+    assert desteklenmeyen_alan({"giris": "close > 1", "kismi_kar": {"gun": 4}}) is None
     assert desteklenmeyen_alan({"giris": "close > 1", "iz_suren": {"tip": "fiyat_adim", "deger": 2}}) == "iz_suren.fiyat_adim"
     assert desteklenmeyen_alan({"giris": "close > 1", "stop": {"tip": "pips", "deger": 30}}) == "stop.pips"
     assert desteklenmeyen_alan({"giris": "close > 1", "roi_tablosu": {"0": 0.1}}) == "roi_tablosu"
     assert needs_benchmark(card("A3-003"))
     with pytest.raises(MotorDestegiYok):
-        build_plan(card("R01"), {"X": synthetic(1)}, week_end="FRI")
+        build_plan(card("O1-078"), {"X": synthetic(1)}, week_end="FRI")
     with pytest.raises(EndeksYok):
         tarama.run_card_market(card("A3-003"), {"X": synthetic(1)}, "BIST30", benchmark=None)
 
@@ -193,3 +193,33 @@ def test_all_ready_daily_cards_run_or_are_skipped_with_a_reason() -> None:
             failures.append(f"{item['id']}: {type(exc).__name__}: {exc}")
     assert not failures, "\n".join(failures)
     assert ran >= 35 and skipped <= 5
+
+
+def test_partial_profit_sells_fraction_once_and_locks_the_rest() -> None:
+    # entry day 1 open 100; held bars: day1=1, day2=2. Close of day 2 is +6 >= trigger, so
+    # 40% sells at day 3 open (108) and the stop for the rest moves to 100.1.
+    frame = _flat_frame(
+        highs=[101, 104, 109, 109, 109, 109], lows=[99, 99, 99, 99, 95, 95],
+        opens=[100, 100, 105, 108, 108, 108], closes=[100, 103, 106, 108, 108, 100],
+    )
+    result = run_portfolio(
+        {"X": frame}, lambda f, m: None, market="ABD25", start=frame.index[0], end=frame.index[-1], cost_rate=0.0,
+        precomputed_signals={"X": _signals(frame, stop_dist=20.0)}, trail_mode=None,
+        partial_profit={"gun": 2, "oran": 0.4, "trigger_atr": 2.0, "stop_fn": lambda price: price * 1.001},
+    )
+    assert len(result.trades) == 1
+    trade = result.trades.iloc[0]
+    assert trade["exit_reason"] == "stop+partial" and trade["exit_price"] == pytest.approx(100.1)
+    full = trade["quantity"]
+    expected = 0.4 * full * (108 - 100) + 0.6 * full * (100.1 - 100)
+    assert trade["net_pnl"] == pytest.approx(expected)
+
+
+def test_partial_profit_not_taken_below_trigger() -> None:
+    frame = _flat_frame(highs=[101] * 6, lows=[99] * 6, closes=[100.5] * 6)
+    result = run_portfolio(
+        {"X": frame}, lambda f, m: None, market="ABD25", start=frame.index[0], end=frame.index[-1], cost_rate=0.0,
+        precomputed_signals={"X": _signals(frame, stop_dist=20.0)}, trail_mode=None,
+        partial_profit={"gun": 2, "oran": 0.4, "trigger_atr": 2.0, "stop_fn": lambda price: price},
+    )
+    assert not result.trades["exit_reason"].str.contains("partial").any()
