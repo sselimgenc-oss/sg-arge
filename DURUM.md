@@ -3,6 +3,7 @@
 Son güncelleme: 2026-10-22 15:45 UTC, lider (Opus)
 
 ## Özet (kullanıcı için)
+- **İlk Geçti:** tarihsel evrenle (PIT) C07 ve R01 tüm paper kapılarını geçti.
 - **Aşama 2b (son eleme) bitti:** 29 satır, **7 Koşullu**, 22 Reddedildi. Ayrıntı: `results/asama2b_ozet.md`.
   - Güçlü (ABD): **C07** kanal+ADX, **R01**, **G011** PowerX, **M038**. Tek şerh survivorship.
   - Zayıf: **C04** BIST, **A6-010** Emtia, **M015** ABD. Hepsinde ön dönem negatif.
@@ -16,12 +17,14 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T18: Koşullu adaylardan portföy + korelasyon** (`docs/GOREV_T18.md`) | Atandı | "Görev geldi" |
+| Sonnet | **T20: özel kodlu kartlar parti 1** (20 kart: desen, durum makinesi, renko; `docs/GOREV_T20.md`) | Atandı | "Görev geldi" |
 | Codex | **T17: gün içi null testi** (`docs/GOREV_T16_T17.md`), model **Sol** | Atandı | Limit 21:10'da açılınca "görev geldi" |
 | Argon | **T11b: BIST30 2015-2019** (`argon/PAKET_T11b_bist_2015_2019.md`) | Atandı | Paketi yapıştır; CSV'yi `argon/`a yükle |
 | Lider | PIT yeniden koşu + gün içi kripto taraması | Koşuyor | Yok |
 
 ## Tamamlananlar (son)
+- T18 (Sonnet, PR #72): portföy + korelasyon kodu; gerçek koşu lider.
+- **PIT yeniden koşu:** C07 ve R01 (ABD) **Geçti**; C04 (BIST) Reddedildi.
 - T16 (Sonnet, PR #70): 50 kart incelendi, terfi 0.
 - T11 (Argon): tarihsel endeks listeleri. Eksik veri: SODA/TRKCM (2020'de SISE'ye birleşti; Yahoo'da veri yok).
 - T12 (Sonnet, PR #67): gün içi tarama, roi_tablosu, motor hızlandırma #2. C01/C09 gerçek veri paritesi birebir.

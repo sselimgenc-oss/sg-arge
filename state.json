@@ -3,7 +3,7 @@
   "lead": "auditor (sselimgenc, Opus 5.5)",
   "turn": "claude-moderator",
   "phase": "1-dogrulama + 0-triyaj",
-  "updated": "2026-10-22T15:45Z",
+  "updated": "2026-10-22T16:30Z",
   "heartbeat_minutes": 15,
   "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider + kullanici onayli)",
   "queue": [
@@ -166,7 +166,7 @@
       "id": "T18",
       "owner": "claude-moderator",
       "title": "Kosullu adaylardan esit riskli portfoy + korelasyon analizi",
-      "status": "PR acildi: backtests/portfoy.py + portfoy.yml; gercek kosu lider (veri gerekir)",
+      "status": "done (PR #72; lider duzeltmesi: Gecti+Kosullu, PIT satirlari oncelikli). Gercek kosu lider",
       "spec": "docs/GOREV_T18.md"
     },
     {
@@ -175,6 +175,13 @@
       "title": "BIST30 2015-2019 donemleri ikinci deneme",
       "status": "atandi",
       "spec": "argon/PAKET_T11b_bist_2015_2019.md"
+    },
+    {
+      "id": "T20",
+      "owner": "claude-moderator",
+      "title": "Ozel kodlu kartlar parti 1: desen, durum makinesi, renko, sinyal bari, bekleyen emir (20 kart)",
+      "status": "atandi",
+      "spec": "docs/GOREV_T20.md"
     }
   ],
   "done": [
