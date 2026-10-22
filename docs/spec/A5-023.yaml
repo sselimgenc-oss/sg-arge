@@ -13,6 +13,7 @@ tf_varsayim: false
 yazar_piyasasi: Kripto (BTC, ETH, BNB, ADA, XRP)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: ml
 giris: close > close[1]
 cikis: close < close[1]
 stop: null
@@ -33,3 +34,4 @@ belirsiz:
 - 'PapersWithBacktest sayfasina dogrudan erisim engellendi (erisim_engeli: true); makale bilgileri (Toledo & Souza, 2022, SSRN 4062476 / IEEE RASSE) PMC (PMC11112015 Tablo 1) literatur incelemesinden kurtarildi.'
 - 'Strateji makine ogrenmesi siniflandiricilarina (Logistic Regression, LR-PCA, LightGBM, LightGBM-PCA, XGBoost, XGBoost-PCA) dayandigi icin standart ifade diline cevrilemez (kural geregi spec_durumu: eksik
   ve ozel_kod: true).'
+- "T10: ozel_kod_nedeni: ml (sinyal tahmin modeli)"

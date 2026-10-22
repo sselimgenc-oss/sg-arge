@@ -23,6 +23,7 @@ gostergeler:
     f: sma
     src: rsi14
     n: 98
+ozel_kod: false
 giris: cross_over(ma_rsi15, ma_rsi98)
 cikis: cross_under(ma_rsi15, ma_rsi98)
 stop: null
@@ -45,3 +46,4 @@ spec_durumu: dakikalik
 belirsiz:
 - Egemen Ozturk (Bilge Yatirimci, 18 Temmuz 2019) tarafindan iDeal platformunda VIP-X030 5 dk periyotta optimize edilmis ornek long-only sistemdir.
 - Komisyon ve kaymalar oncesi 27175 puan (PF 1.30), komisyon ve kaymalar sonrasi 7635 puan net getiri (PF 1.07, 311 islem, %37 karli islem, 13 ardisik zararda -7025 puan) raporlanmistir.
+- "T10: ozel_kod true -> false; RSI(14) uzerinde SMA(15)/SMA(98) kesisimi kutuphane gostergeleriyle tam; 5m kart yalniz kriptoda taranir (D3, B)"

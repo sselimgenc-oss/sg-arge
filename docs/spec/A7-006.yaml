@@ -13,6 +13,7 @@ tf_varsayim: true
 yazar_piyasasi: Kripto (50 Parite)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: close > open
 cikis: close < open
 stop: null
@@ -31,3 +32,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - 'EliteTrader 382851 basligina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde onbellek kopyasi bulunamadi.'
+- "T10: ozel_kod_nedeni: tanim_belirsiz (gosterge tarayici sistemi, kural yok; yer tutucu)"

@@ -13,6 +13,7 @@ tf_varsayim: false
 yazar_piyasasi: ABD Hisse (Dow Jones Endeks Hisseleri)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: close > 0
 cikis: close > 0
 stop: null
@@ -32,3 +33,4 @@ spec_durumu: eksik
 belirsiz:
 - 'PapersWithBacktest sayfasina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde bu stratejiye ait onbellek metni bulunamadi.'
 - 'Ayrica strateji sirket bilanco/kar aciklama tarihleri (earnings announcements) olay verisine dayandigi icin salt fiyat serisiyle (OHLCV) karta cevrilemez (spec_durumu: eksik, ozel_kod: true).'
+- "T10: ozel_kod_nedeni: tanim_belirsiz (bilanco aciklamasi olay verisi, OHLCV ile karta cevrilemez)"

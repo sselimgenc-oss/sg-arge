@@ -11,8 +11,9 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY)
 gostergeler: {}
-ozel_kod: true
-giris: close < close[1] and close[1] < close[2]
+ozel_kod: false
+dolum: kapanis
+giris: "haftanin_gunu() == 0 and close < close[1] and close[1] < close[2]"
 cikis: close > high[1]
 stop: null
 hedef: null
@@ -40,3 +41,4 @@ belirsiz:
   okundu.
 - 'Takvim filtresi (ozel_kod: true): Bugun Pazartesi olmali (dayofweek == 1) ve piyasa Cuma ve Pazartesi ust uste 2 gun dusmus olmali (close < close[1] and close[1] < close[2]). Pazartesi kapanista long
   girilir, kapanis dunku yuksegin uzerine ciktiginda (close > high[1]) satilir (SPY 1993-2025: 271 islem, ort. 4 gun tutma, %11 exposure, %7.2 CAGR, %16 MDD, %0.03 komisyon dahil).'
+- "T10: Pazartesi filtresi haftanin_gunu() == 0 ile; kaynak 'kapanista long' dedigi icin dolum: kapanis (D4)"

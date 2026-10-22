@@ -16,10 +16,13 @@ gostergeler:
     src: low
     n: 5
     kaydir: 1
+ozel_kod: false
+dolum: kapanis
 giris: close < ll5 and (close - low) / (high - low) < 0.25
 cikis: close > high[1]
 stop: null
 hedef: null
+zaman_stop: {bar: 5}
 stop_eklendi: false
 parametreler:
   ll5.n: 5
@@ -43,3 +46,4 @@ belirsiz:
 - 'Makale metninden (5-day-low-of-the-range-strategy/) ve yazarin swing stratejileri makalesinden (swing-trading-strategies-for-beginners/ Strateji 3) kurallar dogrulandi: Kapanis fiyati onceki 5 islem
   gununun en dusuk seviyesinin altindaysa (close < ll5) ve IBS = (close - low) / (high - low) < 0.25 ise kapanista long girilir; kapanis dunku yuksegin uzerine ciktiginda (close > high[1]) veya 5 gun sonunda
   cikilir (414 islem, 305 kazanan, %73 WR, %0.03 maliyet sonrasi islem basina ort. %0.7 kazanc, %20 MDD).'
+- "T10: ozel_kod alani eklendi (false); kaynak 'kapanis > dunku yuksek VEYA 5 gun sonunda cikis' dedigi icin zaman_stop: 5 eklendi; kapanista giris (dolum: kapanis, D4)"

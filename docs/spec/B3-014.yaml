@@ -20,6 +20,7 @@ gostergeler:
     src: close
     n: 21
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 giris: roc5 < 0
 cikis: null
 stop: null
@@ -54,3 +55,4 @@ belirsiz:
 - 'Kesitsel hisse senedi ortalamaya donus kurallari (ozel_kod: true, Quantpedia #13 / Groot, Huij & Zhou, 2012): 1) Yatirim evreni piyasa degeri en yuksek 100 ABD hissesinden (fiyati >= 1$) olusur. 2) Portfoy
   her hafta (5 islem gununde bir, zaman_stop: 5) yeniden dengelenir. 3) Long bacak: Son 1 haftada (5 islem gunu, roc5) en dusuk getiriye sahip 10 hisse esit agirlikli olarak long alinir. 4) Short bacak:
   Son 1 ayda (21 islem gunu, roc21) en yuksek getiriye sahip 10 hisse esit agirlikli olarak short satilir.'
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (kesitsel siralama (en dusuk 5 gunluk getirili 10 hisse long, en yuksek 21 gunluk getirili 10 hisse short) ve haftalik yeniden dengeleme)"

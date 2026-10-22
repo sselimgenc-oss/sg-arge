@@ -11,6 +11,8 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: BIST Vadeli (VIP-X030 / VIOP30)
 gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: null
 cikis: null
 stop: null
@@ -31,3 +33,4 @@ belirsiz:
 - Egemen Ozturk (Bilge Yatirimci, 18 Temmuz 2019) makalesinde VIP-X030 5 dk periyotta Haziran 2018 - Temmuz 2019 donemi icin Sistem 1'in performans istatistikleri paylasilmistir (90 islem, %63 karli islem,
   komisyon oncesi 66975 puan ve PF 4.97, komisyon/kayma sonrasi 59900 puan ve PF 3.56, maks ardisik zarar -2200 puan).
 - Ancak Sistem 2'nin (O1-017) aksine Sistem 1 icin yalnizca 'piyasayi degerlendiren ve piyasa sartlarina gore sekil alan bir sistem' tanimi yapilmis, kullanilan gostergeler ve giris/cikis kurallari aciklanmamistir.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kural yok)"

@@ -31,6 +31,7 @@ gostergeler:
     n: 50
     kaydir: 1
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: sma_short > sma_long
 cikis: sma_short <= sma_long
 stop: null
@@ -54,3 +55,4 @@ belirsiz:
 - 'PapersWithBacktest sayfasina ve Trinity College Dublin PDF aynasina (IIIS Discussion Paper No. 92) dogrudan erisim engellendi (erisim_engeli: true).'
 - 'Arama motoru indeksinden kurtarilan bilgilere gore makalede MENA borsalarinda Variable Moving Average (VMA: kisa VMA > uzun VMA iken long) ve Trading Range Break (TRB: H gunluk zirve kirilimi) kurallari
   test edilmektedir; ancak PWB''de secilen kesin (short, long, H, bant) parametre kombinasyonu dogrulanamadi.'
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kaynak okunamadi; SMA donemleri yer tutucu)"

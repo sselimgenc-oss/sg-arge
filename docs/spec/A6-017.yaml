@@ -12,6 +12,7 @@ tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: tick_veri
 giris: close < close[1] and close[1] < close[2]
 cikis: null
 stop: null
@@ -45,3 +46,4 @@ belirsiz:
 - 'Tam strateji kurallari (Jakub Demko & David Belobrad, Quantpedia, Eylul 2026): 1) Algoseek 1 dakikalik SPY verisinden her islem gunu 09:30-10:00 (ilk 30 dakika, Pencere A) arasindaki agresif alici ve
   satici hacimleri toplanarak gunluk Order Flow Imbalance (OFI = TradeAtAsk - TradeAtBid) hesaplanir. 2) Gunluk sabah OFI degeri ust uste 2 islem gunu boyunca dusmusse (OFI[t] < OFI[t-1] and OFI[t-1] <
   OFI[t-2]), o gunun kapanisinda (saat 15:59) SPY long pozisyon acilir. 3) Pozisyon ertesi islem gununun kapanisinda (15:59, Y4 penceresi) veya ertesi sabah acilista (09:31, Y3 penceresi) kapatilir.'
+- "T10: ozel_kod_nedeni: tick_veri (emir akisi verisi)"

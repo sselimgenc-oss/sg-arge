@@ -13,11 +13,13 @@ tf_varsayim: true
 yazar_piyasasi: Endeks (DAX)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 giris: close > open
 cikis: close < open
 stop: null
 hedef: null
 stop_eklendi: false
+piyasa_kisiti: [GER40]
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -31,3 +33,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - 'NexusFi (Futures.io) sayfasina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde onbellek metni bulunamadi.'
+- "T10: ozel_kod_nedeni: ozel_gosterge (Value Area gunluk bias)"

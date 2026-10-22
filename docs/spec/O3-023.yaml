@@ -13,11 +13,13 @@ tf_varsayim: true
 yazar_piyasasi: Forex (GBP pariteleri)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 giris: close > open
 cikis: close < open
 stop: null
 hedef: null
 stop_eklendi: false
+piyasa_kisiti: [FX]
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -31,3 +33,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - 'NexusFi (Futures.io) sayfasina dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde onbellek metni bulunamadi.'
+- "T10: ozel_kod_nedeni: seans_saat (Londra seansi acilis araligi kirilimi)"

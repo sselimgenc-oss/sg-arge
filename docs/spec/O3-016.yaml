@@ -21,11 +21,13 @@ gostergeler:
     tf: 1D
     kaydir: 1
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 giris: open <= close_1d * 0.9985 and open >= close_1d * 0.993 and open > mtf("1D", sma25_1d)
 cikis: high >= close_1d
 stop: null
 hedef: null
 stop_eklendi: false
+piyasa_kisiti: [ES]
 parametreler:
   min_gap_down_pct: 0.15
   max_gap_down_pct: 0.7
@@ -48,3 +50,4 @@ belirsiz:
 - 'Gun ici bosluk doldurma (gap fill) kurallari (ozel_kod: true): 2011-2021 5 dakikalik surekli E-mini S&P 500 vadeli verisinde seans acilisinda dunku kapanisa gore -%0.15 ile -%0.70 arasinda asagi bosluk
   (gap down) olusmali ve bugunku acilis fiyati son 25 gunluk kapanis ortalamasinin (SMA25) uzerinde olmalidir. Acilista long girilir, bosluk doldugunda (fiyat dunku kapanisa ulastiginda) veya seans sonunda
   kapatilir (islem basina ort. %0.06 getiri).'
+- "T10: ozel_kod_nedeni: seans_saat (seans acilis boslugu (dunku kapanisa gore -%0.15..-%0.70) ve seans sonu cikisi)"

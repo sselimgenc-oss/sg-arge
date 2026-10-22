@@ -16,11 +16,13 @@ gostergeler:
     f: donchian
     n: 21
 ozel_kod: true
+ozel_kod_nedeni: renko
 giris: close > dc21.orta
 cikis: close < dc21.orta
 stop: null
 hedef: null
 stop_eklendi: false
+piyasa_kisiti: [ES]
 parametreler:
   donchian_n: 21
 deneme_sayisi_kaynakta: null
@@ -35,3 +37,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - 'Futures.io (NexusFi) sayfasina erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde bu basliga ait detayli metin bulunamadi.'
+- "T10: ozel_kod_nedeni: renko (Renko barlar)"

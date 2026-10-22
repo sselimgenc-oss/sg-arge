@@ -11,8 +11,9 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: Vadeli / ETF (NQ - Nasdaq 100 Futures, QQQ)
 gostergeler: {}
-ozel_kod: true
-giris: (close - low) / (high - low) <= 0.1
+ozel_kod: false
+dolum: kapanis
+giris: "(haftanin_gunu() == 0 or haftanin_gunu() == 1) and (close - low) / (high - low) <= 0.1"
 cikis: close > high[1]
 stop: null
 hedef: null
@@ -33,3 +34,4 @@ belirsiz:
 - Yazarin Nasdaq stratejileri makalesinden (quantifiedstrategies.com/nasdaq-trading-strategies/ Bolum 5) eksiksiz okundu.
 - 'Takvim filtresi (ozel_kod: true): 1) Bugun Pazartesi veya Sali olmali (dayofweek == 1 or dayofweek == 2). 2) IBS = (close - low) / (high - low) <= 0.1 olmali. 3) Kapanista long girilir ve kapanis dunku
   yuksegin uzerine ciktigi ilk gun (Amibroker kodu: c > ref(h, -1), yani close > high[1]) pozisyondan cikilir (2006''dan beri NQ vadeli kontratta 86 islem, PF 4.13).'
+- "T10: Pazartesi/Sali filtresi haftanin_gunu() ile (Amibroker dayofweek 1-2 = Pzt-Sali); kapanista giris (dolum: kapanis, D4)"
