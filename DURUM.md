@@ -18,7 +18,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Codex | **T13: sonuç raporu üreticisi** (`SONUC.md`). Model: Terra | Atandı | "Görev geldi" |
+| Codex | **T14: point-in-time evren** (survivorship düzeltmesi altyapısı). Model: Terra. Sonra T15 bekleyen emir (Sol) | Atandı | "Görev geldi" |
 | Sonnet | **T12: kripto gün içi/dakikalık tarama** + roi_tablosu + parti 11 düzeltme | Atandı | "Görev geldi" |
 | Argon | **T11: tarihsel endeks bileşenleri** (BIST30 dönemsel, ABD en büyük 25; survivorship düzeltmesi için) | Atandı | `argon/PAKET_T11_tarihsel_evren.md`'yi yapıştır; iki CSV'yi `argon/`a yükle |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
