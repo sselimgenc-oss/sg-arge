@@ -18,8 +18,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Codex | T1b: kalan 9 aile (15 satır) | **Sırada; limit açılınca** | Limit açılınca "görev geldi" |
-| Sonnet | **T6a: piyasa betası testleri** (BIST USD + rastgele giriş) + `kismi_kar` desteği | Atandı | "Görev geldi" |
+| Codex | T1b **tamam** (PR #49). Sıradaki: T6b, T6a sonuçları gelince | Bekliyor | Yok |
+| Sonnet | T6a **tamam** (PR #47). Sıradaki iş T6a sonuçlarına göre | Boşta | Yok |
 | Argon | **Parti 10** (29 kaynak, Markdown listelerinden; gözden kaçmıştı) | Sırada | `argon/PAKET_T2_parti10.md`'yi yapıştır; cevabı `T2_parti10.yaml` adıyla yükle. Sonra parti 11 (28) |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
 
@@ -37,4 +37,4 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## İlerleme
 - Kart aşaması **tamamlandı**: 326 kart (324 strateji + C01/C02 parite). tam 99, dakikalık 57, eksik 123, gizli 29, ihtiyari 14. Doğrulanamaz (kaynak erişilemedi): 93. İlk tarama: 42 kart, 35 aşama 2 adayı (`tartisma/005`).
-- Backtest: 6 / 21 Codex Algo satırı (T1a)
+- Backtest: Codex Algo 21/21 satır (T1a+T1b, `tartisma/007`). İlk tarama 42 kart + P02/R01. T6a (rastgele giriş + BIST USD) lider ortamında koşuyor.
