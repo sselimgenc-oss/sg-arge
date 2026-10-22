@@ -88,6 +88,10 @@ def needs_benchmark(card: Mapping[str, Any]) -> bool:
             return True
         if any("endeks_close" in str(spec.get(key) or "") for key in ("src", "ifade")):
             return True
+    order = card.get("giris_emri")
+    if isinstance(order, Mapping) and order.get("seviye"):
+        if BENCHMARK_RUNTIME & _expr.parse(str(order["seviye"])).names:
+            return True
     return False
 
 
@@ -156,6 +160,10 @@ def card_frame_signals(
     atr_sizing = _ind.atr(frame, SIZING_ATR)
     out = pd.DataFrame({"entry": entry, "exit": exit_static, "atr": atr_sizing}, index=index)
 
+    entry_order = card.get("giris_emri")
+    if entry_order:
+        out["entry_level"] = _eval_series(str(entry_order["seviye"]), env, index, mtf)
+
     stop, hedef, trail = card.get("stop"), card.get("hedef"), card.get("iz_suren")
     if stop:
         if stop["tip"] == "atr":
@@ -206,6 +214,10 @@ def build_plan(
         "trail_multiple": float(trail["carpan"]) if trail else None,
         "fill_at_close": card.get("dolum") == "kapanis",
     }
+    entry_order = card.get("giris_emri")
+    if entry_order:
+        kwargs["entry_order_type"] = str(entry_order["tip"])
+        kwargs["entry_order_validity"] = int(entry_order["gecerlilik_bar"])
     zaman = card.get("zaman_stop")
     if zaman:
         kwargs["time_stop_bars"] = int(zaman["bar"])

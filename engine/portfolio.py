@@ -23,6 +23,9 @@ class Order:
     target_dist: float = float("nan")
     stop_pct: float = float("nan")
     target_pct: float = float("nan")
+    entry_level: float = float("nan")
+    activate_loc: int = -1
+    expires_loc: int = -1
 
 
 @dataclass
@@ -139,6 +142,8 @@ def run_portfolio(
     exit_builder: Callable[..., pd.Series | None] | None = None,
     partial_profit: dict | None = None,
     roi_table: dict[float, float] | None = None,
+    entry_order_type: str | None = None,
+    entry_order_validity: int = 1,
 ) -> BacktestResult:
     """Run shared-capital portfolio events without same-bar signal fills.
 
@@ -164,10 +169,18 @@ def run_portfolio(
       ``stop_fn(entry_price)`` (stop for the remainder). Taken once; the fraction fills at
       the next open (or the same close with ``fill_at_close``). The trade stays one row,
       its ``exit_reason`` ends with ``+partial``.
+    * ``entry_order_type``: ``"stop"`` or ``"limit"`` uses the signal-bar
+      ``entry_level`` for up to ``entry_order_validity`` following bars.
     """
 
     if extra_delay_bars < 0:
         raise ValueError("extra_delay_bars must be non-negative")
+    if entry_order_type not in (None, "stop", "limit"):
+        raise ValueError("entry_order_type must be 'stop', 'limit' or None")
+    if entry_order_type is not None and entry_order_validity < 1:
+        raise ValueError("entry_order_validity must be >= 1")
+    if entry_order_type is not None and fill_at_close:
+        raise ValueError("pending entry orders cannot use fill_at_close")
     if trail_mode not in ("close", "high", None):
         raise ValueError("trail_mode must be 'close', 'high' or None")
     trail_m = atr_stop_multiple if trail_multiple is None else trail_multiple
@@ -220,6 +233,7 @@ def run_portfolio(
     sig_target_dist = {symbol: column(symbol, "target_dist") for symbol in symbols}
     sig_stop_pct = {symbol: column(symbol, "stop_pct") for symbol in symbols}
     sig_target_pct = {symbol: column(symbol, "target_pct") for symbol in symbols}
+    sig_entry_level = {symbol: column(symbol, "entry_level") for symbol in symbols}
     has_stop_dist = {symbol: "stop_dist" in signals[symbol].columns for symbol in symbols}
 
     # Entry signals per date: only symbols holding a position or flagging an entry need a signal-step visit.
@@ -234,6 +248,7 @@ def run_portfolio(
     positions: dict[str, Position] = {}
     scheduled: dict[pd.Timestamp, list[Order]] = {}
     pending: dict[str, str] = {}
+    pending_entries: dict[str, Order] = {}
     trades: list[Trade] = []
     equity_points: dict[pd.Timestamp, float] = {}
     exposure_points: dict[pd.Timestamp, float] = {}
@@ -397,6 +412,37 @@ def run_portfolio(
             open_position(order.symbol, date, open_price, order.signal_atr, order.stop_dist,
                           order.target_dist, order.stop_pct, order.target_pct)
 
+        # A pending stop/limit order becomes active only after its signal bar.
+        # It fills before protective stops are evaluated, so a stop touched on
+        # the entry bar wins pessimistically over a target touched that day.
+        for symbol in sorted(list(pending_entries)):
+            order = pending_entries[symbol]
+            loc = locs[symbol][di]
+            if loc < 0 or loc < order.activate_loc:
+                continue
+            if loc > order.expires_loc:
+                pending_entries.pop(symbol, None)
+                if pending.get(symbol) == "pending_entry":
+                    pending.pop(symbol, None)
+                continue
+            open_price = float(price_arr[symbol]["open"][loc])
+            high_price = float(price_arr[symbol]["high"][loc])
+            low_price = float(price_arr[symbol]["low"][loc])
+            triggered = (
+                high_price >= order.entry_level if entry_order_type == "stop"
+                else low_price <= order.entry_level
+            )
+            if not triggered:
+                continue
+            fill_price = (
+                max(open_price, order.entry_level) if entry_order_type == "stop"
+                else min(open_price, order.entry_level)
+            )
+            pending_entries.pop(symbol, None)
+            pending.pop(symbol, None)
+            open_position(symbol, date, fill_price, order.signal_atr, order.stop_dist,
+                          order.target_dist, order.stop_pct, order.target_pct)
+
         # Stops are active during the bar, including a position entered at its open.
         for symbol in sorted(positions):
             loc = locs[symbol][di]
@@ -483,7 +529,18 @@ def run_portfolio(
                     order = Order(symbol, "exit", execute_date, date, float(sig_atr[symbol][loc]))
                     scheduled.setdefault(execute_date, []).append(order)
                     pending[symbol] = "exit"
-            elif symbol not in positions and entry_signal and symbol not in pending and cooled_down(symbol):
+            elif symbol not in positions and entry_signal and (symbol not in pending or pending[symbol] == "pending_entry") and cooled_down(symbol):
+                if entry_order_type is not None:
+                    level = float(sig_entry_level[symbol][loc])
+                    if np.isfinite(level) and level > 0:
+                        atr_value, stop_dist, target_dist, stop_pct, target_pct = sizing_at(symbol, loc)
+                        activate = loc + 1 + extra_delay_bars
+                        pending_entries[symbol] = Order(
+                            symbol, "pending_entry", date, date, atr_value, stop_dist, target_dist,
+                            stop_pct, target_pct, level, activate, activate + entry_order_validity - 1,
+                        )
+                        pending[symbol] = "pending_entry"
+                    continue
                 target_loc = loc + 1 + extra_delay_bars
                 if target_loc < len(index_of[symbol]) and index_of[symbol][target_loc] <= end:
                     execute_date = index_of[symbol][target_loc]

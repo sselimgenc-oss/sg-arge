@@ -124,8 +124,22 @@
       "id": "T13",
       "owner": "codex-worker",
       "title": "Sonuc raporu ureticisi (SONUC.md, sonuc.csv) — model: Terra",
-      "status": "atandi",
+      "status": "done (PR #63)",
       "spec": "docs/GOREV_T12_T13.md"
+    },
+    {
+      "id": "T14",
+      "owner": "codex-worker",
+      "title": "Point-in-time evren altyapisi (survivorship) — model Terra",
+      "status": "done (PR #65)",
+      "spec": "docs/GOREV_T14_T15.md"
+    },
+    {
+      "id": "T15",
+      "owner": "codex-worker",
+      "title": "Motor: bekleyen emir (stop/limit giris) — model Sol",
+      "status": "done (PR #66)",
+      "spec": "docs/GOREV_T14_T15.md"
     }
   ],
   "done": [
@@ -266,6 +280,12 @@
       "owner": "argon",
       "title": "29 kart (4 tam, 19 okunamadi)",
       "ref": "argon/T2_parti11.yaml"
+    },
+    {
+      "id": "T6a-kosu2",
+      "owner": "auditor",
+      "title": "21 satir: 5 gecti; birlesik 146/8",
+      "ref": "tartisma/008"
     }
   ],
   "user_decisions_pending": [

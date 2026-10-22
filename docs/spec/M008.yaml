@@ -24,14 +24,17 @@ gostergeler:
     src: close
     n: 100
 giris: close > 1 and close > sma100 and rsi2 < 10
+giris_emri:
+  tip: limit
+  seviye: close * 0.95
+  gecerlilik_bar: 1
 cikis: rsi2 > 50
 zaman_stop:
   bar: 10
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: bekleyen_emir
+ozel_kod: false
 parametreler:
   sma100.n: 100
   rsi2.n: 2

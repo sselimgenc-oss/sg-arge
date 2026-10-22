@@ -33,6 +33,7 @@ if str(ROOT) not in sys.path:
 from backtests import asama2a, tarama  # noqa: E402
 from backtests.run_codex21 import ROWS, RowConfig, _git_sha, _load_market  # noqa: E402
 from data.fetch import normalize_ohlcv  # noqa: E402
+from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
 from engine.portfolio import BacktestResult, calculate_metrics, run_portfolio  # noqa: E402
 
 BASE_SEED = asama2a.BASE_SEED
@@ -240,11 +241,13 @@ class CodexPrepared:
         )
 
 
-def prepare_codex(config: RowConfig, data: dict[str, pd.DataFrame], start: pd.Timestamp, end: pd.Timestamp) -> CodexPrepared:
+def prepare_codex(config: RowConfig, data: dict[str, pd.DataFrame], start: pd.Timestamp, end: pd.Timestamp, pit_universe: PITUniverse | None = None) -> CodexPrepared:
     frames = {symbol: frame for symbol, frame in data.items() if not frame.loc[(frame.index >= start) & (frame.index <= end)].empty}
     if not frames:
         raise ValueError(f"{config.market}: donemde veri yok")
     signals = {symbol: config.signal_function(frame, config.market) for symbol, frame in frames.items()}
+    if pit_universe is not None:
+        signals = filter_entry_signals(signals, pit_universe, config.market)
     annualization = 365 if config.market == "KRIPTO25" else 252
     return CodexPrepared(config, frames, start, end, SimpleNamespace(signals=signals), annualization)
 
@@ -312,11 +315,12 @@ def evaluate_codex(
     null_reps_high: int,
     bootstrap_reps: int,
     data_hash: str,
+    pit_universe: PITUniverse | None = None,
 ) -> dict[str, Any]:
     row = {column: np.nan for column in OUTPUT_COLUMNS}
     row.update(id=config.row_id, piyasa=config.market, kaynak="Codex Algo", para="USD" if config.market == "BIST30" else "yerel", data_hash=data_hash, git_sha=_git_sha())
     seed = BASE_SEED ^ zlib.crc32(f"{config.row_id}|{config.market}".encode())
-    prepared = prepare_codex(config, data, IS_START, IS_END)
+    prepared = prepare_codex(config, data, IS_START, IS_END, pit_universe)
     real = prepared.run()
     real_pf, real_ortr, real_count = asama2a.trade_stats(real.trades)
     if real_count < 5:
@@ -333,9 +337,9 @@ def evaluate_codex(
     ortr95 = float(np.nanpercentile(null["ortr"], 95))
     row.update(null_tekrar=reps, null_pf_p95=pf95, null_ortr_p95=ortr95, p_pf=p_pf, p_ortr=p_ortr, null_gecti=bool(real_pf > pf95 and real_ortr > ortr95))
 
-    oos = prepare_codex(config, data, OOS_START, max(frame.index.max() for frame in data.values())).run()
+    oos = prepare_codex(config, data, OOS_START, max(frame.index.max() for frame in data.values()), pit_universe).run()
     pre_start = pd.Timestamp("2018-01-01" if config.market == "KRIPTO25" else "2015-01-01", tz="UTC")
-    pre = prepare_codex(config, data, pre_start, PRE_END).run()
+    pre = prepare_codex(config, data, pre_start, PRE_END, pit_universe).run()
     oos_m, pre_m = _metrics(oos, prepared.annualization), _metrics(pre, prepared.annualization)
     two, three, delay = prepared.run(2), prepared.run(3), prepared.run(extra_delay_bars=1)
     row.update(
@@ -368,6 +372,7 @@ def evaluate_codex(
 def evaluate_card(
     card: dict[str, Any], market: str, data: dict[str, pd.DataFrame], benchmark: pd.DataFrame | None,
     stage2a_row: pd.Series, *, results_dir: Path, bootstrap_reps: int, data_hash: str,
+    pit_universe: PITUniverse | None = None,
 ) -> dict[str, Any]:
     row = {column: np.nan for column in OUTPUT_COLUMNS}
     row.update(
@@ -377,12 +382,12 @@ def evaluate_card(
         p_ortr=stage2a_row.get("p_ortr"), null_gecti=True, data_hash=data_hash, git_sha=_git_sha(),
     )
     seed = BASE_SEED ^ zlib.crc32(f"{card['id']}|{market}".encode())
-    prepared = tarama.prepare(card, data, market, benchmark=benchmark, start=IS_START, end=IS_END)
+    prepared = tarama.prepare(card, data, market, benchmark=benchmark, start=IS_START, end=IS_END, pit_universe=pit_universe)
     real = prepared.run()
     final = max(frame.index.max() for frame in data.values())
-    oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final).run()
+    oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final, pit_universe=pit_universe).run()
     pre_start = pd.Timestamp("2018-01-01" if market == "KRIPTO25" else "2015-01-01", tz="UTC")
-    pre = tarama.prepare(card, data, market, benchmark=benchmark, start=pre_start, end=PRE_END).run()
+    pre = tarama.prepare(card, data, market, benchmark=benchmark, start=pre_start, end=PRE_END, pit_universe=pit_universe).run()
     oos_m, pre_m = _metrics(oos, prepared.annualization), _metrics(pre, prepared.annualization)
     row.update(
         oos_islem=oos_m["islem"], oos_ort_r=oos_m["ortalama_r"], oos_net=oos_m["getiri"],
@@ -396,7 +401,7 @@ def evaluate_card(
         cells = []
         for factors in itertools.product(PLATEAU_FACTORS, repeat=len(parameters)):
             variant = _mutate_card(card, parameters, factors)
-            result = tarama.prepare(variant, data, market, benchmark=benchmark, start=IS_START, end=IS_END).run()
+            result = tarama.prepare(variant, data, market, benchmark=benchmark, start=IS_START, end=IS_END, pit_universe=pit_universe).run()
             metrics = _metrics(result, prepared.annualization)
             cells.append((factors, metrics["pf"], metrics["getiri"]))
         plateau = plateau_summary(cells)
@@ -462,6 +467,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--bootstrap-tekrar", type=int, default=1000)
     parser.add_argument("--kart-ids", default="")
     parser.add_argument("--codex-ids", default=",".join(ROWS))
+    parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
     return parser.parse_args()
 
 
@@ -476,8 +482,9 @@ def main() -> int:
     cards = load_card_candidates(args.results_dir, args.kartlar, only_cards)
     markets = sorted({ROWS[row_id].market for row_id in codex_ids} | {market for _, market, _ in cards})
     data, hashes, benchmarks = {}, {}, {}
+    pit_universe = load_pit_universe() if args.evren == "pit" else None
     for market in markets:
-        data[market], hashes[market], _ = _load_market(market, args.data_dir)
+        data[market], hashes[market], _ = _load_market(market, args.data_dir, args.evren)
     if "BIST30" in data:
         fx_path = args.data_dir / "USDTRY_X.parquet"
         if not fx_path.exists():
@@ -490,9 +497,9 @@ def main() -> int:
     tasks: list[tuple[str, Callable[[], dict[str, Any]]]] = []
     for row_id in codex_ids:
         config = ROWS[row_id]
-        tasks.append((row_id, lambda config=config: evaluate_codex(config, data[config.market], results_dir=args.results_dir, null_reps=args.null_tekrar, null_reps_high=args.null_tekrar_yuksek, bootstrap_reps=args.bootstrap_tekrar, data_hash=hashes[config.market])))
+        tasks.append((row_id, lambda config=config: evaluate_codex(config, data[config.market], results_dir=args.results_dir, null_reps=args.null_tekrar, null_reps_high=args.null_tekrar_yuksek, bootstrap_reps=args.bootstrap_tekrar, data_hash=hashes[config.market], pit_universe=pit_universe)))
     for card, market, stage2a_row in cards:
-        tasks.append((card["id"], lambda card=card, market=market, stage2a_row=stage2a_row: evaluate_card(card, market, data[market], benchmarks.get(market), stage2a_row, results_dir=args.results_dir, bootstrap_reps=args.bootstrap_tekrar, data_hash=hashes[market])))
+        tasks.append((card["id"], lambda card=card, market=market, stage2a_row=stage2a_row: evaluate_card(card, market, data[market], benchmarks.get(market), stage2a_row, results_dir=args.results_dir, bootstrap_reps=args.bootstrap_tekrar, data_hash=hashes[market], pit_universe=pit_universe)))
     for number, (name, task) in enumerate(tasks, 1):
         try:
             row = task()

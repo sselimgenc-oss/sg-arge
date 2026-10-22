@@ -109,6 +109,13 @@ Hepsi `engine/portfolio.py` + `engine/kart_sinyal.py` ile uygulanir; tum emirler
 - `paskalya(k)`: Bati (Gregoryen) Paskalya Pazari'ndan `k` takvim gunu sonraki tarihte True (k negatif olabilir). Kutsal Persembe `paskalya(-3)`, Paskalya oncesi carsamba `paskalya(-4)`, Paskalya haftasindan onceki cuma `paskalya(-9)`. Tatil gunu (bar yok) sinyal uretmez.
 - Birlikte takvim kartlari G008, G009 (paskalya) ve G010 (ay_gunu) `ozel_kod` gerektirmez.
 
-### D8. `roi_tablosu` ve gun ici tarama (T12, Sonnet; lider onayina acik)
+### D8. Bekleyen giris emirleri (T15, Codex)
+- **`giris_emri {tip, seviye, gecerlilik_bar}`:** `giris` kurulum sinyalidir; `seviye` ifadesi sinyal barinda bir kez hesaplanip dondurulur. Emir sinyal barinda dolmaz, izleyen `gecerlilik_bar` bar boyunca (son bar dahil) aktiftir. Ayni sembolde yeni bir kurulum sinyali acik emrin seviyesini, boyutlama verilerini ve gecerlilik suresini yeniler.
+- **Stop giris:** aktif barda `high >= seviye` ise dolum `max(open, seviye)` fiyatindadir; boylece seviyenin uzerine acilan gap iyimser fiyatlanmaz.
+- **Limit giris:** aktif barda `low <= seviye` ise dolum `min(open, seviye)` fiyatindadir; boylece seviyenin altina acilan gap ilk erisilebilir fiyatla dolar.
+- Stop/hedef giris barinda da etkindir. Giris ile koruyucu stop ayni barda, ya da stop ile hedef ayni barda gorulurse A3 uyarinca kotumser siralama uygulanir ve stop kazanir.
+- Alan verilmezse A1'deki mevcut sonraki acilis dolumu aynen korunur. `dolum: kapanis` ile bekleyen giris birlikte kullanilmaz.
+
+### D9. `roi_tablosu` ve gun ici tarama (T12, Sonnet; lider onayina acik)
 - **`roi_tablosu {dakika: kar_orani}`** (Freqtrade `minimal_roi`): pozisyonun giris barinin acilis zamanindan bu yana gecen dakika (bar acilis zamani farki; giris barinda 0), tablodaki `dakika <= gecen` olan en buyuk anahtarin oranina ulasirsa cikilir. Bar yuksegi `giris x (1 + oran)` seviyesine ulasinca o fiyattan, bar bu seviyenin ustunde aciliyorsa acilistan dolar (`exit_reason: roi`). Stop ayni barda once kontrol edilir (A3). Son anahtar 0 ise (`{.., 600: 0}`) o sureden sonra basabasta (kar >= 0) cikis demektir.
 - **Gun ici tarama (`tarama.py --tf 1H,30m,15m,5m,1m`):** 1H alti kartlar yalniz kriptoda (Binance); diger piyasalar `Dogrulanamaz (dakikalik_veri_yok)`. 1H kartlar dort piyasada: kripto IS 2020-01-01 -> 2024-09-30; BIST/ABD/emtia (yfinance ~2 yil) ilk 2/3 IS, son 1/3 gorulmez. BIST 1H, `results/veri_kalitesi_1h.md` sorunu (seans disi / sifir hacimli barlar) cozulene kadar `Dogrulanamaz (veri_kalitesi)`. Gun ici kartlarda kapanis dolumu istisnasi yok (D4): `dolum: kapanis` yok sayilir, A1 uygulanir. Sharpe yillik carpani bar sayisina gore (kripto 24/7, hisse 7 saat).

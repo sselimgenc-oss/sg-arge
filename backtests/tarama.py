@@ -24,6 +24,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
+from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
 from engine import gosterge  # noqa: E402
 from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
@@ -133,6 +134,7 @@ def prepare(
     benchmark: pd.DataFrame | None = None,
     start: pd.Timestamp = IS_START,
     end: pd.Timestamp = IS_END,
+    pit_universe: PITUniverse | None = None,
 ) -> Prepared:
     """Card timeframe frames (weekly for 1W cards), signals and engine arguments for one market."""
     week_end = "SUN" if market == "KRIPTO25" else "FRI"
@@ -145,6 +147,8 @@ def prepare(
     if not in_period:
         raise ValueError(f"{market}: donemde veri yok")
     plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark)
+    if pit_universe is not None:
+        plan.signals = filter_entry_signals(plan.signals, pit_universe, market)
     if card["tf"] not in DAILY_TFS:
         plan.engine_kwargs["fill_at_close"] = False  # no MOC exception for intraday cards (D4)
         plan.dolum_kapanis = False
@@ -159,9 +163,10 @@ def run_card_market(
     benchmark: pd.DataFrame | None = None,
     start: pd.Timestamp = IS_START,
     end: pd.Timestamp = IS_END,
+    pit_universe: PITUniverse | None = None,
 ) -> dict[str, Any]:
     """Run one card on one market's data; returns the metric fields of a tarama row."""
-    prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end)
+    prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
     plan, annualization = prepared.plan, prepared.annualization
     out: dict[str, Any] = {}
     first, second = prepared.run(1.0), prepared.run(2.0)
@@ -231,8 +236,10 @@ def scan(
     merge: bool = False,
     data_root: Path | None = None,
     summary_name: str | None = None,
+    evren: str = "sabit",
 ) -> pd.DataFrame:
     git_sha = _git_sha()
+    pit_universe = load_pit_universe() if evren == "pit" else None
     root = data_root or data_dir.parent
     loaded: dict[tuple[str, str], tuple[dict[str, pd.DataFrame], str, list[str]]] = {}
     benchmark_cache: dict[str, dict[str, pd.DataFrame | None]] = {}
@@ -243,7 +250,7 @@ def scan(
     def market_data(tf: str, market: str):
         key = (str(directory_for(tf)), market)
         if key not in loaded:
-            loaded[key] = _load_market(market, directory_for(tf))
+            loaded[key] = _load_market(market, directory_for(tf), evren if tf in DAILY_TFS else "sabit")
         return loaded[key]
 
     rows: list[dict[str, Any]] = []
@@ -271,7 +278,8 @@ def scan(
             try:
                 start, end = period_for(tf, market, data)
                 result = run_card_market(
-                    card, data, market, benchmark=benchmark_cache[directory].get(market), start=start, end=end
+                    card, data, market, benchmark=benchmark_cache[directory].get(market), start=start, end=end,
+                    pit_universe=pit_universe if tf in DAILY_TFS else None,
                 )
             except MotorDestegiYok as exc:
                 rows.append(_empty(card, market, "Atlandi", f"motor_destegi_yok:{exc.field_name}"))
@@ -381,6 +389,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
     parser.add_argument("--veri-kok", type=Path, default=ROOT / "data", help="root of the hourly/1m/5m/15m/30m archives")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
+    parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
     return parser.parse_args()
 
 
@@ -393,7 +402,7 @@ def main() -> int:
     intraday = not any(item in DAILY_TFS for item in args.tf.split(","))
     table = scan(
         cards, args.data_dir, args.results_dir, merge=args.birlestir or intraday, data_root=args.veri_kok,
-        summary_name="tarama_gunici_ozet.md" if intraday else None,
+        summary_name="tarama_gunici_ozet.md" if intraday else None, evren=args.evren,
     )
     print(f"{len(cards)} kart, {len(table)} satir, {int((table['durum'] == 'Hesaplandi').sum())} hesaplandi, "
           f"{int(table['asama2_aday'].fillna(False).astype(bool).sum())} satir asama 2 adayi")

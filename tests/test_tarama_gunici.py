@@ -59,7 +59,7 @@ def test_intraday_scan_end_to_end_on_synthetic_bars(tmp_path: Path) -> None:
     cards = tarama.load_cards(SPEC, "1H") + tarama.load_cards(SPEC, "5m,15m,30m,1m")
     assert cards, "expected ready intraday cards"
     one_hour = next(card for card in cards if card["tf"] == "1H" and not card.get("roi_tablosu"))
-    minute = next(card for card in cards if card["tf"] != "1H")
+    minute = next(card for card in cards if card["tf"] != "1H" and not card.get("piyasa_kisiti"))
     universe = pd.read_csv(Path(tarama.ROOT) / "data" / "evren.csv", dtype=str).fillna("")
     root = tmp_path / "data"
     for directory, freq in (("hourly", "h"), (minute["tf"], {"1m": "min", "5m": "5min", "15m": "15min", "30m": "30min"}[minute["tf"]])):

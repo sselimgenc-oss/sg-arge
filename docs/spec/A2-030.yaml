@@ -23,12 +23,15 @@ gostergeler:
     src: low
     n: 55
 giris: cross_over(ema33_close, ema55_high)
+giris_emri:
+  tip: limit
+  seviye: ema33_close
+  gecerlilik_bar: 1
 cikis: cross_under(ema33_close, ema55_low)
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: bekleyen_emir
+ozel_kod: false
 parametreler:
   signal_ema.n: 33
   channel_ema.n: 55

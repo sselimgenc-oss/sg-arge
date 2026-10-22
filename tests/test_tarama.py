@@ -163,6 +163,16 @@ def test_unsupported_and_benchmark_cards_are_reported_not_ignored() -> None:
         tarama.run_card_market(card("A3-003"), {"X": synthetic(1)}, "BIST30", benchmark=None)
 
 
+def test_pending_entry_card_builds_level_and_engine_arguments() -> None:
+    item = card("A6-003")
+    plan = build_plan(item, {"X": synthetic(1)}, week_end="FRI")
+    assert plan.engine_kwargs["entry_order_type"] == "limit"
+    assert plan.engine_kwargs["entry_order_validity"] == 1
+    assert "entry_level" in plan.signals["X"]
+    expected = plan.signals["X"].index[-1]
+    assert np.isfinite(plan.signals["X"].at[expected, "entry_level"])
+
+
 def test_stage_decision_rule() -> None:
     good = {"islem": 40, "PF_1x": 1.3, "net_2x": 0.01}
     assert tarama._stage_decision(good)[0]

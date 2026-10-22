@@ -18,7 +18,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Codex | **T13: sonuç raporu üreticisi** (`SONUC.md`). Model: Terra | Atandı | "Görev geldi" |
+| Codex | T15 **tamam** (PR #66). Limit 21:10'a kadar | Bekliyor | Limit açılınca haber ver |
 | Sonnet | **T12: kripto gün içi/dakikalık tarama** + roi_tablosu + parti 11 düzeltme | Atandı | "Görev geldi" |
 | Argon | **T11: tarihsel endeks bileşenleri** (BIST30 dönemsel, ABD en büyük 25; survivorship düzeltmesi için) | Atandı | `argon/PAKET_T11_tarihsel_evren.md`'yi yapıştır; iki CSV'yi `argon/`a yükle |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
@@ -27,7 +27,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.
 
 ## Aşama 2a sonucu (`tartisma/008`)
-125 satırdan **3'ü** rastgele giriş testini geçti: A6-010 Emtia, P3-011 Kripto, R01 ABD (Qullamaggie). Giriş sinyalleri genel olarak rastgele girişten ayırt edilemiyor; kâr piyasa yönü ve çıkış yapısından geliyor. Sırada T6b (lider koşusu).
+146 satırdan **8'i** rastgele giriş testini geçti: A6-010 Emtia, P3-011 Kripto, R01 ABD, G007 Kripto, G011 ABD (PowerX), M015 ABD (Connors Cumulative RSI), M038 ABD, O3-003 ABD. Uyarı: şansla ~7 yanlış pozitif beklenir; T6b belirleyici.
 
 ## Sırada bekleyen (açılmadı)
 - Argon parti 11 (28 kaynak, md listeleri) ve parti 12 (13 strateji: güncellenmiş liste PDF'i + Trend Trigger). Envanter: `tartisma/006_pdf_envanteri.md` (repoda toplam ≈392 strateji).
