@@ -43,6 +43,19 @@ def card(card_id: str) -> dict:
     return yaml.safe_load((SPEC / f"{card_id}.yaml").read_text(encoding="utf-8"))
 
 
+def test_fx_constraint_appends_fx8_without_changing_existing_market_rows() -> None:
+    assert tarama.markets_for_card({"piyasa_kisiti": ["FX"]}) == (*tarama.MARKETS, "FX8")
+    assert tarama.markets_for_card({"piyasa_kisiti": ["ABD"]}) == tarama.MARKETS
+    assert tarama.MARKETS == ("BIST30", "ABD25", "KRIPTO25", "EMTIA")
+    assert tarama.BASE_COST["FX8"] == 0.0001
+
+
+def test_volume_dependent_card_is_skipped_for_volume_free_fx_data() -> None:
+    assert tarama._needs_volume({"gostergeler": {"mfi": {"f": "mfi", "n": 14}}})
+    assert tarama._needs_volume({"gostergeler": {}, "giris": "volume > 0"})
+    assert not tarama._needs_volume({"gostergeler": {"rsi": {"f": "rsi", "n": 14}}})
+
+
 @pytest.mark.parametrize(
     "card_id, strategy, market, calendar",
     [

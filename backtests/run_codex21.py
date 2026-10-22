@@ -124,6 +124,9 @@ def _git_sha() -> str:
 
 
 def _symbols_for_market(market: str, evren: str = "sabit") -> list[str]:
+    from data.fetch import SINGLE_MARKETS  # noqa: PLC0415
+    if market in SINGLE_MARKETS:
+        return list(SINGLE_MARKETS[market])
     universe = pd.read_csv(ROOT / "data" / "evren.csv", dtype=str).fillna("")
     if evren == "pit":
         extras = ROOT / "data" / "evren_pit_semboller.csv"

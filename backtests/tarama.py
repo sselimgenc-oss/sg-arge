@@ -37,6 +37,8 @@ IS_END = pd.Timestamp("2024-09-30", tz="UTC")
 MARKETS = ("BIST30", "ABD25", "KRIPTO25", "EMTIA")
 BASE_COST = {"BIST30": 0.0015, "ABD25": 0.0005, "KRIPTO25": 0.0015, "EMTIA": 0.0005}
 MARKET_TOKEN = {"BIST30": "BIST", "ABD25": "ABD", "KRIPTO25": "KRIPTO", "EMTIA": "EMTIA"}
+BASE_COST["FX8"] = 0.0001
+MARKET_TOKEN["FX8"] = "FX"
 BENCHMARK_SYMBOL = {"ABD25": "SPY", "KRIPTO25": "BTCUSDT"}  # BIST30/EMTIA: no index series yet
 MIN_TRADES, MIN_PF, PF_ALARM = 30, 1.1, 4.0
 DAILY_TFS = ("1D", "1W")
@@ -81,6 +83,8 @@ def annualization_for(tf: str, market: str) -> int:
         return 52
     if tf == "1D":
         return 365 if market == "KRIPTO25" else 252
+    if market == "FX8":
+        return (24 * 60 // TF_MINUTES[tf]) * 252  # 24h weekday FX archive
     # 2H/4H US/commodity bars include the closed short final session bucket.
     # Preserve the established 1H factor for existing CI parity results.
     if market != "KRIPTO25" and tf in RESAMPLED_HOURLY_TFS:
@@ -334,6 +338,18 @@ def _skip_reason(
     return None
 
 
+def markets_for_card(card: dict[str, Any]) -> tuple[str, ...]:
+    """Preserve all historical rows and append FX8 only for FX-bound cards."""
+    return MARKETS + (("FX8",) if "FX" in (card.get("piyasa_kisiti") or []) else ())
+
+
+def _needs_volume(card: dict[str, Any]) -> bool:
+    volume_indicators = {"volume", "obv", "mfi", "vwap", "rvol"}
+    if any(spec.get("f") in volume_indicators for spec in (card.get("gostergeler") or {}).values() if isinstance(spec, dict)):
+        return True
+    return any("volume" in str(card.get(field) or "") for field in ("giris", "cikis"))
+
+
 def scan(
     cards: list[dict[str, Any]],
     data_dir: Path,
@@ -371,7 +387,7 @@ def scan(
             rows.append(_empty(card, "-", "Atlandi", f"alias:{card['alias_of']}"))
             continue
         tf = card["tf"]
-        for market in MARKETS:
+        for market in markets_for_card(card):
             skip = _skip_reason(card, market, bist_1h_quality_ok=True)
             if skip:
                 rows.append(_empty(card, market, *skip))
@@ -390,6 +406,9 @@ def scan(
                     continue
             if not data:
                 rows.append(_empty(card, market, "Dogrulanamaz", "veri_yok"))
+                continue
+            if _needs_volume(card) and all((frame["volume"] <= 0).all() for frame in data.values()):
+                rows.append(_empty(card, market, "Dogrulanamaz", "veri_yok:volume"))
                 continue
             directory = str(directory_for(tf))
             if directory not in benchmark_cache:
