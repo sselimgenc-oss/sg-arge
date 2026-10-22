@@ -47,6 +47,7 @@ def test_skip_rules_and_annualisation() -> None:
     assert tarama._skip_reason(card, "KRIPTO25") is None
     one_hour = {"id": "Y", "tf": "1H"}
     assert tarama._skip_reason(one_hour, "BIST30")[1].startswith("veri_kalitesi")
+    assert tarama._skip_reason(one_hour, "BIST30", bist_1h_quality_ok=True) is None
     assert tarama._skip_reason(one_hour, "ABD25") is None
     assert tarama._skip_reason({"id": "Z", "tf": "1H", "piyasa_kisiti": ["ABD"]}, "EMTIA")[1].startswith("piyasa_ozgu")
     assert tarama.annualization_for("1H", "KRIPTO25") == 24 * 365
@@ -76,7 +77,7 @@ def test_intraday_scan_end_to_end_on_synthetic_bars(tmp_path: Path) -> None:
     )
     rows = table.set_index(["id", "piyasa"])
     assert rows.loc[(minute["id"], "ABD25"), "neden"] == "dakikalik_veri_yok"
-    assert rows.loc[(one_hour["id"], "BIST30"), "durum"] == "Dogrulanamaz"
+    assert rows.loc[(one_hour["id"], "BIST30"), "durum"] == "Hesaplandi"
     assert (table["durum"] != "Hata").all(), table[table["durum"] == "Hata"][["id", "piyasa", "neden"]]
     assert "Hesaplandi" in set(table[table["id"] == one_hour["id"]]["durum"])
     assert (results / "tarama_gunici_ozet.md").read_text(encoding="utf-8").startswith("# Gun ici")

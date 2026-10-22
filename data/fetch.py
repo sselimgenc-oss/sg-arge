@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import sys
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -15,6 +16,11 @@ import requests
 import yfinance as yf
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from data.bist_1h import normalize_market_1h, quality as bist_1h_quality  # noqa: E402
+
 DATA_DIR = ROOT / "data"
 UNIVERSE_PATH = DATA_DIR / "evren.csv"
 ROTATION_PATH = DATA_DIR / "rotasyon_semboller.csv"  # named instruments of the T22 transition (gecis) cards
@@ -139,7 +145,10 @@ def fetch_yfinance(asset: Asset, interval: str) -> pd.DataFrame:
         options["period"] = "730d"
     else:
         options["start"] = DAILY_START
-    return normalize_ohlcv(yf.download(**options))
+    frame = normalize_ohlcv(yf.download(**options))
+    if interval == "1h":
+        frame = normalize_market_1h(frame, asset.market)
+    return frame
 
 
 def _binance_rows_to_frame(rows: list[list[object]]) -> pd.DataFrame:
@@ -272,23 +281,34 @@ def update_manifest(rows: Iterable[dict[str, object]], path: Path = MANIFEST_PAT
     incoming.to_csv(path, index=False)
 
 
-def quality_metrics(frame: pd.DataFrame, asset: Asset) -> dict[str, int]:
+def quality_metrics(frame: pd.DataFrame, asset: Asset) -> dict[str, int | float | bool]:
     duplicate = int(frame.index.duplicated().sum())
     zero_volume = int((frame["volume"] <= 0).sum()) if not frame.empty else 0
     missing = 0
     outside_session = 0
+    zero_volume_flat = 0
+    zero_volume_changed = 0
+    suspicious_zero_volume_rate = 0.0
+    quality_passed = True
     if not frame.empty and asset.source == "binance":
         expected = pd.date_range(frame.index[0], frame.index[-1], freq="1h", tz="UTC")
         missing = len(expected.difference(frame.index))
     if not frame.empty and asset.market.upper() == "BIST30":
-        local = frame.index.tz_convert("Europe/Istanbul")
-        minute = local.hour * 60 + local.minute
-        outside_session = int(((minute < 10 * 60) | (minute >= 18 * 60)).sum())
+        measurement = bist_1h_quality(frame)
+        outside_session = measurement.outside_session
+        zero_volume_flat = measurement.zero_volume_flat
+        zero_volume_changed = measurement.zero_volume_changed
+        suspicious_zero_volume_rate = measurement.suspicious_zero_volume_rate
+        quality_passed = measurement.passed
     return {
         "duplicates": duplicate,
         "missing_bars": missing,
         "zero_volume": zero_volume,
         "outside_session": outside_session,
+        "zero_volume_flat": zero_volume_flat,
+        "zero_volume_changed": zero_volume_changed,
+        "suspicious_zero_volume_rate": suspicious_zero_volume_rate,
+        "quality_passed": quality_passed,
     }
 
 
@@ -302,15 +322,26 @@ def write_quality_report(records: list[dict[str, object]], path: Path = QUALITY_
         f"Toplam Parquet boyutu: {sum(int(record['bytes']) for record in records)} byte.",
         "",
         "Eksik bar yalnız kesintisiz işlem gören Binance serilerinde saatlik takvime göre ölçülür. "
-        "BIST seans dışı kontrolü bar-başı etiketiyle 10:00–18:00 Europe/Istanbul aralığını kullanır.",
+        "BIST barları Europe/Istanbul 10:00–18:00 seans sınırlarına hizalanır; eksik bar doldurulmaz.",
+        "BIST kalite kapısı: seans dışı = 0 ve fiyatı değişen sıfır hacimli bar oranı her sembolde <%1.",
         "",
-        "| Sembol | Piyasa | Satır | Eksik bar | Sıfır hacim | Seans dışı | Tekrar |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "| Sembol | Piyasa | Satır | Eksik | Sıfır hacim | Sıfır/düz | Sıfır/değişen | Şüpheli % | Seans dışı | Kapı | Tekrar |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for record in sorted(records, key=lambda item: (str(item["market"]), str(item["symbol"]))):
+        display = dict(record)
+        display.update(
+            zero_volume_flat=record.get("zero_volume_flat", 0),
+            zero_volume_changed=record.get("zero_volume_changed", 0),
+            suspicious_zero_volume_rate=float(record.get("suspicious_zero_volume_rate", 0)),
+            quality_passed=(
+                "Geçti" if record.get("quality_passed", True) else "Kaldı"
+            ) if str(record["market"]).upper() == "BIST30" else "-",
+        )
         lines.append(
             "| {symbol} | {market} | {rows} | {missing_bars} | {zero_volume} | "
-            "{outside_session} | {duplicates} |".format(**record)
+            "{zero_volume_flat} | {zero_volume_changed} | {suspicious_zero_volume_rate:.2%} | "
+            "{outside_session} | {quality_passed} | {duplicates} |".format(**display)
         )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -328,6 +359,8 @@ def fetch_asset(
     if incoming.empty:
         raise RuntimeError("source returned no bars")
     combined = merge_archive(existing, incoming) if append else incoming
+    if interval == "1h":
+        combined = normalize_market_1h(combined, asset.market)
     _write_parquet_atomic(combined, path)
     return path, combined
 
