@@ -31,6 +31,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   SMA_DAYS: 150
   adx_n: 7
@@ -52,3 +53,4 @@ belirsiz:
 - 'TuringTrader makalesinde Mean-Reversion Long kuralları metin olarak özetlenmiş, fbertram/TuringTrader GitHub C# kodundan (Bensdorp_30MinStockTrader.cs) aday filtreleri (Close > SMA(150), ADX(7) > 45,
   10 günlük TrueRange/Close ortalaması > %4, RSI(3) aşırı satım) çıkarılmıştır; ancak GitHub dosyasına doğrudan erişim engeli nedeniyle limit emir yüzdesi, ATR stop çarpanı, kâr hedefi ve zaman stopu gün
   sayısı tam doğrulanamadığından spec_durumu: eksik bırakıldı.'
+- "T10: ozel_kod_nedeni: tanim_belirsiz (cikis kurali yok (kitaptaki cikis kaynakta okunamadi))"

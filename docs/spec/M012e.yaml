@@ -11,11 +11,12 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD Hisse / ETF (SPY)
 gostergeler:
-  high10:
+  hh10:
     f: highest
     src: high
     n: 10
-giris: high > high10[1] and (close - low) / (high - low) < 0.15
+    kaydir: 1
+giris: high > hh10 and (close - low) / (high - low) < 0.15
 cikis: close > high[1]
 stop: null
 hedef: null
@@ -38,4 +39,8 @@ rapor:
   wr: null
   maliyet_dahil: evet
 spec_durumu: tam
-belirsiz: []
+belirsiz:
+- 'T10: ayni kural O3-003 (yeni 10 gunluk tepe + IBS < 0.15)'
+alias_of: O3-003
+ozel_kod: false
+dolum: kapanis

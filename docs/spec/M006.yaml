@@ -35,6 +35,7 @@ gostergeler:
     f: highest
     src: rsi8
     n: 8
+ozel_kod: false
 giris: close > 2 and vol_sma50 > 10000 and rsi_low8 < 30 and rsi_low21 < rsi_low8 and rsi8 < 50
 cikis: rsi_high8 > 70 and rsi_high21 > rsi_high8 and rsi8 > 60
 stop: null
@@ -67,3 +68,4 @@ belirsiz:
 - 'WiseStockTrader sayfası doğrudan browse aracını engellediği için tam AFL kodu Google arama snippet''lerinden (51.1.1, 53.1.1) satır satır okundu: Vfifty = MA(V,50); myRSI = RSI(8); Monthlow = LLV(myRSI,21);
   Lastlow = LLV(myRSI,8); Higherlow = Monthlow < Lastlow; rsimin = (Lastlow < 30) AND Higherlow AND myRSI < 50; Monthhigh = HHV(myRSI,21); Lasthigh = HHV(myRSI,8); Lowerhigh = Monthhigh > Lasthigh; rsimax
   = (Lasthigh > 70) AND Lowerhigh AND myRSI > 60; Filter = (C > 2) AND (Vfifty > 10000); Buy = Filter AND RSImin; Sell = RSImax.'
+- "T10: ozel_kod alani eklendi (false); AFL kurali tam ifade dilinde (RSI(8) cift dip)"

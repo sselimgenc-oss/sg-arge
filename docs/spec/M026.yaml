@@ -16,11 +16,14 @@ gostergeler:
     n: 30
     d: 6
     smooth: 3
+ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
+piyasa_kisiti: [FX]
 parametreler:
   KDPeriod: 30
   M1: 3
@@ -43,3 +46,4 @@ belirsiz:
 - 'MQL5 açıklama sayfası ve Strategy Tester raporu okundu (parametreler: KDPeriod=30, M1=3, M2=6, SL=0, TP=0, Lots=0.1; GBPUSD H1 2010.06.01-2010.07.12 testinde 52 işlem, PF 1.25, Sharpe 4.69, MDD %10.12,
   WR %46.15). Ancak MQL5 üzerindeki .mq5 kaynak dosyası indirme bağlantılarına (autoRKD_EA.mq5 ve RKD.mq5) erişim engeli olduğu için RKD göstergesinin kesin kesişim/eşik giriş-çıkış koşulu doğrulanamadı;
   yer tutucu ifade yazmamak adına giris/cikis null ve spec_durumu: eksik bırakıldı.'
+- "T10: ozel_kod_nedeni: ozel_gosterge (ozel RKD gostergesi)"

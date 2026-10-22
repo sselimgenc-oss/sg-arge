@@ -11,12 +11,12 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD Hisse / ETF (SPY)
 gostergeler: {}
-giris: close < close[1] and close[1] < close[2]
+giris: haftanin_gunu() == 0 and close < close[1] and close[1] < close[2]
 cikis: close > high[1]
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   entry_day_of_week: Monday
   down_days: 2
@@ -33,3 +33,6 @@ spec_durumu: tam
 belirsiz:
 - 'Haftanın günü filtresi (ozel_kod: true): Giriş yalnız Pazartesi (Monday) günü kapanışında, Pazartesi kapanışı Cuma kapanışından düşük (close < close[1]) ve Cuma kapanışı Perşembe kapanışından düşük (close[1]
   < close[2]) ise yapılır. Çıkış: close > high[1].'
+- 'T10: ayni kural O3-001 (Pazartesi dususu; haftanin_gunu() == 0, kapanis dolumu)'
+alias_of: O3-001
+dolum: kapanis

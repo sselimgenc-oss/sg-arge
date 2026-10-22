@@ -11,6 +11,8 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: Kripto (BTC)
 gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: null
 cikis: null
 stop: null
@@ -30,3 +32,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - TradingView script sayfasına (https://www.tradingview.com/script/Qh7OYDvf/) erişim engeli nedeniyle ulaşılamadı ve GitHub/Scribd/web aramalarında 'Qh7OYDvf' koduna ait ayna bulunamadı.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kural yok)"

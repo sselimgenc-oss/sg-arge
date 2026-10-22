@@ -27,6 +27,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   orb_minutes: 60
   min_range_pct: 0.2
@@ -62,3 +63,4 @@ belirsiz:
   - OR_Low) / Open_0930 >= 0.002) olmalı ve saat 12:00 EST''den önce fiyat OR_High üstüne kırılmalıdır. Tetiklendiğinde kısa bacağı OR_Low seviyesinde veya altında olan 15$ genişlikli 0DTE short put spread
   açılır ve gün sonuna (16:00 EST vade sonu) kadar tutulur.'
 - 'Short (bearish) kuralı: Fiyat 12:00 EST öncesinde OR_Low altına kırılırsa kısa bacağı OR_High seviyesinde veya üstünde olan 15$ genişlikli 0DTE short call spread açılır; günde en fazla 1 işlem alınır.'
+- "T10: ozel_kod_nedeni: tanim_belirsiz (0DTE opsiyon uygulamasi, dayanak degil prim uzerinden; OHLCV karta cevrilemez)"

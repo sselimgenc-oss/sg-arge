@@ -25,6 +25,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: desen
 parametreler:
   kase_range_pts: 1.0
   length: 3
@@ -47,3 +48,4 @@ belirsiz:
 - 'Giriş/çıkış mantığı (ozel_kod: true): 1.00 puanlık Kase barı son Length=3 barın en düşük seviyesinin altına inip (low < lowest(low, 3)[1]) bir önceki Kase barının kapanışının üzerinde kapanırsa (close
   > close[1]) sonraki bar açılışında 100 adet SPY long girilir. Pozisyon bazlı 200$ (hisse başına 2,00$) kâr hedefi veya 200$ (hisse başına 2,00$) zarar kes ile ya da ters sinyal (Short Key Reversal: yeni
   3-bar yüksek + close < close[1]) geldiğinde kapatılır.'
+- "T10: ozel_kod_nedeni: desen (Kase bar anahtar donus deseni)"

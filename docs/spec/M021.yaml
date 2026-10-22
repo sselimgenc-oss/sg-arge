@@ -21,6 +21,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: ml
 parametreler:
   n_components: 3
   n_iter: 100
@@ -46,3 +47,4 @@ belirsiz:
 - 'Algoritma adımları: 1) Piyasa değerine göre en büyük 10 ABD hissesi seçilir. 2) 1 dakikalık veriler 5 dakikalık barlara konsolide edilir ve 1-barlık değişim oranı (ROC(1)) için 150 barlık kayan pencere
   tutulur. 3) Her ay başında her hisse için son 150 adet 5 dakikalık getiri üzerinde hmmlearn GaussianHMM(n_components=3, n_iter=100, random_state=100) modeli eğitilir. 4) Her 5 dakikalık barda son getiri
   için durum olasılıkları (post_prob = model.predict_proba) hesaplanır; eğer post_prob[2] > post_prob[0] ise portföyün %10''u ile long pozisyon tutulur, aksi halde %-10 ağırlıkla short pozisyona geçilir.'
+- "T10: ozel_kod_nedeni: ml (gizli Markov modeli)"

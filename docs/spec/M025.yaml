@@ -11,12 +11,15 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: Forex (EURUSD)
 gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: null
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
 erisim_engeli: true
+piyasa_kisiti: [FX]
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -30,3 +33,4 @@ rapor:
 spec_durumu: eksik
 belirsiz:
 - Kaynak URL'ye (https://www.mql5.com/en/code/8970) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında bu kod numarasına ait sayfa/kod aynası bulunamadı.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kural yok)"

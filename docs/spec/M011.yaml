@@ -15,16 +15,16 @@ gostergeler:
     f: sma
     src: close
     n: 200
-  close_min7:
+  llv7:
     f: lowest
     src: close
     n: 7
-  close_max7:
+  hhv7:
     f: highest
     src: close
     n: 7
-giris: close > sma200 and close <= close_min7
-cikis: close >= close_max7
+giris: close > sma200 and close <= llv7
+cikis: close >= hhv7
 stop: null
 hedef: null
 stop_eklendi: false
@@ -48,3 +48,6 @@ spec_durumu: tam
 belirsiz:
 - tradingstrategy.ai sayfası doğrudan browse aracını engellediği için Google indeksindeki tradingstrategy.ai kod snippet'lerinden (LOW_CANDLES=7, HIGH_CANDLES=7, MOVING_AVERAGE_CANDLES=200) ve StatOasis/BTS/Chartist
   Double 7 aynalarından doğrulandı.
+- 'T10: ayni kural A6-001 (Double 7''s); kripto/hisse uygulamalari ayrica test edilmez, sonuc asil karttan'
+alias_of: A6-001
+ozel_kod: false

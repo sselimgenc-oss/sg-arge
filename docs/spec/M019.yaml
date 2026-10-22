@@ -33,6 +33,7 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
 parametreler:
   pds: 52
   slw: 31
@@ -68,3 +69,4 @@ belirsiz:
   Five (Five=2) ile UpFive = (NOT WhenGoDown) AND (TTurn > 0) AND (Tgo > Five) hesaplanır. 3) NormStoch = (C - LLV(L, 52)) / (HHV(H, 52) - LLV(L, 52)) üzerinden 3 barlık tahmin PlusForecast = ForeNmSth3
   > NormStoch * Enough (Enough=1.042, MaxForecast=0.33) hesaplanır. 4) Buy = Close > Open AND PlusForecast AND UpFive AND MFI(3) > 0 AND FLSK < Thirty (41) AND Day() > BuyDay (9). 5) Sell: Held = BarsSince(Buy)
   > 3 ve PositionScore < SellPoint (6400) düşüşü veya Held > MinHold (14) performans filtresi / FLSK > Fifty (48) koşuluyla çıkılır; Short = 0, Cover = 0 (yalnız long).'
+- "T10: ozel_kod_nedeni: durum_makinesi (AFL: ExRem sinyal temizleme, MinHold/SellPoint/Forecast durumlari)"
