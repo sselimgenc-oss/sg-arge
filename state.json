@@ -248,6 +248,14 @@
       "status": "done (PR #92)",
       "spec": "docs/GOREV_T28.md",
       "model": "Terra"
+    },
+    {
+      "id": "T29",
+      "owner": "codex-worker",
+      "title": "Uctan uca huni is akisi; sonuclar PR ile",
+      "status": "atandi",
+      "spec": "docs/GOREV_T29.md",
+      "model": "Terra"
     }
   ],
   "done": [
