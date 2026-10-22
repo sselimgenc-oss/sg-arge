@@ -274,7 +274,7 @@ def test_workflow_writes_only_to_the_paper_branch_and_guards_the_panel_token() -
     text = (ROOT / ".github" / "workflows" / "paper.yml").read_text(encoding="utf-8")
     flow = yaml.safe_load(text)
     triggers = flow[True]  # YAML reads the key `on` as True
-    assert triggers["schedule"] == [{"cron": "30 22 * * 1-5"}] and "workflow_dispatch" in triggers  # weekdays after the US close
+    assert "schedule" not in triggers and "workflow_dispatch" in triggers  # Faz 2: schedule off until the user starts paper
     assert flow["permissions"] == {"contents": "write"}
     steps = flow["jobs"]["paper"]["steps"]
     publish = next(s for s in steps if "dashboard repo" in s.get("name", ""))

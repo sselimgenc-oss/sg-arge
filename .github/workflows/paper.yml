@@ -5,8 +5,8 @@ name: Paper trade (gunluk sanal defter)
 # paper/portfoy.yaml `baslangic` tarihi kullanici onayina kadar yer tutucudur.
 
 on:
-  schedule:
-    - cron: "30 22 * * 1-5"   # 22:30 UTC: ABD kapanisindan (20:00/21:00 UTC) sonra
+  # Faz 2'ye kadar KAPALI (kullanici karari 2026-10-22): tum stratejiler bitince paper toplu baslar.
+  # Etkinlestirmek icin: schedule: - cron: "30 22 * * 1-5"  (22:30 UTC, ABD kapanisindan sonra)
   workflow_dispatch:
 
 permissions:
