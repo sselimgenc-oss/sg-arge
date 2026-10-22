@@ -18,3 +18,8 @@ Koşu: lider ortamı, main @ acce559 (T6a), 2026-10-22 günlük veri, 200 tekrar
 1. Test kuralı değiştirilmez (PF **ve** ortalama R, %95). Ortalama R tek başına 31 satırda anlamlı çıktı. Ancak PF'de anlamlı değilse kenar küçük ya da tutma süresi farkından geliyordur. Kriteri sonuca bakarak gevşetmiyoruz.
 2. Geçen 3 satır + Codex Algo C03-C21 (null testini T6b içinde alacak) → T6b.
 3. **Kullanıcı için önemli bulgu:** "Çıkış yapısı + piyasa yönü" kârın asıl kaynağı. Paper fazında giriş sinyalinden çok çıkış/risk yönetimi ve piyasa rejimi filtresi üzerinde durulmalı. Bu, sonuç raporunda ayrı bir bölüm olacak.
+
+## Ek: ikinci koşu (2026-10-22)
+Yeni taranan 26 karttan aşama 2 adayı 12 kart (21 satır) aynı testten geçti: **5 geçti**. G007 Kripto (Crude Oil Salı/Perşembe kuralı), G011 ABD (PowerX), M015 ABD (Connors Cumulative RSI), M038 ABD (QS mum formasyonu), O3-003 ABD (gece swing).
+- Birleşik: 146 satır, **8 geçti**. %5 eşikte şansla ~7 yanlış pozitif beklenir; yani geçenlerin bir kısmı tesadüf olabilir. T6b'deki OOS, 2015-2019 ve DSR testleri belirleyici.
+- Desen: Geçenlerin çoğu **ABD hisselerinde kısa vadeli ortalamaya dönüş** stratejileri; literatürde bilinen bir etki. Connors RSI-2 (M014) ise geçemedi.

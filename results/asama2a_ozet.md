@@ -1,4 +1,26 @@
-# Asama 2a: piyasa betasi testleri (T6a)
+# Asama 2a: piyasa betasi testleri (T6a) — birlesik
+
+Iki lider kosusu birlestirildi: 1) ilk 37 kart (125 satir), 2) ikinci tarama adaylari (12 kart, 21 satir).
+
+Satir: 146 | Reddedildi (piyasa betasi): 128 | Reddedildi (BIST USD): 10 | Gecti (null): 8
+
+## Gecenler
+
+| Kart | Piyasa | Para | Islem | PF | p(PF) | p(ortR) |
+|---|---|---|---:|---:|---:|---:|
+| A6-010 | EMTIA | yerel | 319 | 1.38 | 0.020 | 0.020 |
+| P3-011 | KRIPTO25 | yerel | 404 | 1.75 | 0.030 | 0.005 |
+| R01 | ABD25 | yerel | 214 | 2.02 | 0.005 | 0.005 |
+| G007 | KRIPTO25 | yerel | 270 | 1.73 | 0.005 | 0.005 |
+| G011 | ABD25 | yerel | 369 | 1.75 | 0.030 | 0.005 |
+| M015 | ABD25 | yerel | 295 | 1.44 | 0.015 | 0.010 |
+| M038 | ABD25 | yerel | 1358 | 1.44 | 0.020 | 0.015 |
+| O3-003 | ABD25 | yerel | 572 | 1.35 | 0.030 | 0.005 |
+
+---
+
+## Ilk kosu ayrintisi
+
 
 BIST USD bazinda; rastgele giris (null) testi: PF ve ortalama R, null dagiliminin %95 yuzdeligini gecmeli.
 Donem: IS 2020-01-01 -> 2024-09-30 (OOS ve 2015-2019 kullanilmadi).
