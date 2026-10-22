@@ -1,0 +1,31 @@
+id: C01
+ad: "Haftalik yonlu gunluk geri cekilme (wd_pullback_risk, Codex Algo 21)"
+kart_yazari: claude
+kaynak: {dosya: "Codex Algo 21 raporu", url: null, sayfa: "8/26"}
+tarz: swing
+tf: 1D
+mtf: 1W
+tf_varsayim: false
+yazar_piyasasi: BIST30
+gostergeler:
+  ema20: {f: ema, src: close, n: 20}
+  ema50: {f: ema, src: close, n: 50}
+  rsi14: {f: rsi, src: close, n: 14}
+  close_w: {f: close, tf: 1W, hizalama: etiket}
+  ema20_w: {f: ema, src: close, n: 20, tf: 1W, hizalama: etiket}
+  ema40_w: {f: ema, src: close, n: 40, tf: 1W, hizalama: etiket}
+  rejim: {f: seri, ifade: "close_w > ema20_w and ema20_w > ema40_w"}
+ozel_kod: false
+giris: "rejim and ema20 > ema50 and cross_over(close, ema20) and rsi14 > 50"
+cikis: "close < ema50 or rsi14 < 40 or not rejim"
+stop: null
+hedef: null
+iz_suren: {tip: atr_kapanis_zirve, n: 14, carpan: 3}
+stop_eklendi: false
+parametreler: {ema20.n: 20, ema50.n: 50, rsi14.n: 14}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 2.21, sharpe: 1.61, getiri: 72.74, mdd: -5.89, islem: 489, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Parite karti: strategies/wd_pullback_risk.py ile birebir (T5b-1 parite testi). Haftalik rejim hizalamasi: hizalama: etiket (hafta Cuma/Pazar etiketinde tamamlanir)."
+  - "iz_suren atr_kapanis_zirve = stop = max(stop, kapanis - 3*ATR14), ertesi bardan gecerli (T1a motoru)."

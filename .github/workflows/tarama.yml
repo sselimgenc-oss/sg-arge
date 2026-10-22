@@ -1,0 +1,48 @@
+name: Tarama asama 1 (T5b-1)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tf:
+        description: "Kart zaman dilimleri (virgulle)"
+        default: "1D,1W"
+      kart_ids:
+        description: "Yalniz bu kartlar (virgulle; bos = hepsi)"
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  tarama:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Download daily bars
+        run: python data/fetch.py --interval 1d --allow-partial
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Run stage 1 scan
+        env:
+          TARAMA_TF: ${{ inputs.tf }}
+          TARAMA_KARTLAR: ${{ inputs.kart_ids }}
+        run: python backtests/tarama.py --kartlar docs/spec --tf "$TARAMA_TF" --kart-ids "$TARAMA_KARTLAR"
+      - name: Commit scan results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/MANIFEST.csv data/evren.csv results/tarama.csv results/tarama_ozet.md results/tarama_islemler/
+          git diff --cached --quiet || git commit -m "chore: refresh stage 1 scan results"
+          # Kosu sirasinda main ilerlemis olabilir: son hali cekip tekrar dene.
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep 5
+          done
+          exit 1

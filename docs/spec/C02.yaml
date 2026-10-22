@@ -1,0 +1,31 @@
+id: C02
+ad: "Haftalik yonlu gunluk CCI devam (wd_cci_continuation_risk, Codex Algo 21)"
+kart_yazari: claude
+kaynak: {dosya: "Codex Algo 21 raporu", url: null, sayfa: "9/16/22/24"}
+tarz: swing
+tf: 1D
+mtf: 1W
+tf_varsayim: false
+yazar_piyasasi: BIST30
+gostergeler:
+  ema50: {f: ema, src: close, n: 50}
+  ema100: {f: ema, src: close, n: 100}
+  cci20: {f: cci, n: 20}
+  cci_min10: {f: lowest, src: "cci20[1]", n: 10}
+  close_w: {f: close, tf: 1W, hizalama: etiket}
+  ema20_w: {f: ema, src: close, n: 20, tf: 1W, hizalama: etiket}
+  ema40_w: {f: ema, src: close, n: 40, tf: 1W, hizalama: etiket}
+  rejim: {f: seri, ifade: "close_w > ema20_w and ema20_w > ema40_w"}
+ozel_kod: false
+giris: "rejim and close > ema100 and cci_min10 < 0 and cross_over(cci20, 100)"
+cikis: "cci20 < 0 or close < ema50 or not rejim"
+stop: null
+hedef: null
+iz_suren: {tip: atr_kapanis_zirve, n: 14, carpan: 3}
+stop_eklendi: false
+parametreler: {ema50.n: 50, ema100.n: 100, cci20.n: 20}
+deneme_sayisi_kaynakta: null
+rapor: {pf: 1.90, sharpe: 1.34, getiri: 56.30, mdd: -6.01, islem: 551, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Parite karti: strategies/wd_cci_continuation_risk.py ile birebir (T5b-1 parite testi). 'Son 10 gun negatif' = giris barindan onceki 10 seans (cci20[1] uzerinde lowest)."

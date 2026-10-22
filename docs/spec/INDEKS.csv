@@ -242,3 +242,5 @@ V1A,VOLTRAN-1A swing kırılım ve rejim motoru (v3),swing,1D,tam,false,5,Voltra
 V1B,VOLTRAN-1B SMC + ML geri çekilme motoru (v3),swing,1D,tam,false,6,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
 V2A,VOLTRAN-2A saatlik adaptif kanal (TOTT) + seans kırılım (v3),day,1H,tam,false,7,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
 V2B,VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3),day,1H,tam,false,5,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
+C01,"Haftalik yonlu gunluk geri cekilme (wd_pullback_risk, Codex Algo 21)",swing,1D,tam,false,2,Codex Algo 21 raporu
+C02,"Haftalik yonlu gunluk CCI devam (wd_cci_continuation_risk, Codex Algo 21)",swing,1D,tam,false,1,Codex Algo 21 raporu

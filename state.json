@@ -54,7 +54,7 @@
       "id": "T5",
       "owner": "claude-moderator",
       "title": "YAML yorumlayici + asama 1 hizli tarama (VectorBT)",
-      "status": "T5a done; T5b-1 (gunluk tarama) Sonnet'e atandi",
+      "status": "T5a done; T5b-1 kod+PR hazir (sentetik veride dogrulandi); gercek tarama icin Actions 'Tarama asama 1' elle tetiklenecek",
       "spec": "docs/GOREV_T5.md"
     },
     {
