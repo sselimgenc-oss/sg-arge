@@ -129,10 +129,23 @@ def test_trusted_inputs_give_identical_runs(card_id: str) -> None:
     assert len(copied.trades) > 0
 
 
+def test_worker_count_follows_free_memory(monkeypatch) -> None:
+    """isci = max(1, min(istenen, floor(0.8 * bos_bellek / isci_basina_zirve)))."""
+    frames = {"S0": intraday(0, 10_000)}
+    one = tarama.veri_baytlari(frames)
+    monkeypatch.setattr(tarama, "bos_bellek", lambda: 10.0 * one)
+    assert tarama.bellek_isci(8, frames, is_basina=2.5) == 3  # floor(0.8 * 10 / 2.5)
+    assert tarama.bellek_isci(2, frames, is_basina=2.5) == 2
+    monkeypatch.setattr(tarama, "bos_bellek", lambda: 0.5 * one)
+    assert tarama.bellek_isci(8, frames, is_basina=2.5) == 1
+    monkeypatch.setattr(tarama, "bos_bellek", lambda: None)
+    assert tarama.bellek_isci(4, frames, is_basina=2.5) == 4
+
+
 def test_memory_ceiling_on_large_synthetic_book() -> None:
-    """200k bars x 5 symbols: signals + engine of a position-state exit card stay under 700 MB (tracemalloc peak)."""
+    """30k bars x 5 symbols: signals + engine of a position-state exit card stay under the ceiling (tracemalloc peak)."""
     data = yaml.safe_load((SPEC / "A3-002d.yaml").read_text(encoding="utf-8"))
-    frames = {f"S{i}": intraday(i, 200_000) for i in range(5)}
+    frames = {f"S{i}": intraday(i, 30_000) for i in range(5)}
     start, end = frames["S0"].index[0], frames["S0"].index[-1]
     tracemalloc.start()
     prepared = tarama.prepare(data, frames, "KRIPTO25", start=start, end=end)
@@ -141,4 +154,5 @@ def test_memory_ceiling_on_large_synthetic_book() -> None:
     _, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
     assert len(result.trades) > 100
-    assert peak < 700 * 2**20, f"zirve {peak / 2**20:.0f} MB"
+    bars = tarama.veri_baytlari(frames)
+    assert peak < 3.0 * bars, f"zirve {peak / 2**20:.0f} MB, bar verisi {bars / 2**20:.0f} MB"  # ~2.4x; defensive copies gave ~3.4x

@@ -510,14 +510,15 @@ def veri_baytlari(data: dict[str, pd.DataFrame]) -> int:
 
 
 def bellek_isci(requested: int, data: dict[str, pd.DataFrame], *, is_basina: float) -> int:
-    """Worker count capped by free memory: ``is_basina`` x the market's bar data is what one worker adds.
+    """Worker count capped by free memory: ``max(1, min(requested, floor(0.8 * free / one_worker_peak)))``.
 
-    Measured on 25 crypto symbols x 5m: one card peaks at ~2.5x the bar data (signals + engine arrays);
-    forked null-test workers share that and add ~1x. GitHub runners have 7 GB, a laptop 16 GB."""
+    One worker's peak is ``is_basina`` x the market's bar data (measured: a card peaks at ~2.5x the bar data
+    - signals plus engine arrays; a forked null-test worker shares that and adds ~1x). The 20 % margin keeps a
+    7 GB GitHub runner from being pushed over by the parent process and the OS."""
     free = bos_bellek()
     if free is None:
         return max(1, requested)
-    return max(1, min(requested, int(free // max(is_basina * veri_baytlari(data), 1))))
+    return max(1, min(requested, int(0.8 * free // max(is_basina * veri_baytlari(data), 1))))
 
 
 def parse_args() -> argparse.Namespace:
