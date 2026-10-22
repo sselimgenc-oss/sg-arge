@@ -52,7 +52,19 @@ def test_skip_rules_and_annualisation() -> None:
     assert tarama._skip_reason({"id": "Z", "tf": "1H", "piyasa_kisiti": ["ABD"]}, "EMTIA")[1].startswith("piyasa_ozgu")
     assert tarama.annualization_for("1H", "KRIPTO25") == 24 * 365
     assert tarama.annualization_for("5m", "KRIPTO25") == 288 * 365
+    assert tarama.annualization_for("2H", "KRIPTO25") == 12 * 365
+    assert tarama.annualization_for("4H", "ABD25") == 252
     assert tarama.annualization_for("1D", "BIST30") == 252 and tarama.annualization_for("1W", "ABD25") == 52
+
+
+def test_card_loader_normalizes_legacy_lowercase_hour(tmp_path: Path) -> None:
+    (tmp_path / "legacy.yaml").write_text(
+        "id: legacy\nspec_durumu: tam\nozel_kod: false\ntf: 1h\n", encoding="utf-8"
+    )
+
+    cards = tarama.load_cards(tmp_path, "1H")
+
+    assert cards[0]["tf"] == "1H"
 
 
 @pytest.mark.skipif(not SPEC.is_dir(), reason="docs/spec not present")

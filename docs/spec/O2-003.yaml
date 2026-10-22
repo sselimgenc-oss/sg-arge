@@ -6,7 +6,7 @@ kaynak:
   url: https://forex-station.com/xard-simple-trend-following-trading-system-t8416709.html
   sayfa: null
 tarz: swing
-tf: 1h
+tf: 1H
 mtf: 1D
 tf_varsayim: false
 yazar_piyasasi: Forex / Endeks (DAX, Dow, Nikkei)

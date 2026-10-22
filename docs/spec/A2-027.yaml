@@ -5,7 +5,7 @@ kaynak:
   url: https://www.forexfactory.com/thread/259419-happs-trading-system
   sayfa: null
 tarz: swing
-tf: 4h
+tf: 4H
 mtf: 1M
 tf_varsayim: true
 yazar_piyasasi: Forex (EURUSD, GBPUSD)

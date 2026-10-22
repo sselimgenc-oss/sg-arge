@@ -42,7 +42,7 @@ MAX_ENTRY_FACTOR = 8.0
 PF_CAP = 1e9  # an infinite PF (no losing trade) is capped so percentiles stay finite
 PASS_PERCENTILE = 95.0
 BORDERLINE_P = (0.03, 0.10)
-SUPPORTED_TFS = (*tarama.DAILY_TFS, "1H", "30m", "15m", "5m")
+SUPPORTED_TFS = (*tarama.DAILY_TFS, *tarama.RESAMPLED_HOURLY_TFS, "1H", "30m", "15m", "5m")
 
 OUTPUT_COLUMNS = [
     "id", "piyasa", "tf", "kart_yazari", "para", "islem", "PF_1x", "PF_2x", "net_1x", "net_2x", "ort_r",
@@ -377,7 +377,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
     parser.add_argument("--veri-kok", type=Path, default=ROOT / "data", help="hourly/30m/15m/5m archive root")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
-    parser.add_argument("--tf", default="1D,1W", help="comma separated timeframes: 1D,1W,1H,30m,15m,5m")
+    parser.add_argument("--tf", default="1D,1W", help="comma separated timeframes: 1D,1W,1H,2H,4H,30m,15m,5m")
     parser.add_argument("--tekrar", type=int, default=200, help="null repetitions (borderline rows rerun with --tekrar-yuksek)")
     parser.add_argument("--tekrar-yuksek", type=int, default=1000)
     parser.add_argument("--kart-ids", default="")
