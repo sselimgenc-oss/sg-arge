@@ -19,7 +19,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Sonnet | **T27: paper trade altyapısı** (sinyal, sanal defter, parite, rapor; `docs/GOREV_T27.md`) | Atandı | "Görev geldi" |
-| Codex | Boşta (limit ~%25'in altında; yeni iş limit yenilenince) | Bekliyor | Yok |
+| Codex | **T29: uçtan uca huni iş akışı + sonuçlar PR ile** (`docs/GOREV_T29.md`), model **Terra** | Atandı | "Görev geldi" |
 | Argon | **T11b: BIST30 2015-2019 değişiklik tabloları** (küçültülmüş paket `argon/PAKET_T11b_bist_2015_2019.md`) | Limit 22:22'de açılır | Yeni paketi yapıştır; CSV'yi `argon/`a yükle |
 | Lider | T24 (#85) doğrulama + gün içi kripto taraması (5m) + rotasyon Aşama 2 gerçek koşu | Sürüyor | Yok |
 
