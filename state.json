@@ -238,7 +238,7 @@
       "id": "T27",
       "owner": "claude-moderator",
       "title": "Paper trade altyapisi (sinyal, defter, parite, rapor)",
-      "status": "atandi",
+      "status": "teslim edildi, lider incelemesi bekliyor: paper/ (gunluk.py, parite.py, panel.py, defter), motor record_state, paper.yml (etkinlestirme lider); gercek veri paritesi birebir (292 islem)",
       "spec": "docs/GOREV_T27.md"
     },
     {
