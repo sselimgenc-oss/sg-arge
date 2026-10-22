@@ -11,9 +11,10 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY)
 gostergeler: {}
-ozel_kod: true
-giris: close <= close[1] * 0.99
-cikis: 'false'
+ozel_kod: false
+dolum: kapanis
+giris: haftanin_gunu() == 0 and close <= close[1] * 0.99
+cikis: bars_since_entry >= 1
 stop:
   tip: yuzde
   deger: 2
@@ -51,3 +52,4 @@ spec_durumu: tam
 belirsiz:
 - 'Takvim filtresi (ozel_kod: true): Giris sinyali yalniz Pazartesi gunleri (dayofweek == 1) degerlendirilir. Ana kurguda Pazartesi kapanisi Cuma kapanisindan en az %1 dusukse (close <= close[1] * 0.99)
   Pazartesi kapanisinda alinarak Sali kapanisinda (1 bar sonra) satilir.'
+- "T10: ozel_kod true -> false; Pazartesi filtresi haftanin_gunu() == 0 ile, cikis 1 bar sonra (bars_since_entry >= 1), kapanis dolumu (O3-014 emsali, D4)"

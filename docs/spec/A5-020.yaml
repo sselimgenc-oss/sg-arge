@@ -23,6 +23,7 @@ gostergeler:
     f: highest
     src: rsi14
     n: 100
+ozel_kod: false
 giris: min_rsi100 >= 40 and max_rsi100 > 70
 cikis: min_rsi100 < 40 and max_rsi100 <= 70
 stop: null
@@ -54,3 +55,4 @@ belirsiz:
   ve QuantifiedStrategies (quantifiedstrategies.com/rsi-range-momentum-trading-strategy/) aynalarindan eksiksiz okundu.
 - 'Kurallar: 14 gunluk RSI uzerinde son N=100 gunde (75-125 gun optimal) RSI hic 40''in altina dusmemisse (RSI Bull Range: min_rsi100 >= 40) ve ayni N gunde en yuksek RSI 70''i asmissa (RSI Bull Momentum:
   max_rsi100 > 70) long girilir; her iki kosul da bozuldugunda (veya RSI 40 altina indiginde) cikilir.'
+- "T10: ozel_kod alani eklendi (false); ifade ortak dilde"

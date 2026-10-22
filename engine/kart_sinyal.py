@@ -135,6 +135,8 @@ def card_frame_signals(
     entry = _bool(_expr.parse(card["giris"]).evaluate(env, index=index, mtf=mtf), index)
 
     exit_text = card.get("cikis")
+    if isinstance(exit_text, str) and exit_text.strip().lower() == "false":
+        exit_text = None  # Argon writes the text 'false' for "no exit rule"; stops/targets close the trade
     builder = None
     if not exit_text:
         exit_static = pd.Series(False, index=index)

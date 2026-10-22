@@ -38,7 +38,7 @@ class Position:
     signal_atr: float = float("nan")
     bars_held: int = 0
     locked: bool = False
-    runtime_exit: pd.Series | None = None
+    runtime_exit: np.ndarray | None = None
 
 
 @dataclass
@@ -168,16 +168,39 @@ def run_portfolio(
             for symbol, frame in clean_data.items()
         }
     )
-    dates = sorted(
-        {
-            date
-            for frame in clean_data.values()
-            for date in frame.index
-            if start <= date <= end
-        }
-    )
+    symbols = sorted(clean_data)
+    all_dates = pd.DatetimeIndex([])
+    for frame in clean_data.values():
+        all_dates = all_dates.union(frame.index)
+    dates = list(all_dates[(all_dates >= start) & (all_dates <= end)])
     if not dates:
         raise ValueError("no bars in requested backtest period")
+
+    # Array views: the event loop below runs on numpy positions, not pandas lookups.
+    index_of = {symbol: clean_data[symbol].index for symbol in symbols}
+    locs = {symbol: index_of[symbol].get_indexer(pd.DatetimeIndex(dates)) for symbol in symbols}
+    price_arr = {
+        symbol: {field: clean_data[symbol][field].to_numpy(dtype=float) for field in ("open", "high", "low", "close")}
+        for symbol in symbols
+    }
+    nan_col = {symbol: np.full(len(index_of[symbol]), np.nan) for symbol in symbols}
+
+    def column(symbol: str, name: str) -> np.ndarray:
+        frame = signals[symbol]
+        return frame[name].to_numpy(dtype=float) if name in frame.columns else nan_col[symbol]
+
+    sig_entry = {symbol: signals[symbol]["entry"].to_numpy().astype(bool) for symbol in symbols}
+    sig_exit = {symbol: signals[symbol]["exit"].to_numpy().astype(bool) for symbol in symbols}
+    sig_atr = {symbol: column(symbol, "atr") for symbol in symbols}
+    sig_trail = {
+        symbol: column(symbol, "trail_atr") if "trail_atr" in signals[symbol].columns else sig_atr[symbol]
+        for symbol in symbols
+    }
+    sig_stop_dist = {symbol: column(symbol, "stop_dist") for symbol in symbols}
+    sig_target_dist = {symbol: column(symbol, "target_dist") for symbol in symbols}
+    sig_stop_pct = {symbol: column(symbol, "stop_pct") for symbol in symbols}
+    sig_target_pct = {symbol: column(symbol, "target_pct") for symbol in symbols}
+    has_stop_dist = {symbol: "stop_dist" in signals[symbol].columns for symbol in symbols}
 
     cash = initial_capital
     positions: dict[str, Position] = {}
@@ -189,11 +212,18 @@ def run_portfolio(
     last_close: dict[str, float] = {}
     max_open_positions = 0
     last_exit_loc: dict[str, int] = {}
+    di = 0  # index of the current date in ``dates``
 
-    def equity_at(date: pd.Timestamp, field: str) -> float:
+    def mark(symbol: str, field: str) -> float:
+        loc = locs[symbol][di]
+        if loc >= 0:
+            return float(price_arr[symbol][field][loc])
+        return last_close.get(symbol, float("nan"))
+
+    def equity_at(field: str) -> float:
         marked = cash
         for symbol, position in positions.items():
-            price = _mark_price(symbol, date, clean_data, last_close, field)
+            price = mark(symbol, field)
             if np.isfinite(price):
                 marked += position.quantity * price
         return marked
@@ -222,8 +252,8 @@ def run_portfolio(
             )
         )
         pending.pop(symbol, None)
-        if symbol in clean_data and date in clean_data[symbol].index:
-            last_exit_loc[symbol] = int(clean_data[symbol].index.get_loc(date))
+        if locs[symbol][di] >= 0:
+            last_exit_loc[symbol] = int(locs[symbol][di])
 
     def open_position(symbol: str, date: pd.Timestamp, price: float, signal_atr: float,
                       stop_dist: float, target_dist: float,
@@ -237,19 +267,15 @@ def run_portfolio(
             target_dist = price * target_pct
         if not np.isfinite(stop_dist) or stop_dist <= 0:
             return
-        portfolio_equity = equity_at(date, "close" if fill_at_close else "open")
         field = "close" if fill_at_close else "open"
+        portfolio_equity = equity_at(field)
         initial_stop = price - stop_dist
         risk_per_unit = price - initial_stop
         existing_risk = sum(
-            max(_mark_price(held, date, clean_data, last_close, field) - position.stop, 0.0)
-            * position.quantity
+            max(mark(held, field) - position.stop, 0.0) * position.quantity
             for held, position in positions.items()
         )
-        gross = sum(
-            position.quantity * _mark_price(held, date, clean_data, last_close, field)
-            for held, position in positions.items()
-        )
+        gross = sum(position.quantity * mark(held, field) for held, position in positions.items())
         risk_budget = min(
             risk_per_trade * portfolio_equity,
             max(max_total_risk * portfolio_equity - existing_risk, 0.0),
@@ -263,9 +289,11 @@ def run_portfolio(
         cash -= quantity * price + entry_cost
         initial_risk = quantity * risk_per_unit
         target = price + target_dist if np.isfinite(target_dist) and target_dist > 0 else float("nan")
-        runtime_exit = (
-            exit_builder(symbol, date, price, initial_stop, target) if exit_builder is not None else None
-        )
+        runtime_exit = None
+        if exit_builder is not None:
+            built = exit_builder(symbol, date, price, initial_stop, target)
+            if built is not None:
+                runtime_exit = built.reindex(index_of[symbol]).fillna(False).to_numpy().astype(bool)
         positions[symbol] = Position(
             symbol=symbol, entry_date=date, entry_price=price, quantity=quantity,
             stop=initial_stop, initial_stop=initial_stop, initial_risk=initial_risk,
@@ -274,28 +302,33 @@ def run_portfolio(
         )
         max_open_positions = max(max_open_positions, len(positions))
 
-    def signal_value(symbol: str, date: pd.Timestamp, column: str, default: float) -> float:
-        row = signals[symbol].loc[date]
-        return float(row[column]) if column in row.index else default
-
-    def cooled_down(symbol: str, date: pd.Timestamp) -> bool:
+    def cooled_down(symbol: str) -> bool:
         if cooldown_bars <= 0 or symbol not in last_exit_loc:
             return True
-        return int(clean_data[symbol].index.get_loc(date)) - last_exit_loc[symbol] > cooldown_bars
+        return int(locs[symbol][di]) - last_exit_loc[symbol] > cooldown_bars
 
-    for date in dates:
-        for symbol, frame in clean_data.items():
-            if date in frame.index:
-                last_close[symbol] = float(frame.at[date, "close"])
+    def sizing_at(symbol: str, loc: int) -> tuple[float, float, float, float, float]:
+        atr_value = float(sig_atr[symbol][loc])
+        stop_dist = float(sig_stop_dist[symbol][loc]) if has_stop_dist[symbol] else atr_stop_multiple * atr_value
+        return (
+            atr_value, stop_dist, float(sig_target_dist[symbol][loc]),
+            float(sig_stop_pct[symbol][loc]), float(sig_target_pct[symbol][loc]),
+        )
+
+    for di, date in enumerate(dates):
+        for symbol in symbols:
+            loc = locs[symbol][di]
+            if loc >= 0:
+                last_close[symbol] = float(price_arr[symbol]["close"][loc])
 
         todays_orders = sorted(scheduled.pop(date, []), key=lambda order: (order.kind != "exit", order.symbol))
         for order in todays_orders:
             if pending.get(order.symbol) != order.kind:
                 continue
-            frame = clean_data[order.symbol]
-            if date not in frame.index:
+            loc = locs[order.symbol][di]
+            if loc < 0:
                 continue
-            open_price = float(frame.at[date, "open"])
+            open_price = float(price_arr[order.symbol]["open"][loc])
             if order.kind == "exit":
                 pending.pop(order.symbol, None)
                 if order.symbol in positions:
@@ -306,110 +339,95 @@ def run_portfolio(
                           order.target_dist, order.stop_pct, order.target_pct)
 
         # Stops are active during the bar, including a position entered at its open.
-        for symbol in sorted(list(positions)):
-            frame = clean_data[symbol]
-            if date not in frame.index:
+        for symbol in sorted(positions):
+            loc = locs[symbol][di]
+            if loc < 0:
                 continue
             position = positions[symbol]
-            open_price = float(frame.at[date, "open"])
-            low_price = float(frame.at[date, "low"])
+            open_price = float(price_arr[symbol]["open"][loc])
+            low_price = float(price_arr[symbol]["low"][loc])
             if open_price <= position.stop:
                 close_position(symbol, date, open_price, "gap_stop")
             elif low_price <= position.stop:
                 close_position(symbol, date, position.stop, "stop")
             elif np.isfinite(position.target) and open_price >= position.target:
                 close_position(symbol, date, open_price, "gap_target")
-            elif np.isfinite(position.target) and float(frame.at[date, "high"]) >= position.target:
+            elif np.isfinite(position.target) and float(price_arr[symbol]["high"][loc]) >= position.target:
                 close_position(symbol, date, position.target, "target")
 
         # A trailing stop calculated from today's close becomes active tomorrow.
         for symbol, position in positions.items():
-            frame = clean_data[symbol]
-            if date not in frame.index:
+            loc = locs[symbol][di]
+            if loc < 0:
                 continue
             position.bars_held += 1
-            signal_row = signals[symbol].loc[date]
             if profit_lock is not None and not position.locked and (
-                float(frame.at[date, "high"])
+                float(price_arr[symbol]["high"][loc])
                 >= position.entry_price + profit_lock["trigger_atr"] * position.signal_atr
             ):
                 position.locked = True
                 position.stop = max(position.stop, float(profit_lock["stop_fn"](position.entry_price)))
             if trail_mode is None:
                 continue
-            current_atr = float(signal_row["trail_atr"]) if "trail_atr" in signal_row.index else float(signal_row["atr"])
+            current_atr = float(sig_trail[symbol][loc])
             if np.isfinite(current_atr):
                 # VARSAYIM: PDF's ATR14x3 trailing stop uses close - ATR14x3.
-                reference = float(frame.at[date, "close" if trail_mode == "close" else "high"])
+                reference = float(price_arr[symbol]["close" if trail_mode == "close" else "high"][loc])
                 position.stop = max(position.stop, reference - trail_m * current_atr)
 
         # Closed-bar signals schedule orders for a later open; never this bar.
         # With fill_at_close the order fills at this bar's close (exits first).
-        close_fills: list[tuple[str, str, float, float, float, float, float]] = []
-        for symbol in sorted(clean_data):
-            frame = clean_data[symbol]
-            if date not in frame.index:
+        close_fills: list[tuple[str, float, float, float, float, float]] = []
+        for symbol in symbols:
+            loc = locs[symbol][di]
+            if loc < 0:
                 continue
-            signal_row = signals[symbol].loc[date]
             position = positions.get(symbol)
-            exit_signal = bool(signal_row["exit"])
+            exit_signal = bool(sig_exit[symbol][loc])
             if position is not None:
-                if position.runtime_exit is not None and bool(position.runtime_exit.get(date, False)):
+                if position.runtime_exit is not None and bool(position.runtime_exit[loc]):
                     exit_signal = True
                 if time_stop_bars is not None and position.bars_held >= time_stop_bars:
                     exit_signal = True
+            entry_signal = bool(sig_entry[symbol][loc])
             if fill_at_close:
                 if position is not None and exit_signal:
-                    close_position(symbol, date, float(frame.at[date, "close"]), "signal")
-                elif position is None and bool(signal_row["entry"]) and cooled_down(symbol, date):
-                    atr_value = float(signal_row["atr"])
-                    close_fills.append((
-                        symbol, "entry", atr_value,
-                        signal_value(symbol, date, "stop_dist", atr_stop_multiple * atr_value),
-                        signal_value(symbol, date, "target_dist", float("nan")),
-                        signal_value(symbol, date, "stop_pct", float("nan")),
-                        signal_value(symbol, date, "target_pct", float("nan")),
-                    ))
+                    close_position(symbol, date, float(price_arr[symbol]["close"][loc]), "signal")
+                elif position is None and entry_signal and cooled_down(symbol):
+                    close_fills.append((symbol, *sizing_at(symbol, loc)))
                 continue
             if symbol in positions and exit_signal and symbol not in pending:
-                execute_date = _next_execution_date(frame.index, date, extra_delay_bars)
-                if execute_date is not None and execute_date <= end:
-                    order = Order(symbol, "exit", execute_date, date, float(signal_row["atr"]))
+                target_loc = loc + 1 + extra_delay_bars
+                if target_loc < len(index_of[symbol]) and index_of[symbol][target_loc] <= end:
+                    execute_date = index_of[symbol][target_loc]
+                    order = Order(symbol, "exit", execute_date, date, float(sig_atr[symbol][loc]))
                     scheduled.setdefault(execute_date, []).append(order)
                     pending[symbol] = "exit"
-            elif symbol not in positions and bool(signal_row["entry"]) and symbol not in pending and cooled_down(symbol, date):
-                execute_date = _next_execution_date(frame.index, date, extra_delay_bars)
-                if execute_date is not None and execute_date <= end:
-                    atr_value = float(signal_row["atr"])
-                    order = Order(
-                        symbol, "entry", execute_date, date, atr_value,
-                        signal_value(symbol, date, "stop_dist", atr_stop_multiple * atr_value),
-                        signal_value(symbol, date, "target_dist", float("nan")),
-                        signal_value(symbol, date, "stop_pct", float("nan")),
-                        signal_value(symbol, date, "target_pct", float("nan")),
-                    )
+            elif symbol not in positions and entry_signal and symbol not in pending and cooled_down(symbol):
+                target_loc = loc + 1 + extra_delay_bars
+                if target_loc < len(index_of[symbol]) and index_of[symbol][target_loc] <= end:
+                    execute_date = index_of[symbol][target_loc]
+                    atr_value, stop_dist, target_dist, stop_pct, target_pct = sizing_at(symbol, loc)
+                    order = Order(symbol, "entry", execute_date, date, atr_value,
+                                  stop_dist, target_dist, stop_pct, target_pct)
                     scheduled.setdefault(execute_date, []).append(order)
                     pending[symbol] = "entry"
-        for symbol, _kind, atr_value, stop_dist, target_dist, stop_pct, target_pct in close_fills:
-            open_position(symbol, date, float(clean_data[symbol].at[date, "close"]), atr_value,
+        for symbol, atr_value, stop_dist, target_dist, stop_pct, target_pct in close_fills:
+            loc = locs[symbol][di]
+            open_position(symbol, date, float(price_arr[symbol]["close"][loc]), atr_value,
                           stop_dist, target_dist, stop_pct, target_pct)
 
-        marked_equity = equity_at(date, "close")
-        gross_close = sum(
-            position.quantity * _mark_price(symbol, date, clean_data, last_close, "close")
-            for symbol, position in positions.items()
-        )
+        marked_equity = equity_at("close")
+        gross_close = sum(position.quantity * mark(symbol, "close") for symbol, position in positions.items())
         equity_points[date] = marked_equity
         exposure_points[date] = gross_close / marked_equity if marked_equity > 0 else np.nan
 
     final_date = dates[-1]
-    for symbol in sorted(list(positions)):
-        frame = clean_data[symbol]
-        available = frame.loc[frame.index <= final_date]
-        if available.empty:
+    for symbol in sorted(positions):
+        loc = int(index_of[symbol].searchsorted(final_date, side="right")) - 1
+        if loc < 0:
             continue
-        exit_date = available.index[-1]
-        close_position(symbol, exit_date, float(available.iloc[-1]["close"]), "end_of_test")
+        close_position(symbol, index_of[symbol][loc], float(price_arr[symbol]["close"][loc]), "end_of_test")
     equity_points[final_date] = cash
     exposure_points[final_date] = 0.0
 

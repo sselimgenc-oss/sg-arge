@@ -16,6 +16,7 @@ gostergeler:
     src: close
     n: 120
 ozel_kod: true
+ozel_kod_nedeni: portfoy_rotasyonu
 giris: z20 < -0.5
 cikis: z20 >= 0
 stop: null
@@ -46,3 +47,4 @@ belirsiz:
   edilir (norm_a = price_a / price_a[0]). 2) Tum ikililer icin kareli sapmalarin toplami Distance = sum((norm_a - norm_b)^2) hesaplanir ve en kucuk mesafeli ilk 5 cift secilir. 3) Takip eden 20 islem gununde
   spread = norm_a - norm_b dizisinin 120 gunluk ortalamasi (mean) ve standart sapmasi (std) izlenir; fark 0.5 * std esigini astiginda ucuz kalan ETF long, pahali kalan ETF esit dolar tutariyla short acilir.
   4) Spread tekrar yakinsadiginda (abs(spread - mean) <= 0.5 * std) veya 20 islem gunu doldugunda pozisyon kapatilir.'
+- "T10: ozel_kod_nedeni: portfoy_rotasyonu (22-24 ETF arasi ikili secimi ve z-skoru)"

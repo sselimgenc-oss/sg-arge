@@ -17,7 +17,7 @@ gostergeler:
     n: 14
 ozel_kod: true
 giris: cross_over(rsi14, 50)
-cikis: 'false'
+cikis: null
 stop: null
 hedef:
   tip: rr

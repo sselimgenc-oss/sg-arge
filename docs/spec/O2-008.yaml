@@ -13,7 +13,7 @@ yazar_piyasasi: Forex
 gostergeler: {}
 ozel_kod: true
 giris: open < close and close > open[1]
-cikis: 'false'
+cikis: null
 stop:
   tip: yuzde
   deger: 1
