@@ -493,6 +493,8 @@ def main() -> int:
     for market, symbol in tarama.BENCHMARK_SYMBOL.items():
         if market in data:
             benchmarks[market] = data[market].get(symbol)
+            if benchmarks[market] is None and (args.data_dir / f"{symbol}.parquet").exists():
+                benchmarks[market] = normalize_ohlcv(pd.read_parquet(args.data_dir / f"{symbol}.parquet"))
     rows: list[dict[str, Any]] = []
     tasks: list[tuple[str, Callable[[], dict[str, Any]]]] = []
     for row_id in codex_ids:
