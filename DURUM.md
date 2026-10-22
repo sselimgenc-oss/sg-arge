@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-22 18:30 UTC, lider (Opus)
+Son güncelleme: 2026-10-22 19:15 UTC, lider (Opus)
 
 ## Özet (kullanıcı için)
 - **İlk Geçti:** tarihsel evrenle (PIT) C07 ve R01 tüm paper kapılarını geçti.
@@ -19,11 +19,12 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Sonnet | **T23: rotasyon kartlarını Aşama 2a/2b + portföye bağla** (`docs/GOREV_T23.md`) | Atandı | "Görev geldi" |
-| Codex | **T17: gün içi null testi** (`docs/GOREV_T16_T17.md`), model **Sol** | Atandı | Limit 21:10'da açılınca "görev geldi" |
+| Codex | **T24: gün içi Aşama 2b + saat/gün ilkelleri (A6-019)** (`docs/GOREV_T24.md`), model **Sol** | Atandı | "Görev geldi" |
 | Argon | **T11b: BIST30 2015-2019 değişiklik tabloları** (küçültülmüş paket `argon/PAKET_T11b_bist_2015_2019.md`) | Limit 22:22'de açılır | Yeni paketi yapıştır; CSV'yi `argon/`a yükle |
 | Lider | Gün içi kripto taraması (1H/30m/15m/5m, veri tam) | Koşuyor | Yok |
 
 ## Tamamlananlar (son)
+- T17 (Codex, PR #82): gün içi Aşama 2a null testi (`--tf`, `--isci`). Günlük null sonuçları ve işlem paritesi birebir.
 - T22 (Sonnet, PR #80): `engine/rotasyon.py` + D12; 13 kart taşındı, Composer paritesi korelasyon 1,0000. Pytest 247, motor paritesi birebir. A6-021 short fazına.
 - T21 (Sonnet, PR #78): 7 kart taşındı (A3-002a/f/h/i, A3-010b, O1-039, P3-008); 13 kart Argon T19'a. Parite birebir.
 - T20 (Sonnet, PR #75): 5 kart taşındı (A3-002b/c, M013, M010, M027), O1-070 kapsam dışı, 16 kart gerekçeyle kaldı. Motor paritesi birebir.
