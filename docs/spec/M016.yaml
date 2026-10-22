@@ -1,0 +1,45 @@
+id: M016
+ad: One Percent a Week Strategy (TQQQ)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.wealth-lab.com/Discussion/8011
+  sayfa: 1
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (TQQQ)
+gostergeler: {}
+giris: low <= open * 0.99
+cikis: high >= (entry_price * 1.01)
+zaman_stop:
+  bar: 5
+stop: null
+hedef:
+  tip: yuzde
+  deger: 1.0
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  entry_dip_pct: 1.0
+  profit_target_pct: 1.0
+  breakeven_trigger_loss_pct: -0.5
+  max_trades_per_week: 1
+varyantlar:
+- aciklama: 'Post #33: RSI(14) karşılaştırmalı TQQQ / SQQQ varyantı (daha düşük performanslı)'
+deneme_sayisi_kaynakta: 2
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- 'Haftalık limit giriş ve dinamik başabaş çıkış mantığı (ozel_kod: true): 1) Haftanın ilk işlem günü (Pazartesi) TQQQ normal seans açılış fiyatı (mondayOpen) gözlenir ve bu fiyatın %1 altına (mondayOpen
+  * 0.99) alış limit emri girilir (haftada en fazla 1 işlem). 2) Pozisyon açıldıktan sonra her gün kapanışta açık kâr/zarar yüzdesi (ProfitPctAsOf) kontrol edilir: eğer kapanışta zarar %-0,5''ten azsa (ProfitPct
+  > -0.5%) ertesi gün için giriş fiyatının %1 üstüne (entry_price * 1.01) satış limit emri konur; eğer kapanışta açık zarar %-0,5 veya daha kötüyse (ProfitPct <= -0.5%) ertesi günkü satış limit emri giriş
+  fiyatına (entry_price, %0 başabaş) çekilir. 3) Haftanın son işlem günü (Cuma) pozisyon hâlâ açıksa haftasonuna pozisyon taşımamak için seans kapanışında (MarketClose / MOC) kapatılır.'

@@ -1,0 +1,49 @@
+id: M002
+ad: Key Reversal Patterns Using Kase Bars
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://cdn.tradestation.com/uploads/Key-Reversal-Patterns-Using-Kase-Bars.pdf
+  sayfa: 4
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (SPY)
+gostergeler:
+  low_min3:
+    f: lowest
+    src: low
+    n: 3
+  high_max3:
+    f: highest
+    src: high
+    n: 3
+giris: low < low_min3[1] and close > close[1]
+cikis: high > high_max3[1] and close < close[1]
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  kase_range_pts: 1.0
+  length: 3
+  profit_target_usd: 200
+  stop_loss_usd: 200
+  shares: 100
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: eksik
+belirsiz:
+- 'Karar barları zaman tabanlı değil, 1 dakikalık SPY verisinden üretilen 1.00 puanlık True Range Kase Barlarıdır; standart zaman barlarıyla birebir test edilemeyeceği için spec_durumu: eksik ve ozel_kod:
+  true işaretlendi.'
+- 'Giriş/çıkış mantığı (ozel_kod: true): 1.00 puanlık Kase barı son Length=3 barın en düşük seviyesinin altına inip (low < lowest(low, 3)[1]) bir önceki Kase barının kapanışının üzerinde kapanırsa (close
+  > close[1]) sonraki bar açılışında 100 adet SPY long girilir. Pozisyon bazlı 200$ (hisse başına 2,00$) kâr hedefi veya 200$ (hisse başına 2,00$) zarar kes ile ya da ters sinyal (Short Key Reversal: yeni
+  3-bar yüksek + close < close[1]) geldiğinde kapatılır.'

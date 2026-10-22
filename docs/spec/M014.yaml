@@ -1,0 +1,46 @@
+id: M014
+ad: Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.elitetrader.com/et/threads/larry-connors-2-day-rsi-holy-grail-adapting-a-strategy-to-deliver-30-annual-return-since-1999.379926/
+  sayfa: 1
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Large/Mega Cap)
+gostergeler:
+  rsi2:
+    f: rsi
+    src: close
+    n: 2
+  sma200:
+    f: sma
+    src: close
+    n: 200
+giris: rsi2 < 5 and close > sma200
+cikis: close > high[1] or close < sma200
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  rsi2.n: 2
+  sma200.n: 200
+  rsi_entry: 5
+  max_positions: 2
+  max_adv_pct: 5.0
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 30.0
+  mdd: 35.0
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- 'Portföy ve likidite filtreleri (ozel_kod: true): Yalnız large/mega cap ABD hisseleri; son 3 aydaki tüm seanslarda işlem görmüş ve pozisyon büyüklüğü son 3 aylık medyan günlük hacmin (ADV) %5''ini aşmayan
+  hisseler alınır. Azami N=2 eşzamanlı pozisyon taşınır; N''den fazla sinyal varsa piyasa değerine göre küçükten büyüğe sıralanır.'

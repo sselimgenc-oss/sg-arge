@@ -33,7 +33,7 @@
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
       "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart) + parti 10-11 (md listeleri, 57 kaynak)",
-      "status": "parti 10 sirada (md listelerindeki 57 kaynak gozden kacmisti)",
+      "status": "parti 10 kabul; sirada parti 11, sonra 12",
       "spec": "argon/PAKET_*.md"
     },
     {
@@ -220,6 +220,12 @@
       "owner": "codex-worker",
       "title": "15 satir; 21/21 tamam",
       "ref": "PR #49, tartisma/007"
+    },
+    {
+      "id": "T2-p10",
+      "owner": "argon",
+      "title": "35 kart (15 tam, 9 okunamadi); 2 satir YAML tirnak hatasi lider tarafindan onarildi",
+      "ref": "argon/T2_parti10.yaml"
     }
   ],
   "user_decisions_pending": [

@@ -1,0 +1,64 @@
+id: M001
+ad: Opening Range Breakout (ORB) 0DTE Options Strategy
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://optionalpha.com/blog/opening-range-breakout-0dte-options-trading-strategy-explained
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Opsiyon (SPX / SPY)
+gostergeler:
+  or_high:
+    f: highest
+    src: high
+    n: 60
+  or_low:
+    f: lowest
+    src: low
+    n: 60
+giris: close > or_high and (or_high - or_low) / open >= 0.002
+cikis: null
+zaman_stop:
+  bar: 330
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  orb_minutes: 60
+  min_range_pct: 0.2
+  wing_width: 15
+  last_entry_hour_est: 12
+varyantlar:
+- orb_minutes: 30
+  wing_width: 15
+  pf: 1.19
+  wr: 82.6
+  getiri_usd: 19555
+  mdd_usd: -8306
+- orb_minutes: 15
+  wing_width: 15
+  pf: 1.17
+  wr: 78.1
+  getiri_usd: 19053
+  mdd_usd: -7602
+deneme_sayisi_kaynakta: 9
+rapor:
+  pf: 1.44
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 600
+  wr: 89.4
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Strateji spot/vadeli kontrat yerine 0DTE opsiyon kredi spreadi (short put spread / short call spread) alıp sattığı için opsiyon zinciri verisi olmadan doğrudan spot OHLCV üzerinde gerçek PnL ile test
+  edilemez (spec_durumu: eksik).'
+- 'Long (bullish) sinyal mantığı (ozel_kod: true): Seansın ilk 60 dakikasında (09:30-10:30 EST) oluşan Opening Range (OR_High ve OR_Low) hesaplanır; aralık genişliği açılış fiyatının en az %0,2''si ((OR_High
+  - OR_Low) / Open_0930 >= 0.002) olmalı ve saat 12:00 EST''den önce fiyat OR_High üstüne kırılmalıdır. Tetiklendiğinde kısa bacağı OR_Low seviyesinde veya altında olan 15$ genişlikli 0DTE short put spread
+  açılır ve gün sonuna (16:00 EST vade sonu) kadar tutulur.'
+- 'Short (bearish) kuralı: Fiyat 12:00 EST öncesinde OR_Low altına kırılırsa kısa bacağı OR_High seviyesinde veya üstünde olan 15$ genişlikli 0DTE short call spread açılır; günde en fazla 1 işlem alınır.'

@@ -616,8 +616,8 @@ gostergeler:
   spy_sma200: {f: sma, src: close, n: 200}
   rsi3: {f: rsi, src: close, n: 3}
   roc200: {f: roc, src: close, n: 200}
-giris: "mtf("1D", spy_close) > mtf("1D", spy_sma200) * 0.98 and mtf("1D", rsi3) < 50"
-cikis: "mtf("1D", spy_close) <= mtf("1D", spy_sma200) * 0.98 or mtf("1D", rsi3) >= 50"
+giris: 'mtf("1D", spy_close) > mtf("1D", spy_sma200) * 0.98 and mtf("1D", rsi3) < 50'
+cikis: 'mtf("1D", spy_close) <= mtf("1D", spy_sma200) * 0.98 or mtf("1D", rsi3) >= 50'
 stop: null
 hedef: null
 stop_eklendi: false

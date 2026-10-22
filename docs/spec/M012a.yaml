@@ -1,0 +1,44 @@
+id: M012a
+ad: '5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS'
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler:
+  high10:
+    f: highest
+    src: high
+    n: 10
+  atr25:
+    f: atr
+    n: 25
+giris: close < high10 - 2.5 * range_sma25 and (close - low) / (high - low) < 0.3
+cikis: close > high[1]
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  high10.n: 10
+  range_sma_n: 25
+  band_mult: 2.5
+  ibs_max: 0.3
+deneme_sayisi_kaynakta: 5
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 8.0
+  mdd: 23.0
+  islem: null
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz:
+- 'range_sma25 hesaplaması (ozel_kod: true): Son 25 günün (high - low) farkının basit hareketli ortalamasıdır (sma(high - low, 25)). Alt bant = highest(high, 10) - 2.5 * sma(high - low, 25). IBS = (close
+  - low) / (high - low). Kapanış alt bandın altında ve IBS < 0.3 ise long girilir; close > high[1] olduğunda çıkılır.'

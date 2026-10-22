@@ -1,0 +1,41 @@
+id: M012e
+ad: '5 Swing Trading Strategies for Beginners - Strategy 5: New Highs with Low IBS'
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler:
+  high10:
+    f: highest
+    src: high
+    n: 10
+giris: high > high10[1] and (close - low) / (high - low) < 0.15
+cikis: close > high[1]
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  high10.n: 10
+  ibs_max: 0.15
+varyantlar:
+- ad: 5 Strateji Birleşik Portföy (M012a-e)
+  getiri_yillik: 11.1
+  mdd: 23.0
+  islem: 975
+deneme_sayisi_kaynakta: 5
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 7.2
+  mdd: 16.0
+  islem: 271
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz: []
