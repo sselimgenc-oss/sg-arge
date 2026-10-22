@@ -1,0 +1,32 @@
+id: M032
+ad: XAU Grid Bot Long Strategy
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.tradingview.com/script/bjoh9PTd-XAU-Grid-Bot-Long-Strategy/
+  sayfa: null
+tarz: swing
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto / Emtia (XAUTUSDT Spot)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- TradingView script sayfasına (https://www.tradingview.com/script/bjoh9PTd-XAU-Grid-Bot-Long-Strategy/) erişim engeli nedeniyle ulaşılamadı ve web/GitHub aramalarında 'bjoh9PTd' koduna ait ayna bulunamadı.

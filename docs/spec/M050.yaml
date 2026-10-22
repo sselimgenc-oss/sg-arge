@@ -1,0 +1,59 @@
+id: M050
+ad: 'Short-Term Reversal Effect in Stocks (Quantpedia #013)'
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://quantpedia.com/strategies/short-term-reversal-in-stocks
+  sayfa: null
+tarz: swing
+tf: 1W
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Top 100 Market Cap)
+gostergeler:
+  roc5:
+    f: roc
+    src: close
+    n: 5
+  roc21:
+    f: roc
+    src: close
+    n: 21
+giris: mtf("1D", close) >= 1.0
+cikis: null
+zaman_stop:
+  bar: 1
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  fundamental_count: 100
+  week_period_days: 5
+  month_period_days: 21
+  stock_selection: 10
+  min_share_price: 1.0
+varyantlar:
+- ad: QuantConnect OOS Backtest (2000-2026)
+  sharpe: 0.5
+  getiri: 14.96
+  mdd: 62.0
+  wr: 45.0
+  islem: 43002
+- ad: '500 en büyük ABD hissesi evreni (haftalık net getiri: +10.6 bp)'
+- ad: '1500 en büyük ABD hissesi evreni (haftalık net getiri: -31.4 bp)'
+deneme_sayisi_kaynakta: 3
+rapor:
+  pf: null
+  sharpe: 1.09
+  getiri: 16.25
+  mdd: 52.94
+  islem: null
+  wr: null
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz:
+- 'Kesitsel (cross-sectional) sıralama ve haftalık portföy dengeleme mantığı (ozel_kod: true): 1) Evren: Piyasa değerine göre en büyük 100 ABD hissesi (fiyat >= 1$). 2) Her 5 işlem gününde bir (haftalık)
+  son 5 günlük getiriye (roc5 = close / close[5] - 1) göre 100 hisse küçükten büyüğe sıralanır; en düşük performanslı 10 hisseye eşit ağırlıkla long girilir. 3) Bir sonraki haftalık dengelemede ilk 10''dan
+  çıkan hisseler kapatılır. 4) Short kuralı: Aynı 100 hisse içinden son 1 aylık (21 işlem günü, roc21 = close / close[21] - 1) getirisi en yüksek olan 10 hisseye eşit ağırlıkla short girilir ve haftalık
+  dengelenir.'

@@ -1,0 +1,33 @@
+id: M035
+ad: Breakout Trading Strategy (Experiments Summary 2025)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://github.com/SokeWang/Breakout-Trading-Strategy/blob/main/strategies/breakout/reports/experiments_summary_2025.md
+  sayfa: null
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex / CFD (MT5)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- GitHub bağlantısına (https://github.com/SokeWang/Breakout-Trading-Strategy/blob/main/strategies/breakout/reports/experiments_summary_2025.md) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında
+  'SokeWang/Breakout-Trading-Strategy' deposuna ait önbellek/ayna bulunamadı.

@@ -1,0 +1,32 @@
+id: M053
+ad: Forex-Station Attachment 3477006 System Package
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://forex-station.com/attach/file/3477006
+  sayfa: null
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- Forex-Station dosya indirme bağlantısına (https://forex-station.com/attach/file/3477006) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında bu dosya ID'sine ait açıklama bulunamadı.

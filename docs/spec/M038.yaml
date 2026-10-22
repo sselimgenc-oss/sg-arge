@@ -1,0 +1,50 @@
+id: M038
+ad: Best Time Frame for Candlestick Patterns (3 Candlestick Patterns Strategy on SPY)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://quantifiedstrategies.substack.com/p/best-time-frame-for-candlestick-patterns
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+giris: (close[1] > open[1] and close < open and open >= close[1] and close <= open[1]) or (close[2] > open[2] and close[1] < open[1] and open[1] >= close[2] and close[1] <= open[2] and close < open and
+  close < close[1]) or (close[1] < open[1] and close > open and open >= close[1] and close <= open[1])
+cikis: close > high[1]
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  patterns: Bearish Engulfing, Three Outside Down, Bullish Harami
+varyantlar:
+- ad: Haftalık (1W) SPY testi
+  tf: 1W
+  pf: 1.5
+  getiri: 2.1
+  islem: 105
+  wr: 73.0
+- ad: Saatlik (1H) ES vadeli testi (son 3 bar > önceki yüksek çıkışı)
+  tf: 1H
+  getiri: 10.5
+  mdd: 34.0
+  islem: 338
+- ad: 15 dakikalık (15m) SPY testi
+  tf: 15m
+  getiri: 14.2
+  islem: 967
+deneme_sayisi_kaynakta: 5
+rapor:
+  pf: 2.1
+  sharpe: null
+  getiri: 6.2
+  mdd: 25.0
+  islem: 474
+  wr: 73.0
+  maliyet_dahil: hayir
+spec_durumu: tam
+belirsiz:
+- 'Substack bağlantısının QuantifiedStrategies.com üzerindeki tam metin karşılığından (https://www.quantifiedstrategies.com/what-is-the-best-time-frame-for-candlesticks-explained/) okundu: SPY günlük barlarında
+  Bearish Engulfing, Three Outside Down veya Bullish Harami mum formasyonlarından biri oluştuğunda long girilir; bugünkü kapanış dünkü yükseğin üzerine çıktığında (close > high[1]) pozisyon kapatılır.'

@@ -33,7 +33,7 @@
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
       "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart) + parti 10-11 (md listeleri, 57 kaynak)",
-      "status": "parti 10 kabul; sirada parti 11, sonra 12",
+      "status": "tamamlandi (parti 11 dahil)",
       "spec": "argon/PAKET_*.md"
     },
     {
@@ -239,6 +239,12 @@
       "owner": "auditor",
       "title": "125 satir: 3 gecti, 114 piyasa betasi, 8 BIST USD",
       "ref": "tartisma/008"
+    },
+    {
+      "id": "T2-p11",
+      "owner": "argon",
+      "title": "29 kart (4 tam, 19 okunamadi)",
+      "ref": "argon/T2_parti11.yaml"
     }
   ],
   "user_decisions_pending": [

@@ -1,0 +1,62 @@
+id: M034
+ad: Backtested Intraday Mean Reversion (ES & NQ Futures)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.reddit.com/r/algotrading/comments/1sm6y5g/backtested_intraday_mean_reversion/
+  sayfa: null
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli (ES ve NQ Futures)
+gostergeler: {}
+giris: null
+cikis: null
+zaman_stop:
+  bar: 26
+stop:
+  tip: yuzde
+  deger: 0.3
+hedef:
+  tip: yuzde
+  deger: 0.75
+stop_eklendi: false
+parametreler:
+  stop_loss_pct: 0.3
+  target_pct: 0.75
+  max_trades_per_day: 1
+  session: RTH
+  eod_flat: true
+varyantlar:
+- ad: ES OOS (2019-2026)
+  pf: 5.29
+  sharpe: 3.63
+  wr: 67.8
+  islem: 146
+  mdd_usd: 2828
+- ad: NQ Full (2010-2026)
+  pf: 4.29
+  sharpe: 1.8
+  wr: 60.7
+  islem: 163
+  mdd_usd: 3944
+- ad: NQ OOS (2019-2026)
+  pf: 5.29
+  sharpe: 2.75
+  wr: 64.2
+  islem: 137
+  mdd_usd: 3944
+deneme_sayisi_kaynakta: 2
+rapor:
+  pf: 4.97
+  sharpe: 2.48
+  getiri: null
+  mdd: null
+  islem: 157
+  wr: 65.0
+  maliyet_dahil: evet
+spec_durumu: gizli
+belirsiz:
+- 'Reddit gönderisi ve tüm yorumlar okundu (u/Ok-Hope-1046): Yazar çıkış/risk kurallarını (%0,30 stop-loss, %0,75 take-profit, 15m RTH barları, günde en fazla 1 işlem, seans sonu EOD zorunlu flat) açıkça
+  paylaşmış; ancak long giriş sinyalini oluşturan ''4-5 teknik koşulu'' (yükselen trendde gün içi kapitülasyon hareketini yakalayan göstergeleri) gizli tutmuştur (spec_durumu: gizli).'

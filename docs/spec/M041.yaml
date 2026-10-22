@@ -1,0 +1,32 @@
+id: M041
+ad: New Low Trading Strategy (QQQ)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://quantifiedstrategies.substack.com/p/new-low-trading-strategy
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (QQQ)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: 2.0
+  sharpe: null
+  getiri: 10.9
+  mdd: 23.0
+  islem: 384
+  wr: 70.0
+  maliyet_dahil: belirtilmemis
+spec_durumu: gizli
+belirsiz:
+- 'QuantifiedStrategies.com sayfası (https://www.quantifiedstrategies.com/new-low-trading-strategy/) ve Substack özeti okundu: QQQ üzerinde 384 işlem, %70 WR, PF 2.0, %10,9 CAGR, %23 MDD raporlanmış; ancak
+  ''Trading Rules'' bölümü ücretli üyelik duvarı (🔒 These trading rules are for members only) arkasında gizli olduğundan spec_durumu: gizli olarak işaretlendi.'

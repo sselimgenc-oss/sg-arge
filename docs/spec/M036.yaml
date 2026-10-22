@@ -1,0 +1,60 @@
+id: M036
+ad: A Mean Reversion Strategy with 2.11 Sharpe (QQQ with Dynamic SMA300 Stop)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.reddit.com/r/algotrading/comments/1cwsco8/a_mean_reversion_strategy_with_211_sharpe/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (QQQ)
+gostergeler:
+  high10:
+    f: highest
+    src: high
+    n: 10
+  sma300:
+    f: sma
+    src: close
+    n: 300
+giris: close < high10 - 2.5 * range_sma25 and (close - low) / (high - low) < 0.3 and close > sma300
+cikis: close > high[1] or close < sma300
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler:
+  range_sma_n: 25
+  high10.n: 10
+  band_mult: 2.5
+  ibs_max: 0.3
+  sma300.n: 300
+varyantlar:
+- ad: Duyarlılık testi (21 gün range SMA, IBS < 0.25)
+  pf: 1.95
+  sharpe: 1.96
+  getiri: 11.5
+  mdd: 18.0
+  wr: 68.0
+- ad: 2003-2024 alt dönem testi
+  sharpe: 2.22
+  getiri: 10.5
+  mdd: 17.1
+deneme_sayisi_kaynakta: 4
+rapor:
+  pf: 1.98
+  sharpe: 2.11
+  getiri: 13.0
+  mdd: 20.3
+  islem: 414
+  wr: 69.0
+  maliyet_dahil: evet
+spec_durumu: tam
+belirsiz:
+- Reddit başlığı, EliteTrader aynası (https://www.elitetrader.com/et/threads/a-mean-reversion-strategy-with-2-11-sharpe.379590/) ve yazarın (ucals / Quantitativo) Substack makalesi (https://www.quantitativo.com/p/a-mean-reversion-strategy-with-211)
+  birlikte okundu.
+- 'range_sma25 hesaplaması ve dinamik stop kuralı (ozel_kod: true): 1) range_sma25 = sma(high - low, 25) (son 25 günün High - Low ortalaması). 2) Alt bant = highest(high, 10) - 2.5 * range_sma25. 3) IBS
+  = (close - low) / (high - low). 4) QQQ kapanışı alt bandın altında, IBS < 0.3 ve fiyat 300 günlük SMA''nın üzerinde (close > sma300) olduğunda ertesi gün açılışta long girilir. 5) Kapanış bir önceki günün
+  yükseğini geçtiğinde (close > high[1]) VEYA 300 günlük SMA''nın altına indiğinde (close < sma300, dinamik stop-loss) ertesi gün açılışta çıkılır.'
