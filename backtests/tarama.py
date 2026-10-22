@@ -81,7 +81,14 @@ class Prepared:
     start: pd.Timestamp
     end: pd.Timestamp
 
-    def run(self, multiplier: float = 1.0, *, close_fill: bool | None = None, signals: dict[str, pd.DataFrame] | None = None):
+    def run(
+        self,
+        multiplier: float = 1.0,
+        *,
+        close_fill: bool | None = None,
+        signals: dict[str, pd.DataFrame] | None = None,
+        extra_delay_bars: int = 0,
+    ):
         """One portfolio run; ``close_fill`` defaults to the card's own fill mode, ``signals`` may replace the plan's."""
         kwargs = dict(self.plan.engine_kwargs)
         fill = self.plan.dolum_kapanis if close_fill is None else close_fill
@@ -89,7 +96,8 @@ class Prepared:
         cost = self.base_cost * multiplier * (MOC_COST_FACTOR if fill else 1.0)
         return run_portfolio(
             self.frames, _unused_signal_function, market=self.market, start=self.start, end=self.end,
-            cost_rate=cost, precomputed_signals=signals if signals is not None else self.plan.signals, **kwargs,
+            cost_rate=cost, extra_delay_bars=extra_delay_bars,
+            precomputed_signals=signals if signals is not None else self.plan.signals, **kwargs,
         )
 
 
