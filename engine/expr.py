@@ -12,7 +12,7 @@ Cards carry entry/exit rules as text. This module parses them with Python's
 * calls to whitelisted functions: ``cross_over``, ``cross_under``, ``mtf``,
   ``ay_islem_gunu_bastan``, ``ay_islem_gunu_sondan``, ``haftanin_gunu``,
   ``yeni_gun``, ``ay_gunu``, ``paskalya``, ``valuewhen``, ``highestsince``, ``lowestsince``,
-  ``max``, ``min``, ``abs``, ``eger(kosul, a, b)`` (if/else)
+  ``max``, ``min``, ``abs``, ``eger(kosul, a, b)`` (if/else), ``barssince(kosul)``
 
 Evaluation is vectorised over pandas Series. NaN comparisons are False.
 """
@@ -46,6 +46,7 @@ FUNCTIONS = frozenset(
         "min",
         "abs",
         "eger",
+        "barssince",
     }
 )
 
@@ -278,6 +279,12 @@ class _Evaluator:
             group = cond.astype(int).cumsum()
             running = series.groupby(group).cummax() if name == "highestsince" else series.groupby(group).cummin()
             return running.where(group > 0)
+        if name == "barssince":
+            if len(args) != 1:
+                raise ExprError("barssince expects (condition)")
+            cond = _as_bool(_as_series(args[0], self.index), self.index)
+            position = pd.Series(np.arange(len(cond), dtype=float), index=cond.index)
+            return position - position.where(cond).ffill()
         if name == "eger":
             if len(args) != 3:
                 raise ExprError("eger expects (condition, if_true, if_false)")

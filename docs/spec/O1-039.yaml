@@ -10,14 +10,17 @@ tf: 1D
 mtf: null
 tf_varsayim: true
 yazar_piyasasi: Hisse / Kripto / Forex
-gostergeler: {}
+gostergeler:
+  lrsi:
+    f: laguerre_rsi
+    src: close
+    alpha: 0.2
 giris: cross_over(lrsi, 0.2)
 cikis: cross_under(lrsi, 0.8)
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: ozel_gosterge
+ozel_kod: false
 parametreler:
   alpha: 0.2
   gamma: 0.8
@@ -41,4 +44,4 @@ belirsiz:
   L3 = -(1-alpha)*L2 + L2[1] + (1-alpha)*L3[1]; cu = max(L0-L1, 0) + max(L1-L2, 0) + max(L2-L3, 0); cd = max(L1-L0, 0) + max(L2-L1, 0) + max(L3-L2, 0); lrsi = cu / (cu + cd). Giriş: lrsi 0.2 seviyesini
   yukarı kestiğinde (cross_over(lrsi, 0.2)) Long; Çıkış: lrsi 0.8 seviyesini aşağı kestiğinde (cross_under(lrsi, 0.8)) pozisyon kapatılır / short açılır'
 - 'short kuralı var: cross_under(lrsi, 0.8) olduğunda short pozisyona geçilir'
-- "ozel_kod_nedeni: ozel_gosterge (Laguerre RSI (ozyinelemeli L0..L3); kutuphanede yok ve yalniz bu kartta gerekli)"
+- "T21: kaynak sayfasina (TradingView / algokutuphanesi) erisilemedi; formul ve parametreler (alpha 0,2, gamma 0,8, esikler 0,2/0,8) Argon'un kaynaktan okudugu metinden (yukaridaki satir) alindi ve laguerre_rsi ilkeli bu formulle yazildi. Filtre baslangic degerleri 0 (Pine nz). Kaynak okununca dogrulanmali (T19)"

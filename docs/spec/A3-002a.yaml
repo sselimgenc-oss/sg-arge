@@ -10,17 +10,28 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: EURJPY
 gostergeler:
-  zlsma:
-    f: zlsma
-    src: close
-    n: 50
   chand:
     f: chandelier
-    atr_n: 1
+    n: 1
     carpan: 2
-giris: dir_flip_to_1 and close > zlsma
-cikis: cross_under(close, zlsma) or close <= chandelier_long_stop
-stop: null
+  lsma:
+    f: linreg
+    src: close
+    n: 50
+    offset: 0
+  lsma2:
+    f: linreg
+    src: lsma
+    n: 50
+    offset: 0
+  zlsma:
+    f: seri
+    ifade: lsma + (lsma - lsma2)
+giris: chand.dir == 1 and chand.dir[1] == -1 and close > zlsma
+cikis: cross_under(close, zlsma)
+stop:
+  tip: seviye
+  ifade: sinyal_chand.long_stop
 hedef: null
 stop_eklendi: false
 parametreler: {}
@@ -34,14 +45,12 @@ rapor:
   wr: '%70.2'
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: true
-ozel_kod_nedeni: ozel_gosterge
+ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- 'Chandelier Exit ATR periyodu 1 (= bar aralığı) ve çarpan 2; ZLSMA = lsma + (lsma - linreg(lsma,50)): ikisi listede yok: ozel_kod'
 - 'PF > 3 ve 30 günden kısa pencere: aşırı uyum alarmı'
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/CEZLSMA.pine'
 - Yazarın test penceresi çok kısa (2023-07-02/07-12 (10 gün)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "ozel_kod_nedeni: ozel_gosterge (ZLSMA ve Chandelier Exit (ATR periyodu 1) kutuphanede yok ve yalniz bu kartta gerekli; stop sinyal barinda sabitlenir)"
+- "T21: Pine kaynagi (CEZLSMA.pine, raw.githubusercontent) birebir portlandi: chandelier(n=1, carpan=2) ilkeli (ratchet long_stop/short_stop ve dir bayragi), ZLSMA = lsma + (lsma - linreg(lsma, 50)) linreg ilkelinden. Giris: dir -1'den +1'e doner ve close > zlsma; cikis: close zlsma'yi asagi keser; stop sinyal barindaki long_stop'ta sabit (D10). Kaynak kodu 'close' kullanir; yazar videoda Heikin Ashi grafikte calistiriyor olabilir (kod HA donusumu yapmaz), duz mumlar kullanildi"
 bias_varsayim: false

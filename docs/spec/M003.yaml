@@ -73,3 +73,4 @@ belirsiz:
 - 'Long giriş (BUY_auto): Price (varsayılan high, 5m ayarında low) MidLine''ı yukarı keser ve up > 0 ise VEYA Price UpperBand''ı yukarı keserse. Çıkış / Short dönüş (SELL_auto): Price LowerBand''ı aşağı
   keserse VEYA (Price MidLine''ı aşağı keser ve down > 0 ise). Ayrıca ATR(14) * stop_mult seviyesinde stop-loss vardır.'
 - "T10: ozel_kod_nedeni: ozel_gosterge (HalfTrend gostergesi kutuphanede yok)"
+- "T21: kaynak erisilemedi (https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/) -> Argon T19. Price girdisi celisiyor: kart high kullanir, kaynak metni 5m ayarinda low der; ayrica yalniz ES vadeli (piyasa_kisiti ES). HalfTrend adimlari kartta var ama bu girdi netlesmeden yazilmadi"

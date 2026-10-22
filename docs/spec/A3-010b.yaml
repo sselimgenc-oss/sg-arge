@@ -14,13 +14,27 @@ gostergeler:
     f: rsi
     src: close
     n: 14
+  slow:
+    f: stoch
+    k: 5
+    d: 3
+    smooth: 3
   bb:
     f: bb
     src: typical
     n: 20
     carpan: 2.0
-giris: rsi14 < 30 and stoch_slowk < 20 and bb_typical_alt > close and cdl_hammer == 100
-cikis: sar > close and fisher_rsi > 0.3
+    ddof: 1
+  sar:
+    f: sar
+  fisher:
+    f: fisher_rsi
+    src: close
+    n: 14
+  hammer:
+    f: cdl_hammer
+giris: rsi14 < 30 and slow.k < 20 and bb.lower > close and hammer == 100
+cikis: sar > close and fisher > 0.3 and close > giris_fiyati
 stop:
   tip: yuzde
   deger: 10
@@ -37,16 +51,13 @@ rapor:
   wr: null
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: true
-ozel_kod_nedeni: ozel_gosterge
+ozel_kod: false
 belirsiz:
 - '5m zaman dilimi: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- 'Zaman bazlı ROI tablosu (roi_tablosu) ve sabit %10 stop şemada yok: şema uzantısı'
 - 'Test penceresi ~1 ay (2017-11/2018-01), maliyet yok: kanıt değeri çok düşük'
 - Fork içeriği resmi depodakiyle karşılaştırılmadı; kural resmi depo koduna dayanıyor
-- 'SAR, Fisher RSI, CDLHAMMER (TA-Lib çekiç mum), Stoch(slowk) listede yok/eksik: ozel_kod'
 - 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy002.py'
-- "ozel_kod_nedeni: ozel_gosterge (TA-Lib CDLHAMMER mum formasyonu; yalniz bu kartta gerekli)"
+- "T21: Strategy002.py (freqtrade/freqtrade-strategies, raw.githubusercontent) birebir portlandi: RSI(14), TA-Lib STOCH varsayilani (fastk 5, slowk SMA 3), tipik fiyatin Bollinger alt bandi (20, 2; qtpylib orneklem sapmasi: bb ddof=1), SAR(0,02; 0,2), Fisher RSI = tanh(0,1 x (RSI - 50)), TA-Lib CDLHAMMER (cdl_hammer ilkeli, TA-Lib ile 0 fark). ROI tablosu (0: %5, 20: %4, 30: %3, 60: %1) ve %10 stop kaynaktaki degerler. Kaynakta exit_profit_only = True: cikis sinyali yalniz karda gecerli; 'close > giris_fiyati' ile yaklasildi (freqtrade komisyonlu kar orani kullanir). ROI tablosu motor roi_tablosu (D9)"
 roi_tablosu:
   0: 0.05
   20: 0.04

@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
-Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 148
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **89**; ayrica `dakikalik` (yalniz kripto testi) hazir: **20**
+Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 141
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **91**; ayrica `dakikalik` (yalniz kripto testi) hazir: **25**
 
 
 ## Durum dagilimi
@@ -25,8 +25,7 @@ Yok.
 
 | gosterge | kart sayisi | kartlar |
 |---|---|---|
-| chandelier | 1 | A3-002a |
-| zlsma | 1 | A3-002a |
+| - | 0 | |
 
 ## Ayristirilamayan giris/cikis ifadeleri
 
@@ -68,7 +67,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | sott4_bear | 2 |
 | tott3_bear | 2 |
 | tott4_bear | 2 |
-| lrsi | 2 |
 | percb | 2 |
 | tsi_val | 2 |
 | hma60 | 2 |
@@ -76,7 +74,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | candle_color | 2 |
 | daily_open | 2 |
 | server_time | 2 |
-| linreg_val | 2 |
 | dynamic_avwap | 2 |
 | lorentzian_skor | 2 |
 | InpEntryHour | 1 |
@@ -98,23 +95,10 @@ Toplam: 7 (durum `tam` olanlar once)
 | is_nr_day | 1 |
 | offset | 1 |
 | session_open | 1 |
-| dir_flip_to_1 | 1 |
-| chandelier_long_stop | 1 |
 | abc_zigzag_deseni | 1 |
 | sma_bulutu_trend | 1 |
-| andean_bull_signal_cross | 1 |
-| gunluk_yuksek_dusuk_onayi | 1 |
 | macd_100_200_50_boga | 1 |
 | mlcel_yeni_al_sinyali | 1 |
-| nw_alt | 1 |
-| nw_ust | 1 |
-| linreg_sinyal | 1 |
-| ut_bot_al | 1 |
-| bb_typical_alt | 1 |
-| cdl_hammer | 1 |
-| stoch_slowk | 1 |
-| fisher_rsi | 1 |
-| sar | 1 |
 | up | 1 |
 | down | 1 |
 | ott_hhv | 1 |
@@ -184,11 +168,10 @@ Toplam: 7 (durum `tam` olanlar once)
 | tech_vs_kmlm_bear | 1 |
 | risk_on_kmlm | 1 |
 | risk_off_kmlm | 1 |
-| sqz_off | 1 |
 | orb_low | 1 |
 | order_block_boga | 1 |
 
 ## Diger kartlarda sorun sayisi
 
-`tam` olmayan 131 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
+`tam` olmayan 126 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
 

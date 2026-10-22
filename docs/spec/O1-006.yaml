@@ -51,3 +51,4 @@ belirsiz:
   ara ortalamalarından oluşan 5 MOTT bandını yukarı kestiğinde AL (CrossAbove), aşağı kestiğinde SAT (CrossBelow) üretilir'
 - Zaman dilimi C# kodunda [Parameter(SymbolPeriod.Day)] olarak tanımlanmıştır (1D)
 - "ozel_kod_nedeni: tanim_belirsiz (5 MOTT bandinin (OTT(HHV)/OTT(LLV) ve ara ortalamalar) ayrintili formulu kartta yok)"
+- "T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4B-Kurgu) -> Argon T19. 5 MOTT bandinin (OTT(HHV)/OTT(LLV) ve ara ortalamalar) formulu kartta yok; O1-009 ile ayni sistemin kopyasi gorunuyor"

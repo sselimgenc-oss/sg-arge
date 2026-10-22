@@ -196,7 +196,7 @@ def test_compute_kaydir_and_unknown_indicator():
     df = frame(range(1, 11))
     assert ind.compute(df, {"f": "sma", "src": "close", "n": 3, "kaydir": 1}).iloc[3] == 2.0
     with pytest.raises(ind.UnknownIndicator):
-        ind.compute(df, {"f": "cdl_hammer"})
+        ind.compute(df, {"f": "cdl_engulfing"})
 
 
 def test_source_expression_and_build_env():

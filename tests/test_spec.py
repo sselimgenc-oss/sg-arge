@@ -73,10 +73,10 @@ def test_runtime_names_allowed_in_exit_but_not_entry(tmp_path):
 
 
 def test_unknown_indicator_is_error_unless_ozel_kod(tmp_path):
-    gost = {"cdl_hammer": {"f": "cdl_hammer"}}
-    strict = result_for(tmp_path, gostergeler=gost, giris="close > cdl_hammer", cikis="close < cdl_hammer")
+    gost = {"cdl_engulfing": {"f": "cdl_engulfing"}}
+    strict = result_for(tmp_path, gostergeler=gost, giris="close > cdl_engulfing", cikis="close < cdl_engulfing")
     assert [i for i in strict.issues if i.kod == "tanimsiz_gosterge"][0].ciddi is True
-    lenient = result_for(tmp_path, gostergeler=gost, giris="close > cdl_hammer", cikis="close < cdl_hammer", ozel_kod=True)
+    lenient = result_for(tmp_path, gostergeler=gost, giris="close > cdl_engulfing", cikis="close < cdl_engulfing", ozel_kod=True)
     assert [i for i in lenient.issues if i.kod == "tanimsiz_gosterge"][0].ciddi is False
 
 

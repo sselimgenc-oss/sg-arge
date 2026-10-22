@@ -66,3 +66,4 @@ belirsiz:
 - Çıkışlar ATR çarpanlı dinamik başabaş (break-even), ATR iz süren stop ve maksimum hesap düşüş koruma kesicisi ile yönetilir
 - 'short kuralı var: Hacim, gövde ve volatilite şartları sağlandığında close < ma50, rsi > 30, close < low[1] - atr*0.2 ve H1 close < ma50 şartlarıyla short açılır'
 - "ozel_kod_nedeni: tanim_belirsiz (cikis: ATR carpanli dinamik basabas, ATR iz suren ve maks. hesap dususu kesicisi kartta sayisal degerlerle yok; avg_vol penceresinin cari bari icerip icermedigi belirsiz)"
+- "T21: kaynak erisilemedi (https://www.mql5.com/en/code/78275) -> Argon T19. cikis kurallari (ATR carpanli basabas, iz suren, maks. hesap dususu) sayisal degerleriyle kartta yok"

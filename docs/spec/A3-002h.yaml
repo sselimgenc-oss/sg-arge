@@ -15,10 +15,25 @@ gostergeler:
     src: close
     n: 5
     ma: rma
-giris: low[1] < nw_alt[1] and close > open and close < nw_alt + 0.5*(nw_ust - nw_alt) and rsi5[1] < 30
+  nw:
+    f: nadaraya_watson
+    h: 8.0
+    carpan: 3.0
+    n: 500
+  tr1:
+    f: tr
+  trma:
+    f: sma
+    src: tr1
+    n: 14
+giris: low[1] < nw.lower[1] and close > open and close < nw.lower + 0.5 * (nw.upper - nw.lower) and rsi5[1] < 30
 cikis: null
-stop: null
-hedef: null
+stop:
+  tip: seviye
+  ifade: sinyal_low - 0.5 * sinyal_trma
+hedef:
+  tip: seviye
+  ifade: sinyal_close + 1.5 * (sinyal_close - stop_seviyesi)
 stop_eklendi: false
 parametreler: {}
 deneme_sayisi_kaynakta: null
@@ -31,14 +46,11 @@ rapor:
   wr: '%50.52'
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: true
-ozel_kod_nedeni: ozel_gosterge
+ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- 'Nadaraya-Watson zarfı (h=8, mult=3, 499 bar MAE) listede yok: ozel_kod'
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/NWERSIASF.pine'
 - Yazarın test penceresi çok kısa (2023-08-15/10-20), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: low - 0.5*SMA(TR,14) ; hedef: giris + 1.5*(giris - stop)' (sinyal barinda sabitlenen degerler: elle kodlanacak)"
-- "ozel_kod_nedeni: ozel_gosterge (Nadaraya-Watson zarfi (h=8, 499 bar MAE))"
+- "T21: Pine kaynagi (NWERSIASF.pine, raw.githubusercontent) birebir portlandi: nadaraya_watson(h=8, carpan=3, n=500) ilkeli (tekrar boyamayan uc nokta surumu, 500 katsayi, 499 bar MAE). stop = low - 0,5 x SMA(TR, 14) (ASF varsayilani SMA, carpan 0,5), hedef = kapanis + 1,5 x (kapanis - stop); sinyal barinda sabit (D10). Ilk ~1000 barda zarf yok (499 + 499 bar isinma)"
 bias_varsayim: false

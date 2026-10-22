@@ -15,19 +15,39 @@ gostergeler:
     f: bb
     src: close
     n: 20
-    std: 2.0
-  kc20:
-    f: kc
+    carpan: 2.0
+  ma20:
+    f: sma
     src: close
     n: 20
-    mult: 1.5
-giris: sqz_off and linreg_val > 0 and linreg_val > linreg_val[1]
-cikis: linreg_val < linreg_val[1]
+  tr1:
+    f: tr
+  rangema:
+    f: sma
+    src: tr1
+    n: 20
+  hh20:
+    f: highest
+    src: high
+    n: 20
+  ll20:
+    f: lowest
+    src: low
+    n: 20
+  mom:
+    f: seri
+    ifade: close - ((hh20 + ll20) / 2 + ma20) / 2
+  val:
+    f: linreg
+    src: mom
+    n: 20
+    offset: 0
+giris: bb20.lower < ma20 - 1.5 * rangema and bb20.upper > ma20 + 1.5 * rangema and val > 0 and val > val[1]
+cikis: val < val[1]
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: ozel_gosterge
+ozel_kod: false
 parametreler:
   bb_length: 20
   bb_mult: 2.0
@@ -49,4 +69,4 @@ belirsiz:
 - 'Özel kod mantığı (John Carter Squeeze): Bollinger Bantları(20, 2.0) Keltner Kanalı(20, 1.5 ATR) içine girdiğinde sıkışma başlar (sqzOn); sıkışma bittiğinde (sqzOff) ve doğrusal regresyon momentum histogramı
   val = linreg(close - avg(avg(highest(20), lowest(20)), sma(20)), 20, 0) pozitif ve yükseliyorsa Long girilir; momentum çubuğu bir önceki çubuğun altına indiğinde pozisyon kapatılır'
 - 'short kuralı var: sqzOff anında val < 0 ve val < val[1] ise short açılır'
-- "ozel_kod_nedeni: ozel_gosterge (LazyBear Squeeze Momentum (linreg histogram, SMA tabanli Keltner); linreg kutuphanede yok ve yalniz bu kartta gerekli)"
+- "T21: TradingView/Scribd kaynagina erisilemedi; formul Argon'un kaynaktan okudugu metne gore (BB 20/2, Keltner 20/1,5 SMA tabanli, val = linreg(close - avg(avg(highest(20), lowest(20)), sma(20)), 20, 0)) kutuphane ilkelleriyle (linreg, tr, bb, seri) yazildi; yeni ilkel yalniz linreg ve tr. Keltner yayilimi SMA(gercek aralik, 20) alindi (kartta 'SMA tabanli Keltner'); sqzOff = BB bantlari Keltner disinda. Kaynak okununca dogrulanmali (T19)"
