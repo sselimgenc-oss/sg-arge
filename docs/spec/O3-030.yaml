@@ -1,0 +1,51 @@
+id: O3-030
+ad: 75%+ win rate trend stratejisi (Jim Brown kitabindan) - EURUSD
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingheroes.com/75-win-rate-trading-strategy/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  ema50:
+    f: ema
+    src: close
+    n: 50
+  ema100:
+    f: ema
+    src: close
+    n: 100
+  wma240:
+    f: wma
+    src: close
+    n: 240
+ozel_kod: true
+giris: ema50 > ema100 and ema100 > wma240 and close > ema50
+cikis: 'false'
+stop: null
+hedef:
+  tip: rr
+  deger: 1.0
+stop_eklendi: false
+parametreler:
+  risk_pct: 1.0
+  target_rr: 1.0
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 42.0
+  mdd: 3.0
+  islem: 84
+  wr: 75.0
+  maliyet_dahil: belirtilmemis
+spec_durumu: gizli
+belirsiz:
+- 'Hugh Kimura''nin Jim Brown''a ait ''MT4/MT5 & TradingView High Probability Forex Trading Method'' kitabini EURUSD 1D (2003-2022) uzerinde test ettigi yazidir: 3 hareketli ortalama siraya dizildiginde
+  (yukari trendde kisa > orta > uzun) fiyat ortalamalardan birinden sekip kitaba ozel gosterge yesil nokta yaktiginda mum kapanisinda long girilir; stop-loss son swing dibinin altina konur, kar hedefi 1R''dir.'
+- 'Blog yazisinda hareketli ortalama periyotlari ve ozel gostergenin (Jim Brown QMP Filter: MACD(12,26,9) + QQE(1,8,3) ve 50 EMA, 100 EMA, 240 LWMA) detaylari kitabi satin almaya yonlendirmek icin gizli
+  tutuldugu (''You''ll have to buy the book to get all of his trading methods... and download the custom indicators'') ve swing stop/MA sekmesi ihtiyari oldugu icin spec_durumu: gizli olarak isaretlendi.'

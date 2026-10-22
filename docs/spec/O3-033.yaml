@@ -1,0 +1,45 @@
+id: O3-033
+ad: RSIDive (RSI uyumsuzlugu) - EURUSD gunluk
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.tradingheroes.com/rsi-trading-strategy-results/
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler:
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+ozel_kod: true
+giris: low < low[1] and rsi14 > rsi14[1]
+cikis: 'false'
+stop: null
+hedef:
+  tip: rr
+  deger: 1.0
+stop_eklendi: false
+parametreler:
+  rsi14.n: 14
+  rsi_ob: 70
+  rsi_os: 30
+  risk_pct: 1.0
+  target_rr: 1.0
+deneme_sayisi_kaynakta: 3
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 12.8
+  mdd: null
+  islem: 26
+  wr: 73.0
+  maliyet_dahil: belirtilmemis
+spec_durumu: ihtiyari
+belirsiz:
+- Hugh Kimura'nin RSIDive v2 planinin EURUSD 1D (6032 gun) uzerindeki tekil manuel backtest sonucudur (26 islem, %73 kazanma orani, +%12.8 getiri, maks ardisik kazanc 7, maks ardisik kayip 2).
+- 'Giris icin RSI(14) < 30 sonrasi fiyat-RSI pozitif uyumsuzlugu, ''guclu trendlerden kacinma'', ''tepeler/dipler arasinda iyi ayrilma'', ''islem yonunde guclu mum'' ve ''son fiyat swing dibinin altina
+  stop + 1R hedef'' kurallari yoruma dayali oldugu icin spec_durumu: ihtiyari.'

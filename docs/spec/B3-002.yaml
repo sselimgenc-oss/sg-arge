@@ -1,0 +1,39 @@
+id: B3-002
+ad: RSI Pullback Strategy (SPY)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://quantifiedstrategies.substack.com/p/rsi-pullback-strategy
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler:
+  rsi2:
+    f: rsi
+    src: close
+    n: 2
+ozel_kod: true
+giris: rsi2 < 15
+cikis: rsi2 > 20
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: 2.8
+  sharpe: null
+  getiri: 3.9
+  mdd: 10.0
+  islem: 184
+  wr: 78.0
+  maliyet_dahil: belirtilmemis
+spec_durumu: gizli
+belirsiz:
+- Substack URL'sine dogrudan erisim engellendi ancak yazarin ana sitesindeki birebir aynasindan (quantifiedstrategies.com/rsi-pullback-strategy/ ve tradingstrategiesdaily.com/p/mastering-rsi-pullbacks)
+  okundu.
+- 'SPY (1993-2026) uzerinde 184 islem, islem basina %0.7 kazanc, %78 win rate, PF 2.8, CAGR %3.9, %8 exposure ve %10 MDD raporlanmistir; ancak strateji kurallari yalnizca ucretli uyelere acik oldugu (''These
+  trading rules are for members only'') icin spec_durumu: gizli olarak isaretlendi.'

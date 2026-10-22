@@ -1,0 +1,42 @@
+id: O3-025
+ad: Bollinger Prism - NQ reversal (PF 2.78)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.elitetrader.com/et/threads/nq-reversal-strategy-backtest-reached-profit-factor-2-78.389985/
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Vadeli (NQ - Nasdaq 100 Futures)
+gostergeler:
+  bb20:
+    f: bb
+    src: close
+    n: 20
+    mult: 2.0
+  rsi14:
+    f: rsi
+    src: close
+    n: 14
+ozel_kod: true
+giris: close < bb20.alt and rsi14 < 30
+cikis: close > bb20.orta
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 2.78
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: gizli
+belirsiz:
+- 'NinjaTrader gosterge saticisi ninZa.co tarafindan acilan tanitim basligidir: NQ 150 Tick, 200 Tick ve ninZaRenko 18/3 grafiklerinde ticari kapali kaynakli ''Superior RSI'' ve ''Bollinger Reversal Pro''
+  gostergelerinin kombinasyonunu kullanir; gosterge formulleri ve sayisal kurallar paylasilmadigi icin spec_durumu: gizli olarak isaretlendi.'

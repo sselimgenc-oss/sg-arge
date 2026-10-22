@@ -1,0 +1,36 @@
+id: A7-005
+ad: Long-only ABD hisseleri dakikalik gun ici (Level4)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.elitetrader.com/et/threads/analyzing-backtesting-results.387769/
+  sayfa: null
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (OTC Haric Tum ABD Hisseleri)
+gostergeler: {}
+ozel_kod: true
+giris: close > open
+cikis: close < open
+stop:
+  tip: yuzde
+  deger: 1.51
+hedef: null
+stop_eklendi: false
+parametreler:
+  max_open_positions: 16
+deneme_sayisi_kaynakta: 5
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 16.2
+  mdd: 8.8
+  islem: 161
+  wr: 73.9
+  maliyet_dahil: false
+spec_durumu: eksik
+belirsiz:
+- EliteTrader kullanicisi Level4 tarafindan 3-7 Kasim 2025 haftasi icin (04:00-20:00 ET pre/after-market dahil, 1m barlar, 0 komisyon) yalnizca backtest istatistikleri paylasilmis, stratejinin giris ve
+  cikis kurallari hic yazilmamistir.

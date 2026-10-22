@@ -1,0 +1,47 @@
+id: O2-008
+ad: Highest Open / Lowest Open Trade
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.forexfactory.com/thread/590623-highest-open-lowest-open-trade
+  sayfa: null
+tarz: day
+tf: 15m
+mtf: 1H
+tf_varsayim: false
+yazar_piyasasi: Forex
+gostergeler: {}
+ozel_kod: true
+giris: open < close and close > open[1]
+cikis: 'false'
+stop:
+  tip: yuzde
+  deger: 1
+hedef: null
+kar_kilidi:
+  tetik_puan: 5
+  kilit_puan: 1
+stop_eklendi: false
+parametreler:
+  session_start_ny: 800
+  session_end_ny: 1200
+  be1_trigger_pips: 5
+  be1_lock_pips: 1
+  be2_trigger_pips: 10
+  be2_lock_pips: 5
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: dakikalik
+belirsiz:
+- 'TooSlow tarafindan paylasilan HOLO (Highest Open / Lowest Open) gun ici donus stratejisidir (ozel_kod: true): 1) Mevcut islem gunu icindeki en yuksek 1H bar acilisi (Highest_H1_Open) ve en dusuk 1H bar
+  acilisi (Lowest_H1_Open) cizilir. 2) Long giris: Fiyat once Lowest_H1_Open altina inmeli (ve 15m bar Lowest_H1_Open altinda acilmali), ardindan yukari donup Lowest_H1_Open seviyesini yukari gecince bar
+  kapanisini beklemeden long acilir (fiyat dunku gunluk yuksek/dusugu kirmissa breakout uyarisi vardir). 3) Stop-loss mevcut gunun en dusuk seviyesidir (Daily Low). 4) Kar yonetimi: Islem +5 pip kara gecince
+  stop BE+1 pipe, +10 pip kara gecince BE+5 pipe veya iz suren stopa cekilir (varsayilan EA seans araligi NY 08:00 - 12:00). 5) Short kurali: Fiyat Highest_H1_Open uzerine cikip tekrar Highest_H1_Open seviyesine
+  indiginde short acilir, stop Daily High''dir.'

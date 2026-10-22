@@ -1,0 +1,55 @@
+id: A5-022
+ad: Trend-based Forecast of Cryptocurrency Returns
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://paperswithbacktest.com/strategies/trend-based-forecast-of-cryptocurrency-returns
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (~3000 Kripto Para)
+gostergeler:
+  sma3:
+    f: sma
+    src: close
+    n: 3
+  sma5:
+    f: sma
+    src: close
+    n: 5
+  sma10:
+    f: sma
+    src: close
+    n: 10
+  sma20:
+    f: sma
+    src: close
+    n: 20
+  sma50:
+    f: sma
+    src: close
+    n: 50
+ozel_kod: true
+giris: sma3 > close and sma10 > close
+cikis: sma3 < close
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'PapersWithBacktest ve RePEc sayfalarina dogrudan erisim engellendi (erisim_engeli: true).'
+- Kaynak makale (Xilong Tan & Yubo Tao, 2023, Economic Modelling, Vol. 124, 106323) ~3000 kripto para uzerinde farkli gecikmeli hareketli ortalamalarla (Han, Zhou & Zhu 2016 / CTREND yontemi) kesitsel getiri
+  tahmini ve portfoy olusturma kurallarini inceler; ancak PWB'de kullanilan spesifik MA gecikmeleri ve dilim (decile/quintile) esikleri sayfa engeli nedeniyle okunamadi.

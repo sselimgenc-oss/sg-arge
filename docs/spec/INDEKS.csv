@@ -13,6 +13,7 @@ A1-014,Blue Monday DAX,day,15m,eksik,true,2,https://www.prorealcode.com/prorealt
 A1-015,Late lunch trade DAX40 strategy,swing,30m,dakikalik,true,3,https://prorealcode.com/prorealtime-trading-strategies/late-lunch-trade-dax40-strategy
 A1-016,VIOP Scalping - ATR SNIPER,day,5m,eksik,false,2,https://www.tradingview.com/script/R0CTM8NR-VIOP-Scalping-ATR-SNIPER/
 A1-017,VIOP Scalping - Original,day,5m,eksik,false,1,https://www.tradingview.com/script/4BcYQ0Ns-VIOP-Scalping-Original/
+A1-018,HYSTERIAN BIST:SISE TRADE ALGORITHM,swing,1D,eksik,true,2,https://tr.tradingview.com/script/DuPtf4A6
 A1-019,BIST30 to S&P 500 ATR Momentum Rider,swing,1D,eksik,false,1,https://www.tradingview.com/script/jd1KSVn7/
 A1-020,Antony.N4A - NQ ORB Quartile Str v6.3,day,5m,gizli,false,3,https://de.tradingview.com/script/uUtBQ59O-Antony-N4A-NQ-ORB-Quartile-Str-v6-3
 A1-021,Pivot Master LITE,day,15m,eksik,true,3,https://cn.tradingview.com/script/RKd6izP4-Pivot-Master-LITE
@@ -95,8 +96,16 @@ A4-008,RSI Extremes Intraday E-mini (embedded backtest),day,5m,eksik,true,2,http
 A4-009,Volume Spikes in Oil Futures (embedded backtest),day,5m,eksik,true,2,https://www.quantconnect.com/terminal/cache/embedded_backtest_19dce81c99a5fcc437
 A4-010,"Intraday Mean Reversion BTCUSD (r/algotrading yaklasimi, embedded backtest)",day,5m,eksik,true,2,https://www.quantconnect.com/terminal/cache/embedded_backtest_b5e5be2775f2e65fb530bae2c5fc8486.html
 A5-009,XLP mean reversion (IBS + 25 günlük bant) (10 Best Swing #7),swing,1D,tam,false,3,https://www.quantifiedstrategies.com/swing-trading-strategies/
+A5-012,Self-Imposed Limits to Arbitrage,swing,1D,eksik,true,2,https://paperswithbacktest.com/strategies/self-imposed-limits-to-arbitrage
+A5-013,Trading Volume Effects of Moving Average Heuristics,swing,1D,eksik,true,2,https://paperswithbacktest.com/strategies/trading-volume-effects-of-moving-average-heuristics
+A5-014,"Seasonality, Trend-following, and Mean reversion in Bitcoin",swing,1D,tam,false,1,https://paperswithbacktest.com/strategies/seasonality-trend-following-and-mean-reversion-in-bitcoin
 A5-015,Reversal in Cryptocurrency Returns,swing,1W,eksik,true,3,https://paperswithbacktest.com/strategies/reversal-in-cryptocurrency-returns
+A5-016,Stock Market Predictability in the MENA: Evidence from New Variance Ratio Tests and Technical Trade Analysis,swing,1D,eksik,true,2,https://paperswithbacktest.com/strategies/stock-market-predictability-in-the-mena-evidence-from-new-variance-ratio-tests-and-technical-trade-analysis
+A5-020,Finding Consistent Trends with Strong Momentum - RSI for Trend-Following and Momentum Strategies,swing,1D,tam,false,2,https://paperswithbacktest.com/strategies/finding-consistent-trends-with-strong-momentum-rsi-for-trend-following-and-momentum-strategies
 A5-021,The 8-K Trading Gap,swing,1D,eksik,true,3,https://paperswithbacktest.com/strategies/the-k-trading-gap
+A5-022,Trend-based Forecast of Cryptocurrency Returns,swing,1D,eksik,true,2,https://paperswithbacktest.com/strategies/trend-based-forecast-of-cryptocurrency-returns
+A5-023,Signal Prediction in cryptocurrency tradeoperations: a machine learning-based approach,swing,1D,eksik,true,2,https://paperswithbacktest.com/strategies/signal-prediction-in-cryptocurrency-tradeoperations-a-machine-learning-based-approach
+A5-024,Impact of Earnings Announcements for Dow Jones Index Stocks,swing,1D,eksik,true,2,https://paperswithbacktest.com/strategies/impact-of-earnings-announcements-for-dow-jones-index-stocks
 A6-001,Double 7's Strategy,swing,1D,tam,false,2,https://alvarezquanttrading.com/blog/double-7s-strategy/
 A6-003,Simple Ideas for a Mean Reversion Strategy with Good Results,swing,1D,tam,true,3,https://alvarezquanttrading.com/blog/simple-ideas-for-a-mean-reversion-strategy-with-good-results/
 A6-004,Mean Reversion Entry Timing,swing,1D,tam,true,3,https://alvarezquanttrading.com/blog/mean-reversion-entry-timing/
@@ -107,10 +116,26 @@ A6-012,Better Tests with Oversampling (3 mum fiyat aksiyonu),day,1H,eksik,true,3
 A6-014,Trend trading system with Market Meanness Index (Why 90% of Backtests Fail),swing,1D,tam,true,3,https://financial-hacker.com/why-90-of-backtests-fail/
 A6-015,Double Bottom Country ETF Trading,swing,1D,tam,true,3,https://quantpedia.com/technical-analysis-report-methodology-double-bottom-country-trading-strategy/
 A6-016,Building and Testing Trend-Following Strategies on One-Minute SPY Data,day,1m,eksik,true,3,https://quantpedia.com/building-and-testing-trend-following-strategies-on-one-minute-spy-data/
+A6-017,Can Weakening Morning Order Flow Predict SPY Reversals?,day,1m,eksik,true,2,https://quantpedia.com/can-weakening-morning-order-flow-predict-spy-reversals/
+A6-019,Overnight Seasonality in Bitcoin,day,1H,tam,true,1,https://quantpedia.com/strategies/intraday-seasonality-in-bitcoin
+A6-020,Market Sentiment and an Overnight Anomaly,day,1D,eksik,true,2,https://quantpedia.com/strategies/market-sentiment-and-an-overnight-anomaly
+A6-021,Pairs Trading with Country ETFs,swing,1D,tam,true,1,https://quantpedia.com/strategies/pairs-trading-with-country-etfs
+A6-022,How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin,swing,1H,tam,false,1,https://quantpedia.com/how-to-design-a-simple-multi-timeframe-trend-strategy-on-bitcoin/
+A6-023,Attention Prop Traders: first half hour predicts last half hour,day,30m,dakikalik,true,2,https://alphaarchitect.com/attention-prop-traders-the-first-half-hour-of-trading-predicts-the-last-half-hour/
+A7-001,NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan),day,5m,dakikalik,true,2,https://www.elitetrader.com/et/threads/i-backtested-37-famous-strategies-with-fees-on-most-lose-mechanically-after-costs-data-one-that-didnt.390197/
+A7-002,RSI asiri alim/satim Forex sistemi (PF 2.41),swing,1H,eksik,true,1,https://www.elitetrader.com/et/threads/improved-trading-strategy-results-profit-factor-increased-to-2-41.382680/
+A7-004,"S&P500-VIX diverjans stratejisi (Scherman, BI makalesi)",swing,1D,eksik,true,2,https://www.elitetrader.com/et/threads/strategy-with-75-win-ratio-and-3-to-1-profit-potential-count-me-as-a-skeptic.382581/
+A7-005,Long-only ABD hisseleri dakikalik gun ici (Level4),day,1m,eksik,true,1,https://www.elitetrader.com/et/threads/analyzing-backtesting-results.387769/
+A7-006,Kripto 50 parite long-only gosterge tarayici sistemi,swing,1H,eksik,true,1,https://www.elitetrader.com/et/threads/automated-trading-feedback.382851/
+A7-007,ES Renko/Donchian 21 pullback scalp (RichJamo gunlugu),day,1m,eksik,true,1,https://futures.io/trading-journals/33441-rich-s-es-s-p-500-futures-contract-intraday-strategy.html
 B1-002,"AlphaTrend Strategy (TradingView, Kıvanç Özbilgiç)",swing,1D,tam,false,5,https://www.tradingview.com/script/3wdQu7P3-AlphaTrend-Strategy
 B2-001,"Opening-Range Breakout (TradingView, vadeli)",day,5m,eksik,false,1,https://pl.tradingview.com/script/8vjWAdLN-Opening-Range-Breakout/
 B2-005,"Athena Momentum Squeeze - Short, Lean, and Mean",day,5m,eksik,false,1,https://in.tradingview.com/script/Oy4huVQ2-Athena-Momentum-Squeeze-Short-Lean-an
+B3-001,RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ),swing,1D,tam,false,1,https://quantifiedstrategies.substack.com/p/rsi-mean-reversion-trading-strategy
+B3-002,RSI Pullback Strategy (SPY),swing,1D,gizli,true,2,https://quantifiedstrategies.substack.com/p/rsi-pullback-strategy
 B3-010,RSI-2 Larry Connors (ProRealCode),swing,1D,tam,false,3,https://www.prorealcode.com/prorealtime-trading-strategies/rsi-2-strategy-larry-connors/
+C01,"Haftalik yonlu gunluk geri cekilme (wd_pullback_risk, Codex Algo 21)",swing,1D,tam,false,2,Codex Algo 21 raporu
+C02,"Haftalik yonlu gunluk CCI devam (wd_cci_continuation_risk, Codex Algo 21)",swing,1D,tam,false,1,Codex Algo 21 raporu
 O1-001,AlphaTrend Strategy (Matriks),belirsiz,1D,tam,false,6,https://algokutuphanesi.com/Sistem/Detay/Matriks/AlphaTrend-Strategy
 O1-002,FIRSATÇITRENDİFLİSİSTEMANILBy (Fırsatçı Trend + IF'li sistem),day,5m,eksik,true,5,https://algokutuphanesi.com/Sistem/Detay/Matriks/FIRSATÇITRENDİFLİSİSTEMANILBy
 O1-003,PHL1 YİĞİT KAYNAK,day,1H,tam,false,4,https://algokutuphanesi.com/Sistem/Detay/Matriks/PHL1-YİGİT-KAYNAK
@@ -124,6 +149,7 @@ O1-010,FirsatciTrend 4Bölge LONG,day,5m,dakikalik,true,6,https://algokutuphanes
 O1-011,SuperTrendVadeliStratejisi,day,5m,dakikalik,false,3,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/SuperTrendVadeliStratejisi
 O1-012,Yükselen Formasyon Stratejisi,day,5m,gizli,true,3,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Yukselen-Formasyon-Stratejisi
 O1-013,OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG,day,5m,dakikalik,true,6,https://algokutuphanesi.com/Sistem/Detay/MatriksIq/OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG
+O1-017,"Sistem 2: RSI ortalama kesisimi (VIOP30 5 dk, long)",day,5m,dakikalik,false,2,https://www.bilgeyatirimci.com/i/sistem-tester-performans-testi-back-test-yaparken-nelere-dikkat-etmeliyiz/
 O1-019,EMA 25/68 BIST30 Futures,day,5m,eksik,false,2,https://www.tradingview.com/script/Tbh1KPxq/
 O1-027,PMax Explorer STRATEGY & SCREENER,swing,1H,tam,false,5,https://www.tradingview.com/script/nHGK4Qtp/
 O1-029,Grover Llorens Activator Strategy Analysis,swing,1D,eksik,true,1,https://www.tradingview.com/script/VuYM89Tw-Grover-Llorens-Activator-Strategy-An
@@ -183,6 +209,8 @@ O2-004,Trading Pullbacks System,day,15m,ihtiyari,true,2,https://forex-station.co
 O2-005,Trading Made Simple,swing,1H,tam,false,5,https://www.forexfactory.com/thread/291622-trading-made-simple
 O2-006,Pivot Trading,day,15m,ihtiyari,true,1,https://www.forexfactory.com/thread/588764-pivot-trading
 O2-007,Another simple system - Time-Frame 15,day,15m,dakikalik,true,5,https://www.forexfactory.com/thread/345586-another-simple-system-time-frame-15
+O2-008,Highest Open / Lowest Open Trade,day,15m,dakikalik,true,1,https://www.forexfactory.com/thread/590623-highest-open-lowest-open-trade
+O2-009,M1 Countertrend Scalping Strategy,day,1m,ihtiyari,true,2,https://www.forexfactory.com/thread/1190104-m1-countertrend-scalping-strategy
 O2-010,JPN225 QuietDrift (The Nikkei EA That Only Buys When Volume Is Quiet),day,15m,dakikalik,true,6,https://www.mql5.com/en/code/78027
 O2-011,PulseStrike Scalper - Statistical Burst Detection EA,day,1m,dakikalik,true,4,https://www.mql5.com/en/code/77167
 O2-012,OHLCMTF Scalper EA - Multi-Timeframe Price Action,day,1H,kapsam_disi,false,1,https://www.mql5.com/en/code/70796
@@ -192,6 +220,7 @@ O2-019,CloudScalper,day,15m,dakikalik,true,4,https://jesse.trade/strategies/clou
 O2-021a,Jesse: Simple Bollinger Bands Strategy,swing,1h,eksik,false,1,https://jesse.trade/strategies
 O2-021b,Jesse: RSI Trend,swing,1h,eksik,false,1,https://jesse.trade/strategies
 O2-021c,Jesse: IchimokuCloud,swing,1h,eksik,false,1,https://jesse.trade/strategies
+O2-023,Intraday Trading Strategy for Futures Contract NQ,day,5m,eksik,true,1,https://www.quantconnect.com/forum/discussion/15192
 O2-025,The Holy Grail,swing,1D,tam,true,3,https://www.composer.trade/trading-strategies/the-holy-grail-MmQbpf2U5TMQFmr9Nt2e
 O2-026,KMLM Switcher of Simon97 - Original,swing,1D,tam,true,3,https://www.composer.trade/trading-strategies/kmlm-switcher-of-simon97-original-syMn9OgFREE0wo8LtYsG
 O2-027,TQQQ For The Long Term (Reddit Post Link),swing,1D,tam,true,3,https://www.composer.trade/trading-strategies/tqqq-for-the-long-term-reddit-post-link-HukRwDJLlYPLMbrQbua5
@@ -199,8 +228,21 @@ O2-028,SVIX/XXXX KMLM switcher (single pops) | BT 12/19/23 = 786/10.5,swing,1D,t
 O2-031,"je-suis-tm/quant-trading (London Breakout, Dual Thrust vb.)",day,1H,kapsam_disi,false,2,https://github.com/je-suis-tm/quant-trading
 O3-007,Turn of the month strategy S&P 500 (10 Best Swing #9),swing,1D,tam,false,5,https://www.quantifiedstrategies.com/swing-trading-strategies/
 O3-009,Stocks in Play – 5 dk ORB + Relative Volume (Zarattini/Barbon/Aziz),day,5m,dakikalik,true,11,https://www.quantifiedstrategies.com/stocks-in-play-trading-strategy-day-trading/
+O3-012,MACD and RSI Strategy (73% win rate),swing,1D,gizli,true,2,https://www.quantifiedstrategies.com/macd-and-rsi-strategy/
+O3-013,Turnaround Tuesday (SPY),swing,1D,tam,true,1,https://www.quantifiedstrategies.com/turnaround-tuesday-strategy/
 O3-014,3 Days Down Overnight (S&P 500),swing,1D,tam,false,5,https://www.quantifiedstrategies.com/3-days-down-overnight-trading-strategy/
 O3-015,IBS (Internal Bar Strength) SPY – IBS<0.2 al / >0.8 sat,swing,1D,tam,false,4,https://www.quantifiedstrategies.com/ibs-internal-bar-strength-indicator-strategies/
+O3-016,Gap down + 25 MA filtresi (S&P 500 gun ici),day,5m,dakikalik,true,1,https://www.quantifiedstrategies.com/gap-trading-strategies/
+O3-018,VRT Levels - hacim tabanli destek/direnc kirilim+reddi,swing,1H,eksik,true,2,https://reddit.com/r/algotrading/comments/1tbgqmn/my_strategy_outperformed_the_sp_500_over_3_years/
+O3-022,DAX Value Area gunluk bias sistemi,day,15m,eksik,true,1,https://nexusfi.com/showthread.php?t=44951
+O3-023,London Session ORB - GBP (mekanik kirilim gunlugu),day,15m,eksik,true,1,https://nexusfi.com/showthread.php?t=36245
+O3-025,Bollinger Prism - NQ reversal (PF 2.78),day,1m,gizli,true,1,https://www.elitetrader.com/et/threads/nq-reversal-strategy-backtest-reached-profit-factor-2-78.389985/
+O3-027,Mean Reversion Strategy Journal - Buy Sell Bands (ABD hisseleri),swing,1D,gizli,true,2,https://elitetrader.com/et/threads/mean-reversion-strategy-journal.363044/
+O3-030,75%+ win rate trend stratejisi (Jim Brown kitabindan) - EURUSD,swing,1D,gizli,true,2,https://www.tradingheroes.com/75-win-rate-trading-strategy/
+O3-031,RSI Divergence swing - 27 parite gunluk,swing,1D,ihtiyari,true,2,https://www.tradingheroes.com/rsi-strategy-for-swing-trading/
+O3-032,RSI50 stratejisi - EURUSD gunluk,swing,1D,ihtiyari,true,1,https://www.tradingheroes.com/rsi-trading-strategy-results/
+O3-033,RSIDive (RSI uyumsuzlugu) - EURUSD gunluk,swing,1D,ihtiyari,true,2,https://www.tradingheroes.com/rsi-trading-strategy-results/
+O3-034,Trending Pin Bar v2 - EURUSD H4,swing,4H,ihtiyari,true,2,https://www.tradingheroes.com/backtesting-results-tpb-eurusd-h4/
 P01,Twin OTT (TOTT) çift bantlı trend sistemi,swing,1D,tam,false,4,Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf
 P02,Kevin Davey Donchian + ADX rejim filtreli kırılım,swing,1D,tam,false,2,Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf
 P03,4H Sweet Spot (1D/4H/1H) PMax + ADX rejim (aynı strateji: R6),day,1H,tam,false,4,Paper_Test_4_Lider_Day_ve_Swing_Strateji_Raporu.pdf
@@ -242,5 +284,3 @@ V1A,VOLTRAN-1A swing kırılım ve rejim motoru (v3),swing,1D,tam,false,5,Voltra
 V1B,VOLTRAN-1B SMC + ML geri çekilme motoru (v3),swing,1D,tam,false,6,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
 V2A,VOLTRAN-2A saatlik adaptif kanal (TOTT) + seans kırılım (v3),day,1H,tam,false,7,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
 V2B,VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3),day,1H,tam,false,5,Voltran_4_Super_Strateji_Mimari_ve_Backtest_Raporu.pdf
-C01,"Haftalik yonlu gunluk geri cekilme (wd_pullback_risk, Codex Algo 21)",swing,1D,tam,false,2,Codex Algo 21 raporu
-C02,"Haftalik yonlu gunluk CCI devam (wd_cci_continuation_risk, Codex Algo 21)",swing,1D,tam,false,1,Codex Algo 21 raporu
