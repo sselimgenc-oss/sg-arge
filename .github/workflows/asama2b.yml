@@ -1,0 +1,56 @@
+name: Asama 2b tam dogrulama (T6b)
+
+on:
+  workflow_dispatch:
+    inputs:
+      null_tekrar:
+        description: "C01-C21 null model tekrar sayisi"
+        default: "500"
+      bootstrap_tekrar:
+        description: "Block bootstrap tekrar sayisi"
+        default: "1000"
+      codex_ids:
+        description: "Codex satirlari (virgulle; bos = C01-C21)"
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  asama2b:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Download daily bars
+        run: python data/fetch.py --interval 1d --allow-partial
+      - name: Download USDTRY
+        run: python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Run stage 2b
+        env:
+          NULL_TEKRAR: ${{ inputs.null_tekrar }}
+          BOOTSTRAP_TEKRAR: ${{ inputs.bootstrap_tekrar }}
+          CODEX_IDS: ${{ inputs.codex_ids }}
+        run: |
+          args=(--null-tekrar "$NULL_TEKRAR" --bootstrap-tekrar "$BOOTSTRAP_TEKRAR")
+          if [ -n "$CODEX_IDS" ]; then args+=(--codex-ids "$CODEX_IDS"); fi
+          python backtests/asama2b.py "${args[@]}"
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/MANIFEST.csv data/evren.csv results/asama2b.csv results/asama2b_ozet.md
+          git diff --cached --quiet || git commit -m "chore: refresh stage 2b results"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep 5
+          done
+          exit 1

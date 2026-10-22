@@ -7,7 +7,7 @@ import argparse
 import hashlib
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Callable
 
@@ -60,10 +60,28 @@ class RowConfig:
     pdf_exposure: float
     pdf_max_positions: int
     time_stop_bars: int | None = None
+    # Two PDF-centred signal parameters used only by T6b's neighbourhood test.
+    # Position sizing and stop-engine knobs intentionally do not appear here.
+    plato_parametreleri: tuple[tuple[str, float], ...] = ()
+
+
+FAMILY_PLATEAU_PARAMS: dict[str, tuple[tuple[str, float], ...]] = {
+    "wd_pullback_risk": (("ema_fast", 20), ("ema_slow", 50)),
+    "wd_cci_continuation_risk": (("cci_period", 20), ("ema_slow", 100)),
+    "wd_flow_confirmation_risk": (("flow_period", 20), ("ema_slow", 100)),
+    "wd_ichimoku_balance_risk": (("tenkan_period", 9), ("kijun_period", 26)),
+    "wd_dmi_trend_risk": (("dmi_period", 14), ("adx_threshold", 20)),
+    "wd_kama_efficiency_risk": (("er_period", 10), ("kama_fast", 2)),
+    "wd_adx_breakout_risk": (("channel_period", 55), ("adx_threshold", 20)),
+    "wd_dual_momentum_risk": (("short_momentum", 21), ("long_momentum", 63)),
+    "wd_breakout_risk": (("channel_period", 20), ("ema_period", 20)),
+    "wd_momentum_risk": (("roc_period", 20), ("ema_slow", 50)),
+    "wd_reversion_risk": (("bb_period", 20), ("rsi_entry_threshold", 10)),
+}
 
 
 ROWS = {
-    item.row_id: item
+    item.row_id: replace(item, plato_parametreleri=FAMILY_PLATEAU_PARAMS[item.family])
     for item in [
         RowConfig("C01", "BIST30", "wd_pullback_risk", pullback_signals, .0015, "2024-10-03", .7274, 2.21, 1.61, -.0589, 489, .0570, .5965, .4815, .6488, .6779, .1412, 14),
         RowConfig("C02", "BIST30", "wd_cci_continuation_risk", cci_signals, .0015, "2024-10-03", .5630, 1.90, 1.34, -.0601, 551, .0168, .4406, .3348, .6019, .4852, .1388, 16),

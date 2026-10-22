@@ -8,10 +8,12 @@ from engine.indicators import atr, ema, rsi
 from strategies.common import completed_weekly_regime, crossed_above
 
 
-def signals(frame: pd.DataFrame, market: str) -> pd.DataFrame:
+def signals(frame: pd.DataFrame, market: str, **params: float) -> pd.DataFrame:
+    ema_fast = int(params.get("ema_fast", 20))
+    ema_slow = int(params.get("ema_slow", 50))
     close = frame["close"]
-    ema20 = ema(close, 20)
-    ema50 = ema(close, 50)
+    ema20 = ema(close, ema_fast)
+    ema50 = ema(close, ema_slow)
     rsi14 = rsi(close, 14)
     weekly = completed_weekly_regime(frame, market)
     return pd.DataFrame(

@@ -15,13 +15,15 @@ def _midpoint(frame: pd.DataFrame, length: int) -> pd.Series:
     ) / 2.0
 
 
-def signals(frame: pd.DataFrame, market: str) -> pd.DataFrame:
+def signals(frame: pd.DataFrame, market: str, **params: float) -> pd.DataFrame:
+    tenkan_period = int(params.get("tenkan_period", 9))
+    kijun_period = int(params.get("kijun_period", 26))
     close = frame["close"]
-    tenkan = _midpoint(frame, 9)
-    kijun = _midpoint(frame, 26)
+    tenkan = _midpoint(frame, tenkan_period)
+    kijun = _midpoint(frame, kijun_period)
     # Completed cloud at today's coordinate: spans calculated 26 bars earlier.
-    span_a = ((tenkan + kijun) / 2.0).shift(26)
-    span_b = _midpoint(frame, 52).shift(26)
+    span_a = ((tenkan + kijun) / 2.0).shift(kijun_period)
+    span_b = _midpoint(frame, 52).shift(kijun_period)
     cloud_top = pd.concat([span_a, span_b], axis=1).max(axis=1)
     cloud_bottom = pd.concat([span_a, span_b], axis=1).min(axis=1)
     weekly = completed_weekly_regime(frame, market)
