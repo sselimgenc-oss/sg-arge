@@ -82,3 +82,4 @@ Aşağıdaki stratejiler için kart çıkar. Bir satırda birden fazla strateji 
 - **G010** | OPEX Week Long | https://www.linkedin.com/posts/quantifiedstrategies_quantifiedstrategies-activity-7440715064598405121-4a_l
 - **G011** | PowerX — RSI + Stochastic + MACD | https://github.com/IvanLetteri/AITA---Strategies/blob/main/rsi-stoch-macd/powerx-results.txt
 - **G012** | Riding Bollinger Bands | https://github.com/IvanLetteri/AITA---Strategies/blob/main/bb_riding/btst_bb_riding_hopt_results.txt
+- **G013** | Trend Trigger | EMA + MTF Stochastic | URL yok: TradingView'da bu adla ara (yazar büyük ihtimalle blitz_locked ya da benzeri). Bulamazsan `erisim_engeli: true`.
