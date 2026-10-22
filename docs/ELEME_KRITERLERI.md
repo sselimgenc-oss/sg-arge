@@ -26,6 +26,10 @@ A: OOS + stres testli rapor (Codex Algo 21; OOS'u seçim sonrası olduğu için 
 9. **Örneklem/anlamlılık:** >= 100 işlem (swing >= 60); t-stat > 2 yalnız canlı kapısında (çoklu test düzeltmesi DSR ile, t > 3 ayrıca aranmaz); tek enstrüman/yıla bağımlılık yok (en iyi işlem/enstrüman çıkarılınca pozitif).
 10. **Aşırı uyum alarmı:** PF > 4, Sharpe > 2-3, getiri > %500 veya "hedefe ulaşana dek iterasyon" (Voltran v1→v3) → ek doğrulama zorunlu (3-8 hepsi sıkı; 3b geçilmeden paper yok).
 
+## Piyasa betasına karşı testler (lider, ilk tarama sonrası; `tartisma/005`)
+- **BIST USD bazında** test edilir (`USDTRY=X`). Karar USD sonucuna göre verilir.
+- **Rastgele giriş (null model):** aynı çıkış kuralları, aynı işlem sayısı ve tutma süresiyle ≥500 rastgele giriş. Stratejinin PF'i ve ortalama R'si rastgele dağılımın %95 yüzdeliğini geçmeli; geçemiyorsa **Reddedildi (piyasa betası)**. Aşama 2'nin ilk testidir; kalan testler bunu geçenlere uygulanır.
+
 ## Baz maliyet (tek yön, komisyon + kayma; lider kararı)
 | Piyasa | Baz | 2x | 3x |
 |---|---|---|---|
