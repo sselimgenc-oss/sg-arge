@@ -238,7 +238,7 @@
       "id": "T27",
       "owner": "claude-moderator",
       "title": "Paper trade altyapisi (sinyal, defter, parite, rapor)",
-      "status": "teslim edildi, lider incelemesi bekliyor: paper/ (gunluk.py, parite.py, panel.py, defter), motor record_state, paper.yml (etkinlestirme lider); gercek veri paritesi birebir (292 islem)",
+      "status": "done (PR #99); etkinlestirme kullanici onayinda",
       "spec": "docs/GOREV_T27.md"
     },
     {
@@ -256,6 +256,13 @@
       "status": "done (PR #97)",
       "spec": "docs/GOREV_T29.md",
       "model": "Terra"
+    },
+    {
+      "id": "T30",
+      "owner": "claude-moderator",
+      "title": "Gun ici tarama/Asama 2 bellek ve hiz",
+      "status": "atandi",
+      "spec": "docs/GOREV_T30.md"
     }
   ],
   "done": [
