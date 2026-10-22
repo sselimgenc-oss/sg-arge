@@ -11,29 +11,45 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD Hisse / Kaldıraçlı ETF (TQQQ, UVXY, TECL, SOXL, SQQQ, BSV)
 gostergeler:
-  sma200_tqqq:
+  tqqq_close:
+    f: close
+    varlik: TQQQ
+  tqqq_sma200:
     f: sma
     src: close
     n: 200
-  sma20_tqqq:
+    varlik: TQQQ
+  tqqq_rsi10:
+    f: rsi
+    src: close
+    n: 10
+    varlik: TQQQ
+  soxl_rsi10:
+    f: rsi
+    src: close
+    n: 10
+    varlik: SOXL
+  tqqq_sma20:
     f: sma
     src: close
     n: 20
-  rsi10_tqqq:
+    varlik: TQQQ
+  sqqq_rsi10:
     f: rsi
     src: close
     n: 10
-  rsi10_soxl:
+    varlik: SQQQ
+  bsv_rsi10:
     f: rsi
     src: close
     n: 10
-giris: close_tqqq > sma200_tqqq and rsi10_tqqq <= 79
-cikis: close_tqqq < sma200_tqqq or rsi10_tqqq > 79
+    varlik: BSV
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: portfoy_rotasyonu
+ozel_kod: false
 parametreler:
   trend_sma_len: 200
   rsi_len: 10
@@ -50,10 +66,44 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: evet
+dolum: kapanis
+piyasa_kisiti: [ABD]
+rotasyon:
+  kip: gecis
+  dengeleme:
+    tip: gun
+  agac:
+    eger: tqqq_close > tqqq_sma200
+    ise:
+      eger: tqqq_rsi10 > 79
+      ise:
+        tut: UVXY
+      degilse:
+        tut: TQQQ
+    degilse:
+      eger: tqqq_rsi10 < 31
+      ise:
+        tut: TECL
+      degilse:
+        eger: soxl_rsi10 < 30
+        ise:
+          tut: SOXL
+        degilse:
+          eger: tqqq_close < tqqq_sma20
+          ise:
+            sec:
+              adaylar:
+              - SQQQ
+              - BSV
+              skor: '{v}_rsi10'
+              yon: yuksek
+              n: 1
+          degilse:
+            tut: TQQQ
 spec_durumu: tam
 belirsiz:
 - Composer.trade sayfasından kurgu mantığı ('How it works') ve getiri raporu eksiksiz okundu
 - 'Özel kod mantığı (Kaldıraçlı ETF Taktiksel Varlık Dağılımı): (1) TQQQ > SMA(TQQQ, 200) ise TQQQ tutulur; ancak RSI(TQQQ, 10) > 79 aşırı ısınma gösterirse UVXY (volatilite sıçraması) tutulur, (2) TQQQ
   < SMA(TQQQ, 200) ise aşırı satım sıçramaları aranır: RSI(TQQQ, 10) < 31 ise TECL (3x tech), değilse ve RSI(SOXL, 10) < 30 ise SOXL (3x semis) tutulur, (3) Diğer durumlarda TQQQ < SMA(TQQQ, 20) iken SQQQ
   (3x ters) veya BSV (kısa vadeli tahvil) arasında momentumu güçlü olan seçilir'
-- "ozel_kod_nedeni: portfoy_rotasyonu (kaldiracli ETF'ler arasi tahsisat; D4 geregi kaldirac fazina ertelendi)"
+- "T22: kural agaci Composer acik uc noktasindan (https://stagehand-api.composer.trade/api/v1/public/symphonies/MmQbpf2U5TMQFmr9Nt2e/score) okundu ve rotasyon.agac olarak birebir cevrildi (esik, pencere ve varlik listesi kaynaktan; RSI Wilder, SMA/RSI gunluk kapanis uzerinden). Agac her bar degerlendirilir; hedef agirlik degisince emir verilir (EVRENSEL_KURALLAR D12). Kaldirac yok; kaldiracli ETF (TQQQ, UVXY vb.) enstruman sayilir. Composer sembolleri kapanista dolar (kendi backtest serisiyle gunluk getiri korelasyonu 1,0000 dogrulandi): D4 geregi dolum: kapanis; iki sekilde raporlanir (kapanis dolumu 2x maliyet | ertesi acilis)."

@@ -17,6 +17,7 @@ import yfinance as yf
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
 UNIVERSE_PATH = DATA_DIR / "evren.csv"
+ROTATION_PATH = DATA_DIR / "rotasyon_semboller.csv"  # named instruments of the T22 transition (gecis) cards
 MANIFEST_PATH = DATA_DIR / "MANIFEST.csv"
 QUALITY_PATH = ROOT / "results" / "veri_kalitesi_1h.md"
 BINANCE_KLINES_URL = "https://data-api.binance.vision/api/v3/klines"
@@ -338,13 +339,14 @@ def run(
     allow_partial: bool = False,
     start: pd.Timestamp | None = None,
     evren: str = "sabit",
+    rotasyon: bool = False,
 ) -> int:
     manifest_rows: list[dict[str, object]] = []
     quality_rows: list[dict[str, object]] = []
     successful: set[str] = set()
     failure_reasons: dict[str, str] = {}
     failures = 0
-    for asset in load_universe(pit=evren == "pit"):
+    for asset in load_universe(ROTATION_PATH) if rotasyon else load_universe(pit=evren == "pit"):
         if interval in SUBHOURLY and asset.source != "binance":
             continue  # sub-hourly bars exist only for crypto (EVRENSEL_KURALLAR B)
         path = archive_dir(interval) / asset.filename
@@ -380,7 +382,7 @@ def run(
                 )
             )
             print(f"ERROR {asset.symbol}: {exc}")
-    if interval not in SUBHOURLY:  # sub-hourly runs only cover crypto: do not mark other symbols missing
+    if interval not in SUBHOURLY and not rotasyon:  # sub-hourly runs only cover crypto: do not mark other symbols missing
         update_universe_notes(successful, failure_reasons)
     update_manifest(manifest_rows)
     if interval == "1h":
@@ -401,6 +403,7 @@ def parse_args() -> argparse.Namespace:
         help="merge downloads into an existing archive without duplicate timestamps",
     )
     parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
+    parser.add_argument("--rotasyon", action="store_true", help="download data/rotasyon_semboller.csv (T22 gecis instruments) instead of the market universe")
     parser.add_argument(
         "--allow-partial",
         action="store_true",
@@ -418,5 +421,6 @@ if __name__ == "__main__":
             allow_partial=arguments.allow_partial,
             start=pd.Timestamp(arguments.baslangic, tz="UTC") if arguments.baslangic else None,
             evren=arguments.evren,
+            rotasyon=arguments.rotasyon,
         )
     )

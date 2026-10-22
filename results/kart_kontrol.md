@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
-Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 141
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **91**; ayrica `dakikalik` (yalniz kripto testi) hazir: **25**
+Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 136
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **104**; ayrica `dakikalik` (yalniz kripto testi) hazir: **25**
 
 
 ## Durum dagilimi
@@ -10,10 +10,10 @@ T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **91**; ayrica `d
 |---|---|
 | gizli | 35 |
 | ihtiyari | 14 |
-| sadece_short | 2 |
-| eksik | 163 |
+| sadece_short | 3 |
+| eksik | 159 |
 | dakikalik | 62 |
-| tam | 123 |
+| tam | 126 |
 | kapsam_disi | 4 |
 
 ## `tam` kartlarda hatalar (T5'e engel)
@@ -50,10 +50,8 @@ Toplam: 7 (durum `tam` olanlar once)
 | mott_b3 | 4 |
 | mott_b4 | 4 |
 | mott_b5 | 4 |
-| close_tqqq | 4 |
 | orb_high | 3 |
 | halftrend | 2 |
-| spy_close | 2 |
 | mov_var | 2 |
 | ott_opt2 | 2 |
 | session_time | 2 |
@@ -163,11 +161,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | tick_vol | 1 |
 | burst_zscore | 1 |
 | bbw_expansion | 1 |
-| rsi10_extremes_cleared | 1 |
-| tech_vs_kmlm_bull | 1 |
-| tech_vs_kmlm_bear | 1 |
-| risk_on_kmlm | 1 |
-| risk_off_kmlm | 1 |
 | orb_low | 1 |
 | order_block_boga | 1 |
 

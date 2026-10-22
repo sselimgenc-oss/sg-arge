@@ -5,21 +5,20 @@ kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.composer.trade/trading-strategies/overbought-or-oversold-spy-else-uvxy-C8QUEQBKayzmaSBz7MAZ
   sayfa: null
-erisim_engeli: true
 tarz: swing
 tf: 1D
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY / UVXY)
 gostergeler:
-  rsi10:
+  spy_rsi10:
     f: rsi
     src: close
     n: 10
-ozel_kod: true
-ozel_kod_nedeni: portfoy_rotasyonu
-giris: rsi10 < 30
-cikis: rsi10 > 80
+    varlik: SPY
+ozel_kod: false
+giris: null
+cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
@@ -34,9 +33,22 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: eksik
+dolum: kapanis
+piyasa_kisiti: [ABD]
+rotasyon:
+  kip: gecis
+  dengeleme:
+    tip: gun
+  agac:
+    eger: spy_rsi10 > 80
+    ise:
+      tut: UVXY
+    degilse:
+      eger: spy_rsi10 < 30
+      ise:
+        tut: UPRO
+      degilse:
+        tut: SPY
+spec_durumu: tam
 belirsiz:
-- 'Composer C8QUEQBKayzmaSBz7MAZ sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
-- Ayni serideki erisilebilen Composer varyantlarinda (Overbought or Oversold SPY else UVXY | Now let's make it weird ve SPY Overbought UVXY Test) SPY 10-gunluk RSI degeri izlenerek asiri alimda (orn. RSI(10)
-  > 68 veya 80) UVXY'ye, asiri satimda UPRO/SPY'a, diger durumda BIL/sepete gecildigi gorulmektedir; ancak C8QUEQBKayzmaSBz7MAZ ID'li senfoninin kesin esik sayilari dogrulanamadi.
-- "T10: ozel_kod_nedeni: portfoy_rotasyonu (Composer SPY/UVXY tahsisati)"
+- "T22: kural agaci Composer acik uc noktasindan (https://stagehand-api.composer.trade/api/v1/public/symphonies/C8QUEQBKayzmaSBz7MAZ/score) okundu ve rotasyon.agac olarak birebir cevrildi (esik, pencere ve varlik listesi kaynaktan; RSI Wilder, SMA/RSI gunluk kapanis uzerinden). Agac her bar degerlendirilir; hedef agirlik degisince emir verilir (EVRENSEL_KURALLAR D12). Kaldirac yok; kaldiracli ETF (TQQQ, UVXY vb.) enstruman sayilir. Composer sembolleri kapanista dolar (kendi backtest serisiyle gunluk getiri korelasyonu 1,0000 dogrulandi): D4 geregi dolum: kapanis; iki sekilde raporlanir (kapanis dolumu 2x maliyet | ertesi acilis)."

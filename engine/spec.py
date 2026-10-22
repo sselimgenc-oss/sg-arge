@@ -26,6 +26,7 @@ import yaml
 
 from . import expr as _expr
 from . import gosterge as _ind
+from . import rotasyon as _rot
 
 DURUMLAR = ("gizli", "ihtiyari", "sadece_short", "eksik", "dakikalik", "tam", "kapsam_disi")
 TARZLAR = ("day", "swing", "belirsiz")
@@ -201,7 +202,14 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
                 if isinstance(item, str):
                     _check_expression(item, f"{block}.{sub}", defined, gost, issues, runtime=True)
 
-    if card.get("spec_durumu") == "tam":
+    rotation = card.get("rotasyon")
+    if rotation is not None:
+        for problem in _rot.dogrula(card):
+            issues.append(Issue("rotasyon", problem))
+        if not issues or not any(i.kod == "rotasyon" for i in issues):
+            for field_name, text in _rot.expressions(card):
+                _check_expression(text, field_name, defined, gost, issues, runtime=False)
+    if card.get("spec_durumu") == "tam" and rotation is None:
         has_exit = any(card.get(key) for key in EXIT_FIELDS)
         for key in EXPR_FIELDS:
             value = card.get(key)

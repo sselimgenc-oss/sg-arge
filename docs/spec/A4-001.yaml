@@ -5,7 +5,6 @@ kaynak:
   dosya: strateji_listesi (2).xlsx
   url: https://www.composer.trade/trading-strategies/short-term-momentum-that-works-20-with-macro-filter-mean-reversion-dsPSLcRMdQldkyolwGon
   sayfa: null
-erisim_engeli: true
 tarz: swing
 tf: 1D
 mtf: null
@@ -33,10 +32,9 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: eksik
+spec_durumu: tam
 belirsiz:
-- 'Composer.trade strateji sayfasina dogrudan erisim engellendi (erisim_engeli: true); arama motoru indeksinden genel yapi kurtarildi.'
 - 'Kurtarilan kurallar: Gunluk yeniden dengelenen taktik ETF stratejisi; 1) Makro rejimi (''weather'') skor kartlariyla okur, 2) Atak (SOXX - yari iletkenler) veya defans (TLT, GLD, XLU) sepetleri ile volatilite/doviz
   korumasi (VIXM) arasinda secim yapar, 3) Kisa vadeli RSI ile asiri alim/satim (mean reversion front-runner) dali calistirir, 4) Short/koruma oncesinde bankalarin sigortacilari yenip yenmedigini (EUFN
   > KIE) kontrol eder. Kesin RSI periyotlari ve dal esikleri sayfa engeli nedeniyle okunamadi.'
-- "T10: ozel_kod_nedeni: portfoy_rotasyonu (Composer makro rejim ve sepet tahsisati)"
+- "T22: kural agaci Composer acik uc noktasindan okunabildi (https://stagehand-api.composer.trade/api/v1/public/symphonies/dsPSLcRMdQldkyolwGon/score); eski 'erisim engellendi' notu gecersiz. Kurallar tam (RSI/cumulative-return/moving-average-return pencereleri kaynakta) ama ag cok buyuk: 228 esit agirlik dugumu, 108 kosul, 52 farkli ETF (DUST, SMN, REW, EUO vb. cogunun 2015-2020 verisi yok) ve wt-cash-specified/ters-oynaklik dugumleri var. rotasyon.agac'a cevrilebilir ama karti okunmaz kilar ve veri_yok ile Dogrulanamaz cikmasi beklenir; kodlanmadi, ozel_kod olarak kaldi. Lider isterse ayni donusturucuyle uretilir."
