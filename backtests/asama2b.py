@@ -325,9 +325,9 @@ def decide(row: dict[str, Any]) -> tuple[str, str]:
         conditional.append("OOS ornek<30")
     if row.get("_intraday_no_pre", False):
         conditional.append("on donem yok")
-    if row.get("piyasa") == "BIST30" and row.get("evren") == "pit":
-        conditional.append("survivorship: 2015-2019 PIT evren yok")  # T11: BIST30 lists only from 2020
-    elif row.get("piyasa") in ("BIST30", "ABD25") and row.get("evren") not in ("pit", "enstruman"):  # named ETFs have no universe
+    # T11 + T11b: BIST30 lists cover 2015-2026, so PIT lifts the flag in both markets (SODA/TRKCM have no bars after
+    # merging into SISE in 2020: a merger, not a failure, so it is not treated as survivorship bias).
+    if row.get("piyasa") in ("BIST30", "ABD25") and row.get("evren") not in ("pit", "enstruman"):  # named ETFs have no universe
         conditional.append("survivorship yanliligi")
     if row.get("on_veri_yok"):
         conditional.append("on donem Dogrulanamaz (veri yok)")

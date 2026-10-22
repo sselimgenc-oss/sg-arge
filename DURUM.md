@@ -20,11 +20,12 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 |---|---|---|---|
 | Sonnet | **T30: gün içi tarama/Aşama 2 bellek ve hız** (`docs/GOREV_T30.md`) | Atandı | "Görev geldi" |
 | Codex | Boşta (limit doldu; yenilenince yeni iş) | Bekliyor | Limit açılınca haber ver |
-| Argon | **T11b: BIST30 2015-2019 değişiklik tabloları** (küçültülmüş paket `argon/PAKET_T11b_bist_2015_2019.md`) | Limit 22:22'de açılır | Yeni paketi yapıştır; CSV'yi `argon/`a yükle |
+| Argon | **T19: 13 kartın kaynağını oku** (`argon/PAKET_T19_kaynak.md`) | Atandı | Paketi yapıştır; `T19_kaynaklar.md`'yi `argon/`a yükle |
 | Lider | T24 (#85) doğrulama + gün içi kripto taraması (5m) + rotasyon Aşama 2 gerçek koşu | Sürüyor | Yok |
 
 ## Tamamlananlar (son)
-- T27 (Sonnet, PR #99): paper altyapısı (`paper/`: günlük sinyal, sanal defter, parite, RAPOR, panel `data.json`, `paper.yml`). Lider doğrulaması: pytest 294, gerçek veri parite birebir (292 işlem), motor değişikliği eski sonuçları değiştirmedi. **Etkinleştirme kullanıcı onayı bekliyor:** başlangıç tarihi, `PANEL_TOKEN`, panel reposunun saatlik botunun kapatılması.
+- **T11b (Argon):** BIST30 2015-2019, 20 çeyrek × 30 hisse, Borsa İstanbul duyurularıyla. Lider denetimi: tekrar yok, çeyrek değişiklikleri zincirleme tutarlı, 2019-Q4 listesi 2020-Q1 listesine bağlanıyor (yalnız KOZAL→TRALT, KOZAA→TRMET kod değişikliği). `data/evren_pit.py` iki listeyi birleştirir; asama2b'de BIST PIT şerhi kalktı. Nihai listeye etkisi yok (tek BIST adayı C04 IS null testinde elenmişti).
+- T27 (Sonnet, PR #99): paper altyapısı (`paper/`: günlük sinyal, sanal defter, parite, RAPOR, panel `data.json`, `paper.yml`). Lider doğrulaması: pytest 294, gerçek veri parite birebir (292 işlem), motor değişikliği eski sonuçları değiştirmedi. Başlangıç **2026-10-23** (kullanıcı onayı). `paper.yml` hafta içi 22:30 UTC çalışır. Bekleyen: `PANEL_TOKEN`, panel reposunun saatlik botu.
 - T29 (Codex, PR #97): `huni.yml` uçtan uca huni (veri → tarama → 2a → 2b sabit/PIT → portföy → SONUC) ve sonuçları PR olarak açar; mevcut 4 iş akışı da artık main'e doğrudan push etmez, PR açar. Kullanıcı ayarı: Actions'ın PR açma izni açık.
 - T28 (Codex, PR #92): `.github/workflows/ci.yml`. Her PR'da pytest + spec kontrolü + main/PR gerçek veri paritesi (C01/C09/G011/M015/C07/R01 tarama, R01/C07 asama2b). `[parite-farki-bekleniyor]` etiketiyle bilinçli fark.
 - **Rotasyon Aşama 2 (gerçek koşu, lider):** 2a'da 12 satırdan 7'si null'u geçti (A4-002, A6-004 ABD, M017, M020a ABD/KRİPTO, O2-025, O2-027). 2b'de 7'si de **Reddedildi**: bootstrap MDD95 > %15 (A6-004 %15,8 en yakını; diğerleri %29-92). Kaldıraçlı ETF stratejileri yüksek getiri ama kabul edilemez düşüş. `SONUC.md` yeniden üretildi.
