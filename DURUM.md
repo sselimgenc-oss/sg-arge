@@ -24,6 +24,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Lider | T24 (#85) doğrulama + gün içi kripto taraması (5m) + rotasyon Aşama 2 gerçek koşu | Sürüyor | Yok |
 
 ## Tamamlananlar (son)
+- **Rotasyon Aşama 2 (gerçek koşu, lider):** 2a'da 12 satırdan 7'si null'u geçti (A4-002, A6-004 ABD, M017, M020a ABD/KRİPTO, O2-025, O2-027). 2b'de 7'si de **Reddedildi**: bootstrap MDD95 > %15 (A6-004 %15,8 en yakını; diğerleri %29-92). Kaldıraçlı ETF stratejileri yüksek getiri ama kabul edilemez düşüş. `SONUC.md` yeniden üretildi.
+- Lider düzeltmesi: `asama2a.py --kart-ids` koşulmayan kartların satırlarını siliyordu; artık yalnız seçilen kartlar değişir (test eklendi).
 - T26 (Codex, PR #89): BIST 1H saat etiketi normalize edildi (Yahoo :30 → tam saat). Açılış barlarında fiyatı değişen sıfır hacim (%5-7) uydurmadan düzeltilemez; kalite kapısı kapalı, BIST 1H Doğrulanamaz kalır (veri düzelirse otomatik açılır).
 - T25 (Sonnet, PR #88): `results/SONUC.md` + `SONUC.csv` başarılı/başarısız listesi (Geçti: C07, R01; Koşullu: A6-010).
 - T24 (Codex, PR #85): gün içi Aşama 2b + saat ilkeleri (D14), A6-019 taşındı. Lider: main ile çakışma çözüldü, `--kart-ids` satır silme hatası düzeltildi.

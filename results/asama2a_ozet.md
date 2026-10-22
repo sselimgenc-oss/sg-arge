@@ -1,31 +1,9 @@
-# Asama 2a: piyasa betasi testleri (T6a) — birlesik
-
-Iki lider kosusu birlestirildi: 1) ilk 37 kart (125 satir), 2) ikinci tarama adaylari (12 kart, 21 satir).
-
-Satir: 146 | Reddedildi (piyasa betasi): 128 | Reddedildi (BIST USD): 10 | Gecti (null): 8
-
-## Gecenler
-
-| Kart | Piyasa | Para | Islem | PF | p(PF) | p(ortR) |
-|---|---|---|---:|---:|---:|---:|
-| A6-010 | EMTIA | yerel | 319 | 1.38 | 0.020 | 0.020 |
-| P3-011 | KRIPTO25 | yerel | 404 | 1.75 | 0.030 | 0.005 |
-| R01 | ABD25 | yerel | 214 | 2.02 | 0.005 | 0.005 |
-| G007 | KRIPTO25 | yerel | 270 | 1.73 | 0.005 | 0.005 |
-| G011 | ABD25 | yerel | 369 | 1.75 | 0.030 | 0.005 |
-| M015 | ABD25 | yerel | 295 | 1.44 | 0.015 | 0.010 |
-| M038 | ABD25 | yerel | 1358 | 1.44 | 0.020 | 0.015 |
-| O3-003 | ABD25 | yerel | 572 | 1.35 | 0.030 | 0.005 |
-
----
-
-## Ilk kosu ayrintisi
-
+# Asama 2a: piyasa betasi testleri (T6a/T17)
 
 BIST USD bazinda; rastgele giris (null) testi: PF ve ortalama R, null dagiliminin %95 yuzdeligini gecmeli.
-Donem: IS 2020-01-01 -> 2024-09-30 (OOS ve 2015-2019 kullanilmadi).
+Donem: gunluk ve kripto gun ici 2020-01-01 -> 2024-09-30; yfinance 1H arsivinin ilk 2/3'u (OOS ve on donem kullanilmadi).
 
-Kart: 37 | T6b'ye gecen: 3 | elenen/dogrulanamaz: 34
+Kart: 58 | T6b'ye gecen: 14 | elenen/dogrulanamaz: 44
 
 ## Satir sonuclari
 
@@ -156,14 +134,49 @@ Kart: 37 | T6b'ye gecen: 3 | elenen/dogrulanamaz: 34
 | V1B | ABD25 | yerel | 743 | 1.77 | 0.162 | 1.98 | 0.158 | 0.249 | 0.045 | 200 | Reddedildi (piyasa betasi): PF p=0.249, ortR p=0.045 (esik 0.05) |
 | V1B | KRIPTO25 | yerel | 631 | 1.56 | 0.160 | 2.19 | 0.180 | 0.652 | 0.129 | 200 | Reddedildi (piyasa betasi): PF p=0.652, ortR p=0.129 (esik 0.05) |
 | V1B | EMTIA | yerel | 272 | 1.44 | 0.126 | 1.76 | 0.147 | 0.408 | 0.129 | 200 | Reddedildi (piyasa betasi): PF p=0.408, ortR p=0.129 (esik 0.05) |
+| B3-001 | ABD25 | yerel | 1014 | 1.28 | 0.045 | 1.41 | 0.054 | 0.303 | 0.219 | 200 | Reddedildi (piyasa betasi): PF p=0.303, ortR p=0.219 (esik 0.05) |
+| B3-005 | ABD25 | yerel | 351 | 1.32 | 0.068 | 1.95 | 0.152 | 0.736 | 0.756 | 200 | Reddedildi (piyasa betasi): PF p=0.736, ortR p=0.756 (esik 0.05) |
+| B3-005 | KRIPTO25 | yerel | 233 | 1.62 | 0.096 | 2.21 | 0.208 | 0.393 | 0.557 | 200 | Reddedildi (piyasa betasi): PF p=0.393, ortR p=0.557 (esik 0.05) |
+| B3-005 | EMTIA | yerel | 62 | 1.43 | 0.081 | 2.18 | 0.216 | 0.453 | 0.502 | 200 | Reddedildi (piyasa betasi): PF p=0.453, ortR p=0.502 (esik 0.05) |
+| G007 | KRIPTO25 | yerel | 270 | 1.73 | 0.050 | 1.03 | 0.003 | 0.005 | 0.005 | 200 | Gecti (null) |
+| G011 | BIST30 | USD | 380 | 1.07 | 0.064 | - | - | - | - | - | Reddedildi (BIST USD): USD: PF_1x<1.1,net_2x<=0 |
+| G011 | ABD25 | yerel | 369 | 1.75 | 0.201 | 1.67 | 0.089 | 0.030 | 0.005 | 200 | Gecti (null) |
+| G011 | KRIPTO25 | yerel | 370 | 1.73 | 0.225 | 2.25 | 0.140 | 0.269 | 0.005 | 200 | Reddedildi (piyasa betasi): PF p=0.269, ortR p=0.005 (esik 0.05) |
+| M006 | BIST30 | USD | 60 | 1.14 | 0.129 | 2.02 | 0.445 | 0.756 | 0.672 | 200 | Reddedildi (piyasa betasi): PF p=0.756, ortR p=0.672 (esik 0.05) |
+| M006 | ABD25 | yerel | 115 | 1.88 | 0.491 | 2.45 | 0.471 | 0.383 | 0.055 | 200 | Reddedildi (piyasa betasi): PF p=0.383, ortR p=0.055 (esik 0.05) |
+| M014 | ABD25 | yerel | 449 | 1.16 | 0.034 | 1.41 | 0.048 | 0.522 | 0.249 | 200 | Reddedildi (piyasa betasi): PF p=0.522, ortR p=0.249 (esik 0.05) |
+| M015 | ABD25 | yerel | 295 | 1.44 | 0.049 | 1.26 | 0.024 | 0.015 | 0.010 | 200 | Gecti (null) |
+| M015 | EMTIA | yerel | 47 | 1.91 | 0.082 | 1.93 | 0.070 | 0.055 | 0.026 | 1000 | Reddedildi (piyasa betasi): PF p=0.055, ortR p=0.026 (esik 0.05) |
+| M037 | ABD25 | yerel | 689 | 1.23 | 0.039 | 1.47 | 0.059 | 0.502 | 0.368 | 200 | Reddedildi (piyasa betasi): PF p=0.502, ortR p=0.368 (esik 0.05) |
+| M037 | EMTIA | yerel | 161 | 1.28 | 0.039 | 1.55 | 0.066 | 0.234 | 0.229 | 200 | Reddedildi (piyasa betasi): PF p=0.234, ortR p=0.229 (esik 0.05) |
+| M038 | BIST30 | USD | 1293 | 0.92 | -0.021 | - | - | - | - | - | Reddedildi (BIST USD): USD: PF_1x<1.1,net_2x<=0 |
+| M038 | ABD25 | yerel | 1358 | 1.44 | 0.064 | 1.40 | 0.052 | 0.020 | 0.015 | 200 | Gecti (null) |
+| O3-001 | ABD25 | yerel | 588 | 1.22 | 0.025 | 1.31 | 0.040 | 0.154 | 0.229 | 200 | Reddedildi (piyasa betasi): PF p=0.154, ortR p=0.229 (esik 0.05) |
+| O3-003 | ABD25 | yerel | 572 | 1.35 | 0.056 | 1.31 | 0.040 | 0.030 | 0.005 | 200 | Gecti (null) |
+| O3-003 | EMTIA | yerel | 142 | 1.34 | 0.056 | 1.34 | 0.043 | 0.053 | 0.023 | 1000 | Reddedildi (piyasa betasi): PF p=0.053, ortR p=0.023 (esik 0.05) |
+| O3-004 | ABD25 | yerel | 632 | 1.21 | 0.034 | 1.32 | 0.042 | 0.224 | 0.129 | 200 | Reddedildi (piyasa betasi): PF p=0.224, ortR p=0.129 (esik 0.05) |
+| A4-002 | ABD25 | yerel | 33 | 2.65 | 0.830 | 1.42 | 0.322 | 0.015 | 0.005 | 200 | Gecti (null) |
+| A4-003 | ABD25 | yerel | 67 | 2.09 | 0.294 | 1.58 | 0.422 | 0.022 | 0.087 | 1000 | Reddedildi (piyasa betasi): PF p=0.022, CAGR p=0.087 (esit 0.05) |
+| A4-005 | ABD25 | yerel | 49 | 0.98 | -0.003 | 5.05 | 0.435 | 0.766 | 0.761 | 200 | Reddedildi (piyasa betasi): PF p=0.766, CAGR p=0.761 (esit 0.05) |
+| A6-004 | ABD25 | yerel | 543 | 1.84 | 0.115 | 1.83 | 0.113 | 0.025 | 0.025 | 200 | Gecti (null) |
+| A6-004 | KRIPTO25 | yerel | 354 | 1.34 | 0.165 | 1.35 | 0.163 | 0.083 | 0.029 | 1000 | Reddedildi (piyasa betasi): PF p=0.083, CAGR p=0.029 (esit 0.05) |
+| B3-014 | BIST30 | USD | 645 | 0.97 | -0.038 | - | - | - | - | - | Reddedildi (BIST USD): USD: PF_1x<1.1,net_2x<=0 |
+| B3-014 | ABD25 | yerel | 619 | 1.17 | 0.132 | 1.50 | 0.336 | 0.816 | 0.806 | 200 | Reddedildi (piyasa betasi): PF p=0.816, CAGR p=0.806 (esit 0.05) |
+| M017 | ABD25 | yerel | 969 | 1.54 | 0.227 | 1.05 | 0.091 | 0.005 | 0.005 | 200 | Gecti (null) |
+| M020a | ABD25 | yerel | 71 | 2.72 | 0.300 | 1.68 | 0.144 | 0.005 | 0.005 | 200 | Gecti (null) |
+| M020a | KRIPTO25 | yerel | 61 | 1.32 | 0.400 | 1.26 | 0.289 | 0.025 | 0.010 | 200 | Gecti (null) |
+| O2-025 | ABD25 | yerel | 119 | 2.15 | 2.241 | 1.56 | 0.538 | 0.010 | 0.005 | 200 | Gecti (null) |
+| O2-027 | ABD25 | yerel | 126 | 2.08 | 1.951 | 1.32 | 0.436 | 0.010 | 0.005 | 200 | Gecti (null) |
 
 ## Karar ozeti
 
-- T6b'ye gecen kartlar: A6-010, P3-011, R01
-- Elenen kartlar (hicbir piyasada gecmedi): A3-007, A3-008a, A3-008b, A3-009a, A3-009b, A3-009c, A5-009, A6-001, B1-002, B3-010, C01, C02, O1-001, O1-038, O1-066, O1-075, O1-079, O3-007, P01, P02, P3-001, P3-002, P3-003, P3-004, P3-005, P3-007, R02, R05, T8-01, T8-02, T8-04, T8-05, V1A, V1B
+- T6b'ye gecen kartlar: A4-002, A6-004, A6-010, G007, G011, M015, M017, M020a, M038, O2-025, O2-027, O3-003, P3-011, R01
+- Elenen kartlar (hicbir piyasada gecmedi): A3-007, A3-008a, A3-008b, A3-009a, A3-009b, A3-009c, A4-003, A4-005, A5-009, A6-001, B1-002, B3-001, B3-005, B3-010, B3-014, C01, C02, M006, M014, M037, O1-001, O1-038, O1-066, O1-075, O1-079, O3-001, O3-004, O3-007, P01, P02, P3-001, P3-002, P3-003, P3-004, P3-005, P3-007, R02, R05, T8-01, T8-02, T8-04, T8-05, V1A, V1B
 
 ## Notlar
 
 - Null model: ayni cikis kurallari ve portfoy limitleri; sembol basina ayni giris sayisi (rastgele barlar), toplam islem sayisini kartinkine yaklastirmak icin giris sayisi pilot kosuyla olceklenir; `null_islem_ort` ve `tutma_*` kontrol icindir.
 - Sinir bolgedeki satirlar (p 0,03-0,10) daha cok tekrarla yeniden kosulur.
+- Rotasyon kartlari (T23, `metrik: PF+CAGR`): islem basina stop/R yok; null modelde takvim, N, maliyet ve yurutme kartinki, yalniz secim rastgele (kesitsel/sirali: rastgele siralama, filtre ve rejim kapisi ayni; gecis: ayni gecis tarihlerinde agacin enstrumanlarindan biri). PF ve CAGR null %95'inin ustunde olmali; `ort_r`, `null_ortr_*`, `p_ortr` sutunlari bu satirlarda CAGR tasir.
+- Gun ici arsivleri `--veri-kok` altindan okunur; BIST 1H veri kalitesi duzelene kadar null testine alinmaz.
 - BIST: USD fiyat = TL fiyat / ayni gun USDTRY kapanisi. TL sonucu `PF_1x_tl`, `net_1x_tl` sutunlarinda yalniz bilgi.
