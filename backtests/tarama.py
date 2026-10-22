@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -106,6 +106,7 @@ class Prepared:
     market: str
     start: pd.Timestamp
     end: pd.Timestamp
+    runtime_cache: dict[str, Any] = field(default_factory=dict)
 
     def run(
         self,
@@ -114,6 +115,8 @@ class Prepared:
         close_fill: bool | None = None,
         signals: dict[str, pd.DataFrame] | None = None,
         extra_delay_bars: int = 0,
+        trusted_inputs: bool = False,
+        trades_only: bool = False,
     ):
         """One portfolio run; ``close_fill`` defaults to the card's own fill mode, ``signals`` may replace the plan's."""
         kwargs = dict(self.plan.engine_kwargs)
@@ -124,6 +127,8 @@ class Prepared:
             self.frames, _unused_signal_function, market=self.market, start=self.start, end=self.end,
             cost_rate=cost, extra_delay_bars=extra_delay_bars,
             precomputed_signals=signals if signals is not None else self.plan.signals, **kwargs,
+            trusted_inputs=trusted_inputs, trades_only=trades_only,
+            runtime_cache=self.runtime_cache if trusted_inputs else None,
         )
 
 

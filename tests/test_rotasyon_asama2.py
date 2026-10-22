@@ -140,8 +140,8 @@ def test_pit_membership_excludes_symbols_that_left_the_index() -> None:
 # ------------------------------------------------------------------------------------------ stage 2a / 2b / portfolio
 def test_stage_2a_rotation_row_uses_pf_and_cagr(monkeypatch: pytest.MonkeyPatch) -> None:
     data = {f"S{i:02d}": frame(walk(i, 2400), start="2014-06-02") for i in range(12)}
-    monkeypatch.setitem(asama2a._STATE, "data", {"ABD25": data})  # noqa: SLF001
-    for key, value in (("benchmarks", {}), ("hashes", {"ABD25": "h"}), ("git_sha", "x"), ("tl_rows", {}), ("usd", {})):
+    monkeypatch.setitem(asama2a._STATE, "data", {("1D", "ABD25"): data})  # noqa: SLF001
+    for key, value in (("benchmarks", {}), ("hashes", {("1D", "ABD25"): "h"}), ("git_sha", "x"), ("tl_rows", {}), ("usd", {})):
         monkeypatch.setitem(asama2a._STATE, key, value)  # noqa: SLF001
     row = asama2a.evaluate_pair({"card": kesitsel_card(dengeleme={"tip": "hafta"}) | {"id": "T", "tf": "1D"}, "market": "ABD25", "reps": 12, "reps_high": 12})
     assert row["metrik"] == "PF+CAGR" and row["null_tekrar"] == 12
@@ -152,8 +152,8 @@ def test_stage_2a_rotation_row_uses_pf_and_cagr(monkeypatch: pytest.MonkeyPatch)
 
 def test_daily_cards_keep_their_stage_2a_metric(monkeypatch: pytest.MonkeyPatch) -> None:
     data = {f"S{i}": frame(walk(i, 2400), start="2014-06-02") for i in range(4)}
-    monkeypatch.setitem(asama2a._STATE, "data", {"ABD25": data})  # noqa: SLF001
-    for key, value in (("benchmarks", {}), ("hashes", {"ABD25": "h"}), ("git_sha", "x"), ("tl_rows", {}), ("usd", {})):
+    monkeypatch.setitem(asama2a._STATE, "data", {("1D", "ABD25"): data})  # noqa: SLF001
+    for key, value in (("benchmarks", {}), ("hashes", {("1D", "ABD25"): "h"}), ("git_sha", "x"), ("tl_rows", {}), ("usd", {})):
         monkeypatch.setitem(asama2a._STATE, key, value)  # noqa: SLF001
     row = asama2a.evaluate_pair({"card": card("A3-007"), "market": "ABD25", "reps": 10, "reps_high": 10})
     assert row["metrik"] == "PF+ortR"

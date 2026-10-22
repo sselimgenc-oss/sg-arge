@@ -152,7 +152,7 @@
       "id": "T17",
       "owner": "codex-worker",
       "title": "Gun ici adaylar icin null testi (asama2a --tf) — model Sol",
-      "status": "atandi (limit 21:10'da acilinca)",
+      "status": "done (PR #82): gun ici asama2a null; regresyon birebir",
       "spec": "docs/GOREV_T16_T17.md"
     },
     {
@@ -210,6 +210,14 @@
       "title": "Rotasyon kartlari icin Asama 2a null + 2b kapilari + portfoy",
       "status": "teslim edildi, lider incelemesi bekliyor: rotasyon kartlari Asama 2a/2b/portfoye bagli (secim-null, PF+CAGR, +-%20 plato, PIT); yerel gercek-veri duman kosusu 7/12 null gecti, 7/7 bootstrap MDD95'te elendi",
       "spec": "docs/GOREV_T23.md"
+    },
+    {
+      "id": "T24",
+      "owner": "codex-worker",
+      "title": "Gun ici Asama 2b + saat/gun ilkelleri (A6-019)",
+      "status": "atandi",
+      "spec": "docs/GOREV_T24.md",
+      "model": "Sol"
     }
   ],
   "done": [

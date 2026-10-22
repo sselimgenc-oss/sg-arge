@@ -146,6 +146,9 @@ def run_portfolio(
     entry_order_type: str | None = None,
     entry_order_validity: int = 1,
     level_fns: dict[str, Callable[..., float]] | None = None,
+    trusted_inputs: bool = False,
+    trades_only: bool = False,
+    runtime_cache: dict | None = None,
 ) -> BacktestResult:
     """Run shared-capital portfolio events without same-bar signal fills.
 
@@ -193,55 +196,82 @@ def run_portfolio(
     trail_m = atr_stop_multiple if trail_multiple is None else trail_multiple
     start = _as_utc(start)
     end = _as_utc(end)
-    clean_data = {symbol: _validate_frame(frame) for symbol, frame in data.items()}
+    # Repeated null draws reuse frames/signals already normalised and aligned by
+    # ``tarama.prepare``. Avoid copying millions of bars on every repetition.
+    clean_data = data if trusted_inputs else {symbol: _validate_frame(frame) for symbol, frame in data.items()}
     signals = (
         {
             symbol: signal_function(frame, market).reindex(frame.index)
             for symbol, frame in clean_data.items()
         }
         if precomputed_signals is None
-        else {
-            symbol: precomputed_signals[symbol].reindex(frame.index)
-            for symbol, frame in clean_data.items()
-        }
+        else (
+            precomputed_signals
+            if trusted_inputs
+            else {
+                symbol: precomputed_signals[symbol].reindex(frame.index)
+                for symbol, frame in clean_data.items()
+            }
+        )
     )
-    symbols = sorted(clean_data)
-    all_dates = pd.DatetimeIndex([])
-    for frame in clean_data.values():
-        all_dates = all_dates.union(frame.index)
-    window = all_dates[(all_dates >= start) & (all_dates <= end)]
-    dates = list(window)
-    if not dates:
-        raise ValueError("no bars in requested backtest period")
+    cached = runtime_cache.get("static") if runtime_cache is not None else None
+    if cached is None:
+        symbols = sorted(clean_data)
+        all_dates = pd.DatetimeIndex([])
+        for frame in clean_data.values():
+            all_dates = all_dates.union(frame.index)
+        window = all_dates[(all_dates >= start) & (all_dates <= end)]
+        dates = list(window)
+        if not dates:
+            raise ValueError("no bars in requested backtest period")
 
-    # Array views: the event loop below runs on numpy positions, not pandas lookups.
-    index_of = {symbol: clean_data[symbol].index for symbol in symbols}
-    locs = {symbol: index_of[symbol].get_indexer(window) for symbol in symbols}
-    price_arr = {
-        symbol: {field: clean_data[symbol][field].to_numpy(dtype=float) for field in ("open", "high", "low", "close")}
-        for symbol in symbols
-    }
-    nan_col = {symbol: np.full(len(index_of[symbol]), np.nan) for symbol in symbols}
-    # last bar at or before each date (a symbol without a bar that date is marked at its last close)
-    prev_loc = {symbol: index_of[symbol].searchsorted(window, side="right") - 1 for symbol in symbols}
+        # Array views: the event loop below runs on numpy positions, not pandas lookups.
+        index_of = {symbol: clean_data[symbol].index for symbol in symbols}
+        locs = {symbol: index_of[symbol].get_indexer(window) for symbol in symbols}
+        price_arr = {
+            symbol: {field: clean_data[symbol][field].to_numpy(dtype=float) for field in ("open", "high", "low", "close")}
+            for symbol in symbols
+        }
+        nan_col = {symbol: np.full(len(index_of[symbol]), np.nan) for symbol in symbols}
+        # last bar at or before each date (a symbol without a bar that date is marked at its last close)
+        prev_loc = {symbol: index_of[symbol].searchsorted(window, side="right") - 1 for symbol in symbols}
 
-    def column(symbol: str, name: str) -> np.ndarray:
-        frame = signals[symbol]
-        return frame[name].to_numpy(dtype=float) if name in frame.columns else nan_col[symbol]
+        def column(symbol: str, name: str) -> np.ndarray:
+            frame = signals[symbol]
+            return frame[name].to_numpy(dtype=float) if name in frame.columns else nan_col[symbol]
+
+        sig_exit = {symbol: signals[symbol]["exit"].to_numpy().astype(bool) for symbol in symbols}
+        sig_atr = {symbol: column(symbol, "atr") for symbol in symbols}
+        sig_trail = {
+            symbol: column(symbol, "trail_atr") if "trail_atr" in signals[symbol].columns else sig_atr[symbol]
+            for symbol in symbols
+        }
+        sig_stop_dist = {symbol: column(symbol, "stop_dist") for symbol in symbols}
+        sig_target_dist = {symbol: column(symbol, "target_dist") for symbol in symbols}
+        sig_stop_pct = {symbol: column(symbol, "stop_pct") for symbol in symbols}
+        sig_target_pct = {symbol: column(symbol, "target_pct") for symbol in symbols}
+        sig_entry_level = {symbol: column(symbol, "entry_level") for symbol in symbols}
+        has_stop_dist = {symbol: "stop_dist" in signals[symbol].columns for symbol in symbols}
+        cached = {
+            "symbols": symbols, "window": window, "dates": dates, "index_of": index_of, "locs": locs,
+            "price_arr": price_arr, "prev_loc": prev_loc, "sig_exit": sig_exit, "sig_atr": sig_atr,
+            "sig_trail": sig_trail, "sig_stop_dist": sig_stop_dist, "sig_target_dist": sig_target_dist,
+            "sig_stop_pct": sig_stop_pct, "sig_target_pct": sig_target_pct,
+            "sig_entry_level": sig_entry_level, "has_stop_dist": has_stop_dist,
+        }
+        if runtime_cache is not None:
+            runtime_cache["static"] = cached
+    else:
+        symbols = cached["symbols"]
+        window, dates = cached["window"], cached["dates"]
+        index_of, locs = cached["index_of"], cached["locs"]
+        price_arr, prev_loc = cached["price_arr"], cached["prev_loc"]
+        sig_exit, sig_atr, sig_trail = cached["sig_exit"], cached["sig_atr"], cached["sig_trail"]
+        sig_stop_dist, sig_target_dist = cached["sig_stop_dist"], cached["sig_target_dist"]
+        sig_stop_pct, sig_target_pct = cached["sig_stop_pct"], cached["sig_target_pct"]
+        sig_entry_level, has_stop_dist = cached["sig_entry_level"], cached["has_stop_dist"]
 
     sig_entry = {symbol: signals[symbol]["entry"].to_numpy().astype(bool) for symbol in symbols}
-    sig_exit = {symbol: signals[symbol]["exit"].to_numpy().astype(bool) for symbol in symbols}
-    sig_atr = {symbol: column(symbol, "atr") for symbol in symbols}
-    sig_trail = {
-        symbol: column(symbol, "trail_atr") if "trail_atr" in signals[symbol].columns else sig_atr[symbol]
-        for symbol in symbols
-    }
-    sig_stop_dist = {symbol: column(symbol, "stop_dist") for symbol in symbols}
-    sig_target_dist = {symbol: column(symbol, "target_dist") for symbol in symbols}
-    sig_stop_pct = {symbol: column(symbol, "stop_pct") for symbol in symbols}
-    sig_target_pct = {symbol: column(symbol, "target_pct") for symbol in symbols}
-    sig_entry_level = {symbol: column(symbol, "entry_level") for symbol in symbols}
-    has_stop_dist = {symbol: "stop_dist" in signals[symbol].columns for symbol in symbols}
 
     # Entry signals per date: only symbols holding a position or flagging an entry need a signal-step visit.
     entry_matrix = np.zeros((len(window), len(symbols)), dtype=bool)
@@ -405,6 +435,17 @@ def run_portfolio(
         )
 
     for di, date in enumerate(dates):
+        # Null repetitions consume only the trade ledger. When the portfolio is
+        # idle, jump over bars without an entry/order instead of marking an
+        # equity point for every one of hundreds of thousands of 5m bars.
+        if (
+            trades_only
+            and not positions
+            and not pending_entries
+            and date not in scheduled
+            and entry_starts[di] == entry_starts[di + 1]
+        ):
+            continue
         todays_orders = sorted(
             scheduled.pop(date, []), key=lambda order: ({"exit": 0, "partial": 1}.get(order.kind, 2), order.symbol)
         )
@@ -582,10 +623,11 @@ def run_portfolio(
             open_position(symbol, date, float(price_arr[symbol]["close"][loc]), atr_value,
                           stop_dist, target_dist, stop_pct, target_pct, int(loc))
 
-        marked_equity = equity_at("close")
-        gross_close = sum(position.quantity * mark(symbol, "close") for symbol, position in positions.items())
-        equity_points[date] = marked_equity
-        exposure_points[date] = gross_close / marked_equity if marked_equity > 0 else np.nan
+        if not trades_only:
+            marked_equity = equity_at("close")
+            gross_close = sum(position.quantity * mark(symbol, "close") for symbol, position in positions.items())
+            equity_points[date] = marked_equity
+            exposure_points[date] = gross_close / marked_equity if marked_equity > 0 else np.nan
 
     final_date = dates[-1]
     for symbol in sorted(positions):
