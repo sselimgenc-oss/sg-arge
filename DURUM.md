@@ -26,6 +26,9 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.
 
+## Aşama 2a sonucu (`tartisma/008`)
+125 satırdan **3'ü** rastgele giriş testini geçti: A6-010 Emtia, P3-011 Kripto, R01 ABD (Qullamaggie). Giriş sinyalleri genel olarak rastgele girişten ayırt edilemiyor; kâr piyasa yönü ve çıkış yapısından geliyor. Sırada T6b (lider koşusu).
+
 ## Sırada bekleyen (açılmadı)
 - Argon parti 11 (28 kaynak, md listeleri) ve parti 12 (13 strateji: güncellenmiş liste PDF'i + Trend Trigger). Envanter: `tartisma/006_pdf_envanteri.md` (repoda toplam ≈392 strateji).
 - **Kullanıcıdan:** repoda olmayan strateji PDF'leri (Paper_Test_8'in "256 stratejilik 3 PDF" dediği kaynaklar dahil) `kaynak_pdf/` klasörüne yüklenmeli.
