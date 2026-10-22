@@ -226,6 +226,6 @@ jobs:
             echo "- Süre: $(( $(date +%s) - $(date -d "$started" +%s) )) saniye"
             echo "- git_sha: $(git rev-parse HEAD)"
             echo
-            sed -n '/## Nihai karar tablosu/,/^## /p' results/SONUC.md | head -45
+            sed -n '/## Özet sayılar/,/^## Paper/p' results/SONUC.md | head -20
           } > /tmp/huni-pr.md
           gh pr create --base main --head "$branch" --title "chore: huni sonuçları ${{ github.run_id }}" --body-file /tmp/huni-pr.md
