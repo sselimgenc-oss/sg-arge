@@ -1,0 +1,231 @@
+name: Uctan uca huni
+
+on:
+  workflow_dispatch:
+    inputs:
+      kartlar:
+        description: "Virgulle kart IDleri (bos = hepsi)"
+        default: ""
+      tf:
+        description: "Zaman dilimleri"
+        default: "1D,1W"
+      null_tekrar:
+        description: "Null tekrar sayisi"
+        default: "200"
+      bootstrap_tekrar:
+        description: "Bootstrap tekrar sayisi"
+        default: "1000"
+      evren_pit:
+        description: "PIT Asama 2b de calissin"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  ARTIFACT_SUFFIX: ${{ github.run_id }}
+
+jobs:
+  veri:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Download daily universe once
+        run: |
+          python data/fetch.py --interval 1d --allow-partial --evren pit
+          python data/fetch.py --interval 1d --rotasyon --allow-partial
+          python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: huni-data-${{ env.ARTIFACT_SUFFIX }}
+          path: |
+            data/daily/
+            data/MANIFEST.csv
+            data/evren.csv
+          retention-days: 7
+
+  tarama:
+    needs: veri
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-data-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - run: python backtests/tarama.py --tf "${{ inputs.tf }}" --kart-ids "${{ inputs.kartlar }}" --birlestir
+      - uses: actions/upload-artifact@v4
+        with:
+          name: huni-tarama-${{ env.ARTIFACT_SUFFIX }}
+          path: results/
+          retention-days: 7
+
+  asama2a:
+    needs: [veri, tarama]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-data-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-tarama-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - run: python backtests/asama2a.py --tf "${{ inputs.tf }}" --tekrar "${{ inputs.null_tekrar }}" --kart-ids "${{ inputs.kartlar }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: huni-asama2a-${{ env.ARTIFACT_SUFFIX }}
+          path: results/
+          retention-days: 7
+
+  asama2b_sabit:
+    needs: [veri, asama2a]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-data-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-asama2a-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - name: Run fixed-universe stage 2b
+        run: |
+          args=(--tf "${{ inputs.tf }}" --null-tekrar "${{ inputs.null_tekrar }}" --bootstrap-tekrar "${{ inputs.bootstrap_tekrar }}")
+          if [ -n "${{ inputs.kartlar }}" ]; then args+=(--kart-ids "${{ inputs.kartlar }}"); fi
+          python backtests/asama2b.py "${args[@]}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: huni-asama2b-sabit-${{ env.ARTIFACT_SUFFIX }}
+          path: results/
+          retention-days: 7
+
+  asama2b_pit:
+    needs: [veri, asama2b_sabit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-data-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-asama2b-sabit-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - name: Run PIT stage 2b and retain its named output
+        if: ${{ inputs.evren_pit }}
+        run: |
+          cp results/asama2b.csv results/asama2b_sabit.csv
+          args=(--tf "${{ inputs.tf }}" --null-tekrar "${{ inputs.null_tekrar }}" --bootstrap-tekrar "${{ inputs.bootstrap_tekrar }}" --evren pit)
+          if [ -n "${{ inputs.kartlar }}" ]; then args+=(--kart-ids "${{ inputs.kartlar }}"); fi
+          python backtests/asama2b.py "${args[@]}"
+          mv results/asama2b.csv results/asama2b_pit.csv
+          mv results/asama2b_sabit.csv results/asama2b.csv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: huni-asama2b-pit-${{ env.ARTIFACT_SUFFIX }}
+          path: results/
+          retention-days: 7
+
+  portfoy:
+    needs: [veri, asama2b_pit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-data-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-asama2b-pit-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - run: python backtests/portfoy.py --bootstrap-tekrar "${{ inputs.bootstrap_tekrar }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: huni-portfoy-${{ env.ARTIFACT_SUFFIX }}
+          path: results/
+          retention-days: 7
+
+  sonuc_pr:
+    needs: portfoy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: huni-portfoy-${{ env.ARTIFACT_SUFFIX }}
+          path: .
+      - name: Build final result report
+        run: python backtests/sonuc_raporu.py
+      - name: Commit results to a run branch and open a PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch="huni/${{ github.run_id }}"
+          git switch -c "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/ data/MANIFEST.csv data/evren.csv
+          git commit -m "chore: huni results ${{ github.run_id }}" || exit 0
+          git push origin "$branch"
+          {
+            echo "## Huni sonucu"
+            echo
+            echo "- Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            started=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" --jq .created_at)
+            echo "- Süre: $(( $(date +%s) - $(date -d "$started" +%s) )) saniye"
+            echo "- git_sha: $(git rev-parse HEAD)"
+            echo
+            sed -n '/## Nihai karar tablosu/,/^## /p' results/SONUC.md | head -45
+          } > /tmp/huni-pr.md
+          gh pr create --base main --head "$branch" --title "chore: huni sonuçları ${{ github.run_id }}" --body-file /tmp/huni-pr.md
