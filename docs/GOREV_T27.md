@@ -11,7 +11,7 @@ Bu görev **gerçek para ve aracı kurum bağlantısı içermez**: API anahtarı
 ## İstenenler
 1. **`paper/portfoy.yaml`:** paper'a giren satırlar (id, piyasa, tf, evren, ağırlık).
    - Başlangıç: C07:ABD25, R01:ABD25, A6-010:EMTIA; 1/N ağırlık.
-   - Sanal sermaye: 100.000 USD.
+   - Sanal sermaye: **5.000 USD** (kullanıcının paneliyle aynı).
    - Evrensel kurallar aynen geçerli: işlem başı %0,5 risk, toplam açık risk %2, ATR14×3 stop (kartta yoksa).
 2. **`paper/gunluk.py`** (her işlem günü kapanıştan sonra çalışır):
    - Güncel veriyi indirir (`data/fetch.py`, yalnız gereken semboller).
@@ -35,5 +35,18 @@ Bu görev **gerçek para ve aracı kurum bağlantısı içermez**: API anahtarı
    - parite (madde 4);
    - durdurma alarmı;
    - tatil/eksik veri günü (emir bekler, uydurma dolum yok).
+
+## Panel entegrasyonu (kullanıcı kararı sonrası eklendi)
+Kullanıcının hazır bir panosu var: `sselimgenc-oss/sg-test-panel` (public). Bu repoda `index.html` (10 sekmeli pano, GitHub Pages), `data.json` (tek veri kaynağı) ve `bot_engine.py` bulunuyor. Panoyu **ön yüz olarak aynen kullan**. Motor sg-arge'den beslenir.
+
+8. **`paper/panel.py`:** Defterden panelin `data.json` şemasında bir dosya üretir: `paper/panel/data.json`. Şemayı sg-test-panel'deki `data.json` ve `index.html`'den oku. Alanlar: `meta`, `kpis`, `accounts`, `open_positions`, `closed_trades_list`, `pending_orders`, `stats`, `periodic_returns`, `calendar`, `risk` vb.
+   - Her paper satırı bir "account" olur: C07, R01, A6-010. Sermaye 1/N.
+   - `strategies_27` yerine **yalnız `results/SONUC.csv`'den gelen gerçek değerler** yazılır: durum, PF, OOS, bootstrap MDD95. Mevcut paneldeki doğrulanmamış skorlar (ör. "skor 96, p<0.01", R05_ZSCORE vb.) kullanılmaz. Alan adı panel kodu gerektiriyorsa korunur, içerik gerçek veriyle doldurulur.
+   - Hesaplanamayan alanlar uydurulmaz; boş ya da `null` bırakılır. Örnekler: `luck_prob`, `coach` önerileri, kaldıraçlı Monte Carlo. Panelde "veri yok" görünmesi kabul.
+9. **Yasak:** sabit/yedek fiyat (`FALLBACK_PRICES` benzeri) kullanılmaz. Veri gelmezse o gün emir bekler, `meta`'ya "veri yok" notu düşülür.
+10. **Yayın:** sg-arge iş akışı `paper/panel/data.json`'u `paper-defter` dalına yazar. Panel reposuna aktarım için kullanıcının bir token (secret) eklemesi gerekir; bunu kullanıcı onayıyla lider ayarlayacak. Sen yalnız aktarım adımını iş akışında `if: secrets.PANEL_TOKEN != ''` koşuluyla hazırla. Hedef repo: `sselimgenc-oss/sg-test-panel`, dosya: `data.json`.
+11. **Test:** Üretilen `data.json` panelin beklediği alanları içermeli. Panelin mevcut `data.json`'undaki anahtar kümesiyle karşılaştıran bir şema testi yaz (gerekli anahtarlar var, tipler uyumlu).
+
+`bot_engine.py`'ye ve panel reposuna doğrudan yazma; sen yalnız sg-arge'de çalış.
 
 Teslim: Tek PR (base `main`); push'tan sonra PR'ı sen aç. Gerçek paper başlangıç tarihi kullanıcı onayıyla belirlenecek; workflow'u etkinleştirmeyi lider yapar.
