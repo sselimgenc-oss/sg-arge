@@ -98,6 +98,13 @@
       "title": "Dakikalik + gun ici kartlarin kripto taramasi (Binance 1m-1H)",
       "status": "sirada",
       "spec": "docs/GOREV_T5.md"
+    },
+    {
+      "id": "T2-p12",
+      "owner": "claude-moderator",
+      "title": "Parti 12 (G001-G013): guncellenmis liste PDF'indeki kural ozetlerinden kart (internet gerekmez; GitHub icin raw.githubusercontent)",
+      "status": "atandi",
+      "spec": "Issue #1 GOREV -> Sonnet parti 12"
     }
   ],
   "done": [
