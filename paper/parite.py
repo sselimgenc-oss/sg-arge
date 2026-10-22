@@ -75,7 +75,7 @@ def karsilastir(portfoy: gunluk.Portfoy, veri: gunluk.Veri, defter: Path) -> dic
     for satir in portfoy.satirlar:
         result, _ = gunluk.kitap(satir, veri, portfoy.baslangic, portfoy.sermaye * satir.agirlik)
         for t in result.trades.to_dict("records"):
-            if t["exit_reason"] == "end_of_test":
+            if str(t["exit_reason"]).startswith("end_of_test"):
                 continue
             expected.append({"satir": satir.etiket, "sembol": t["symbol"], "giris_tarihi": gunluk._day(t["entry_date"]), "cikis_tarihi": gunluk._day(t["exit_date"]),  # noqa: SLF001
                              "giris_fiyati": t["entry_price"], "cikis_fiyati": None, "adet": t["quantity"], "net": t["net_pnl"]})

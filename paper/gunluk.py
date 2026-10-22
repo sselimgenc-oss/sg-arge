@@ -305,7 +305,7 @@ def calistir(
     summary_rows = {}
     for satir in portfoy.satirlar:
         trades = results[satir.etiket].trades
-        trades = trades[trades["exit_reason"] != "end_of_test"] if not trades.empty else trades
+        trades = trades[~trades["exit_reason"].str.startswith("end_of_test")] if not trades.empty else trades
         wins, losses = (trades.loc[trades["net_pnl"] > 0, "net_pnl"].sum(), -trades.loc[trades["net_pnl"] < 0, "net_pnl"].sum()) if len(trades) else (0.0, 0.0)
         pf = float(wins / losses) if losses > 0 else (float("inf") if wins > 0 else float("nan"))
         summary_rows[satir.etiket] = {"islem": int(len(trades)), "pf": pf, "net": float(trades["net_pnl"].sum()) if len(trades) else 0.0}

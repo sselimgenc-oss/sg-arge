@@ -95,6 +95,16 @@ def test_orders_fill_at_the_next_actual_open_and_positions_follow(tmp_path: Path
 
 
 # ------------------------------------------------------------------------------------------ parity (the key test)
+def test_partial_sells_before_the_end_do_not_count_as_closed_trades(tmp_path: Path) -> None:
+    """A position that already took its partial profit is force-closed at the end of a run with reason ``end_of_test+partial``."""
+    data, p = veri(1), portfoy("2016-06-01")
+    ozet = gunluk.calistir(p, data, tmp_path, git_sha="t")
+    for etiket, result in ozet["sonuclar"].items():
+        forced = result.trades[result.trades["exit_reason"].str.startswith("end_of_test")]
+        assert len(forced) == len(result.open_positions)  # exactly the open book, partial or not
+        assert ozet["satir_ozet"][etiket]["islem"] == len(result.trades) - len(forced)
+
+
 def test_replayed_ledger_equals_one_backtest(tmp_path: Path) -> None:
     data, p = veri(1), portfoy("2016-06-01")
     days = [first_after(data, p.baslangic + pd.Timedelta(days=60))] + last_days(data, 12)
