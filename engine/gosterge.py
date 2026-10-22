@@ -204,10 +204,11 @@ def macd(df: pd.DataFrame, src: str = "close", fast: int = 12, slow: int = 26, s
     return pd.DataFrame({"macd": line, "signal": sig, "hist": line - sig})
 
 
-def bb(df: pd.DataFrame, src: str = "close", n: int = 20, carpan: float = 2.0) -> pd.DataFrame:
+def bb(df: pd.DataFrame, src: str = "close", n: int = 20, carpan: float = 2.0, ddof: int = 0) -> pd.DataFrame:
+    """Bollinger bands; ``ddof`` 0 = Pine ``ta.stdev`` (default), 1 = pandas/qtpylib sample deviation."""
     s = source(df, src)
     basis = s.rolling(int(n)).mean()
-    dev = float(carpan) * s.rolling(int(n)).std(ddof=0)
+    dev = float(carpan) * s.rolling(int(n)).std(ddof=int(ddof))
     return pd.DataFrame({"upper": basis + dev, "basis": basis, "lower": basis - dev})
 
 
@@ -621,6 +622,147 @@ def renko_sayac(df: pd.DataFrame, kutu: float = 1.0, ilk_bar: int = 1) -> pd.Dat
     return pd.DataFrame({"up": up, "down": down}, index=df.index)
 
 
+def tr(df: pd.DataFrame) -> pd.Series:
+    """True range as a series (Pine ``ta.tr(true)``: the first bar is high - low)."""
+    return true_range(df)
+
+
+def linreg(df: pd.DataFrame, src: str = "close", n: int = 14, offset: int = 0) -> pd.Series:
+    """Pine ``ta.linreg``: least-squares line over the last ``n`` bars, evaluated ``offset`` bars before the end."""
+    n, offset = int(n), int(offset)
+    y = source(df, src).to_numpy(dtype=float)
+    out = np.full(len(y), np.nan)
+    if len(y) < n or n < 2:
+        return pd.Series(out, index=df.index)
+    x = np.arange(n, dtype=float)  # oldest bar = 0
+    sx, sxx = x.sum(), (x * x).sum()
+    sy = np.convolve(y, np.ones(n), mode="valid")
+    sxy = np.convolve(y, x[::-1], mode="valid")
+    slope = (n * sxy - sx * sy) / (n * sxx - sx * sx)
+    intercept = (sy - slope * sx) / n
+    out[n - 1:] = intercept + slope * (n - 1 - offset)
+    return pd.Series(out, index=df.index)
+
+
+def chandelier(df: pd.DataFrame, n: int = 22, carpan: float = 3.0) -> pd.DataFrame:
+    """Chandelier Exit as in geraked's CEZLSMA Pine: ratcheting ``long_stop``/``short_stop`` and the ``dir`` flag (+1/-1).
+
+    ``highest``/``lowest`` of the close and the ATR use the same period ``n``; both stops only ratchet while the
+    previous close stayed on the right side, and ``dir`` starts at +1.
+    """
+    n = int(n)
+    close = _col(df, "close").to_numpy(dtype=float)
+    atr_value = float(carpan) * atr(df, n).to_numpy(dtype=float)
+    top = _col(df, "close").rolling(n).max().to_numpy()
+    bottom = _col(df, "close").rolling(n).min().to_numpy()
+    size = len(close)
+    long_stop, short_stop = np.full(size, np.nan), np.full(size, np.nan)
+    direction = np.ones(size)
+    flag = 1.0
+    for i in range(size):
+        raw_long, raw_short = top[i] - atr_value[i], bottom[i] + atr_value[i]
+        prev_long = long_stop[i - 1] if i > 0 and not np.isnan(long_stop[i - 1]) else raw_long
+        prev_short = short_stop[i - 1] if i > 0 and not np.isnan(short_stop[i - 1]) else raw_short
+        previous_close = close[i - 1] if i > 0 else np.nan
+        current_long = max(raw_long, prev_long) if previous_close > prev_long else raw_long
+        current_short = min(raw_short, prev_short) if previous_close < prev_short else raw_short
+        long_stop[i], short_stop[i] = current_long, current_short
+        if close[i] > prev_short:
+            flag = 1.0
+        elif close[i] < prev_long:
+            flag = -1.0
+        direction[i] = flag
+    return pd.DataFrame({"long_stop": long_stop, "short_stop": short_stop, "dir": direction}, index=df.index)
+
+
+def andean(df: pd.DataFrame, n: int = 50, sinyal: int = 9) -> pd.DataFrame:
+    """Andean Oscillator (alpinex/Pine, as used in geraked's DHLAOS): exponential envelopes -> ``bull``, ``bear``, ``signal``."""
+    alpha = 2.0 / (int(n) + 1)
+    close, open_ = _col(df, "close").to_numpy(dtype=float), _col(df, "open").to_numpy(dtype=float)
+    size = len(close)
+    up1, up2, dn1, dn2 = (np.zeros(size) for _ in range(4))
+    p_up1 = p_up2 = p_dn1 = p_dn2 = 0.0
+    for i in range(size):
+        c, o = close[i], open_[i]
+        p_up1 = max(c, o, p_up1 - (p_up1 - c) * alpha)
+        p_up2 = max(c * c, o * o, p_up2 - (p_up2 - c * c) * alpha)
+        p_dn1 = min(c, o, p_dn1 + (c - p_dn1) * alpha)
+        p_dn2 = min(c * c, o * o, p_dn2 + (c * c - p_dn2) * alpha)
+        up1[i], up2[i], dn1[i], dn2[i] = p_up1, p_up2, p_dn1, p_dn2
+    with np.errstate(invalid="ignore"):
+        bull = np.sqrt(dn2 - dn1 * dn1)
+        bear = np.sqrt(up2 - up1 * up1)
+    frame = pd.DataFrame({"bull": bull, "bear": bear}, index=df.index)
+    frame["signal"] = ema(pd.DataFrame({"close": np.maximum(bull, bear)}, index=df.index), "close", int(sinyal))
+    return frame
+
+
+def nadaraya_watson(df: pd.DataFrame, h: float = 8.0, carpan: float = 3.0, n: int = 500, src: str = "close") -> pd.DataFrame:
+    """Nadaraya-Watson envelope, end-point (non-repainting) variant of LuxAlgo as in NWERSIASF: ``mid``, ``upper``, ``lower``.
+
+    ``mid`` is the Gaussian-kernel weighted mean of the last ``n`` values (bandwidth ``h``); the band half-width is
+    ``carpan`` x SMA(|close - mid|, n - 1) as in the source (499-bar MAE for the default 500 coefficients).
+    """
+    n = int(n)
+    y = source(df, src).to_numpy(dtype=float)
+    weights = np.exp(-(np.arange(n, dtype=float) ** 2) / (float(h) * float(h) * 2.0))
+    mid = np.full(len(y), np.nan)
+    if len(y) >= n:
+        mid[n - 1:] = np.convolve(y, weights, mode="valid") / weights.sum()
+    mid_series = pd.Series(mid, index=df.index)
+    mae = (_col(df, "close") - mid_series).abs().rolling(n - 1).mean() * float(carpan)
+    return pd.DataFrame({"mid": mid_series, "upper": mid_series + mae, "lower": mid_series - mae})
+
+
+def laguerre_rsi(df: pd.DataFrame, src: str = "close", alpha: float = 0.2) -> pd.Series:
+    """Ehlers' Laguerre RSI (gamma = 1 - alpha), filters start at 0 like Pine's ``nz``."""
+    price = source(df, src).to_numpy(dtype=float)
+    gamma = 1.0 - float(alpha)
+    out = np.full(len(price), np.nan)
+    l0 = l1 = l2 = l3 = 0.0
+    for i, value in enumerate(price):
+        p0, p1, p2 = l0, l1, l2
+        l0 = float(alpha) * value + gamma * p0
+        l1 = -gamma * l0 + p0 + gamma * l1
+        l2 = -gamma * l1 + p1 + gamma * l2
+        l3 = -gamma * l2 + p2 + gamma * l3
+        up = max(l0 - l1, 0.0) + max(l1 - l2, 0.0) + max(l2 - l3, 0.0)
+        down = max(l1 - l0, 0.0) + max(l2 - l1, 0.0) + max(l3 - l2, 0.0)
+        out[i] = up / (up + down) if up + down != 0 else np.nan
+    return pd.Series(out, index=df.index)
+
+
+def cdl_hammer(df: pd.DataFrame) -> pd.Series:
+    """TA-Lib ``CDLHAMMER`` (100 on a hammer bar, else 0), ported from the C implementation's default candle settings."""
+    open_, high = _col(df, "open").to_numpy(dtype=float), _col(df, "high").to_numpy(dtype=float)
+    low, close = _col(df, "low").to_numpy(dtype=float), _col(df, "close").to_numpy(dtype=float)
+    body = np.abs(close - open_)
+    upper = high - np.maximum(close, open_)
+    lower = np.minimum(close, open_) - low
+    spread = high - low
+
+    def trailing(values: np.ndarray, period: int, shift: int) -> np.ndarray:
+        """Mean of ``values`` over the ``period`` bars ending ``shift`` bars before each bar."""
+        out = np.full(len(values), np.nan)
+        csum = np.concatenate(([0.0], np.cumsum(values)))
+        for i in range(period + shift, len(values)):
+            out[i] = (csum[i - shift + 1] - csum[i - shift - period + 1]) / period
+        return out
+
+    body_short = trailing(body, 10, 1)                  # BodyShort: real body, 10 bars, factor 1.0
+    shadow_very_short = 0.1 * trailing(spread, 10, 1)   # ShadowVeryShort: high-low, 10 bars, factor 0.1
+    near_average = np.full(len(close), np.nan)          # Near: high-low, 5 bars, factor 0.2, evaluated one bar back
+    near = 0.2 * trailing(spread, 5, 1)
+    near_average[1:] = near[:-1]
+    previous_low = np.concatenate(([np.nan], low[:-1]))
+    with np.errstate(invalid="ignore"):
+        hit = (
+            (body < body_short) & (lower > body) & (upper < shadow_very_short)
+            & (np.minimum(close, open_) <= previous_low + near_average)
+        )
+    return pd.Series(np.where(hit, 100.0, 0.0), index=df.index)
+
+
 def _price(name: str) -> Callable[..., pd.Series]:
     return lambda df: _col(df, name)
 
@@ -631,7 +773,9 @@ REGISTRY: dict[str, Callable[..., pd.Series | pd.DataFrame]] = {
     "vwap": vwap, "kama": kama, "ichimoku": ichimoku, "supertrend": supertrend, "roc": roc,
     "zscore": zscore, "highest": highest, "lowest": lowest, "ott": ott, "pmax": pmax, "rvol": rvol,
     "stdev": stdev, "var": var, "rrs": rrs, "atr_ratio": atr_ratio,
-    "williams_fractal": williams_fractal, "renko_sayac": renko_sayac,
+    "williams_fractal": williams_fractal, "renko_sayac": renko_sayac, "tr": tr, "linreg": linreg,
+    "chandelier": chandelier, "andean": andean, "nadaraya_watson": nadaraya_watson, "laguerre_rsi": laguerre_rsi,
+    "cdl_hammer": cdl_hammer,
     "heikinashi": heikinashi, "alphatrend": alphatrend, "ut_bot": ut_bot, "sar": sar, "fisher_rsi": fisher_rsi,
     "open": _price("open"), "high": _price("high"), "low": _price("low"), "close": _price("close"), "volume": _price("volume"),
 }
@@ -645,6 +789,8 @@ COLUMNS: dict[str, tuple[str, ...] | None] = {
     "pmax": ("pmax", "ma", "dir", "long_stop", "short_stop"),
     "heikinashi": ("open", "high", "low", "close"),
     "williams_fractal": ("up", "down"), "renko_sayac": ("up", "down"),
+    "chandelier": ("long_stop", "short_stop", "dir"), "andean": ("bull", "bear", "signal"),
+    "nadaraya_watson": ("mid", "upper", "lower"),
 }
 
 # Meta indicator evaluated by build_env, not a function of the frame: {f: seri, ifade: "<expression>"}

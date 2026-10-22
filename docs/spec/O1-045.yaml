@@ -75,3 +75,4 @@ belirsiz:
 - 'short kuralı var: ANGLE <= -37 ve cross_under(pente, trigger) ve pente > -1 olduğunda short açılır (hedef %1.25, ATR iz süren çarpan 4, zararda zaman stopu 650 bar)'
 - "ozel_kod_nedeni: ozel_gosterge (ATAN acisi ve pipsize'li egim vektorleri (EMA10/EMA20 egimleri); birim bagimli)"
 - "piyasa_kisiti: ['GER40'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- "T21: kaynak erisilemedi (https://www.prorealcode.com/prorealtime-trading-strategies/vectorial-dax-m5/) -> Argon T19. ATAN acisi pipsize'a bagli (GER40 piyasa_kisiti), 10:00-22:00 seans ve zararda zaman stopu (seans saati paketi)"

@@ -128,3 +128,9 @@ Hepsi `engine/portfolio.py` + `engine/kart_sinyal.py` ile uygulanir; tum emirler
 - **`renko_sayac {kutu, ilk_bar}`:** kapanis bazli sentetik Renko tugla sayaci (ProBuilder tarzi, `.up`/`.down`); sayaclar ters yonde tugla olusana kadar kalir.
 - **`veri: endeks`** (gosterge alani): gosterge, islem gorulen enstruman yerine endeks (benchmark) serisinin kendi barlarindan hesaplanir ve takvime ffill ile hizalanir (ornek: endeks ATR'si). Endeks yoksa kart `EndeksYok` ile Dogrulanamaz olur.
 - Her yeni ilkel icin look-ahead testi (seriyi t'de kesince t'ye kadarki degerler ayni) `tests/test_t20.py`'dedir.
+
+### D11. Yeni gostergeler ve ifade ilkelleri (T21, Sonnet; lider onayina acik)
+- **`linreg {src, n, offset}`** (Pine `ta.linreg`, TA-Lib `LINEARREG` ile 1e-8 icinde), **`tr`** (gercek aralik serisi, ilk bar high-low), gosterge `bb` icin **`ddof`** (0 = Pine, 1 = pandas/qtpylib orneklem sapmasi).
+- **`chandelier {n, carpan}`** (`.long_stop/.short_stop/.dir`), **`andean {n, sinyal}`** (`.bull/.bear/.signal`), **`nadaraya_watson {h, carpan, n}`** (`.mid/.upper/.lower`; tekrar boyamayan uc nokta, `n` = 500 katsayi, 499 bar MAE), **`laguerre_rsi {src, alpha}`** (Ehlers, filtreler 0'dan baslar), **`cdl_hammer`** (TA-Lib `CDLHAMMER` portu, TA-Lib ile birebir). Hepsi icin look-ahead testi `tests/test_t21.py`'dedir; ilk dortunun literal Pine/Python portlariyla karsilastirmasi da orada.
+- **`barssince(kosul)`** (ifade dili): kosulun son True oldugu bardan bu yana gecen bar sayisi (kosul o barda True ise 0).
+- ZLSMA, Squeeze Momentum ve DHLAOS'un 300 barlik olay penceresi yeni ilkel gerektirmedi: `seri` + `linreg` + `valuewhen`/`barssince` kompozisyonu olarak kartta yazildi.

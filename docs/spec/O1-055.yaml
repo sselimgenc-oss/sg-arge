@@ -61,3 +61,4 @@ belirsiz:
   tar3 = +1.79% ve stop-loss slPrice = HighestSince(Buy, LLV(L, 40)) olarak tanımlanmıştır'
 - 'short kuralı var: aHPivs == 1 (12 barlık tepe pivotu) oluştuğunda Sell / Short sinyali üretilir'
 - "ozel_kod_nedeni: tanim_belirsiz ('aLPivs == 1' yerel pivot tanimi (cok barli onay mi, low == LLV(12) mi) kartta belirsiz; kodun genisletilmis surumu farkli hedefler kullaniyor)"
+- "T21: kaynak erisilemedi (https://www.wisestocktrader.com/indicators/4853-intraday-profit-maker-best-with-automation-for-amibroker-afl) -> Argon T19. 'aLPivs == 1' pivot tanimi (cok barli onay mi, low == LLV(12) mi) ve repaint eden ZigZag belirsiz"

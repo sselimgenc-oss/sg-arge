@@ -83,3 +83,4 @@ belirsiz:
 - "T7 sozdizimi: ternary (c ? a : b) '(c and a) or (not c and b)' bicimine cevrildi; anlam ayni"
 - "ozel_kod_nedeni: tanim_belirsiz (OTT/StochSlow(500,200,111) bolge kosullari (ott2_bull, stoc1_bull...) Matriks tanimlariyla kartta yok)"
 - "piyasa_kisiti: ['BIST'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- "T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Anil-Özekşi-Sistem-1) -> Argon T19. OTT/StochSlow(500,200,111) bolge kosullari (ott2_bull, stoc1_bull ...) ve seans penceresi Matriks tanimlariyla kartta yok"

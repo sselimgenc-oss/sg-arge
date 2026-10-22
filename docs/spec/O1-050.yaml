@@ -55,3 +55,4 @@ belirsiz:
 - 'İçsel gün içi güncellenme notu: DHigh(0) ve DLow(0) cari günün o ana kadarki en yüksek/düşük değerini kullanır'
 - 'short kuralı var: MM < Survente ve cross_under(close, Milieu) olduğunda 3 kontrat short açılır (+40 pip ve +78 pip kısmi kâr, 33 pip iz süren stop, 200 pip SL)'
 - "ozel_kod_nedeni: ozel_gosterge (TEMA/ucgen MA ve Dhigh/Dlow (cari gun) tabanli Milieu/Surachat; ProBuilder gunluk ust-alt fonksiyonlari)"
+- "T21: kaynak erisilemedi (https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/) -> Argon T19. pip cinsinden kismi kar/izsuren (FX), TEMA/ucgen MA ve cari gun Dhigh/Dlow, seans penceresi; ProBuilder kodu okunamadi"

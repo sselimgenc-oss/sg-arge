@@ -9,11 +9,60 @@ tf: 5m
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: AUDUSD
-gostergeler: {}
-giris: andean_bull_signal_cross and gunluk_yuksek_dusuk_onayi
+gostergeler:
+  ao:
+    f: andean
+    n: 50
+    sinyal: 9
+  pdl:
+    f: low
+    tf: 1D
+  ll5:
+    f: lowest
+    src: low
+    n: 5
+  ev_a:
+    f: seri
+    ifade: ao.bull[1] >= ao.bear[1] and ao.bull < ao.bear
+  ev_b:
+    f: seri
+    ifade: ao.bull[1] >= ao.signal[1] and ao.bull < ao.signal
+  ev_c:
+    f: seri
+    ifade: ao.bull[1] <= ao.signal[1] and ao.bull > ao.signal
+  ev_d:
+    f: seri
+    ifade: ao.bull[1] <= ao.bear[1] and ao.bull > ao.bear
+  iptal:
+    f: seri
+    ifade: ev_a or ev_b or ev_c
+  isaret:
+    f: seri
+    ifade: iptal or ev_d
+  tip:
+    f: seri
+    ifade: eger(iptal, 1, 2)
+  alt_gun:
+    f: seri
+    ifade: eger(high < pdl and ao.bull < ao.bear, 1, 0)
+  pencere:
+    f: highest
+    src: alt_gun
+    n: 51
+  son_tip:
+    f: seri
+    ifade: valuewhen(isaret[2], tip[2])
+  son_pencere:
+    f: seri
+    ifade: valuewhen(isaret[2], pencere[2])
+giris: cross_over(ao.bull, ao.signal) and son_tip == 2 and son_pencere > 0 and barssince(isaret[2]) <= 298
 cikis: null
-stop: null
-hedef: null
+stop:
+  tip: seviye
+  ifade: sinyal_ll5
+hedef:
+  tip: seviye
+  ifade: sinyal_close + 1.5 * (sinyal_close - stop_seviyesi)
 stop_eklendi: false
 parametreler: {}
 deneme_sayisi_kaynakta: null
@@ -26,15 +75,12 @@ rapor:
   wr: '%69.5'
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: true
-ozel_kod_nedeni: ozel_gosterge
+ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- 'Andean Oscillator (up1/up2/dn1/dn2 üstel zarflar) + 1D yüksek/düşük döngüsel onayı: ozel_kod'
 - Sadece 23 işlem, 4 haftalık pencere
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/DHLAOS.pine'
 - Yazarın test penceresi çok kısa (2023-08-06/09-03 (4 hafta)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: lowest(low,5) ; hedef: giris + 1.5*(giris - stop)' (sinyal barinda sabitlenen degerler: elle kodlanacak)"
-- "ozel_kod_nedeni: ozel_gosterge (Andean Oscillator (ustel zarflar) ve 1D yuksek/dusuk dongusel onayi)"
+- "T21: Pine kaynagi (DHLAOS.pine, raw.githubusercontent) okundu. Andean Oscillator andean(n=50, sinyal=9) ilkeli. Kaynaktaki 300 barlik geriye dogru dongu (en yakin olay: bull'un bear/sinyal'i asagi kesmesi ya da sinyali yukari kesmesi iptal eder; bull'un bear'i yukari kesmesi kurar) ve 51 barlik 'bar onceki gun dususunun altinda ve bull < bear' penceresi ifade diliyle yazildi (iptal/isaret/tip serileri, valuewhen, barssince). 300 bar icinde olay yoksa kaynak onceki 'li' degiskenini kullanir (bayat durum); burada giris atlanir. 1D dusuk = onceki tamamlanmis gunun dusugu (request.security + [1]). stop = lowest(low, 5), hedef = kapanis + 1,5 x (kapanis - stop) sinyal barinda sabit (D10). Kaynak pyramiding=10: ayni sembolde birden cok pozisyon acabilir, motor sembol basina tek pozisyon tutar"
 bias_varsayim: false

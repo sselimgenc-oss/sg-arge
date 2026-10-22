@@ -59,3 +59,4 @@ belirsiz:
 - "T7 sozdizimi: ternary (c ? a : b) '(c and a) or (not c and b)' bicimine cevrildi; anlam ayni"
 - "ozel_kod_nedeni: tanim_belirsiz (TOTT/SOTT ve HOTT/LOTT (OTT(HHV)/OTT(LLV)) bolge kosullari kartta tanimli degil)"
 - "piyasa_kisiti: ['BIST'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- "T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG) -> Argon T19. TOTT/SOTT ve HOTT/LOTT bolge kosullari kartta tanimli degil; seans penceresi"

@@ -63,3 +63,4 @@ belirsiz:
   + ADX > 40 ve CMO filtresi ile 3x kaldıraçlı Long girilir; 4 ATR stop loss ve 3 ATR kar hedefi uygulanır'
 - 'short kuralı var: TEMA kesişimi ve 4h trend filtresi aşağı döndüğünde short açılır'
 - "ozel_kod_nedeni: tanim_belirsiz (TEMA ve CMO onayi: CMO esigi ve TEMA 20/70 (4H) kartta yok; gostergeler'deki 'wma' yer tutucu)"
+- "T21: kaynak erisilemedi (https://jesse.trade/strategies/tematrendfollowing) -> Argon T19. CMO esigi ve TEMA 20/70 (4H) parametre degerleri kartta yok, 'tema' kutuphanede yok"

@@ -50,3 +50,4 @@ belirsiz:
 - 'Özel kod mantığı: MOV(C, 4, VAR) ortalamasının, HHV(H, 80) ve LLV(L, 80) üzerine kurulan OTT(2, 1.4) kanalları ile ara çizgilerinden oluşan 5 MOTT bandı ile kesişiminde Al/Sat emri gönderilir'
 - 'short kuralı var: CrossBelow şartı gerçekleştiğinde pozisyon kapatılır / açığa satılır'
 - "ozel_kod_nedeni: tanim_belirsiz (5 MOTT bandinin ayrintili formulu kartta yok)"
+- "T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4-Kurgu-Stratejisi) -> Argon T19. 5 MOTT bandinin formulu kartta yok; O1-006 ile ayni sistemin kopyasi gorunuyor"

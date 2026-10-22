@@ -9,12 +9,36 @@ tf: 15m
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: USDCHF
-gostergeler: {}
-giris: ut_bot_al and close > linreg_sinyal
-cikis: null
+gostergeler:
+  lr_open:
+    f: linreg
+    src: open
+    n: 11
+    offset: 0
+  lr_close:
+    f: linreg
+    src: close
+    n: 11
+    offset: 0
+  lr_signal:
+    f: sma
+    src: lr_close
+    n: 7
+  utstop:
+    f: ut_bot
+    carpan: 2
+    n: 1
+  hh7:
+    f: highest
+    src: high
+    n: 7
+giris: cross_under(close, utstop) and close < lr_signal
+cikis: lr_close[1] < lr_open[1] and lr_close > lr_open
 stop: null
-hedef: null
-stop_eklendi: false
+hedef:
+  tip: seviye
+  ifade: sinyal_hh7
+stop_eklendi: true
 parametreler: {}
 deneme_sayisi_kaynakta: null
 rapor:
@@ -26,17 +50,12 @@ rapor:
   wr: '%70.57'
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: true
-ozel_kod_nedeni: ozel_gosterge
+ozel_kod: false
+ters_sinyal: true
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- 'Varsayılan reverse=true: yazarın raporu ''UT Bot AL sinyalinde SHORT, SAT sinyalinde LONG''; long kolu için SAT sinyali + ters mantık gerekir -> lider
-  kararı'
-- 'Linear Regression Candles + UT Bot: ozel_kod'
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/LRCUTB.pine'
 - Yazarın test penceresi çok kısa (2023-08-01/10-27), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T7 sozdizimi: ozgun cikis metni: 'linreg mum rengi ters dönünce kapat'"
-- "T7 sozdizimi: 'sma(linreg_mum_kapanis, 7)' -> ad 'linreg_sinyal' (= SMA(linreg mum kapanisi, 7)); ozgun giris metni sonundaki yorum: 'reverse=true: bu sinyalde SHORT'"
-- "ozel_kod_nedeni: ozel_gosterge (Linear Regression Candles; ayrica D3 reverse=true karari kartta uygulanmadi (T7/PR #26 notu))"
+- "T21: Pine kaynagi (LRCUTB.pine, raw.githubusercontent) birebir portlandi; D3 geregi reverse=true halinin long kolu: UT Bot SAT sinyali (close, ut_bot izleyen stopun altina iner) ve close < SMA(linreg kapanis(11), 7) iken long; hedef = lowest-high(7) yani highest(high, 7) (strategy.exit yalniz limit verir, kaynakta stop yok: A7 standart ATR14 x 3 stop eklendi); cikis: linreg mumu kirmizidan yesile doner. UT Bot (carpan 2, ATR periyodu 1) kutuphane ilkeli, linreg mumlari linreg ilkelinden. Hedef dolum fiyatinin altindaysa (gap) giris atlanir"
 bias_varsayim: false
