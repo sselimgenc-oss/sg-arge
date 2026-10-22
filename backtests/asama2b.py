@@ -220,9 +220,13 @@ class CodexPrepared:
         *,
         signals: dict[str, pd.DataFrame] | None = None,
         extra_delay_bars: int = 0,
-        atr_stop_multiple: float = 3.0,
-        risk_per_trade: float = 0.005,
+        signal_params: dict[str, float] | None = None,
     ) -> BacktestResult:
+        computed = (
+            {symbol: self.config.signal_function(frame, self.config.market, **signal_params)
+             for symbol, frame in self.frames.items()}
+            if signals is None and signal_params is not None else self.plan.signals
+        )
         return run_portfolio(
             self.frames,
             self.config.signal_function,
@@ -232,9 +236,7 @@ class CodexPrepared:
             cost_rate=self.config.cost * multiplier,
             extra_delay_bars=extra_delay_bars,
             time_stop_bars=self.config.time_stop_bars,
-            precomputed_signals=signals if signals is not None else self.plan.signals,
-            atr_stop_multiple=atr_stop_multiple,
-            risk_per_trade=risk_per_trade,
+            precomputed_signals=signals if signals is not None else computed,
         )
 
 
@@ -344,13 +346,17 @@ def evaluate_codex(
         stres_net_gecikme=_metrics(delay, prepared.annualization)["getiri"],
     )
     cells = []
-    for atr_factor, risk_factor in itertools.product(PLATEAU_FACTORS, repeat=2):
-        result = prepared.run(atr_stop_multiple=3.0 * atr_factor, risk_per_trade=0.005 * risk_factor)
+    for factors in itertools.product(PLATEAU_FACTORS, repeat=len(config.plato_parametreleri)):
+        signal_params = {
+            name: max(1, int(round(center * factor)))
+            for (name, center), factor in zip(config.plato_parametreleri, factors, strict=True)
+        }
+        result = prepared.run(signal_params=signal_params)
         metrics = _metrics(result, prepared.annualization)
-        cells.append(((atr_factor, risk_factor), metrics["pf"], metrics["getiri"]))
+        cells.append((factors, metrics["pf"], metrics["getiri"]))
     plateau = plateau_summary(cells)
     row.update(
-        plato_parametreleri="atr_stop_multiple,risk_per_trade", plato_hucre=plateau["cells"],
+        plato_parametreleri=",".join(name for name, _ in config.plato_parametreleri), plato_hucre=plateau["cells"],
         plato_pf_medyan=plateau["median_pf"], plato_pozitif_oran=plateau["positive_rate"],
         plato_en_iyi_kenarda=plateau["best_on_edge"],
         **_bootstrap_and_dsr(real, prepared.annualization, trial_count(None, results_dir), bootstrap_reps, seed),
@@ -439,8 +445,9 @@ def write_outputs(table: pd.DataFrame, results_dir: Path, card_input_missing: bo
             f"{f(item.plato_pozitif_oran, '.0%')} | {f(item.bootstrap_mdd_p95, '.1%')} | {f(item.dsr_5N, '.3f')} | {item.karar} | {item.neden} |"
         )
     lines += ["", "## Yontem notlari", "", "- BIST fiyatlari USDTRY ile ayni gun USD'ye cevrilir.",
-              "- Plato merkezleri kaynak degerleridir; en iyi hucre secilmez ve stratejiye geri yazilmaz.",
+              "- Plato merkezleri kaynak sinyal degerleridir; en iyi hucre secilmez ve stratejiye geri yazilmaz.",
               "- DSR N = kaynak denemesi (yoksa 1) + tarama.csv satirlari + 21 Codex satiri.",
+              "- DSR'da denemeler arasi SR varyansi bilinmedigi icin stratejinin kendi SR standart hatasi kullanildi (yaklasim).",
               "- BIST/ABD guncel evrenleri survivorship yanliligi nedeniyle en fazla `Kosullu` olabilir."]
     (results_dir / "asama2b_ozet.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 

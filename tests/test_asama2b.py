@@ -7,6 +7,8 @@ import pandas as pd
 import pytest
 
 from backtests import asama2b
+from backtests.run_codex21 import ROWS
+from tests.test_tarama import synthetic
 
 
 def test_max_drawdown_has_known_result() -> None:
@@ -85,4 +87,21 @@ def test_decision_gates_known_cases() -> None:
     assert asama2b.decide(conditional)[0] == "Kosullu"
     rejected = {**passing, "stres_pf_2x": 1.19}
     assert asama2b.decide(rejected)[0] == "Reddedildi"
+
+
+def test_codex_signal_defaults_are_identical_with_explicit_pdf_parameters() -> None:
+    """T6b's optional parameters must not alter the T1a/T1b source centre."""
+    frame = synthetic(23, periods=400)
+    for config in ROWS.values():
+        params = {name: value for name, value in config.plato_parametreleri}
+        default = config.signal_function(frame, config.market)
+        explicit = config.signal_function(frame, config.market, **params)
+        pd.testing.assert_frame_equal(default, explicit)
+
+
+def test_every_codex_row_has_two_signal_not_sizing_plateau_parameters() -> None:
+    banned = {"atr_stop_multiple", "risk_per_trade"}
+    for config in ROWS.values():
+        assert len(config.plato_parametreleri) == 2
+        assert not {name for name, _ in config.plato_parametreleri}.intersection(banned)
 

@@ -8,10 +8,12 @@ from engine.indicators import atr
 from strategies.common import completed_weekly_regime, crossed_above, efficiency_ratio, kama
 
 
-def signals(frame: pd.DataFrame, market: str) -> pd.DataFrame:
+def signals(frame: pd.DataFrame, market: str, **params: float) -> pd.DataFrame:
+    er_period = int(params.get("er_period", 10))
+    kama_fast = int(params.get("kama_fast", 2))
     close = frame["close"]
-    kama_line = kama(close, 10, 2, 30)
-    er10 = efficiency_ratio(close, 10)
+    kama_line = kama(close, er_period, kama_fast, 30)
+    er10 = efficiency_ratio(close, er_period)
     weekly = completed_weekly_regime(frame, market)
     return pd.DataFrame(
         {

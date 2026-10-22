@@ -8,15 +8,17 @@ from engine.indicators import atr
 from strategies.common import completed_weekly_regime, dmi
 
 
-def signals(frame: pd.DataFrame, market: str) -> pd.DataFrame:
+def signals(frame: pd.DataFrame, market: str, **params: float) -> pd.DataFrame:
+    channel_period = int(params.get("channel_period", 55))
+    adx_threshold = float(params.get("adx_threshold", 20))
     close = frame["close"]
     adx14 = dmi(frame, 14)["adx"]
-    prior_high55 = frame["high"].shift(1).rolling(55, min_periods=55).max()
+    prior_high55 = frame["high"].shift(1).rolling(channel_period, min_periods=channel_period).max()
     prior_low20 = frame["low"].shift(1).rolling(20, min_periods=20).min()
     weekly = completed_weekly_regime(frame, market)
     return pd.DataFrame(
         {
-            "entry": weekly & (adx14 >= 20) & (close > prior_high55),
+            "entry": weekly & (adx14 >= adx_threshold) & (close > prior_high55),
             "exit": (close < prior_low20) | (adx14 < 15) | ~weekly,
             "atr": atr(frame, 14),
         },

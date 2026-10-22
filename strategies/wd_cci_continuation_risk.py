@@ -8,11 +8,13 @@ from engine.indicators import atr, cci, ema
 from strategies.common import completed_weekly_regime, crossed_above
 
 
-def signals(frame: pd.DataFrame, market: str) -> pd.DataFrame:
+def signals(frame: pd.DataFrame, market: str, **params: float) -> pd.DataFrame:
+    cci_period = int(params.get("cci_period", 20))
+    ema_slow = int(params.get("ema_slow", 100))
     close = frame["close"]
     ema50 = ema(close, 50)
-    ema100 = ema(close, 100)
-    cci20 = cci(frame, 20)
+    ema100 = ema(close, ema_slow)
+    cci20 = cci(frame, cci_period)
     weekly = completed_weekly_regime(frame, market)
     # VARSAYIM: "son 10 gün içinde negatif" means the ten completed sessions
     # before the crossing bar; the PDF does not state whether the crossing bar

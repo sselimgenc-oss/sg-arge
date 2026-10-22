@@ -8,11 +8,13 @@ from engine.indicators import atr, ema
 from strategies.common import completed_weekly_regime, roc
 
 
-def signals(frame: pd.DataFrame, market: str) -> pd.DataFrame:
+def signals(frame: pd.DataFrame, market: str, **params: float) -> pd.DataFrame:
+    roc_period = int(params.get("roc_period", 20))
+    ema_slow = int(params.get("ema_slow", 50))
     close = frame["close"]
     ema20 = ema(close, 20)
-    ema50 = ema(close, 50)
-    roc20 = roc(close, 20)
+    ema50 = ema(close, ema_slow)
+    roc20 = roc(close, roc_period)
     weekly = completed_weekly_regime(frame, market)
     return pd.DataFrame(
         {
