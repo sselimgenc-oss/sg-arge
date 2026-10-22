@@ -102,10 +102,14 @@ def _seeded_smooth(values: pd.Series, n: int, alpha: float) -> pd.Series:
         return pd.Series(out, index=values.index)
     state = arr[start:start + n].mean()
     out[start + n - 1] = state
-    for i in range(start + n, len(arr)):
-        if not np.isnan(arr[i]):
-            state = alpha * arr[i] + (1 - alpha) * state
-        out[i] = state
+    tail = arr[start + n:].tolist()  # python floats: the same IEEE arithmetic, without numpy scalar overhead
+    smooth = [0.0] * len(tail)
+    keep = 1 - alpha
+    for i, value in enumerate(tail):
+        if value == value:
+            state = alpha * value + keep * state
+        smooth[i] = state
+    out[start + n:] = smooth
     return pd.Series(out, index=values.index)
 
 

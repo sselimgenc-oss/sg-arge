@@ -10,6 +10,7 @@ implement raises `MotorDestegiYok`; the scan then skips the card and writes
 
 from __future__ import annotations
 
+import ast
 from dataclasses import dataclass, field
 from typing import Any, Callable, Mapping
 
@@ -17,6 +18,7 @@ import numpy as np
 import pandas as pd
 
 from . import expr as _expr
+from .expr import ExprError
 from . import gosterge as _ind
 from .spec import RUNTIME_NAMES
 
@@ -117,6 +119,182 @@ def mtf_callback(frame: pd.DataFrame) -> Callable[[str, pd.Series], pd.Series]:
     return callback
 
 
+LAZY_FUNCS = frozenset({"cross_over", "cross_under", "max", "min", "abs", "eger"})
+LAZY_FIRST_CHUNK, LAZY_MAX_CHUNK = 64, 4096
+
+
+def _lazy_warmup(expression: _expr.Expr) -> int | None:
+    """Bars of history a chunked evaluation of ``expression`` needs, or None when it must see the whole series.
+
+    Only elementwise rules qualify: lags (`x[k]`) and crossings look back a bounded number of bars, whereas
+    `valuewhen`/`barssince`/`mtf`/calendar functions depend on the whole index."""
+    if not expression.funcs <= LAZY_FUNCS:
+        return None
+    lags = 0
+    for node in ast.walk(expression.tree):
+        if isinstance(node, ast.Subscript):
+            lags += int(node.slice.value)
+        elif isinstance(node, ast.Call) and node.func.id in ("cross_over", "cross_under"):
+            lags += 1
+    return lags
+
+
+def _arrays(env: Mapping[str, Any]) -> dict[str, Any]:
+    """Env with every Series/DataFrame replaced by float64 arrays (DataFrames by a dict of columns)."""
+    out: dict[str, Any] = {}
+    for name, value in env.items():
+        if isinstance(value, pd.Series):
+            out[name] = value.to_numpy(dtype=float)
+        elif isinstance(value, pd.DataFrame):
+            out[name] = {column: value[column].to_numpy(dtype=float) for column in value.columns}
+        elif isinstance(value, dict):
+            out[name] = _arrays(value)
+        else:
+            out[name] = value
+    return out
+
+
+def _flag(value: Any) -> Any:
+    """`expr._as_bool` on arrays: NaN counts as False."""
+    if isinstance(value, np.ndarray):
+        return value if value.dtype == bool else (np.nan_to_num(value, nan=0.0) != 0)
+    return bool(value)
+
+
+def _shift(value: Any, lag: int) -> Any:
+    if not isinstance(value, np.ndarray) or lag == 0:
+        return value
+    out = np.full(len(value), np.nan)
+    if lag < len(value):
+        out[lag:] = value[:-lag]
+    return out
+
+
+def _cmp(op: ast.cmpop, left: Any, right: Any) -> Any:
+    return {ast.Lt: np.less, ast.LtE: np.less_equal, ast.Gt: np.greater, ast.GtE: np.greater_equal,
+            ast.Eq: np.equal, ast.NotEq: np.not_equal}[type(op)](left, right)
+
+
+def _both(a: Any, b: Any) -> Any:
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
+        return np.asarray(a, dtype=bool) & np.asarray(b, dtype=bool)
+    return bool(a) and bool(b)
+
+
+def _either(a: Any, b: Any) -> Any:
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
+        return np.asarray(a, dtype=bool) | np.asarray(b, dtype=bool)
+    return bool(a) or bool(b)
+
+
+def _np_eval(node: ast.AST, env: Mapping[str, Any], size: int) -> Any:
+    """Array twin of `engine.expr` for the elementwise subset (LAZY_FUNCS); same NaN semantics as the pandas evaluator."""
+    def ev(item: ast.AST) -> Any:
+        return _np_eval(item, env, size)
+
+    def full(value: Any) -> np.ndarray:
+        return value if isinstance(value, np.ndarray) else np.full(size, value)
+
+    if isinstance(node, ast.Constant):
+        return node.value
+    if isinstance(node, ast.Name):
+        return env[node.id]
+    if isinstance(node, ast.Attribute):
+        return env[node.value.id][node.attr]
+    if isinstance(node, ast.Subscript):
+        return _shift(ev(node.value), int(node.slice.value))
+    if isinstance(node, ast.UnaryOp):
+        operand = ev(node.operand)
+        if isinstance(node.op, ast.Not):
+            flag = _flag(operand)
+            return ~flag if isinstance(flag, np.ndarray) else (not flag)
+        return -operand if isinstance(node.op, ast.USub) else +operand
+    if isinstance(node, ast.BinOp):
+        left, right = ev(node.left), ev(node.right)
+        with np.errstate(all="ignore"):
+            if isinstance(node.op, ast.Add):
+                return left + right
+            if isinstance(node.op, ast.Sub):
+                return left - right
+            if isinstance(node.op, ast.Mult):
+                return left * right
+            return left / right
+    if isinstance(node, ast.Compare):
+        left, result = ev(node.left), None
+        for op, comparator in zip(node.ops, node.comparators):
+            right = ev(comparator)
+            with np.errstate(all="ignore"):
+                part = _cmp(op, left, right)
+            result = part if result is None else _both(result, part)
+            left = right
+        return result
+    if isinstance(node, ast.BoolOp):
+        values = [_flag(ev(v)) for v in node.values]
+        result = values[0]
+        for value in values[1:]:
+            result = _both(result, value) if isinstance(node.op, ast.And) else _either(result, value)
+        return result
+    if isinstance(node, ast.Call):
+        name, args = node.func.id, [ev(arg) for arg in node.args]
+        if name in ("cross_over", "cross_under"):
+            a, b = full(args[0]), full(args[1])
+            with np.errstate(all="ignore"):
+                if name == "cross_over":
+                    return (a > b) & (_shift(a, 1) <= _shift(b, 1))
+                return (a < b) & (_shift(a, 1) >= _shift(b, 1))
+        if name == "eger":
+            cond = _flag(args[0])
+            if isinstance(cond, np.ndarray) or any(isinstance(a, np.ndarray) for a in args[1:]):
+                return np.where(full(cond).astype(bool), full(args[1]), full(args[2]))
+            return args[1] if cond else args[2]
+        if name in ("max", "min"):
+            return (np.maximum if name == "max" else np.minimum)(args[0], args[1])
+        return abs(args[0])
+    raise ExprError(f"cannot evaluate {type(node).__name__}")
+
+
+def _window(value: Any, begin: int, stop: int) -> Any:
+    if isinstance(value, np.ndarray):
+        return value[begin:stop]
+    if isinstance(value, dict):
+        return {key: _window(item, begin, stop) for key, item in value.items()}
+    return value
+
+
+class LazyExit:
+    """`built[loc]` of a position-state exit rule, evaluated per chunk of bars instead of over the whole series.
+
+    The engine reads one bar at a time while the position is open; a 5-minute book with thousands of entries
+    otherwise re-evaluates the rule over ~700k bars per entry. Results equal the full evaluation (each chunk
+    carries ``warmup`` bars of history; bars before the entry are False)."""
+
+    def __init__(self, expression: _expr.Expr, arrays: Mapping[str, Any], runtime: Mapping[str, Any], size: int,
+                 entry_loc: int, warmup: int) -> None:
+        self.expression, self.arrays, self.runtime = expression, arrays, runtime
+        self.size, self.entry_loc, self.warmup = size, entry_loc, warmup
+        self.first = self.last = entry_loc
+        self.values = np.zeros(0, dtype=bool)
+        self.step = LAZY_FIRST_CHUNK
+
+    def __getitem__(self, loc: int) -> bool:
+        while loc >= self.last:
+            self._extend()
+        return bool(self.values[loc - self.first]) if loc >= self.first else False
+
+    def _extend(self) -> None:
+        start = self.last
+        stop = min(start + self.step, self.size)
+        self.step = min(self.step * 2, LAZY_MAX_CHUNK)
+        begin = max(start - self.warmup, 0)
+        env = {name: _window(value, begin, stop) for name, value in self.arrays.items()}
+        env.update(self.runtime)
+        env["bars_since_entry"] = np.arange(begin, stop, dtype=float) - self.entry_loc
+        chunk = _flag(_np_eval(self.expression.tree.body, env, stop - begin))
+        chunk = chunk if isinstance(chunk, np.ndarray) else np.full(stop - begin, chunk)
+        self.values = np.concatenate([self.values, chunk[start - begin:]])
+        self.last = stop
+
+
 def _bool(value: Any, index: pd.Index) -> pd.Series:
     if isinstance(value, pd.Series):
         return value.fillna(False).astype(bool)
@@ -158,14 +336,18 @@ def card_frame_signals(
         exit_static = pd.Series(False, index=index)
         exit_expr = _expr.parse(exit_text)
         positions = np.arange(len(index))
+        warmup = _lazy_warmup(exit_expr)
+        arrays = _arrays({name: env[name] for name in exit_expr.names if name in env}) if warmup is not None else None
 
-        def builder(symbol: str, entry_date: pd.Timestamp, price: float, stop: float, target: float) -> pd.Series:  # noqa: ARG001
+        def builder(symbol: str, entry_date: pd.Timestamp, price: float, stop: float, target: float):  # noqa: ARG001
             loc = index.get_loc(entry_date)
             runtime = {
                 "giris": price, "giris_fiyati": price, "giris_stop": stop,
                 "giris_hedef": target, "stop_mesafesi": price - stop,
-                "bars_since_entry": pd.Series(positions - loc, index=index, dtype=float),
             }
+            if warmup is not None:  # elementwise rule: evaluate in chunks, only as far as the position lives
+                return LazyExit(exit_expr, arrays, runtime, len(index), loc, warmup)
+            runtime["bars_since_entry"] = pd.Series(positions - loc, index=index, dtype=float)
             out = _bool(exit_expr.evaluate({**env, **runtime}, index=index, mtf=mtf), index)
             return out & pd.Series(positions >= loc, index=index)
     else:
@@ -228,18 +410,42 @@ def _uses_signal_levels(card: Mapping[str, Any]) -> bool:
     )
 
 
+def _level_texts(card: Mapping[str, Any]) -> list[str]:
+    """Expressions of the card's signal-bar level rules (stop/target level, profit lock)."""
+    texts = []
+    for key in ("stop", "hedef"):
+        block = card.get(key)
+        if block and block.get("tip") == "seviye":
+            texts.append(str(block["ifade"]))
+    lock = card.get("kar_kilidi")
+    if lock and "tetik_seviye" in lock:
+        texts += [str(lock["tetik_seviye"]), str(lock["stop"])]
+    return texts
+
+
 def signal_context(card: Mapping[str, Any], frame: pd.DataFrame, env: Mapping[str, Any]) -> dict[str, Any]:
-    """Arrays of signal-bar values for ``sinyal_<ad>`` references (OHLC columns and card indicators)."""
+    """Arrays of signal-bar values for the ``sinyal_<ad>`` references of the level rules (OHLC columns and card indicators).
+
+    Only names a level expression mentions are kept: the full set (every indicator, 8 bytes a bar) is what made
+    5-minute books of 25 symbols run out of memory."""
+    wanted = set().union(*(parse_names(text) for text in _level_texts(card)))
     context: dict[str, Any] = {}
     for name in ("open", "high", "low", "close", "volume"):
-        context[f"sinyal_{name}"] = frame[name].to_numpy(dtype=float)
+        if f"sinyal_{name}" in wanted:
+            context[f"sinyal_{name}"] = frame[name].to_numpy(dtype=float)
     for name in (card.get("gostergeler") or {}):
+        if f"sinyal_{name}" not in wanted:
+            continue
         value = env.get(name)
         if isinstance(value, pd.Series):
             context[f"sinyal_{name}"] = value.to_numpy(dtype=float)
         elif isinstance(value, pd.DataFrame):
             context[f"sinyal_{name}"] = {col: value[col].to_numpy(dtype=float) for col in value.columns}
     return context
+
+
+def parse_names(text: str) -> frozenset[str]:
+    return _expr.parse(text).names
 
 
 def _level_fn(text: str, contexts: Mapping[str, dict[str, Any]], extra: tuple[str, ...]) -> Callable[..., float]:
