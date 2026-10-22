@@ -4,13 +4,105 @@ Bu rapor mevcut dosyaları birleştirir; yeni backtest veya istatistik hesaplama
 
 ## Ozet
 
-Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
+Toplam: 422 | Bekliyor: 75 | Dogrulanamaz: 290 | Ertelendi: 18 | Kapsam disi: 3 | Reddedildi: 36
 
-> Henuz yok: asama2b.csv. Bu nedenle ilgili asama bekleyen satirlar `Dogrulanamaz` gorunur.
+> Henuz yok: asama2b.csv. Bu nedenle ilgili asama bekleyen satirlar `Bekliyor` gorunur.
 
 ## Gecti ve Kosullu
 
 - Yok.
+
+## Bekliyor
+
+### asama 2b bekliyor (3)
+
+| ID | Strateji | Durum | En iyi piyasa | Ayrinti |
+|---|---|---|---|---|
+| A6-010 | The Gap Momentum System | Bekliyor | EMTIA | asama 2b bekliyor |
+| P3-011 | MACD Strategy with trailing ATR stop | Bekliyor | KRIPTO25 | asama 2b bekliyor |
+| R01 | Qullamaggie breakout continuation + episodic pivot | Bekliyor | ABD25 | asama 2b bekliyor |
+
+### codex algo 2b bekliyor (21)
+
+| ID | Strateji | Durum | En iyi piyasa | Ayrinti |
+|---|---|---|---|---|
+| C01 | Haftalik yonlu gunluk geri cekilme (wd_pullback_risk, Codex Algo 21) | Bekliyor | - | codex algo 2b bekliyor |
+| C02 | Haftalik yonlu gunluk CCI devam (wd_cci_continuation_risk, Codex Algo 21) | Bekliyor | - | codex algo 2b bekliyor |
+| C03 | Codex Algo 21: wd_flow_confirmation_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C04 | Codex Algo 21: wd_ichimoku_balance_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C05 | Codex Algo 21: wd_dmi_trend_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C06 | Codex Algo 21: wd_kama_efficiency_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C07 | Codex Algo 21: wd_adx_breakout_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C08 | Codex Algo 21: wd_dual_momentum_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C09 | Codex Algo 21: wd_cci_continuation_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C10 | Codex Algo 21: wd_breakout_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C11 | Codex Algo 21: wd_momentum_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C12 | Codex Algo 21: wd_ichimoku_balance_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C13 | Codex Algo 21: wd_reversion_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C14 | Codex Algo 21: wd_breakout_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C15 | Codex Algo 21: wd_cci_continuation_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C16 | Codex Algo 21: wd_dual_momentum_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C17 | Codex Algo 21: wd_cci_continuation_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C18 | Codex Algo 21: wd_breakout_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C19 | Codex Algo 21: wd_pullback_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C20 | Codex Algo 21: wd_momentum_risk | Bekliyor | - | codex algo 2b bekliyor |
+| C21 | Codex Algo 21: wd_adx_breakout_risk | Bekliyor | - | codex algo 2b bekliyor |
+
+### tarama bekliyor (51)
+
+| ID | Strateji | Durum | En iyi piyasa | Ayrinti |
+|---|---|---|---|---|
+| A3-002d | geraked BBRSI | Bekliyor | - | tarama bekliyor |
+| A3-010a | Freqtrade Strategy001 | Bekliyor | - | tarama bekliyor |
+| A3-010c | Freqtrade Strategy003 | Bekliyor | - | tarama bekliyor |
+| A3-010d | Freqtrade Strategy004 | Bekliyor | - | tarama bekliyor |
+| A3-011a | pandianmn fork: Strategy001 (A3-010a ile aynı kural varsayımı) | Bekliyor | - | tarama bekliyor |
+| A3-011b | pandianmn fork: Strategy002 (A3-010b ile aynı kural varsayımı) | Bekliyor | - | tarama bekliyor |
+| A3-011c | pandianmn fork: Strategy003 (A3-010c ile aynı kural varsayımı) | Bekliyor | - | tarama bekliyor |
+| A3-011d | pandianmn fork: Strategy004 (A3-010d ile aynı kural varsayımı) | Bekliyor | - | tarama bekliyor |
+| A3-011e | pandianmn fork: Strategy005 (resmi depo kodu) | Bekliyor | - | tarama bekliyor |
+| A5-020 | Finding Consistent Trends with Strong Momentum - RSI for Trend-Following and Momentum Strategies | Bekliyor | - | tarama bekliyor |
+| A6-022 | How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin | Bekliyor | - | tarama bekliyor |
+| B3-001 | RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ) | Bekliyor | - | tarama bekliyor |
+| B3-005 | Triple RSI Strategy (90.36% win rate) | Bekliyor | - | tarama bekliyor |
+| G003 | Reinforced Smooth Scalp (Freqtrade, hyperopt parametreleri) | Bekliyor | - | tarama bekliyor |
+| G007 | Crude Oil Tuesday/Thursday Pullback | Bekliyor | - | tarama bekliyor |
+| G008 | Holy Thursday Sprint | Bekliyor | - | tarama bekliyor |
+| G009 | Pre-Easter Week | Bekliyor | - | tarama bekliyor |
+| G010 | OPEX Week Long | Bekliyor | - | tarama bekliyor |
+| G011 | PowerX - RSI + Stochastic + MACD (Freqtrade powerxhopt) | Bekliyor | - | tarama bekliyor |
+| G012 | Riding Bollinger Bands (Freqtrade bb_riding, hyperopt) | Bekliyor | - | tarama bekliyor |
+| M006 | RSI Double-Bottom for Amibroker (AFL) | Bekliyor | - | tarama bekliyor |
+| M011 | Double 7's Strategy (Larry Connors) | Bekliyor | - | tarama bekliyor |
+| M012a | 5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS | Bekliyor | - | tarama bekliyor |
+| M012b | 5 Swing Trading Strategies for Beginners - Strategy 2: Turnaround Tuesday | Bekliyor | - | tarama bekliyor |
+| M012c | 5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry | Bekliyor | - | tarama bekliyor |
+| M012d | 5 Swing Trading Strategies for Beginners - Strategy 4: Volatility Contraction | Bekliyor | - | tarama bekliyor |
+| M012e | 5 Swing Trading Strategies for Beginners - Strategy 5: New Highs with Low IBS | Bekliyor | - | tarama bekliyor |
+| M014 | Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation) | Bekliyor | - | tarama bekliyor |
+| M015 | Larry Connors' Cumulative RSI Strategy | Bekliyor | - | tarama bekliyor |
+| M037 | What Is the Best RSI Oversold Level? We Tested 1 Through 50 | Bekliyor | - | tarama bekliyor |
+| M038 | Best Time Frame for Candlestick Patterns (3 Candlestick Patterns Strategy on SPY) | Bekliyor | - | tarama bekliyor |
+| O1-003 | PHL1 YİĞİT KAYNAK | Bekliyor | - | tarama bekliyor |
+| O1-004 | PHL2 YIGITBOX | Bekliyor | - | tarama bekliyor |
+| O1-011 | SuperTrendVadeliStratejisi | Bekliyor | - | tarama bekliyor |
+| O1-017 | Sistem 2: RSI ortalama kesisimi (VIOP30 5 dk, long) | Bekliyor | - | tarama bekliyor |
+| O1-027 | PMax Explorer STRATEGY & SCREENER | Bekliyor | - | tarama bekliyor |
+| O2-005 | Trading Made Simple | Bekliyor | - | tarama bekliyor |
+| O3-001 | Monday reversal in the S&P 500 (10 Best Swing #1) | Bekliyor | - | tarama bekliyor |
+| O3-002 | Overnight swing strategy in the S&P 500 (10 Best Swing #2) | Bekliyor | - | tarama bekliyor |
+| O3-003 | Buy when S&P 500 makes new intraday high (10 Best Swing #3) | Bekliyor | - | tarama bekliyor |
+| O3-004 | Monday/Tuesday trade in Nasdaq (10 Best Swing #4) | Bekliyor | - | tarama bekliyor |
+| O3-011 | 5-Day Low of the Range (IBS<0.25) - S&P 500 | Bekliyor | - | tarama bekliyor |
+| O3-013 | Turnaround Tuesday (SPY) | Bekliyor | - | tarama bekliyor |
+| P03 | 4H Sweet Spot (1D/4H/1H) PMax + ADX rejim (aynı strateji: R6) | Bekliyor | - | tarama bekliyor |
+| P04 | VOLTRAN-R2 intraday hibrit (RRS göreceli güç + RVOL ORB) (aynı strateji: S8/R8) | Bekliyor | - | tarama bekliyor |
+| P3-014 | EmperorBTC's VWAP Strategy | Bekliyor | - | tarama bekliyor |
+| R03 | RealDayTrading göreceli güç (RRS) 1H momentum | Bekliyor | - | tarama bekliyor |
+| R04 | Stocks in Play (Zarattini) RVOL açılış kırılımı | Bekliyor | - | tarama bekliyor |
+| T8-07 | StackLight MTF momentum stack + Stochastic | Bekliyor | - | tarama bekliyor |
+| V2A | VOLTRAN-2A saatlik adaptif kanal (TOTT) + seans kırılım (v3) | Bekliyor | - | tarama bekliyor |
+| V2B | VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3) | Bekliyor | - | tarama bekliyor |
 
 ## Reddedilenler
 
@@ -35,7 +127,7 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | O3-014 | 3 Days Down Overnight (S&P 500) | Reddedildi | BIST30 | asama 1: PF_1x<1.1,net_2x<=0 |
 | O3-015 | IBS (Internal Bar Strength) SPY – IBS<0.2 al / >0.8 sat | Reddedildi | BIST30 | asama 1: net_2x<=0 |
 
-### piyasa betasi (27)
+### piyasa betasi (25)
 
 | ID | Strateji | Durum | En iyi piyasa | Ayrinti |
 |---|---|---|---|---|
@@ -47,8 +139,6 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | A3-009c | Systematic-Trading-Backtester: 252 günlük momentum | Reddedildi | BIST30 | piyasa betasi: PF p=0.194, ortR p=0.149 (esik 0.05) |
 | A5-009 | XLP mean reversion (IBS + 25 günlük bant) (10 Best Swing #7) | Reddedildi | ABD25 | piyasa betasi: PF p=0.716, ortR p=0.736 (esik 0.05) |
 | B3-010 | RSI-2 Larry Connors (ProRealCode) | Reddedildi | ABD25 | piyasa betasi: PF p=0.289, ortR p=0.060 (esik 0.05) |
-| C01 | Haftalik yonlu gunluk geri cekilme (wd_pullback_risk, Codex Algo 21) | Reddedildi | BIST30 | piyasa betasi: PF p=0.542, ortR p=0.373 (esik 0.05) |
-| C02 | Haftalik yonlu gunluk CCI devam (wd_cci_continuation_risk, Codex Algo 21) | Reddedildi | BIST30 | piyasa betasi: PF p=0.199, ortR p=0.005 (esik 0.05) |
 | O1-066 | Accumulation/Distribution Range Breakout Strategy NT8 - August 2018 S&C | Reddedildi | BIST30 | piyasa betasi: PF p=0.547, ortR p=0.552 (esik 0.05) |
 | O1-075 | MeanReversal Strategy NT8 | Reddedildi | EMTIA | piyasa betasi: PF p=0.438, ortR p=0.637 (esik 0.05) |
 | O1-079 | Golden Triangle Strategy | Reddedildi | BIST30 | piyasa betasi: PF p=0.632, ortR p=0.289 (esik 0.05) |
@@ -68,14 +158,6 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | V1B | VOLTRAN-1B SMC + ML geri çekilme motoru (v3) | Reddedildi | BIST30 | piyasa betasi: PF p=0.796, ortR p=0.716 (esik 0.05) |
 
 ## Dogrulanamaz
-
-### asama 2b henuz yok (3)
-
-| ID | Strateji | Durum | En iyi piyasa | Ayrinti |
-|---|---|---|---|---|
-| A6-010 | The Gap Momentum System | Dogrulanamaz | EMTIA | asama 2b henuz yok |
-| P3-011 | MACD Strategy with trailing ATR stop | Dogrulanamaz | KRIPTO25 | asama 2b henuz yok |
-| R01 | Qullamaggie breakout continuation + episodic pivot | Dogrulanamaz | ABD25 | asama 2b henuz yok |
 
 ### eksik (42)
 
@@ -164,81 +246,6 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | P3-031 | AEA Algo MES | Dogrulanamaz | - | gizli |
 | P3-032 | SQT Stocks Long Portfolio 2x | Dogrulanamaz | - | gizli |
 
-### henuz yok (70)
-
-| ID | Strateji | Durum | En iyi piyasa | Ayrinti |
-|---|---|---|---|---|
-| A3-002d | geraked BBRSI | Dogrulanamaz | - | henuz yok |
-| A3-010a | Freqtrade Strategy001 | Dogrulanamaz | - | henuz yok |
-| A3-010c | Freqtrade Strategy003 | Dogrulanamaz | - | henuz yok |
-| A3-010d | Freqtrade Strategy004 | Dogrulanamaz | - | henuz yok |
-| A3-011a | pandianmn fork: Strategy001 (A3-010a ile aynı kural varsayımı) | Dogrulanamaz | - | henuz yok |
-| A3-011b | pandianmn fork: Strategy002 (A3-010b ile aynı kural varsayımı) | Dogrulanamaz | - | henuz yok |
-| A3-011c | pandianmn fork: Strategy003 (A3-010c ile aynı kural varsayımı) | Dogrulanamaz | - | henuz yok |
-| A3-011d | pandianmn fork: Strategy004 (A3-010d ile aynı kural varsayımı) | Dogrulanamaz | - | henuz yok |
-| A3-011e | pandianmn fork: Strategy005 (resmi depo kodu) | Dogrulanamaz | - | henuz yok |
-| A5-020 | Finding Consistent Trends with Strong Momentum - RSI for Trend-Following and Momentum Strategies | Dogrulanamaz | - | henuz yok |
-| A6-022 | How to Design a Simple Multi-Timeframe Trend Strategy on Bitcoin | Dogrulanamaz | - | henuz yok |
-| B3-001 | RSI Mean Reversion Trading Strategy in Nasdaq100 (QQQ) | Dogrulanamaz | - | henuz yok |
-| B3-005 | Triple RSI Strategy (90.36% win rate) | Dogrulanamaz | - | henuz yok |
-| C03 | C03 | Dogrulanamaz | - | henuz yok |
-| C04 | C04 | Dogrulanamaz | - | henuz yok |
-| C05 | C05 | Dogrulanamaz | - | henuz yok |
-| C06 | C06 | Dogrulanamaz | - | henuz yok |
-| C07 | C07 | Dogrulanamaz | - | henuz yok |
-| C08 | C08 | Dogrulanamaz | - | henuz yok |
-| C09 | C09 | Dogrulanamaz | - | henuz yok |
-| C10 | C10 | Dogrulanamaz | - | henuz yok |
-| C11 | C11 | Dogrulanamaz | - | henuz yok |
-| C12 | C12 | Dogrulanamaz | - | henuz yok |
-| C13 | C13 | Dogrulanamaz | - | henuz yok |
-| C14 | C14 | Dogrulanamaz | - | henuz yok |
-| C15 | C15 | Dogrulanamaz | - | henuz yok |
-| C16 | C16 | Dogrulanamaz | - | henuz yok |
-| C17 | C17 | Dogrulanamaz | - | henuz yok |
-| C18 | C18 | Dogrulanamaz | - | henuz yok |
-| C19 | C19 | Dogrulanamaz | - | henuz yok |
-| C20 | C20 | Dogrulanamaz | - | henuz yok |
-| C21 | C21 | Dogrulanamaz | - | henuz yok |
-| G003 | Reinforced Smooth Scalp (Freqtrade, hyperopt parametreleri) | Dogrulanamaz | - | henuz yok |
-| G007 | Crude Oil Tuesday/Thursday Pullback | Dogrulanamaz | - | henuz yok |
-| G008 | Holy Thursday Sprint | Dogrulanamaz | - | henuz yok |
-| G009 | Pre-Easter Week | Dogrulanamaz | - | henuz yok |
-| G010 | OPEX Week Long | Dogrulanamaz | - | henuz yok |
-| G011 | PowerX - RSI + Stochastic + MACD (Freqtrade powerxhopt) | Dogrulanamaz | - | henuz yok |
-| G012 | Riding Bollinger Bands (Freqtrade bb_riding, hyperopt) | Dogrulanamaz | - | henuz yok |
-| M006 | RSI Double-Bottom for Amibroker (AFL) | Dogrulanamaz | - | henuz yok |
-| M011 | Double 7's Strategy (Larry Connors) | Dogrulanamaz | - | henuz yok |
-| M012a | 5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS | Dogrulanamaz | - | henuz yok |
-| M012b | 5 Swing Trading Strategies for Beginners - Strategy 2: Turnaround Tuesday | Dogrulanamaz | - | henuz yok |
-| M012c | 5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry | Dogrulanamaz | - | henuz yok |
-| M012d | 5 Swing Trading Strategies for Beginners - Strategy 4: Volatility Contraction | Dogrulanamaz | - | henuz yok |
-| M012e | 5 Swing Trading Strategies for Beginners - Strategy 5: New Highs with Low IBS | Dogrulanamaz | - | henuz yok |
-| M014 | Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation) | Dogrulanamaz | - | henuz yok |
-| M015 | Larry Connors' Cumulative RSI Strategy | Dogrulanamaz | - | henuz yok |
-| M037 | What Is the Best RSI Oversold Level? We Tested 1 Through 50 | Dogrulanamaz | - | henuz yok |
-| M038 | Best Time Frame for Candlestick Patterns (3 Candlestick Patterns Strategy on SPY) | Dogrulanamaz | - | henuz yok |
-| O1-003 | PHL1 YİĞİT KAYNAK | Dogrulanamaz | - | henuz yok |
-| O1-004 | PHL2 YIGITBOX | Dogrulanamaz | - | henuz yok |
-| O1-011 | SuperTrendVadeliStratejisi | Dogrulanamaz | - | henuz yok |
-| O1-017 | Sistem 2: RSI ortalama kesisimi (VIOP30 5 dk, long) | Dogrulanamaz | - | henuz yok |
-| O1-027 | PMax Explorer STRATEGY & SCREENER | Dogrulanamaz | - | henuz yok |
-| O2-005 | Trading Made Simple | Dogrulanamaz | - | henuz yok |
-| O3-001 | Monday reversal in the S&P 500 (10 Best Swing #1) | Dogrulanamaz | - | henuz yok |
-| O3-002 | Overnight swing strategy in the S&P 500 (10 Best Swing #2) | Dogrulanamaz | - | henuz yok |
-| O3-003 | Buy when S&P 500 makes new intraday high (10 Best Swing #3) | Dogrulanamaz | - | henuz yok |
-| O3-004 | Monday/Tuesday trade in Nasdaq (10 Best Swing #4) | Dogrulanamaz | - | henuz yok |
-| O3-011 | 5-Day Low of the Range (IBS<0.25) - S&P 500 | Dogrulanamaz | - | henuz yok |
-| O3-013 | Turnaround Tuesday (SPY) | Dogrulanamaz | - | henuz yok |
-| P03 | 4H Sweet Spot (1D/4H/1H) PMax + ADX rejim (aynı strateji: R6) | Dogrulanamaz | - | henuz yok |
-| P04 | VOLTRAN-R2 intraday hibrit (RRS göreceli güç + RVOL ORB) (aynı strateji: S8/R8) | Dogrulanamaz | - | henuz yok |
-| P3-014 | EmperorBTC's VWAP Strategy | Dogrulanamaz | - | henuz yok |
-| R03 | RealDayTrading göreceli güç (RRS) 1H momentum | Dogrulanamaz | - | henuz yok |
-| R04 | Stocks in Play (Zarattini) RVOL açılış kırılımı | Dogrulanamaz | - | henuz yok |
-| T8-07 | StackLight MTF momentum stack + Stochastic | Dogrulanamaz | - | henuz yok |
-| V2A | VOLTRAN-2A saatlik adaptif kanal (TOTT) + seans kırılım (v3) | Dogrulanamaz | - | henuz yok |
-| V2B | VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3) | Dogrulanamaz | - | henuz yok |
-
 ### ihtiyari (14)
 
 | ID | Strateji | Durum | En iyi piyasa | Ayrinti |
@@ -258,15 +265,7 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | O3-033 | RSIDive (RSI uyumsuzlugu) - EURUSD gunluk | Dogrulanamaz | - | ihtiyari |
 | O3-034 | Trending Pin Bar v2 - EURUSD H4 | Dogrulanamaz | - | ihtiyari |
 
-### kapsam disi (3)
-
-| ID | Strateji | Durum | En iyi piyasa | Ayrinti |
-|---|---|---|---|---|
-| O2-012 | OHLCMTF Scalper EA - Multi-Timeframe Price Action | Dogrulanamaz | - | kapsam disi |
-| O2-031 | je-suis-tm/quant-trading (London Breakout, Dual Thrust vb.) | Dogrulanamaz | - | kapsam disi |
-| P3-033 | Index Futures Trading | Dogrulanamaz | - | kapsam disi |
-
-### kaynak erisilemedi (121)
+### kaynak erisilemedi (115)
 
 | ID | Strateji | Durum | En iyi piyasa | Ayrinti |
 |---|---|---|---|---|
@@ -288,16 +287,11 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | A1-026 | LongBuyLongSell 90% profit Excellent Win Rate Strategy | Dogrulanamaz | - | kaynak erisilemedi |
 | A2-010 | ICE (Impulse Confirmation Engine) | Dogrulanamaz | - | kaynak erisilemedi |
 | A3-004 | Pairs_Trading (gün içi eş-bütünleşme, M1) | Dogrulanamaz | - | kaynak erisilemedi |
-| A4-001 | Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion | Dogrulanamaz | - | kaynak erisilemedi |
-| A4-003 | Overbought or Oversold SPY else UVXY | Dogrulanamaz | - | kaynak erisilemedi |
-| A4-005 | SPY RSI 30 Test | Dogrulanamaz | - | kaynak erisilemedi |
-| A4-007 | Enhanced Short-Term Mean Reversion Algorithm | Dogrulanamaz | - | kaynak erisilemedi |
 | A4-008 | RSI Extremes Intraday E-mini (embedded backtest) | Dogrulanamaz | - | kaynak erisilemedi |
 | A4-009 | Volume Spikes in Oil Futures (embedded backtest) | Dogrulanamaz | - | kaynak erisilemedi |
 | A4-010 | Intraday Mean Reversion BTCUSD (r/algotrading yaklasimi, embedded backtest) | Dogrulanamaz | - | kaynak erisilemedi |
 | A5-012 | Self-Imposed Limits to Arbitrage | Dogrulanamaz | - | kaynak erisilemedi |
 | A5-013 | Trading Volume Effects of Moving Average Heuristics | Dogrulanamaz | - | kaynak erisilemedi |
-| A5-015 | Reversal in Cryptocurrency Returns | Dogrulanamaz | - | kaynak erisilemedi |
 | A5-016 | Stock Market Predictability in the MENA: Evidence from New Variance Ratio Tests and Technical Trade Analysis | Dogrulanamaz | - | kaynak erisilemedi |
 | A5-021 | The 8-K Trading Gap | Dogrulanamaz | - | kaynak erisilemedi |
 | A5-022 | Trend-based Forecast of Cryptocurrency Returns | Dogrulanamaz | - | kaynak erisilemedi |
@@ -312,7 +306,6 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | B3-009 | Connors/Alvarez 2009 basit ortalamaya donus (ES+TY) | Dogrulanamaz | - | kaynak erisilemedi |
 | B3-015 | Is there 1 Strategy that just works? (gunluk long-only ETF betigi) | Dogrulanamaz | - | kaynak erisilemedi |
 | M007 | ForexFactory Post 8694795 Swing Strategy | Dogrulanamaz | - | kaynak erisilemedi |
-| M017 | RSI 2 Portfolio (Composer Symphony) | Dogrulanamaz | - | kaynak erisilemedi |
 | M018 | TradingView Script LHKOdUOs | Dogrulanamaz | - | kaynak erisilemedi |
 | M022 | Quadrant Strategy (DAX 5m) | Dogrulanamaz | - | kaynak erisilemedi |
 | M023 | Quadrant 2.0 DAX 5 min | Dogrulanamaz | - | kaynak erisilemedi |
@@ -398,7 +391,7 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 |---|---|---|---|---|
 | O1-078 | Atr Breakout | Dogrulanamaz | BIST30 | motor destegi yok |
 
-### ozel kod (93)
+### ozel kod (83)
 
 | ID | Strateji | Durum | En iyi piyasa | Ayrinti |
 |---|---|---|---|---|
@@ -433,20 +426,15 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | A3-002h | geraked NWERSIASF | Dogrulanamaz | - | ozel kod: ozel_gosterge |
 | A3-002i | geraked LRCUTB | Dogrulanamaz | - | ozel kod: ozel_gosterge |
 | A3-010b | Freqtrade Strategy002 | Dogrulanamaz | - | ozel kod: ozel_gosterge |
-| A4-002 | Simple TQQQ RSI mean reversion | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
-| A4-004 | RSI 82 | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
 | A4-006 | Opening Range Breakout for Stocks in Play | Dogrulanamaz | - | ozel kod: bekleyen_emir |
 | A5-014 | Seasonality, Trend-following, and Mean reversion in Bitcoin | Dogrulanamaz | - | ozel kod: tanim_belirsiz |
 | A6-003 | Simple Ideas for a Mean Reversion Strategy with Good Results | Dogrulanamaz | - | ozel kod: bekleyen_emir |
-| A6-004 | Mean Reversion Entry Timing | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
 | A6-009 | Trading the Channel (Inside Channel, Kaufman) | Dogrulanamaz | - | ozel kod: ozel_gosterge |
 | A6-014 | Trend trading system with Market Meanness Index (Why 90% of Backtests Fail) | Dogrulanamaz | - | ozel kod: ozel_gosterge |
 | A6-015 | Double Bottom Country ETF Trading | Dogrulanamaz | - | ozel kod: desen |
 | A6-019 | Overnight Seasonality in Bitcoin | Dogrulanamaz | - | ozel kod: seans_saat |
-| A6-021 | Pairs Trading with Country ETFs | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
 | A6-023 | Attention Prop Traders: first half hour predicts last half hour | Dogrulanamaz | - | ozel kod: seans_saat |
 | A7-001 | NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan) | Dogrulanamaz | - | ozel kod: seans_saat |
-| B3-014 | Cross-Sectional Equity Mean Reversion (Quantpedia #13) | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
 | M003 | 5min /ES Futures Strategy For ThinkOrSwim (HalfTrend with Deviation Bands) | Dogrulanamaz | - | ozel kod: ozel_gosterge |
 | M004 | Beat the Market: Intraday Momentum Strategy for S&P500 ETF (SPY) | Dogrulanamaz | - | ozel kod: seans_saat |
 | M005 | Intraday Momentum for ES and NQ (Noise Area 90-Day Variant) | Dogrulanamaz | - | ozel kod: seans_saat |
@@ -455,7 +443,6 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | M013 | Simple H4 Mobile Trading System | Dogrulanamaz | - | ozel kod: sinyal_bari_referansi |
 | M016 | One Percent a Week Strategy (TQQQ) | Dogrulanamaz | - | ozel kod: bekleyen_emir |
 | M019 | FullStochastic with Filters - Buy&Sell for Amibroker (AFL) | Dogrulanamaz | - | ozel kod: durum_makinesi |
-| M020a | The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp) | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
 | M027 | Renko Automated Trading System | Dogrulanamaz | - | ozel kod: renko |
 | M036 | A Mean Reversion Strategy with 2.11 Sharpe (QQQ with Dynamic SMA300 Stop) | Dogrulanamaz | - | ozel kod |
 | M050 | Short-Term Reversal Effect in Stocks (Quantpedia #013) | Dogrulanamaz | - | ozel kod |
@@ -484,10 +471,6 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | O2-011 | PulseStrike Scalper - Statistical Burst Detection EA | Dogrulanamaz | - | ozel kod: tick_veri |
 | O2-017 | TemaTrendFollowing | Dogrulanamaz | - | ozel kod: tanim_belirsiz |
 | O2-019 | CloudScalper | Dogrulanamaz | - | ozel kod: tanim_belirsiz |
-| O2-025 | The Holy Grail | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
-| O2-026 | KMLM Switcher of Simon97 - Original | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
-| O2-027 | TQQQ For The Long Term (Reddit Post Link) | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
-| O2-028 | SVIX/XXXX KMLM switcher (single pops) | BT 12/19/23 = 786/10.5 | Dogrulanamaz | - | ozel kod: portfoy_rotasyonu |
 | O3-009 | Stocks in Play – 5 dk ORB + Relative Volume (Zarattini/Barbon/Aziz) | Dogrulanamaz | - | ozel kod: seans_saat |
 | O3-016 | Gap down + 25 MA filtresi (S&P 500 gun ici) | Dogrulanamaz | - | ozel kod: seans_saat |
 | P3-008 | Strategy based on Squeeze Momentum Indicator [LazyBear] | Dogrulanamaz | - | ozel kod: ozel_gosterge |
@@ -496,12 +479,45 @@ Toplam: 422 | Dogrulanamaz: 384 | Reddedildi: 38
 | R07 | VOLTRAN-R1 swing hibrit (Qullamaggie + Z-skor + IBS dip avcısı) | Dogrulanamaz | - | ozel kod: durum_bilgisi |
 | T8-06 | TOTT/OTT tek bantlı (Twin Optimized Trend Tracker, saatlik kurgu) | Dogrulanamaz | - | ozel kod: tanim_belirsiz |
 
+## Ertelenenler
+
+### kaldirac / portfoy rotasyonu (16)
+
+| ID | Strateji | Durum | En iyi piyasa | Ayrinti |
+|---|---|---|---|---|
+| A4-001 | Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| A4-002 | Simple TQQQ RSI mean reversion | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| A4-003 | Overbought or Oversold SPY else UVXY | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| A4-004 | RSI 82 | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| A4-005 | SPY RSI 30 Test | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| A4-007 | Enhanced Short-Term Mean Reversion Algorithm | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| A5-015 | Reversal in Cryptocurrency Returns | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| A6-004 | Mean Reversion Entry Timing | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| A6-021 | Pairs Trading with Country ETFs | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| B3-014 | Cross-Sectional Equity Mean Reversion (Quantpedia #13) | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| M017 | RSI 2 Portfolio (Composer Symphony) | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| M020a | The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp) | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| O2-025 | The Holy Grail | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| O2-026 | KMLM Switcher of Simon97 - Original | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| O2-027 | TQQQ For The Long Term (Reddit Post Link) | Ertelendi | - | kaldirac / portfoy rotasyonu |
+| O2-028 | SVIX/XXXX KMLM switcher (single pops) | BT 12/19/23 = 786/10.5 | Ertelendi | - | kaldirac / portfoy rotasyonu |
+
 ### sadece short (2)
 
 | ID | Strateji | Durum | En iyi piyasa | Ayrinti |
 |---|---|---|---|---|
-| A2-016 | RSI Exhaustion Reversal - EURUSD | Dogrulanamaz | - | sadece short |
-| M020c | The 30-Minute Stock Trader - Strategy 3: Mean-Reversion Short (Laurens Bensdorp) | Dogrulanamaz | - | sadece short |
+| A2-016 | RSI Exhaustion Reversal - EURUSD | Ertelendi | - | sadece short |
+| M020c | The 30-Minute Stock Trader - Strategy 3: Mean-Reversion Short (Laurens Bensdorp) | Ertelendi | - | sadece short |
+
+## Kapsam disi
+
+### kapsam disi (3)
+
+| ID | Strateji | Durum | En iyi piyasa | Ayrinti |
+|---|---|---|---|---|
+| O2-012 | OHLCMTF Scalper EA - Multi-Timeframe Price Action | Kapsam disi | - | kapsam disi |
+| O2-031 | je-suis-tm/quant-trading (London Breakout, Dual Thrust vb.) | Kapsam disi | - | kapsam disi |
+| P3-033 | Index Futures Trading | Kapsam disi | - | kapsam disi |
 
 ## Yontem ve uyarilar
 

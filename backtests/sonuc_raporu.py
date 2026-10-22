@@ -23,7 +23,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 OUTPUT_COLUMNS = ["id", "ad", "kaynak", "tarz", "tf", "nihai_durum", "alt_neden", "en_iyi_piyasa", "piyasa_ayrintisi"]
-STATUS_RANK = {"Gecti": 3, "Kosullu": 2, "Reddedildi": 1, "Dogrulanamaz": 0}
+STATUS_RANK = {
+    "Gecti": 6, "Kosullu": 5, "Bekliyor": 4, "Reddedildi": 3,
+    "Dogrulanamaz": 2, "Ertelendi": 1, "Kapsam disi": 0,
+}
 MISSING_STAGE = "asama 2b henuz yok"
 
 
@@ -72,27 +75,32 @@ def _best(rows: pd.DataFrame, status_column: str, reason_column: str = "neden") 
     return ranked.sort_values(["_rank", "_reason"], ascending=[False, True], kind="stable").iloc[0]
 
 
-def _underlying_reason(card: dict[str, Any], yeniden: set[str], tarama_rows: pd.DataFrame) -> str:
+def _underlying_verdict(card: dict[str, Any], yeniden: set[str], tarama_rows: pd.DataFrame) -> tuple[str, str]:
     identifier = str(card.get("id", ""))
-    if identifier in yeniden:
-        return "kaynak erisilemedi"
     status = _clean(card.get("spec_durumu"))
-    if status in {"kapsam_disi", "sadece_short"}:
-        return status.replace("_", " ")
+    deferred = _clean(card.get("ozel_kod_nedeni"))
+    if status == "kapsam_disi":
+        return "Kapsam disi", "kapsam disi"
+    if status == "sadece_short":
+        return "Ertelendi", "sadece short"
+    if deferred == "portfoy_rotasyonu" or "kaldirac" in deferred.lower():
+        return "Ertelendi", "kaldirac / portfoy rotasyonu"
+    if identifier in yeniden:
+        return "Dogrulanamaz", "kaynak erisilemedi"
     if status in {"gizli", "ihtiyari", "eksik"}:
-        return status
+        return "Dogrulanamaz", status
     if card.get("ozel_kod"):
-        return "ozel kod" + (f": {_clean(card.get('ozel_kod_nedeni'))}" if _clean(card.get("ozel_kod_nedeni")) else "")
+        return "Dogrulanamaz", "ozel kod" + (f": {deferred}" if deferred else "")
     reasons = " ".join(tarama_rows.get("neden", pd.Series(dtype=str)).fillna("").astype(str)).lower()
     if "dakikalik veri yok" in reasons:
-        return "dakikalik veri yok"
+        return "Dogrulanamaz", "dakikalik veri yok"
     if "motor_destegi_yok" in reasons:
-        return "motor destegi yok"
+        return "Dogrulanamaz", "motor destegi yok"
     if "piyasa_ozgu" in reasons:
-        return "piyasa ozgu"
+        return "Dogrulanamaz", "piyasa ozgu"
     if "orneklem" in reasons or "islem<30" in reasons:
-        return "orneklem"
-    return "henuz yok"
+        return "Dogrulanamaz", "orneklem"
+    return "Dogrulanamaz", "henuz yok"
 
 
 def _market_detail(identifier: str, tarama: pd.DataFrame, asama2a: pd.DataFrame, asama2b: pd.DataFrame, codex: pd.DataFrame) -> str:
@@ -116,11 +124,16 @@ def _verdict(identifier: str, card: dict[str, Any], yeniden: set[str], tarama: p
     if b is not None and _clean(b["karar"]) in STATUS_RANK:
         return _clean(b["karar"]), _clean(b.get("neden")), _clean(b.get("piyasa"))
 
+    # The Codex Algo rows have their own T6b null+validation pipeline.  A
+    # similarly named YAML card's T6a result must not mark that pipeline done.
+    if identifier in {f"C{i:02d}" for i in range(1, 22)}:
+        return "Bekliyor", "codex algo 2b bekliyor", ""
+
     a_rows = asama2a[asama2a["id"].astype(str) == identifier] if not asama2a.empty and "id" in asama2a else pd.DataFrame()
     a_pass = a_rows[a_rows["karar"].astype(str) == "Gecti (null)"] if not a_rows.empty and "karar" in a_rows else pd.DataFrame()
     if not a_pass.empty:
         best = a_pass.iloc[0]
-        return "Dogrulanamaz", MISSING_STAGE, _clean(best.get("piyasa"))
+        return "Bekliyor", "asama 2b bekliyor", _clean(best.get("piyasa"))
     a_rejected = a_rows[a_rows["karar"].astype(str).str.startswith("Reddedildi")] if not a_rows.empty and "karar" in a_rows else pd.DataFrame()
     if not a_rejected.empty:
         best = a_rejected.iloc[0]
@@ -131,17 +144,19 @@ def _verdict(identifier: str, card: dict[str, Any], yeniden: set[str], tarama: p
     candidates = t_rows[t_rows["asama2_aday"].map(_bool)] if not t_rows.empty and "asama2_aday" in t_rows else pd.DataFrame()
     if not candidates.empty:
         best = candidates.iloc[0]
-        return "Dogrulanamaz", "asama 2a henuz yok", _clean(best.get("piyasa"))
+        return "Bekliyor", "asama 2a bekliyor", _clean(best.get("piyasa"))
     calculated = t_rows[t_rows["durum"].astype(str) == "Hesaplandi"] if not t_rows.empty and "durum" in t_rows else pd.DataFrame()
     if not calculated.empty:
         best = calculated.iloc[0]
         return "Reddedildi", f"asama 1: {_clean(best.get('neden'))}", _clean(best.get("piyasa"))
 
-    reason = _underlying_reason(card, yeniden, t_rows)
-    if reason in {"kapsam disi", "sadece short"}:
-        return "Dogrulanamaz", reason, ""
+    underlying_status, reason = _underlying_verdict(card, yeniden, t_rows)
+    if underlying_status in {"Kapsam disi", "Ertelendi"}:
+        return underlying_status, reason, ""
+    if t_rows.empty and _clean(card.get("spec_durumu")) in {"tam", "dakikalik"} and not card.get("ozel_kod"):
+        return "Bekliyor", "tarama bekliyor", ""
     market = _clean(t_rows.iloc[0].get("piyasa")) if not t_rows.empty else ""
-    return "Dogrulanamaz", reason, market
+    return underlying_status, reason, market
 
 
 def build_report(spec_dir: Path, results_dir: Path) -> pd.DataFrame:
@@ -155,6 +170,11 @@ def build_report(spec_dir: Path, results_dir: Path) -> pd.DataFrame:
     rows = []
     for identifier in sorted(ids):
         metadata = _metadata(index, cards, identifier)
+        if identifier.startswith("C") and metadata["ad"] == identifier and not codex.empty and "satir" in codex:
+            codex_rows = codex[codex["satir"].astype(str) == identifier]
+            if not codex_rows.empty:
+                family = _clean(codex_rows.iloc[0].get("aile"))
+                metadata.update(ad=f"Codex Algo 21: {family}", kaynak="Codex Algo 21 raporu", tarz="swing", tf="1D")
         verdict, reason, market = _verdict(identifier, cards.get(identifier, {}), yeniden, tarama, asama2a, asama2b)
         metadata.update(nihai_durum=verdict, alt_neden=reason, en_iyi_piyasa=market,
                         piyasa_ayrintisi=_market_detail(identifier, tarama, asama2a, asama2b, codex))
@@ -175,8 +195,12 @@ def _write_markdown(table: pd.DataFrame, path: Path, missing: list[str]) -> None
     lines = ["# Nihai strateji sonucu (T13)", "", "Bu rapor mevcut dosyaları birleştirir; yeni backtest veya istatistik hesaplamaz.", "",
              "## Ozet", "", f"Toplam: {len(table)} | " + " | ".join(f"{key}: {value}" for key, value in sorted(counts.items())), ""]
     if missing:
-        lines += [f"> Henuz yok: {', '.join(missing)}. Bu nedenle ilgili asama bekleyen satirlar `Dogrulanamaz` gorunur.", ""]
-    for heading, statuses in (("Gecti ve Kosullu", ("Gecti", "Kosullu")), ("Reddedilenler", ("Reddedildi",)), ("Dogrulanamaz", ("Dogrulanamaz",))):
+        lines += [f"> Henuz yok: {', '.join(missing)}. Bu nedenle ilgili asama bekleyen satirlar `Bekliyor` gorunur.", ""]
+    for heading, statuses in (
+        ("Gecti ve Kosullu", ("Gecti", "Kosullu")), ("Bekliyor", ("Bekliyor",)),
+        ("Reddedilenler", ("Reddedildi",)), ("Dogrulanamaz", ("Dogrulanamaz",)),
+        ("Ertelenenler", ("Ertelendi",)), ("Kapsam disi", ("Kapsam disi",)),
+    ):
         subset = table[table["nihai_durum"].isin(statuses)]
         lines += [f"## {heading}", ""]
         if subset.empty:
