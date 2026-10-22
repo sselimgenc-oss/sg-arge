@@ -1,0 +1,33 @@
+id: M040
+ad: A Simple Stochastic Pullback Strategy for Uptrending Markets
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://quantifiedstrategies.substack.com/p/a-simple-stochastic-pullback-strategy
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: 195
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: gizli
+belirsiz:
+- 'Substack makalesi (https://quantifiedstrategies.substack.com/p/a-simple-stochastic-pullback-strategy) ücretli abonelere özeldir (Paid). Önizleme metninden SPY günlük grafikte ana yükseliş trendi içinde
+  Stochastic göstergesiyle kısa vadeli geri çekilmeleri satın aldığı ve 195 işlem ürettiği doğrulanmış, ancak kesin parametre ve giriş/çıkış kuralları üyelik duvarı arkasında gizli olduğundan spec_durumu:
+  gizli bırakılmıştır.'

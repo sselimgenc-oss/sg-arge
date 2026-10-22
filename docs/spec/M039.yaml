@@ -1,0 +1,42 @@
+id: M039
+ad: We Combined RSI, EMA, and VWAP on QQQ
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://quantifiedstrategies.substack.com/p/we-combined-rsi-ema-and-vwap-on-qqq
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (QQQ)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  vwap_rolling_days: 10
+varyantlar:
+- ad: Yalnız RSI (EMA ve VWAP filtresiz)
+  pf: 2.19
+  mdd: 22.7
+  islem: 340
+- ad: 2018-2026 alt dönem performansı
+  pf: 2.66
+deneme_sayisi_kaynakta: 4
+rapor:
+  pf: 3.54
+  sharpe: null
+  getiri: null
+  mdd: 9.1
+  islem: 215
+  wr: 79.5
+  maliyet_dahil: hayir
+spec_durumu: gizli
+belirsiz:
+- 'QuantifiedStrategies.com tam sayfası (https://www.quantifiedstrategies.com/we-combined-rsi-ema-and-vwap-on-qqq-3-54-profit-factor/) ve Substack özeti okundu: Strateji QQQ günlük grafikte 1) hızlı RSI
+  aşırı satım, 2) uzun vadeli EMA''nın yükseliyor olması ve 3) fiyatın son 10 günlük hacim ağırlıklı ortalama fiyatın (rolling VWAP) belirgin altında olması koşullarıyla long açıp kısa vadeli momentum toparlandığında
+  çıkmaktadır; ancak ''The Exact Backtest Rules'' bölümü ücretli üyelik duvarı (🔒 These trading rules are for members only) arkasında gizli olduğundan kesin RSI/EMA periyotları ve eşikleri açık değildir
+  (spec_durumu: gizli).'

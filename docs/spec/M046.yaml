@@ -1,0 +1,33 @@
+id: M046
+ad: ELLIPSE Bidirectional Swing Trading Strategy
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.tradingview.com/script/O6E7WhRC-ELLIPSE-Bidirectional-Swing-Trading-Strategy-Strategy-Version/
+  sayfa: null
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTCUSDT)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- TradingView script sayfasına (https://www.tradingview.com/script/O6E7WhRC-ELLIPSE-Bidirectional-Swing-Trading-Strategy-Strategy-Version/) erişim engeli nedeniyle ulaşılamadı ve web/GitHub aramalarında
+  'O6E7WhRC' koduna ait ayna bulunamadı.

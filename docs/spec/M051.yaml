@@ -1,0 +1,39 @@
+id: M051
+ad: MeanReversionRSI (Jesse.Trade)
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://jesse.trade/strategies/meanreversionrsi
+  sayfa: null
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTCUSDT)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+varyantlar:
+- ad: Jesse.Trade dizininde listelenen güncel metrikler (Ağustos-Ekim 2026)
+  getiri: 6.47
+  sharpe: 5.7
+  mdd: 0.0
+  wr: 100.0
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: 2.63
+  getiri: 45.36
+  mdd: 1.63
+  islem: null
+  wr: 100.0
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- Jesse.Trade strateji detay sayfasına (https://jesse.trade/strategies/meanreversionrsi) erişim engeli nedeniyle ulaşılamadı; genel strateji listesi (https://jesse.trade/strategies) ve yazar profili (https://jesse.trade/u/saleh)
+  okunabilmiş olsa da stratejinin Python kaynak kodu ve kesin RSI parametreleri detay sayfasında yer aldığından doğrulanamadı.

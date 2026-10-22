@@ -1,0 +1,35 @@
+id: M047
+ad: Gold Swing More Trades 50 SL 100 TP
+kart_yazari: argon
+kaynak:
+  dosya: markdown_listesi
+  url: https://www.tradingview.com/script/8b1AgVrV-Gold-Swing-More-Trades-50-SL-100-TP/
+  sayfa: null
+tarz: swing
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Emtia (Altın / XAUUSD)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler:
+  sl_points: 50
+  tp_points: 100
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- TradingView script sayfasına (https://www.tradingview.com/script/8b1AgVrV-Gold-Swing-More-Trades-50-SL-100-TP/) erişim engeli nedeniyle ulaşılamadı ve web/GitHub aramalarında '8b1AgVrV' koduna ait ayna
+  bulunamadı.
