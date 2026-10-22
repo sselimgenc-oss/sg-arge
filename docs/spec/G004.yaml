@@ -1,0 +1,54 @@
+id: G004
+ad: TIS BTC Momentum + Confluencia
+kart_yazari: claude
+kaynak:
+  dosya: day_trade_swing_trade_guncellenmis_strateji_listesi.pdf
+  url: https://www.tradingview.com/script/k9nauxnv-TIS-BTC-ESTRATEGIA-Momentum-Confluencia/
+  sayfa: 5 (madde 11)
+erisim_engeli: true
+tarz: swing
+tf: 4H
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTCUSDT)
+gostergeler:
+  sma50:
+    f: sma
+    src: close
+    n: 50
+  atr14:
+    f: atr
+    n: 14
+  yesil3_4h:
+    f: lowest
+    src: close - open
+    n: 3
+  yesil3_1d:
+    f: lowest
+    src: close - open
+    n: 3
+    tf: 1D
+ozel_kod: false
+giris: close > sma50 and yesil3_4h > 0 and yesil3_1d > 0
+cikis: close < sma50 or (open - close) >= 2 * atr14
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 4.42
+  sharpe: 0.26
+  getiri: 201
+  mdd: 6.2
+  islem: 81
+  wr: 53.1
+  maliyet_dahil: hayir (komisyon 0, kayma 5 tick)
+spec_durumu: eksik
+belirsiz:
+- yalniz PDF ozeti (kaynak sayfasina erisilemedi; sandbox yalniz raw.githubusercontent.com'a erisir)
+- 'PDF ozeti: SMA50 ustunde; 4 saatte ve gunlukte uc ardisik yesil mum; ATR boyutlandirma, %40 tavan; SMA50 alti veya ters 2 ATR mumda cikis.'
+- SMA50'nin zaman dilimi (4H varsayildi), ATR periyodu (14 varsayildi) ve 'ters 2 ATR mum' tanimi (govde >= 2 ATR kirmizi mum varsayildi) kaynakta yok; ifade bu varsayimlarla yazildi
+- 'Boyutlandirma kaynaktaki ATR/%40 tavan kurali yok sayilir: evrensel A6 boyutlandirmasi'
+- 'Yazar sonucu komisyonsuz; ayni donemde al-tut %1.389 (strateji %201): al-tut''u geride birakmiyor'
+- Kaynak sayfa okunamadigi icin kart eksik kalir, taramaya girmez

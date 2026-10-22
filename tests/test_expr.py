@@ -120,3 +120,21 @@ def test_valuewhen_highestsince_lowestsince_yeni_gun():
         parse("yeni_gun(1)").evaluate(env)
     with pytest.raises(ExprError):
         parse("valuewhen(close)").evaluate(env)
+
+
+def test_paskalya_and_ay_gunu_calendar_primitives() -> None:
+    import pandas as pd
+
+    from engine import expr, takvim
+
+    assert [takvim._easter_sunday(y).date().isoformat() for y in (2023, 2024, 2025, 2026)] == [
+        "2023-04-09", "2024-03-31", "2025-04-20", "2026-04-05",
+    ]
+    index = pd.bdate_range("2024-03-01", "2024-04-30")
+    env = {"close": pd.Series(1.0, index=index)}
+    holy_thursday = expr.parse("paskalya(-3)").evaluate(env, index=index)
+    assert list(index[holy_thursday]) == [pd.Timestamp("2024-03-28")]
+    assert list(index[expr.parse("paskalya(-4)").evaluate(env, index=index)]) == [pd.Timestamp("2024-03-27")]
+    assert list(index[expr.parse("paskalya(-9)").evaluate(env, index=index)]) == [pd.Timestamp("2024-03-22")]
+    day = expr.parse("ay_gunu() == 15").evaluate(env, index=index)
+    assert list(index[day]) == [pd.Timestamp("2024-03-15"), pd.Timestamp("2024-04-15")]

@@ -11,7 +11,7 @@ Cards carry entry/exit rules as text. This module parses them with Python's
 * ``and`` / ``or`` / ``not``
 * calls to whitelisted functions: ``cross_over``, ``cross_under``, ``mtf``,
   ``ay_islem_gunu_bastan``, ``ay_islem_gunu_sondan``, ``haftanin_gunu``,
-  ``yeni_gun``, ``valuewhen``, ``highestsince``, ``lowestsince``,
+  ``yeni_gun``, ``ay_gunu``, ``paskalya``, ``valuewhen``, ``highestsince``, ``lowestsince``,
   ``max``, ``min``, ``abs``
 
 Evaluation is vectorised over pandas Series. NaN comparisons are False.
@@ -37,6 +37,8 @@ FUNCTIONS = frozenset(
         "ay_islem_gunu_sondan",
         "haftanin_gunu",
         "yeni_gun",
+        "ay_gunu",
+        "paskalya",
         "valuewhen",
         "highestsince",
         "lowestsince",
@@ -253,6 +255,14 @@ class _Evaluator:
             if self.index is None:
                 raise ExprError("haftanin_gunu needs an index")
             return takvim.haftanin_gunu(self.index)
+        if name == "ay_gunu":
+            if self.index is None or args:
+                raise ExprError("ay_gunu() takes no arguments and needs an index")
+            return takvim.ay_gunu(self.index)
+        if name == "paskalya":
+            if len(args) != 1 or self.index is None:
+                raise ExprError("paskalya expects (k) and an index")
+            return takvim.paskalya(self.index, int(args[0]))
         if name == "yeni_gun":
             if self.index is None or args:
                 raise ExprError("yeni_gun() takes no arguments and needs an index")

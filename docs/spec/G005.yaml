@@ -1,0 +1,36 @@
+id: G005
+ad: XLP Mean Reversion w/ Twist
+kart_yazari: claude
+kaynak:
+  dosya: day_trade_swing_trade_guncellenmis_strateji_listesi.pdf
+  url: https://www.wealth-lab.com/Strategy/DesignPublished?strategyID=78
+  sayfa: 5 (madde 15)
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF/Hisse (WealthLab100 evreni)
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: 0.91
+  getiri: null
+  mdd: 40.21
+  islem: null
+  wr: 66.89
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- yalniz PDF ozeti (kaynak sayfasina erisilemedi; sandbox yalniz raw.githubusercontent.com'a erisir)
+- 'PDF ozeti kural vermiyor: ''XLP icin yayimlanmis mean-reversion tasarimi''; sonuc XLP''ye degil ortak WealthLab100 evrenine ait'
+- 'Kural metni yok: giris/cikis yazilamadi'

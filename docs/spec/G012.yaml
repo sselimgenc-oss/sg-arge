@@ -1,0 +1,53 @@
+id: G012
+ad: Riding Bollinger Bands (Freqtrade bb_riding, hyperopt)
+kart_yazari: claude
+kaynak:
+  dosya: day_trade_swing_trade_guncellenmis_strateji_listesi.pdf
+  url: https://github.com/IvanLetteri/AITA---Strategies/blob/main/bb_riding/btst_bb_riding_hopt_results.txt
+  sayfa: 9 (madde 35)
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (Binance USDT)
+gostergeler:
+  bb:
+    f: bb
+    src: close
+    n: 20
+    carpan: 2.0
+  macd:
+    f: macd
+    src: close
+    fast: 12
+    slow: 26
+    signal: 9
+ozel_kod: false
+giris: close > bb.upper and (bb.upper - bb.lower) / bb.basis > 0.02
+cikis: macd.signal < 0
+stop:
+  tip: yuzde
+  deger: 34.5
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: 1.64
+  sharpe: null
+  getiri: 3814.05
+  mdd: 35.88
+  islem: 425
+  wr: 68.2
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+roi_tablosu:
+  0: 1.029
+  7087: 0.381
+  23932: 0.123
+  57136: 0
+belirsiz:
+- 'Kod: https://raw.githubusercontent.com/IvanLetteri/AITA---Strategies/main/bb_riding/bb_riding.py; rapor 1d (kod varsayilani 30m; PDF: alt rapor gunluk, bu kart gunluk)'
+- 'ROI tablosu (dakika) ve stop hyperopt sonucudur: {0: 1.029, 7087: 0.381, 23932: 0.123, 57136: 0}, stoploss -0.345 (kod varsayilani -0.235 / ROI 0.3 degil, sonuc dosyasindaki degerler esas)'
+- 'roi_tablosu motorda desteklenmiyor: tarama bu karti motor_destegi_yok:roi_tablosu ile atlar'
+- 'Parametreler tum donemde optimize edilmis: asiri uyum riski'
