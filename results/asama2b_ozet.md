@@ -3,7 +3,7 @@
 OOS, on donem, 2x/3x/+1 bar stres, kaynak merkezli parametre platosu, 20 gunluk block bootstrap ve DSR birlikte raporlanir.
 DSR paper trading icin bilgi; canliya geciste kotumser (5N) deger icin 0,95 kapisi uygulanir.
 
-Satir: 36 | Kosullu: 7 | Reddedildi: 29
+Satir: 39 | Kosullu: 9 | Reddedildi: 30
 
 | ID | Piyasa | OOS islem/ortR | 2x PF | 3x net | +1 net | Plato + | Boot MDD95 | DSR 5N | Karar | Gerekce |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|---|
@@ -43,6 +43,9 @@ Satir: 36 | Kosullu: 7 | Reddedildi: 29
 | M020a | KRIPTO25 | 28/0.191 | 1.30 | 335.0% | 475.1% | 100% | 85.4% | 0.072 | Reddedildi | bootstrap MDD>%15 |
 | O2-025 | ABD25 | 46/0.506 | 2.11 | 20792.7% | 6807.4% | 100% | 85.0% | 0.794 | Reddedildi | bootstrap MDD>%15 |
 | O2-027 | ABD25 | 33/0.369 | 2.03 | 13103.0% | 3087.0% | 100% | 81.9% | 0.718 | Reddedildi | bootstrap MDD>%15 |
+| O1-004 | EMTIA | 652/0.042 | 1.10 | -2.1% | 12.1% | 67% | 15.4% | 0.024 | Reddedildi | 2x PF<1.2, 3x net<=0, bootstrap MDD>%15 |
+| T8-07 | EMTIA | 212/0.068 | 1.46 | 6.1% | 9.7% | 100% | 7.9% | 0.106 | Kosullu | on donem yok |
+| V2B | EMTIA | 718/0.006 | 1.33 | 1.4% | 14.3% | 100% | 8.3% | 0.091 | Kosullu | on donem yok |
 
 ## Yontem notlari
 

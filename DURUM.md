@@ -21,9 +21,10 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Sonnet | **T30: gün içi tarama/Aşama 2 bellek ve hız** (`docs/GOREV_T30.md`) | Atandı | "Görev geldi" |
 | Codex | Boşta (limit doldu; yenilenince yeni iş) | Bekliyor | Limit açılınca haber ver |
 | Argon | **T19: 13 kartın kaynağını oku** (`argon/PAKET_T19_kaynak.md`) | Atandı | Paketi yapıştır; `T19_kaynaklar.md`'yi `argon/`a yükle |
-| Lider | T24 (#85) doğrulama + gün içi kripto taraması (5m) + rotasyon Aşama 2 gerçek koşu | Sürüyor | Yok |
+| Lider | T30/T19 teslimlerini bekliyor; A3-001/A3-002d/A3-002f 5m taraması T30 sonrası | Bekliyor | Yok |
 
 ## Tamamlananlar (son)
+- **Gün içi huni (lider, gerçek koşu):** 1H/30m/15m/5m tarama. Kripto 30m/15m/5m'de aday yok. 1H'de 9 aday (ABD/EMTIA, yfinance ~2 yıl) → 2a'da 3 geçti (O1-004, T8-07, V2B; hepsi EMTIA) → 2b: **T8-07 ve V2B Koşullu** (OOS +%5,8 / +%3,1, bootstrap MDD95 %7,9 / %8,3; şerh: 1H ön dönem verisi yok), O1-004 Reddedildi. A3-001/A3-002d/A3-002f 5m taraması bellek yetersizliğinden koşulamadı (T30).
 - **T11b (Argon):** BIST30 2015-2019, 20 çeyrek × 30 hisse, Borsa İstanbul duyurularıyla. Lider denetimi: tekrar yok, çeyrek değişiklikleri zincirleme tutarlı, 2019-Q4 listesi 2020-Q1 listesine bağlanıyor (yalnız KOZAL→TRALT, KOZAA→TRMET kod değişikliği). `data/evren_pit.py` iki listeyi birleştirir; asama2b'de BIST PIT şerhi kalktı. Nihai listeye etkisi yok (tek BIST adayı C04 IS null testinde elenmişti).
 - T27 (Sonnet, PR #99): paper altyapısı (`paper/`: günlük sinyal, sanal defter, parite, RAPOR, panel `data.json`, `paper.yml`). Lider doğrulaması: pytest 294, gerçek veri parite birebir (292 işlem), motor değişikliği eski sonuçları değiştirmedi. Başlangıç **2026-10-23** (kullanıcı onayı). `paper.yml` hafta içi 22:30 UTC çalışır. Bekleyen: `PANEL_TOKEN`, panel reposunun saatlik botu.
 - T29 (Codex, PR #97): `huni.yml` uçtan uca huni (veri → tarama → 2a → 2b sabit/PIT → portföy → SONUC) ve sonuçları PR olarak açar; mevcut 4 iş akışı da artık main'e doğrudan push etmez, PR açar. Kullanıcı ayarı: Actions'ın PR açma izni açık.
