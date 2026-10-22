@@ -31,6 +31,7 @@ from engine.kart_sinyal import EndeksYok, MotorDestegiYok, PipsPiyasaDisi, build
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
 from engine.resample import resample_hourly  # noqa: E402
 from engine.spec import normalize_timeframe  # noqa: E402
+from strategies.ozel import has_strategy as has_special_strategy, build_plan as build_special_plan  # noqa: E402
 
 IS_START = pd.Timestamp("2020-01-01", tz="UTC")
 IS_END = pd.Timestamp("2024-09-30", tz="UTC")
@@ -62,7 +63,8 @@ def load_cards(directory: Path, tf: str) -> list[dict[str, Any]]:
     for path in sorted(directory.glob("*.yaml")):
         card = yaml.safe_load(path.read_text(encoding="utf-8"))
         card["tf"] = normalize_timeframe(card.get("tf"))
-        if card.get("spec_durumu") in ("tam", "dakikalik") and not card.get("ozel_kod") and card.get("tf") in tf.split(","):
+        runnable = not card.get("ozel_kod") or has_special_strategy(card["id"])
+        if card.get("spec_durumu") in ("tam", "dakikalik") and runnable and card.get("tf") in tf.split(","):
             cards.append(card)
     return cards
 
@@ -179,7 +181,11 @@ def prepare(
     in_period = {s: f for s, f in data.items() if not f.loc[(f.index >= start) & (f.index <= end)].empty}
     if not in_period:
         raise ValueError(f"{market}: donemde veri yok")
-    plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark, market=market)
+    plan = (
+        build_special_plan(card, in_period, week_end=week_end, benchmark=benchmark, market=market)
+        if card.get("ozel_kod") else
+        build_plan(card, in_period, week_end=week_end, benchmark=benchmark, market=market)
+    )
     if pit_universe is not None:
         plan.signals = filter_entry_signals(plan.signals, pit_universe, market)
     if card["tf"] not in DAILY_TFS:
