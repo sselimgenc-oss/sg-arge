@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   portfoy:
@@ -39,14 +40,13 @@ jobs:
         env:
           BOOTSTRAP_TEKRAR: ${{ inputs.bootstrap_tekrar }}
         run: python backtests/portfoy.py --bootstrap-tekrar "$BOOTSTRAP_TEKRAR"
-      - name: Commit results
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add results/portfoy.md results/portfoy_korelasyon.csv
-          git diff --cached --quiet || git commit -m "chore: refresh portfolio analysis"
-          for i in 1 2 3; do
-            git pull --rebase origin main && git push && exit 0
-            sleep 5
-          done
-          exit 1
+      - name: Open results PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: refresh portfolio analysis"
+          branch: "results/portfoy-${{ github.run_id }}"
+          title: "chore: refresh portfolio analysis"
+          body: "Workflow sonucu; main'e doğrudan push edilmez."
+          add-paths: |
+            results/portfoy.md
+            results/portfoy_korelasyon.csv

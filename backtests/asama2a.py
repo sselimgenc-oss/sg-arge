@@ -321,11 +321,16 @@ def load_candidates(
     return tasks
 
 
-def merge_selected_results(existing: pd.DataFrame, fresh: pd.DataFrame, timeframes: set[str]) -> pd.DataFrame:
-    """Replace selected TF rows while preserving daily (and other unselected) results exactly."""
+def merge_selected_results(
+    existing: pd.DataFrame, fresh: pd.DataFrame, timeframes: set[str], only: set[str] | None = None
+) -> pd.DataFrame:
+    """Replace selected TF rows (only the ``--kart-ids`` cards when given) while preserving the other results exactly."""
     if existing.empty:
         return fresh
-    kept = existing[~existing["tf"].astype(str).isin(timeframes)]
+    replaced = existing["tf"].astype(str).isin(timeframes)
+    if only:
+        replaced &= existing["id"].astype(str).isin(only)
+    kept = existing[~replaced]
     return pd.concat([kept, fresh], ignore_index=True).reindex(columns=OUTPUT_COLUMNS)
 
 
@@ -434,8 +439,8 @@ def main() -> int:
     table = pd.DataFrame(rows).reindex(columns=OUTPUT_COLUMNS)
     args.results_dir.mkdir(parents=True, exist_ok=True)
     output_path = args.results_dir / "asama2a.csv"
-    if output_path.exists() and not timeframes.issuperset(SUPPORTED_TFS):
-        table = merge_selected_results(pd.read_csv(output_path), table, timeframes)
+    if output_path.exists() and (only or not timeframes.issuperset(SUPPORTED_TFS)):
+        table = merge_selected_results(pd.read_csv(output_path), table, timeframes, only)
     write_outputs(table, args.results_dir)
     print(f"{len(table)} satir, {int((table['karar'] == 'Gecti (null)').sum())} gecti")
     return 0

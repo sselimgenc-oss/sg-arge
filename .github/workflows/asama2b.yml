@@ -21,6 +21,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   asama2b:
@@ -66,14 +67,15 @@ jobs:
           args=(--tf "$ASAMA2B_TF" --null-tekrar "$NULL_TEKRAR" --bootstrap-tekrar "$BOOTSTRAP_TEKRAR" --isci "$ASAMA2B_ISCI")
           if [ -n "$CODEX_IDS" ]; then args+=(--codex-ids "$CODEX_IDS"); fi
           python backtests/asama2b.py "${args[@]}"
-      - name: Commit results
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/MANIFEST.csv data/evren.csv results/asama2b.csv results/asama2b_ozet.md
-          git diff --cached --quiet || git commit -m "chore: refresh stage 2b results"
-          for i in 1 2 3; do
-            git pull --rebase origin main && git push && exit 0
-            sleep 5
-          done
-          exit 1
+      - name: Open results PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: refresh stage 2b results"
+          branch: "results/asama2b-${{ github.run_id }}"
+          title: "chore: refresh stage 2b results"
+          body: "Workflow sonucu; main'e doğrudan push edilmez."
+          add-paths: |
+            data/MANIFEST.csv
+            data/evren.csv
+            results/asama2b.csv
+            results/asama2b_ozet.md
