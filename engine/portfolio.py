@@ -48,6 +48,7 @@ class Position:
     realized: float = 0.0
     exit_cost_acc: float = 0.0
     entry_cost_sold: float = 0.0
+    sig_loc: int = -1
 
 
 @dataclass
@@ -144,6 +145,7 @@ def run_portfolio(
     roi_table: dict[float, float] | None = None,
     entry_order_type: str | None = None,
     entry_order_validity: int = 1,
+    level_fns: dict[str, Callable[..., float]] | None = None,
 ) -> BacktestResult:
     """Run shared-capital portfolio events without same-bar signal fills.
 
@@ -169,6 +171,11 @@ def run_portfolio(
       ``stop_fn(entry_price)`` (stop for the remainder). Taken once; the fraction fills at
       the next open (or the same close with ``fill_at_close``). The trade stays one row,
       its ``exit_reason`` ends with ``+partial``.
+    * ``level_fns``: signal-bar referenced levels (docs/EVRENSEL_KURALLAR.md D10), each called as
+      ``fn(symbol, signal_loc, fill_price, ...)`` returning an absolute price. ``"stop"`` sets the initial
+      stop; ``"target"`` ``(…, stop_level)`` the target; ``"lock_trigger"`` / ``"lock_stop"``
+      ``(…, stop_level, target_level)`` replace ``profit_lock``'s ATR trigger and stop. An entry whose
+      stop is not below, or target not above, the fill price is skipped.
     * ``entry_order_type``: ``"stop"`` or ``"limit"`` uses the signal-bar
       ``entry_level`` for up to ``entry_order_validity`` following bars.
     """
@@ -304,7 +311,7 @@ def run_portfolio(
 
     def open_position(symbol: str, date: pd.Timestamp, price: float, signal_atr: float,
                       stop_dist: float, target_dist: float,
-                      stop_pct: float = float("nan"), target_pct: float = float("nan")) -> None:
+                      stop_pct: float = float("nan"), target_pct: float = float("nan"), sig_loc: int = -1) -> None:
         nonlocal cash, max_open_positions
         if symbol in positions or not np.isfinite(signal_atr) or signal_atr <= 0:
             return
@@ -312,6 +319,16 @@ def run_portfolio(
             stop_dist = price * stop_pct
         if np.isfinite(target_pct):
             target_dist = price * target_pct
+        if level_fns:
+            stop_level = float("nan")
+            if "stop" in level_fns:
+                stop_level = float(level_fns["stop"](symbol, sig_loc, price))
+                stop_dist = price - stop_level
+            if "target" in level_fns:
+                target_level = float(level_fns["target"](symbol, sig_loc, price, stop_level))
+                if not np.isfinite(target_level) or target_level <= price:
+                    return
+                target_dist = target_level - price
         if not np.isfinite(stop_dist) or stop_dist <= 0:
             return
         field = "close" if fill_at_close else "open"
@@ -345,7 +362,7 @@ def run_portfolio(
             symbol=symbol, entry_date=date, entry_price=price, quantity=quantity,
             stop=initial_stop, initial_stop=initial_stop, initial_risk=initial_risk,
             entry_cost=entry_cost, target=target, signal_atr=signal_atr,
-            runtime_exit=runtime_exit, orig_quantity=quantity,
+            runtime_exit=runtime_exit, orig_quantity=quantity, sig_loc=sig_loc,
         )
         max_open_positions = max(max_open_positions, len(positions))
 
@@ -410,7 +427,8 @@ def run_portfolio(
                 continue
             pending.pop(order.symbol, None)
             open_position(order.symbol, date, open_price, order.signal_atr, order.stop_dist,
-                          order.target_dist, order.stop_pct, order.target_pct)
+                          order.target_dist, order.stop_pct, order.target_pct,
+                          int(index_of[order.symbol].get_indexer([order.signal_date])[0]))
 
         # A pending stop/limit order becomes active only after its signal bar.
         # It fills before protective stops are evaluated, so a stop touched on
@@ -441,7 +459,8 @@ def run_portfolio(
             pending_entries.pop(symbol, None)
             pending.pop(symbol, None)
             open_position(symbol, date, fill_price, order.signal_atr, order.stop_dist,
-                          order.target_dist, order.stop_pct, order.target_pct)
+                          order.target_dist, order.stop_pct, order.target_pct,
+                          int(index_of[symbol].get_indexer([order.signal_date])[0]))
 
         # Stops are active during the bar, including a position entered at its open.
         for symbol in sorted(positions):
@@ -475,12 +494,21 @@ def run_portfolio(
             if loc < 0:
                 continue
             position.bars_held += 1
-            if profit_lock is not None and not position.locked and (
-                float(price_arr[symbol]["high"][loc])
-                >= position.entry_price + profit_lock["trigger_atr"] * position.signal_atr
-            ):
-                position.locked = True
-                position.stop = max(position.stop, float(profit_lock["stop_fn"](position.entry_price)))
+            if profit_lock is not None and not position.locked:
+                if "trigger_level_fn" in profit_lock:
+                    trigger_price = float(profit_lock["trigger_level_fn"](
+                        symbol, position.sig_loc, position.entry_price, position.initial_stop, position.target))
+                else:
+                    trigger_price = position.entry_price + profit_lock["trigger_atr"] * position.signal_atr
+                if float(price_arr[symbol]["high"][loc]) >= trigger_price:
+                    position.locked = True
+                    locked_stop = (
+                        float(profit_lock["stop_level_fn"](
+                            symbol, position.sig_loc, position.entry_price, position.initial_stop, position.target))
+                        if "stop_level_fn" in profit_lock
+                        else float(profit_lock["stop_fn"](position.entry_price))
+                    )
+                    position.stop = max(position.stop, locked_stop)
             if trail_mode is None:
                 continue
             current_atr = float(sig_trail[symbol][loc])
@@ -552,7 +580,7 @@ def run_portfolio(
         for symbol, atr_value, stop_dist, target_dist, stop_pct, target_pct in close_fills:
             loc = locs[symbol][di]
             open_position(symbol, date, float(price_arr[symbol]["close"][loc]), atr_value,
-                          stop_dist, target_dist, stop_pct, target_pct)
+                          stop_dist, target_dist, stop_pct, target_pct, int(loc))
 
         marked_equity = equity_at("close")
         gross_close = sum(position.quantity * mark(symbol, "close") for symbol, position in positions.items())

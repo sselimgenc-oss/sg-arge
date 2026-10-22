@@ -59,3 +59,4 @@ belirsiz:
   5 seviyesini 4 kez test ettikten sonra cross_under(RSI[2], 5) ile çıkılır'
 - "T7 sozdizimi: 'lowest(stoch18.k, 2)[2] < 10' ifadesi birebir (stoch18.k[2] < 10 or stoch18.k[3] < 10) olarak yazildi (2 barlik pencere, 2 bar geriden)"
 - "ozel_kod_nedeni: durum_makinesi (2 asamali kurulum/tetik durum makinesi (Stoch = -1 ve sayac))"
+- "T20: motorda kalmadi. 2 asamali kurulum/tetik durum makinesi: kurulumun ne zaman sifirlandigi ve RSI sayaci (RSICounter/RSICounterAdj, LastRSI) kartta yalnizca ozet olarak var; kaynak kodu okunamadi, tahmin yazilmadi"

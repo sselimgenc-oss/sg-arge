@@ -58,4 +58,5 @@ belirsiz:
 - 'Kod-açıklama çelişkisi: InpPendingExpiryHours=15 parametresi ile zaman damgası hesaplansa da emir gönderiminde ORDER_TIME_GTC kullanıldığı için saat bazlı bekleyen emir iptali kodda çalışmamaktadır'
 - 'short kuralı var: Onaylanmış swing low (solunda 5 ve sağında 5 bardan kesin düşük) bulunduğunda swing_low * (1 + 0.0010) seviyesine Sell Stop konur'
 - "ozel_kod_nedeni: bekleyen_emir (swing high'in altina Buy Stop, BE/izsuren/Salvage durum kurallari)"
+- "T20: motorda kalmadi. Bekleyen Buy Stop (T15) ifade edilebilir; ancak swing high pivot ilkeli (5 sol/5 sag, 200 bar) ve kaynaktaki pozisyon yonetimi yok: yuzde tetikli basabas kilidi, +%0,2'de baslayan %0,2 mesafeli yuzde izsuren ve -%1'de TP'yi giristen %0,15 asagiya ceken 'salvage'. Bunlari birakip karti cevirmek kaynagi degistirirdi"
 kart_yazari: argon

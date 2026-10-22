@@ -46,4 +46,5 @@ belirsiz:
   son kırmızı tuğlanın düşüğü veya son anlamlı diptir; çıkış ters renkli (kırmızı) tuğla kapanışında veya 20-30 pip izsüren stop ile yapılır'
 - 'short kuralı var: Fiyat EMA(21) ve EMA(50) altındayken yeşilden kırmızıya dönüp 2 ardışık kırmızı tuğla kapandığında short açılır'
 - "ozel_kod_nedeni: renko (10 pip Renko tuglalari (zaman bazli bar degil))"
+- "T20: motorda kalmadi. 10 pip Renko (EURUSD, FX) ve 20-30 pip izsuren; pips stop tipi motorda yok, 'kirmizidan yesile donus + 2 yesil tugla' kurali kaynakta tam degil"
 kart_yazari: argon

@@ -36,8 +36,7 @@ iz_suren:
 zaman_stop:
   bar: 11
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: cok_enstruman
+ozel_kod: false
 parametreler:
   SEC2: FXY
   SEC3: SPY
@@ -63,7 +62,7 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: tam
+spec_durumu: kapsam_disi
 belirsiz:
 - NinjaTrader sayfasının referans verdiği Temmuz 2017 Stocks & Commodities Traders' Tips sayfasından (https://technical.traders.com/content/TTlink.asp?mo=07&yr=2017, Markos Katsanos 'Trading The Nikkei')
   tam strateji kodu okundu
@@ -76,3 +75,4 @@ belirsiz:
 - 'short kuralı var: IM2[3] < 25 ve IM2 > IM2[3] ve IM2 < 75 ve CR3 < 0.8 ve (LR <= LR[1] veya Close < SMA(Close, 25)) olduğunda short açılır (3 bar sonra %1.5 stop + Stoch < 90, 7 bar sonra %1.5 iz süren
   stop, 11 bar zaman stopu)'
 - "ozel_kod_nedeni: cok_enstruman (FXY ve SPY serileri ile cross-instrument regresyon uyumsuzlugu)"
+- "T20: kapsam disi. Sinyal DXJ (Nikkei ETF) fiyatini FXY (yen ETF) ve SPY ile 50 gunluk regresyon uyumsuzlugundan uretir (IM2, CR3); DXJ ve FXY evrenimizde yok, sinyal ikinci/ucuncu enstrumanin serisini gerektirir ve tek-enstrumana indirgenemez"

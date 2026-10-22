@@ -66,4 +66,5 @@ belirsiz:
 - 'Kod içi tutarsızlık: Kullanıcı girdisi olarak atrLength=14 tanımlanmış ancak 207. satırda ta.atr(14) sabit 14 ile çağrılmıştır'
 - 'short kuralı var: dShort=true ve FLIP=true varsayılanıyla İkili Tepe (Double Top) boyun çizgisi aşağı kırılımında (close < y3) short açılır ve açık long varsa tersine döner'
 - "ozel_kod_nedeni: desen (5x3 pivot matrisinde cift dip (double bottom) deseni)"
+- "T20: motorda kalmadi. 5x3 pivot matrisli cift dip/tepe algoritmasi (Bjorgum Pine); genel bir desen ilkeline indirgenemedi, Pine kaynagi raw.githubusercontent'ta yok"
 kart_yazari: argon

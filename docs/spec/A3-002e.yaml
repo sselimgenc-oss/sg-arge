@@ -38,4 +38,5 @@ belirsiz:
 - "T7 sozdizimi: ozgun cikis metni: 'stop/hedef: kaynak koddaki longSl/longTp (TP katsayisi 2.0)'"
 - "T7 sozdizimi: 'abc_zigzag_deseni(prd=8, fib 0.382-0.618, hata %5)' -> ad 'abc_zigzag_deseni'; parametreler: prd=8, fib 0.382-0.618, hata %5"
 - "ozel_kod_nedeni: desen (ZigZag/ABC deseni (Fibonacci oranli) ve 6 ortalamali trend bulutu)"
+- "T20: motorda kalmadi. Pine kaynagi (ABSAR.pine, raw.githubusercontent) okundu: ZigZag dizisi + ABC fibonacci orani + 6 ortalamali bulut + Parabolic SAR + son 6 bar stochastic donusu, durumlu dizi algoritmasi; stop = lowest(low, 5), hedef = giris + 2 x risk (kapanista giris). Genel ilkele indirgenmedi; kaynak okundugu icin ayri bir port isi olarak yapilabilir"
 bias_varsayim: false

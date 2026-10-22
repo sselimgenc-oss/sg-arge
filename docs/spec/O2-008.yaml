@@ -48,3 +48,4 @@ belirsiz:
   stop BE+1 pipe, +10 pip kara gecince BE+5 pipe veya iz suren stopa cekilir (varsayilan EA seans araligi NY 08:00 - 12:00). 5) Short kurali: Fiyat Highest_H1_Open uzerine cikip tekrar Highest_H1_Open seviyesine
   indiginde short acilir, stop Daily High''dir.'
 - "T10: ozel_kod_nedeni: durum_makinesi (gun ici en yuksek/en dusuk 1H acilis seviyeleri ve asagi kirip geri donus durumu)"
+- "T20: motorda kalmadi. Gun ici en yuksek/en dusuk 1H acilis seviyeleri, 'asagi kirip geri donus' durumu ve NY 08:00-12:00 seans penceresi (seans saati paketi) gerektirir"

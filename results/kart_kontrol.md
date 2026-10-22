@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
-Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 152
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **87**; ayrica `dakikalik` (yalniz kripto testi) hazir: **17**
+Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 148
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **89**; ayrica `dakikalik` (yalniz kripto testi) hazir: **20**
 
 
 ## Durum dagilimi
@@ -13,8 +13,8 @@ T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **87**; ayrica `d
 | sadece_short | 2 |
 | eksik | 163 |
 | dakikalik | 62 |
-| tam | 124 |
-| kapsam_disi | 3 |
+| tam | 123 |
+| kapsam_disi | 4 |
 
 ## `tam` kartlarda hatalar (T5'e engel)
 
@@ -54,7 +54,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | close_tqqq | 4 |
 | orb_high | 3 |
 | halftrend | 2 |
-| avg_spread_diff | 2 |
 | spy_close | 2 |
 | mov_var | 2 |
 | ott_opt2 | 2 |
@@ -101,7 +100,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | session_open | 1 |
 | dir_flip_to_1 | 1 |
 | chandelier_long_stop | 1 |
-| down_fractal2 | 1 |
 | abc_zigzag_deseni | 1 |
 | sma_bulutu_trend | 1 |
 | andean_bull_signal_cross | 1 |
@@ -119,9 +117,6 @@ Toplam: 7 (durum `tam` olanlar once)
 | sar | 1 |
 | up | 1 |
 | down | 1 |
-| rsi_atr_mkt | 1 |
-| totalbricksup | 1 |
-| totalbricksdown | 1 |
 | ott_hhv | 1 |
 | stosk_ott | 1 |
 | ott_llv | 1 |
@@ -195,5 +190,5 @@ Toplam: 7 (durum `tam` olanlar once)
 
 ## Diger kartlarda sorun sayisi
 
-`tam` olmayan 132 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
+`tam` olmayan 131 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
 

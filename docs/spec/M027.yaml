@@ -10,14 +10,19 @@ tf: 15m
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: Endeks (DAX)
-gostergeler: {}
-giris: (totalbricksup[1] == 0 or totalbricksup[1] == 1) and totalbricksup >= 2
-cikis: (totalbricksdown[1] == 0 or totalbricksdown[1] == 1) and totalbricksdown >= 2
-stop: null
+gostergeler:
+  renko22:
+    f: renko_sayac
+    kutu: 22
+    ilk_bar: 1
+giris: (renko22.up[1] == 0 or renko22.up[1] == 1) and renko22.up >= 2
+cikis: (renko22.down[1] == 0 or renko22.down[1] == 1) and renko22.down >= 2
+stop:
+  tip: puan
+  deger: 120
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: renko
+ozel_kod: false
 piyasa_kisiti: [GER40]
 parametreler:
   bricksize: 22
@@ -50,4 +55,4 @@ belirsiz:
   az 2 yükseliş tuğlası oluştuğunda) sonraki bar açılışında long (buy at market) girilir. 3) Eğer close <= downbrick - bricksize ise: newbricksdown = round(((downbrick - close) / bricksize) - 0.5); diffdown
   = newbricksdown * bricksize; upbrick = upbrick - diffdown; downbrick = downbrick - diffdown; totalbricksdown = totalbricksdown + newbricksdown; totalbricksup = 0. Eğer (totalbricksdown[1] == 0 veya totalbricksdown[1]
   == 1) ve totalbricksdown >= 2 ise long kapatılıp short (sellshort at market) açılır. 4) Ayrıca 120 puanlık sabit stop-loss (set stop ploss 120) uygulanır.'
-- "T10: ozel_kod_nedeni: renko (Renko tugla sayimi)"
+- "T20: kapanis bazli sentetik Renko sayaci renko_sayac(kutu=22, ilk_bar=1) ilkeli (tugla yalniz kapanmis barla olusur, look-ahead yok); 120 puan stop; kaynaktaki short/reversal kolu long-only modda yok. Puan birimi GER40 icin: piyasa_kisiti GER40 oldugundan evrenimizde Dogrulanamaz"

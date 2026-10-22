@@ -22,8 +22,8 @@ from .spec import RUNTIME_NAMES
 
 BENCHMARK_RUNTIME = frozenset({"endeks_close"})
 POSITION_RUNTIME = RUNTIME_NAMES - BENCHMARK_RUNTIME
-STOP_TYPES = ("atr", "yuzde", "puan", "max")
-TARGET_TYPES = ("atr", "yuzde", "puan")
+STOP_TYPES = ("atr", "yuzde", "puan", "max", "seviye")
+TARGET_TYPES = ("atr", "yuzde", "puan", "seviye")
 TRAIL_TYPES = {"atr_zirve": "high", "atr_kapanis_zirve": "close"}
 STANDARD_STOP_ATR = 3.0  # EVRENSEL_KURALLAR A7: ATR14 x 3 when the card has no stop of its own
 SIZING_ATR = 14
@@ -84,7 +84,7 @@ def needs_benchmark(card: Mapping[str, Any]) -> bool:
     for spec in (card.get("gostergeler") or {}).values():
         if not isinstance(spec, dict):
             continue
-        if spec.get("benchmark"):
+        if spec.get("benchmark") or spec.get("veri"):
             return True
         if any("endeks_close" in str(spec.get(key) or "") for key in ("src", "ifade")):
             return True
@@ -165,7 +165,9 @@ def card_frame_signals(
         out["entry_level"] = _eval_series(str(entry_order["seviye"]), env, index, mtf)
 
     stop, hedef, trail = card.get("stop"), card.get("hedef"), card.get("iz_suren")
-    if stop:
+    if stop and stop["tip"] == "seviye":
+        pass  # absolute level resolved at the fill from signal-bar values (level_fns)
+    elif stop:
         if stop["tip"] == "atr":
             out["stop_dist"] = float(stop["carpan"]) * _ind.atr(frame, int(stop.get("n", SIZING_ATR)))
         elif stop["tip"] == "yuzde":
@@ -180,7 +182,9 @@ def card_frame_signals(
         out["stop_dist"] = float(trail["carpan"]) * _ind.atr(frame, int(trail.get("n", SIZING_ATR)))
     else:
         out["stop_dist"] = STANDARD_STOP_ATR * atr_sizing
-    if hedef:
+    if hedef and hedef["tip"] == "seviye":
+        pass
+    elif hedef:
         if hedef["tip"] == "atr":
             out["target_dist"] = float(hedef["carpan"]) * _ind.atr(frame, int(hedef.get("n", SIZING_ATR)))
         elif hedef["tip"] == "yuzde":
@@ -189,7 +193,45 @@ def card_frame_signals(
             out["target_dist"] = float(hedef["deger"])
     if trail:
         out["trail_atr"] = _ind.atr(frame, int(trail.get("n", SIZING_ATR)))
+    if _uses_signal_levels(card):
+        out.attrs["sinyal_baglam"] = signal_context(card, frame, env)
     return out, builder
+
+
+def _uses_signal_levels(card: Mapping[str, Any]) -> bool:
+    stop, hedef, lock = card.get("stop"), card.get("hedef"), card.get("kar_kilidi")
+    return bool(
+        (stop and stop.get("tip") == "seviye") or (hedef and hedef.get("tip") == "seviye")
+        or (lock and "tetik_seviye" in lock)
+    )
+
+
+def signal_context(card: Mapping[str, Any], frame: pd.DataFrame, env: Mapping[str, Any]) -> dict[str, Any]:
+    """Arrays of signal-bar values for ``sinyal_<ad>`` references (OHLC columns and card indicators)."""
+    context: dict[str, Any] = {}
+    for name in ("open", "high", "low", "close", "volume"):
+        context[f"sinyal_{name}"] = frame[name].to_numpy(dtype=float)
+    for name in (card.get("gostergeler") or {}):
+        value = env.get(name)
+        if isinstance(value, pd.Series):
+            context[f"sinyal_{name}"] = value.to_numpy(dtype=float)
+        elif isinstance(value, pd.DataFrame):
+            context[f"sinyal_{name}"] = {col: value[col].to_numpy(dtype=float) for col in value.columns}
+    return context
+
+
+def _level_fn(text: str, contexts: Mapping[str, dict[str, Any]], extra: tuple[str, ...]) -> Callable[..., float]:
+    """``fn(symbol, signal_loc, fill_price, *extra_values)`` evaluating ``text`` at the signal bar."""
+    expression = _expr.parse(str(text))
+
+    def fn(symbol: str, loc: int, price: float, *values: float) -> float:
+        env: dict[str, Any] = {"giris": price, "giris_fiyati": price}
+        for name, array in contexts[symbol].items():
+            env[name] = {col: values_[loc] for col, values_ in array.items()} if isinstance(array, dict) else array[loc]
+        env.update(zip(extra, values))
+        return float(expression.evaluate(env, index=None))
+
+    return fn
 
 
 def build_plan(
@@ -205,8 +247,10 @@ def build_plan(
         raise MotorDestegiYok(missing)
     signals: dict[str, pd.DataFrame] = {}
     builders: dict[str, Callable[..., pd.Series | None] | None] = {}
+    contexts: dict[str, dict[str, Any]] = {}
     for symbol, frame in data.items():
         signals[symbol], builders[symbol] = card_frame_signals(card, frame, week_end=week_end, benchmark=benchmark)
+        contexts[symbol] = signals[symbol].attrs.get("sinyal_baglam", {})
 
     trail = card.get("iz_suren")
     kwargs: dict[str, Any] = {
@@ -223,8 +267,21 @@ def build_plan(
         kwargs["time_stop_bars"] = int(zaman["bar"])
     if card.get("cooldown_bar"):
         kwargs["cooldown_bars"] = int(card["cooldown_bar"])
+    levels: dict[str, Callable[..., float]] = {}
+    stop_card, target_card = card.get("stop"), card.get("hedef")
+    if stop_card and stop_card.get("tip") == "seviye":
+        levels["stop"] = _level_fn(stop_card["ifade"], contexts, ())
+    if target_card and target_card.get("tip") == "seviye":
+        levels["target"] = _level_fn(target_card["ifade"], contexts, ("stop_seviyesi",))
+    if levels:
+        kwargs["level_fns"] = levels
     lock = card.get("kar_kilidi")
-    if lock:
+    if lock and "tetik_seviye" in lock:
+        kwargs["profit_lock"] = {
+            "trigger_level_fn": _level_fn(lock["tetik_seviye"], contexts, ("stop_seviyesi", "hedef_seviyesi")),
+            "stop_level_fn": _level_fn(lock["stop"], contexts, ("stop_seviyesi", "hedef_seviyesi")),
+        }
+    elif lock:
         lock_expr = _expr.parse(str(lock["stop"]))
         kwargs["profit_lock"] = {
             "trigger_atr": float(lock["tetik_atr"]),

@@ -10,6 +10,9 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: EURUSD
 gostergeler:
+  fraktal2:
+    f: williams_fractal
+    n: 2
   ema20:
     f: ema
     src: close
@@ -22,10 +25,14 @@ gostergeler:
     f: ema
     src: close
     n: 100
-giris: ema20 > ema50 and ema50 > ema100 and low > ema100 and low < ema20 and down_fractal2
+giris: ema20 > ema50 and ema50 > ema100 and low > ema100 and low < ema20 and fraktal2.down
 cikis: null
-stop: null
-hedef: null
+stop:
+  tip: seviye
+  ifade: eger(sinyal_low > sinyal_ema50, sinyal_ema50, sinyal_ema100)
+hedef:
+  tip: seviye
+  ifade: giris + 1 * (giris - stop_seviyesi)
 stop_eklendi: false
 parametreler: {}
 deneme_sayisi_kaynakta: null
@@ -38,16 +45,12 @@ rapor:
   wr: '%76.7'
   maliyet_dahil: belirtilmemiş
 spec_durumu: dakikalik
-ozel_kod: true
-ozel_kod_nedeni: desen
+ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- 'Williams fraktal (n=2, genişletilmiş sınırlar) listede yok: ozel_kod'
 - 'Giriş sinyal barının kapanışında: A1 gereği sonraki açılış'
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/3MAF.pine'
 - Yazarın test penceresi çok kısa (2023-01-02/07-13), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T7 sozdizimi: ozgun cikis/stop-hedef metni: 'stop: ema50 if low > ema50 else ema100 ; hedef: giris + 1*(giris - stop)' (sayisal ternary dil disi; sinyal barina bagli: elle kodlanacak)"
-- "T7 sozdizimi: 'down_fractal(n=2)' -> ad 'down_fractal2' (Williams fraktal, n=2; ozel gosterge)"
-- "ozel_kod_nedeni: desen (Williams fraktal (n=2) ve sinyal barina bagli sayisal ternary stop)"
+- "T20: Pine kaynagi (3MAF.pine, raw.githubusercontent) okundu. Williams fraktali williams_fractal(n=2) ilkeli (kaynaktaki genisletilmis sinir varyantlariyla; fraktal n bar sonra bilinir, look-ahead yok). stop = low > ema50 ise ema50 yoksa ema100 (sinyal bari), hedef = giris + 1 x (giris - stop) (tpCoef = 1). Kaynaktaki reverse = false (varsayilan) long kolu kullanildi"
 bias_varsayim: false
