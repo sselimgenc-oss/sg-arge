@@ -19,11 +19,12 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
 | Sonnet | **T30: gün içi bellek/hız** (`docs/GOREV_T30.md`), ardından **T31: 13 kartın kaynağı** (`docs/GOREV_T31.md`, eski Argon T19) | Atandı | "Görev geldi" |
-| Codex | **T32: 2H/4H + tek enstrüman piyasaları (FX, endeks, altın)** (`docs/GOREV_T32.md`, Terra; PR-1 tf, PR-2 piyasa) | Atandı | "Görev geldi" |
+| Codex | Boşta (T32 tamam: PR #108 2H/4H, PR #109 FX8 + pips) | Bekliyor | Yok |
 | Argon | **Kullanılmıyor** (kullanıcı kararı: ikinci talimata kadar; limit ekran görüntüsü gezintisiyle tükeniyor) | Beklemede | Yok |
 | Lider | T30/T31 teslimlerini bekliyor; A3-001/A3-002d/A3-002f 5m taraması T30 sonrası; M013 (4H) için 1H→4H yeniden örnekleme değerlendirilecek | Bekliyor | Yok |
 
 ## Tamamlananlar (son)
+- **T32 (Codex/Terra) tamam:** 2H/4H mumlar (D16) ve FX8 piyasası + pip stop. Gerçek koşu: M013 (FX8 4H, PF 0.79) ve O2-005 (FX8 1H, PF 0.62) Aşama 1’de Reddedildi. Not: lider ilk tahmini (~80 kart) yanlıştı; bu piyasalara bağlı kartların çoğu kural eksik/özel kod. SONUC: Geçti 2, Koşullu 3, Reddedildi 132, Bekliyor 5.
 - **Kıl payı denetimi (`results/denetim_kil_payi.md`, ön kayıtlı):** 2a'da elenen 147 satıra risk testi → BH sonrası 0 keşif (ham p<0.05: 7, şans beklentisi 7.4); yalnız OOS ile elenen 2 satır OOS'ta gerçekten bozulmuş. Eleme iyi strateji kaçırmamış; SONUC değişmedi.
 - **Bekleyen 15 stratejiden 9'u sonuçlandı (lider, düzeltilmiş motorla, PR #104 sonrası):** hepsi Reddedildi. A6-019 ve M016 Aşama 1'de; A1-025, A6-003, M008, M010, O1-039 ve A2-002/A2-021 (1H) rastgele giriş testinde (piyasa betası); M036 ABD sabit evrende Koşullu iken tarihsel evrende (PIT) 2x maliyette PF<1,2 ve 3x maliyette net≤0 ile Reddedildi; P3-008 kripto OOS ortR≤0. Nihai liste değişmedi: Geçti 2 (C07, R01), Koşullu 3. Kalan Bekliyor 6: A3-002a/c ve O1-064 (1m veri yok), A3-002d/f (T30 bellek), M013 (4H desteklenmiyor). Not: Codex C10 yeni veriyle sınırda (p 0,052→0,050) karar değiştiriyor; sağlam değil, main'deki Reddedildi korundu.
 - **Lider motor düzeltmesi (bekleyen emir, D8):** bar içinde dolan limit/stop girişte motor aynı barın açılışıyla `gap_target` çıkışı yapıyordu (açılış girişten önce: look-ahead) ve aynı barda hedefe dokunmayı kâr sayıyordu (bar içi sıra bilinmez). Artık bar içi dolumda o bar yalnız stop kontrol edilir; hedef ertesi bardan. Etki: A1-025 ve M016 (One Percent a Week) PF 3-5'ten ~1'e düştü. Etkilenen kartlar (giris_emri olan 10 kart) yeniden taranıyor. Test eklendi.

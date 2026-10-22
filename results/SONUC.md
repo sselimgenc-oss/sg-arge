@@ -8,9 +8,9 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 |---|---:|---:|---:|
 | Geçti | 2 | 2 | 0 |
 | Koşullu | 3 | 1 | 2 |
-| Bekliyor | 6 | 1 | 5 |
-| Reddedildi | 130 | 103 | 27 |
-| Doğrulanamaz | 274 | 119 | 155 |
+| Bekliyor | 5 | 0 | 5 |
+| Reddedildi | 132 | 105 | 27 |
+| Doğrulanamaz | 273 | 118 | 155 |
 | Ertelendi | 3 | 2 | 1 |
 | Kapsam dışı | 4 | 2 | 2 |
 | **Toplam** | **422** | 230 | 192 |
@@ -38,7 +38,6 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 | A3-002c | geraked CP1 | - | asama1: tarama bekliyor |
 | A3-002d | geraked BBRSI | - | asama1: tarama bekliyor |
 | A3-002f | geraked DHLAOS | - | asama1: tarama bekliyor |
-| M013 | Simple H4 Mobile Trading System | - | asama1: tarama bekliyor |
 | O1-064 | Try this NQ Strategy + Code | - | asama1: tarama bekliyor |
 
 ## Önerilen portföy
@@ -58,7 +57,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 ## Reddedildi
 
-### Aşama 1 (hızlı tarama): 40
+### Aşama 1 (hızlı tarama): 42
 
 | ID | Strateji | Piyasa/tf | Alt neden |
 |---|---|---|---|
@@ -88,9 +87,11 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | M012a | 5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS | ABD25/1D | net_2x<=0 (alias: O3-002) |
 | M012c | 5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry | ABD25/1D | net_2x<=0 |
 | M012d | 5 Swing Trading Strategies for Beginners - Strategy 4: Volatility Contraction | ABD25/1D | PF_1x<1.1, net_2x<=0 |
+| M013 | Simple H4 Mobile Trading System | FX8/4H | PF_1x<1.1, net_2x<=0 |
 | M016 | One Percent a Week Strategy (TQQQ) | ABD25/1D | PF_1x<1.1, net_2x<=0 |
 | O1-011 | SuperTrendVadeliStratejisi | KRIPTO25/5m | PF_1x<1.1, net_2x<=0 |
 | O1-017 | Sistem 2: RSI ortalama kesisimi (VIOP30 5 dk, long) | KRIPTO25/5m | PF_1x<1.1, net_2x<=0 |
+| O2-005 | Trading Made Simple | FX8/1H | PF_1x<1.1, net_2x<=0 |
 | O3-002 | Overnight swing strategy in the S&P 500 (10 Best Swing #2) | ABD25/1D | net_2x<=0 |
 | O3-011 | 5-Day Low of the Range (IBS<0.25) - S&P 500 | ABD25/1D | PF_1x<1.1, net_2x<=0 |
 | O3-013 | Turnaround Tuesday (SPY) | ABD25/1D | PF_1x<1.1, net_2x<=0 |
@@ -203,7 +204,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | P3-008 | Strategy based on Squeeze Momentum Indicator [LazyBear] | KRIPTO25/1D | OOS ortR<=0 |
 | P3-011 | MACD Strategy with trailing ATR stop | KRIPTO25/1D | OOS ortR<=0 |
 
-## Doğrulanamaz (274)
+## Doğrulanamaz (273)
 
 <details><summary><b>kaynak erisilemedi</b> (117)</summary>
 
@@ -577,15 +578,6 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 </details>
 
-<details><summary><b>piyasa ozgu (FX)</b> (2)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| O1-037 | Simple and Profitable Scalping Strategy (ForexSignals TV) | - |
-| O2-005 | Trading Made Simple | - |
-
-</details>
-
 <details><summary><b>kaynakta sinyal tanimi yok (ozel kod: cok_enstruman)</b> (1)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
@@ -647,6 +639,14 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | ID | Strateji | Gerekçe (karttaki not) |
 |---|---|---|
 | O2-011 | PulseStrike Scalper - Statistical Burst Detection EA | - |
+
+</details>
+
+<details><summary><b>piyasa ozgu (FX)</b> (1)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| O1-037 | Simple and Profitable Scalping Strategy (ForexSignals TV) | - |
 
 </details>
 
