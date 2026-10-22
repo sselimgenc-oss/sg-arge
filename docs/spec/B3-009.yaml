@@ -20,6 +20,8 @@ gostergeler:
     f: sma
     src: close
     n: 200
+ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: null
 cikis: close > sma5
 stop: null
@@ -43,3 +45,4 @@ belirsiz:
 - Arama motoru indeksinden kurtarilan bilgilere gore strateji Larry Connors ve Cesar Alvarez'in 2009 tarihli 'Short Term Trading Strategies That Work' kitabindaki kurallara dayanir; uzun vadeli trend filtresiyle
   girilir ve long pozisyon fiyat 5 gunluk ortalamanin uzerinde kapattiginda (close > sma5) kapatilir (short pozisyon 5 gunluk ortalamanin altinda kapattiginda kapatilir). Ancak giris tetikleyicisinin (orn.
   RSI(2) esigi veya N gunluk dusus) kesin parametresi ucretli makale engeli nedeniyle okunamadi.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (giris kurali yok)"

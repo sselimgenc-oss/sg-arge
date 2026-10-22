@@ -24,6 +24,7 @@ gostergeler:
     f: atr
     n: 14
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 giris: close > mtf("1H", ema50_1h) and low <= ema20 and close > ema20
 cikis: null
 stop:
@@ -34,6 +35,7 @@ hedef:
   tip: rr
   deger: 0.75
 stop_eklendi: false
+piyasa_kisiti: [NQ]
 parametreler:
   ema_fast_5m: 20
   ema_trend_1h: 50
@@ -54,3 +56,4 @@ belirsiz:
   haric).
 - 'Kurallar (ozel_kod: true): 1) Yalniz NY seansinda islem yapilir. 2) 1H trend filtresi: fiyat 1 saatlik 50 EMA''nin uzerinde olmali (close > mtf("1H", ema50_1h); short icin altinda). 3) 5m grafikte fiyatin
   20 EMA''ya geri cekilmesinde (pullback) trend yonunde girilir. 4) Stop-loss 1.5 * ATR (periyot belirtilmemis, 14 varsayildi), kar hedefi 0.75R (yani 1.125 * ATR).'
+- "T10: ozel_kod_nedeni: seans_saat (yalniz NY seansi; hedef 0.75R (rr tipi) motorda yok)"

@@ -18,6 +18,8 @@ gostergeler:
   atr25:
     f: atr
     n: 25
+ozel_kod: false
+dolum: kapanis
 giris: close < hh10 - 2.5 * atr25 and (close - low) / (high - low) < 0.3
 cikis: close > high[1]
 stop: null
@@ -48,3 +50,4 @@ belirsiz:
 - 'Yazarin alt makalelerinden (quantifiedstrategies.com/swing-trading-strategies-for-beginners/ Strateji 1 ve quantifiedstrategies.com/overnight-trading-strategy/) okundu: Son 10 gunun en yuksek seviyesinden
   (hh10), son 25 gunluk ortalama gunluk araligin (High - Low ortalamasi / ATR25) 2.5 kati cikarilarak alt bant hesaplanir; SPY bu bandin altinda kapattiginda ve IBS < 0.3 (overnight versiyonunda < 0.5)
   oldugunda long girilir, close > high[1] oldugunda cikilir (SPY 1993-2025: %8 CAGR, %18 exposure, %23 MDD).'
+- "T10: ozel_kod alani eklendi (false); kapanista giris (dolum: kapanis, D4). 25 gunluk ortalama gunluk aralik yerine ATR(25) kullanildi (kutuphane)"

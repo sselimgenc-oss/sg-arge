@@ -28,6 +28,7 @@ gostergeler:
     src: close
     n: 14
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: ema500 > ema500[1] and ema_fast > ema_fast[1] and rsi14 > rsi14[1] and roc14 > roc14[1]
 cikis: ema_fast < ema_fast[1] and rsi14 < rsi14[1]
 stop: null
@@ -35,6 +36,7 @@ hedef:
   tip: puan
   deger: 5
 stop_eklendi: false
+piyasa_kisiti: [NQ]
 parametreler:
   ema_long: 500
   target_points: 5
@@ -55,3 +57,4 @@ belirsiz:
 - 'QuantConnect tartisma sayfasindaki (David E, Mayis 2023) aciklamadan okundu: 5m NQ Mini barlarinda EMA egimi, RSI egimi, Momentum egimi ve Ultimate Oscillator egimi (MACD histogram egimi elenmis) ile
   500 EMA trend yonu kullanilir (500 EMA pozitifken long icin 1 bar sinyal, short icin ust uste 2 bar sinyal gerekir). Ancak gomulu backtest kodundaki kesin periyot sayilari metinde yazmadigi icin spec_durumu:
   eksik olarak isaretlendi.'
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kural metni eksik; yer tutucu ifade)"

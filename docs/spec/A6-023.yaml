@@ -12,6 +12,7 @@ tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 giris: close[11] > open[11]
 cikis: null
 stop: null
@@ -19,6 +20,7 @@ hedef: null
 zaman_stop:
   bar: 1
 stop_eklendi: false
+piyasa_kisiti: [ABD]
 parametreler:
   first_half_hour_bar: 1
   twelfth_half_hour_bar: 12
@@ -44,3 +46,4 @@ belirsiz:
 - 'Gao, Han, Li & Zhou (2014) ''Intraday Momentum: The First Half-Hour Return Predicts the Last Half-Hour Return'' makalesinin Jack Vogel (Alpha Architect) ozetidir (SPY 1999-2012).'
 - 'Saat bazli kural (ozel_kod: true): ABD seansinda 13 adet 30 dakikalik bar vardir. 1. yarim saat (09:30-10:00 ET, r_1) getirisi pozitifse saat 15:30 ET''de (son yarim saatin basinda) SPY long acilir ve
   16:00 ET kapanisinda kapatilir. Makalede r_1 < 0 oldugunda son yarim saatte short acma kurali da yer alir.'
+- "T10: ozel_kod_nedeni: seans_saat (ilk yarim saat getirisi ve 15:30 ET giris / 16:00 ET cikis)"

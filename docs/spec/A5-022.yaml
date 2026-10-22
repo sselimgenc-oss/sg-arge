@@ -33,6 +33,7 @@ gostergeler:
     src: close
     n: 50
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: sma3 > close and sma10 > close
 cikis: sma3 < close
 stop: null
@@ -53,3 +54,4 @@ belirsiz:
 - 'PapersWithBacktest ve RePEc sayfalarina dogrudan erisim engellendi (erisim_engeli: true).'
 - Kaynak makale (Xilong Tan & Yubo Tao, 2023, Economic Modelling, Vol. 124, 106323) ~3000 kripto para uzerinde farkli gecikmeli hareketli ortalamalarla (Han, Zhou & Zhu 2016 / CTREND yontemi) kesitsel getiri
   tahmini ve portfoy olusturma kurallarini inceler; ancak PWB'de kullanilan spesifik MA gecikmeleri ve dilim (decile/quintile) esikleri sayfa engeli nedeniyle okunamadi.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kesitsel kripto sepeti; dilim ve esikler okunamadi)"

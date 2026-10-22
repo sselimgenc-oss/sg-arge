@@ -21,6 +21,7 @@ gostergeler:
     src: close
     n: 200
 ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: cross_over(close, sma200) or cross_over(sma50, sma200)
 cikis: cross_under(close, sma200) or cross_under(sma50, sma200)
 stop: null
@@ -43,3 +44,4 @@ belirsiz:
 - 'PapersWithBacktest strateji sayfasina dogrudan erisim engellendi (erisim_engeli: true).'
 - Kaynak makale (Thomas Etheber, Andreas Hackethal & Steffen Meyer, 2014, SSRN 2517005) bireysel yatirimcilarin 50 ve 200 gunluk hareketli ortalama kesisimleri etrafindaki islem hacmi ve getiri etkilerini
   inceler; ancak PWB'de uygulanan spesifik portfoy kurallari sayfa engeli nedeniyle dogrulanamadi.
+- "T10: ozel_kod_nedeni: tanim_belirsiz (kaynak okunamadi; SMA kesisimi yer tutucu)"

@@ -16,6 +16,8 @@ gostergeler:
     src: high
     n: 10
     kaydir: 1
+ozel_kod: false
+dolum: kapanis
 giris: high > hh10 and (close - low) / (high - low) < 0.15
 cikis: close > high[1]
 stop: null
@@ -38,3 +40,4 @@ belirsiz:
 - 'Yazarin swing stratejileri makalesinden (quantifiedstrategies.com/swing-trading-strategies-for-beginners/ Strateji 5) okundu: SPY gun icinde son 10 gunun en yuksek seviyesini gecerek yeni bir 10 gunluk
   gun ici zirve yaptiginda (high > hh10), ancak gunu gunluk araligin en alt %15''lik diliminde kapattiginda (IBS = (close - low) / (high - low) < 0.15, basarisiz kirilim / gun ici reddedilme) kapanista
   long girilir; kapanis dunku yuksegi gectiginde (close > high[1]) cikilir (1993-2025: 271 islem, ort. 4 gun tutma, %11 exposure, %7.2 CAGR, %16 MDD).'
+- "T10: ozel_kod alani eklendi (false); kapanista giris (dolum: kapanis, D4)"

@@ -13,6 +13,7 @@ tf_varsayim: false
 yazar_piyasasi: Hisse (Cift Pay Sinifli Hisseler - HSBC, Royal Dutch/Shell, 3Com/Palm)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: cok_enstruman
 giris: close < close[1]
 cikis: close >= close[1]
 stop: null
@@ -35,3 +36,4 @@ belirsiz:
   of Applied Finance 21:2, 88-105) makale ozeti philipmaymin.com aynasindan okundu.'
 - Makale ayni sirketin iki farkli pay sinifi (orn. HSBC, Royal Dutch-Shell) arasindaki goreceli hacim ile goreceli fiyat arasindaki negatif iliskiyi ve 100 gunluk islem hacmi pozisyon sinirini inceler;
   ancak PWB'deki somut giris/cikis formulu sayfa engeli nedeniyle okunamadi.
+- "T10: ozel_kod_nedeni: cok_enstruman (cift paysiniflari arasi fark)"
