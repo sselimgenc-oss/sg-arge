@@ -33,6 +33,8 @@ REQUIRED_UNIVERSE_COLUMNS = {"sembol", "piyasa", "kaynak", "not"}
 OHLCV_COLUMNS = ["open", "high", "low", "close", "volume"]
 INTERVALS = ("1d", "1h", "30m", "15m", "5m", "1m")
 SUBHOURLY = ("30m", "15m", "5m", "1m")  # Binance only; archives are not committed (large)
+FX8_SYMBOLS = ("EURUSD=X", "GBPUSD=X", "USDJPY=X", "GBPJPY=X", "AUDUSD=X", "USDCHF=X", "USDCAD=X", "EURJPY=X")
+SINGLE_MARKETS = {"FX8": FX8_SYMBOLS}
 
 
 def archive_dir(interval: str) -> Path:
@@ -81,6 +83,15 @@ def load_universe(path: Path = UNIVERSE_PATH, *, pit: bool = False) -> list[Asse
     return assets
 
 
+def single_market_assets(markets: Iterable[str]) -> list[Asset]:
+    """yfinance assets for the explicit, non-survivorship FX8 market."""
+    codes = [market.strip().upper() for market in markets if market.strip()]
+    unknown = sorted(set(codes).difference(SINGLE_MARKETS))
+    if unknown:
+        raise ValueError(f"unsupported single market: {','.join(unknown)}")
+    return [Asset(symbol, "FX8", "yfinance") for code in codes for symbol in SINGLE_MARKETS[code]]
+
+
 def update_universe_notes(
     successful: set[str],
     failures: dict[str, str],
@@ -122,6 +133,9 @@ def normalize_ohlcv(frame: pd.DataFrame) -> pd.DataFrame:
     if "adj_close" in clean.columns and "close" not in clean.columns:
         clean["close"] = clean["adj_close"]
     missing = set(OHLCV_COLUMNS).difference(clean.columns)
+    if missing == {"volume"}:  # yfinance FX bars may not carry volume
+        clean["volume"] = 0.0
+        missing.clear()
     if missing:
         raise ValueError(f"download missing OHLCV columns: {sorted(missing)}")
     clean = clean.loc[:, OHLCV_COLUMNS]
@@ -373,13 +387,15 @@ def run(
     start: pd.Timestamp | None = None,
     evren: str = "sabit",
     rotasyon: bool = False,
+    piyasa: tuple[str, ...] = (),
 ) -> int:
     manifest_rows: list[dict[str, object]] = []
     quality_rows: list[dict[str, object]] = []
     successful: set[str] = set()
     failure_reasons: dict[str, str] = {}
     failures = 0
-    for asset in load_universe(ROTATION_PATH) if rotasyon else load_universe(pit=evren == "pit"):
+    assets = single_market_assets(piyasa) if piyasa else (load_universe(ROTATION_PATH) if rotasyon else load_universe(pit=evren == "pit"))
+    for asset in assets:
         if interval in SUBHOURLY and asset.source != "binance":
             continue  # sub-hourly bars exist only for crypto (EVRENSEL_KURALLAR B)
         path = archive_dir(interval) / asset.filename
@@ -415,7 +431,7 @@ def run(
                 )
             )
             print(f"ERROR {asset.symbol}: {exc}")
-    if interval not in SUBHOURLY and not rotasyon:  # sub-hourly runs only cover crypto: do not mark other symbols missing
+    if interval not in SUBHOURLY and not rotasyon and not piyasa:  # sub-hourly runs only cover crypto: do not mark other symbols missing
         update_universe_notes(successful, failure_reasons)
     update_manifest(manifest_rows)
     if interval == "1h":
@@ -437,6 +453,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
     parser.add_argument("--rotasyon", action="store_true", help="download data/rotasyon_semboller.csv (T22 gecis instruments) instead of the market universe")
+    parser.add_argument("--piyasa", action="append", default=[], choices=("FX8",), help="single-instrument market (FX8)")
     parser.add_argument(
         "--allow-partial",
         action="store_true",
@@ -455,5 +472,6 @@ if __name__ == "__main__":
             start=pd.Timestamp(arguments.baslangic, tz="UTC") if arguments.baslangic else None,
             evren=arguments.evren,
             rotasyon=arguments.rotasyon,
+            piyasa=tuple(arguments.piyasa),
         )
     )

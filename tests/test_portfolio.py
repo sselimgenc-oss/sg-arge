@@ -164,3 +164,20 @@ def test_pending_order_expires_and_entry_bar_stop_wins() -> None:
     assert trade["entry_date"] == both_frame.index[1]
     assert trade["exit_date"] == both_frame.index[1]
     assert trade["exit_reason"] == "stop" and trade["exit_price"] == 95.0
+
+
+def test_intrabar_pending_fill_has_no_same_bar_open_or_target_exit() -> None:
+    # A limit filled inside the bar happened after its open: the open cannot be an exit
+    # price (look-ahead) and a target touched the same day has an unknown order with the fill.
+    frame = _frame(opens=[100.0, 100.0, 101.0, 102.0, 103.0], lows=[99.0, 96.0, 99.0, 100.0, 101.0])
+    frame.loc[frame.index[1], "high"] = 110.0
+    signals = _pending_signals(frame, level=98.0, stop_dist=10.0, target_dist=1.0)
+    result = run_portfolio(
+        {"TEST": frame}, lambda f, m: signals, market="ABD25",
+        start=frame.index[0], end=frame.index[-1], cost_rate=0.0,
+        precomputed_signals={"TEST": signals}, entry_order_type="limit", entry_order_validity=1,
+    )
+    trade = result.trades.iloc[0]
+    assert trade["entry_date"] == frame.index[1] and trade["entry_price"] == 98.0
+    assert trade["exit_date"] == frame.index[2]
+    assert trade["exit_reason"] == "gap_target" and trade["exit_price"] == 101.0

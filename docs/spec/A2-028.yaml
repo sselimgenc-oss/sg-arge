@@ -5,7 +5,7 @@ kaynak:
   url: https://www.forexfactory.com/thread/430840-tco-trader-ea
   sayfa: null
 tarz: day
-tf: 1h
+tf: 1H
 mtf: 1D
 tf_varsayim: true
 yazar_piyasasi: Forex

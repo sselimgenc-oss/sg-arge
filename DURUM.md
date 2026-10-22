@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-22 20:30 UTC, lider (Opus)
+Son güncelleme: 2026-10-22 22:10 UTC, lider (Opus)
 
 ## Özet (kullanıcı için)
 - **İlk Geçti:** tarihsel evrenle (PIT) C07 ve R01 tüm paper kapılarını geçti.
@@ -18,14 +18,19 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T30: gün içi tarama/Aşama 2 bellek ve hız** (`docs/GOREV_T30.md`) | Atandı | "Görev geldi" |
-| Codex | Boşta (limit doldu; yenilenince yeni iş) | Bekliyor | Limit açılınca haber ver |
-| Argon | **T19: 13 kartın kaynağını oku** (`argon/PAKET_T19_kaynak.md`) | Atandı | Paketi yapıştır; `T19_kaynaklar.md`'yi `argon/`a yükle |
-| Lider | T24 (#85) doğrulama + gün içi kripto taraması (5m) + rotasyon Aşama 2 gerçek koşu | Sürüyor | Yok |
+| Sonnet | **T30: gün içi bellek/hız** (`docs/GOREV_T30.md`), ardından **T31: 13 kartın kaynağı** (`docs/GOREV_T31.md`, eski Argon T19) | Atandı | "Görev geldi" |
+| Codex | **T33: özel kod kartları** (`docs/GOREV_T33.md`, Sol; 4 parti × 3-4 kart, 15 kart) | Atandı | "Görev geldi" |
+| Argon | **Kullanılmıyor** (kullanıcı kararı: ikinci talimata kadar; limit ekran görüntüsü gezintisiyle tükeniyor) | Beklemede | Yok |
+| Lider | T30/T31 teslimlerini bekliyor; A3-001/A3-002d/A3-002f 5m taraması T30 sonrası; M013 (4H) için 1H→4H yeniden örnekleme değerlendirilecek | Bekliyor | Yok |
 
 ## Tamamlananlar (son)
+- **T32 (Codex/Terra) tamam:** 2H/4H mumlar (D16) ve FX8 piyasası + pip stop. Gerçek koşu: M013 (FX8 4H, PF 0.79) ve O2-005 (FX8 1H, PF 0.62) Aşama 1’de Reddedildi. Not: lider ilk tahmini (~80 kart) yanlıştı; bu piyasalara bağlı kartların çoğu kural eksik/özel kod. SONUC: Geçti 2, Koşullu 3, Reddedildi 132, Bekliyor 5.
+- **Kıl payı denetimi (`results/denetim_kil_payi.md`, ön kayıtlı):** 2a'da elenen 147 satıra risk testi → BH sonrası 0 keşif (ham p<0.05: 7, şans beklentisi 7.4); yalnız OOS ile elenen 2 satır OOS'ta gerçekten bozulmuş. Eleme iyi strateji kaçırmamış; SONUC değişmedi.
+- **Bekleyen 15 stratejiden 9'u sonuçlandı (lider, düzeltilmiş motorla, PR #104 sonrası):** hepsi Reddedildi. A6-019 ve M016 Aşama 1'de; A1-025, A6-003, M008, M010, O1-039 ve A2-002/A2-021 (1H) rastgele giriş testinde (piyasa betası); M036 ABD sabit evrende Koşullu iken tarihsel evrende (PIT) 2x maliyette PF<1,2 ve 3x maliyette net≤0 ile Reddedildi; P3-008 kripto OOS ortR≤0. Nihai liste değişmedi: Geçti 2 (C07, R01), Koşullu 3. Kalan Bekliyor 6: A3-002a/c ve O1-064 (1m veri yok), A3-002d/f (T30 bellek), M013 (4H desteklenmiyor). Not: Codex C10 yeni veriyle sınırda (p 0,052→0,050) karar değiştiriyor; sağlam değil, main'deki Reddedildi korundu.
+- **Lider motor düzeltmesi (bekleyen emir, D8):** bar içinde dolan limit/stop girişte motor aynı barın açılışıyla `gap_target` çıkışı yapıyordu (açılış girişten önce: look-ahead) ve aynı barda hedefe dokunmayı kâr sayıyordu (bar içi sıra bilinmez). Artık bar içi dolumda o bar yalnız stop kontrol edilir; hedef ertesi bardan. Etki: A1-025 ve M016 (One Percent a Week) PF 3-5'ten ~1'e düştü. Etkilenen kartlar (giris_emri olan 10 kart) yeniden taranıyor. Test eklendi.
+- **Gün içi huni (lider, gerçek koşu):** 1H/30m/15m/5m tarama. Kripto 30m/15m/5m'de aday yok. 1H'de 9 aday (ABD/EMTIA, yfinance ~2 yıl) → 2a'da 3 geçti (O1-004, T8-07, V2B; hepsi EMTIA) → 2b: **T8-07 ve V2B Koşullu** (OOS +%5,8 / +%3,1, bootstrap MDD95 %7,9 / %8,3; şerh: 1H ön dönem verisi yok), O1-004 Reddedildi. A3-001/A3-002d/A3-002f 5m taraması bellek yetersizliğinden koşulamadı (T30).
 - **T11b (Argon):** BIST30 2015-2019, 20 çeyrek × 30 hisse, Borsa İstanbul duyurularıyla. Lider denetimi: tekrar yok, çeyrek değişiklikleri zincirleme tutarlı, 2019-Q4 listesi 2020-Q1 listesine bağlanıyor (yalnız KOZAL→TRALT, KOZAA→TRMET kod değişikliği). `data/evren_pit.py` iki listeyi birleştirir; asama2b'de BIST PIT şerhi kalktı. Nihai listeye etkisi yok (tek BIST adayı C04 IS null testinde elenmişti).
-- T27 (Sonnet, PR #99): paper altyapısı (`paper/`: günlük sinyal, sanal defter, parite, RAPOR, panel `data.json`, `paper.yml`). Lider doğrulaması: pytest 294, gerçek veri parite birebir (292 işlem), motor değişikliği eski sonuçları değiştirmedi. Başlangıç **2026-10-23** (kullanıcı onayı). `paper.yml` hafta içi 22:30 UTC çalışır. Bekleyen: `PANEL_TOKEN`, panel reposunun saatlik botu.
+- T27 (Sonnet, PR #99): paper altyapısı (`paper/`: günlük sinyal, sanal defter, parite, RAPOR, panel `data.json`, `paper.yml`). Lider doğrulaması: pytest 294, gerçek veri parite birebir (292 işlem), motor değişikliği eski sonuçları değiştirmedi. **Paper Faz 2 (kullanıcı kararı):** tüm stratejiler bitince toplu başlar. `paper.yml` zamanlaması kapalı; `PANEL_TOKEN` eklendi, hazır bekliyor.
 - T29 (Codex, PR #97): `huni.yml` uçtan uca huni (veri → tarama → 2a → 2b sabit/PIT → portföy → SONUC) ve sonuçları PR olarak açar; mevcut 4 iş akışı da artık main'e doğrudan push etmez, PR açar. Kullanıcı ayarı: Actions'ın PR açma izni açık.
 - T28 (Codex, PR #92): `.github/workflows/ci.yml`. Her PR'da pytest + spec kontrolü + main/PR gerçek veri paritesi (C01/C09/G011/M015/C07/R01 tarama, R01/C07 asama2b). `[parite-farki-bekleniyor]` etiketiyle bilinçli fark.
 - **Rotasyon Aşama 2 (gerçek koşu, lider):** 2a'da 12 satırdan 7'si null'u geçti (A4-002, A6-004 ABD, M017, M020a ABD/KRİPTO, O2-025, O2-027). 2b'de 7'si de **Reddedildi**: bootstrap MDD95 > %15 (A6-004 %15,8 en yakını; diğerleri %29-92). Kaldıraçlı ETF stratejileri yüksek getiri ama kabul edilemez düşüş. `SONUC.md` yeniden üretildi.

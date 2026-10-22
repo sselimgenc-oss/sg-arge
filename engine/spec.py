@@ -35,6 +35,18 @@ MTF_RE = re.compile(r"^\d+[mHDWMr](/\d+[mHDWMr])*$")
 BASE_NAMES = frozenset({"open", "high", "low", "close", "volume"})
 RUNTIME_NAMES = frozenset({"giris", "giris_fiyati", "giris_stop", "giris_hedef", "bars_since_entry", "endeks_close", "stop_mesafesi", "giris_modu"})
 REQUIRED = ("id", "ad", "kaynak", "tarz", "tf", "gostergeler", "giris", "cikis", "spec_durumu", "belirsiz", "ozel_kod")
+
+
+def normalize_timeframe(value: object) -> object:
+    """Canonicalise legacy hourly spelling without changing minute ``m``.
+
+    Older cards used ``1h``/``4h`` although the card schema denotes hours as
+    upper-case ``H``.  Normalisation happens at load time so callers never need
+    to branch on the historical spelling.
+    """
+    if isinstance(value, str) and re.fullmatch(r"\d+h", value.strip()):
+        return value.strip()[:-1] + "H"
+    return value
 EXPR_FIELDS = ("giris", "cikis")
 EXIT_FIELDS = ("stop", "hedef", "iz_suren", "zaman_stop")  # structured exits: a card may rely on them alone
 OZEL_NEDENLERI = (

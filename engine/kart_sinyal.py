@@ -24,8 +24,8 @@ from .spec import RUNTIME_NAMES
 
 BENCHMARK_RUNTIME = frozenset({"endeks_close"})
 POSITION_RUNTIME = RUNTIME_NAMES - BENCHMARK_RUNTIME
-STOP_TYPES = ("atr", "yuzde", "puan", "max", "seviye")
-TARGET_TYPES = ("atr", "yuzde", "puan", "seviye")
+STOP_TYPES = ("atr", "yuzde", "puan", "pips", "max", "seviye")
+TARGET_TYPES = ("atr", "yuzde", "puan", "pips", "seviye")
 TRAIL_TYPES = {"atr_zirve": "high", "atr_kapanis_zirve": "close"}
 STANDARD_STOP_ATR = 3.0  # EVRENSEL_KURALLAR A7: ATR14 x 3 when the card has no stop of its own
 SIZING_ATR = 14
@@ -41,6 +41,10 @@ class MotorDestegiYok(Exception):
 
 class EndeksYok(Exception):
     """The card needs a market index series that is not available."""
+
+
+class PipsPiyasaDisi(Exception):
+    """Pip-denominated rules are defined only for the FX8 market."""
 
 
 @dataclass
@@ -78,6 +82,15 @@ def desteklenmeyen_alan(card: Mapping[str, Any]) -> str | None:
     if card.get("dolum") not in (None, "kapanis"):
         return f"dolum.{card.get('dolum')}"
     return None
+
+
+def pip_size(symbol: str) -> float:
+    """Price increment represented by one pip for an FX8 pair."""
+    return 0.01 if "JPY" in symbol.upper() else 0.0001
+
+
+def _uses_pips(card: Mapping[str, Any]) -> bool:
+    return any(isinstance(card.get(field), Mapping) and card[field].get("tip") == "pips" for field in ("stop", "hedef"))
 
 
 def needs_benchmark(card: Mapping[str, Any]) -> bool:
@@ -302,6 +315,7 @@ def card_frame_signals(
     *,
     week_end: str,
     benchmark: pd.DataFrame | None = None,
+    pip_value: float | None = None,
 ) -> tuple[pd.DataFrame, Callable[..., pd.Series | None] | None]:
     """Signals for one symbol plus an optional position-state exit builder."""
     index = frame.index
@@ -356,6 +370,10 @@ def card_frame_signals(
             out["stop_pct"] = float(stop["deger"]) / 100.0
         elif stop["tip"] == "puan":
             out["stop_dist"] = float(stop["deger"])
+        elif stop["tip"] == "pips":
+            if pip_value is None:
+                raise ValueError("pips requires an FX symbol")
+            out["stop_dist"] = float(stop["deger"]) * pip_value
         else:
             out["stop_dist"] = pd.concat(
                 [_eval_series(text, env, index, mtf) for text in stop["secenekler"]], axis=1
@@ -371,6 +389,10 @@ def card_frame_signals(
             out["target_dist"] = float(hedef["carpan"]) * _ind.atr(frame, int(hedef.get("n", SIZING_ATR)))
         elif hedef["tip"] == "yuzde":
             out["target_pct"] = float(hedef["deger"]) / 100.0
+        elif hedef["tip"] == "pips":
+            if pip_value is None:
+                raise ValueError("pips requires an FX symbol")
+            out["target_dist"] = float(hedef["deger"]) * pip_value
         else:
             out["target_dist"] = float(hedef["deger"])
     if trail:
@@ -446,16 +468,22 @@ def build_plan(
     *,
     week_end: str,
     benchmark: pd.DataFrame | None = None,
+    market: str | None = None,
 ) -> KartPlan:
     """Signals for every symbol and the engine keyword arguments for the card."""
     missing = desteklenmeyen_alan(card)
     if missing:
         raise MotorDestegiYok(missing)
+    if _uses_pips(card) and market is not None and market != "FX8":
+        raise PipsPiyasaDisi()
     signals: dict[str, pd.DataFrame] = {}
     builders: dict[str, Callable[..., pd.Series | None] | None] = {}
     contexts: dict[str, dict[str, Any]] = {}
     for symbol, frame in data.items():
-        signals[symbol], builders[symbol] = card_frame_signals(card, frame, week_end=week_end, benchmark=benchmark)
+        signals[symbol], builders[symbol] = card_frame_signals(
+            card, frame, week_end=week_end, benchmark=benchmark,
+            pip_value=pip_size(symbol) if _uses_pips(card) else None,
+        )
         contexts[symbol] = signals[symbol].attrs.get("sinyal_baglam", {})
 
     trail = card.get("iz_suren")

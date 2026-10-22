@@ -27,20 +27,26 @@ from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
 from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
 from data.bist_1h import normalize_market_1h, quality_gate as bist_1h_quality_gate  # noqa: E402
 from engine import gosterge, rotasyon  # noqa: E402
-from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan  # noqa: E402
+from engine.kart_sinyal import EndeksYok, MotorDestegiYok, PipsPiyasaDisi, build_plan  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
+from engine.resample import resample_hourly  # noqa: E402
+from engine.spec import normalize_timeframe  # noqa: E402
+from strategies.ozel import has_strategy as has_special_strategy, build_plan as build_special_plan  # noqa: E402
 
 IS_START = pd.Timestamp("2020-01-01", tz="UTC")
 IS_END = pd.Timestamp("2024-09-30", tz="UTC")
 MARKETS = ("BIST30", "ABD25", "KRIPTO25", "EMTIA")
 BASE_COST = {"BIST30": 0.0015, "ABD25": 0.0005, "KRIPTO25": 0.0015, "EMTIA": 0.0005}
 MARKET_TOKEN = {"BIST30": "BIST", "ABD25": "ABD", "KRIPTO25": "KRIPTO", "EMTIA": "EMTIA"}
+BASE_COST["FX8"] = 0.0001
+MARKET_TOKEN["FX8"] = "FX"
 BENCHMARK_SYMBOL = {"ABD25": "SPY", "KRIPTO25": "BTCUSDT"}  # BIST30/EMTIA: no index series yet
 MIN_TRADES, MIN_PF, PF_ALARM = 30, 1.1, 4.0
 DAILY_TFS = ("1D", "1W")
+RESAMPLED_HOURLY_TFS = ("2H", "4H")
 SUBHOURLY_TFS = ("1m", "5m", "15m", "30m")
-TF_DIR = {"1H": "hourly", "30m": "30m", "15m": "15m", "5m": "5m", "1m": "1m"}
-TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1H": 60}
+TF_DIR = {"1H": "hourly", "2H": "hourly", "4H": "hourly", "30m": "30m", "15m": "15m", "5m": "5m", "1m": "1m"}
+TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1H": 60, "2H": 120, "4H": 240}
 IS_FRACTION = 2 / 3  # EVRENSEL_KURALLAR C: hourly yfinance markets, first 2/3 in-sample, last 1/3 unseen
 MOC_COST_FACTOR = 2.0  # EVRENSEL_KURALLAR D4: close fills carry 2x base cost
 FIXED_DATA_DIR = ROOT / "data" / "daily"  # daily bars of the named instruments of rotation `gecis` cards
@@ -56,7 +62,9 @@ def load_cards(directory: Path, tf: str) -> list[dict[str, Any]]:
     cards = []
     for path in sorted(directory.glob("*.yaml")):
         card = yaml.safe_load(path.read_text(encoding="utf-8"))
-        if card.get("spec_durumu") in ("tam", "dakikalik") and not card.get("ozel_kod") and card.get("tf") in tf.split(","):
+        card["tf"] = normalize_timeframe(card.get("tf"))
+        runnable = not card.get("ozel_kod") or has_special_strategy(card["id"])
+        if card.get("spec_durumu") in ("tam", "dakikalik") and runnable and card.get("tf") in tf.split(","):
             cards.append(card)
     return cards
 
@@ -77,6 +85,14 @@ def annualization_for(tf: str, market: str) -> int:
         return 52
     if tf == "1D":
         return 365 if market == "KRIPTO25" else 252
+    if market == "FX8":
+        return (24 * 60 // TF_MINUTES[tf]) * 252  # 24h weekday FX archive
+    # 2H/4H US/commodity bars include the closed short final session bucket.
+    # Preserve the established 1H factor for existing CI parity results.
+    if market != "KRIPTO25" and tf in RESAMPLED_HOURLY_TFS:
+        if market == "BIST30":
+            return {"2H": 4, "4H": 2}[tf] * 252
+        return {"2H": 4, "4H": 2}[tf] * 252
     per_day = 24 * 60 // TF_MINUTES[tf] if market == "KRIPTO25" else max(7 * 60 // TF_MINUTES[tf], 1)
     return per_day * (365 if market == "KRIPTO25" else 252)
 
@@ -153,6 +169,10 @@ def prepare(
 
         return rotasyon_asama2.prepare_rotation(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
     week_end = "SUN" if market == "KRIPTO25" else "FRI"
+    if card["tf"] in RESAMPLED_HOURLY_TFS:
+        data = {symbol: resample_hourly(frame, market=market, timeframe=card["tf"]) for symbol, frame in data.items()}
+        if benchmark is not None:
+            benchmark = resample_hourly(benchmark, market=market, timeframe=card["tf"])
     weekly_card = card["tf"] == "1W"
     if weekly_card:
         data = {symbol: weekly_frame(frame, week_end) for symbol, frame in data.items()}
@@ -161,7 +181,11 @@ def prepare(
     in_period = {s: f for s, f in data.items() if not f.loc[(f.index >= start) & (f.index <= end)].empty}
     if not in_period:
         raise ValueError(f"{market}: donemde veri yok")
-    plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark)
+    plan = (
+        build_special_plan(card, in_period, week_end=week_end, benchmark=benchmark, market=market)
+        if card.get("ozel_kod") else
+        build_plan(card, in_period, week_end=week_end, benchmark=benchmark, market=market)
+    )
     if pit_universe is not None:
         plan.signals = filter_entry_signals(plan.signals, pit_universe, market)
     if card["tf"] not in DAILY_TFS:
@@ -324,6 +348,18 @@ def _skip_reason(
     return None
 
 
+def markets_for_card(card: dict[str, Any]) -> tuple[str, ...]:
+    """Preserve all historical rows and append FX8 only for FX-bound cards."""
+    return MARKETS + (("FX8",) if "FX" in (card.get("piyasa_kisiti") or []) else ())
+
+
+def _needs_volume(card: dict[str, Any]) -> bool:
+    volume_indicators = {"volume", "obv", "mfi", "vwap", "rvol"}
+    if any(spec.get("f") in volume_indicators for spec in (card.get("gostergeler") or {}).values() if isinstance(spec, dict)):
+        return True
+    return any("volume" in str(card.get(field) or "") for field in ("giris", "cikis"))
+
+
 def scan(
     cards: list[dict[str, Any]],
     data_dir: Path,
@@ -361,7 +397,7 @@ def scan(
             rows.append(_empty(card, "-", "Atlandi", f"alias:{card['alias_of']}"))
             continue
         tf = card["tf"]
-        for market in MARKETS:
+        for market in markets_for_card(card):
             skip = _skip_reason(card, market, bist_1h_quality_ok=True)
             if skip:
                 rows.append(_empty(card, market, *skip))
@@ -381,6 +417,9 @@ def scan(
             if not data:
                 rows.append(_empty(card, market, "Dogrulanamaz", "veri_yok"))
                 continue
+            if _needs_volume(card) and all((frame["volume"] <= 0).all() for frame in data.values()):
+                rows.append(_empty(card, market, "Dogrulanamaz", "veri_yok:volume"))
+                continue
             directory = str(directory_for(tf))
             if directory not in benchmark_cache:
                 benchmark_cache[directory] = _load_benchmarks(
@@ -397,6 +436,9 @@ def scan(
                 continue
             except EndeksYok:
                 rows.append(_empty(card, market, "Dogrulanamaz", f"endeks_yok:{market}"))
+                continue
+            except PipsPiyasaDisi:
+                rows.append(_empty(card, market, "Dogrulanamaz", "pips_yalniz_FX8"))
                 continue
             except rotasyon.RotasyonVeriYok as exc:
                 rows.append(_empty(card, market, "Dogrulanamaz", f"{exc.reason}:{','.join(exc.symbols)}"))
@@ -524,7 +566,7 @@ def bellek_isci(requested: int, data: dict[str, pd.DataFrame], *, is_basina: flo
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kartlar", type=Path, default=ROOT / "docs" / "spec")
-    parser.add_argument("--tf", default="1D", help="comma separated card timeframes, e.g. 1D,1W")
+    parser.add_argument("--tf", default="1D", help="comma separated card timeframes, e.g. 1D,1W,2H,4H")
     parser.add_argument("--kart-ids", default="", help="comma separated card ids (default: all)")
     parser.add_argument("--birlestir", action="store_true", help="merge into the existing results/tarama.csv (rescanned cards replace their rows)")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")

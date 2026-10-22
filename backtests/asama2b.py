@@ -47,7 +47,7 @@ PRE_END = pd.Timestamp("2019-12-31", tz="UTC")
 PLATEAU_FACTORS = (0.6, 0.8, 1.0, 1.2, 1.4)
 INTRADAY_PLATEAU_FACTORS = (0.8, 1.0, 1.2)
 STRESS_WORKER_DATA_FACTOR = 2.5  # a stress/plateau worker re-prepares signals and engine arrays: ~2.5x the bar data (T30)
-INTRADAY_TFS = ("1H", "30m", "15m", "5m")
+INTRADAY_TFS = ("1H", "2H", "4H", "30m", "15m", "5m")
 BOOTSTRAP_BLOCK = 20
 RISK_BUDGET = 0.15
 
@@ -664,7 +664,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
     parser.add_argument("--veri-kok", type=Path, default=ROOT / "data", help="hourly/30m/15m/5m archive root")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
-    parser.add_argument("--tf", default="1D,1W", help="comma separated timeframes: 1D,1W,1H,30m,15m,5m")
+    parser.add_argument("--tf", default="1D,1W", help="comma separated timeframes: 1D,1W,1H,2H,4H,30m,15m,5m")
     parser.add_argument("--null-tekrar", type=int, default=500)
     parser.add_argument("--null-tekrar-yuksek", type=int, default=1000)
     parser.add_argument("--bootstrap-tekrar", type=int, default=1000)

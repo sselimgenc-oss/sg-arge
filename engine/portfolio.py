@@ -507,6 +507,10 @@ def run_portfolio(
         # A pending stop/limit order becomes active only after its signal bar.
         # It fills before protective stops are evaluated, so a stop touched on
         # the entry bar wins pessimistically over a target touched that day.
+        # A fill inside the bar (not at its open) happened after the open and in
+        # an unknown order with the bar's high/low: on that bar only the stop
+        # (low) is checked; open-gap exits and targets start on the next bar.
+        intrabar_fills: set[str] = set()
         for symbol in sorted(list(pending_entries)):
             order = pending_entries[symbol]
             loc = locs[symbol][di]
@@ -535,6 +539,8 @@ def run_portfolio(
             open_position(symbol, date, fill_price, order.signal_atr, order.stop_dist,
                           order.target_dist, order.stop_pct, order.target_pct,
                           int(index_of[symbol].get_loc(order.signal_date)))
+            if symbol in positions and fill_price != open_price:
+                intrabar_fills.add(symbol)
 
         # Stops are active during the bar, including a position entered at its open.
         for symbol in sorted(positions):
@@ -544,6 +550,10 @@ def run_portfolio(
             position = positions[symbol]
             open_price = float(price_arr[symbol]["open"][loc])
             low_price = float(price_arr[symbol]["low"][loc])
+            if symbol in intrabar_fills:
+                if low_price <= position.stop:
+                    close_position(symbol, date, position.stop, "stop")
+                continue
             if open_price <= position.stop:
                 close_position(symbol, date, open_price, "gap_stop")
             elif low_price <= position.stop:
