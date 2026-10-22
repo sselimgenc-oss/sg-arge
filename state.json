@@ -33,7 +33,7 @@
       "id": "T2-argon",
       "owner": "argon (kullanici araciligiyla)",
       "title": "Kart cikarma: partiler 4,6,7,8,9 + YENIDEN.csv (74 kart)",
-      "status": "parti 2,4,6,7 + yeniden 1,2 kabul; sirada parti 8",
+      "status": "tamamlandi (parti 9 lider tarafindan kapsam_disi)",
       "spec": "argon/PAKET_*.md"
     },
     {
@@ -195,6 +195,12 @@
       "owner": "argon",
       "title": "40 kart (12 okunamadi)",
       "ref": "argon/T2_parti7.yaml"
+    },
+    {
+      "id": "T2-p8",
+      "owner": "argon",
+      "title": "40 kart (22 gizli, 10 okunamadi)",
+      "ref": "argon/T2_parti8.yaml"
     }
   ],
   "user_decisions_pending": [],

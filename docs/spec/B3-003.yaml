@@ -1,0 +1,33 @@
+id: B3-003
+ad: GBPUSD Forex Strategy (Python Code Included)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://quantifiedstrategies.substack.com/p/gbpusd-forex-strategy-python-code
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (GBPUSD)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 2
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 5.01
+  mdd: 17.37
+  islem: 315
+  wr: 66.67
+  maliyet_dahil: belirtilmemis
+spec_durumu: gizli
+belirsiz:
+- Substack URL'sine dogrudan erisim engellendi ancak yazarin ana sitesindeki birebir aynasindan (quantifiedstrategies.com/gbpusd-pair-trading-strategy/) okundu.
+- 'GBPUSD=X gunluk verisinde SMA uzunlugu ve VIX volatilite esigi kullanan stratejide 315 islem, %66.67 kazanma orani, ort. kazanc %1.42, ort. kayip -%1.76, %32.72 piyasada kalma orani, %5.01 CAGR ve -%17.37
+  MDD raporlanmistir; ancak kesin giris/cikis kurallari ve Python kodu yalnizca ucretli uyelere acik oldugu (''These trading rules are for members only'') icin spec_durumu: gizli olarak isaretlendi.'

@@ -1,0 +1,32 @@
+id: O2-024
+ad: BeatTheMarketMomentum (SPY intraday momentum, embedded backtest)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantconnect.com/terminal/cache/embedded_backtest_fd22e7bd368af4d6bd31153c9f8c4dad.html
+  sayfa: null
+erisim_engeli: true
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'QuantConnect gomulu backtest onbellek URL''sine dogrudan erisim engellendi (erisim_engeli: true) ve arama motoru indeksinde kopyasi bulunamadi.'

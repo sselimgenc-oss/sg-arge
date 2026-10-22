@@ -1,0 +1,36 @@
+id: P3-026
+ad: Adaptive Investments
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://collective2.eu/grid
+  sayfa: null
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (TQQQ ve SQQQ)
+gostergeler: {}
+ozel_kod: true
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  lookback_years: 20
+  target_vol_mult: 2.0
+deneme_sayisi_kaynakta: 5
+rapor:
+  pf: 1.47
+  sharpe: 1.41
+  getiri: 72.5
+  mdd: 33.1
+  islem: 278
+  wr: 49.3
+  maliyet_dahil: true
+spec_durumu: gizli
+belirsiz:
+- 'Collective2 (#148705494, FormulaicSystems, 495$/ay) ucretli sinyal sayfasindan (collective2.com/details/148705494) okundu: Nasdaq-100''un ertesi gunluk getirisini tahmin etmek icin 20 yillik veride en
+  yakin komsu (KNN - Nearest-Neighbor) makine ogrenmesi algoritmasi kullanir ve seans kapanisindan 15-20 saniye once (15:58 ET) TQQQ (3x Bull), SQQQ (3x Bear) ve nakit arasinda -%300 ile +%300 kaldirac
+  tahsisi yapar (ort. tutma suresi 2.4 gun). Kapali ticari ML modeli oldugu icin spec_durumu: gizli.'

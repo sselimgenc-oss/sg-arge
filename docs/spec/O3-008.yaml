@@ -1,0 +1,36 @@
+id: O3-008
+ad: 'Day trading strategy #78 (SPY, acilis->kapanis)'
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://www.quantifiedstrategies.com/day-trading-strategies/
+  sayfa: null
+tarz: day
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+zaman_stop:
+  bar: 1
+stop_eklendi: false
+parametreler: {}
+deneme_sayisi_kaynakta: 1
+rapor:
+  pf: null
+  sharpe: null
+  getiri: 2.5
+  mdd: 9.0
+  islem: 165
+  wr: 60.0
+  maliyet_dahil: belirtilmemis
+spec_durumu: gizli
+belirsiz:
+- 'QuantifiedStrategies makalesinde (day-trading-strategies/) ''Strategy #78 is available to our paying subscribers, so we don''t want to reveal its trading rules'' ifadeleriyle kurallarin gizli tutuldugu
+  belirtilmektedir (spec_durumu: gizli).'
+- 'Raporlanan bilgiler: Gunluk barlar uzerinde acilista long girilip ayni gun kapanista (6.5 saat sonra) cikilir; SPY (1993-2026) uzerinde 165 islem, islem basina ort. %0.51 kazanc, %60 kazanma orani, %9
+  MDD ve %2.5 CAGR (%2 exposure, %125 riske gore duzeltilmis getiri).'

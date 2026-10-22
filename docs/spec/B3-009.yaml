@@ -1,0 +1,45 @@
+id: B3-009
+ad: Connors/Alvarez 2009 basit ortalamaya donus (ES+TY)
+kart_yazari: argon
+kaynak:
+  dosya: strateji_listesi (2).xlsx
+  url: https://algotr.substack.com/p/this-simple-2009-strategy-still-wins
+  sayfa: null
+erisim_engeli: true
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli (ES - S&P 500 ve TY - 10Y US Treasury Note)
+gostergeler:
+  sma5:
+    f: sma
+    src: close
+    n: 5
+  sma200:
+    f: sma
+    src: close
+    n: 200
+giris: null
+cikis: close > sma5
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler:
+  sma5.n: 5
+  sma200.n: 200
+deneme_sayisi_kaynakta: null
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: eksik
+belirsiz:
+- 'Substack sayfasina dogrudan erisim engellendi (erisim_engeli: true) ve yazarin (alpha_algotr) Instagram paylasimlarinda makalenin ucretli (''paid article'') oldugu belirtilmektedir.'
+- Arama motoru indeksinden kurtarilan bilgilere gore strateji Larry Connors ve Cesar Alvarez'in 2009 tarihli 'Short Term Trading Strategies That Work' kitabindaki kurallara dayanir; uzun vadeli trend filtresiyle
+  girilir ve long pozisyon fiyat 5 gunluk ortalamanin uzerinde kapattiginda (close > sma5) kapatilir (short pozisyon 5 gunluk ortalamanin altinda kapattiginda kapatilir). Ancak giris tetikleyicisinin (orn.
+  RSI(2) esigi veya N gunluk dusus) kesin parametresi ucretli makale engeli nedeniyle okunamadi.
