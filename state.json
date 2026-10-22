@@ -233,6 +233,12 @@
       "owner": "argon",
       "title": "35 kart (15 tam, 9 okunamadi); 2 satir YAML tirnak hatasi lider tarafindan onarildi",
       "ref": "argon/T2_parti10.yaml"
+    },
+    {
+      "id": "T6a-kosu",
+      "owner": "auditor",
+      "title": "125 satir: 3 gecti, 114 piyasa betasi, 8 BIST USD",
+      "ref": "tartisma/008"
     }
   ],
   "user_decisions_pending": [
