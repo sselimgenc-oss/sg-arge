@@ -89,7 +89,7 @@
       "id": "T10",
       "owner": "claude-moderator",
       "title": "Argon kartlarini standarda getirme (her Argon partisinden sonra): T7 sozdizimi + T8 ozel_kod triyaji + piyasa_kisiti",
-      "status": "parti 7-8, 10 done (PR acik); parti 11 alininca, 9 yok",
+      "status": "parti 6,7,8,10 done; parti 11 T12 icinde",
       "spec": "Issue #1 GOREV -> Sonnet T10"
     },
     {
@@ -112,6 +112,20 @@
       "title": "Tarihsel endeks bilesenleri: BIST30 donemsel (2015-2026), ABD en buyuk 25 yil basi (survivorship duzeltmesi icin veri toplama)",
       "status": "atandi",
       "spec": "argon/PAKET_T11_tarihsel_evren.md"
+    },
+    {
+      "id": "T12",
+      "owner": "claude-moderator",
+      "title": "Kripto gun ici/dakikalik tarama + roi_tablosu + parti 11 kart duzeltme",
+      "status": "atandi",
+      "spec": "docs/GOREV_T12_T13.md"
+    },
+    {
+      "id": "T13",
+      "owner": "codex-worker",
+      "title": "Sonuc raporu ureticisi (SONUC.md, sonuc.csv) — model: Terra",
+      "status": "atandi",
+      "spec": "docs/GOREV_T12_T13.md"
     }
   ],
   "done": [
