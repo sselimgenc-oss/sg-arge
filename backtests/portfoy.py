@@ -135,12 +135,17 @@ def market_proxy(data: dict[str, dict[str, pd.DataFrame]]) -> pd.Series:
 
 
 def select_candidates(results_dir: Path) -> tuple[pd.DataFrame, str]:
-    for name in ("asama2b_pit.csv", "asama2b.csv"):
-        path = results_dir / name
-        if path.exists():
-            table = pd.read_csv(path)
-            return table[table["karar"] == "Kosullu"].reset_index(drop=True), name
-    raise SystemExit("results/asama2b_pit.csv ya da asama2b.csv yok")
+    """Gecti/Kosullu rows; a PIT rerun row replaces the fixed-universe row of the same id/market."""
+    base, pit = results_dir / "asama2b.csv", results_dir / "asama2b_pit.csv"
+    if not base.exists():
+        raise SystemExit("results/asama2b.csv yok")
+    table, name = pd.read_csv(base), "asama2b.csv"
+    if pit.exists():
+        rerun = pd.read_csv(pit)
+        keys = set(zip(rerun["id"], rerun["piyasa"]))
+        table = pd.concat([table[[(i, m) not in keys for i, m in zip(table["id"], table["piyasa"])]], rerun], ignore_index=True)
+        name = "asama2b.csv + asama2b_pit.csv"
+    return table[table["karar"].isin(["Gecti", "Kosullu"])].reset_index(drop=True), name
 
 
 def _fmt(value: Any, fmt: str) -> str:
@@ -152,7 +157,7 @@ def write_report(
     corr: pd.DataFrame, open_risk_max: float, evren: str,
 ) -> None:
     lines = [
-        "# Portfoy analizi: Kosullu adaylar (T18)", "",
+        "# Portfoy analizi: Gecti + Kosullu adaylar (T18)", "",
         f"Kaynak: `results/{source}` (evren: {evren}) | Adaylar ({len(names)}): {', '.join(names)}", "",
         "> **Secim yanliligi uyarisi:** adaylar IS sonuclarina bakilarak secildi. Asil kanit **OOS** bloktur "
         "(2024-10-01 sonrasi, secime girmedi); IS rakamlari yalniz baglam icindir. Agirlik optimizasyonu yapilmadi: her aday 1/N.", "",
@@ -206,7 +211,7 @@ def main() -> int:
     args = parse_args()
     candidates, source = select_candidates(args.results_dir)
     if candidates.empty:
-        raise SystemExit("Kosullu aday yok")
+        raise SystemExit("Gecti/Kosullu aday yok")
     evren = str(candidates["evren"].iloc[0]) if "evren" in candidates else "sabit"
     pit = load_pit_universe() if evren == "pit" else None
     cards = {c["id"]: c for c in (yaml.safe_load(p.read_text(encoding="utf-8")) for p in args.kartlar.glob("*.yaml"))}

@@ -103,3 +103,11 @@ def test_report_and_correlation_files_are_written(tmp_path) -> None:
     assert text.index("**OOS**") < text.index("**IS**")  # out-of-sample first
     assert "Secim yanliligi" in text and "A:BIST30" in text
     assert set(corr.columns) == set(portfoy.CORRELATION_COLUMNS)
+
+
+def test_select_candidates_prefers_pit_rows(tmp_path):
+    pd.DataFrame({"id": ["C04", "C07", "A6-010", "C01"], "piyasa": ["BIST30", "ABD25", "EMTIA", "BIST30"],
+                  "karar": ["Kosullu", "Kosullu", "Kosullu", "Reddedildi"]}).to_csv(tmp_path / "asama2b.csv", index=False)
+    pd.DataFrame({"id": ["C04", "C07"], "piyasa": ["BIST30", "ABD25"], "karar": ["Reddedildi", "Gecti"]}).to_csv(tmp_path / "asama2b_pit.csv", index=False)
+    table, _ = portfoy.select_candidates(tmp_path)
+    assert sorted(zip(table["id"], table["karar"])) == [("A6-010", "Kosullu"), ("C07", "Gecti")]
