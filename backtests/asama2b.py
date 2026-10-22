@@ -46,6 +46,7 @@ OOS_START = pd.Timestamp("2024-10-01", tz="UTC")
 PRE_END = pd.Timestamp("2019-12-31", tz="UTC")
 PLATEAU_FACTORS = (0.6, 0.8, 1.0, 1.2, 1.4)
 INTRADAY_PLATEAU_FACTORS = (0.8, 1.0, 1.2)
+STRESS_WORKER_DATA_FACTOR = 2.5  # a stress/plateau worker re-prepares signals and engine arrays: ~2.5x the bar data (T30)
 INTRADAY_TFS = ("1H", "30m", "15m", "5m")
 BOOTSTRAP_BLOCK = 20
 RISK_BUDGET = 0.15
@@ -437,13 +438,14 @@ def _card_stage2_worker(job: tuple[str, Any]) -> tuple[str, Any, dict[str, Any]]
     """Run one stress/plateau cell from fork-shared card data."""
     kind, value = job
     prepared: tarama.Prepared = _CARD_WORK_STATE["prepared"]
+    trusted = _CARD_WORK_STATE.get("trusted", False)
     if kind == "stress":
         multiplier, delay = value
-        result = prepared.run(multiplier, extra_delay_bars=delay)
+        result = prepared.run(multiplier, extra_delay_bars=delay, trusted_inputs=trusted)
     else:
         factors = value
         variant = _mutate_card(_CARD_WORK_STATE["card"], _CARD_WORK_STATE["parameters"], factors)
-        result = tarama.prepare(
+        cell = tarama.prepare(
             variant,
             _CARD_WORK_STATE["data"],
             _CARD_WORK_STATE["market"],
@@ -451,7 +453,8 @@ def _card_stage2_worker(job: tuple[str, Any]) -> tuple[str, Any, dict[str, Any]]
             start=IS_START,
             end=IS_END,
             pit_universe=_CARD_WORK_STATE["pit_universe"],
-        ).run()
+        )
+        result = cell.run(trusted_inputs=trusted) if isinstance(cell, tarama.Prepared) else cell.run()
     return kind, value, _metrics(result, prepared.annualization)
 
 
@@ -474,9 +477,10 @@ def evaluate_card(
     prepared = tarama.prepare(card, data, market, benchmark=benchmark, start=IS_START, end=IS_END, pit_universe=pit_universe)
     if isinstance(prepared, rot.RotationPrepared):
         return evaluate_rotation_card(card, market, data, benchmark, prepared, row, results_dir=results_dir, bootstrap_reps=bootstrap_reps, seed=seed, pit_universe=pit_universe)
-    real = prepared.run()
+    real = prepared.run(trusted_inputs=intraday)  # intraday: skip the engine's defensive copies (T30)
+    prepared.runtime_cache.clear()  # the OOS / pre-period books are built next; their arrays must not coexist with these
     final = max(frame.index.max() for frame in data.values())
-    oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final, pit_universe=pit_universe).run()
+    oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final, pit_universe=pit_universe).run(trusted_inputs=intraday)
     pre = None
     if intraday and market != "KRIPTO25":
         row["_intraday_no_pre"] = True
@@ -490,7 +494,7 @@ def evaluate_card(
             pre = tarama.prepare(
                 card, data, market, benchmark=benchmark, start=pre_start, end=PRE_END,
                 pit_universe=pit_universe,
-            ).run()
+            ).run(trusted_inputs=intraday)
         except ValueError as exc:
             if intraday and market == "KRIPTO25" and "donemde veri yok" in str(exc):
                 row.update(karar="Dogrulanamaz", neden="on donem verisi yok (2017-2019)")
@@ -512,9 +516,10 @@ def evaluate_card(
     ]
     _CARD_WORK_STATE.update(
         prepared=prepared, card=card, parameters=parameters, data=data, market=market,
-        benchmark=benchmark, pit_universe=pit_universe,
+        benchmark=benchmark, pit_universe=pit_universe, trusted=intraday,
     )
-    parallel_workers = workers if intraday else 1  # daily execution order/output is a locked regression
+    # daily execution order/output is a locked regression; intraday workers are capped by free memory (T30)
+    parallel_workers = tarama.bellek_isci(workers, data, is_basina=STRESS_WORKER_DATA_FACTOR) if intraday else 1
     if parallel_workers > 1 and len(jobs) > 1:
         with ProcessPoolExecutor(
             max_workers=min(parallel_workers, len(jobs)), mp_context=multiprocessing.get_context("fork")
@@ -522,6 +527,7 @@ def evaluate_card(
             completed = list(pool.map(_card_stage2_worker, jobs))
     else:
         completed = [_card_stage2_worker(job) for job in jobs]
+    prepared.runtime_cache.clear()
     stress = {value: metrics for kind, value, metrics in completed if kind == "stress"}
     row.update(
         stres_pf_2x=stress[(2.0, 0)]["pf"], stres_net_3x=stress[(3.0, 0)]["getiri"],
