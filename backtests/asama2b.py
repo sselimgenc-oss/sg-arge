@@ -31,6 +31,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backtests import asama2a, tarama  # noqa: E402
+from backtests import rotasyon_asama2 as rot  # noqa: E402
 from backtests.run_codex21 import ROWS, RowConfig, _git_sha, _load_market  # noqa: E402
 from data.fetch import normalize_ohlcv  # noqa: E402
 from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
@@ -52,7 +53,7 @@ OUTPUT_COLUMNS = [
     "stres_net_gecikme", "plato_parametreleri", "plato_hucre", "plato_pf_medyan",
     "plato_pozitif_oran", "plato_en_iyi_kenarda", "bootstrap_mdd_p95",
     "bootstrap_cagr_p05", "dsr_n", "dsr_N", "dsr_2N", "dsr_5N", "karar",
-    "neden", "evren", "data_hash", "git_sha",
+    "neden", "evren", "data_hash", "git_sha", "metrik",
 ]
 
 
@@ -282,8 +283,10 @@ def decide(row: dict[str, Any]) -> tuple[str, str]:
         conditional.append("OOS ornek<30")
     if row.get("piyasa") == "BIST30" and row.get("evren") == "pit":
         conditional.append("survivorship: 2015-2019 PIT evren yok")  # T11: BIST30 lists only from 2020
-    elif row.get("piyasa") in ("BIST30", "ABD25") and row.get("evren") != "pit":
+    elif row.get("piyasa") in ("BIST30", "ABD25") and row.get("evren") not in ("pit", "enstruman"):  # named ETFs have no universe
         conditional.append("survivorship yanliligi")
+    if row.get("on_veri_yok"):
+        conditional.append("on donem Dogrulanamaz (veri yok)")
     if rejected:
         return "Reddedildi", ", ".join(rejected)
     if conditional:
@@ -384,8 +387,11 @@ def evaluate_card(
         null_ortr_p95=stage2a_row.get("null_ortr_p95"), p_pf=stage2a_row.get("p_pf"),
         p_ortr=stage2a_row.get("p_ortr"), null_gecti=True, data_hash=data_hash, git_sha=_git_sha(),
     )
+    row["metrik"] = "PF+ortR"
     seed = BASE_SEED ^ zlib.crc32(f"{card['id']}|{market}".encode())
     prepared = tarama.prepare(card, data, market, benchmark=benchmark, start=IS_START, end=IS_END, pit_universe=pit_universe)
+    if isinstance(prepared, rot.RotationPrepared):
+        return evaluate_rotation_card(card, market, data, benchmark, prepared, row, results_dir=results_dir, bootstrap_reps=bootstrap_reps, seed=seed, pit_universe=pit_universe)
     real = prepared.run()
     final = max(frame.index.max() for frame in data.values())
     oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final, pit_universe=pit_universe).run()
@@ -417,6 +423,46 @@ def evaluate_card(
         row.update(plato_parametreleri="parametre_yok", plato_hucre=1, plato_pf_medyan=_metrics(real, prepared.annualization)["pf"], plato_pozitif_oran=float(_metrics(real, prepared.annualization)["getiri"] > 0), plato_en_iyi_kenarda=False)
     row.update(**_bootstrap_and_dsr(real, prepared.annualization, trial_count(card, results_dir), bootstrap_reps, seed))
     row["evren"] = "pit" if pit_universe is not None else "sabit"
+    row["karar"], row["neden"] = decide(row)
+    return row
+
+
+def evaluate_rotation_card(
+    card: dict[str, Any], market: str, data: dict[str, pd.DataFrame], benchmark: pd.DataFrame | None, prepared: rot.RotationPrepared,
+    row: dict[str, Any], *, results_dir: Path, bootstrap_reps: int, seed: int, pit_universe: PITUniverse | None,
+) -> dict[str, Any]:
+    """Rotation card (T23, ``metrik: PF+CAGR``): the same gates as ``evaluate_card``.
+
+    There is no per-trade R, so the ``oos_ort_r`` / ``on_ort_r`` columns carry the period CAGR (sign gate). Stress runs fill at the
+    next open (+1 bar delay = one more bar); the plateau moves every numeric parameter of the ``rotasyon:`` block alone by +-20 %
+    and counts the share of cells with PF > 1 and a positive return."""
+    row["metrik"] = rot.METRIC
+    row["evren"] = "enstruman" if card["rotasyon"]["kip"] == "gecis" else ("pit" if pit_universe is not None else "sabit")
+    ann = prepared.annualization
+    real = prepared.run()
+    pre_start = pd.Timestamp("2018-01-01" if market == "KRIPTO25" else "2015-01-01", tz="UTC")
+    final = max(frame.index.max() for frame in (prepared.frames or data).values())
+    oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final, pit_universe=pit_universe).run()
+    oos_m = _metrics(oos, ann)
+    row.update(oos_islem=oos_m["islem"], oos_ort_r=oos_m["cagr"], oos_net=oos_m["getiri"])
+    try:
+        pre_m = _metrics(tarama.prepare(card, data, market, benchmark=benchmark, start=pre_start, end=PRE_END, pit_universe=pit_universe).run(), ann)
+        row.update(on_islem=pre_m["islem"], on_ort_r=pre_m["cagr"], on_net=pre_m["getiri"])
+    except (rot.rotasyon.RotasyonVeriYok, ValueError):
+        row.update(on_islem=0, on_veri_yok=True)  # no 2015-2019 data for a needed instrument / the whole universe
+    row.update(
+        stres_pf_2x=_metrics(prepared.run(2), ann)["pf"], stres_net_3x=_metrics(prepared.run(3), ann)["getiri"],
+        stres_net_gecikme=_metrics(prepared.run(extra_delay_bars=1), ann)["getiri"],
+    )
+    cells = rot.plateau_cells(prepared, data, benchmark, pit_universe)
+    pfs = np.array([c[2] for c in cells], dtype=float)
+    nets = np.array([c[3] for c in cells], dtype=float)
+    row.update(
+        plato_parametreleri=f"{len(cells) - 1} varyant (+-%20 tek tek)", plato_hucre=len(cells),
+        plato_pf_medyan=float(np.nanmedian(pfs)), plato_pozitif_oran=float(np.mean((pfs > 1.0) & (nets > 0))),
+        plato_en_iyi_kenarda=False,
+    )
+    row.update(**_bootstrap_and_dsr(real, ann, trial_count(card, results_dir), bootstrap_reps, seed))
     row["karar"], row["neden"] = decide(row)
     return row
 
@@ -453,7 +499,9 @@ def write_outputs(table: pd.DataFrame, results_dir: Path, card_input_missing: bo
             f"{f(item.stres_pf_2x, '.2f')} | {f(item.stres_net_3x, '.1%')} | {f(item.stres_net_gecikme, '.1%')} | "
             f"{f(item.plato_pozitif_oran, '.0%')} | {f(item.bootstrap_mdd_p95, '.1%')} | {f(item.dsr_5N, '.3f')} | {item.karar} | {item.neden} |"
         )
-    lines += ["", "## Yontem notlari", "", "- BIST fiyatlari USDTRY ile ayni gun USD'ye cevrilir.",
+    lines += ["", "## Yontem notlari", "",
+              "- Rotasyon kartlari (T23, `metrik: PF+CAGR`): ortR yerine CAGR; `oos_ort_r`/`on_ort_r` sutunlari donem CAGR'i tasir. Asama 2'de dolum ertesi acilistir (Composer kartlarinin kapanis dolumu yalniz Asama 1 bilgisidir). "
+              "Plato: `rotasyon:` blogu ve kullandigi gostergelerin her sayisal parametresi (pencere, esik, N) tek tek +-%20; hucre = PF>1 ve getiri>0. `evren: enstruman` = adli ETF'ler (survivorship notu yok).", "- BIST fiyatlari USDTRY ile ayni gun USD'ye cevrilir.",
               "- Plato merkezleri kaynak sinyal degerleridir; en iyi hucre secilmez ve stratejiye geri yazilmaz.",
               "- DSR N = kaynak denemesi (yoksa 1) + tarama.csv satirlari + 21 Codex satiri.",
               "- DSR'da denemeler arasi SR varyansi bilinmedigi icin stratejinin kendi SR standart hatasi kullanildi (yaklasim).",
@@ -477,6 +525,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    tarama.FIXED_DATA_DIR = args.data_dir
     only_cards = {value.strip() for value in args.kart_ids.split(",") if value.strip()} or None
     codex_ids = [value.strip() for value in args.codex_ids.split(",") if value.strip()]
     unknown = set(codex_ids).difference(ROWS)

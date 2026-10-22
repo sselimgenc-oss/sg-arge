@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from backtests import rotasyon_asama2 as rot  # noqa: E402
 from backtests import tarama  # noqa: E402
 from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
 from data.fetch import normalize_ohlcv  # noqa: E402
@@ -45,7 +46,7 @@ OUTPUT_COLUMNS = [
     "id", "piyasa", "tf", "kart_yazari", "para", "islem", "PF_1x", "PF_2x", "net_1x", "net_2x", "ort_r",
     "PF_1x_tl", "net_1x_tl", "usd_kapi", "null_tekrar", "null_pf_p50", "null_pf_p95", "null_ortr_p50",
     "null_ortr_p95", "p_pf", "p_ortr", "null_islem_ort", "tutma_gercek", "tutma_null", "karar", "neden",
-    "data_hash", "git_sha",
+    "data_hash", "git_sha", "metrik",
 ]
 
 _STATE: dict[str, Any] = {}  # filled before the worker pool forks
@@ -150,11 +151,13 @@ def evaluate_pair(task: dict[str, Any]) -> dict[str, Any]:
     base = {column: np.nan for column in OUTPUT_COLUMNS}
     base.update(id=card["id"], piyasa=market, tf=card["tf"], kart_yazari=card.get("kart_yazari") or "",
                 para="USD" if market == "BIST30" else "yerel", git_sha=_STATE["git_sha"],
-                data_hash=_STATE["hashes"][market])
+                data_hash=_STATE["hashes"][market], metrik="PF+ortR")
     try:
         data = _STATE["usd"][market] if market == "BIST30" else _STATE["data"][market]
         benchmark = None if market == "BIST30" else _STATE["benchmarks"].get(market)  # BIST has no index series
         prepared = tarama.prepare(card, data, market, benchmark=benchmark)
+        if isinstance(prepared, rot.RotationPrepared):
+            return evaluate_rotation(task, base, prepared)
         first, second = prepared.run(1.0), prepared.run(2.0)
         m1, m2 = (calculate_metrics(r, annualization=prepared.annualization) for r in (first, second))
         real_pf, real_ortr, real_count = trade_stats(first.trades)
@@ -195,8 +198,54 @@ def evaluate_pair(task: dict[str, Any]) -> dict[str, Any]:
     return base
 
 
+def evaluate_rotation(task: dict[str, Any], base: dict[str, Any], prepared: rot.RotationPrepared) -> dict[str, Any]:
+    """Rotation card (T23): same gates as ``evaluate_pair`` but the null randomises the selection and compares PF **and CAGR**
+    (there is no per-trade stop, hence no R multiple): ``metrik: PF+CAGR``. ``ort_r`` / ``null_ortr_*`` / ``p_ortr`` carry the CAGR."""
+    card, market = task["card"], task["market"]
+    base["metrik"] = rot.METRIC
+    first, second = prepared.run(1.0), prepared.run(2.0)
+    m1, m2 = (calculate_metrics(r, annualization=prepared.annualization) for r in (first, second))
+    real_pf, real_cagr, real_count = rot.stats(first, prepared.annualization)
+    base.update(islem=m1["islem"], PF_1x=m1["pf"], PF_2x=m2["pf"], net_1x=m1["getiri"], net_2x=m2["getiri"],
+                ort_r=real_cagr, tutma_gercek=rot.holding_days(first.trades))
+    if market == "BIST30":
+        tl = _STATE["tl_rows"].get((card["id"], market), {})
+        base.update(PF_1x_tl=tl.get("PF_1x"), net_1x_tl=tl.get("net_1x"))
+        gate, why = tarama._stage_decision({"islem": m1["islem"], "PF_1x": m1["pf"], "net_2x": m2["getiri"]})
+        base["usd_kapi"] = bool(gate)
+        if not gate:
+            base.update(karar="Reddedildi (BIST USD)", neden=f"USD: {why}")
+            return base
+    if real_count < 5:
+        base.update(karar="Dogrulanamaz", neden="null testi icin islem yok/az")
+        return base
+    seed = BASE_SEED ^ zlib.crc32(f"{card['id']}|{market}".encode())
+    reps = task["reps"]
+    result = rot.null_distribution(prepared, reps, seed)
+    p_pf, p_cagr = p_value(real_pf, result["pf"]), p_value(real_cagr, result["cagr"])
+    if BORDERLINE_P[0] <= max(p_pf, p_cagr) <= BORDERLINE_P[1]:
+        reps = task["reps_high"]
+        result = rot.null_distribution(prepared, reps, seed + 1)
+        p_pf, p_cagr = p_value(real_pf, result["pf"]), p_value(real_cagr, result["cagr"])
+    pf95 = float(np.nanpercentile(result["pf"], PASS_PERCENTILE))
+    cagr95 = float(np.nanpercentile(result["cagr"], PASS_PERCENTILE))
+    passed = bool(real_pf > pf95 and real_cagr > cagr95)
+    base.update(
+        null_tekrar=reps, null_pf_p50=float(np.nanpercentile(result["pf"], 50)), null_pf_p95=pf95,
+        null_ortr_p50=float(np.nanpercentile(result["cagr"], 50)), null_ortr_p95=cagr95,
+        p_pf=p_pf, p_ortr=p_cagr, null_islem_ort=float(np.mean(result["count"])), tutma_null=float(np.nanmean(result["hold"])),
+        karar="Gecti (null)" if passed else "Reddedildi (piyasa betasi)",
+        neden="" if passed else f"PF p={p_pf:.3f}, CAGR p={p_cagr:.3f} (esit {1 - PASS_PERCENTILE / 100:.2f})",
+    )
+    return base
+
+
 def load_candidates(results_dir: Path, card_dir: Path, only: set[str] | None) -> list[dict[str, Any]]:
     table = pd.read_csv(results_dir / "tarama.csv")
+    rotation_scan = results_dir / "tarama_rotasyon.csv"  # T22/T23: rotation cards are scanned into their own file
+    if rotation_scan.exists():
+        table = pd.concat([table, pd.read_csv(rotation_scan)], ignore_index=True)
+        table = table.drop_duplicates(["id", "piyasa"], keep="last")
     chosen = table[table["asama2_aday"].fillna(False).astype(bool)]
     cards = {}
     for path in card_dir.glob("*.yaml"):
@@ -240,6 +289,9 @@ def write_outputs(table: pd.DataFrame, results_dir: Path) -> None:
               "- Null model: ayni cikis kurallari ve portfoy limitleri; sembol basina ayni giris sayisi (rastgele barlar), "
               "toplam islem sayisini kartinkine yaklastirmak icin giris sayisi pilot kosuyla olceklenir; `null_islem_ort` ve `tutma_*` kontrol icindir.",
               "- Sinir bolgedeki satirlar (p 0,03-0,10) daha cok tekrarla yeniden kosulur.",
+              "- Rotasyon kartlari (T23, `metrik: PF+CAGR`): islem basina stop/R yok; null modelde takvim, N, maliyet ve yurutme kartinki, yalniz secim rastgele "
+              "(kesitsel/sirali: rastgele siralama, filtre ve rejim kapisi ayni; gecis: ayni gecis tarihlerinde agacin enstrumanlarindan biri). "
+              "PF ve CAGR null %95'inin ustunde olmali; `ort_r`, `null_ortr_*`, `p_ortr` sutunlari bu satirlarda CAGR tasir.",
               "- BIST: USD fiyat = TL fiyat / ayni gun USDTRY kapanisi. TL sonucu `PF_1x_tl`, `net_1x_tl` sutunlarinda yalniz bilgi."]
     (results_dir / "asama2a_ozet.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -258,6 +310,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    tarama.FIXED_DATA_DIR = args.data_dir
     only = {item.strip() for item in args.kart_ids.split(",") if item.strip()} or None
     tasks = load_candidates(args.results_dir, args.kartlar, only)
     markets = sorted({task["market"] for task in tasks})
@@ -277,6 +330,8 @@ def main() -> int:
             if benchmarks[market] is None and (args.data_dir / f"{symbol}.parquet").exists():
                 benchmarks[market] = normalize_ohlcv(pd.read_parquet(args.data_dir / f"{symbol}.parquet"))
     previous = pd.read_csv(args.results_dir / "tarama.csv")
+    if (args.results_dir / "tarama_rotasyon.csv").exists():
+        previous = pd.concat([previous, pd.read_csv(args.results_dir / "tarama_rotasyon.csv")], ignore_index=True)
     tl_rows = {(r.id, r.piyasa): {"PF_1x": r.PF_1x, "net_1x": r.net_1x} for r in previous.itertuples()}
     _STATE.update(data=data, usd=usd, benchmarks=benchmarks, hashes=hashes, tl_rows=tl_rows, git_sha=_git_sha())
     for task in tasks:

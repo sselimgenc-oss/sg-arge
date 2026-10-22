@@ -42,6 +42,7 @@ TF_DIR = {"1H": "hourly", "30m": "30m", "15m": "15m", "5m": "5m", "1m": "1m"}
 TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1H": 60}
 IS_FRACTION = 2 / 3  # EVRENSEL_KURALLAR C: hourly yfinance markets, first 2/3 in-sample, last 1/3 unseen
 MOC_COST_FACTOR = 2.0  # EVRENSEL_KURALLAR D4: close fills carry 2x base cost
+FIXED_DATA_DIR = ROOT / "data" / "daily"  # daily bars of the named instruments of rotation `gecis` cards
 
 OUTPUT_COLUMNS = [
     "id", "piyasa", "tf", "durum", "islem", "PF_1x", "PF_2x", "net_1x", "net_2x", "sharpe", "mdd",
@@ -137,8 +138,10 @@ def prepare(
     pit_universe: PITUniverse | None = None,
 ) -> Prepared:
     """Card timeframe frames (weekly for 1W cards), signals and engine arguments for one market."""
-    if card.get("rotasyon"):
-        raise MotorDestegiYok("rotasyon_asama2")  # rotation books run through run_rotation_market (T22)
+    if card.get("rotasyon"):  # T23: rotation books (stage 2 fills at the next open)
+        from backtests import rotasyon_asama2  # noqa: PLC0415 - rotasyon_asama2 imports this module
+
+        return rotasyon_asama2.prepare_rotation(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
     week_end = "SUN" if market == "KRIPTO25" else "FRI"
     weekly_card = card["tf"] == "1W"
     if weekly_card:
