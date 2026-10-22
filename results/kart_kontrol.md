@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
 Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 136
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **104**; ayrica `dakikalik` (yalniz kripto testi) hazir: **25**
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **105**; ayrica `dakikalik` (yalniz kripto testi) hazir: **25**
 
 
 ## Durum dagilimi

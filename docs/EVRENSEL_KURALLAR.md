@@ -145,3 +145,9 @@ Sembolleri birbirine gore secen kartlar (`engine/rotasyon.py`, `engine/portfolio
 - **Tarama:** `tarama.py` `rotasyon` kartlarini yeni modulle kosar, ayni `tarama.csv` sutunlari; kesitsel kartlar dort piyasada, `gecis` kartlari yalniz ABD satirinda. `--evren pit` kesitsel kartlarda secimi PIT uyeligine baglar. Asama 2a/2b/portfoy rotasyon kartlari icin henuz bagli degil (`MotorDestegiYok: rotasyon_asama2`).
 - **Yeni gostergeler:** `getiri_ort {n}` ve `getiri_std {n}` (gunluk % getirinin ortalamasi / orneklem std'si; Composer `moving-average-return` / `standard-deviation-return`).
 - **Test:** `tests/test_rotasyon.py` (kesitsel siralama, giris filtresi, rejim, takvim, sirali giris, gecis agaci/esit/ters-vol, dolum ve maliyet, look-ahead (seri t'de kesilince t'ye kadarki agirliklar ve ozsermaye ayni), tarama uctan uca).
+
+### D13. UTC saat ve gun ici takvim ilkelleri (T24, Codex)
+- **`saat_utc()`** barin acilis zamaninin UTC saatini (0-23), **`dakika()`** UTC dakikasini (0-59) verir. Zaman dilimli indeksler once UTC'ye cevrilir; zaman dilimsiz indeksler UTC kabul edilir.
+- **`haftanin_gunu()`** mevcut anlamiyla 0=Pazartesi, ..., 6=Pazar degerini verir. Uc ilkel de yalniz bar etiketini okur, gelecek bar kullanmaz.
+- A1 degismez: saat kosulu kapanmis sinyal barinda degerlendirilir ve emir sonraki bar acilisinda dolar. Ornegin 22:00 UTC acilisinda dolum icin saatlik kart `saat_utc() == 21` sinyali uretir.
+- Bu ilkeller yalniz UTC'ye gore tanimli ve evrenimizde verisi bulunan kurallari acar (A6-019). DAX/ABD vadeli/doviz gibi piyasaya ve seansa ozgu kartlar `Dogrulanamaz (piyasa ozgu)` kalir.

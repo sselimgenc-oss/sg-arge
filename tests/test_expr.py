@@ -138,3 +138,17 @@ def test_paskalya_and_ay_gunu_calendar_primitives() -> None:
     assert list(index[expr.parse("paskalya(-9)").evaluate(env, index=index)]) == [pd.Timestamp("2024-03-22")]
     day = expr.parse("ay_gunu() == 15").evaluate(env, index=index)
     assert list(index[day]) == [pd.Timestamp("2024-03-15"), pd.Timestamp("2024-04-15")]
+
+
+def test_intraday_clock_primitives_are_utc_and_have_no_lookahead() -> None:
+    index = pd.date_range("2024-01-08 00:30", periods=7, freq="30min", tz="Europe/Istanbul")
+    env = {"close": pd.Series(range(len(index)), index=index, dtype=float)}
+    rule = parse("saat_utc() == 22 and dakika() == 0 and haftanin_gunu() == 0")
+    full = rule.evaluate(env, index=index)
+    expected = index.tz_convert("UTC") == pd.Timestamp("2024-01-07 22:00", tz="UTC")
+    assert full.tolist() == expected.tolist()
+
+    for end in range(1, len(index) + 1):
+        prefix_index = index[:end]
+        prefix = rule.evaluate({"close": env["close"].iloc[:end]}, index=prefix_index)
+        pd.testing.assert_series_equal(prefix, full.iloc[:end])
