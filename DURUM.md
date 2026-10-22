@@ -18,10 +18,10 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T23: rotasyon kartlarını Aşama 2a/2b + portföye bağla** (`docs/GOREV_T23.md`) | Atandı | "Görev geldi" |
-| Codex | **T24: gün içi Aşama 2b + saat/gün ilkelleri (A6-019)** (`docs/GOREV_T24.md`), model **Sol** | Atandı | "Görev geldi" |
+| Sonnet | **T25: nihai sonuç raporu v2 (başarılı/başarısız listesi)** (`docs/GOREV_T25.md`) | Atandı | "Görev geldi" |
+| Codex | **T26: BIST 1H veri temizliği** (`docs/GOREV_T26.md`), model **Terra**. T24 PR #85 lider incelemesinde | Atandı | "Görev geldi" |
 | Argon | **T11b: BIST30 2015-2019 değişiklik tabloları** (küçültülmüş paket `argon/PAKET_T11b_bist_2015_2019.md`) | Limit 22:22'de açılır | Yeni paketi yapıştır; CSV'yi `argon/`a yükle |
-| Lider | Gün içi kripto taraması (1H/30m/15m/5m, veri tam) | Koşuyor | Yok |
+| Lider | T24 (#85) doğrulama + gün içi kripto taraması (5m) + rotasyon Aşama 2 gerçek koşu | Sürüyor | Yok |
 
 ## Tamamlananlar (son)
 - T23 (Sonnet, PR #84): rotasyon kartları Aşama 2a (PF+CAGR null) / 2b / portföye bağlandı. T17 ile çakışmayı lider çözdü; günlük 2a/2b ve işlem paritesi birebir.
