@@ -14,13 +14,16 @@ gostergeler:
     f: ema
     src: close
     n: 100
-giris: close[1] > ema100[1] and close[1] < open[1] and high > high[1]
-cikis: null
+giris: close > ema100 and close < open
+giris_emri:
+  tip: stop
+  seviye: high
+  gecerlilik_bar: 20
+cikis: close < 0
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: bekleyen_emir
+ozel_kod: false
 parametreler:
   ema.n: 100
   rr_target: 2.0

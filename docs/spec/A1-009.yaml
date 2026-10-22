@@ -11,9 +11,12 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: Endeks (NASDAQ100)
 gostergeler: {}
-ozel_kod: true
-ozel_kod_nedeni: bekleyen_emir
-giris: low <= close * 0.99
+ozel_kod: false
+giris: haftanin_gunu() == 0
+giris_emri:
+  tip: limit
+  seviye: close * 0.99
+  gecerlilik_bar: 360
 cikis: null
 stop:
   tip: yuzde

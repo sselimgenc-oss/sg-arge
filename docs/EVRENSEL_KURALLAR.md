@@ -108,3 +108,10 @@ Hepsi `engine/portfolio.py` + `engine/kart_sinyal.py` ile uygulanir; tum emirler
 - `ay_gunu()`: barin tarihinin ay gunu (1-31). Ayin 3. cumasi = `haftanin_gunu() == 4 and ay_gunu() >= 15 and ay_gunu() <= 21`.
 - `paskalya(k)`: Bati (Gregoryen) Paskalya Pazari'ndan `k` takvim gunu sonraki tarihte True (k negatif olabilir). Kutsal Persembe `paskalya(-3)`, Paskalya oncesi carsamba `paskalya(-4)`, Paskalya haftasindan onceki cuma `paskalya(-9)`. Tatil gunu (bar yok) sinyal uretmez.
 - Birlikte takvim kartlari G008, G009 (paskalya) ve G010 (ay_gunu) `ozel_kod` gerektirmez.
+
+### D8. Bekleyen giris emirleri (T15, Codex)
+- **`giris_emri {tip, seviye, gecerlilik_bar}`:** `giris` kurulum sinyalidir; `seviye` ifadesi sinyal barinda bir kez hesaplanip dondurulur. Emir sinyal barinda dolmaz, izleyen `gecerlilik_bar` bar boyunca (son bar dahil) aktiftir. Ayni sembolde yeni bir kurulum sinyali acik emrin seviyesini, boyutlama verilerini ve gecerlilik suresini yeniler.
+- **Stop giris:** aktif barda `high >= seviye` ise dolum `max(open, seviye)` fiyatindadir; boylece seviyenin uzerine acilan gap iyimser fiyatlanmaz.
+- **Limit giris:** aktif barda `low <= seviye` ise dolum `min(open, seviye)` fiyatindadir; boylece seviyenin altina acilan gap ilk erisilebilir fiyatla dolar.
+- Stop/hedef giris barinda da etkindir. Giris ile koruyucu stop ayni barda, ya da stop ile hedef ayni barda gorulurse A3 uyarinca kotumser siralama uygulanir ve stop kazanir.
+- Alan verilmezse A1'deki mevcut sonraki acilis dolumu aynen korunur. `dolum: kapanis` ile bekleyen giris birlikte kullanilmaz.

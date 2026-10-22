@@ -145,6 +145,14 @@ def test_tam_card_may_exit_only_through_structured_stop(tmp_path):
     assert "tam_bos_ifade" in codes(result_for(tmp_path, cikis=None))
 
 
+def test_pending_entry_schema(tmp_path):
+    valid = {"tip": "stop", "seviye": "ema20 + 1", "gecerlilik_bar": 3}
+    assert not {code for code in codes(result_for(tmp_path, giris_emri=valid)) if code.startswith("giris_emri")}
+    bad = {"tip": "market", "seviye": "missing + 1", "gecerlilik_bar": 0}
+    found = codes(result_for(tmp_path, giris_emri=bad))
+    assert {"giris_emri_tip", "giris_emri_gecerlilik", "tanimsiz_ad"} <= found
+
+
 REPO_SPEC = Path(__file__).resolve().parents[1] / "docs" / "spec"
 
 
@@ -224,6 +232,9 @@ def test_repository_cards_evaluate_on_synthetic_data():
                 if card.get(key):
                     out = expr.parse(card[key]).evaluate(env, index=frame.index, mtf=lambda tf, s: s)
                     assert out.dtype == bool, f"{key} bool degil: {out.dtype}"
+            if card.get("giris_emri"):
+                level = expr.parse(card["giris_emri"]["seviye"]).evaluate(env, index=frame.index, mtf=lambda tf, s: s)
+                assert np.asarray(level).dtype.kind in "fiu", "giris_emri.seviye sayisal degil"
             checked += 1
         except Exception as exc:  # noqa: BLE001 - collect every failing card
             failures.append(f"{result.id}: {type(exc).__name__}: {exc}")

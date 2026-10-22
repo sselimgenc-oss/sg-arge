@@ -109,3 +109,58 @@ def test_maximum_holding_period_exits_at_next_open() -> None:
     assert trade["entry_date"] == frame.index[1]
     assert trade["exit_date"] == frame.index[4]
     assert trade["exit_reason"] == "signal"
+
+
+def _pending_signals(frame: pd.DataFrame, *, level: float, stop_dist: float = 20.0, target_dist=None) -> pd.DataFrame:
+    signals = pd.DataFrame(False, index=frame.index, columns=["entry", "exit"])
+    signals.iloc[0, signals.columns.get_loc("entry")] = True
+    signals["atr"] = 1.0
+    signals["entry_level"] = level
+    signals["stop_dist"] = stop_dist
+    if target_dist is not None:
+        signals["target_dist"] = target_dist
+    return signals
+
+
+def test_pending_stop_and_limit_use_pessimistic_gap_prices() -> None:
+    stop_frame = _frame(opens=[100.0, 105.0, 101.0, 102.0, 103.0])
+    stop = _pending_signals(stop_frame, level=103.0)
+    stop_result = run_portfolio(
+        {"TEST": stop_frame}, lambda f, m: stop, market="ABD25",
+        start=stop_frame.index[0], end=stop_frame.index[-1], cost_rate=0.0,
+        precomputed_signals={"TEST": stop}, entry_order_type="stop", entry_order_validity=1,
+    )
+    assert stop_result.trades.iloc[0]["entry_price"] == 105.0
+
+    limit_frame = _frame(opens=[100.0, 95.0, 101.0, 102.0, 103.0], lows=[99.0, 94.0, 99.0, 100.0, 101.0])
+    limit = _pending_signals(limit_frame, level=97.0)
+    limit_result = run_portfolio(
+        {"TEST": limit_frame}, lambda f, m: limit, market="ABD25",
+        start=limit_frame.index[0], end=limit_frame.index[-1], cost_rate=0.0,
+        precomputed_signals={"TEST": limit}, entry_order_type="limit", entry_order_validity=1,
+    )
+    assert limit_result.trades.iloc[0]["entry_price"] == 95.0
+
+
+def test_pending_order_expires_and_entry_bar_stop_wins() -> None:
+    expired_frame = _frame(opens=[100.0] * 5)
+    expired = _pending_signals(expired_frame, level=110.0)
+    expired_result = run_portfolio(
+        {"TEST": expired_frame}, lambda f, m: expired, market="ABD25",
+        start=expired_frame.index[0], end=expired_frame.index[-1], cost_rate=0.0,
+        precomputed_signals={"TEST": expired}, entry_order_type="stop", entry_order_validity=2,
+    )
+    assert expired_result.trades.empty
+
+    both_frame = _frame(opens=[100.0] * 5, lows=[99.0, 94.0, 99.0, 100.0, 101.0])
+    both_frame.loc[both_frame.index[1], "high"] = 110.0
+    both = _pending_signals(both_frame, level=100.0, stop_dist=5.0, target_dist=5.0)
+    result = run_portfolio(
+        {"TEST": both_frame}, lambda f, m: both, market="ABD25",
+        start=both_frame.index[0], end=both_frame.index[-1], cost_rate=0.0,
+        precomputed_signals={"TEST": both}, entry_order_type="stop", entry_order_validity=1,
+    )
+    trade = result.trades.iloc[0]
+    assert trade["entry_date"] == both_frame.index[1]
+    assert trade["exit_date"] == both_frame.index[1]
+    assert trade["exit_reason"] == "stop" and trade["exit_price"] == 95.0
