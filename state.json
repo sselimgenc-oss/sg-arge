@@ -201,7 +201,7 @@
       "id": "T19",
       "owner": "argon (kullanici araciligiyla)",
       "title": "T21'de erisilemeyen 13 kaynagin kod/formul avi",
-      "status": "T11b'den sonra",
+      "status": "Sonnet'e devredildi (T31)",
       "spec": "PR #78 govdesindeki URL tablosu"
     },
     {
@@ -263,6 +263,13 @@
       "title": "Gun ici tarama/Asama 2 bellek ve hiz",
       "status": "atandi",
       "spec": "docs/GOREV_T30.md"
+    },
+    {
+      "id": "T31",
+      "owner": "claude-moderator",
+      "title": "13 kartin kaynagi (eski Argon T19), alternatif yollar",
+      "status": "atandi (T30 sonrasi)",
+      "spec": "docs/GOREV_T31.md"
     }
   ],
   "done": [

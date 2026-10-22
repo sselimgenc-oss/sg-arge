@@ -3,7 +3,7 @@
 BIST USD bazinda; rastgele giris (null) testi: PF ve ortalama R, null dagiliminin %95 yuzdeligini gecmeli.
 Donem: gunluk ve kripto gun ici 2020-01-01 -> 2024-09-30; yfinance 1H arsivinin ilk 2/3'u (OOS ve on donem kullanilmadi).
 
-Kart: 58 | T6b'ye gecen: 14 | elenen/dogrulanamaz: 44
+Kart: 65 | T6b'ye gecen: 17 | elenen/dogrulanamaz: 48
 
 ## Satir sonuclari
 
@@ -167,11 +167,20 @@ Kart: 58 | T6b'ye gecen: 14 | elenen/dogrulanamaz: 44
 | M020a | KRIPTO25 | yerel | 61 | 1.32 | 0.400 | 1.26 | 0.289 | 0.025 | 0.010 | 200 | Gecti (null) |
 | O2-025 | ABD25 | yerel | 119 | 2.15 | 2.241 | 1.56 | 0.538 | 0.010 | 0.005 | 200 | Gecti (null) |
 | O2-027 | ABD25 | yerel | 126 | 2.08 | 1.951 | 1.32 | 0.436 | 0.010 | 0.005 | 200 | Gecti (null) |
+| A2-002 | EMTIA | yerel | 436 | 1.16 | 0.092 | 1.23 | 0.131 | 0.234 | 0.234 | 200 | Reddedildi (piyasa betasi): PF p=0.234, ortR p=0.234 (esik 0.05) |
+| A2-021 | ABD25 | yerel | 42 | 5.33 | 10.230 | 156.59 | 46.465 | 0.856 | 0.597 | 200 | Reddedildi (piyasa betasi): PF p=0.856, ortR p=0.597 (esik 0.05) |
+| O1-003 | ABD25 | yerel | 697 | 1.13 | 0.059 | 1.39 | 0.122 | 0.542 | 0.448 | 200 | Reddedildi (piyasa betasi): PF p=0.542, ortR p=0.448 (esik 0.05) |
+| O1-003 | EMTIA | yerel | 439 | 1.29 | 0.161 | 1.35 | 0.124 | 0.114 | 0.025 | 200 | Reddedildi (piyasa betasi): PF p=0.114, ortR p=0.025 (esik 0.05) |
+| O1-004 | EMTIA | yerel | 588 | 1.26 | 0.116 | 1.24 | 0.077 | 0.039 | 0.005 | 1000 | Gecti (null) |
+| O1-027 | ABD25 | yerel | 135 | 1.27 | 0.270 | 2.20 | 0.692 | 0.647 | 0.512 | 200 | Reddedildi (piyasa betasi): PF p=0.647, ortR p=0.512 (esik 0.05) |
+| O1-027 | EMTIA | yerel | 108 | 1.52 | 0.380 | 2.30 | 0.753 | 0.517 | 0.493 | 200 | Reddedildi (piyasa betasi): PF p=0.517, ortR p=0.493 (esik 0.05) |
+| T8-07 | EMTIA | yerel | 223 | 1.39 | 0.173 | 1.38 | 0.106 | 0.049 | 0.006 | 1000 | Gecti (null) |
+| V2B | EMTIA | yerel | 647 | 1.28 | 0.094 | 1.23 | 0.060 | 0.020 | 0.005 | 200 | Gecti (null) |
 
 ## Karar ozeti
 
-- T6b'ye gecen kartlar: A4-002, A6-004, A6-010, G007, G011, M015, M017, M020a, M038, O2-025, O2-027, O3-003, P3-011, R01
-- Elenen kartlar (hicbir piyasada gecmedi): A3-007, A3-008a, A3-008b, A3-009a, A3-009b, A3-009c, A4-003, A4-005, A5-009, A6-001, B1-002, B3-001, B3-005, B3-010, B3-014, C01, C02, M006, M014, M037, O1-001, O1-038, O1-066, O1-075, O1-079, O3-001, O3-004, O3-007, P01, P02, P3-001, P3-002, P3-003, P3-004, P3-005, P3-007, R02, R05, T8-01, T8-02, T8-04, T8-05, V1A, V1B
+- T6b'ye gecen kartlar: A4-002, A6-004, A6-010, G007, G011, M015, M017, M020a, M038, O1-004, O2-025, O2-027, O3-003, P3-011, R01, T8-07, V2B
+- Elenen kartlar (hicbir piyasada gecmedi): A2-002, A2-021, A3-007, A3-008a, A3-008b, A3-009a, A3-009b, A3-009c, A4-003, A4-005, A5-009, A6-001, B1-002, B3-001, B3-005, B3-010, B3-014, C01, C02, M006, M014, M037, O1-001, O1-003, O1-027, O1-038, O1-066, O1-075, O1-079, O3-001, O3-004, O3-007, P01, P02, P3-001, P3-002, P3-003, P3-004, P3-005, P3-007, R02, R05, T8-01, T8-02, T8-04, T8-05, V1A, V1B
 
 ## Notlar
 
