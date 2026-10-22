@@ -24,7 +24,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## Tamamlananlar (son)
 - T18 (Sonnet, PR #72): portföy + korelasyon kodu; gerçek koşu lider.
-- **PIT yeniden koşu:** C07 ve R01 (ABD) **Geçti**; C04 (BIST) Reddedildi.
+- **PIT yeniden koşu** (`results/asama2b_pit_ozet.md`): C07 ve R01 (ABD) **Geçti**; C04, G011, M015, M038 Reddedildi.
+- **Portföy** (`results/portfoy.md`): C07 + R01 + A6-010, eşit risk. OOS +%7,5, MDD %2,9, korelasyon 0,20.
 - T16 (Sonnet, PR #70): 50 kart incelendi, terfi 0.
 - T11 (Argon): tarihsel endeks listeleri. Eksik veri: SODA/TRKCM (2020'de SISE'ye birleşti; Yahoo'da veri yok).
 - T12 (Sonnet, PR #67): gün içi tarama, roi_tablosu, motor hızlandırma #2. C01/C09 gerçek veri paritesi birebir.
