@@ -61,7 +61,7 @@
       "id": "T6",
       "owner": "claude-moderator (T6a) / codex-worker (T6b)",
       "title": "Asama 2 tam dogrulama + results/SONUC.md (basarili/basarisiz listesi)",
-      "status": "T6a done (PR #47), lider kosusu suruyor; T6b Codex'e T6a sonuclarindan sonra",
+      "status": "T6a done; T6b Codex'e atandi (GOREV_T6 'T6b ayrintili gorev')",
       "spec": "docs/GOREV_T6.md"
     },
     {

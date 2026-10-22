@@ -24,3 +24,26 @@ Girdi: `results/tarama.csv` icinde `asama2_aday = True` olan kart × piyasa sati
 
 ## Yapmayacaklari
 Parametre optimizasyonu yok (plato yalniz komsuluk testi). Kart kurali degistirilmez.
+
+## T6b ayrintili gorev (lider, 2026-10-22) — Codex
+**Onerilen model seviyesi: GUCLU** (istatistiksel test tasarimi; hata sonuclari bozar).
+
+Girdiler:
+- Kart satirlari: `results/asama2a.csv`'de `karar` = aday kalan kart × piyasa satirlari (lider kosusu bitince main'e gelir; o zamana kadar sentetik veri ve birkac ornek kartla gelistir).
+- Codex Algo satirlari: C01-C21 (`strategies/*.py`). **Bunlar henuz rastgele giris testinden gecmedi:** once `backtests/asama2a.py`'deki `random_entry_signals` / `null_distribution` mantigini `strategies/*.py` sinyallerine uygula (ayni null kurallari, ayni seed politikasi; BIST satirlari USD). Kod tekrari yerine ortak fonksiyonu kullan; `asama2a.py`'nin karta ozel kismina dokunma.
+
+Yapilacaklar (`backtests/asama2b.py`, tek giris noktasi):
+1. **OOS** (2024-10-01 → son) ve **on donem** (2015-01-01, kripto 2018 → 2019-12-31): 1x maliyet. Kapı: OOS islem >= 30 ise ortalama R > 0; on donem negatifse `Kosullu`.
+2. **Stres:** 2x PF >= 1,2; 3x ve +1 bar gecikmede net > 0 (IS donemi).
+3. **Plato:** kartin `parametreler` alanindaki (yoksa gostergelerin `n`/`carpan` alanlari) en fazla 2 parametre, ±%20 ve ±%40 komsuluk (5×5 izgara). Rapor: komsu medyan PF, pozitif hucre orani, merkez izgara kenarinda mi. Kapı: pozitif hucre orani >= %60. **Optimizasyon degil:** merkez hep kaynak degeri.
+4. **Block bootstrap:** gunluk portfoy getirileri, blok 20 gun, 1000 tekrar, sabit seed. %95 MDD ve CAGR alt %5. Kapı: %95 MDD portfoy risk butcesi (%15) icinde.
+5. **DSR:** Bailey & Lopez de Prado. N = kaynaktaki deneme sayisi (`deneme_sayisi_kaynakta`, yoksa 1) + bizim tarama satir sayisi (`results/tarama.csv` satir sayisi) + T1 satirlari. N, 2N, 5N icin raporla; karar kotumser olana gore. Kapı (canli icin): DSR >= 0,95; paper icin yalniz raporlanir.
+6. **Karar:** her satir icin `Gecti` / `Kosullu` / `Reddedildi` + gerekce (hangi test). ELEME_KRITERLERI kapı ozeti tablosuna gore.
+
+Ciktilar:
+- `results/asama2b.csv`, `results/asama2b_ozet.md`
+- `.github/workflows/asama2b.yml` (`workflow_dispatch`, push oncesi `git pull --rebase`)
+- `tests/`: her test icin sentetik veride bilinen sonuclu birim testi (or. rastgele yuruyus serisinde DSR dusuk; trendli seride plato pozitif).
+
+Kurallar: `engine/` cekirdegine dokunma (gerekirse ince sarmalayici). Sonuclari ben (lider) ayrica kendi ortamimda kosup kontrol ederim.
+PR: `[Codex-Sol] T6b asama 2 tam dogrulama`.

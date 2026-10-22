@@ -18,8 +18,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Codex | T1b **tamam** (PR #49). Sıradaki: T6b, T6a sonuçları gelince | Bekliyor | Yok |
-| Sonnet | T6a **tamam** (PR #47). Sıradaki iş T6a sonuçlarına göre | Boşta | Yok |
+| Codex | **T6b: ikinci aşama tam doğrulama** (OOS, ön dönem, stres, plato, bootstrap, DSR) + Codex Algo satırlarına rastgele giriş testi. Model: güçlü | Atandı | "Görev geldi" |
+| Sonnet | T10: Argon parti 7-8 standart | Atandı | "Görev geldi" |
 | Argon | **Parti 10** (29 kaynak, Markdown listelerinden; gözden kaçmıştı) | Sırada | `argon/PAKET_T2_parti10.md`'yi yapıştır; cevabı `T2_parti10.yaml` adıyla yükle. Sonra parti 11 (28) |
 | Veri arşivi | Saatlik arşiv | **Tamam** (4. koşu): 62 dosya, 8,5 MB; haftalık otomatik | Yok |
 
