@@ -11,6 +11,7 @@ from data.fetch import (
     merge_archive,
     normalize_ohlcv,
     quality_metrics,
+    single_market_assets,
     update_manifest,
     update_universe_notes,
 )
@@ -41,6 +42,17 @@ def test_normalize_ohlcv_converts_to_sorted_unique_utc() -> None:
     assert result.index.is_monotonic_increasing
     assert not result.index.has_duplicates
     assert result.loc[pd.Timestamp("2026-01-01 08:00", tz="UTC"), "close"] == 3
+
+
+def test_normalize_ohlcv_accepts_volume_free_fx_bars() -> None:
+    result = normalize_ohlcv(_frame(pd.date_range("2026-01-01", periods=2, freq="D", tz="UTC")).drop(columns="Volume"))
+    assert result["volume"].tolist() == [0.0, 0.0]
+
+
+def test_fx8_assets_are_the_approved_eight_pairs() -> None:
+    assert [asset.symbol for asset in single_market_assets(("FX8",))] == [
+        "EURUSD=X", "GBPUSD=X", "USDJPY=X", "GBPJPY=X", "AUDUSD=X", "USDCHF=X", "USDCAD=X", "EURJPY=X",
+    ]
 
 
 def timezone_utc():
