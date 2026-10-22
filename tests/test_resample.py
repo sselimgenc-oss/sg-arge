@@ -74,8 +74,8 @@ def test_timezone_naive_input_is_rejected() -> None:
 
 
 def test_us_two_hour_buckets_start_at_new_york_session_open() -> None:
-    # 09:30 ET is 14:30 UTC on this winter date.  The last 90 minutes of the
-    # 6.5-hour session must not become an incomplete two-hour candle.
+    # 09:30 ET is 14:30 UTC on this winter date. The short final session bucket
+    # is valid once its sole 15:30 source bar has closed.
     index = pd.date_range("2026-01-05 14:30", periods=7, freq="h", tz="UTC", name="timestamp")
     result = resample_hourly(_bars(index), market="ABD25", timeframe="2H")
 
@@ -83,10 +83,32 @@ def test_us_two_hour_buckets_start_at_new_york_session_open() -> None:
         pd.Timestamp("2026-01-05 14:30", tz="UTC"),
         pd.Timestamp("2026-01-05 16:30", tz="UTC"),
         pd.Timestamp("2026-01-05 18:30", tz="UTC"),
+        pd.Timestamp("2026-01-05 20:30", tz="UTC"),
     ]
     assert result.iloc[0].to_dict() == {
         "open": 1.0, "high": 3.0, "low": 0.0, "close": 2.5, "volume": 20.0,
     }
+
+
+def test_us_four_hour_keeps_the_closed_short_final_session_bucket() -> None:
+    index = pd.date_range("2026-01-05 14:30", periods=7, freq="h", tz="UTC", name="timestamp")
+    result = resample_hourly(_bars(index), market="ABD25", timeframe="4H")
+
+    assert result.index.tolist() == [
+        pd.Timestamp("2026-01-05 14:30", tz="UTC"),
+        pd.Timestamp("2026-01-05 18:30", tz="UTC"),
+    ]
+    assert result.iloc[1].to_dict() == {
+        "open": 5.0, "high": 8.0, "low": 4.0, "close": 7.5, "volume": 30.0,
+    }
+
+
+def test_us_short_final_bucket_waits_for_every_source_bar() -> None:
+    index = pd.date_range("2026-01-05 14:30", periods=6, freq="h", tz="UTC", name="timestamp")
+
+    result = resample_hourly(_bars(index), market="ABD25", timeframe="4H")
+
+    assert result.index.tolist() == [pd.Timestamp("2026-01-05 14:30", tz="UTC")]
 
 
 def test_partial_bucket_never_revises_an_already_closed_candle() -> None:

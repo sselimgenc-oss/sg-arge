@@ -53,7 +53,8 @@ def test_skip_rules_and_annualisation() -> None:
     assert tarama.annualization_for("1H", "KRIPTO25") == 24 * 365
     assert tarama.annualization_for("5m", "KRIPTO25") == 288 * 365
     assert tarama.annualization_for("2H", "KRIPTO25") == 12 * 365
-    assert tarama.annualization_for("4H", "ABD25") == 252
+    assert tarama.annualization_for("2H", "ABD25") == 4 * 252
+    assert tarama.annualization_for("4H", "ABD25") == 2 * 252
     assert tarama.annualization_for("1D", "BIST30") == 252 and tarama.annualization_for("1W", "ABD25") == 52
 
 

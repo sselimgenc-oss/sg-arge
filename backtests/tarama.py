@@ -81,12 +81,12 @@ def annualization_for(tf: str, market: str) -> int:
         return 52
     if tf == "1D":
         return 365 if market == "KRIPTO25" else 252
-    # 2H/4H US/commodity bars are complete session buckets: 3 and 1 bars/day.
+    # 2H/4H US/commodity bars include the closed short final session bucket.
     # Preserve the established 1H factor for existing CI parity results.
     if market != "KRIPTO25" and tf in RESAMPLED_HOURLY_TFS:
         if market == "BIST30":
             return {"2H": 4, "4H": 2}[tf] * 252
-        return {"2H": 3, "4H": 1}[tf] * 252
+        return {"2H": 4, "4H": 2}[tf] * 252
     per_day = 24 * 60 // TF_MINUTES[tf] if market == "KRIPTO25" else max(7 * 60 // TF_MINUTES[tf], 1)
     return per_day * (365 if market == "KRIPTO25" else 252)
 

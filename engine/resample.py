@@ -7,6 +7,8 @@ by default so a running session cannot leak a partially formed bar.
 
 from __future__ import annotations
 
+import math
+
 import pandas as pd
 
 OHLCV_AGGREGATION = {
@@ -33,11 +35,12 @@ def _validate(frame: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def _aggregate(grouped: object, *, expected_bars: int, drop_incomplete: bool) -> pd.DataFrame:
+def _aggregate(grouped: object, *, expected_bars: int | pd.Series, drop_incomplete: bool) -> pd.DataFrame:
     bars = grouped.agg(OHLCV_AGGREGATION)
     counts = grouped["close"].count()
     if drop_incomplete:
-        bars = bars.loc[counts == expected_bars]
+        expected = expected_bars.reindex(counts.index) if isinstance(expected_bars, pd.Series) else expected_bars
+        bars = bars.loc[counts == expected]
     return bars.dropna(subset=["open", "high", "low", "close"])
 
 
@@ -52,10 +55,9 @@ def _resample_session(
 ) -> pd.DataFrame:
     """Aggregate whole 1H buckets anchored at a market's session open.
 
-    The final fractional session portion (for example 15:30--16:00 ET) is
-    deliberately not promoted to a 2H/4H candle.  This makes every emitted
-    candle closed at the time it is visible and prevents a partial future bar
-    from entering a signal.
+    The final short session bucket is retained only when every 1H source bar
+    available before the session close is present. This keeps the final candle
+    while still withholding a running or incomplete bucket.
     """
     local = frame.tz_convert(timezone)
     minute = local.index.hour * 60 + local.index.minute
@@ -68,7 +70,13 @@ def _resample_session(
     labels = session_start + pd.to_timedelta(bucket * hours, unit="h")
     local["_bucket"] = labels
     grouped = local.groupby("_bucket", sort=True)
-    result = _aggregate(grouped, expected_bars=hours, drop_incomplete=drop_incomplete)
+    bucket_labels = pd.DatetimeIndex(grouped.size().index)
+    session_end = bucket_labels.normalize() + pd.to_timedelta(session_close_minutes, unit="m")
+    # Bars are start-labelled. A 13:30 ET bucket ending at 16:00 therefore
+    # needs the 13:30, 14:30 and 15:30 source bars: ceil(2.5) == 3.
+    remaining = (session_end - bucket_labels).total_seconds() / 3600
+    expected = pd.Series(remaining, index=bucket_labels).map(math.ceil).clip(upper=hours).astype(int)
+    result = _aggregate(grouped, expected_bars=expected, drop_incomplete=drop_incomplete)
     result.index = pd.DatetimeIndex(result.index, name=frame.index.name).tz_convert("UTC")
     return result
 
