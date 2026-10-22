@@ -1,10 +1,10 @@
-name: Tarama asama 1 (T5b-1)
+name: Tarama asama 1 (T5b-1, T12 gun ici)
 
 on:
   workflow_dispatch:
     inputs:
       tf:
-        description: "Kart zaman dilimleri (virgulle)"
+        description: "Kart zaman dilimleri (virgulle): 1D,1W gunluk | 1H,30m,15m,5m,1m gun ici"
         default: "1D,1W"
       kart_ids:
         description: "Yalniz bu kartlar (virgulle; bos = hepsi)"
@@ -16,7 +16,7 @@ permissions:
 jobs:
   tarama:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -25,11 +25,25 @@ jobs:
           cache: pip
       - name: Install pinned dependencies
         run: pip install -r requirements.txt
-      - name: Download daily bars
-        run: python data/fetch.py --interval 1d --allow-partial
+      - name: Download bars for the requested timeframes
+        env:
+          TARAMA_TF: ${{ inputs.tf }}
+        run: |
+          set -e
+          IFS=',' read -ra TFS <<< "$TARAMA_TF"
+          NEED_DAILY=0
+          for tf in "${TFS[@]}"; do
+            case "$tf" in
+              1D|1W) NEED_DAILY=1 ;;
+              1H) python data/fetch.py --interval 1h --append --allow-partial ;;
+              30m|15m|5m|1m) python data/fetch.py --interval "$tf" --baslangic 2020-01-01 --allow-partial ;;
+            esac
+          done
+          # the scan always loads the daily archive for the benchmark series
+          python data/fetch.py --interval 1d --allow-partial
       - name: Run tests
         run: python -m pytest -q
-      - name: Run stage 1 scan
+      - name: Run scan
         env:
           TARAMA_TF: ${{ inputs.tf }}
           TARAMA_KARTLAR: ${{ inputs.kart_ids }}
@@ -38,8 +52,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/MANIFEST.csv data/evren.csv results/tarama.csv results/tarama_ozet.md results/tarama_islemler/
-          git diff --cached --quiet || git commit -m "chore: refresh stage 1 scan results"
+          git add data/MANIFEST.csv data/evren.csv data/hourly results/tarama.csv results/tarama_ozet.md results/tarama_gunici_ozet.md results/tarama_islemler/ results/veri_kalitesi_1h.md 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "chore: refresh scan results"
           # Kosu sirasinda main ilerlemis olabilir: son hali cekip tekrar dene.
           for i in 1 2 3; do
             git pull --rebase origin main && git push && exit 0

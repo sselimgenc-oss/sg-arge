@@ -24,6 +24,12 @@ BINANCE_START = pd.Timestamp("2017-01-01", tz="UTC")
 DAILY_START = "2015-01-01"
 REQUIRED_UNIVERSE_COLUMNS = {"sembol", "piyasa", "kaynak", "not"}
 OHLCV_COLUMNS = ["open", "high", "low", "close", "volume"]
+INTERVALS = ("1d", "1h", "30m", "15m", "5m", "1m")
+SUBHOURLY = ("30m", "15m", "5m", "1m")  # Binance only; archives are not committed (large)
+
+
+def archive_dir(interval: str) -> Path:
+    return DATA_DIR / {"1d": "daily", "1h": "hourly"}.get(interval, interval)
 
 
 @dataclass(frozen=True)
@@ -308,12 +314,13 @@ def write_quality_report(records: list[dict[str, object]], path: Path = QUALITY_
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def fetch_asset(asset: Asset, interval: str, *, append: bool) -> tuple[Path, pd.DataFrame]:
-    directory = DATA_DIR / ("hourly" if interval == "1h" else "daily")
-    path = directory / asset.filename
+def fetch_asset(
+    asset: Asset, interval: str, *, append: bool, start_override: pd.Timestamp | None = None
+) -> tuple[Path, pd.DataFrame]:
+    path = archive_dir(interval) / asset.filename
     existing = _read_archive(path) if append else normalize_ohlcv(pd.DataFrame())
     if asset.source == "binance":
-        start = existing.index[-1] + pd.Timedelta(1, unit="ms") if not existing.empty else None
+        start = existing.index[-1] + pd.Timedelta(1, unit="ms") if not existing.empty else start_override
         incoming = fetch_binance(asset, interval, start=start)
     else:
         incoming = fetch_yfinance(asset, interval)
@@ -324,17 +331,25 @@ def fetch_asset(asset: Asset, interval: str, *, append: bool) -> tuple[Path, pd.
     return path, combined
 
 
-def run(interval: str, *, append: bool, allow_partial: bool = False, evren: str = "sabit") -> int:
+def run(
+    interval: str,
+    *,
+    append: bool,
+    allow_partial: bool = False,
+    start: pd.Timestamp | None = None,
+    evren: str = "sabit",
+) -> int:
     manifest_rows: list[dict[str, object]] = []
     quality_rows: list[dict[str, object]] = []
     successful: set[str] = set()
     failure_reasons: dict[str, str] = {}
     failures = 0
     for asset in load_universe(pit=evren == "pit"):
-        directory = DATA_DIR / ("hourly" if interval == "1h" else "daily")
-        path = directory / asset.filename
+        if interval in SUBHOURLY and asset.source != "binance":
+            continue  # sub-hourly bars exist only for crypto (EVRENSEL_KURALLAR B)
+        path = archive_dir(interval) / asset.filename
         try:
-            path, frame = fetch_asset(asset, interval, append=append)
+            path, frame = fetch_asset(asset, interval, append=append, start_override=start)
             manifest_rows.append(
                 _manifest_row(asset, interval, path, frame, status="ok")
             )
@@ -365,7 +380,8 @@ def run(interval: str, *, append: bool, allow_partial: bool = False, evren: str 
                 )
             )
             print(f"ERROR {asset.symbol}: {exc}")
-    update_universe_notes(successful, failure_reasons)
+    if interval not in SUBHOURLY:  # sub-hourly runs only cover crypto: do not mark other symbols missing
+        update_universe_notes(successful, failure_reasons)
     update_manifest(manifest_rows)
     if interval == "1h":
         write_quality_report(quality_rows)
@@ -374,7 +390,11 @@ def run(interval: str, *, append: bool, allow_partial: bool = False, evren: str 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--interval", choices=("1d", "1h"), required=True)
+    parser.add_argument("--interval", choices=INTERVALS, required=True)
+    parser.add_argument(
+        "--baslangic",
+        help="ISO start date for Binance downloads (default 2017-01-01); the scan only needs 2020-01-01 for sub-hourly bars",
+    )
     parser.add_argument(
         "--append",
         action="store_true",
@@ -392,5 +412,11 @@ def parse_args() -> argparse.Namespace:
 if __name__ == "__main__":
     arguments = parse_args()
     raise SystemExit(
-        run(arguments.interval, append=arguments.append, allow_partial=arguments.allow_partial, evren=arguments.evren)
+        run(
+            arguments.interval,
+            append=arguments.append,
+            allow_partial=arguments.allow_partial,
+            start=pd.Timestamp(arguments.baslangic, tz="UTC") if arguments.baslangic else None,
+            evren=arguments.evren,
+        )
     )

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import bisect
 from dataclasses import asdict, dataclass
 from typing import Callable
 
@@ -140,6 +141,7 @@ def run_portfolio(
     profit_lock: dict | None = None,
     exit_builder: Callable[..., pd.Series | None] | None = None,
     partial_profit: dict | None = None,
+    roi_table: dict[float, float] | None = None,
     entry_order_type: str | None = None,
     entry_order_validity: int = 1,
 ) -> BacktestResult:
@@ -158,6 +160,10 @@ def run_portfolio(
       ``stop_fn(entry_price)`` returning the locked stop), ``exit_builder`` (position
       state dependent exit series, called as ``(symbol, entry_date, entry_price,
       initial_stop, target)``);
+    * ``roi_table``: Freqtrade ``minimal_roi`` ({minutes held: profit ratio}); from the bar
+      whose open time is at least that many minutes after the entry bar's open time, the
+      position exits once the bar reaches ``entry * (1 + ratio)`` (fills at the open on a
+      gap, else at that price). The stop is checked first (A3);
     * ``partial_profit``: ``gun`` (bars held), ``oran`` (fraction sold), ``trigger_atr`` or
       ``trigger_fn(entry_price, stop_distance)`` (price gain needed at the close) and
       ``stop_fn(entry_price)`` (stop for the remainder). Taken once; the fraction fills at
@@ -209,6 +215,8 @@ def run_portfolio(
         for symbol in symbols
     }
     nan_col = {symbol: np.full(len(index_of[symbol]), np.nan) for symbol in symbols}
+    # last bar at or before each date (a symbol without a bar that date is marked at its last close)
+    prev_loc = {symbol: index_of[symbol].searchsorted(window, side="right") - 1 for symbol in symbols}
 
     def column(symbol: str, name: str) -> np.ndarray:
         frame = signals[symbol]
@@ -228,6 +236,14 @@ def run_portfolio(
     sig_entry_level = {symbol: column(symbol, "entry_level") for symbol in symbols}
     has_stop_dist = {symbol: "stop_dist" in signals[symbol].columns for symbol in symbols}
 
+    # Entry signals per date: only symbols holding a position or flagging an entry need a signal-step visit.
+    entry_matrix = np.zeros((len(window), len(symbols)), dtype=bool)
+    for column_number, symbol in enumerate(symbols):
+        valid = locs[symbol] >= 0
+        entry_matrix[valid, column_number] = sig_entry[symbol][locs[symbol][valid]]
+    entry_rows, entry_cols = np.nonzero(entry_matrix)
+    entry_starts = np.searchsorted(entry_rows, np.arange(len(window) + 1))
+
     cash = initial_capital
     positions: dict[str, Position] = {}
     scheduled: dict[pd.Timestamp, list[Order]] = {}
@@ -236,16 +252,18 @@ def run_portfolio(
     trades: list[Trade] = []
     equity_points: dict[pd.Timestamp, float] = {}
     exposure_points: dict[pd.Timestamp, float] = {}
-    last_close: dict[str, float] = {}
     max_open_positions = 0
     last_exit_loc: dict[str, int] = {}
     di = 0  # index of the current date in ``dates``
+    roi_keys = sorted(roi_table) if roi_table else []
+    roi_values = [roi_table[key] for key in roi_keys]
 
     def mark(symbol: str, field: str) -> float:
         loc = locs[symbol][di]
         if loc >= 0:
             return float(price_arr[symbol][field][loc])
-        return last_close.get(symbol, float("nan"))
+        previous = prev_loc[symbol][di]
+        return float(price_arr[symbol]["close"][previous]) if previous >= 0 else float("nan")
 
     def equity_at(field: str) -> float:
         marked = cash
@@ -370,11 +388,6 @@ def run_portfolio(
         )
 
     for di, date in enumerate(dates):
-        for symbol in symbols:
-            loc = locs[symbol][di]
-            if loc >= 0:
-                last_close[symbol] = float(price_arr[symbol]["close"][loc])
-
         todays_orders = sorted(
             scheduled.pop(date, []), key=lambda order: ({"exit": 0, "partial": 1}.get(order.kind, 2), order.symbol)
         )
@@ -446,6 +459,15 @@ def run_portfolio(
                 close_position(symbol, date, open_price, "gap_target")
             elif np.isfinite(position.target) and float(price_arr[symbol]["high"][loc]) >= position.target:
                 close_position(symbol, date, position.target, "target")
+            elif roi_keys:
+                elapsed = (date - position.entry_date).total_seconds() / 60.0
+                slot = bisect.bisect_right(roi_keys, elapsed) - 1
+                if slot >= 0:
+                    roi_price = position.entry_price * (1.0 + roi_values[slot])
+                    if open_price >= roi_price:
+                        close_position(symbol, date, open_price, "roi")
+                    elif float(price_arr[symbol]["high"][loc]) >= roi_price:
+                        close_position(symbol, date, roi_price, "roi")
 
         # A trailing stop calculated from today's close becomes active tomorrow.
         for symbol, position in positions.items():
@@ -470,7 +492,8 @@ def run_portfolio(
         # Closed-bar signals schedule orders for a later open; never this bar.
         # With fill_at_close the order fills at this bar's close (exits first).
         close_fills: list[tuple[str, float, float, float, float, float]] = []
-        for symbol in symbols:
+        visit = set(positions) | {symbols[c] for c in entry_cols[entry_starts[di]:entry_starts[di + 1]]}
+        for symbol in sorted(visit):
             loc = locs[symbol][di]
             if loc < 0:
                 continue

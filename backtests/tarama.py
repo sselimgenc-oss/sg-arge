@@ -36,6 +36,11 @@ BASE_COST = {"BIST30": 0.0015, "ABD25": 0.0005, "KRIPTO25": 0.0015, "EMTIA": 0.0
 MARKET_TOKEN = {"BIST30": "BIST", "ABD25": "ABD", "KRIPTO25": "KRIPTO", "EMTIA": "EMTIA"}
 BENCHMARK_SYMBOL = {"ABD25": "SPY", "KRIPTO25": "BTCUSDT"}  # BIST30/EMTIA: no index series yet
 MIN_TRADES, MIN_PF, PF_ALARM = 30, 1.1, 4.0
+DAILY_TFS = ("1D", "1W")
+SUBHOURLY_TFS = ("1m", "5m", "15m", "30m")
+TF_DIR = {"1H": "hourly", "30m": "30m", "15m": "15m", "5m": "5m", "1m": "1m"}
+TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1H": 60}
+IS_FRACTION = 2 / 3  # EVRENSEL_KURALLAR C: hourly yfinance markets, first 2/3 in-sample, last 1/3 unseen
 MOC_COST_FACTOR = 2.0  # EVRENSEL_KURALLAR D4: close fills carry 2x base cost
 
 OUTPUT_COLUMNS = [
@@ -49,7 +54,7 @@ def load_cards(directory: Path, tf: str) -> list[dict[str, Any]]:
     cards = []
     for path in sorted(directory.glob("*.yaml")):
         card = yaml.safe_load(path.read_text(encoding="utf-8"))
-        if card.get("spec_durumu") == "tam" and not card.get("ozel_kod") and card.get("tf") in tf.split(","):
+        if card.get("spec_durumu") in ("tam", "dakikalik") and not card.get("ozel_kod") and card.get("tf") in tf.split(","):
             cards.append(card)
     return cards
 
@@ -62,6 +67,25 @@ def weekly_frame(frame: pd.DataFrame, week_end: str) -> pd.DataFrame:
     weekly = grouped.agg({"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"})
     weekly.index = pd.DatetimeIndex(frame.index.to_series().groupby(keys, sort=True).first().to_numpy())
     return weekly
+
+
+def annualization_for(tf: str, market: str) -> int:
+    """Bars per year for the Sharpe annualisation (crypto trades around the clock)."""
+    if tf == "1W":
+        return 52
+    if tf == "1D":
+        return 365 if market == "KRIPTO25" else 252
+    per_day = 24 * 60 // TF_MINUTES[tf] if market == "KRIPTO25" else max(7 * 60 // TF_MINUTES[tf], 1)
+    return per_day * (365 if market == "KRIPTO25" else 252)
+
+
+def period_for(tf: str, market: str, data: dict[str, pd.DataFrame]) -> tuple[pd.Timestamp, pd.Timestamp]:
+    """In-sample window: crypto and daily use the fixed IS; yfinance hourly markets the first 2/3 of their span."""
+    if market == "KRIPTO25" or tf in DAILY_TFS:
+        return IS_START, IS_END
+    first = min(frame.index[0] for frame in data.values())
+    last = max(frame.index[-1] for frame in data.values())
+    return first, first + (last - first) * IS_FRACTION
 
 
 def _unused_signal_function(frame: pd.DataFrame, market: str) -> pd.DataFrame:  # pragma: no cover
@@ -125,8 +149,10 @@ def prepare(
     plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark)
     if pit_universe is not None:
         plan.signals = filter_entry_signals(plan.signals, pit_universe, market)
-    annualization = 52 if weekly_card else (365 if market == "KRIPTO25" else 252)
-    return Prepared(in_period, plan, annualization, BASE_COST[market], market, start, end)
+    if card["tf"] not in DAILY_TFS:
+        plan.engine_kwargs["fill_at_close"] = False  # no MOC exception for intraday cards (D4)
+        plan.dolum_kapanis = False
+    return Prepared(in_period, plan, annualization_for(card["tf"], market), BASE_COST[market], market, start, end)
 
 
 def run_card_market(
@@ -177,19 +203,56 @@ def _empty(card: dict[str, Any], market: str, durum: str, neden: str) -> dict[st
     }
 
 
-def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path, *, merge: bool = False, evren: str = "sabit") -> pd.DataFrame:
-    git_sha = _git_sha()
-    pit_universe = load_pit_universe() if evren == "pit" else None
-    market_data: dict[str, tuple[dict[str, pd.DataFrame], str, list[str]]] = {m: _load_market(m, data_dir, evren) for m in MARKETS}
+def _load_benchmarks(market_data: dict, directory: Path) -> dict[str, pd.DataFrame | None]:
     benchmarks: dict[str, pd.DataFrame | None] = {}
     for market, symbol in BENCHMARK_SYMBOL.items():
         loaded = market_data[market][0]
         benchmarks[market] = loaded.get(symbol)
         if benchmarks[market] is None:
-            path = data_dir / f"{symbol}.parquet"
+            path = directory / f"{symbol}.parquet"
             if path.exists():
                 from data.fetch import normalize_ohlcv  # noqa: PLC0415
                 benchmarks[market] = normalize_ohlcv(pd.read_parquet(path))
+    return benchmarks
+
+
+def _skip_reason(card: dict[str, Any], market: str) -> tuple[str, str] | None:
+    """(durum, neden) when the card cannot be tested in this market, else None."""
+    allowed = card.get("piyasa_kisiti")
+    if allowed and MARKET_TOKEN[market] not in allowed:
+        return "Dogrulanamaz", f"piyasa_ozgu:{','.join(allowed)}"
+    if card["tf"] in SUBHOURLY_TFS and market != "KRIPTO25":
+        return "Dogrulanamaz", "dakikalik_veri_yok"
+    if card["tf"] == "1H" and market == "BIST30":
+        return "Dogrulanamaz", "veri_kalitesi:BIST_1H_seans_disi_sifir_hacim (results/veri_kalitesi_1h.md)"
+    return None
+
+
+def scan(
+    cards: list[dict[str, Any]],
+    data_dir: Path,
+    results_dir: Path,
+    *,
+    merge: bool = False,
+    data_root: Path | None = None,
+    summary_name: str | None = None,
+    evren: str = "sabit",
+) -> pd.DataFrame:
+    git_sha = _git_sha()
+    pit_universe = load_pit_universe() if evren == "pit" else None
+    root = data_root or data_dir.parent
+    loaded: dict[tuple[str, str], tuple[dict[str, pd.DataFrame], str, list[str]]] = {}
+    benchmark_cache: dict[str, dict[str, pd.DataFrame | None]] = {}
+
+    def directory_for(tf: str) -> Path:
+        return data_dir if tf in DAILY_TFS else root / TF_DIR[tf]
+
+    def market_data(tf: str, market: str):
+        key = (str(directory_for(tf)), market)
+        if key not in loaded:
+            loaded[key] = _load_market(market, directory_for(tf), evren if tf in DAILY_TFS else "sabit")
+        return loaded[key]
+
     rows: list[dict[str, Any]] = []
     trade_dir = results_dir / "tarama_islemler"
     trade_dir.mkdir(parents=True, exist_ok=True)
@@ -197,17 +260,27 @@ def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path, *, merg
         if card.get("alias_of"):
             rows.append(_empty(card, "-", "Atlandi", f"alias:{card['alias_of']}"))
             continue
-        allowed = card.get("piyasa_kisiti")
+        tf = card["tf"]
         for market in MARKETS:
-            if allowed and MARKET_TOKEN[market] not in allowed:
-                rows.append(_empty(card, market, "Dogrulanamaz", f"piyasa_ozgu:{','.join(allowed)}"))
+            skip = _skip_reason(card, market)
+            if skip:
+                rows.append(_empty(card, market, *skip))
                 continue
-            data, data_hash, _missing = market_data[market]
+            data, data_hash, _missing = market_data(tf, market)
             if not data:
                 rows.append(_empty(card, market, "Dogrulanamaz", "veri_yok"))
                 continue
+            directory = str(directory_for(tf))
+            if directory not in benchmark_cache:
+                benchmark_cache[directory] = _load_benchmarks(
+                    {m: market_data(tf, m) for m in BENCHMARK_SYMBOL}, directory_for(tf)
+                )
             try:
-                result = run_card_market(card, data, market, benchmark=benchmarks.get(market), pit_universe=pit_universe)
+                start, end = period_for(tf, market, data)
+                result = run_card_market(
+                    card, data, market, benchmark=benchmark_cache[directory].get(market), start=start, end=end,
+                    pit_universe=pit_universe if tf in DAILY_TFS else None,
+                )
             except MotorDestegiYok as exc:
                 rows.append(_empty(card, market, "Atlandi", f"motor_destegi_yok:{exc.field_name}"))
                 continue
@@ -229,6 +302,7 @@ def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path, *, merg
             if not trades.empty:
                 trades.to_csv(trade_dir / f"{card['id']}_{market}.csv", index=False)
     table = pd.DataFrame(rows).reindex(columns=OUTPUT_COLUMNS)
+    scanned = list(dict.fromkeys(table["id"]))
     results_dir.mkdir(parents=True, exist_ok=True)
     existing = results_dir / "tarama.csv"
     if merge and existing.exists():
@@ -237,7 +311,13 @@ def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path, *, merg
         previous = previous[~previous["id"].isin(set(table["id"]))]
         table = pd.concat([previous, table], ignore_index=True).sort_values("id", kind="stable", ignore_index=True)
     table.to_csv(existing, index=False, float_format="%.6g")
-    write_summary(table, list(dict.fromkeys(table["id"])), results_dir / "tarama_ozet.md")
+    if summary_name is None:
+        write_summary(table, list(dict.fromkeys(table["id"])), results_dir / "tarama_ozet.md")
+    else:
+        write_summary(
+            table[table["id"].isin(scanned)], scanned, results_dir / summary_name,
+            title="Gun ici / dakikalik tarama ozeti (T12)", gunici=True,
+        )
     return table
 
 
@@ -252,14 +332,20 @@ def card_verdict(rows: pd.DataFrame) -> tuple[str, str]:
     return "Dogrulanamaz", "; ".join(reasons)
 
 
-def write_summary(table: pd.DataFrame, card_ids: list[str], path: Path) -> None:
+def write_summary(
+    table: pd.DataFrame, card_ids: list[str], path: Path, *,
+    title: str = "Asama 1 tarama ozeti (T5b-1: gunluk/haftalik kartlar)", gunici: bool = False,
+) -> None:
     verdicts = {card_id: card_verdict(table[table["id"] == card_id]) for card_id in card_ids}
     count: dict[str, int] = {}
     for verdict, _ in verdicts.values():
         count[verdict] = count.get(verdict, 0) + 1
     lines = [
-        "# Asama 1 tarama ozeti (T5b-1: gunluk/haftalik kartlar)", "",
-        "Donem: IS 2020-01-01 -> 2024-09-30 (OOS ve 2015-2019 kullanilmadi). Maliyet 1x ve 2x (ELEME_KRITERLERI baz tablosu).",
+        f"# {title}", "",
+        "Donem: IS 2020-01-01 -> 2024-09-30 (OOS ve 2015-2019 kullanilmadi). Maliyet 1x ve 2x (ELEME_KRITERLERI baz tablosu)."
+        if not gunici else
+        "Donem: kripto IS 2020-01-01 -> 2024-09-30; BIST/ABD/emtia 1H (yfinance ~2 yil) ilk 2/3 IS, son 1/3 gorulmez. "
+        "Maliyet 1x ve 2x (ELEME_KRITERLERI baz tablosu). Gun ici kartlarda kapanis dolumu istisnasi yok.",
         f"Gecis kurali: en az bir piyasada islem >= {MIN_TRADES}, 1x PF >= {MIN_PF}, 2x net > 0.", "",
         f"Kart: {len(card_ids)} | " + " | ".join(f"{k}: {v}" for k, v in sorted(count.items())), "",
         "## Karar tablosu", "", "| Kart | Karar | Ayrinti |", "|---|---|---|",
@@ -287,6 +373,10 @@ def write_summary(table: pd.DataFrame, card_ids: list[str], path: Path) -> None:
               "- Evren gunumuzun buyuk sirketleridir (survivorship yanliligi); BIST/ABD sonuclari en fazla Kosullu sayilir.",
               "- BIST30 ve EMTIA icin endeks serisi yok: `endeks_close` kullanan kartlar bu piyasalarda Dogrulanamaz.",
               "- Cikis alan anlamlari: docs/EVRENSEL_KURALLAR.md D5."]
+    if gunici:
+        lines += ["- 1H altindaki kartlar yalniz kriptoda (Binance) test edilir; diger piyasalar `dakikalik_veri_yok` (Dogrulanamaz).",
+                  "- BIST 1H verisinde seans disi/sifir hacimli bar sorunu cozulmedigi icin BIST 1H satirlari `veri_kalitesi` (Dogrulanamaz).",
+                  "- Gercek (OOS) sonuclar ve 2018-2019 kripto donemi bu taramada gorulmez."]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -297,6 +387,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--kart-ids", default="", help="comma separated card ids (default: all)")
     parser.add_argument("--birlestir", action="store_true", help="merge into the existing results/tarama.csv (rescanned cards replace their rows)")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
+    parser.add_argument("--veri-kok", type=Path, default=ROOT / "data", help="root of the hourly/1m/5m/15m/30m archives")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
     parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
     return parser.parse_args()
@@ -308,7 +399,11 @@ def main() -> int:
     if args.kart_ids:
         wanted = {item.strip() for item in args.kart_ids.split(",") if item.strip()}
         cards = [card for card in cards if card["id"] in wanted]
-    table = scan(cards, args.data_dir, args.results_dir, merge=args.birlestir, evren=args.evren)
+    intraday = not any(item in DAILY_TFS for item in args.tf.split(","))
+    table = scan(
+        cards, args.data_dir, args.results_dir, merge=args.birlestir or intraday, data_root=args.veri_kok,
+        summary_name="tarama_gunici_ozet.md" if intraday else None, evren=args.evren,
+    )
     print(f"{len(cards)} kart, {len(table)} satir, {int((table['durum'] == 'Hesaplandi').sum())} hesaplandi, "
           f"{int(table['asama2_aday'].fillna(False).astype(bool).sum())} satir asama 2 adayi")
     return 0

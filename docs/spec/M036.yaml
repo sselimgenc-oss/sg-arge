@@ -19,12 +19,16 @@ gostergeler:
     f: sma
     src: close
     n: 300
+  range_sma25:
+    f: sma
+    src: high - low
+    n: 25
 giris: close < high10 - 2.5 * range_sma25 and (close - low) / (high - low) < 0.3 and close > sma300
 cikis: close > high[1] or close < sma300
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 parametreler:
   range_sma_n: 25
   high10.n: 10
@@ -58,3 +62,4 @@ belirsiz:
 - 'range_sma25 hesaplaması ve dinamik stop kuralı (ozel_kod: true): 1) range_sma25 = sma(high - low, 25) (son 25 günün High - Low ortalaması). 2) Alt bant = highest(high, 10) - 2.5 * range_sma25. 3) IBS
   = (close - low) / (high - low). 4) QQQ kapanışı alt bandın altında, IBS < 0.3 ve fiyat 300 günlük SMA''nın üzerinde (close > sma300) olduğunda ertesi gün açılışta long girilir. 5) Kapanış bir önceki günün
   yükseğini geçtiğinde (close > high[1]) VEYA 300 günlük SMA''nın altına indiğinde (close < sma300, dinamik stop-loss) ertesi gün açılışta çıkılır.'
+- 'T10: ozel_kod true -> false; range_sma25 = sma(high - low, 25) gostergesi eklendi; ''dinamik stop'' kapanis < sma300 cikisi olarak kuralin icinde (ayri stop yok)'

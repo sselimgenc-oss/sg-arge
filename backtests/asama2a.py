@@ -206,6 +206,8 @@ def load_candidates(results_dir: Path, card_dir: Path, only: set[str] | None) ->
     for row in chosen.itertuples():
         if only and row.id not in only:
             continue
+        if cards[row.id]["tf"] not in tarama.DAILY_TFS:
+            continue  # intraday candidates need their own data archives (not part of stage 2a yet)
         tasks.append({"card": cards[row.id], "market": row.piyasa})
     return tasks
 

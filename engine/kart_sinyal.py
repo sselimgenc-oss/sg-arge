@@ -60,8 +60,6 @@ def _uses(card: Mapping[str, Any], names: frozenset[str]) -> bool:
 
 def desteklenmeyen_alan(card: Mapping[str, Any]) -> str | None:
     """Name of the first card field the engine cannot honour, else None."""
-    if card.get("roi_tablosu"):
-        return "roi_tablosu"
     stop = card.get("stop")
     if stop and stop.get("tip") not in STOP_TYPES:
         return f"stop.{stop.get('tip')}"
@@ -232,6 +230,8 @@ def build_plan(
             "trigger_atr": float(lock["tetik_atr"]),
             "stop_fn": lambda price, e=lock_expr: float(e.evaluate({"giris": price, "giris_fiyati": price}, index=None)),
         }
+    if card.get("roi_tablosu"):
+        kwargs["roi_table"] = {float(k): float(v) for k, v in card["roi_tablosu"].items()}
     partial = card.get("kismi_kar")
     if partial:
         stop_expr = _expr.parse(str(partial["kalan_stop"]))

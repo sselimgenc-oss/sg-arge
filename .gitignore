@@ -12,3 +12,9 @@ data/**/*.tmp
 # Kripto saatlik veri arsivlenmez: Binance tum gecmisi her zaman verir (lider karari).
 # Arsiv yalniz kayan pencereli yfinance verisi (BIST, ABD, emtia) icindir.
 data/hourly/*USDT*.parquet
+
+# Dakikalik arsivler (kripto, buyuk) versiyonlanmaz.
+data/1m/
+data/5m/
+data/15m/
+data/30m/

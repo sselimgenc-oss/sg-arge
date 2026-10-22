@@ -11,6 +11,7 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD ETF (SPY)
 gostergeler: {}
+ozel_kod: false
 giris: (close[1] > open[1] and close < open and open >= close[1] and close <= open[1]) or (close[2] > open[2] and close[1] < open[1] and open[1] >= close[2] and close[1] <= open[2] and close < open and
   close < close[1]) or (close[1] < open[1] and close > open and open >= close[1] and close <= open[1])
 cikis: close > high[1]
@@ -48,3 +49,4 @@ spec_durumu: tam
 belirsiz:
 - 'Substack bağlantısının QuantifiedStrategies.com üzerindeki tam metin karşılığından (https://www.quantifiedstrategies.com/what-is-the-best-time-frame-for-candlesticks-explained/) okundu: SPY günlük barlarında
   Bearish Engulfing, Three Outside Down veya Bullish Harami mum formasyonlarından biri oluştuğunda long girilir; bugünkü kapanış dünkü yükseğin üzerine çıktığında (close > high[1]) pozisyon kapatılır.'
+- "T10: ozel_kod alani eklendi (false); mum formasyonlari (Bearish Engulfing, Three Outside Down, Bullish Harami) ifade diliyle yazilmis"
