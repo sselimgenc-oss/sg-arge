@@ -114,3 +114,14 @@ def test_pit_universe_lifts_survivorship_flag():
     assert asama2b.decide({**base, "piyasa": "ABD25"})[0] == "Kosullu"
     assert asama2b.decide({**base, "piyasa": "ABD25", "evren": "pit"})[0] == "Gecti"
     assert asama2b.decide({**base, "piyasa": "BIST30", "evren": "pit"})[0] == "Kosullu"
+
+
+def test_codex_rows_accept_the_fast_null_path() -> None:
+    """T17 calls ``run(..., trusted_inputs=True, trades_only=True)`` in the null; Codex rows must give the same trades."""
+    config = ROWS["C07"]
+    data = {f"S{i}": synthetic(30 + i, periods=1500) for i in range(3)}
+    start, end = pd.Timestamp("2012-01-01", tz="UTC"), pd.Timestamp("2030-01-01", tz="UTC")
+    prepared = asama2b.prepare_codex(config, data, start, end)
+    slow = prepared.run(1.0, signals=prepared.plan.signals).trades
+    fast = prepared.run(1.0, signals=prepared.plan.signals, trusted_inputs=True, trades_only=True).trades
+    pd.testing.assert_frame_equal(slow.reset_index(drop=True), fast.reset_index(drop=True))

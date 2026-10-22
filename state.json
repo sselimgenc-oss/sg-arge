@@ -208,7 +208,7 @@
       "id": "T23",
       "owner": "claude-moderator",
       "title": "Rotasyon kartlari icin Asama 2a null + 2b kapilari + portfoy",
-      "status": "teslim edildi, lider incelemesi bekliyor: rotasyon kartlari Asama 2a/2b/portfoye bagli (secim-null, PF+CAGR, +-%20 plato, PIT); yerel gercek-veri duman kosusu 7/12 null gecti, 7/7 bootstrap MDD95'te elendi",
+      "status": "done (PR #84): rotasyon asama2a/2b/portfoy; lider cakisma cozdu",
       "spec": "docs/GOREV_T23.md"
     },
     {

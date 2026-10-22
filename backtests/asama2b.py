@@ -16,7 +16,7 @@ import math
 import re
 import sys
 import zlib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from statistics import NormalDist
 from types import SimpleNamespace
@@ -215,6 +215,7 @@ class CodexPrepared:
     end: pd.Timestamp
     plan: Any
     annualization: int
+    runtime_cache: dict[str, Any] = field(default_factory=dict)
 
     def run(
         self,
@@ -223,6 +224,8 @@ class CodexPrepared:
         signals: dict[str, pd.DataFrame] | None = None,
         extra_delay_bars: int = 0,
         signal_params: dict[str, float] | None = None,
+        trusted_inputs: bool = False,
+        trades_only: bool = False,
     ) -> BacktestResult:
         computed = (
             {symbol: self.config.signal_function(frame, self.config.market, **signal_params)
@@ -239,6 +242,9 @@ class CodexPrepared:
             extra_delay_bars=extra_delay_bars,
             time_stop_bars=self.config.time_stop_bars,
             precomputed_signals=signals if signals is not None else computed,
+            trusted_inputs=trusted_inputs,
+            trades_only=trades_only,
+            runtime_cache=self.runtime_cache if trusted_inputs else None,
         )
 
 
