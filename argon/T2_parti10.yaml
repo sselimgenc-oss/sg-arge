@@ -1,0 +1,900 @@
+id: M001
+ad: "Opening Range Breakout (ORB) 0DTE Options Strategy"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://optionalpha.com/blog/opening-range-breakout-0dte-options-trading-strategy-explained", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Opsiyon (SPX / SPY)
+gostergeler:
+  or_high: {f: highest, src: high, n: 60}
+  or_low: {f: lowest, src: low, n: 60}
+giris: "close > or_high and (or_high - or_low) / open >= 0.002"
+cikis: null
+zaman_stop: {bar: 330}
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {orb_minutes: 60, min_range_pct: 0.2, wing_width: 15, last_entry_hour_est: 12}
+varyantlar:
+  - {orb_minutes: 30, wing_width: 15, pf: 1.19, wr: 82.6, getiri_usd: 19555, mdd_usd: -8306}
+  - {orb_minutes: 15, wing_width: 15, pf: 1.17, wr: 78.1, getiri_usd: 19053, mdd_usd: -7602}
+deneme_sayisi_kaynakta: 9
+rapor: {pf: 1.44, sharpe: null, getiri: null, mdd: null, islem: 600, wr: 89.4, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Strateji spot/vadeli kontrat yerine 0DTE opsiyon kredi spreadi (short put spread / short call spread) alıp sattığı için opsiyon zinciri verisi olmadan doğrudan spot OHLCV üzerinde gerçek PnL ile test edilemez (spec_durumu: eksik)."
+  - "Long (bullish) sinyal mantığı (ozel_kod: true): Seansın ilk 60 dakikasında (09:30-10:30 EST) oluşan Opening Range (OR_High ve OR_Low) hesaplanır; aralık genişliği açılış fiyatının en az %0,2'si ((OR_High - OR_Low) / Open_0930 >= 0.002) olmalı ve saat 12:00 EST'den önce fiyat OR_High üstüne kırılmalıdır. Tetiklendiğinde kısa bacağı OR_Low seviyesinde veya altında olan 15$ genişlikli 0DTE short put spread açılır ve gün sonuna (16:00 EST vade sonu) kadar tutulur."
+  - "Short (bearish) kuralı: Fiyat 12:00 EST öncesinde OR_Low altına kırılırsa kısa bacağı OR_High seviyesinde veya üstünde olan 15$ genişlikli 0DTE short call spread açılır; günde en fazla 1 işlem alınır."
+---
+id: M002
+ad: "Key Reversal Patterns Using Kase Bars"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://cdn.tradestation.com/uploads/Key-Reversal-Patterns-Using-Kase-Bars.pdf", sayfa: 4}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (SPY)
+gostergeler:
+  low_min3: {f: lowest, src: low, n: 3}
+  high_max3: {f: highest, src: high, n: 3}
+giris: "low < low_min3[1] and close > close[1]"
+cikis: "high > high_max3[1] and close < close[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {kase_range_pts: 1.0, length: 3, profit_target_usd: 200, stop_loss_usd: 200, shares: 100}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: evet}
+spec_durumu: eksik
+belirsiz:
+  - "Karar barları zaman tabanlı değil, 1 dakikalık SPY verisinden üretilen 1.00 puanlık True Range Kase Barlarıdır; standart zaman barlarıyla birebir test edilemeyeceği için spec_durumu: eksik ve ozel_kod: true işaretlendi."
+  - "Giriş/çıkış mantığı (ozel_kod: true): 1.00 puanlık Kase barı son Length=3 barın en düşük seviyesinin altına inip (low < lowest(low, 3)[1]) bir önceki Kase barının kapanışının üzerinde kapanırsa (close > close[1]) sonraki bar açılışında 100 adet SPY long girilir. Pozisyon bazlı 200$ (hisse başına 2,00$) kâr hedefi veya 200$ (hisse başına 2,00$) zarar kes ile ya da ters sinyal (Short Key Reversal: yeni 3-bar yüksek + close < close[1]) geldiğinde kapatılır."
+---
+id: M003
+ad: "5min /ES Futures Strategy For ThinkOrSwim (HalfTrend with Deviation Bands)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Vadeli (ES Futures)
+gostergeler:
+  lowpricei: {f: lowest, src: low, n: 25}
+  highpricei: {f: highest, src: high, n: 25}
+  lowma: {f: sma, src: low, n: 25}
+  highma: {f: sma, src: high, n: 25}
+  atr14: {f: atr, n: 14}
+giris: "(cross_over(high, halftrend) and up > 0) or cross_over(high, halftrend + 17)"
+cikis: "cross_under(high, halftrend - 17) or (cross_under(high, halftrend) and down > 0)"
+stop: {tip: atr, n: 14, carpan: 2.5}
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {Price: "high", Amplitude: 25, Num_Dev_Dn: -17, Num_Dev_up: 17, stop_mult: 2.5}
+varyantlar:
+  - {aciklama: "Yazarın 5m ES mesajında kullandığı ayarlar", Price: "low", Amplitude: 20, Num_Dev_Dn: -4, Num_Dev_up: 4, stop_mult: 0.5}
+deneme_sayisi_kaynakta: 2
+rapor: {pf: 2.3, sharpe: null, getiri: null, mdd: null, islem: 1270, wr: null, maliyet_dahil: hayir}
+spec_durumu: dakikalik
+belirsiz:
+  - "HalfTrend + Deviation Bands hesaplama adımları (ozel_kod: true): 1) lowpricei = lowest(low, Amplitude), highpricei = highest(high, Amplitude), lowma = sma(low, Amplitude), highma = sma(high, Amplitude). 2) nexttrend[1] == 1 iken: maxlowprice = max(lowpricei, maxlowprice[1]); eğer highma < maxlowprice[1] ve close < low[1] ise trend = 1, nexttrend = 0, minhighprice = highpricei olur. 3) nexttrend[1] == 0 iken: minhighprice = min(highpricei, minhighprice[1]); eğer lowma > minhighprice[1] ve close > high[1] ise trend = 0, nexttrend = 1, maxlowprice = lowpricei olur. 4) trend == 0 iken up = (trend[1] != 0 ise down[1] değilse max(maxlowprice[1], up[1])), down = 0; trend == 1 iken down = (trend[1] != 1 ise up[1] değilse min(minhighprice, down[1])), up = 0. 5) halftrend (MidLine) = (up > 0 ise up değilse down); LowerBand = halftrend + Num_Dev_Dn; UpperBand = halftrend + Num_Dev_up."
+  - "Long giriş (BUY_auto): Price (varsayılan high, 5m ayarında low) MidLine'ı yukarı keser ve up > 0 ise VEYA Price UpperBand'ı yukarı keserse. Çıkış / Short dönüş (SELL_auto): Price LowerBand'ı aşağı keserse VEYA (Price MidLine'ı aşağı keser ve down > 0 ise). Ayrıca ATR(14) * stop_mult seviyesinde stop-loss vardır."
+---
+id: M004
+ad: "Beat the Market: Intraday Momentum Strategy for S&P500 ETF (SPY)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://concretumgroup.com/wp-content/uploads/2026/02/Beat-the-Market.pdf", sayfa: 6}
+tarz: day
+tf: 30m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (SPY)
+gostergeler:
+  vwap_intra: {f: vwap}
+  ret_1d: {f: roc, src: close, n: 1}
+giris: "close > upper_bound"
+cikis: "close < upper_bound or close < vwap_intra"
+zaman_stop: {bar: 13}
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {noise_lookback_days: 14, decision_interval_min: 30, vol_target_daily_pct: 2.0, max_leverage: 4.0}
+varyantlar:
+  - {ad: "Base Model (Opposite Band Stop, 100% Size)", getiri: 178, sharpe: 0.61, mdd: 21, islem: 5494, wr: 53}
+  - {ad: "Current Band + VWAP Stop (100% Size)", getiri: 380, sharpe: 1.24, mdd: 12, islem: 7668, wr: 37}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: 1.33, getiri: 1985.0, mdd: 25.0, islem: 7668, wr: 37.0, maliyet_dahil: evet}
+spec_durumu: dakikalik
+belirsiz:
+  - "Concretum Group PDF linki (wp-content/uploads/2026/02/Beat-the-Market.pdf) doğrudan açılmadığı için makalenin St. Gallen Üniversitesi (UNISG Alexandria) resmi arşiv kopyasından (https://alexandria.unisg.ch/bitstreams/a99aba00-f967-49b3-aceb-f544dc386e0b/download) tam metin okundu."
+  - "Saat-eşlemeli Noise Area ve giriş/çıkış mantığı (ozel_kod: true): 1) Her gün t ve her yarım saatlik dilim HH:MM (10:00, 10:30, ..., 15:30) için önceki 14 işlem günündeki aynı saat diliminin 09:30 açılışına göre mutlak getirilerinin ortalaması alınır: sigma_{t,HH:MM} = (1/14) * sum_{i=1..14} |Close_{t-i,HH:MM} / Open_{t-i,09:30} - 1|. 2) Gece boşluğu (gap) düzeltmeli bantlar: UpperBound_{t,HH:MM} = max(Open_{t,09:30}, Close_{t-1,16:00}) * (1 + sigma_{t,HH:MM}) ve LowerBound_{t,HH:MM} = min(Open_{t,09:30}, Close_{t-1,16:00}) * (1 - sigma_{t,HH:MM}). 3) Yalnız yarım saatlik kontrol noktalarında (HH:00 ve HH:30) Close > UpperBound ise long açılır (Close < LowerBound ise short açılır). 4) Long pozisyon, yarım saatlik kontrol noktasında Close < max(UpperBound, VWAP) olduğunda veya 16:00 seans kapanışında (EOD flat) kapatılır. 5) Pozisyon büyüklüğü: 14 günlük günlük getiri standart sapması ile günlük %2 volatilite hedeflenir, kaldıraç azami 4x ile sınırlandırılır: min(4, 0.02 / stdev_14(daily_ret))."
+---
+id: M005
+ad: "Intraday Momentum for ES and NQ (Noise Area 90-Day Variant)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.quantitativo.com/p/intraday-momentum-for-es-and-nq", sayfa: null}
+tarz: day
+tf: 30m
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: Vadeli (ES ve NQ Futures)
+gostergeler:
+  vwap_intra: {f: vwap}
+giris: "close > upper_bound"
+cikis: "close < upper_bound or close < vwap_intra"
+zaman_stop: {bar: 13}
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {noise_lookback_days: 90, decision_interval_min: 30, vol_target_daily_pct: 3.0, max_leverage: 8.0}
+varyantlar:
+  - {ad: "14 günlük orijinal parametrelerle ES testi", getiri_yillik: 8.1, sharpe: 0.91, mdd: 24.0}
+  - {ad: "ES + NQ + Long-Only birleşik portföy", getiri_yillik: 22.4, sharpe: 1.5}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: 1.67, getiri: 24.3, mdd: null, islem: null, wr: null, maliyet_dahil: evet}
+spec_durumu: dakikalik
+belirsiz:
+  - "Substack sayfası doğrudan browse aracını engellediği için Google indeks snippet'leri, Scribd aynası ve Quantitativo/Quantopian özet kaydından (https://www.youtube.com/shorts/vEFhYylwBmc) kurallar doğrulandı."
+  - "Zarattini et al. (M004) Noise Area stratejisinin ES ve NQ vadeli kontratlarına uyarlanmış halidir (ozel_kod: true): 1) Saat-eşlemeli ortalama mutlak hareket (sigma_{t,HH:MM}) 14 gün yerine N=90 günlük bakış penceresiyle hesaplanır: sigma_{t,HH:MM} = (1/90) * sum_{i=1..90} |Close_{t-i,HH:MM} / Open_{t-i,09:30} - 1|. 2) UpperBound = max(Open_{t,09:30}, Close_{t-1,16:00}) * (1 + sigma_{t,HH:MM}), LowerBound = min(Open_{t,09:30}, Close_{t-1,16:00}) * (1 - sigma_{t,HH:MM}). 3) Yarım saatlik barlarda (HH:00 ve HH:30) Close > UpperBound ise long (Close < LowerBound ise short) girilir. 4) Çıkış: yarım saatlik kontrol noktalarında Close < max(UpperBound, VWAP) veya seans kapanışında (16:00 EST) flat. 5) Günlük volatilite hedefi %2 yerine %3, azami kaldıraç 4x yerine 8x olarak uygulanır."
+---
+id: M006
+ad: "RSI Double-Bottom for Amibroker (AFL)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.wisestocktrader.com/indicators/371-rsi-double-bottom-for-amibroker-afl", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
+gostergeler:
+  vol_sma50: {f: sma, src: volume, n: 50}
+  rsi8: {f: rsi, src: close, n: 8}
+  rsi_low21: {f: lowest, src: rsi8, n: 21}
+  rsi_low8: {f: lowest, src: rsi8, n: 8}
+  rsi_high21: {f: highest, src: rsi8, n: 21}
+  rsi_high8: {f: highest, src: rsi8, n: 8}
+giris: "close > 2 and vol_sma50 > 10000 and rsi_low8 < 30 and rsi_low21 < rsi_low8 and rsi8 < 50"
+cikis: "rsi_high8 > 70 and rsi_high21 > rsi_high8 and rsi8 > 60"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {rsi8.n: 8, rsi_low21.n: 21, rsi_low8.n: 8, rsi_high21.n: 21, rsi_high8.n: 8, vol_sma50.n: 50, min_price: 2, min_vol_sma50: 10000, oversold: 30, buy_rsi_max: 50, overbought: 70, sell_rsi_min: 60}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: 4.12, sharpe: null, getiri: 24.63, mdd: null, islem: 217, wr: 77.0, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "WiseStockTrader sayfası doğrudan browse aracını engellediği için tam AFL kodu Google arama snippet'lerinden (51.1.1, 53.1.1) satır satır okundu: Vfifty = MA(V,50); myRSI = RSI(8); Monthlow = LLV(myRSI,21); Lastlow = LLV(myRSI,8); Higherlow = Monthlow < Lastlow; rsimin = (Lastlow < 30) AND Higherlow AND myRSI < 50; Monthhigh = HHV(myRSI,21); Lasthigh = HHV(myRSI,8); Lowerhigh = Monthhigh > Lasthigh; rsimax = (Lasthigh > 70) AND Lowerhigh AND myRSI > 60; Filter = (C > 2) AND (Vfifty > 10000); Buy = Filter AND RSImin; Sell = RSImax."
+---
+id: M007
+ad: "ForexFactory Post 8694795 Swing Strategy"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.forexfactory.com/thread/post/8694795", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Forex
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Kaynak URL'ye (https://www.forexfactory.com/thread/post/8694795) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında önbellek/ayna kaydı bulunamadı."
+---
+id: M008
+ad: "RSI2 Strategy: Pullback on Ex-Russell 3000 Stocks"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://alvarezquanttrading.com/blog/rsi2-strategy-double-returns-with-a-simple-rule-change/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse
+gostergeler:
+  sma100: {f: sma, src: close, n: 100}
+  rsi2: {f: rsi, src: close, n: 2}
+  hv100: {f: stdev, src: close, n: 100}
+giris: "close > 1 and close > sma100 and rsi2 < 10"
+cikis: "rsi2 > 50"
+zaman_stop: {bar: 10}
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {sma100.n: 100, rsi2.n: 2, rsi_entry: 10, rsi_exit: 50, limit_discount_pct: 5.0, max_hold_days: 10, max_positions: 10, min_price: 1.0, min_dollar_vol_21d: 500000}
+varyantlar:
+  - {aciklama: "Cherry-picked varyant: RSI2 < 15 giriş eşiği"}
+  - {aciklama: "Baz strateji: Mevcut Russell 3000 hisseleri (1947 işlem)"}
+deneme_sayisi_kaynakta: 142
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: 1947, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Limit emir ve evren/sıralama mantığı (ozel_kod: true): 1) Evren: Geçmişte Russell 3000 endeksinde yer almış ancak işlem gününde endeksten çıkmış (ex-index) hisseler. 2) Likidite: İşlem fiyatı > 1$ ve 21 günlük ortalama (Close * Volume) > 500.000$. 3) Kurulum: Close > SMA(100) ve RSI(2) < 10 gerçekleştiğinde ertesi gün için son kapanışın %5 altına (Close * 0.95) 1 gün geçerli alış limit emri verilir. 4) En fazla 10 açık pozisyon taşınır; birden fazla aday varsa 100 günlük tarihsel volatiliteye (yüksekten düşüğe) göre sıralanır. 5) Çıkış: RSI(2) > 50 olduğunda veya 10 işlem günü sonunda ertesi sabah açılışta çıkılır."
+---
+id: M009
+ad: "5-Year SPY Put Credit Spread Backtest"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://optionalpha.com/blog/spy-put-credit-spread-backtest", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Opsiyon (SPY)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {dte_entry: 30, short_put_delta: 0.30, long_put_delta: 0.10, allocation_pct: 10.0}
+varyantlar:
+  - {ad: "Backtest 1 (5% alloc, hold to expiry)", getiri: 16.0, sharpe: 0.56, wr: 93.0, islem: 133}
+  - {ad: "Backtest 2 (10% alloc, 50% TP, 25% SL, 15 DTE exit)", sharpe: 0.77, islem: 295}
+  - {ad: "Backtest 3 (10% alloc, 50% TP, 50% SL, 15 DTE exit)"}
+  - {ad: "Backtest 4 (10% alloc, 75% TP, 25% SL, 15 DTE exit)", pf: 1.34, sharpe: 0.83, islem: 296}
+deneme_sayisi_kaynakta: 8
+rapor: {pf: null, sharpe: 0.62, getiri: 39.0, mdd: 12.0, islem: 133, wr: 93.0, maliyet_dahil: hayir}
+spec_durumu: eksik
+belirsiz:
+  - "Strateji teknik bir fiyat sinyali kullanmaz; açık pozisyon olmadığında sıralı olarak 30 DTE vadeli, 0.30 delta short put / 0.10 delta long put opsiyon kredi spreadi açar. Opsiyon zinciri ve delta/DTE verisi gerektirdiği için spot OHLCV üzerinde test edilemez (spec_durumu: eksik, ozel_kod: true)."
+---
+id: M010
+ad: "RSI Volatility Spread"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://cdn.tradestation.com/uploads/RSI-Volatility-Spread.pdf", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (IXC, IXJ, EWU, EWD, SPY)
+gostergeler:
+  atr_sec: {f: atr, n: 14}
+  rsi_atr_sec: {f: rsi, src: atr_sec, n: 50}
+giris: "avg_spread_diff < 0 and rsi_atr_mkt > rsi_atr_sec"
+cikis: "avg_spread_diff > 0"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {RSILen: 50, ATRLen: 14}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "TradeStation PDF bağlantısı doğrudan açılmadığı için Alexandra Guevara'nın yazdığı 'RSI Volatility Spread' (TradeStation Labs Report) belgesinin Scribd aynasından (https://www.scribd.com/document/721162939/ATR-RSI-Spread) kurallar çıkarıldı."
+  - "Çapraz varlık volatilite spreadi hesaplama adımları (ozel_kod: true): 1) İşlem gören menkul kıymetin ATR'sinin 50 periyotluk RSI'ı (rsi_atr_sec = RSI(ATR(security, ATRLen), RSILen)) ve piyasa endeksinin (S&P 500) ATR'sinin 50 periyotluk RSI'ı (rsi_atr_mkt = RSI(ATR(SP500, ATRLen), RSILen)) hesaplanır (RSILen=50). 2) RSISpread = rsi_atr_sec / rsi_atr_mkt olarak bulunur. 3) AvgSpread = EMA(RSISpread, RSILen) ve AvgSpreadDiff = RSISpread - AvgSpread hesaplanır. 4) Long Giriş: AvgSpreadDiff < 0 ve rsi_atr_mkt > rsi_atr_sec (piyasa volatilite RSI'ı hisse volatilite RSI'ından büyük) olduğunda al. 5) Long Çıkış: AvgSpreadDiff > 0 olduğunda sat."
+---
+id: M011
+ad: "Double 7's Strategy (Larry Connors)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://tradingstrategy.ai/docs/programming/old-strategies/double-7.html", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY) / Kripto
+gostergeler:
+  sma200: {f: sma, src: close, n: 200}
+  close_min7: {f: lowest, src: close, n: 7}
+  close_max7: {f: highest, src: close, n: 7}
+giris: "close > sma200 and close <= close_min7"
+cikis: "close >= close_max7"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {sma200.n: 200, close_min7.n: 7, close_max7.n: 7}
+varyantlar:
+  - {ad: "Double 7 (advanced) on tradingstrategy.ai", tf: "4H"}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: 2.33, sharpe: 0.8, getiri: 3.51, mdd: 8.5, islem: 322, wr: 74.5, maliyet_dahil: hayir}
+spec_durumu: tam
+belirsiz:
+  - "tradingstrategy.ai sayfası doğrudan browse aracını engellediği için Google indeksindeki tradingstrategy.ai kod snippet'lerinden (LOW_CANDLES=7, HIGH_CANDLES=7, MOVING_AVERAGE_CANDLES=200) ve StatOasis/BTS/Chartist Double 7 aynalarından doğrulandı."
+---
+id: M012a
+ad: "5 Swing Trading Strategies for Beginners - Strategy 1: The Mean Reversion Band and IBS"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler:
+  high10: {f: highest, src: high, n: 10}
+  atr25: {f: atr, n: 25}
+giris: "close < high10 - 2.5 * range_sma25 and (close - low) / (high - low) < 0.3"
+cikis: "close > high[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {high10.n: 10, range_sma_n: 25, band_mult: 2.5, ibs_max: 0.3}
+deneme_sayisi_kaynakta: 5
+rapor: {pf: null, sharpe: null, getiri: 8.0, mdd: 23.0, islem: null, wr: null, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+  - "range_sma25 hesaplaması (ozel_kod: true): Son 25 günün (high - low) farkının basit hareketli ortalamasıdır (sma(high - low, 25)). Alt bant = highest(high, 10) - 2.5 * sma(high - low, 25). IBS = (close - low) / (high - low). Kapanış alt bandın altında ve IBS < 0.3 ise long girilir; close > high[1] olduğunda çıkılır."
+---
+id: M012b
+ad: "5 Swing Trading Strategies for Beginners - Strategy 2: Turnaround Tuesday"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler: {}
+giris: "close < close[1] and close[1] < close[2]"
+cikis: "close > high[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {entry_day_of_week: "Monday", down_days: 2}
+deneme_sayisi_kaynakta: 5
+rapor: {pf: null, sharpe: null, getiri: 7.2, mdd: 16.0, islem: 271, wr: null, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+  - "Haftanın günü filtresi (ozel_kod: true): Giriş yalnız Pazartesi (Monday) günü kapanışında, Pazartesi kapanışı Cuma kapanışından düşük (close < close[1]) ve Cuma kapanışı Perşembe kapanışından düşük (close[1] < close[2]) ise yapılır. Çıkış: close > high[1]."
+---
+id: M012c
+ad: "5 Swing Trading Strategies for Beginners - Strategy 3: The 5-Day Low Entry"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler:
+  low5: {f: lowest, src: low, n: 5}
+giris: "close < low5[1]"
+cikis: "close > high[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {low5.n: 5}
+deneme_sayisi_kaynakta: 5
+rapor: {pf: null, sharpe: null, getiri: 8.0, mdd: null, islem: null, wr: null, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz: []
+---
+id: M012d
+ad: "5 Swing Trading Strategies for Beginners - Strategy 4: Volatility Contraction"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler:
+  adx5: {f: adx, n: 5}
+giris: "adx5 > 40 and (high - low) <= range_min6"
+cikis: "close > high[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {adx5.n: 5, adx_min: 40, range_lookback: 6}
+deneme_sayisi_kaynakta: 5
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz:
+  - "range_min6 hesaplaması (ozel_kod: true): Günlük bar genişliğinin (high - low) son 6 gündeki en düşük değeridir (lowest(high - low, 6)). ADX(5) > 40 iken bugünkü (high - low) son 6 günün en dar barıysa long girilir; close > high[1] olduğunda çıkılır."
+---
+id: M012e
+ad: "5 Swing Trading Strategies for Beginners - Strategy 5: New Highs with Low IBS"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse / ETF (SPY)
+gostergeler:
+  high10: {f: highest, src: high, n: 10}
+giris: "high > high10[1] and (close - low) / (high - low) < 0.15"
+cikis: "close > high[1]"
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {high10.n: 10, ibs_max: 0.15}
+varyantlar:
+  - {ad: "5 Strateji Birleşik Portföy (M012a-e)", getiri_yillik: 11.1, mdd: 23.0, islem: 975}
+deneme_sayisi_kaynakta: 5
+rapor: {pf: null, sharpe: null, getiri: 7.2, mdd: 16.0, islem: 271, wr: null, maliyet_dahil: evet}
+spec_durumu: tam
+belirsiz: []
+---
+id: M013
+ad: "Simple H4 Mobile Trading System"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.forexfactory.com/thread/830795-simple-h4-mobile-trading-system", sayfa: 1}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (USD, EUR, GBP, JPY pariteleri)
+gostergeler:
+  ema30: {f: ema, src: close, n: 30}
+giris: "close > ema30 and close > open and high > high[1] and low < low[1]"
+cikis: null
+kar_kilidi: {tetik_fibo: 150, yeni_stop_fibo: 100}
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {ema30.n: 30, sl_fibo: 0, be_trigger_fibo: 150, be_sl_fibo: 100, tp_fibo: 200}
+varyantlar:
+  - {aciklama: "Kasım 2018 güncellemesinde TP Fibo 150 olarak test edilmiş"}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Sinyal barı Fibonacci stop/hedef ve kâr kilidi mantığı (ozel_kod: true): 1) EMA(30) üzerinde bir Bullish Engulfing / Outside bar (high > high[1] ve low < low[1], yazar #18. mesajda teyit edildiği üzere önceki barın high-low aralığını yutan barı engulfing olarak tanımlamaktadır) kapandığında sonraki 4H barın açılışında long girilir. 2) Sinyal barının low seviyesi Fibo 0, high seviyesi Fibo 100 olacak şekilde (R = high - low): Stop-Loss = low (Fibo 0), Take-Profit = high + R (Fibo 200) olarak konur. 3) Fiyat high + 0.5 * R (Fibo 150) seviyesine ulaştığında Stop-Loss high (Fibo 100 / başabaş) seviyesine çekilir."
+  - "Short kuralı: EMA(30) altında Bearish Engulfing bar oluştuğunda sonraki bar açılışında short girilir; Fibo 0 (high) SL, Fibo 200 (low - R) TP, Fibo 150'de SL Fibo 100'e çekilir."
+---
+id: M014
+ad: "Larry Connors' 2-Day RSI Holy Grail (Multi-Stock Adaptation)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.elitetrader.com/et/threads/larry-connors-2-day-rsi-holy-grail-adapting-a-strategy-to-deliver-30-annual-return-since-1999.379926/", sayfa: 1}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Large/Mega Cap)
+gostergeler:
+  rsi2: {f: rsi, src: close, n: 2}
+  sma200: {f: sma, src: close, n: 200}
+giris: "rsi2 < 5 and close > sma200"
+cikis: "close > high[1] or close < sma200"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {rsi2.n: 2, sma200.n: 200, rsi_entry: 5, max_positions: 2, max_adv_pct: 5.0}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: null, sharpe: null, getiri: 30.0, mdd: 35.0, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Portföy ve likidite filtreleri (ozel_kod: true): Yalnız large/mega cap ABD hisseleri; son 3 aydaki tüm seanslarda işlem görmüş ve pozisyon büyüklüğü son 3 aylık medyan günlük hacmin (ADV) %5'ini aşmayan hisseler alınır. Azami N=2 eşzamanlı pozisyon taşınır; N'den fazla sinyal varsa piyasa değerine göre küçükten büyüğe sıralanır."
+---
+id: M015
+ad: "Larry Connors' Cumulative RSI Strategy"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.elitetrader.com/et/threads/larry-connors-cumulative-rsi-26-annual-return-now-with-sensitivity-analysis.379982/", sayfa: 1}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Large/Mega Cap)
+gostergeler:
+  rsi2: {f: rsi, src: close, n: 2}
+  sma200: {f: sma, src: close, n: 200}
+giris: "(rsi2 + rsi2[1]) < 10 and close > sma200"
+cikis: "(rsi2 + rsi2[1]) > 65 or close < sma200"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {rsi2.n: 2, cum_rsi_days: 2, cum_rsi_entry: 10, cum_rsi_exit: 65, sma200.n: 200, max_positions: 3, max_adv_pct: 5.0}
+deneme_sayisi_kaynakta: 198
+rapor: {pf: null, sharpe: 1.18, getiri: 26.0, mdd: 37.0, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Portföy ve likidite filtreleri (ozel_kod: true): Yalnız large/mega cap ABD hisseleri; son 3 aydaki tüm seanslarda işlem görmüş ve pozisyon büyüklüğü son 3 aylık medyan ADV'nin %5'ini aşmayan hisseler. Azami N=3 pozisyon taşınır; 3'ten fazla sinyal varsa piyasa değerine göre küçükten büyüğe önceliklendirilir."
+---
+id: M016
+ad: "One Percent a Week Strategy (TQQQ)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.wealth-lab.com/Discussion/8011", sayfa: 1}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (TQQQ)
+gostergeler: {}
+giris: "low <= open * 0.99"
+cikis: "high >= (entry_price * 1.01)"
+zaman_stop: {bar: 5}
+stop: null
+hedef: {tip: yuzde, deger: 1.0}
+stop_eklendi: false
+ozel_kod: true
+parametreler: {entry_dip_pct: 1.0, profit_target_pct: 1.0, breakeven_trigger_loss_pct: -0.5, max_trades_per_week: 1}
+varyantlar:
+  - {aciklama: "Post #33: RSI(14) karşılaştırmalı TQQQ / SQQQ varyantı (daha düşük performanslı)"}
+deneme_sayisi_kaynakta: 2
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "Haftalık limit giriş ve dinamik başabaş çıkış mantığı (ozel_kod: true): 1) Haftanın ilk işlem günü (Pazartesi) TQQQ normal seans açılış fiyatı (mondayOpen) gözlenir ve bu fiyatın %1 altına (mondayOpen * 0.99) alış limit emri girilir (haftada en fazla 1 işlem). 2) Pozisyon açıldıktan sonra her gün kapanışta açık kâr/zarar yüzdesi (ProfitPctAsOf) kontrol edilir: eğer kapanışta zarar %-0,5'ten azsa (ProfitPct > -0.5%) ertesi gün için giriş fiyatının %1 üstüne (entry_price * 1.01) satış limit emri konur; eğer kapanışta açık zarar %-0,5 veya daha kötüyse (ProfitPct <= -0.5%) ertesi günkü satış limit emri giriş fiyatına (entry_price, %0 başabaş) çekilir. 3) Haftanın son işlem günü (Cuma) pozisyon hâlâ açıksa haftasonuna pozisyon taşımamak için seans kapanışında (MarketClose / MOC) kapatılır."
+---
+id: M017
+ad: "RSI 2 Portfolio (Composer Symphony)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.composer.trade/trading-strategies/rsi-2-portfolio-DszXqIWmqcC8lxiliUsf", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: ABD ETF / Hisse
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Kaynak URL'ye (https://www.composer.trade/trading-strategies/rsi-2-portfolio-DszXqIWmqcC8lxiliUsf) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında bu Symphony ID'sine (DszXqIWmqcC8lxiliUsf) ait kural ağacı bulunamadı."
+---
+id: M018
+ad: "TradingView Script LHKOdUOs"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.tradingview.com/script/LHKOdUOs/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: true
+yazar_piyasasi: Belirtilmemis
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "TradingView script sayfasına (https://www.tradingview.com/script/LHKOdUOs/) erişim engeli nedeniyle ulaşılamadı ve GitHub/Scribd/web aramalarında 'LHKOdUOs' koduna ait ayna bulunamadı."
+---
+id: M019
+ad: "FullStochastic with Filters - Buy&Sell for Amibroker (AFL)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.wisestocktrader.com/indicators/3565-fullstochastic-with-filters-buy-sell-for-amibroker-afl", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (IBD Top 50)
+gostergeler:
+  fsk: {f: stoch, n: 52, d: 1, smooth: 1}
+  flsk: {f: ema, src: fsk, n: 31}
+  flsd: {f: ema, src: flsk, n: 16}
+  mfi3: {f: mfi, n: 3}
+giris: "close > open and mfi3 > 0 and flsk < 41"
+cikis: "flsk > 48"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {pds: 52, slw: 31, slwD: 16, OB: 76, OSsub: 7, OS: 69, MaxFLSK: 21, MFIdays: 3, BuyDay: 9, Thirty: 41, Five: 2, Enough: 1.042, MaxForecast: 0.33, MinHold: 14, Fifty: 48, SellPoint: 6400}
+deneme_sayisi_kaynakta: 100
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "WiseStockTrader sayfası doğrudan browse aracını engellediği için RBuck tarafından yazılan AFL kodu Google arama snippet'lerinden (36.2.1, 40.4.1, 43.1.1-43.3.1, 45.3.1-45.6.1, 47.3.1-47.6.1, 49.3.1-49.6.1, 51.2.1-51.4.1) çıkarıldı."
+  - "Tam AFL giriş/çıkış mantığı (ozel_kod: true): 1) FSK = 100 * (C - LLV(L, pds)) / (HHV(H, pds) - LLV(L, pds)) (pds=52); FLSK = EMA(FSK, slw) (slw=31); FLSD = EMA(FLSK, slwD) (slwD=16); OB=76, OS = OB - OSsub = 69. 2) WhenGoUp = FLSD < OS AND Cross(FSK, OS) AND FLSK >= Ref(FLSK, -1) AND FLSD >= Ref(FLSD, -1); ExRem ile WhenGoUp/WhenGoDown ardışık sinyalleri temizlenir ve Tgo = BarsSince(WhenGoUp) > Five (Five=2) ile UpFive = (NOT WhenGoDown) AND (TTurn > 0) AND (Tgo > Five) hesaplanır. 3) NormStoch = (C - LLV(L, 52)) / (HHV(H, 52) - LLV(L, 52)) üzerinden 3 barlık tahmin PlusForecast = ForeNmSth3 > NormStoch * Enough (Enough=1.042, MaxForecast=0.33) hesaplanır. 4) Buy = Close > Open AND PlusForecast AND UpFive AND MFI(3) > 0 AND FLSK < Thirty (41) AND Day() > BuyDay (9). 5) Sell: Held = BarsSince(Buy) > 3 ve PositionScore < SellPoint (6400) düşüşü veya Held > MinHold (14) performans filtresi / FLSK > Fifty (48) koşuluyla çıkılır; Short = 0, Cover = 0 (yalnız long)."
+---
+id: M020a
+ad: "The 30-Minute Stock Trader - Strategy 1: Weekly Rotation (Laurens Bensdorp)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.turingtrader.com/2020/01/30-minute-stock-trader/", sayfa: null}
+tarz: swing
+tf: 1W
+mtf: 1D
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (S&P 500)
+gostergeler:
+  spy_sma200: {f: sma, src: close, n: 200}
+  rsi3: {f: rsi, src: close, n: 3}
+  roc200: {f: roc, src: close, n: 200}
+giris: "mtf("1D", spy_close) > mtf("1D", spy_sma200) * 0.98 and mtf("1D", rsi3) < 50"
+cikis: "mtf("1D", spy_close) <= mtf("1D", spy_sma200) * 0.98 or mtf("1D", rsi3) >= 50"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {spy_sma_n: 200, spy_band_mult: 0.98, rsi_n: 3, max_rsi: 50, roc_n: 200, top_n_stocks: 10, weight_pct: 10.0}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: 0.53, getiri: 11.49, mdd: 36.39, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz:
+  - "TuringTrader inceleme sayfası, TuringTrader Weekly Rotation portföy sayfası (https://www.turingtrader.com/portfolios/bensdorp-weekly-rotation/) ve GitHub C# kodu (fbertram/TuringTrader/blob/master/BooksAndPubs/Bensdorp_30MinStockTrader.cs) birlikte okundu."
+  - "Haftalık rotasyon ve sıralama mantığı (ozel_kod: true): 1) S&P 500 hisseleri haftada bir kez (haftasonu hesaplanıp Pazartesi açılışta) yeniden dengelenir. 2) Rejim filtresi: S&P 500 endeksi 200 günlük SMA'sının %2 altındaki bandın (0.98 * SMA(200)) üzerinde olmalıdır. 3) Aşırı alım filtresi: 3 günlük RSI değeri 50'yi aşan (RSI(3) >= 50) hisseler elenir. 4) Kalan S&P 500 hisseleri 200 günlük momentumlarına (ROC(200)) göre yüksekten düşüğe sıralanır, ilk 10 hisseye %10'ar eşit ağırlık verilir."
+---
+id: M020b
+ad: "The 30-Minute Stock Trader - Strategy 2: Mean-Reversion Long (Laurens Bensdorp)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.turingtrader.com/2020/01/30-minute-stock-trader/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (All US Stocks / S&P 1500 / Russell 3000)
+gostergeler:
+  sma150: {f: sma, src: close, n: 150}
+  adx7: {f: adx, n: 7}
+  atr10: {f: atr, n: 10}
+  rsi3: {f: rsi, src: close, n: 3}
+giris: "close > sma150 and adx7 > 45 and (atr10 / close) > 0.04 and rsi3 < 30"
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {SMA_DAYS: 150, adx_n: 7, MIN_ADX: 45, atr_n: 10, MIN_ATR_PCT: 4.0, rsi_n: 3}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "TuringTrader makalesinde Mean-Reversion Long kuralları metin olarak özetlenmiş, fbertram/TuringTrader GitHub C# kodundan (Bensdorp_30MinStockTrader.cs) aday filtreleri (Close > SMA(150), ADX(7) > 45, 10 günlük TrueRange/Close ortalaması > %4, RSI(3) aşırı satım) çıkarılmıştır; ancak GitHub dosyasına doğrudan erişim engeli nedeniyle limit emir yüzdesi, ATR stop çarpanı, kâr hedefi ve zaman stopu gün sayısı tam doğrulanamadığından spec_durumu: eksik bırakıldı."
+---
+id: M020c
+ad: "The 30-Minute Stock Trader - Strategy 3: Mean-Reversion Short (Laurens Bensdorp)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.turingtrader.com/2020/01/30-minute-stock-trader/", sayfa: null}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Russell 3000)
+gostergeler:
+  sma150: {f: sma, src: close, n: 150}
+  adx7: {f: adx, n: 7}
+  atr10: {f: atr, n: 10}
+  rsi3: {f: rsi, src: close, n: 3}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {adx_n: 7, MIN_ADX: 50, atr_n: 10, rsi_n: 3, up_days: 2}
+deneme_sayisi_kaynakta: 3
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: sadece_short
+belirsiz:
+  - "Yalnız short stratejisidir (long kuralı yoktur, spec_durumu: sadece_short). GitHub C# kodundaki (Bensdorp_30MinStockTrader.cs) short filtreleri: üst üste 2 yükseliş günü (Close[0] > Close[1] ve Close[1] > Close[2]), ADX(7) > 50, yüksek 10 günlük ATR/Close volatilitesi ve aşırı alım RSI(3) sonrasında limit emirle short açılıp kâr hedefi, stop-loss veya zaman stopu ile kapatılır."
+---
+id: M021
+ad: "Intraday Application of Hidden Markov Models"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.quantconnect.com/research/17900/intraday-application-of-hidden-markov-models/", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD Hisse (Top 10 Market Cap)
+gostergeler:
+  roc1: {f: roc, src: close, n: 1}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {n_components: 3, n_iter: 100, random_state: 100, roc_n: 1, roc_window_size: 150, bar_minutes: 5, universe_top_n: 10, position_weight: 0.1}
+deneme_sayisi_kaynakta: 63
+rapor: {pf: null, sharpe: 1.9, getiri: null, mdd: 14.0, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Strateji makine öğrenmesi / olasılıksal gizli durum modeli (3 bileşenli Gaussian Hidden Markov Model - GaussianHMM) kullandığı için standart gösterge diliyle karta çevrilemez (spec_durumu: eksik, ozel_kod: true)."
+  - "Algoritma adımları: 1) Piyasa değerine göre en büyük 10 ABD hissesi seçilir. 2) 1 dakikalık veriler 5 dakikalık barlara konsolide edilir ve 1-barlık değişim oranı (ROC(1)) için 150 barlık kayan pencere tutulur. 3) Her ay başında her hisse için son 150 adet 5 dakikalık getiri üzerinde hmmlearn GaussianHMM(n_components=3, n_iter=100, random_state=100) modeli eğitilir. 4) Her 5 dakikalık barda son getiri için durum olasılıkları (post_prob = model.predict_proba) hesaplanır; eğer post_prob[2] > post_prob[0] ise portföyün %10'u ile long pozisyon tutulur, aksi halde %-10 ağırlıkla short pozisyona geçilir."
+---
+id: M022
+ad: "Quadrant Strategy (DAX 5m)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.prorealcode.com/prorealtime-trading-strategies/quadrant-strategy/", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks (DAX)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {session_start: "09:00", session_end: "17:30"}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Kaynak URL'ye (https://www.prorealcode.com/prorealtime-trading-strategies/quadrant-strategy/) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında strateji koduna ait önbellek/ayna bulunamadı."
+---
+id: M023
+ad: "Quadrant 2.0 DAX 5 min"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.prorealcode.com/wp-content/uploads/2017/04/Quadrant-2.0-DAX-5-min.itf", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks (DAX)
+gostergeler: {}
+giris: null
+cikis: null
+zaman_stop: {bar: 29}
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {max_hold_minutes: 145}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Kaynak .itf dosyasına (https://www.prorealcode.com/wp-content/uploads/2017/04/Quadrant-2.0-DAX-5-min.itf) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında içeriği bulunamadı."
+---
+id: M024
+ad: "MQL5 Code 8688 (EURUSD M1 Day Trade)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.mql5.com/en/code/8688", sayfa: null}
+tarz: day
+tf: 1m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Kaynak URL'ye (https://www.mql5.com/en/code/8688) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında bu kod numarasına ait sayfa/kod aynası bulunamadı."
+---
+id: M025
+ad: "MQL5 Code 8970 (EURUSD M5)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.mql5.com/en/code/8970", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (EURUSD)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "Kaynak URL'ye (https://www.mql5.com/en/code/8970) erişim engeli nedeniyle ulaşılamadı ve arama motorlarında bu kod numarasına ait sayfa/kod aynası bulunamadı."
+---
+id: M026
+ad: "A simple RKD Expert Advisor based on a specified custom RKD indicator (autoRKD_EA)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.mql5.com/en/code/126", sayfa: null}
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Forex (GBPUSD, EURUSD)
+gostergeler:
+  rkd30: {f: stoch, n: 30, d: 6, smooth: 3}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+parametreler: {KDPeriod: 30, M1: 3, M2: 6, Lots: 0.1, SL: 0, TP: 0, MAGIC: 666}
+deneme_sayisi_kaynakta: 1
+rapor: {pf: 1.25, sharpe: 4.69, getiri: 7.6, mdd: 10.12, islem: 52, wr: 46.15, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "MQL5 açıklama sayfası ve Strategy Tester raporu okundu (parametreler: KDPeriod=30, M1=3, M2=6, SL=0, TP=0, Lots=0.1; GBPUSD H1 2010.06.01-2010.07.12 testinde 52 işlem, PF 1.25, Sharpe 4.69, MDD %10.12, WR %46.15). Ancak MQL5 üzerindeki .mq5 kaynak dosyası indirme bağlantılarına (autoRKD_EA.mq5 ve RKD.mq5) erişim engeli olduğu için RKD göstergesinin kesin kesişim/eşik giriş-çıkış koşulu doğrulanamadı; yer tutucu ifade yazmamak adına giris/cikis null ve spec_durumu: eksik bırakıldı."
+---
+id: M027
+ad: "Renko Automated Trading System"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.prorealcode.com/prorealtime-trading-strategies/renko-automated-trading-system/", sayfa: null}
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Endeks (DAX)
+gostergeler: {}
+giris: "(totalbricksup[1] == 0 or totalbricksup[1] == 1) and totalbricksup >= 2"
+cikis: "(totalbricksdown[1] == 0 or totalbricksdown[1] == 1) and totalbricksdown >= 2"
+stop: null
+hedef: null
+stop_eklendi: false
+ozel_kod: true
+parametreler: {bricksize: 22, BIfirst: 1, stop_loss_points: 120}
+varyantlar:
+  - {bricksize: 18, pf: 1.40, getiri: 12.52, islem: 830, wr: 41.98}
+  - {bricksize: 17, getiri: 12.61, islem: 916, wr: 40.94}
+deneme_sayisi_kaynakta: 50
+rapor: {pf: 1.25, sharpe: null, getiri: 7.71, mdd: null, islem: 692, wr: 41.47, maliyet_dahil: belirtilmemis}
+spec_durumu: dakikalik
+belirsiz:
+  - "15 dakikalık bar kapanışları üzerinde sentetik Renko tuğlası hesaplama ve sinyal mantığı (ozel_kod: true): 1) İlk barda (barindex == BIfirst, varsayılan 1) upbrick = close ve downbrick = close - bricksize (bricksize=22 puan) olarak başlatılır. 2) Her 15m barda eğer close >= upbrick + bricksize ise: newbricksup = round(((close - upbrick) / bricksize) - 0.5); diffup = newbricksup * bricksize; downbrick = downbrick + diffup; upbrick = upbrick + diffup; totalbricksup = totalbricksup + newbricksup; totalbricksdown = 0. Eğer (totalbricksup[1] == 0 veya totalbricksup[1] == 1) ve totalbricksup >= 2 ise (en az 2 yükseliş tuğlası oluştuğunda) sonraki bar açılışında long (buy at market) girilir. 3) Eğer close <= downbrick - bricksize ise: newbricksdown = round(((downbrick - close) / bricksize) - 0.5); diffdown = newbricksdown * bricksize; upbrick = upbrick - diffdown; downbrick = downbrick - diffdown; totalbricksdown = totalbricksdown + newbricksdown; totalbricksup = 0. Eğer (totalbricksdown[1] == 0 veya totalbricksdown[1] == 1) ve totalbricksdown >= 2 ise long kapatılıp short (sellshort at market) açılır. 4) Ayrıca 120 puanlık sabit stop-loss (set stop ploss 120) uygulanır."
+---
+id: M028
+ad: "TradingView Script Qh7OYDvf (BTC/Crypto 5m)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.tradingview.com/script/Qh7OYDvf/", sayfa: null}
+tarz: day
+tf: 5m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (BTC)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "TradingView script sayfasına (https://www.tradingview.com/script/Qh7OYDvf/) erişim engeli nedeniyle ulaşılamadı ve GitHub/Scribd/web aramalarında 'Qh7OYDvf' koduna ait ayna bulunamadı."
+---
+id: M029
+ad: "Geometric Grid Machine 3Commas (HYPEUSDT 15m)"
+kart_yazari: argon
+kaynak: {dosya: "markdown_listesi", url: "https://www.tradingview.com/script/8N8DT3Pv-Geometric-Grid-Machine-3Commas/", sayfa: null}
+tarz: day
+tf: 15m
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto (HYPEUSDT Perpetual)
+gostergeler: {}
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+erisim_engeli: true
+parametreler: {}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: eksik
+belirsiz:
+  - "TradingView script sayfasına (https://www.tradingview.com/script/8N8DT3Pv-Geometric-Grid-Machine-3Commas/) erişim engeli nedeniyle ulaşılamadı ve web/GitHub aramalarında bu scriptin kaynak koduna ait ayna bulunamadı."
+---
+ozet: {paket: T2_parti10, kart_sayisi: 35, tam: 15, eksik: 15, gizli: 0, dakikalik: 4, ihtiyari: 0, sadece_short: 1, okunamayan_url: [M007, M017, M018, M022, M023, M024, M025, M028, M029]}
