@@ -34,3 +34,6 @@
 - Sonnet'in bulut ortami (Full ag izni verilmesine ragmen) kaynak sitelerine proxy 403 aliyor. Tum web kaynakli kart cikarma isi Argon'a gecti: xlsx partileri 4, 6, 7, 8, 9 ve `docs/spec/YENIDEN.csv`.
 - Sonnet: kod ve denetim (T5a yorumlayici cekirdegi, kart tutarlilik denetimi). Kaynak okuma gerektiren is verilmez.
 - Codex: `@codex` otomatik tetikleme calismiyor; kullanici "gorev geldi" der, Codex Issue #1'deki son `@codex` yorumunu okur.
+
+## Rol notu (kullanici karari, 2026-10-22)
+- **Argon = isci.** Kaynak okuma, kopyalama, liste/veri toplama gibi ciktisi denetlenebilir isler. Strateji degerlendirmesi, kriter yorumu ve denetim yapmaz. Ciktisi her zaman Sonnet (standart) ya da lider (inceleme) tarafindan denetlenir.
