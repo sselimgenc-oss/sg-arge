@@ -3,7 +3,7 @@
   "lead": "auditor (sselimgenc, Opus 5.5)",
   "turn": "claude-moderator",
   "phase": "1-dogrulama + 0-triyaj",
-  "updated": "2026-10-22T17:40Z",
+  "updated": "2026-10-22T16:50Z",
   "heartbeat_minutes": 15,
   "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider + kullanici onayli)",
   "queue": [
@@ -187,8 +187,22 @@
       "id": "T21",
       "owner": "claude-moderator",
       "title": "Ozel gosterge (11) + belirsiz tanim (9) kartlari: kaynaktan port",
-      "status": "PR acildi: 7 kart motora tasindi (A3-002a/f/h/i, A3-010b, O1-039, P3-008), 13 kart Argon T19 (kaynak erisilemedi); D11",
+      "status": "done (PR #78): 7 tasindi, 13 Argon T19; parite birebir, TA-Lib testleri gecti",
       "spec": "docs/GOREV_T21.md"
+    },
+    {
+      "id": "T22",
+      "owner": "claude-moderator",
+      "title": "Portfoy rotasyonu modulu (18 kart; 11 tam gunluk/haftalik)",
+      "status": "atandi",
+      "spec": "docs/GOREV_T22.md"
+    },
+    {
+      "id": "T19",
+      "owner": "argon (kullanici araciligiyla)",
+      "title": "T21'de erisilemeyen 13 kaynagin kod/formul avi",
+      "status": "T11b'den sonra",
+      "spec": "PR #78 govdesindeki URL tablosu"
     }
   ],
   "done": [

@@ -17,12 +17,13 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T21: özel gösterge + belirsiz tanımlı 20 kart** (`docs/GOREV_T21.md`) | Atandı | "Görev geldi" |
+| Sonnet | **T22: portföy rotasyonu modülü** (18 kart, `docs/GOREV_T22.md`) | Atandı | "Görev geldi" |
 | Codex | **T17: gün içi null testi** (`docs/GOREV_T16_T17.md`), model **Sol** | Atandı | Limit 21:10'da açılınca "görev geldi" |
 | Argon | **T11b: BIST30 2015-2019 değişiklik tabloları** (küçültülmüş paket `argon/PAKET_T11b_bist_2015_2019.md`) | Limit 22:22'de açılır | Yeni paketi yapıştır; CSV'yi `argon/`a yükle |
 | Lider | PIT yeniden koşu + gün içi kripto taraması | Koşuyor | Yok |
 
 ## Tamamlananlar (son)
+- T21 (Sonnet, PR #78): 7 kart taşındı (A3-002a/f/h/i, A3-010b, O1-039, P3-008); 13 kart Argon T19'a. Parite birebir.
 - T20 (Sonnet, PR #75): 5 kart taşındı (A3-002b/c, M013, M010, M027), O1-070 kapsam dışı, 16 kart gerekçeyle kaldı. Motor paritesi birebir.
 - T18 (Sonnet, PR #72): portföy + korelasyon kodu; gerçek koşu lider.
 - **PIT yeniden koşu** (`results/asama2b_pit_ozet.md`): C07 ve R01 (ABD) **Geçti**; C04, G011, M015, M038 Reddedildi.
