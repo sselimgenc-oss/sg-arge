@@ -1,0 +1,51 @@
+name: Asama 2a piyasa betasi (T6a)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tekrar:
+        description: "Null model tekrar sayisi (sinir satirlar icin 1000'e cikar)"
+        default: "200"
+      kart_ids:
+        description: "Yalniz bu kartlar (virgulle; bos = tarama.csv'deki tum asama 2 adaylari)"
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  asama2a:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Download daily bars
+        run: python data/fetch.py --interval 1d --allow-partial
+      - name: Download USDTRY
+        run: python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Scan kismi_kar cards (P02, R01) and merge into tarama.csv
+        run: python backtests/tarama.py --kartlar docs/spec --tf 1D,1W --kart-ids P02,R01 --birlestir
+      - name: Run stage 2a
+        env:
+          ASAMA2A_TEKRAR: ${{ inputs.tekrar }}
+          ASAMA2A_KARTLAR: ${{ inputs.kart_ids }}
+        run: python backtests/asama2a.py --tekrar "$ASAMA2A_TEKRAR" --kart-ids "$ASAMA2A_KARTLAR"
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/MANIFEST.csv data/evren.csv results/tarama.csv results/tarama_ozet.md results/tarama_islemler/ results/asama2a.csv results/asama2a_ozet.md
+          git diff --cached --quiet || git commit -m "chore: refresh stage 2a results"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep 5
+          done
+          exit 1

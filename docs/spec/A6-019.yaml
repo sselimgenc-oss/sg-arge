@@ -12,12 +12,14 @@ tf_varsayim: false
 yazar_piyasasi: Kripto (BTCUSD)
 gostergeler: {}
 ozel_kod: true
+ozel_kod_nedeni: seans_saat
 giris: close > 0
-cikis: 'false'
+cikis: null
 stop: null
 hedef: null
 zaman_stop:
   bar: 2
+piyasa_kisiti: [KRIPTO]
 stop_eklendi: false
 parametreler:
   open_trade_hour_utc: 22
@@ -41,3 +43,4 @@ spec_durumu: tam
 belirsiz:
 - 'Saat bazli giris/cikis (ozel_kod: true): Her gun saat 22:00 UTC+0''da (ABD, Avrupa ve Asya ana borsalarinin kapali oldugu saat dilimi) BTCUSD long pozisyon acilir, 2 saat tutulduktan sonra saat 00:00
   UTC+0''da kapatilir (Padyšák & Vojtko, 2022).'
+- "T10: ozel_kod_nedeni: seans_saat (22:00-00:00 UTC saat penceresi); piyasa_kisiti: [KRIPTO] zaten kriptoya ozgu"

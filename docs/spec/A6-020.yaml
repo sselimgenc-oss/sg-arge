@@ -17,7 +17,7 @@ gostergeler:
     n: 20
 ozel_kod: true
 giris: close > sma20
-cikis: 'false'
+cikis: null
 stop: null
 hedef: null
 zaman_stop:

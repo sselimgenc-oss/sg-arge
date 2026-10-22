@@ -13,7 +13,7 @@ yazar_piyasasi: Forex (EURUSD)
 gostergeler: {}
 ozel_kod: true
 giris: (min(open, close) - low) >= 0.667 * (high - low)
-cikis: 'false'
+cikis: null
 stop: null
 hedef:
   tip: rr

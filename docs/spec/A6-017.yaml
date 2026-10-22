@@ -13,7 +13,7 @@ yazar_piyasasi: ABD ETF (SPY)
 gostergeler: {}
 ozel_kod: true
 giris: close < close[1] and close[1] < close[2]
-cikis: 'false'
+cikis: null
 stop: null
 hedef: null
 zaman_stop:

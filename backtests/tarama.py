@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -70,7 +71,29 @@ def _metrics(result, annualization: int) -> dict[str, float]:
     return calculate_metrics(result, annualization=annualization)
 
 
-def run_card_market(
+@dataclass
+class Prepared:
+    frames: dict[str, pd.DataFrame]
+    plan: Any
+    annualization: int
+    base_cost: float
+    market: str
+    start: pd.Timestamp
+    end: pd.Timestamp
+
+    def run(self, multiplier: float = 1.0, *, close_fill: bool | None = None, signals: dict[str, pd.DataFrame] | None = None):
+        """One portfolio run; ``close_fill`` defaults to the card's own fill mode, ``signals`` may replace the plan's."""
+        kwargs = dict(self.plan.engine_kwargs)
+        fill = self.plan.dolum_kapanis if close_fill is None else close_fill
+        kwargs["fill_at_close"] = fill
+        cost = self.base_cost * multiplier * (MOC_COST_FACTOR if fill else 1.0)
+        return run_portfolio(
+            self.frames, _unused_signal_function, market=self.market, start=self.start, end=self.end,
+            cost_rate=cost, precomputed_signals=signals if signals is not None else self.plan.signals, **kwargs,
+        )
+
+
+def prepare(
     card: dict[str, Any],
     data: dict[str, pd.DataFrame],
     market: str,
@@ -78,8 +101,8 @@ def run_card_market(
     benchmark: pd.DataFrame | None = None,
     start: pd.Timestamp = IS_START,
     end: pd.Timestamp = IS_END,
-) -> dict[str, Any]:
-    """Run one card on one market's data; returns the metric fields of a tarama row."""
+) -> Prepared:
+    """Card timeframe frames (weekly for 1W cards), signals and engine arguments for one market."""
     week_end = "SUN" if market == "KRIPTO25" else "FRI"
     weekly_card = card["tf"] == "1W"
     if weekly_card:
@@ -91,27 +114,30 @@ def run_card_market(
         raise ValueError(f"{market}: donemde veri yok")
     plan = build_plan(card, in_period, week_end=week_end, benchmark=benchmark)
     annualization = 52 if weekly_card else (365 if market == "KRIPTO25" else 252)
-    base = BASE_COST[market]
+    return Prepared(in_period, plan, annualization, BASE_COST[market], market, start, end)
+
+
+def run_card_market(
+    card: dict[str, Any],
+    data: dict[str, pd.DataFrame],
+    market: str,
+    *,
+    benchmark: pd.DataFrame | None = None,
+    start: pd.Timestamp = IS_START,
+    end: pd.Timestamp = IS_END,
+) -> dict[str, Any]:
+    """Run one card on one market's data; returns the metric fields of a tarama row."""
+    prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end)
+    plan, annualization = prepared.plan, prepared.annualization
     out: dict[str, Any] = {}
-
-    def run(multiplier: float, close_fill: bool):
-        kwargs = dict(plan.engine_kwargs)
-        kwargs["fill_at_close"] = close_fill
-        cost = base * multiplier * (MOC_COST_FACTOR if close_fill else 1.0)
-        return run_portfolio(
-            in_period, _unused_signal_function, market=market, start=start, end=end,
-            cost_rate=cost, precomputed_signals=plan.signals, **kwargs,
-        )
-
-    main_fill = plan.dolum_kapanis
-    first, second = run(1.0, main_fill), run(2.0, main_fill)
+    first, second = prepared.run(1.0), prepared.run(2.0)
     m1, m2 = _metrics(first, annualization), _metrics(second, annualization)
     out.update(
         islem=m1["islem"], PF_1x=m1["pf"], PF_2x=m2["pf"], net_1x=m1["getiri"], net_2x=m2["getiri"],
         sharpe=m1["sharpe"], mdd=m1["mdd"], maruziyet=m1["maruziyet"],
     )
-    if main_fill:
-        variant_b = _metrics(run(1.0, False), annualization)
+    if plan.dolum_kapanis:
+        variant_b = _metrics(prepared.run(1.0, close_fill=False), annualization)
         out.update(PF_1x_b=variant_b["pf"], net_1x_b=variant_b["getiri"], islem_b=variant_b["islem"])
     out["stop_eklendi"] = plan.stop_eklendi
     out["trades"] = first.trades
@@ -138,7 +164,7 @@ def _empty(card: dict[str, Any], market: str, durum: str, neden: str) -> dict[st
     }
 
 
-def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path) -> pd.DataFrame:
+def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path, *, merge: bool = False) -> pd.DataFrame:
     git_sha = _git_sha()
     market_data: dict[str, tuple[dict[str, pd.DataFrame], str, list[str]]] = {m: _load_market(m, data_dir) for m in MARKETS}
     benchmarks: dict[str, pd.DataFrame | None] = {}
@@ -190,8 +216,14 @@ def scan(cards: list[dict[str, Any]], data_dir: Path, results_dir: Path) -> pd.D
                 trades.to_csv(trade_dir / f"{card['id']}_{market}.csv", index=False)
     table = pd.DataFrame(rows).reindex(columns=OUTPUT_COLUMNS)
     results_dir.mkdir(parents=True, exist_ok=True)
-    table.to_csv(results_dir / "tarama.csv", index=False, float_format="%.6g")
-    write_summary(table, cards, results_dir / "tarama_ozet.md")
+    existing = results_dir / "tarama.csv"
+    if merge and existing.exists():
+        # keep earlier rows of cards that were not rescanned; rescanned cards replace theirs
+        previous = pd.read_csv(existing)
+        previous = previous[~previous["id"].isin(set(table["id"]))]
+        table = pd.concat([previous, table], ignore_index=True).sort_values("id", kind="stable", ignore_index=True)
+    table.to_csv(existing, index=False, float_format="%.6g")
+    write_summary(table, list(dict.fromkeys(table["id"])), results_dir / "tarama_ozet.md")
     return table
 
 
@@ -206,8 +238,8 @@ def card_verdict(rows: pd.DataFrame) -> tuple[str, str]:
     return "Dogrulanamaz", "; ".join(reasons)
 
 
-def write_summary(table: pd.DataFrame, cards: list[dict[str, Any]], path: Path) -> None:
-    verdicts = {card["id"]: card_verdict(table[table["id"] == card["id"]]) for card in cards}
+def write_summary(table: pd.DataFrame, card_ids: list[str], path: Path) -> None:
+    verdicts = {card_id: card_verdict(table[table["id"] == card_id]) for card_id in card_ids}
     count: dict[str, int] = {}
     for verdict, _ in verdicts.values():
         count[verdict] = count.get(verdict, 0) + 1
@@ -215,12 +247,12 @@ def write_summary(table: pd.DataFrame, cards: list[dict[str, Any]], path: Path) 
         "# Asama 1 tarama ozeti (T5b-1: gunluk/haftalik kartlar)", "",
         "Donem: IS 2020-01-01 -> 2024-09-30 (OOS ve 2015-2019 kullanilmadi). Maliyet 1x ve 2x (ELEME_KRITERLERI baz tablosu).",
         f"Gecis kurali: en az bir piyasada islem >= {MIN_TRADES}, 1x PF >= {MIN_PF}, 2x net > 0.", "",
-        f"Kart: {len(cards)} | " + " | ".join(f"{k}: {v}" for k, v in sorted(count.items())), "",
+        f"Kart: {len(card_ids)} | " + " | ".join(f"{k}: {v}" for k, v in sorted(count.items())), "",
         "## Karar tablosu", "", "| Kart | Karar | Ayrinti |", "|---|---|---|",
     ]
-    for card in cards:
-        verdict, detail = verdicts[card["id"]]
-        lines.append(f"| {card['id']} | {verdict} | {detail} |")
+    for card_id in card_ids:
+        verdict, detail = verdicts[card_id]
+        lines.append(f"| {card_id} | {verdict} | {detail} |")
     alarms = table[table["pf_alarmi"] == True]  # noqa: E712
     if not alarms.empty:
         lines += ["", f"## PF > {PF_ALARM:g} alarmi (asiri uyum suphesi)", ""]
@@ -249,6 +281,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--kartlar", type=Path, default=ROOT / "docs" / "spec")
     parser.add_argument("--tf", default="1D", help="comma separated card timeframes, e.g. 1D,1W")
     parser.add_argument("--kart-ids", default="", help="comma separated card ids (default: all)")
+    parser.add_argument("--birlestir", action="store_true", help="merge into the existing results/tarama.csv (rescanned cards replace their rows)")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data" / "daily")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results")
     return parser.parse_args()
@@ -260,7 +293,7 @@ def main() -> int:
     if args.kart_ids:
         wanted = {item.strip() for item in args.kart_ids.split(",") if item.strip()}
         cards = [card for card in cards if card["id"] in wanted]
-    table = scan(cards, args.data_dir, args.results_dir)
+    table = scan(cards, args.data_dir, args.results_dir, merge=args.birlestir)
     print(f"{len(cards)} kart, {len(table)} satir, {int((table['durum'] == 'Hesaplandi').sum())} hesaplandi, "
           f"{int(table['asama2_aday'].fillna(False).astype(bool).sum())} satir asama 2 adayi")
     return 0

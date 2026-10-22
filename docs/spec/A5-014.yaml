@@ -19,8 +19,10 @@ gostergeler:
     f: lowest
     src: close
     n: 10
+ozel_kod: true
+ozel_kod_nedeni: tanim_belirsiz
 giris: close >= hh10 or close <= ll10
-cikis: 'false'
+cikis: null
 stop: null
 hedef: null
 zaman_stop:
@@ -53,3 +55,4 @@ spec_durumu: tam
 belirsiz:
 - PapersWithBacktest URL'sine dogrudan erisim engellendi; ancak makalenin yazarlarina (Matúš Padyšák & Radovan Vojtko, Quantpedia) ait iki tam metin aynasindan (quantpedia.com/strategies/intraday-seasonality-in-bitcoin
   ve quantpedia.com/revisiting-trend-following-and-mean-reversion-strategies-in-bitcoin/) makaledeki birlesik MIN10 + MAX10 stratejisinin ve 2 saatlik mevsimsellik stratejisinin tum kurallari eksiksiz okundu.
+- "T10: giris yer tutucu gorunuyor (iki yonlu kirilim, cikis yok); mevsimsellik/trend-takip/ortalamaya donus kurali karta dogru cevrilemedi; ozel_kod_nedeni: tanim_belirsiz"

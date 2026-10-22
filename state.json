@@ -61,7 +61,7 @@
       "id": "T6",
       "owner": "claude-moderator (T6a) / codex-worker (T6b)",
       "title": "Asama 2 tam dogrulama + results/SONUC.md (basarili/basarisiz listesi)",
-      "status": "T6a Sonnet'e atandi; T6b Codex T1b'den sonra",
+      "status": "T6a kod+PR hazir (kismi_kar, BIST USD, null model; gercek kosu Actions 'Asama 2a' elle); T6b Codex T1b'den sonra",
       "spec": "docs/GOREV_T6.md"
     },
     {

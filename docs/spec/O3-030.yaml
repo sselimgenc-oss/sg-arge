@@ -25,7 +25,7 @@ gostergeler:
     n: 240
 ozel_kod: true
 giris: ema50 > ema100 and ema100 > wma240 and close > ema50
-cikis: 'false'
+cikis: null
 stop: null
 hedef:
   tip: rr

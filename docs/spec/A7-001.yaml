@@ -25,7 +25,7 @@ gostergeler:
     n: 14
 ozel_kod: true
 giris: close > mtf("1H", ema50_1h) and low <= ema20 and close > ema20
-cikis: 'false'
+cikis: null
 stop:
   tip: atr
   n: 14

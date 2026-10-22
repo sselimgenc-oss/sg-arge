@@ -17,7 +17,7 @@ gostergeler:
     n: 14
 ozel_kod: true
 giris: low < low[1] and rsi14 > rsi14[1]
-cikis: 'false'
+cikis: null
 stop: null
 hedef:
   tip: rr

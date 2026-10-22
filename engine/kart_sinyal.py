@@ -62,8 +62,6 @@ def desteklenmeyen_alan(card: Mapping[str, Any]) -> str | None:
     """Name of the first card field the engine cannot honour, else None."""
     if card.get("roi_tablosu"):
         return "roi_tablosu"
-    if card.get("kismi_kar"):
-        return "kismi_kar"
     stop = card.get("stop")
     if stop and stop.get("tip") not in STOP_TYPES:
         return f"stop.{stop.get('tip')}"
@@ -135,6 +133,8 @@ def card_frame_signals(
     entry = _bool(_expr.parse(card["giris"]).evaluate(env, index=index, mtf=mtf), index)
 
     exit_text = card.get("cikis")
+    if isinstance(exit_text, str) and exit_text.strip().lower() == "false":
+        exit_text = None  # Argon writes the text 'false' for "no exit rule"; stops/targets close the trade
     builder = None
     if not exit_text:
         exit_static = pd.Series(False, index=index)
@@ -220,6 +220,21 @@ def build_plan(
             "trigger_atr": float(lock["tetik_atr"]),
             "stop_fn": lambda price, e=lock_expr: float(e.evaluate({"giris": price, "giris_fiyati": price}, index=None)),
         }
+    partial = card.get("kismi_kar")
+    if partial:
+        stop_expr = _expr.parse(str(partial["kalan_stop"]))
+        config: dict[str, Any] = {
+            "gun": int(partial["gun"]), "oran": float(partial["oran"]),
+            "stop_fn": lambda price, e=stop_expr: float(e.evaluate({"giris": price, "giris_fiyati": price}, index=None)),
+        }
+        if "tetik_atr" in partial:
+            config["trigger_atr"] = float(partial["tetik_atr"])
+        else:
+            trigger_expr = _expr.parse(str(partial["tetik"]))
+            config["trigger_fn"] = lambda price, distance, e=trigger_expr: float(
+                e.evaluate({"giris": price, "giris_fiyati": price, "stop_mesafesi": distance}, index=None)
+            )
+        kwargs["partial_profit"] = config
     if any(builders.values()):
         kwargs["exit_builder"] = lambda symbol, *args: builders[symbol](symbol, *args) if builders.get(symbol) else None
     return KartPlan(
