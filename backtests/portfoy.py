@@ -212,7 +212,8 @@ def main() -> int:
     candidates, source = select_candidates(args.results_dir)
     if candidates.empty:
         raise SystemExit("Gecti/Kosullu aday yok")
-    evren = str(candidates["evren"].iloc[0]) if "evren" in candidates else "sabit"
+    # PIT only filters BIST30/ABD25 entries; markets without PIT lists are unaffected
+    evren = "pit" if "evren" in candidates and (candidates["evren"] == "pit").any() else "sabit"
     pit = load_pit_universe() if evren == "pit" else None
     cards = {c["id"]: c for c in (yaml.safe_load(p.read_text(encoding="utf-8")) for p in args.kartlar.glob("*.yaml"))}
     data: dict[str, dict[str, pd.DataFrame]] = {}
