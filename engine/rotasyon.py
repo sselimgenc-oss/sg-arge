@@ -15,8 +15,11 @@ unless the source has one, so risk is measured on the portfolio MDD in the later
 
 from __future__ import annotations
 
+import copy
 import math
-from typing import Any, Mapping
+import re
+from dataclasses import dataclass
+from typing import Any, Callable, Mapping
 
 import numpy as np
 import pandas as pd
@@ -344,8 +347,14 @@ def _member(table: pd.DataFrame, membership: pd.DataFrame | None) -> pd.DataFram
     return table & membership.reindex(index=table.index, columns=table.columns).fillna(False).astype(bool)
 
 
+def _random_scores(score: pd.DataFrame, rng: np.random.Generator) -> pd.DataFrame:
+    """Same shape and missing values as ``score``, with random ranks (the null model of T23)."""
+    return pd.DataFrame(np.where(score.notna().to_numpy(), rng.random(score.shape), np.nan), index=score.index, columns=score.columns)
+
+
 def _kesitsel_weights(card: Mapping[str, Any], frames: Mapping[str, pd.DataFrame], calendar: pd.DatetimeIndex,
-                      benchmark: pd.DataFrame | None, week_end: str, membership: pd.DataFrame | None) -> pd.DataFrame:
+                      benchmark: pd.DataFrame | None, week_end: str, membership: pd.DataFrame | None):
+    """(real weights, null function): the null keeps eligibility, filters, regime, calendar and N and randomises the ranking."""
     block = card["rotasyon"]
     tables = _per_symbol(card, frames, calendar, benchmark, week_end, ("skor", "filtre", "giris_filtre", "rejim"))
     score = tables["skor"]
@@ -357,24 +366,38 @@ def _kesitsel_weights(card: Mapping[str, Any], frames: Mapping[str, pd.DataFrame
         eligible = eligible.mul(gate, axis=0)
     decide = _decision_days(calendar, block["dengeleme"])
     count = _count(block, len(frames))
-    weights = pd.DataFrame(0.0, index=calendar, columns=score.columns)
     # giris_filtre gates only symbols that are not held yet: a held name stays while it is still in the top N
     entry_gate = tables["giris_filtre"].fillna(False).astype(bool) if "giris_filtre" in tables else None
-    held: set[str] = set()
-    for date in calendar[decide.to_numpy()]:
-        row = score.loc[date].where(eligible.loc[date]).dropna()
-        chosen = list(row.sort_values(ascending=False, kind="stable").index[:count])
-        if entry_gate is not None:
-            chosen = [s for s in chosen if s in held or bool(entry_gate.at[date, s])]
-            held = set(chosen)
-        if chosen:
-            weights.loc[date, chosen] = 1.0 / count
-    weights.attrs["karar"] = decide
-    return weights
+
+    columns = list(score.columns)
+    eligible_values = eligible.to_numpy(bool)
+    gate_values = entry_gate.to_numpy(bool) if entry_gate is not None else None
+    decision_locs = np.flatnonzero(decide.to_numpy())
+
+    def assign(values: pd.DataFrame) -> pd.DataFrame:
+        scores = values.to_numpy(float)
+        out = np.zeros(scores.shape)
+        held: set[int] = set()
+        for loc in decision_locs:
+            usable = np.flatnonzero(eligible_values[loc] & ~np.isnan(scores[loc]))
+            if not len(usable):
+                continue
+            order = usable[np.argsort(-scores[loc, usable], kind="stable")][:count]  # ties keep the column order
+            chosen = [int(i) for i in order]
+            if gate_values is not None:
+                chosen = [i for i in chosen if i in held or gate_values[loc, i]]
+                held = set(chosen)
+            out[loc, chosen] = 1.0 / count
+        weights = pd.DataFrame(out, index=calendar, columns=columns)
+        weights.attrs["karar"] = decide
+        return weights
+
+    return assign(score), lambda rng: assign(_random_scores(score, rng))
 
 
 def _sirali_weights(card: Mapping[str, Any], frames: Mapping[str, pd.DataFrame], calendar: pd.DatetimeIndex,
-                    benchmark: pd.DataFrame | None, week_end: str, membership: pd.DataFrame | None) -> pd.DataFrame:
+                    benchmark: pd.DataFrame | None, week_end: str, membership: pd.DataFrame | None):
+    """(real weights, null function): the null randomises which of the day's entry candidates takes a free slot."""
     block = card["rotasyon"]
     tables = _per_symbol(card, frames, calendar, benchmark, week_end, ("skor", "giris", "cikis", "rejim"))
     entry = _member(tables["giris"].fillna(False).astype(bool), membership)
@@ -385,22 +408,71 @@ def _sirali_weights(card: Mapping[str, Any], frames: Mapping[str, pd.DataFrame],
     decide = _decision_days(calendar, block["dengeleme"])
     slots = int(block["max_pozisyon"])
     columns = list(score.columns)
-    score_values, entry_values, leave_values = score.to_numpy(float), entry.to_numpy(bool), leave.to_numpy(bool)
+    entry_values, leave_values = entry.to_numpy(bool), leave.to_numpy(bool)
     decide_values = decide.to_numpy()
-    held: list[int] = []
-    rows = []
-    for loc in range(len(calendar)):
-        if decide_values[loc]:
-            held = [i for i in held if not leave_values[loc, i]]
-            if len(held) < slots:
-                taken = set(held)
-                ready = [i for i in range(len(columns)) if entry_values[loc, i] and i not in taken and not np.isnan(score_values[loc, i])]
-                ready.sort(key=lambda i: -score_values[loc, i])  # stable: ties keep the column order
-                held += ready[: slots - len(held)]
-        rows.append({columns[i]: 1.0 / slots for i in held})
-    table = pd.DataFrame(rows, index=calendar).reindex(columns=score.columns).fillna(0.0)
-    table.attrs["karar"] = decide
+
+    def assign(values: pd.DataFrame) -> pd.DataFrame:
+        score_values = values.to_numpy(float)
+        held: list[int] = []
+        rows = []
+        for loc in range(len(calendar)):
+            if decide_values[loc]:
+                held = [i for i in held if not leave_values[loc, i]]
+                if len(held) < slots:
+                    taken = set(held)
+                    ready = [i for i in range(len(columns)) if entry_values[loc, i] and i not in taken and not np.isnan(score_values[loc, i])]
+                    ready.sort(key=lambda i: -score_values[loc, i])  # stable: ties keep the column order
+                    held += ready[: slots - len(held)]
+            rows.append({columns[i]: 1.0 / slots for i in held})
+        table = pd.DataFrame(rows, index=calendar).reindex(columns=columns).fillna(0.0)
+        table.attrs["karar"] = decide
+        return table
+
+    return assign(score), lambda rng: assign(_random_scores(score, rng))
+
+
+def _gecis_null(real: pd.DataFrame, rng: np.random.Generator) -> pd.DataFrame:
+    """Same switch dates as the real tree; on each switch one of the tree's instruments is held at random (cash stays cash)."""
+    values = real.to_numpy(float)
+    out = np.zeros_like(values)
+    for i in range(len(values)):
+        if i and np.allclose(values[i], values[i - 1]):
+            out[i] = out[i - 1]
+        elif values[i].sum() > 1e-12:
+            out[i, rng.integers(values.shape[1])] = 1.0
+    table = pd.DataFrame(out, index=real.index, columns=real.columns)
+    table.attrs["karar"] = real.attrs.get("karar", pd.Series(True, index=real.index))
     return table
+
+
+@dataclass
+class Baglam:
+    """Real target weights of a card plus a generator of its random-selection null (T23)."""
+
+    weights: pd.DataFrame
+    null: Callable[[np.random.Generator], pd.DataFrame]
+
+
+def hazirla(
+    card: Mapping[str, Any],
+    frames: Mapping[str, pd.DataFrame],
+    *,
+    benchmark: pd.DataFrame | None = None,
+    week_end: str = "FRI",
+    membership: pd.DataFrame | None = None,
+) -> Baglam:
+    """Weights decided on each bar's close and the null generator (index = signal bar, columns = instruments)."""
+    block = card["rotasyon"]
+    calendar = _calendar(frames)
+    if block["kip"] == "gecis":
+        prepared = {symbol: _ffilled(frame, calendar) for symbol, frame in frames.items()}
+        real = _gecis_weights(card, prepared, calendar)
+        return Baglam(real, lambda rng: _gecis_null(real, rng))
+    if len(frames) < int(block.get("min_evren", 8)):
+        raise RotasyonVeriYok("evren_kucuk", [str(len(frames))])
+    build = _kesitsel_weights if block["kip"] == "kesitsel" else _sirali_weights
+    real, null = build(card, frames, calendar, benchmark, week_end, membership)
+    return Baglam(real, null)
 
 
 def agirliklar(
@@ -412,16 +484,7 @@ def agirliklar(
     membership: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Target weights decided on each bar's close (index = signal bar, columns = instruments)."""
-    block = card["rotasyon"]
-    calendar = _calendar(frames)
-    prepared = {symbol: _ffilled(frame, calendar) for symbol, frame in frames.items()}
-    if block["kip"] == "gecis":
-        return _gecis_weights(card, prepared, calendar)
-    if len(frames) < int(block.get("min_evren", 8)):
-        raise RotasyonVeriYok("evren_kucuk", [str(len(frames))])
-    if block["kip"] == "kesitsel":
-        return _kesitsel_weights(card, frames, calendar, benchmark, week_end, membership)
-    return _sirali_weights(card, frames, calendar, benchmark, week_end, membership)
+    return hazirla(card, frames, benchmark=benchmark, week_end=week_end, membership=membership).weights
 
 
 # --------------------------------------------------------------------------------------------- simulation
@@ -548,3 +611,104 @@ def kos(
         frames, weights, start=start, end=end, cost_rate=cost_rate, extra_delay_bars=extra_delay_bars,
         fill_at_close=fill_at_close,
     )
+
+
+# --------------------------------------------------------------------------------------------- plateau parameters (T23)
+_LITERAL = re.compile(r"(?<![\w.{}])\d+(?:\.\d+)?(?![\w.}])")
+_INDICATOR_KEYS = ("n", "carpan")
+
+
+@dataclass
+class Parametre:
+    """One numeric parameter of a rotation card; ``uygula(card, factor)`` returns a changed deep copy."""
+
+    etiket: str
+    deger: float
+    uygula: Callable[[dict[str, Any], float], dict[str, Any]]
+
+
+def _scaled(value: float, factor: float, integer: bool) -> float | int:
+    return max(1, int(round(value * factor))) if integer else value * factor
+
+
+def _literal_params(text: str, label: str, locate: Callable[[dict[str, Any]], tuple[Any, Any]]) -> list[Parametre]:
+    """Every non-zero numeric literal of an expression (windows inside names stay untouched)."""
+    found = []
+    for k, match in enumerate(_LITERAL.finditer(text)):
+        value = float(match.group())
+        if value == 0.0:
+            continue
+
+        def apply(card: dict[str, Any], factor: float, k: int = k, raw: str = match.group(), value: float = value) -> dict[str, Any]:
+            changed = copy.deepcopy(card)
+            holder, key = locate(changed)
+            hits = list(_LITERAL.finditer(holder[key]))
+            new = _scaled(value, factor, "." not in raw)
+            holder[key] = holder[key][: hits[k].start()] + format(new, "g") + holder[key][hits[k].end():]
+            return changed
+
+        found.append(Parametre(f"{label}#{k}:{match.group()}", value, apply))
+    return found
+
+
+def parametreler(card: Mapping[str, Any]) -> list[Parametre]:
+    """Numeric parameters of the ``rotasyon`` block and of the indicators it uses (windows, thresholds, N), in card order."""
+    found: list[Parametre] = []
+    for name, spec in (card.get("gostergeler") or {}).items():
+        for key in _INDICATOR_KEYS:
+            value = spec.get(key)
+            if isinstance(value, (int, float)) and not isinstance(value, bool) and value > 0:
+                def apply(c: dict[str, Any], f: float, name: str = name, key: str = key, v: float = value) -> dict[str, Any]:
+                    changed = copy.deepcopy(c)
+                    changed["gostergeler"][name][key] = _scaled(v, f, isinstance(v, int))
+                    return changed
+
+                found.append(Parametre(f"gostergeler.{name}.{key}", float(value), apply))
+    block = card["rotasyon"]
+    for key in ("n", "n_oran", "max_pozisyon"):
+        value = block.get(key)
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            def apply(c: dict[str, Any], f: float, key: str = key, v: float = value) -> dict[str, Any]:
+                changed = copy.deepcopy(c)
+                changed["rotasyon"][key] = _scaled(v, f, isinstance(v, int))
+                return changed
+
+            found.append(Parametre(f"rotasyon.{key}", float(value), apply))
+    every = (block.get("dengeleme") or {}).get("her")
+    if isinstance(every, int) and not isinstance(every, bool):
+        def apply(c: dict[str, Any], f: float, v: int = every) -> dict[str, Any]:
+            changed = copy.deepcopy(c)
+            changed["rotasyon"]["dengeleme"]["her"] = _scaled(v, f, True)
+            return changed
+
+        found.append(Parametre("rotasyon.dengeleme.her", float(every), apply))
+    for key in ("skor", "filtre", "giris_filtre", "rejim", "giris", "cikis"):
+        if isinstance(block.get(key), str):
+            found += _literal_params(block[key], f"rotasyon.{key}", lambda c, key=key: (c["rotasyon"], key))
+    # tree: walk by path so a variant edits exactly the node that was listed
+    def walk(node: Any, path: tuple[Any, ...]) -> None:
+        if not isinstance(node, Mapping):
+            return
+        def at(c: dict[str, Any], path: tuple[Any, ...] = path) -> Any:
+            target = c["rotasyon"]["agac"]
+            for step in path:
+                target = target[step]
+            return target
+
+        if isinstance(node.get("eger"), str):
+            found.extend(_literal_params(node["eger"], "agac" + "/".join(map(str, path)) + ".eger", lambda c, at=at: (at(c), "eger")))
+            walk(node["ise"], path + ("ise",))
+            walk(node["degilse"], path + ("degilse",))
+        for i, child in enumerate(node.get("esit") or []):
+            walk(child, path + ("esit", i))
+        for key, field in (("sec", "n"), ("ters_vol", "pencere")):
+            if isinstance(node.get(key), Mapping) and isinstance(node[key].get(field), int):
+                def apply(c: dict[str, Any], f: float, at=at, key=key, field=field, v: int = node[key][field]) -> dict[str, Any]:
+                    changed = copy.deepcopy(c)
+                    at(changed)[key][field] = _scaled(v, f, True)
+                    return changed
+
+                found.append(Parametre("agac" + "/".join(map(str, path)) + f".{key}.{field}", float(node[key][field]), apply))
+
+    walk(block.get("agac"), ())
+    return found

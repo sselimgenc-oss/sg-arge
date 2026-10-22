@@ -146,7 +146,14 @@ Sembolleri birbirine gore secen kartlar (`engine/rotasyon.py`, `engine/portfolio
 - **Yeni gostergeler:** `getiri_ort {n}` ve `getiri_std {n}` (gunluk % getirinin ortalamasi / orneklem std'si; Composer `moving-average-return` / `standard-deviation-return`).
 - **Test:** `tests/test_rotasyon.py` (kesitsel siralama, giris filtresi, rejim, takvim, sirali giris, gecis agaci/esit/ters-vol, dolum ve maliyet, look-ahead (seri t'de kesilince t'ye kadarki agirliklar ve ozsermaye ayni), tarama uctan uca).
 
-### D13. UTC saat ve gun ici takvim ilkelleri (T24, Codex)
+### D13. Rotasyon kartlari Asama 2'de (T23, Sonnet; lider onayina acik)
+- **Baglanti:** `tarama.prepare` rotasyon kartlari icin `RotationPrepared` dondurur (`backtests/rotasyon_asama2.py`); `asama2a`, `asama2b`, `portfoy` gunluk kartlarla ayni arayuzu (`run(carpan, extra_delay_bars=)`) kullanir. Adaylar `tarama.csv` + `tarama_rotasyon.csv`'den okunur. Asama 2'de dolum **her zaman ertesi acilis**, maliyet 1x/2x/3x baz (Composer kartlarinin D4 kapanis dolumu yalniz Asama 1 bilgi sutunudur).
+- **Asama 2a null (`metrik: PF+CAGR`):** takvim, N, maliyet, yurutme, filtre/rejim kapisi kartinki; yalniz **secim rastgele**: `kesitsel`/`sirali_giris` rastgele siralama (uygun semboller arasindan), `gecis` ayni gecis tarihlerinde agacin enstrumanlarindan biri (esit olasilik, nakit donemi nakit). Islem basina stop/R olmadigi icin karar **PF ve CAGR** null %95'inin ustunde (ortR yerine). `asama2a.csv`'de `metrik` sutunu; rotasyon satirlarinda `ort_r`, `null_ortr_*`, `p_ortr` CAGR tasir. En az 200 tekrar, sinir bolgede (p 0,03-0,10) 1000.
+- **Asama 2b:** gunluk kartlarla ayni kapilar ve `decide()`. OOS/on donem kapisi ortR yerine donem CAGR isaretidir (`oos_ort_r`, `on_ort_r` CAGR tasir); on donem verisi yoksa (ETF 2015-2019'da yok) satir `on_veri_yok` ile **Kosullu: on donem Dogrulanamaz**. Plato: `rotasyon:` blogunun ve gostergelerinin her sayisal parametresi (pencere, esik, N, `n_oran`, literal sabitler) **tek tek +-%20** (tamsayilar yuvarlanir); `plato_pozitif_oran` = (PF>1 ve getiri>0) hucre orani. Bootstrap MDD95 <= %15 ve DSR ayni. `gecis` kartlarinda `evren: enstruman` (adli ETF listesi; survivorship notu yok).
+- **PIT:** `--evren pit` kesitsel/sirali kartlarda secimi (null dahil) PIT uyeligine baglar; uyelikten cikmis sembol secilmez.
+- **Portfoy:** rotasyon kitaplari islem basina `initial_risk` tasimadigi icin acik risk sutununa 0 katki verir; riskleri MDD ve bootstrap MDD95 ile olculur.
+
+### D14. UTC saat ve gun ici takvim ilkelleri (T24, Codex)
 - **`saat_utc()`** barin acilis zamaninin UTC saatini (0-23), **`dakika()`** UTC dakikasini (0-59) verir. Zaman dilimli indeksler once UTC'ye cevrilir; zaman dilimsiz indeksler UTC kabul edilir.
 - **`haftanin_gunu()`** mevcut anlamiyla 0=Pazartesi, ..., 6=Pazar degerini verir. Uc ilkel de yalniz bar etiketini okur, gelecek bar kullanmaz.
 - A1 degismez: saat kosulu kapanmis sinyal barinda degerlendirilir ve emir sonraki bar acilisinda dolar. Ornegin 22:00 UTC acilisinda dolum icin saatlik kart `saat_utc() == 21` sinyali uretir.

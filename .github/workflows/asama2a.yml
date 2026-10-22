@@ -44,6 +44,7 @@ jobs:
           done
           if [ "$NEED_DAILY" = 1 ]; then
             python data/fetch.py --interval 1d --allow-partial
+            python data/fetch.py --interval 1d --rotasyon --allow-partial  # T23: ETFs of the rotation (gecis) cards
             python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
           fi
       - name: Run tests

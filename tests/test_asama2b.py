@@ -160,7 +160,8 @@ def test_intraday_candidate_filter_and_daily_result_regression(tmp_path: Path) -
     existing = pd.read_csv(Path(__file__).resolve().parents[1] / "results" / "asama2b.csv")
     fresh = pd.DataFrame([{**{column: np.nan for column in asama2b.OUTPUT_COLUMNS}, "id": "I5", "piyasa": "KRIPTO25"}])
     merged = asama2b.merge_selected_results(existing, fresh, {"I5"})
-    pd.testing.assert_frame_equal(merged.iloc[:len(existing)].reset_index(drop=True), existing, check_dtype=False)
+    kept = merged.iloc[:len(existing)].reset_index(drop=True)[existing.columns]  # T23 adds metrik; existing values must stay identical
+    pd.testing.assert_frame_equal(kept, existing, check_dtype=False)
     pit = pd.read_csv(Path(__file__).resolve().parents[1] / "results" / "asama2b_pit.csv")
     pd.testing.assert_frame_equal(pit, pd.read_csv(Path(__file__).resolve().parents[1] / "results" / "asama2b_pit.csv"))
 
@@ -249,3 +250,14 @@ def test_intraday_stage2b_end_to_end_preserves_existing_outputs(
     assert output.loc[1, "karar"] in ("Gecti", "Kosullu", "Reddedildi")
     assert output.loc[1, "plato_hucre"] == 3
     assert pit_path.read_bytes() == pit_before
+
+
+def test_codex_rows_accept_the_fast_null_path() -> None:
+    """T17 calls ``run(..., trusted_inputs=True, trades_only=True)`` in the null; Codex rows must give the same trades."""
+    config = ROWS["C07"]
+    data = {f"S{i}": synthetic(30 + i, periods=1500) for i in range(3)}
+    start, end = pd.Timestamp("2012-01-01", tz="UTC"), pd.Timestamp("2030-01-01", tz="UTC")
+    prepared = asama2b.prepare_codex(config, data, start, end)
+    slow = prepared.run(1.0, signals=prepared.plan.signals).trades
+    fast = prepared.run(1.0, signals=prepared.plan.signals, trusted_inputs=True, trades_only=True).trades
+    pd.testing.assert_frame_equal(slow.reset_index(drop=True), fast.reset_index(drop=True))

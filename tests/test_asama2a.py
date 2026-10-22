@@ -134,6 +134,7 @@ def test_intraday_merge_preserves_existing_daily_rows_exactly() -> None:
     fresh = pd.DataFrame([{**{column: np.nan for column in asama2a.OUTPUT_COLUMNS}, "id": "I5", "piyasa": "KRIPTO25", "tf": "5m"}])
     merged = asama2a.merge_selected_results(existing, fresh, {"5m"})
     daily_after = merged[merged["tf"].isin(asama2a.tarama.DAILY_TFS)].reset_index(drop=True)
+    daily_after = daily_after[daily_before.columns]  # T23 adds the metrik column; existing values must stay identical
     pd.testing.assert_frame_equal(daily_after, daily_before, check_dtype=False)
 
 

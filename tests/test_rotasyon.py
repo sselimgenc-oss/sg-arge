@@ -355,8 +355,9 @@ def test_scan_runs_rotation_cards_and_reports_unverifiable_ones(tmp_path: Path) 
     assert rows.loc[("M020a", "ABD25"), "durum"] == "Hesaplandi"
     assert rows.loc[("A6-004", "KRIPTO25"), "durum"] == "Hesaplandi"
     assert (tmp_path / "results" / "tarama.csv").exists()
-    with pytest.raises(Exception, match="rotasyon_asama2"):
-        tarama.prepare(cards["B3-014"], {"X": frame(walk(1, 300))}, "ABD25")
+    from backtests.rotasyon_asama2 import RotationPrepared
+
+    assert isinstance(tarama.prepare(cards["B3-014"], {f"S{i}": frame(walk(i, 400)) for i in range(9)}, "ABD25"), RotationPrepared)
 
 
 def test_return_statistics_indicators() -> None:
