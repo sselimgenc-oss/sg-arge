@@ -202,6 +202,8 @@ def run_portfolio(
         for symbol in symbols
     }
     nan_col = {symbol: np.full(len(index_of[symbol]), np.nan) for symbol in symbols}
+    # last bar at or before each date (a symbol without a bar that date is marked at its last close)
+    prev_loc = {symbol: index_of[symbol].searchsorted(window, side="right") - 1 for symbol in symbols}
 
     def column(symbol: str, name: str) -> np.ndarray:
         frame = signals[symbol]
@@ -220,6 +222,14 @@ def run_portfolio(
     sig_target_pct = {symbol: column(symbol, "target_pct") for symbol in symbols}
     has_stop_dist = {symbol: "stop_dist" in signals[symbol].columns for symbol in symbols}
 
+    # Entry signals per date: only symbols holding a position or flagging an entry need a signal-step visit.
+    entry_matrix = np.zeros((len(window), len(symbols)), dtype=bool)
+    for column_number, symbol in enumerate(symbols):
+        valid = locs[symbol] >= 0
+        entry_matrix[valid, column_number] = sig_entry[symbol][locs[symbol][valid]]
+    entry_rows, entry_cols = np.nonzero(entry_matrix)
+    entry_starts = np.searchsorted(entry_rows, np.arange(len(window) + 1))
+
     cash = initial_capital
     positions: dict[str, Position] = {}
     scheduled: dict[pd.Timestamp, list[Order]] = {}
@@ -227,7 +237,6 @@ def run_portfolio(
     trades: list[Trade] = []
     equity_points: dict[pd.Timestamp, float] = {}
     exposure_points: dict[pd.Timestamp, float] = {}
-    last_close: dict[str, float] = {}
     max_open_positions = 0
     last_exit_loc: dict[str, int] = {}
     di = 0  # index of the current date in ``dates``
@@ -238,7 +247,8 @@ def run_portfolio(
         loc = locs[symbol][di]
         if loc >= 0:
             return float(price_arr[symbol][field][loc])
-        return last_close.get(symbol, float("nan"))
+        previous = prev_loc[symbol][di]
+        return float(price_arr[symbol]["close"][previous]) if previous >= 0 else float("nan")
 
     def equity_at(field: str) -> float:
         marked = cash
@@ -363,11 +373,6 @@ def run_portfolio(
         )
 
     for di, date in enumerate(dates):
-        for symbol in symbols:
-            loc = locs[symbol][di]
-            if loc >= 0:
-                last_close[symbol] = float(price_arr[symbol]["close"][loc])
-
         todays_orders = sorted(
             scheduled.pop(date, []), key=lambda order: ({"exit": 0, "partial": 1}.get(order.kind, 2), order.symbol)
         )
@@ -441,7 +446,8 @@ def run_portfolio(
         # Closed-bar signals schedule orders for a later open; never this bar.
         # With fill_at_close the order fills at this bar's close (exits first).
         close_fills: list[tuple[str, float, float, float, float, float]] = []
-        for symbol in symbols:
+        visit = set(positions) | {symbols[c] for c in entry_cols[entry_starts[di]:entry_starts[di + 1]]}
+        for symbol in sorted(visit):
             loc = locs[symbol][di]
             if loc < 0:
                 continue

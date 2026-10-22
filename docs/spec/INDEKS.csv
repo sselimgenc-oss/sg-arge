@@ -196,9 +196,9 @@ M032,XAU Grid Bot Long Strategy,swing,15m,eksik,false,1,https://www.tradingview.
 M033,SMC Pro BTC ICT Order Blocks FVG DOE,swing,1H,eksik,false,1,https://www.tradingview.com/script/QMvHkvdQ-SMC-Pro-BTC-ICT-Order-Blocks-FVG-DOE/
 M034,Backtested Intraday Mean Reversion (ES & NQ Futures),day,15m,gizli,false,1,https://www.reddit.com/r/algotrading/comments/1sm6y5g/backtested_intraday_mean_reversion/
 M035,Breakout Trading Strategy (Experiments Summary 2025),swing,1H,eksik,false,1,https://github.com/SokeWang/Breakout-Trading-Strategy/blob/main/strategies/breakout/reports/experiments_summary_2025.md
-M036,A Mean Reversion Strategy with 2.11 Sharpe (QQQ with Dynamic SMA300 Stop),swing,1D,tam,true,2,https://www.reddit.com/r/algotrading/comments/1cwsco8/a_mean_reversion_strategy_with_211_sharpe/
-M037,What Is the Best RSI Oversold Level? We Tested 1 Through 50,swing,1D,tam,false,1,https://quantifiedstrategies.substack.com/p/what-is-the-best-rsi-oversold-level
-M038,Best Time Frame for Candlestick Patterns (3 Candlestick Patterns Strategy on SPY),swing,1D,tam,false,1,https://quantifiedstrategies.substack.com/p/best-time-frame-for-candlestick-patterns
+M036,A Mean Reversion Strategy with 2.11 Sharpe (QQQ with Dynamic SMA300 Stop),swing,1D,tam,false,3,https://www.reddit.com/r/algotrading/comments/1cwsco8/a_mean_reversion_strategy_with_211_sharpe/
+M037,What Is the Best RSI Oversold Level? We Tested 1 Through 50,swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/what-is-the-best-rsi-oversold-level
+M038,Best Time Frame for Candlestick Patterns (3 Candlestick Patterns Strategy on SPY),swing,1D,tam,false,2,https://quantifiedstrategies.substack.com/p/best-time-frame-for-candlestick-patterns
 M039,"We Combined RSI, EMA, and VWAP on QQQ",swing,1D,gizli,false,1,https://quantifiedstrategies.substack.com/p/we-combined-rsi-ema-and-vwap-on-qqq
 M040,A Simple Stochastic Pullback Strategy for Uptrending Markets,swing,1D,gizli,false,1,https://quantifiedstrategies.substack.com/p/a-simple-stochastic-pullback-strategy
 M041,New Low Trading Strategy (QQQ),swing,1D,gizli,false,1,https://quantifiedstrategies.substack.com/p/new-low-trading-strategy
@@ -211,7 +211,7 @@ M046,ELLIPSE Bidirectional Swing Trading Strategy,swing,4H,eksik,false,1,https:/
 M047,Gold Swing More Trades 50 SL 100 TP,swing,1H,eksik,false,1,https://www.tradingview.com/script/8b1AgVrV-Gold-Swing-More-Trades-50-SL-100-TP/
 M048,3Commas Turtle Strategy (ETHUSDT H4),swing,4H,eksik,false,1,https://www.tradingview.com/script/9qFCuXqF-3Commas-Turtle-Strategy/
 M049,BTC RSI Strategy 3Commas,swing,4H,eksik,false,1,https://www.tradingview.com/script/eZsaqsZY-BTC-RSI-Strategy-3Commas/
-M050,Short-Term Reversal Effect in Stocks (Quantpedia #013),swing,1W,tam,true,1,https://quantpedia.com/strategies/short-term-reversal-in-stocks
+M050,Short-Term Reversal Effect in Stocks (Quantpedia #013),swing,1W,tam,true,2,https://quantpedia.com/strategies/short-term-reversal-in-stocks
 M051,MeanReversionRSI (Jesse.Trade),swing,1H,eksik,false,1,https://jesse.trade/strategies/meanreversionrsi
 M052,ForexFactory Post 3629700 Strategy,swing,1H,eksik,false,1,https://www.forexfactory.com/thread/post/3629700
 M053,Forex-Station Attachment 3477006 System Package,day,15m,eksik,false,1,https://forex-station.com/attach/file/3477006

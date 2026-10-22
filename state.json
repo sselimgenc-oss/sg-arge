@@ -117,7 +117,7 @@
       "id": "T12",
       "owner": "claude-moderator",
       "title": "Kripto gun ici/dakikalik tarama + roi_tablosu + parti 11 kart duzeltme",
-      "status": "atandi",
+      "status": "kod+PR hazir (parti 11 duzeltme, roi_tablosu, gun ici tarama); gercek kosu Actions Tarama is akisi tf=1H,30m,15m,5m",
       "spec": "docs/GOREV_T12_T13.md"
     },
     {
