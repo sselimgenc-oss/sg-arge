@@ -25,6 +25,7 @@ if str(ROOT) not in sys.path:
 
 from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
 from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
+from data.bist_1h import normalize_market_1h, quality_gate as bist_1h_quality_gate  # noqa: E402
 from engine import gosterge, rotasyon  # noqa: E402
 from engine.kart_sinyal import EndeksYok, MotorDestegiYok, build_plan  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
@@ -305,14 +306,16 @@ def _load_benchmarks(market_data: dict, directory: Path) -> dict[str, pd.DataFra
     return benchmarks
 
 
-def _skip_reason(card: dict[str, Any], market: str) -> tuple[str, str] | None:
+def _skip_reason(
+    card: dict[str, Any], market: str, *, bist_1h_quality_ok: bool = False
+) -> tuple[str, str] | None:
     """(durum, neden) when the card cannot be tested in this market, else None."""
     allowed = card.get("piyasa_kisiti")
     if allowed and MARKET_TOKEN[market] not in allowed:
         return "Dogrulanamaz", f"piyasa_ozgu:{','.join(allowed)}"
     if card["tf"] in SUBHOURLY_TFS and market != "KRIPTO25":
         return "Dogrulanamaz", "dakikalik_veri_yok"
-    if card["tf"] == "1H" and market == "BIST30":
+    if card["tf"] == "1H" and market == "BIST30" and not bist_1h_quality_ok:
         return "Dogrulanamaz", "veri_kalitesi:BIST_1H_seans_disi_sifir_hacim (results/veri_kalitesi_1h.md)"
     return None
 
@@ -339,7 +342,11 @@ def scan(
     def market_data(tf: str, market: str):
         key = (str(directory_for(tf)), market)
         if key not in loaded:
-            loaded[key] = _load_market(market, directory_for(tf), evren if tf in DAILY_TFS else "sabit")
+            result = _load_market(market, directory_for(tf), evren if tf in DAILY_TFS else "sabit")
+            if tf == "1H" and market == "BIST30":
+                frames, data_hash, missing = result
+                result = ({symbol: normalize_market_1h(frame, market) for symbol, frame in frames.items()}, data_hash, missing)
+            loaded[key] = result
         return loaded[key]
 
     rows: list[dict[str, Any]] = []
@@ -351,11 +358,16 @@ def scan(
             continue
         tf = card["tf"]
         for market in MARKETS:
-            skip = _skip_reason(card, market)
+            skip = _skip_reason(card, market, bist_1h_quality_ok=True)
             if skip:
                 rows.append(_empty(card, market, *skip))
                 continue
             data, data_hash, _missing = market_data(tf, market)
+            if tf == "1H" and market == "BIST30":
+                passed, _quality = bist_1h_quality_gate(data)
+                if not passed:
+                    rows.append(_empty(card, market, *_skip_reason(card, market)))
+                    continue
             if (card.get("rotasyon") or {}).get("kip") == "gecis":
                 try:
                     data = load_fixed_symbols(rotasyon.needed_symbols(card), directory_for(tf))
@@ -473,7 +485,7 @@ def write_summary(
               "- Cikis alan anlamlari: docs/EVRENSEL_KURALLAR.md D5."]
     if gunici:
         lines += ["- 1H altindaki kartlar yalniz kriptoda (Binance) test edilir; diger piyasalar `dakikalik_veri_yok` (Dogrulanamaz).",
-                  "- BIST 1H verisinde seans disi/sifir hacimli bar sorunu cozulmedigi icin BIST 1H satirlari `veri_kalitesi` (Dogrulanamaz).",
+                  "- BIST 1H yalnız kalite kapısı (seans dışı=0, fiyatı değişen sıfır hacim <%1/sembol) geçerse hesaplanır; aksi halde `veri_kalitesi` (Dogrulanamaz).",
                   "- Gercek (OOS) sonuclar ve 2018-2019 kripto donemi bu taramada gorulmez."]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 

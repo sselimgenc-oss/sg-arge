@@ -14,6 +14,7 @@ from data.fetch import (
     update_manifest,
     update_universe_notes,
 )
+from data.bist_1h import normalize_bist_1h, normalize_market_1h, quality, quality_gate
 
 
 def _frame(index: pd.DatetimeIndex, start: int = 1) -> pd.DataFrame:
@@ -106,6 +107,52 @@ def test_crypto_quality_counts_missing_hours_and_zero_volume() -> None:
     metrics = quality_metrics(frame, Asset("BTCUSDT", "KRIPTO25", "binance"))
     assert metrics["missing_bars"] == 1
     assert metrics["zero_volume"] == 1
+
+
+def test_bist_hourly_normalization_aligns_timezone_merges_ohlcv_and_drops_outside() -> None:
+    index = pd.DatetimeIndex(
+        [
+            "2026-01-02 09:00",  # truly outside: dropped
+            "2026-01-02 09:30",  # Yahoo first bar -> 10:00
+            "2026-01-02 17:30",  # last continuous bar -> 18:00
+            "2026-01-02 18:05",  # closing auction -> merge at 18:00
+            "2026-01-02 18:30",  # truly outside: dropped
+        ],
+        tz="Europe/Istanbul",
+    )
+    frame = normalize_ohlcv(_frame(index))
+    result = normalize_bist_1h(frame)
+
+    assert result.index.tolist() == [
+        pd.Timestamp("2026-01-02 07:00", tz="UTC"),
+        pd.Timestamp("2026-01-02 15:00", tz="UTC"),
+    ]
+    last = result.iloc[-1]
+    assert last["open"] == 3
+    assert last["high"] == 5
+    assert last["low"] == 2
+    assert last["close"] == 4
+    assert last["volume"] == 200
+    pd.testing.assert_frame_equal(normalize_bist_1h(result), result)  # idempotent archive/load path
+
+
+def test_non_bist_hourly_markets_are_unchanged() -> None:
+    source = normalize_ohlcv(_frame(pd.date_range("2026-01-02", periods=4, freq="h", tz="UTC")))
+    assert normalize_market_1h(source, "ABD25") is source
+    assert normalize_market_1h(source, "KRIPTO25") is source
+
+
+def test_bist_quality_gate_has_pass_and_fail_directions() -> None:
+    # Keep all synthetic observations inside the session on separate days.
+    index = pd.date_range("2026-01-02 10:00", periods=101, freq="D", tz="Europe/Istanbul")
+    good = normalize_ohlcv(_frame(index))
+    good.iloc[0, good.columns.get_loc("volume")] = 0
+    assert quality(good).zero_volume_changed == 1
+    assert quality_gate({"AAA.IS": good})[0]
+
+    bad = good.copy()
+    bad.iloc[1, bad.columns.get_loc("volume")] = 0
+    assert quality_gate({"AAA.IS": bad})[0] is False
 
 
 def test_manifest_records_total_archive_size(tmp_path: Path) -> None:
