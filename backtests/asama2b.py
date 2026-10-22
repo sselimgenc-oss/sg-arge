@@ -52,7 +52,7 @@ OUTPUT_COLUMNS = [
     "stres_net_gecikme", "plato_parametreleri", "plato_hucre", "plato_pf_medyan",
     "plato_pozitif_oran", "plato_en_iyi_kenarda", "bootstrap_mdd_p95",
     "bootstrap_cagr_p05", "dsr_n", "dsr_N", "dsr_2N", "dsr_5N", "karar",
-    "neden", "data_hash", "git_sha",
+    "neden", "evren", "data_hash", "git_sha",
 ]
 
 
@@ -280,7 +280,9 @@ def decide(row: dict[str, Any]) -> tuple[str, str]:
         conditional.append("on donem negatif")
     if row.get("oos_islem", 0) < 30:
         conditional.append("OOS ornek<30")
-    if row.get("piyasa") in ("BIST30", "ABD25"):
+    if row.get("piyasa") == "BIST30" and row.get("evren") == "pit":
+        conditional.append("survivorship: 2015-2019 PIT evren yok")  # T11: BIST30 lists only from 2020
+    elif row.get("piyasa") in ("BIST30", "ABD25") and row.get("evren") != "pit":
         conditional.append("survivorship yanliligi")
     if rejected:
         return "Reddedildi", ", ".join(rejected)
@@ -365,6 +367,7 @@ def evaluate_codex(
         plato_en_iyi_kenarda=plateau["best_on_edge"],
         **_bootstrap_and_dsr(real, prepared.annualization, trial_count(None, results_dir), bootstrap_reps, seed),
     )
+    row["evren"] = "pit" if pit_universe is not None else "sabit"
     row["karar"], row["neden"] = decide(row)
     return row
 
@@ -413,6 +416,7 @@ def evaluate_card(
     else:
         row.update(plato_parametreleri="parametre_yok", plato_hucre=1, plato_pf_medyan=_metrics(real, prepared.annualization)["pf"], plato_pozitif_oran=float(_metrics(real, prepared.annualization)["getiri"] > 0), plato_en_iyi_kenarda=False)
     row.update(**_bootstrap_and_dsr(real, prepared.annualization, trial_count(card, results_dir), bootstrap_reps, seed))
+    row["evren"] = "pit" if pit_universe is not None else "sabit"
     row["karar"], row["neden"] = decide(row)
     return row
 
@@ -453,7 +457,7 @@ def write_outputs(table: pd.DataFrame, results_dir: Path, card_input_missing: bo
               "- Plato merkezleri kaynak sinyal degerleridir; en iyi hucre secilmez ve stratejiye geri yazilmaz.",
               "- DSR N = kaynak denemesi (yoksa 1) + tarama.csv satirlari + 21 Codex satiri.",
               "- DSR'da denemeler arasi SR varyansi bilinmedigi icin stratejinin kendi SR standart hatasi kullanildi (yaklasim).",
-              "- BIST/ABD guncel evrenleri survivorship yanliligi nedeniyle en fazla `Kosullu` olabilir."]
+              "- BIST/ABD guncel evrenleri survivorship yanliligi nedeniyle en fazla `Kosullu` olabilir; `--evren pit` (T11) ile ABD tam, BIST 2020 sonrasi duzeltilir."]
     (results_dir / "asama2b_ozet.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 

@@ -105,3 +105,12 @@ def test_every_codex_row_has_two_signal_not_sizing_plateau_parameters() -> None:
         assert len(config.plato_parametreleri) == 2
         assert not {name for name, _ in config.plato_parametreleri}.intersection(banned)
 
+
+
+def test_pit_universe_lifts_survivorship_flag():
+    base = {"null_gecti": True, "oos_islem": 100, "oos_ort_r": 0.1, "stres_pf_2x": 1.5,
+            "stres_net_3x": 0.1, "stres_net_gecikme": 0.1, "plato_pozitif_oran": 1.0,
+            "bootstrap_mdd_p95": 0.1, "on_islem": 50, "on_ort_r": 0.1}
+    assert asama2b.decide({**base, "piyasa": "ABD25"})[0] == "Kosullu"
+    assert asama2b.decide({**base, "piyasa": "ABD25", "evren": "pit"})[0] == "Gecti"
+    assert asama2b.decide({**base, "piyasa": "BIST30", "evren": "pit"})[0] == "Kosullu"

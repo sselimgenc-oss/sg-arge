@@ -1,13 +1,13 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-22 15:10 UTC, lider (Opus)
+Son güncelleme: 2026-10-22 15:45 UTC, lider (Opus)
 
 ## Özet (kullanıcı için)
-- **Aşama 2b (son eleme) 1. koşu bitti:** 24 satır, **3 Koşullu**, 21 Reddedildi. Ayrıntı: `results/asama2b_ozet.md`.
-  - **C07 ABD (kanal+ADX):** en güçlü aday. OOS 94 işlem, 3x maliyette +%37. Tek şerh survivorship; T11 sonrası PIT evrenle yeniden koşulacak.
-  - **C04 BIST** ve **A6-010 Emtia:** zayıf. Ön dönem negatif, C04'te OOS örneği az.
-- BIST/ABD güncel evrenle en fazla Koşullu olabilir (kural). "Geçti" için T11 (Argon) tarihsel evren gerekli.
-- **2. koşu sürüyor:** R01 Koşullu, G011 Koşullu, G007 Reddedildi; M015, M038, O3-003 bekliyor.
+- **Aşama 2b (son eleme) bitti:** 29 satır, **7 Koşullu**, 22 Reddedildi. Ayrıntı: `results/asama2b_ozet.md`.
+  - Güçlü (ABD): **C07** kanal+ADX, **R01**, **G011** PowerX, **M038**. Tek şerh survivorship.
+  - Zayıf: **C04** BIST, **A6-010** Emtia, **M015** ABD. Hepsinde ön dönem negatif.
+- **T11 (Argon) geldi:** ABD 2015-2026 ve BIST30 2020-2026 tarihsel listeleri tam. BIST 2015-2019 bulunamadı (T11b ile ikinci deneme). Koşullu adaylar tarihsel evrenle (`--evren pit`) yeniden koşuluyor. ABD'de survivorship kalkınca adaylar **Geçti** olabilir.
+- T16: 50 eksik kartın hiçbiri tamamlanamadı; sinyal kuralı kaynakta yok. Doğrulanamaz kalıyorlar.
 - Gün içi kripto taraması: veri (30m/15m/5m) lider ortamında iniyor.
 
 ## Kural
@@ -16,15 +16,16 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T16: eksik kart triyajı** (47 kart, `docs/GOREV_T16_T17.md`) | Atandı | "Görev geldi" |
+| Sonnet | **T18: Koşullu adaylardan portföy + korelasyon** (`docs/GOREV_T18.md`) | Atandı | "Görev geldi" |
 | Codex | **T17: gün içi null testi** (`docs/GOREV_T16_T17.md`), model **Sol** | Atandı | Limit 21:10'da açılınca "görev geldi" |
-| Argon | **T11: tarihsel endeks bileşenleri** (BIST30 dönemsel, ABD en büyük 25) | Atandı | `argon/PAKET_T11_tarihsel_evren.md`; iki CSV'yi `argon/`a yükle |
-| Lider | Aşama 2b 2. koşu + gün içi kripto taraması | Koşuyor | Yok |
+| Argon | **T11b: BIST30 2015-2019** (`argon/PAKET_T11b_bist_2015_2019.md`) | Atandı | Paketi yapıştır; CSV'yi `argon/`a yükle |
+| Lider | PIT yeniden koşu + gün içi kripto taraması | Koşuyor | Yok |
 
 ## Tamamlananlar (son)
+- T16 (Sonnet, PR #70): 50 kart incelendi, terfi 0.
+- T11 (Argon): tarihsel endeks listeleri. Eksik veri: SODA/TRKCM (2020'de SISE'ye birleşti; Yahoo'da veri yok).
 - T12 (Sonnet, PR #67): gün içi tarama, roi_tablosu, motor hızlandırma #2. C01/C09 gerçek veri paritesi birebir.
-- T15 (Codex, PR #66): bekleyen giriş emirleri. T14 (PR #65): PIT evren. T13 (PR #63): SONUC raporu.
-- asama2b: endeks serisi evren dışından okunur (R01 EndeksYok düzeltmesi, lider).
+- asama2b: R01 EndeksYok düzeltmesi; PIT evrenle koşulunca ABD'de survivorship şerhi kalkar, BIST'te "2015-2019 PIT yok" şerhi kalır.
 
 ## İlk sonuçlar (T1a, ayrıntı `tartisma/004_t1a_lider_degerlendirme.md`)
 2015-2019 (raporu yazanın görmediği dönem) testinde: C01 BIST Geri Çekilme PF 1,76, C02 BIST CCI PF 1,89, C09 ABD CCI PF 1,50 güçlü. C19 Emtia Geri Çekilme negatif. Henüz nihai karar değil; tam test seti T6'da.

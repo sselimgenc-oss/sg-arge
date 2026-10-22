@@ -3,7 +3,7 @@
   "lead": "auditor (sselimgenc, Opus 5.5)",
   "turn": "claude-moderator",
   "phase": "1-dogrulama + 0-triyaj",
-  "updated": "2026-10-22T15:10Z",
+  "updated": "2026-10-22T15:45Z",
   "heartbeat_minutes": 15,
   "criteria": "docs/ELEME_KRITERLERI.md v0.3 (lider + kullanici onayli)",
   "queue": [
@@ -110,7 +110,7 @@
       "id": "T11",
       "owner": "argon (kullanici araciligiyla)",
       "title": "Tarihsel endeks bilesenleri: BIST30 donemsel (2015-2026), ABD en buyuk 25 yil basi (survivorship duzeltmesi icin veri toplama)",
-      "status": "atandi",
+      "status": "done: BIST30 2020-2026 tam (28 donem), 2015-2019 bulunamadi; ABD25 2015-2026 tam. SODA/TRKCM verisi yok (2020, 3 ceyrek)",
       "spec": "argon/PAKET_T11_tarihsel_evren.md"
     },
     {
@@ -145,7 +145,7 @@
       "id": "T16",
       "owner": "claude-moderator",
       "title": "eksik + ozel_kod:false 47 kart triyaji (varsayilanla tamamlanabilenleri tam'a terfi)",
-      "status": "PR acildi: 50 kartin 50si eksik kaldi (sinyal tanimi kaynakta yok), terfi 0",
+      "status": "done (PR #70): 50 kart incelendi, terfi 0 (sinyal tanimi kaynakta yok)",
       "spec": "docs/GOREV_T16_T17.md"
     },
     {
@@ -159,8 +159,22 @@
       "id": "T6b-kosu",
       "owner": "opus-lead",
       "title": "Asama 2b gercek kosu",
-      "status": "1. kosu 24 satir: Kosullu C04,C07,A6-010; 2. kosu (R01,G007,G011,M015,M038,O3-003) suruyor",
+      "status": "bitti: 29 satir, 7 Kosullu (C04,C07,A6-010,R01,G011,M015,M038); PIT yeniden kosu suruyor",
       "spec": "docs/GOREV_T6.md"
+    },
+    {
+      "id": "T18",
+      "owner": "claude-moderator",
+      "title": "Kosullu adaylardan esit riskli portfoy + korelasyon analizi",
+      "status": "atandi",
+      "spec": "docs/GOREV_T18.md"
+    },
+    {
+      "id": "T11b",
+      "owner": "argon (kullanici araciligiyla)",
+      "title": "BIST30 2015-2019 donemleri ikinci deneme",
+      "status": "atandi",
+      "spec": "argon/PAKET_T11b_bist_2015_2019.md"
     }
   ],
   "done": [
