@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-22 15:45 UTC, lider (Opus)
+Son güncelleme: 2026-10-22 18:30 UTC, lider (Opus)
 
 ## Özet (kullanıcı için)
 - **İlk Geçti:** tarihsel evrenle (PIT) C07 ve R01 tüm paper kapılarını geçti.
@@ -9,7 +9,8 @@ Son güncelleme: 2026-10-22 15:45 UTC, lider (Opus)
   - Zayıf: **C04** BIST, **A6-010** Emtia, **M015** ABD. Hepsinde ön dönem negatif.
 - **T11 (Argon) geldi:** ABD 2015-2026 ve BIST30 2020-2026 tarihsel listeleri tam. BIST 2015-2019 bulunamadı (T11b ile ikinci deneme). Koşullu adaylar tarihsel evrenle (`--evren pit`) yeniden koşuluyor. ABD'de survivorship kalkınca adaylar **Geçti** olabilir.
 - T16: 50 eksik kartın hiçbiri tamamlanamadı; sinyal kuralı kaynakta yok. Doğrulanamaz kalıyorlar.
-- Gün içi kripto taraması: veri (30m/15m/5m) lider ortamında iniyor.
+- **Rotasyon (T22) taraması:** 13 kart, 12 satır Aşama 1'i geçti. Çoğu kaldıraçlı ETF stratejisinde MDD %40-80. MDD'si %15 altındakiler: A6-004 ABD (%8), M017 ABD (%12). Aşama 2 bağlantısı T23'te.
+- Gün içi kripto taraması: veri tam (25 coin, 30m/15m/5m), tarama koşuyor.
 
 ## Kural
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
@@ -17,12 +18,13 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T22: portföy rotasyonu modülü** (18 kart, `docs/GOREV_T22.md`) | Atandı | "Görev geldi" |
+| Sonnet | **T23: rotasyon kartlarını Aşama 2a/2b + portföye bağla** (`docs/GOREV_T23.md`) | Atandı | "Görev geldi" |
 | Codex | **T17: gün içi null testi** (`docs/GOREV_T16_T17.md`), model **Sol** | Atandı | Limit 21:10'da açılınca "görev geldi" |
 | Argon | **T11b: BIST30 2015-2019 değişiklik tabloları** (küçültülmüş paket `argon/PAKET_T11b_bist_2015_2019.md`) | Limit 22:22'de açılır | Yeni paketi yapıştır; CSV'yi `argon/`a yükle |
-| Lider | PIT yeniden koşu + gün içi kripto taraması | Koşuyor | Yok |
+| Lider | Gün içi kripto taraması (1H/30m/15m/5m, veri tam) | Koşuyor | Yok |
 
 ## Tamamlananlar (son)
+- T22 (Sonnet, PR #80): `engine/rotasyon.py` + D12; 13 kart taşındı, Composer paritesi korelasyon 1,0000. Pytest 247, motor paritesi birebir. A6-021 short fazına.
 - T21 (Sonnet, PR #78): 7 kart taşındı (A3-002a/f/h/i, A3-010b, O1-039, P3-008); 13 kart Argon T19'a. Parite birebir.
 - T20 (Sonnet, PR #75): 5 kart taşındı (A3-002b/c, M013, M010, M027), O1-070 kapsam dışı, 16 kart gerekçeyle kaldı. Motor paritesi birebir.
 - T18 (Sonnet, PR #72): portföy + korelasyon kodu; gerçek koşu lider.
