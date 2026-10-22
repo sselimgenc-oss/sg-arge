@@ -11,8 +11,12 @@ mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD ETF (TQQQ)
 gostergeler: {}
-giris: low <= open * 0.99
-cikis: high >= (entry_price * 1.01)
+giris: haftanin_gunu() == 0
+giris_emri:
+  tip: limit
+  seviye: open * 0.99
+  gecerlilik_bar: 4
+cikis: high >= (giris_fiyati * 1.01)
 zaman_stop:
   bar: 5
 stop: null
@@ -20,8 +24,7 @@ hedef:
   tip: yuzde
   deger: 1.0
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: bekleyen_emir
+ozel_kod: false
 parametreler:
   entry_dip_pct: 1.0
   profit_target_pct: 1.0

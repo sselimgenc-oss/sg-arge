@@ -37,7 +37,7 @@ REQUIRED = ("id", "ad", "kaynak", "tarz", "tf", "gostergeler", "giris", "cikis",
 EXPR_FIELDS = ("giris", "cikis")
 EXIT_FIELDS = ("stop", "hedef", "iz_suren", "zaman_stop")  # structured exits: a card may rely on them alone
 OZEL_NEDENLERI = (
-    "bekleyen_emir",       # stop/limit entries, fills inside a bar (engine fills at next open only)
+    "bekleyen_emir",       # simple long stop/limit entry is supported; complex variants may still need code
     "seans_saat",          # exchange/server clock windows, session open/close, spread or margin filters
     "desen",               # pivot/pattern recognition (double bottom, ABC, zigzag, fractal levels)
     "durum_makinesi",      # multi-stage state machines
@@ -174,6 +174,19 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
     # exit rules may use entry state (bars_since_entry, giris_fiyati, ...); entries may not
     _check_expression(card.get("giris"), "giris", defined, gost, issues, runtime=False)
     _check_expression(card.get("cikis"), "cikis", defined, gost, issues, runtime=True)
+    entry_order = card.get("giris_emri")
+    if entry_order is not None:
+        if not isinstance(entry_order, dict):
+            issues.append(Issue("giris_emri_tipi", "giris_emri bir sozluk olmali"))
+        else:
+            if entry_order.get("tip") not in ("stop", "limit"):
+                issues.append(Issue("giris_emri_tip", f"giris_emri.tip gecersiz: {entry_order.get('tip')}"))
+            _check_expression(entry_order.get("seviye"), "giris_emri.seviye", defined, gost, issues, runtime=False)
+            if not isinstance(entry_order.get("seviye"), str) or not entry_order.get("seviye", "").strip():
+                issues.append(Issue("giris_emri_seviye", "giris_emri.seviye bos olmayan bir ifade olmali"))
+            validity = entry_order.get("gecerlilik_bar")
+            if isinstance(validity, bool) or not isinstance(validity, int) or validity < 1:
+                issues.append(Issue("giris_emri_gecerlilik", "giris_emri.gecerlilik_bar pozitif tam sayi olmali"))
     for block, sub in (("stop", "secenekler"), ("stop", "ifade"), ("hedef", "ifade"), ("kar_kilidi", "stop"), ("kismi_kar", "tetik"), ("kismi_kar", "kalan_stop")):
         value = card.get(block)
         if isinstance(value, dict):

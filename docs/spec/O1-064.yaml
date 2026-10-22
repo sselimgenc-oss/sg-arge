@@ -18,14 +18,17 @@ gostergeler:
   dopen:
     f: open
     tf: 1D
-giris: close[1] > ema20[1] and high >= high[1] + 0.25
+giris: close > ema20
+giris_emri:
+  tip: stop
+  seviye: high + 0.25
+  gecerlilik_bar: 1
 cikis: null
 stop: null
 hedef: null
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 piyasa_kisiti: [NQ]
-ozel_kod_nedeni: bekleyen_emir
 parametreler:
   ema20.n: 20
   entry_offset_ticks: 1

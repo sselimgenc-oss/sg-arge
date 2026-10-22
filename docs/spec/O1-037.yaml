@@ -44,22 +44,25 @@ gostergeler:
     f: lowest
     src: low
     n: 3
-giris: mtf("1H", ema8_1h > ema21_1h and close_1h > ema8_1h) and ema8 > ema13 and ema13 > ema21 and low[1] <= ema8[1] and close[1] >= ema21[1] and high > hh5[1]
+giris: mtf("1H", ema8_1h > ema21_1h and close_1h > ema8_1h) and ema8 > ema13 and ema13 > ema21 and low <= ema8 and close >= ema21
+giris_emri:
+  tip: stop
+  seviye: hh5[1]
+  gecerlilik_bar: 1
 cikis: close < ll3[1]
 stop: null
 hedef: null
 kismi_kar:
-  gun: null
-  tetik_atr: null
+  gun: 1
+  tetik: giris_fiyati + stop_mesafesi
   oran: 0.5
   kalan_stop: giris
 varyantlar:
 - ad: Sabit 2R Hedef Varyantı
   cikis: 1R'de %50 kısmi kâr + başabaş (BE) stop sonrası kalan %50 pozisyonu 2R hedefte kapatma
 stop_eklendi: false
-ozel_kod: true
+ozel_kod: false
 piyasa_kisiti: [FX]
-ozel_kod_nedeni: bekleyen_emir
 parametreler:
   ema8.n: 8
   ema13.n: 13

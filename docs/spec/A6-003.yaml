@@ -22,9 +22,12 @@ gostergeler:
   atr10:
     f: atr
     n: 10
-ozel_kod: true
-ozel_kod_nedeni: bekleyen_emir
-giris: close[1] > sma100[1] and close[1] < sma5[1] and low[1] < low[2] and low[2] < low[3] and low[3] < low[4] and low <= close[1] - 0.5 * atr10[1]
+ozel_kod: false
+giris: close > sma100 and close < sma5 and low < low[1] and low[1] < low[2] and low[2] < low[3]
+giris_emri:
+  tip: limit
+  seviye: close - 0.5 * atr10
+  gecerlilik_bar: 1
 cikis: close > close[1]
 stop: null
 hedef: null

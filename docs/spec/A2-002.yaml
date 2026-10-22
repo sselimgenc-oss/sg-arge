@@ -19,8 +19,12 @@ gostergeler:
     f: bb
     src: close
     n: 9
-    std: 2.0
+    carpan: 2.0
 giris: stoch_custom.d < stoch_custom.d[1] and stoch_custom.d[1] > stoch_custom.d[2] and open[3] < bb9.upper[3]
+giris_emri:
+  tip: stop
+  seviye: mtf("1D", high[1])
+  gecerlilik_bar: 9
 cikis: null
 stop:
   tip: yuzde
@@ -29,8 +33,7 @@ hedef:
   tip: yuzde
   deger: 1.9
 stop_eklendi: false
-ozel_kod: true
-ozel_kod_nedeni: bekleyen_emir
+ozel_kod: false
 parametreler:
   InpBandPeriod: 9
   bb_dev: 2.0
