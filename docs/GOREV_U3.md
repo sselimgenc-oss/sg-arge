@@ -11,11 +11,17 @@ Kurulumu (yön, rejim, seviye) **4 saat ya da 1 saat** grafikte yapan, girişi *
 - Piyasa serbest: kripto, FX, endeks vadeli, hisse, emtia. Ana işimiz kripto olduğu için kripto kaynaklarına öncelik ver, ama başka piyasaları dışlama.
 - Bu liste ileride U1/U2 için yeni hipotez havuzu olacak. Bu aşamada hiçbiri test edilmez.
 
-## Toplama kapısı: kayıt listeye girer, eğer
-1. **Zaman dilimi şartı:** kaynakta açıkça iki katman var: kurulum TF ∈ {4H, 1H} **ve** giriş TF ∈ {15m, 5m}. Tek TF'li strateji girmez. Kurulum 2H ya da giriş 30m/1m ise `kirmizi_bayrak: tf_sinir_disi` ile girer (en fazla 10 kayıt).
-2. **Strateji tanımlı:** en az bir paragraf açıklama ya da kod. Kurs, sinyal grubu ya da bot satışı reklamı girmez.
-3. **Performans:** en az bir metrik (PF, WR, getiri, Sharpe, MDD) **ve** test dönemi yazılı. Metrik yok ama kural tam ve kod açıksa `kirmizi_bayrak: metrik_yok` ile girer (en fazla 30 kayıt). Bu kayıtlar ön kayıtlı test için yine değerli.
-4. **Tekrar değil:**
+## Toplama kapısı (revize, lider, 2026-10-23: ilk tur 0 kayıt verdi)
+**Neden revize:** ilk turda metrik + dönem şartı hiç kayıt bıraktırmadı. Biz her stratejiyi zaten kendi motorumuzda yeniden test ediyoruz; Faz 1'de yazar rakamları zaten tutmadı. Bu yüzden **ana kapı artık kuralın tam olması.** Yazarın rakamı varsa yazılır, yoksa kayıt yine girer.
+
+Kayıt listeye girer, eğer:
+1. **Zaman dilimi şartı (değişmedi):** kurulum TF ∈ {4H, 1H} **ve** giriş TF ∈ {15m, 5m}, kaynakta ya da kodda açık.
+   - Freqtrade'de **5m taban + `@informative('1h')` / `informative_timeframe = '1h'` / `'4h'`** geçerli. 5m taban + yalnız 15m bilgi katmanı geçmez.
+   - Kurulum 2H ya da giriş 30m/1m ise `kirmizi_bayrak: tf_sinir_disi` ile girer (en fazla 10 kayıt). Kurulum 1D/4H + giriş 1H olanlar **girmez**.
+2. **Kural tam:** giriş ve çıkış kuralı koddan ya da metinden tek anlamlı okunuyor (gösterge parametreleri dahil). `kural_tam: evet` olmayan girmez.
+3. **Performans (artık zorunlu değil):** yazarın metriği ve dönemi varsa `iddia_*` alanlarına yazılır. Yoksa `kirmizi_bayrak: metrik_yok`; üst sınır yok.
+4. Kurs, sinyal grubu ya da bot satışı reklamı girmez.
+5. **Tekrar değil:**
    - Faz 1 ile tekrar kontrolü: `strateji_listesi (2).xlsx` (URL sütunu), `docs/KATALOG.csv`, `docs/spec/*.yaml` (`kaynak.url`, `ad`).
    - T35 ile tekrar kontrolü: `arastirma/TUM_KAYITLAR.csv`.
    - Şüphe varsa `faz1_tekrar: supheli <id>`.
@@ -34,6 +40,20 @@ Giriş gerektiren ya da ücretli kaynak atılmaz, `erisim` alanında işaretleni
 - `motor_notu`: `short`, `cok_bacakli`, `seans_saati`, `tick_veri`, `orderbook`, `funding` vb.; yoksa boş.
 
 Çıktı: `arastirma/U3_mtf.csv` (UTF-8, virgüllü, metin alanları tırnaklı). Açılamayan siteler `arastirma/U3_erisim.md` dosyasına "site, ne denendi, sonuç" olarak yazılır.
+
+## Arama yöntemi (revize)
+Genel web araması yerine **MTF'yi koddan tanıyan anahtarlar** ile ara. Bulduğun her dosyayı kural tamlığı ve TF şartı için oku:
+
+| Platform | Kodda aranacak iz | Nasıl ulaşılır |
+|---|---|---|
+| Freqtrade | `@informative('1h')`, `@informative('4h')`, `informative_timeframe`, `merge_informative_pair` (taban `timeframe = '5m'` ya da `'15m'`) | `git clone` ile açık depolar; depo adlarını WebSearch ile bul (`"informative_timeframe = '1h'" freqtrade strategy github`) |
+| TradingView Pine | `request.security(..., "60", ...)`, `"240"` ve grafik 5/15 dk | WebSearch `site:tradingview.com/script` + "multi timeframe" / "MTF" / "HTF bias"; script sayfası açık kaynaksa kod sayfada |
+| ProRealCode | `TIMEFRAME(1 hour)`, `TIMEFRAME(4 hours)` ve `TIMEFRAME(default)` 5/15 dk | WebSearch `site:prorealcode.com "TIMEFRAME(1 hour)"` |
+| MQL4/5 | `PERIOD_H1` / `PERIOD_H4` ile 5/15 dk grafik (`PERIOD_M5`, `PERIOD_M15`) | mql5.com/en/code ve /articles; WebSearch `site:mql5.com "PERIOD_H1" "PERIOD_M5"` |
+| Jesse | `self.get_candles(..., '1h')` ya da `extra_candles` + `timeframe: 5m/15m` | `git clone` |
+| NinjaTrader / cTrader | `AddDataSeries(BarsPeriodType.Minute, 60)`, `MarketData.GetBars(TimeFrame.Hour)` | Ecosystem / cTrader Algo sayfaları |
+
+**Asgari çaba:** "hedefe ulaşılamadı" demeden önce en az **40 kaynak/depo/sayfa** incele ve hepsini `U3_erisim.md`'ye yaz (ne bulundu, neden girdi ya da girmedi). İlk tur (12 arama, 1 depo) yeterli değildi.
 
 ## Kaynak önerileri (sıra serbest; T35-P2 erişim notlarındaki API yöntemleri işe yarar)
 | Tür | Kaynak |
