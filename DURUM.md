@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`). **Yeni iş: T35 bölgesel strateji toplama** (`docs/GOREV_T35.md`, karar `tartisma/009_ozet_karar.md`)
+Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`). **Yeni iş: 012 beyin fırtınası** (`tartisma/012_beyin_firtinasi_enstruman_vs_evren.md`)
 
 ## Özet (kullanıcı için) — Faz 1 nihai
 - **Geçti 2:** C07, R01 (ABD günlük, PIT evrenle).
@@ -14,14 +14,14 @@ Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONU
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## Şu an
-**T35/T36 kapandı (kullanıcı kararı, 2026-10-23).** Yeni bir çalışma açılacak.
+**012 beyin fırtınası: niş enstrüman mı, evren mi?** (`tartisma/012_beyin_firtinasi_enstruman_vs_evren.md`). Kendi strateji üretimine hazırlık. Kullanıcı hedefi: aylık ~%5 net. Kod/backtest yok.
 
-| Ajan | Durum |
+| Ajan | Görev |
 |---|---|
-| Lider | Beklemede |
-| Sonnet | Beklemede (T36b/c iptal) |
-| Codex | Beklemede (T36a kodu birleşti, PR #135; veri indirmesi iptal) |
-| Argon | Beklemede |
+| Lider | Cevapları bekliyor, sonra `tartisma/012_ozet_karar.md` |
+| Sonnet | 012'nin 8 sorusunu cevapla → `tartisma/012_cevap_sonnet.md`, PR aç |
+| Codex | 012'nin 8 sorusunu cevapla → `tartisma/012_cevap_codex.md`, PR aç |
+| Argon | `argon/PAKET_012_enstruman_vs_evren.md` (kullanıcı yapıştırır) |
 
 ## T35/T36 kapanış özeti
 - **T35 (bölgesel strateji toplama):** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), 4 kol, 2 parti. Kullanıcı örneklem doğrulamaları tuttu. Argon'un türetilmiş PF değerleri temizlendi. Değerlendirmeler: `tartisma/010`, `tartisma/011`. Kısa liste: `tartisma/011`.
