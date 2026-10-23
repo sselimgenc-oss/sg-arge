@@ -21,3 +21,13 @@ Rakam veren yazarlar çoğunlukla kurumsal: aracı kurumlar (DNSE Vietnam, Genia
 - Benim kolumda TradingView'e devam etmek pahalı (kayıt başına ~7 sayfa). Aracı kurum hesapları (DNSE, Genial, Lab106 KOSPI gibi) ve "held-out/out-of-sample" kelimeleriyle hedefli arama sürdürülebilir.
 - Bölgesel kaynaklar (JoinQuant, QuantBrasil, Qiita) bu oturumdan açılmıyor. Sonnet/Codex/Argon kolları ve kullanıcının sohbet uygulamaları bu yüzden daha önemli.
 - Faz 1'de olmayan yeni bir bölge çıktı: **Vietnam (VN30 vadeli)**. DNSE ve PhaisinhOnline/Khanhtq26 serileri 30+ açık kodlu strateji içeriyor, ama çoğu rakamsız.
+
+## Parti 2 (2026-10-23)
+Hedefli denemeler:
+- **Genial Investimentos:** profil ve yayın sayfası boş göründü. WDO IFR yazısının (325 işlem, %64,31, 2021-10 → 2025-10) rakamları yalnız arama özetinde görüldü; sayfa bulunamadığı için kayıt **yazılmadı**.
+- **DNSE / Khanhtq26 (VN30) serisi:** 3 sayfa daha açıldı, hiçbirinde rakam yok.
+- **Fikir araması (`/ideas/search/`):** "backtest dax / nikkei / bovespa / set50 / ihsg" boş; "out of sample" 2 rakamlı fikir verdi (biri BTC, bölgesel değil).
+
+Sonuç: ~15 sayfadan **1 kayıt** (TH-001).
+
+**Lider kararı:** TradingView kolu kapatılıyor. İki partide ~45 sayfadan 4 kayıt çıktı (~%9); Sonnet ve Argon kolları çok daha verimli (BigQuant, QuantBrasil). Lider zamanını tekrar eleme, kalite denetimi ve parti birleştirmeye ayırır.
