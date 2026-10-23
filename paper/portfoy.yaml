@@ -2,9 +2,9 @@
 # Satirlar results/SONUC.md ve results/portfoy.md onerisidir; 1/N sermaye, her satir kendi kitabinda
 # EVRENSEL_KURALLAR A6 ile boyutlanir (islem basi %0,5 risk, toplam acik risk %2, kitap brutu %100, ATR14x3 stop kartta yoksa).
 sanal_sermaye: 5000            # USD (kullanicinin paneliyle ayni)
-# Paper Faz 2'dir: tum stratejiler bitince satirlar ve baslangic tarihi kullaniciyla birlikte belirlenir.
-# Asagidaki tarih yer tutucudur (parite/rapor denemesi icin); paper.yml zamanlamasi kapali.
-baslangic: 2025-01-01
+# Faz 2 paper basladi (kullanici karari 2026-10-23, secenek b: C07 + R01 + A6-010).
+# Baslangic gelecekte bir gun olamaz (motor "donemde veri yok" der); ilk sinyaller 2026-10-23 kapanisinda.
+baslangic: 2026-10-23
 satirlar:
   - {id: C07, piyasa: ABD25, tf: 1D, kaynak: codex, evren: guncel, agirlik: 0.333333}
   - {id: R01, piyasa: ABD25, tf: 1D, kaynak: kart, evren: guncel, agirlik: 0.333333}
