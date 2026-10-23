@@ -16,7 +16,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | T30 tamam (PR #113). Beklemede | Beklemede | Yok |
+| Sonnet | **T34: kullanıcının 5 enstrümanı × 5 tf** (`docs/GOREV_T34.md`) | Atandı | "Görev geldi" |
 | Codex | **Pasif** (kullanıcı kararı: limit bitti; ikinci talimata kadar kullanılmıyor). T33 parti 1 tamam (PR #112: A1-027 yazıldı, A6-015/P3-010/M019 tanim_belirsiz); parti 2-4 (11 kart) denenmedi | Beklemede | Yok |
 | Argon | **Kullanılmıyor** (kullanıcı kararı: ikinci talimata kadar; limit ekran görüntüsü gezintisiyle tükeniyor) | Beklemede | Yok |
 | Lider | Faz 1 kapandı. Kullanıcı kararı: paper açılmayacak, Faz 2 askıda. Sistem yeni stratejileri denemek için süzgeç olarak duruyor | Kapandı | Yok |
