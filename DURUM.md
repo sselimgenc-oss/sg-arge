@@ -1,16 +1,14 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-22 22:10 UTC, lider (Opus)
+Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`)
 
-## Özet (kullanıcı için)
-- **İlk Geçti:** tarihsel evrenle (PIT) C07 ve R01 tüm paper kapılarını geçti.
-- **Aşama 2b (son eleme) bitti:** 29 satır, **7 Koşullu**, 22 Reddedildi. Ayrıntı: `results/asama2b_ozet.md`.
-  - Güçlü (ABD): **C07** kanal+ADX, **R01**, **G011** PowerX, **M038**. Tek şerh survivorship.
-  - Zayıf: **C04** BIST, **A6-010** Emtia, **M015** ABD. Hepsinde ön dönem negatif.
-- **T11 (Argon) geldi:** ABD 2015-2026 ve BIST30 2020-2026 tarihsel listeleri tam. BIST 2015-2019 bulunamadı (T11b ile ikinci deneme). Koşullu adaylar tarihsel evrenle (`--evren pit`) yeniden koşuluyor. ABD'de survivorship kalkınca adaylar **Geçti** olabilir.
-- T16: 50 eksik kartın hiçbiri tamamlanamadı; sinyal kuralı kaynakta yok. Doğrulanamaz kalıyorlar.
-- **Rotasyon (T22) taraması:** 13 kart, 12 satır Aşama 1'i geçti. Çoğu kaldıraçlı ETF stratejisinde MDD %40-80. MDD'si %15 altındakiler: A6-004 ABD (%8), M017 ABD (%12). Aşama 2 bağlantısı T23'te.
-- Gün içi kripto taraması: veri tam (25 coin, 30m/15m/5m), tarama koşuyor.
+## Özet (kullanıcı için) — Faz 1 nihai
+- **Geçti 2:** C07, R01 (ABD günlük, PIT evrenle).
+- **Koşullu 3:** A6-010 (emtia günlük), T8-07 ve V2B (emtia 1H).
+- **Reddedildi 132**, **Doğrulanamaz 273**, **Test edilmedi 5** (dakikalık kartlar), Ertelendi/Kapsam dışı 7. Toplam 422.
+- **Önerilen portföy** (C07 + R01 + A6-010, eşit ağırlık): OOS getiri %7,5, MDD %2,9.
+- **Kıl payı denetimi:** gözden kaçan strateji yok.
+- Ayrıntı: `docs/FAZ1_SONUC_RAPORU.md`. Faz 2 planı: `docs/FAZ2_NOTLAR.md`.
 
 ## Kural
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
@@ -18,10 +16,10 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 ## Şu an
 | Ajan | İş | Durum | Kullanıcıdan beklenen |
 |---|---|---|---|
-| Sonnet | **T30: gün içi bellek/hız** (`docs/GOREV_T30.md`), ardından **T31: 13 kartın kaynağı** (`docs/GOREV_T31.md`, eski Argon T19) | Atandı | "Görev geldi" |
-| Codex | **T33: özel kod kartları** (`docs/GOREV_T33.md`, Sol; 4 parti × 3-4 kart, 15 kart) | Atandı | "Görev geldi" |
+| Sonnet | T30 tamam (PR #113). Beklemede | Beklemede | Yok |
+| Codex | **Pasif** (kullanıcı kararı: limit bitti; ikinci talimata kadar kullanılmıyor). T33 parti 1 tamam (PR #112: A1-027 yazıldı, A6-015/P3-010/M019 tanim_belirsiz); parti 2-4 (11 kart) denenmedi | Beklemede | Yok |
 | Argon | **Kullanılmıyor** (kullanıcı kararı: ikinci talimata kadar; limit ekran görüntüsü gezintisiyle tükeniyor) | Beklemede | Yok |
-| Lider | T30/T31 teslimlerini bekliyor; A3-001/A3-002d/A3-002f 5m taraması T30 sonrası; M013 (4H) için 1H→4H yeniden örnekleme değerlendirilecek | Bekliyor | Yok |
+| Lider | Faz 1 kapandı; Faz 2 için kullanıcı kararı bekleniyor (paper kapsamı: a/b/c) | Bekliyor | Faz 2 kararı |
 
 ## Tamamlananlar (son)
 - **T32 (Codex/Terra) tamam:** 2H/4H mumlar (D16) ve FX8 piyasası + pip stop. Gerçek koşu: M013 (FX8 4H, PF 0.79) ve O2-005 (FX8 1H, PF 0.62) Aşama 1’de Reddedildi. Not: lider ilk tahmini (~80 kart) yanlıştı; bu piyasalara bağlı kartların çoğu kural eksik/özel kod. SONUC: Geçti 2, Koşullu 3, Reddedildi 132, Bekliyor 5.

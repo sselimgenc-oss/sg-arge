@@ -1,5 +1,7 @@
 # T31 — 13 kartın kaynağını oku (eski Argon T19; sahibi: claude-moderator / Sonnet)
 
+> **İPTAL (kullanıcı kararı, 2026-10-22):** T31 yapılmayacak. 13 kart "kaynak erişilemedi" olarak Doğrulanamaz kalır.
+
 ## Neden
 Kullanıcı kararı (2026-10-22): Argon'un limiti ekran görüntüsü tabanlı gezinmeyle hızla tükeniyor. Bu yüzden ikinci talimata kadar **Argon kullanılmayacak**; T19 Sonnet'e geçti. Paket: `argon/PAKET_T19_kaynak.md`. Kartlar ve URL'ler orada; kurallar aynen geçerli: uydurma yok, giriş yapma ve form doldurma yok, kod varsa aynen kopyalanır.
 
