@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-CORE = ("BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT")
+CORE = ("BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "TRXUSDT")
 
 
 def _column(frame: pd.DataFrame, names: tuple[str, ...]) -> str:
@@ -32,8 +32,12 @@ def _bootstrap_pf(values: pd.Series, repetitions: int, seed: int) -> tuple[float
     if len(numbers) == 0 or repetitions < 1:
         return float("nan"), float("nan")
     rng = np.random.default_rng(seed)
-    draws = rng.integers(0, len(numbers), size=(repetitions, len(numbers)))
-    samples = numbers[draws]
+    block = max(1, int(round(np.sqrt(len(numbers)))))
+    blocks = int(np.ceil(len(numbers) / block))
+    starts = rng.integers(0, len(numbers), size=(repetitions, blocks))
+    offsets = np.arange(block)
+    draws = (starts[:, :, None] + offsets[None, None, :]) % len(numbers)
+    samples = numbers[draws].reshape(repetitions, -1)[:, : len(numbers)]
     gains = np.maximum(samples, 0).sum(axis=1)
     losses = -np.minimum(samples, 0).sum(axis=1)
     pfs = np.divide(gains, losses, out=np.full(repetitions, np.inf), where=losses > 0)
