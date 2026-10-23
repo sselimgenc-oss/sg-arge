@@ -18,6 +18,7 @@ import sys
 import time
 from datetime import date, timedelta
 from pathlib import Path
+from typing import Callable
 
 import pandas as pd
 import requests
@@ -27,6 +28,7 @@ DATA_DIR = ROOT / "data" / "dakika"
 BASE_URL = "https://datafeed.dukascopy.com/datafeed"
 RECORD = struct.Struct(">IIIIIf")
 COLUMNS = ["sec", "open", "close", "low", "high", "volume"]
+REQUEST_DELAY = 0.75
 
 # Price divisor (1 / point). Index CFD divisors must be confirmed against a reference
 # close before the archive is used (see ``check_scale``).
@@ -74,11 +76,21 @@ def merge_sides(bid: pd.DataFrame, ask: pd.DataFrame) -> pd.DataFrame:
     return out[out["volume"] > 0]
 
 
-def fetch_day(session: requests.Session, symbol: str, day: date, retries: int = 4) -> pd.DataFrame:
+def fetch_day(
+    session: requests.Session,
+    symbol: str,
+    day: date,
+    retries: int = 4,
+    delay: float = REQUEST_DELAY,
+) -> pd.DataFrame:
     divisor = POINT_DIVISOR[symbol]
     sides = {}
     for side in ("BID", "ASK"):
+        needs_spacing = bool(sides)
         for attempt in range(retries):
+            if needs_spacing:
+                time.sleep(delay)
+                needs_spacing = False
             resp = session.get(day_url(symbol, day, side), timeout=30)
             if resp.status_code == 404:
                 sides[side] = decode(b"", day, divisor)
@@ -86,7 +98,15 @@ def fetch_day(session: requests.Session, symbol: str, day: date, retries: int = 
             if resp.ok:
                 sides[side] = decode(resp.content, day, divisor)
                 break
-            time.sleep(2 ** (attempt + 1))
+            if resp.status_code not in (429, 500, 502, 503, 504):
+                raise RuntimeError(f"{symbol} {day} {side}: HTTP {resp.status_code}")
+            retry_after = resp.headers.get("Retry-After", "")
+            try:
+                backoff = max(delay, float(retry_after))
+            except ValueError:
+                backoff = delay * (2**attempt)
+            time.sleep(backoff)
+            needs_spacing = False
         else:
             raise RuntimeError(f"{symbol} {day} {side}: HTTP {resp.status_code}")
     return merge_sides(sides["BID"], sides["ASK"])
@@ -96,18 +116,37 @@ def archive_path(symbol: str, year: int) -> Path:
     return DATA_DIR / symbol / f"{year}.parquet"
 
 
-def fetch_year(symbol: str, year: int, *, session: requests.Session | None = None) -> pd.DataFrame:
+def fetch_year(
+    symbol: str,
+    year: int,
+    *,
+    session: requests.Session | None = None,
+    existing: pd.DataFrame | None = None,
+    delay: float = REQUEST_DELAY,
+    on_day: Callable[[pd.DataFrame], None] | None = None,
+) -> pd.DataFrame:
+    """Fetch a year, skipping dates already present in *existing*.
+
+    ``on_day`` is called after each newly fetched day.  The CLI uses it to
+    checkpoint the Parquet file, so an interrupted run can resume safely.
+    """
     session = session or requests.Session()
+    existing = existing.copy() if existing is not None else pd.DataFrame()
+    present = set(existing.index.date) if not existing.empty else set()
     start = max(date(year, 1, 1), START.get(symbol, date(year, 1, 1)))
     end = min(date(year, 12, 31), date.today() - timedelta(days=1))
-    frames = []
+    frames = [existing] if not existing.empty else []
     day = start
     while day <= end:
-        if day.weekday() != 5:  # Saturday has no FX/CFD data
-            frames.append(fetch_day(session, symbol, day))
+        if day.weekday() != 5 and day not in present:  # Saturday has no data
+            frame = fetch_day(session, symbol, day, delay=delay)
+            if not frame.empty:
+                frames.append(frame)
+                present.add(day)
+            if on_day is not None:
+                on_day(pd.concat(frames).sort_index())
         day += timedelta(days=1)
-    frames = [f for f in frames if not f.empty]
-    out = pd.concat(frames).sort_index() if frames else pd.DataFrame()
+    out = pd.concat([f for f in frames if not f.empty]).sort_index() if frames else pd.DataFrame()
     return out[~out.index.duplicated(keep="last")] if not out.empty else out
 
 
@@ -118,6 +157,18 @@ def check_scale(frame: pd.DataFrame, reference_close: float, tolerance: float = 
         raise ValueError(f"scale check failed: archive {last} vs reference {reference_close}")
 
 
+def load_archive(symbol: str, year: int) -> pd.DataFrame:
+    path = archive_path(symbol, year)
+    return pd.read_parquet(path) if path.exists() else pd.DataFrame()
+
+
+def save_archive(frame: pd.DataFrame, symbol: str, year: int) -> Path:
+    path = archive_path(symbol, year)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    frame.to_parquet(path, compression="zstd")
+    return path
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("semboller", nargs="+", choices=sorted(POINT_DIVISOR))
@@ -126,13 +177,18 @@ def main(argv: list[str] | None = None) -> int:
     session = requests.Session()
     for symbol in args.semboller:
         for year in args.yillar:
-            frame = fetch_year(symbol, year, session=session)
+            existing = load_archive(symbol, year)
+            frame = fetch_year(
+                symbol,
+                year,
+                session=session,
+                existing=existing,
+                on_day=lambda current, s=symbol, y=year: save_archive(current, s, y),
+            )
             if frame.empty:
                 print(f"{symbol} {year}: veri yok")
                 continue
-            path = archive_path(symbol, year)
-            path.parent.mkdir(parents=True, exist_ok=True)
-            frame.to_parquet(path, compression="zstd")
+            path = save_archive(frame, symbol, year)
             print(f"{symbol} {year}: {len(frame)} bar, medyan spread {frame['spread'].median():.5f} -> {path}")
     return 0
 
