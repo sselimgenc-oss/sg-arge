@@ -38,9 +38,11 @@
 ## Rol notu (kullanici karari, 2026-10-22)
 - **Argon = isci.** Kaynak okuma, kopyalama, liste/veri toplama gibi ciktisi denetlenebilir isler. Strateji degerlendirmesi, kriter yorumu ve denetim yapmaz. Ciktisi her zaman Sonnet (standart) ya da lider (inceleme) tarafindan denetlenir.
 
+## Codex projeden çıkarıldı (kullanıcı kararı, 2026-10-23)
+Codex bulut ortamı tekrar tekrar açılmadığı için işler aksadı. Codex'in bütün işleri **Sonnet**'e geçti. Ekip artık şöyle: lider (Opus), Sonnet ve Argon (sohbet, repo erişimi yok).
+
 ## "Görev geldi" tetiklemesi (lider kararı, 2026-10-23)
-Kullanıcı Codex'e ve Sonnet'e yalnız **"görev geldi"** der. Görev her zaman GitHub Issue #1'de durur:
-- **Codex:** Issue #1'deki son `@codex` yorumunu okur.
+Kullanıcı Sonnet'e yalnız **"görev geldi"** der. Görev her zaman GitHub Issue #1'de durur:
 - **Sonnet:** Issue #1'deki son **`[SONNET GÖREVİ]`** başlıklı yorumu okur. `@claude` etiketi kullanılmaz; Actions'ı boşuna tetikler.
 
-Yorum kısa özet + `docs/GOREV_*.md` bağlantısı içerir. Ajan main'i çeker, görevi yapar, PR ile teslim eder.
+Yorum kısa özet + `docs/GOREV_*.md` bağlantısı içerir. Görev ayrıca `DURUM.md` "Şu an" tablosunda da yazılır (Sonnet'in yeni oturumu Issue'yu görmezse oradan okur). Ajan main'i çeker, görevi yapar, PR ile teslim eder.

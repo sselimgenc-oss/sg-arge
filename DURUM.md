@@ -18,10 +18,10 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 | Ajan | Görev |
 |---|---|
-| Lider | PR denetimi; sonra U1c (huni + `results/U1_SONUC.md`) |
-| Codex | **U1a:** Binance 5 dk/15 dk/1 saat arşivi (14 coin), `engine/kilit.py`, `scripts/kardes_rapor.py` → PR |
-| Sonnet | **U1b (revize):** U1-H2-A/B/C kartları + gün içi ilkeller + Hat 0 çalıştırma ayarı → PR. Rotasyon işi iptal |
+| Lider | Sonnet'in U1a PR'ını denetler; sonra U1c (veri indirme + huni + `results/U1_SONUC.md`) |
+| Sonnet | U1b birleşti (PR #147). **Şimdi U1a** (Codex'ten devralındı): `work` dalındaki kodu (PR #142) al, 3 düzeltmeyi yap, kendi PR'ını aç |
 | Argon | Beklemede |
+| ~~Codex~~ | Projeden çıkarıldı (kullanıcı kararı, 2026-10-23; ortam açılmıyor) |
 
 ## T35/T36 kapanış özeti
 - **T35 (bölgesel strateji toplama):** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), 4 kol, 2 parti. Kullanıcı örneklem doğrulamaları tuttu. Argon'un türetilmiş PF değerleri temizlendi. Değerlendirmeler: `tartisma/010`, `tartisma/011`. Kısa liste: `tartisma/011`.

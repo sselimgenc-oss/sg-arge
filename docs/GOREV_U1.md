@@ -75,7 +75,7 @@ Short yok. PR #136 (T36b) short desteği içeriyor. U1 umut verirse U2'de ele al
 - Kazanan kurallar kriptodan oraya da taşınabilir.
 
 ## 5. İşler
-### U1a: Codex (veri + denetim araçları)
+### U1a: Sonnet (Codex'ten devralındı, 2026-10-23; veri + denetim araçları)
 1. **Binance gün içi arşivi:** 14 coin, **5 dk, 15 dk ve 1 saat**, 2017'den (ya da listelenmeden) bugüne. `data/fetch.py`'nin Binance yolu kullanılır. Parquet `.gitignore`'da kalır, `data/MANIFEST.csv` güncellenir. Kalite raporu: boşluk, tekrar, sıfır hacim.
 2. **Kilit:** `engine/kilit.py`. Veri varsayılan olarak 2025-09-30'da kesilir. Kilit yalnız `KILIT_AC=1` ile açılır ve açılınca uyarı loglanır. Testi yazılır.
 3. **Kardeş/havuz raporu:** `scripts/kardes_rapor.py`. Çıktı:
