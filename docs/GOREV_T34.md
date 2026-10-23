@@ -1,5 +1,7 @@
 # T34 — Kullanıcının 5 enstrümanı × 5 zaman dilimi (sahibi: claude-moderator / Sonnet)
 
+> **İPTAL (kullanıcı kararı, 2026-10-23):** Şimdilik yapılmayacak; kullanıcı düşünecek. Görev tanımı ileride kullanılmak üzere duruyor.
+
 ## Neden
 Kullanıcı yalnız kendi işlem yaptığı 5 enstrümanda sonuç istiyor:
 
