@@ -120,8 +120,8 @@ def run_variant(variant: str, card: dict[str, Any], data: dict[str, pd.DataFrame
     """Summary rows (per coin + pooled, 1x/2x/3x) and the 1x pooled trade list of one variant in one period."""
     start, end = PERIODS[period]
     lock_check(end)
-    data = {symbol: frame[frame.index <= end] for symbol, frame in kilit.uygula(data).items()}  # Hat 0 cards are not U1- ids, cut here
-    prepared = tarama.prepare(card, data, MARKET, start=start, end=end)
+    data = {symbol: frame[frame.index <= end] for symbol, frame in data.items()}
+    prepared = tarama.prepare(card, data, MARKET, start=start, end=end, kilit=True)  # explicit lock for every U1 run, Hat 0 included
     annual = tarama.annualization_for(card["tf"], MARKET)
     results = {mult: prepared.run(mult, trusted_inputs=True) for mult in COSTS}
     trades = results[1.0].trades.copy()

@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 CORE = ("BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "TRXUSDT")
+SIBLINGS = ("ADAUSDT", "DOGEUSDT", "LTCUSDT", "LINKUSDT", "DOTUSDT", "AVAXUSDT", "BCHUSDT", "NEARUSDT")
 
 
 def _column(frame: pd.DataFrame, names: tuple[str, ...]) -> str:
@@ -48,6 +49,7 @@ def summarize_trades(
     trades: pd.DataFrame,
     *,
     core: tuple[str, ...] = CORE,
+    siblings: tuple[str, ...] = SIBLINGS,
     repetitions: int = 1000,
     seed: int = 42,
 ) -> tuple[pd.DataFrame, dict[str, float | int | str]]:
@@ -61,8 +63,10 @@ def summarize_trades(
     work = work.dropna(subset=["_pnl"])
     date_col = next((name for name in ("exit_date", "entry_date", "date", "timestamp") if name in work), None)
     if date_col:
-        dates = pd.to_datetime(work[date_col], utc=True, errors="coerce").dt.tz_localize(None)
-        work["_month"] = dates.dt.to_period("M").astype(str)
+        work["_when"] = pd.to_datetime(work[date_col], utc=True, errors="coerce")
+        # the block bootstrap resamples consecutive trades: they must be in time order, not in symbol order
+        work = work.sort_values("_when", kind="stable", na_position="last").reset_index(drop=True)
+        work["_month"] = work["_when"].dt.tz_localize(None).dt.to_period("M").astype(str).where(work["_when"].notna(), "")
     else:
         work["_month"] = ""
 
@@ -79,8 +83,10 @@ def summarize_trades(
             "is_core": symbol in core,
         })
     detail = pd.DataFrame(rows)
-    siblings = detail.loc[~detail["is_core"]] if not detail.empty else detail
-    sibling_ratio = float((siblings["profit_factor"] > 1.1).mean()) if len(siblings) else float("nan")
+    # fixed denominator: a sibling without trades or with an undefined PF has not passed (NaN > 1.1 is False)
+    by_symbol = detail.set_index("symbol")["profit_factor"] if not detail.empty else pd.Series(dtype=float)
+    passed = sum(bool(by_symbol.get(symbol, float("nan")) > 1.1) for symbol in siblings)
+    sibling_ratio = passed / len(siblings) if siblings else float("nan")
 
     pooled = work["_pnl"]
     low, high = _bootstrap_pf(pooled, repetitions, seed)
@@ -100,6 +106,7 @@ def summarize_trades(
         "pooled_pf_ci90_low": low,
         "pooled_pf_ci90_high": high,
         "sibling_pf_gt_1_1_ratio": sibling_ratio,
+        "sibling_pf_gt_1_1_count": f"{passed}/{len(siblings)}",
         "largest_profit_share_symbol": str(detail.loc[detail["net_pnl"].idxmax(), "symbol"]) if not detail.empty else "",
         "largest_profit_share": max_symbol_share,
         "best_month_removed": best_month,
@@ -134,9 +141,11 @@ def main() -> int:
     parser.add_argument("--out-csv", type=Path, default=Path("results/U1_kardes_rapor.csv"))
     parser.add_argument("--out-md", type=Path, default=Path("results/U1_kardes_rapor.md"))
     parser.add_argument("--core", default=",".join(CORE), help="çekirdek semboller")
+    parser.add_argument("--kardesler", default=",".join(SIBLINGS), help="kardeş semboller (oranın sabit paydası)")
     parser.add_argument("--repetitions", type=int, default=1000)
     args = parser.parse_args()
-    detail, summary = summarize_trades(pd.read_csv(args.trades), core=tuple(x for x in args.core.split(",") if x), repetitions=args.repetitions)
+    detail, summary = summarize_trades(pd.read_csv(args.trades), core=tuple(x for x in args.core.split(",") if x),
+        siblings=tuple(x for x in args.kardesler.split(",") if x), repetitions=args.repetitions)
     write_report(detail, summary, args.out_csv, args.out_md)
     print(f"OK {args.out_md}: {summary['trades']} işlem, PF={summary['pooled_profit_factor']}")
     return 0
