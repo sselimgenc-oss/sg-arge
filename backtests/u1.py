@@ -7,7 +7,7 @@
 * Every variant is one pooled portfolio over the 14 coins (Faz 1 sizing: 0.5 % risk per trade, 2 % open risk). Per-coin
   rows are sliced from that pooled trade list. Costs 0.15 / 0.30 / 0.45 % (1x/2x/3x).
 * Periods: IS 2018-01-01 -> 2023-09-30, OOS 2023-10-01 -> 2025-09-30. Data is cut at the OOS end; the locked period
-  (2025-10-01 -> ) opens only with ``KILIT_AC=1``.
+  (2025-10-01 -> ) opens only with ``KILIT_AC=1`` (engine/kilit.py).
 
     python backtests/u1.py --hat 0,2 --donem IS,OOS --veri-kok data --results-dir results/u1
 """
@@ -32,6 +32,7 @@ if str(ROOT) not in sys.path:
 
 from backtests import tarama  # noqa: E402
 from data.fetch import normalize_ohlcv  # noqa: E402
+from engine import kilit  # noqa: E402
 from engine.portfolio import calculate_metrics  # noqa: E402
 from engine.spec import normalize_timeframe  # noqa: E402
 
@@ -92,11 +93,9 @@ def all_variants(hats: tuple[int, ...] = (0, 2), directory: Path = SPEC) -> list
 
 # --------------------------------------------------------------------------------------------- data and periods
 def lock_check(end: pd.Timestamp) -> None:
-    """The locked period opens only with KILIT_AC=1 (engine/kilit.py of U1a supersedes this guard when merged)."""
-    if end > LOCK_END:
-        if os.environ.get("KILIT_AC") != "1":
-            raise PermissionError("kilitli donem (2025-10-01 ->) yalniz KILIT_AC=1 ile ve lider kararıyla acilir")
-        LOG.warning("KILITLI DONEM ACILDI (KILIT_AC=1)")
+    """The locked period opens only with KILIT_AC=1 (engine/kilit.py; the log warning comes from there)."""
+    if end > LOCK_END and not kilit.acik():
+        raise PermissionError("kilitli donem (2025-10-01 ->) yalniz KILIT_AC=1 ile ve lider kararıyla acilir")
 
 
 def load_data(root: Path, tf: str, symbols: list[str]) -> dict[str, pd.DataFrame]:
@@ -122,7 +121,7 @@ def run_variant(variant: str, card: dict[str, Any], data: dict[str, pd.DataFrame
     start, end = PERIODS[period]
     lock_check(end)
     data = {symbol: frame[frame.index <= end] for symbol, frame in data.items()}
-    prepared = tarama.prepare(card, data, MARKET, start=start, end=end)
+    prepared = tarama.prepare(card, data, MARKET, start=start, end=end, kilit=True)  # explicit lock for every U1 run, Hat 0 included
     annual = tarama.annualization_for(card["tf"], MARKET)
     results = {mult: prepared.run(mult, trusted_inputs=True) for mult in COSTS}
     trades = results[1.0].trades.copy()

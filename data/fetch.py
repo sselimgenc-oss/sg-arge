@@ -26,6 +26,7 @@ UNIVERSE_PATH = DATA_DIR / "evren.csv"
 ROTATION_PATH = DATA_DIR / "rotasyon_semboller.csv"  # named instruments of the T22 transition (gecis) cards
 MANIFEST_PATH = DATA_DIR / "MANIFEST.csv"
 QUALITY_PATH = ROOT / "results" / "veri_kalitesi_1h.md"
+BINANCE_QUALITY_PATH = ROOT / "results" / "veri_kalitesi_binance.md"
 BINANCE_KLINES_URL = "https://data-api.binance.vision/api/v3/klines"
 BINANCE_START = pd.Timestamp("2017-01-01", tz="UTC")
 DAILY_START = "2015-01-01"
@@ -295,7 +296,7 @@ def update_manifest(rows: Iterable[dict[str, object]], path: Path = MANIFEST_PAT
     incoming.to_csv(path, index=False)
 
 
-def quality_metrics(frame: pd.DataFrame, asset: Asset) -> dict[str, int | float | bool]:
+def quality_metrics(frame: pd.DataFrame, asset: Asset, interval: str = "1h") -> dict[str, int | float | bool]:
     duplicate = int(frame.index.duplicated().sum())
     zero_volume = int((frame["volume"] <= 0).sum()) if not frame.empty else 0
     missing = 0
@@ -305,7 +306,8 @@ def quality_metrics(frame: pd.DataFrame, asset: Asset) -> dict[str, int | float 
     suspicious_zero_volume_rate = 0.0
     quality_passed = True
     if not frame.empty and asset.source == "binance":
-        expected = pd.date_range(frame.index[0], frame.index[-1], freq="1h", tz="UTC")
+        frequency = f"{interval[:-1]}min" if interval.endswith("m") else interval
+        expected = pd.date_range(frame.index[0], frame.index[-1], freq=frequency, tz="UTC")
         missing = len(expected.difference(frame.index))
     if not frame.empty and asset.market.upper() == "BIST30":
         measurement = bist_1h_quality(frame)
@@ -360,6 +362,30 @@ def write_quality_report(records: list[dict[str, object]], path: Path = QUALITY_
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def write_binance_quality_report(
+    records: list[dict[str, object]], path: Path = BINANCE_QUALITY_PATH
+) -> None:
+    """Write quality measurements for explicitly requested Binance archives."""
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# Binance gün içi veri kalite raporu",
+        "",
+        f"Üretim zamanı (UTC): {datetime.now(timezone.utc).isoformat()}",
+        "",
+        "Eksik barlar, serinin ilk ve son zaman damgası arasındaki sürekli Binance takvimine göre ölçülür.",
+        "",
+        "| Sembol | Aralık | Satır | Eksik | Tekrar | Sıfır hacim | İlk zaman | Son zaman |",
+        "|---|---:|---:|---:|---:|---:|---|---|",
+    ]
+    for record in sorted(records, key=lambda item: (str(item["interval"]), str(item["symbol"]))):
+        lines.append(
+            "| {symbol} | {interval} | {rows} | {missing_bars} | {duplicates} | {zero_volume} | "
+            "{first_timestamp} | {last_timestamp} |".format(**record)
+        )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def fetch_asset(
     asset: Asset, interval: str, *, append: bool, start_override: pd.Timestamp | None = None
 ) -> tuple[Path, pd.DataFrame]:
@@ -388,6 +414,7 @@ def run(
     evren: str = "sabit",
     rotasyon: bool = False,
     piyasa: tuple[str, ...] = (),
+    semboller: tuple[str, ...] = (),
 ) -> int:
     manifest_rows: list[dict[str, object]] = []
     quality_rows: list[dict[str, object]] = []
@@ -395,6 +422,12 @@ def run(
     failure_reasons: dict[str, str] = {}
     failures = 0
     assets = single_market_assets(piyasa) if piyasa else (load_universe(ROTATION_PATH) if rotasyon else load_universe(pit=evren == "pit"))
+    if semboller:
+        wanted = {symbol.strip().upper() for symbol in semboller if symbol.strip()}
+        assets = [asset for asset in assets if asset.symbol.upper() in wanted]
+        missing = sorted(wanted.difference({asset.symbol.upper() for asset in assets}))
+        if missing:
+            raise ValueError(f"semboller evrende yok: {','.join(missing)}")
     for asset in assets:
         if interval in SUBHOURLY and asset.source != "binance":
             continue  # sub-hourly bars exist only for crypto (EVRENSEL_KURALLAR B)
@@ -406,13 +439,16 @@ def run(
             )
             successful.add(asset.symbol)
             if interval == "1h":
+                quality_rows.append({"symbol": asset.symbol, "market": asset.market, "rows": len(frame), "bytes": path.stat().st_size, **quality_metrics(frame, asset, interval)})
+            elif interval in SUBHOURLY and asset.source == "binance":
                 quality_rows.append(
                     {
                         "symbol": asset.symbol,
-                        "market": asset.market,
+                        "interval": interval,
                         "rows": len(frame),
-                        "bytes": path.stat().st_size,
-                        **quality_metrics(frame, asset),
+                        "first_timestamp": frame.index[0].isoformat(),
+                        "last_timestamp": frame.index[-1].isoformat(),
+                        **quality_metrics(frame, asset, interval),
                     }
                 )
             print(f"OK {asset.symbol}: {len(frame)} rows")
@@ -436,6 +472,8 @@ def run(
     update_manifest(manifest_rows)
     if interval == "1h":
         write_quality_report(quality_rows)
+    elif interval in SUBHOURLY:
+        write_binance_quality_report(quality_rows)
     return 1 if failures and not allow_partial else 0
 
 
@@ -454,6 +492,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--evren", choices=("sabit", "pit"), default="sabit")
     parser.add_argument("--rotasyon", action="store_true", help="download data/rotasyon_semboller.csv (T22 gecis instruments) instead of the market universe")
     parser.add_argument("--piyasa", action="append", default=[], choices=("FX8",), help="single-instrument market (FX8)")
+    parser.add_argument("--semboller", help="comma-separated symbols to fetch from the selected universe")
     parser.add_argument(
         "--allow-partial",
         action="store_true",
@@ -473,5 +512,6 @@ if __name__ == "__main__":
             evren=arguments.evren,
             rotasyon=arguments.rotasyon,
             piyasa=tuple(arguments.piyasa),
+            semboller=tuple(arguments.semboller.split(",")) if arguments.semboller else (),
         )
     )
