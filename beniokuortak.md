@@ -1,46 +1,54 @@
 # 🚀 Autonomous Multi-AI Quantitative Trading Framework
 
-Bu proje, finansal piyasalar için kantitatif borsa stratejileri geliştirmek, optimize etmek ve backtest (geriye dönük test) süreçlerini otomatikleştirmek amacıyla **Claude Code** ve **ChatGPT Codex** ekosistemlerini hibrit ve otonom bir yapıda buluşturur.
+Bu proje, finansal piyasalar için kantitatif borsa stratejileri geliştirmek, optimize etmek ve backtest (geriye dönük test) süreçlerini otomatikleştirmek amacıyla **Claude Code**, **ChatGPT Codex** ve **Google Gemini** modellerini tek bir ekipte buluşturur.
+
+> **Güncel durum her zaman `DURUM.md`'dedir** (kimin hangi işte olduğu, son kararlar). Çalışma kuralları: `docs/PROTOKOL.md`. `state.json` 2026-10-22'den beri güncellenmiyor, yalnız geçmiş kaydıdır.
+>
+> **Kapsam (kullanıcı kararı, 2026-10-23): yalnız kripto, gün içi** (1 saat kurulum, 15 dk / 5 dk işlem). Hedef yılda %20-30 net, MDD ≤ %15. Faz 1 (BIST/ABD/emtia/kripto, 422 strateji) kapandı: `docs/FAZ1_SONUC_RAPORU.md`.
 
 ---
 
-## 🤖 Model Rolleri ve Sorumluluk Matrisi
+## 🤖 Ekip ve roller (güncelleme: 2026-10-23)
 
-Sistem içi maliyetleri, token tüketimini ve haftalık limitleri optimize etmek için roller sıkı bir şekilde ayrıştırılmıştır:
-
-| Model / Ekosistem | Rol | Temel Sorumluluklar |
+| Model | Rol | Ne yapar |
 | :--- | :--- | :--- |
-| **Claude Opus 5.5** (sselimgenc hesabı, `@auditor`) | **Takım Lideri & Danışman** (Auditor) | - Takımın nihai karar ve öncelik sahibi<br>- Finansal stratejilerin mantıksal denetimi<br>- Token ve haftalık limit optimizasyonu<br>- Görevlerin efor ve maliyet analizine göre Claude veya Codex tarafına dengeli dağıtımı |
-| **Claude Code Sonnet 5.5** (sg507 hesabı, `@claude`) | Yardımcı Moderatör: lider talimatıyla çalışır, karar vermez | - Günlük iş akışı koordinasyonu<br>- GitHub üzerindeki görev sırasının (Queue) yönetimi<br>- Mimari bütünlüğün korunması |
-| **GPT-5.6 Sol** | Görev Yürütücüsü (Worker) | - Claude tarafından atanan görevlerin işlenmesi<br>- Python tabanlı borsa stratejisi kodlarının yazılması (Backtrader, VectorBT, Pandas vb.) |
-| **Argon** (Google Gemini, GitHub bağlantısı yok) | Kart Çıkarıcı & Çapraz Denetçi | - Strateji kaynaklarını internetten okuyup YAML kart çıkarma (T2 çift partiler)<br>- Kullanıcı aracılığıyla çalışır: paket `argon/PAKET_*.md`, çıktı `argon/*.yaml` |
-| **GPT-5.6 / Sol 6.1** | Geliştirme & İyileştirme Danışmanı | - Codex tarafındaki kod kalitesinin artırılması<br>- Algoritmik performans ve hız optimizasyonu önerileri |
+| **Claude Opus 5.5** (sselimgenc hesabı) | **Takım lideri** | Karar ve öncelik sahibi. Görev yazar (`docs/GOREV_*.md`), ön kaydı belirler, PR'ları denetler, sonuç raporlarını yazar. `DURUM.md`'yi yalnız lider günceller. |
+| **Codex** | Uygulayıcı (kod, veri, gerçek koşular) | 2026-10-23'te projeden çıkarıldı, aynı gün geri döndü (kullanıcı kararı). Görevini Issue #1'deki `[CODEX GÖREVİ]` yorumundan ya da kullanıcının yapıştırdığı mesajdan alır. Teslim PR ile. |
+| **Claude Sonnet 5.5** (sg507 hesabı) | Uygulayıcı (kod, araştırma) | Lider talimatıyla çalışır, karar vermez. Görevini Issue #1'deki `[SONNET GÖREVİ]` yorumundan ya da kullanıcının yapıştırdığı mesajdan alır. Teslim PR ile. |
+| **Argon** (Google Gemini 3.8, repo erişimi yok) | Araştırmacı + denetçi | Kullanıcı aracılığıyla çalışır: lider `argon/PAKET_*.md` paketini hazırlar, kullanıcı Gemini'ye yapıştırır, cevabı geri getirir. Bulgularını kaynaklı yazar; ekibin yöntemini eleştirebilir (kullanıcı kararı, 2026-10-23). Çıktısını lider denetler. |
+| ~~Sol 6.1~~ | — | Kanalı yok, pasif. |
+
+**Kural:** her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ---
 
-## 🔄 GitHub Üzerinden Otonom İletişim Protokolü
+## 🔄 İletişim (gerçekte nasıl işliyor)
 
-İki farklı AI ekosistemi doğrudan insan müdahalesi olmadan GitHub üzerinden haberleşir:
+Ajanlar kendiliğinden tetiklenmiyor; 15 dakikalık yoklama ve `@` ile dürtme **çalışmıyor**. Akış şöyle:
 
-1. **15 Dakikalık Periyodik Yoklama (Heartbeat):** 
-   Her iki yapay zeka ekosistemi de repo içerisindeki durum dosyalarını (`state.json` veya aktif GitHub Issue etiketlerini) **15 dakikada bir** kontrol ederek sıranın kendisine gelip gelmediğini denetler.
-   
-2. **Dürtme (Poke / Ping) Mekanizması:** 
-   Moderator (Sonnet 5.5) veya Denetçi (Opus 5.5) kritik bir görev atadığında, GitHub Issue yorumlarında ilgili modeli etiketleyerek `@codex-worker` veya `@claude-moderator` şeklinde "dürterek" 15 dakikalık bekleme süresini baypas edebilir ve anlık tetikleme sağlayabilir.
+1. Lider görevi `docs/GOREV_*.md` dosyasına yazar, PR açar; kullanıcı PR'ı birleştirir.
+2. Lider Issue #1'e `[CODEX GÖREVİ]` ya da `[SONNET GÖREVİ]` başlıklı kısa bir yorum yazar ve `DURUM.md`'yi günceller.
+3. Lider kullanıcıya her ajan için **yapıştırmaya hazır** bir mesaj verir. Kullanıcı mesajı ilgili ajana yapıştırır (ya da yalnız "görev geldi" der).
+4. Ajan main'i çeker, görevi yapar, PR ile teslim eder. Lider denetler, kabul ya da ret yazar.
 
-3. **Veri Akışı ve Versiyonlama:** 
-   - Strateji parametreleri, ham veriler ve backtest sonuç raporları `strategies/` ve `results/` klasörleri altında saklanır.
-   - Her tur sonunda yapılan değişiklikler anlamlı commit mesajlarıyla (`[Claude-Mod]`, `[Codex-Sol]` etiketleriyle) depoya işlenir.
+Commit etiketleri: `[Opus-Lead]`, `[Claude-Mod]` (Sonnet), `[Codex]`, `[Argon]`.
 
 ---
 
-## 📂 Proje Yapısı
+## 📂 Proje yapısı
 
 ```text
-├── .github/
-│   └── workflows/          # Otomasyon ve tetikleyici betikler
-├── strategies/             # Geliştirilen borsa stratejileri (Python)
-├── backtests/              # Backtest sonuçları, metrikler ve loglar
-├── data/                   # Piyasa veri setleri (CSV / Parquet)
-├── state.json              # AI'lar arası sıra ve görev durum takip dosyası
-└── README.md
+├── DURUM.md                # Güncel durum (tek doğru kaynak)
+├── docs/                   # Görevler (GOREV_*.md), kurallar (EVRENSEL_KURALLAR, ELEME_KRITERLERI, PROTOKOL), strateji kartları (spec/)
+├── engine/                 # Kart yorumlayıcı, göstergeler, portföy motoru, kilit
+├── backtests/              # Huni aşamaları (tarama, asama2a, asama2b), U1 koşucuları, raporlar
+├── data/                   # İndiriciler ve MANIFEST.csv (büyük Parquet dosyaları git dışında)
+├── results/                # Sonuçlar (SONUC.md/csv, U1 çıktıları)
+├── paper/                  # Paper trade altyapısı (zamanlaması kapalı)
+├── strategies/             # Codex Algo 21 Python stratejileri
+├── tartisma/               # Tartışmalar ve lider kararları
+├── argon/                  # Argon paketleri ve cevapları
+├── arastirma/              # Strateji toplama kayıtları (T35, U3)
+├── tests/                  # pytest
+└── state.json              # Eski kuyruk kaydı (2026-10-22'den beri güncellenmiyor)
+```

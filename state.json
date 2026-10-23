@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "_NOT": "BU DOSYA 2026-10-22'DEN BERI GUNCELLENMIYOR; yalniz gecmis kaydi. Guncel durum, sira ve roller: DURUM.md. Asagidaki turn/queue/triggers alanlarini kullanma.",
   "lead": "auditor (sselimgenc, Opus 5.5)",
   "turn": "claude-moderator",
   "phase": "1-dogrulama + 0-triyaj",
