@@ -21,7 +21,7 @@ Amaç: yazar beyanıyla toplanan 10 adayı **kendi motorumuzda**, Faz 1'in evren
 Eklenmezse B planı: veri GitHub Actions'ta (açık internet) çekilir ve repoya Parquet olarak yazılır (`.github/workflows/dukascopy.yml`).
 
 ## 2. İşler
-### T36a: Veri (lider)
+### T36a: Veri (Sonnet; Codex ortamı açılırsa Codex). Taslak: `data/dukascopy.py` (lider, test edilmedi)
 - `data/dukascopy.py`: bi5 (LZMA) tick/1 dk mum indirici, UTC, bid/ask ortası. Spread bilgisi ayrıca saklanır (maliyet modeli için).
 - Semboller: USDJPY, USDCHF (2010→); USATECHIDXUSD (mevcut ilk tarih→).
 - Depolama: `data/dakika/<sembol>/<yil>.parquet` (1 dk). Repo boyutu için yalnız 1 dk; 5 dk/30 dk yeniden örneklenir.
@@ -34,7 +34,7 @@ Eklenmezse B planı: veri GitHub Actions'ta (açık internet) çekilir ve repoya
 4. **Seans sonu kapatma:** `seans_sonu_kapat: "HH:MM tz"`.
 5. Testler + CI paritesi (Faz 1 sonuçları birebir aynı kalmalı).
 
-### T36c: Kartlar (lider)
+### T36c: Kartlar (Sonnet; note.com API erişimi var)
 `docs/spec/T35-<id>.yaml` kartları, uydurma yok. Kaynakta olmayan parametre `belirsiz`'e yazılır. Öncelik: JP-005, JP-004, US-009, IN-004, SA-003; sonra US-006, TH-001.
 Kart için kaynak metin gerekiyor: lider oturumu note.com / stsfutures / quantbrasil'i açamıyor. Kural metinleri T35 kayıtlarından (`orijinal_alinti`, `giris/cikis/stop`) alınır; eksikse Sonnet (note.com API erişimi var) kaynaktan tamamlar.
 
@@ -44,5 +44,7 @@ Dönemler: FX/CFD dakikalık için IS 2010-2019, OOS 2020→ (JP-004 için yazar
 
 ## 3. Sıra
 1. Kullanıcı: alan adı izni.
-2. Lider T36a (veri) ve T36c (kartlar) paralel; Sonnet T36b (motor).
-3. T36b birleşince lider T36d.
+2. Sonnet sırayla: T36b (motor) → T36a (veri: taslağı tamamla, testleri yaz, ağ izni varsa indir; yoksa `.github/workflows/dukascopy.yml` ile Actions'ta indir) → T36c (kartlar). Codex ortamı açılırsa T36a'yı o alır.
+3. Lider: her PR'ı denetler; T36d (huni koşusu ve sonuç raporu).
+
+**Token tasarrufu (kullanıcı kararı, 2026-10-23):** Lider kod/veri işi yapmaz; yalnız görev, denetim, karar ve sonuç raporu.

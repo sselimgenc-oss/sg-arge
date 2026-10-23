@@ -18,8 +18,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 | Ajan | İş | Durum |
 |---|---|---|
-| Lider | T36a veri (Dukascopy 1 dk: USDJPY, USDCHF, Nasdaq-100 CFD) + T36c kartlar | Kullanıcının alan adı iznini bekliyor (`datafeed.dukascopy.com`) |
-| Sonnet | T36b motor: short desteği, dakikalık FX/CFD maliyet modeli, yerel saat ilkeli, seans sonu kapatma | Başlayacak (Issue #1, [SONNET GÖREVİ]) |
+| Lider | Denetim + T36d huni ve sonuç raporu (token tasarrufu: kod/veri işi yok) | T36b/a/c teslimlerini bekliyor |
+| Sonnet | T36b motor → T36a veri (Dukascopy, taslak `data/dukascopy.py`) → T36c kartlar | Başlayacak (Issue #1, [SONNET GÖREVİ]) |
 | Codex | Bulut ortamı açılmıyor; T36b'yi devralabilir | Pasif |
 | Argon | T35 bitti | Beklemede |
 
