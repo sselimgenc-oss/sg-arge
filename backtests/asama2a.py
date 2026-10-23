@@ -89,32 +89,55 @@ def trade_stats(trades: pd.DataFrame) -> tuple[float, float, int]:
     return float(min(pf, PF_CAP)), float(trades["r_multiple"].mean()), len(trades)
 
 
+def _draw_entries(prepared: tarama.Prepared, base: pd.DataFrame, count: int, factor: float, rng: np.random.Generator) -> np.ndarray:
+    entry = np.zeros(len(base), dtype=bool)
+    if count:
+        index = base.index
+        eligible = np.flatnonzero(
+            np.asarray(index >= prepared.start)
+            & np.asarray(index <= prepared.end)
+            & np.isfinite(base["atr"].to_numpy(dtype=float))
+        )
+        eligible = eligible[:-1] if len(eligible) > 1 else eligible
+        if len(eligible):
+            draws = min(len(eligible), max(1, int(round(count * factor))))
+            entry[rng.choice(eligible, size=draws, replace=False)] = True
+    return entry
+
+
 def random_entry_signals(
     prepared: tarama.Prepared,
     per_symbol: dict[str, int],
     factor: float,
     rng: np.random.Generator,
+    per_symbol_short: dict[str, int] | None = None,
 ) -> dict[str, pd.DataFrame]:
-    """Plan signals with the entry column replaced by random entry bars (exits untouched)."""
+    """Plan signals with the entry column replaced by random entry bars (exits untouched).
+
+    The null keeps the card's direction (D17): a ``short`` card draws its random entries into ``entry_short``; a
+    two-way (``iki``) card draws ``per_symbol`` long and ``per_symbol_short`` short entries, each side with its own
+    exit rule. Long-only cards consume the random stream exactly as before."""
+    direction = prepared.plan.engine_kwargs.get("direction", "long")
     signals = {}
     for symbol, base in prepared.plan.signals.items():
-        count = per_symbol.get(symbol, 0)
-        entry = np.zeros(len(base), dtype=bool)
-        if count:
-            index = base.index
-            eligible = np.flatnonzero(
-                np.asarray(index >= prepared.start)
-                & np.asarray(index <= prepared.end)
-                & np.isfinite(base["atr"].to_numpy(dtype=float))
-            )
-            eligible = eligible[:-1] if len(eligible) > 1 else eligible
-            if len(eligible):
-                draws = min(len(eligible), max(1, int(round(count * factor))))
-                entry[rng.choice(eligible, size=draws, replace=False)] = True
         frame = base.copy(deep=False)
-        frame["entry"] = entry
+        if direction == "short":
+            frame["entry_short"] = _draw_entries(prepared, base, per_symbol.get(symbol, 0), factor, rng)
+        else:
+            frame["entry"] = _draw_entries(prepared, base, per_symbol.get(symbol, 0), factor, rng)
+            if direction == "both":
+                frame["entry_short"] = _draw_entries(prepared, base, (per_symbol_short or {}).get(symbol, 0), factor, rng)
         signals[symbol] = frame
     return signals
+
+
+def side_counts(prepared: tarama.Prepared, real_trades: pd.DataFrame) -> tuple[dict[str, int], dict[str, int] | None]:
+    """Per-symbol trade counts of the real run, split by direction for two-way cards (long-only: one dict, as before)."""
+    if prepared.plan.engine_kwargs.get("direction") == "both" and "yon" in real_trades.columns:
+        longs = real_trades[real_trades["yon"] == "long"]["symbol"].value_counts().to_dict()
+        shorts = real_trades[real_trades["yon"] == "short"]["symbol"].value_counts().to_dict()
+        return longs, shorts
+    return real_trades["symbol"].value_counts().to_dict(), None
 
 
 def _one_null(args: tuple[float, int]) -> tuple[float, float, int, float]:
@@ -124,7 +147,7 @@ def _one_null(args: tuple[float, int]) -> tuple[float, float, int, float]:
         raise RuntimeError("null worker was not initialised")
     rng = np.random.default_rng(seed)
     per_symbol = _STATE["null_per_symbol"]
-    signals = random_entry_signals(_NULL_PREPARED, per_symbol, factor, rng)
+    signals = random_entry_signals(_NULL_PREPARED, per_symbol, factor, rng, _STATE.get("null_per_symbol_short"))
     trades = _NULL_PREPARED.run(1.0, signals=signals, trusted_inputs=True, trades_only=True).trades
     pf, ortr, count = trade_stats(trades)
     return pf, ortr, count, holding_bars(trades, _NULL_PREPARED.frames)
@@ -144,11 +167,11 @@ def null_distribution(
     which keeps every daily result reproducible byte for byte.
     """
     rng = np.random.default_rng(seed)
-    per_symbol = real_trades["symbol"].value_counts().to_dict()
+    per_symbol, per_symbol_short = side_counts(prepared, real_trades)
     target = len(real_trades)
 
     def one(factor: float):
-        signals = random_entry_signals(prepared, per_symbol, factor, rng)
+        signals = random_entry_signals(prepared, per_symbol, factor, rng, per_symbol_short)
         return prepared.run(1.0, signals=signals, trusted_inputs=True, trades_only=True).trades
 
     factor = 1.0
@@ -169,6 +192,7 @@ def null_distribution(
         global _NULL_PREPARED
         _NULL_PREPARED = prepared
         _STATE["null_per_symbol"] = per_symbol
+        _STATE["null_per_symbol_short"] = per_symbol_short
         # A single pool is retained through calibration and the measured repetitions.
         with ProcessPoolExecutor(
             max_workers=workers, mp_context=multiprocessing.get_context("fork")

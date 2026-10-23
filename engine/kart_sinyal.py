@@ -59,13 +59,38 @@ class KartPlan:
 def _uses(card: Mapping[str, Any], names: frozenset[str]) -> bool:
     return any(
         names & _expr.parse(str(card[key])).names
-        for key in ("giris", "cikis")
+        for key in ("giris", "cikis", "giris_short", "cikis_short")
         if card.get(key)
     )
 
 
+YONLER = ("long", "short", "iki")
+SHORT_YOK = ("kismi_kar", "roi_tablosu", "kar_kilidi", "giris_emri")  # long-only engine features (D17)
+
+
+def card_direction(card: Mapping[str, Any]) -> str:
+    """``yon`` of the card: ``long`` (default), ``short`` or ``iki`` (two-way)."""
+    return str(card.get("yon") or "long")
+
+
+def _uses_expr(card: Mapping[str, Any], keys: tuple[str, ...], names: frozenset[str]) -> bool:
+    return any(names & _expr.parse(str(card[key])).names for key in keys if card.get(key))
+
+
 def desteklenmeyen_alan(card: Mapping[str, Any]) -> str | None:
     """Name of the first card field the engine cannot honour, else None."""
+    yon = card_direction(card)
+    if yon not in YONLER:
+        return f"yon.{yon}"
+    if yon != "long":
+        for key in SHORT_YOK:
+            if card.get(key):
+                return f"yon.{yon}+{key}"
+        for key in ("stop", "hedef"):
+            if isinstance(card.get(key), Mapping) and card[key].get("tip") == "seviye":
+                return f"yon.{yon}+{key}.seviye"
+        if yon == "iki" and not card.get("giris_short"):
+            return "yon.iki+giris_short_yok"
     stop = card.get("stop")
     if stop and stop.get("tip") not in STOP_TYPES:
         return f"stop.{stop.get('tip')}"
@@ -324,37 +349,56 @@ def card_frame_signals(
         raise EndeksYok(card["id"])
     env = _ind.build_env(frame, card.get("gostergeler") or {}, benchmarks=benchmarks, week_end=week_end)
     mtf = mtf_callback(frame)
-    entry = _bool(_expr.parse(card["giris"]).evaluate(env, index=index, mtf=mtf), index)
+    positions = np.arange(len(index))
 
-    exit_text = card.get("cikis")
-    if isinstance(exit_text, str) and exit_text.strip().lower() == "false":
-        exit_text = None  # Argon writes the text 'false' for "no exit rule"; stops/targets close the trade
-    builder = None
-    if not exit_text:
-        exit_static = pd.Series(False, index=index)
-    elif POSITION_RUNTIME & _expr.parse(exit_text).names:
-        exit_static = pd.Series(False, index=index)
-        exit_expr = _expr.parse(exit_text)
-        positions = np.arange(len(index))
-        warmup = _lazy_warmup(exit_expr)
-        arrays = _arrays({name: env[name] for name in exit_expr.names if name in env}) if warmup is not None else None
+    def rules(entry_text: str, exit_text: Any, short: bool = False):
+        """Entry series, static exit series and the position-state exit builder of one side."""
+        entry = _bool(_expr.parse(entry_text).evaluate(env, index=index, mtf=mtf), index)
+        if isinstance(exit_text, str) and exit_text.strip().lower() == "false":
+            exit_text = None  # Argon writes the text 'false' for "no exit rule"; stops/targets close the trade
+        builder = None
+        if not exit_text:
+            exit_static = pd.Series(False, index=index)
+        elif POSITION_RUNTIME & _expr.parse(exit_text).names:
+            exit_static = pd.Series(False, index=index)
+            exit_expr = _expr.parse(exit_text)
+            warmup = _lazy_warmup(exit_expr)
+            arrays = _arrays({name: env[name] for name in exit_expr.names if name in env}) if warmup is not None else None
 
-        def builder(symbol: str, entry_date: pd.Timestamp, price: float, stop: float, target: float):  # noqa: ARG001
-            loc = index.get_loc(entry_date)
-            runtime = {
-                "giris": price, "giris_fiyati": price, "giris_stop": stop,
-                "giris_hedef": target, "stop_mesafesi": price - stop,
-            }
-            if warmup is not None:  # elementwise rule: evaluate in chunks, only as far as the position lives
-                return LazyExit(exit_expr, arrays, runtime, len(index), loc, warmup)
-            runtime["bars_since_entry"] = pd.Series(positions - loc, index=index, dtype=float)
-            out = _bool(exit_expr.evaluate({**env, **runtime}, index=index, mtf=mtf), index)
-            return out & pd.Series(positions >= loc, index=index)
-    else:
-        exit_static = _bool(_expr.parse(exit_text).evaluate(env, index=index, mtf=mtf), index)
+            def builder(symbol: str, entry_date: pd.Timestamp, price: float, stop: float, target: float):  # noqa: ARG001
+                loc = index.get_loc(entry_date)
+                runtime = {
+                    "giris": price, "giris_fiyati": price, "giris_stop": stop,
+                    "giris_hedef": target, "stop_mesafesi": (stop - price) if short else (price - stop),
+                }
+                if warmup is not None:  # elementwise rule: evaluate in chunks, only as far as the position lives
+                    return LazyExit(exit_expr, arrays, runtime, len(index), loc, warmup)
+                runtime["bars_since_entry"] = pd.Series(positions - loc, index=index, dtype=float)
+                out = _bool(exit_expr.evaluate({**env, **runtime}, index=index, mtf=mtf), index)
+                return out & pd.Series(positions >= loc, index=index)
+        else:
+            exit_static = _bool(_expr.parse(exit_text).evaluate(env, index=index, mtf=mtf), index)
+        return entry, exit_static, builder
 
+    yon = card_direction(card)
+    entry, exit_static, builder = rules(card["giris"], card.get("cikis"), short=(yon == "short"))
     atr_sizing = _ind.atr(frame, SIZING_ATR)
-    out = pd.DataFrame({"entry": entry, "exit": exit_static, "atr": atr_sizing}, index=index)
+    if yon == "long":
+        out = pd.DataFrame({"entry": entry, "exit": exit_static, "atr": atr_sizing}, index=index)
+    elif yon == "short":  # `giris`/`cikis` describe the short side (D17)
+        never = pd.Series(False, index=index)
+        out = pd.DataFrame({"entry": never, "exit": never, "entry_short": entry, "exit_short": exit_static,
+                            "atr": atr_sizing}, index=index)
+    else:  # iki: `giris`/`cikis` = long side, `giris_short`/`cikis_short` = short side
+        entry_short, exit_short, builder_short = rules(card["giris_short"], card.get("cikis_short"), short=True)
+        out = pd.DataFrame({"entry": entry, "exit": exit_static, "entry_short": entry_short, "exit_short": exit_short,
+                            "atr": atr_sizing}, index=index)
+        if builder is not None or builder_short is not None:
+            long_builder = builder
+
+            def builder(symbol, entry_date, price, stop, target, _long=long_builder, _short=builder_short):  # noqa: ANN001
+                chosen = _short if stop > price else _long  # the stop sits above a short fill
+                return chosen(symbol, entry_date, price, stop, target) if chosen else None
 
     entry_order = card.get("giris_emri")
     if entry_order:
@@ -474,7 +518,7 @@ def build_plan(
     missing = desteklenmeyen_alan(card)
     if missing:
         raise MotorDestegiYok(missing)
-    if _uses_pips(card) and market is not None and market != "FX8":
+    if _uses_pips(card) and market is not None and market not in ("FX8", "FXDK"):
         raise PipsPiyasaDisi()
     signals: dict[str, pd.DataFrame] = {}
     builders: dict[str, Callable[..., pd.Series | None] | None] = {}
@@ -492,6 +536,12 @@ def build_plan(
         "trail_multiple": float(trail["carpan"]) if trail else None,
         "fill_at_close": card.get("dolum") == "kapanis",
     }
+    yon = card_direction(card)
+    if yon != "long":
+        kwargs["direction"] = "short" if yon == "short" else "both"
+    if card.get("seans_sonu_kapat"):
+        clock, _, zone_name = str(card["seans_sonu_kapat"]).partition(" ")
+        kwargs["session_close"] = (clock.strip(), zone_name.strip() or "UTC")
     entry_order = card.get("giris_emri")
     if entry_order:
         kwargs["entry_order_type"] = str(entry_order["tip"])

@@ -1,10 +1,11 @@
-"""Small event-driven, long-only portfolio reference engine."""
+"""Small event-driven portfolio reference engine (long-only by default; short and two-way: docs D17)."""
 
 from __future__ import annotations
 
 import bisect
 from dataclasses import dataclass, field
 from typing import Callable
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
@@ -26,6 +27,7 @@ class Order:
     entry_level: float = float("nan")
     activate_loc: int = -1
     expires_loc: int = -1
+    side: float = 1.0
 
 
 @dataclass
@@ -49,6 +51,8 @@ class Position:
     exit_cost_acc: float = 0.0
     entry_cost_sold: float = 0.0
     sig_loc: int = -1
+    side: float = 1.0
+    sess_key: int = -1
 
 
 @dataclass
@@ -66,6 +70,7 @@ class Trade:
     net_pnl: float
     r_multiple: float
     exit_reason: str
+    yon: str = "long"
 
 
 @dataclass
@@ -156,6 +161,9 @@ def run_portfolio(
     trades_only: bool = False,
     runtime_cache: dict | None = None,
     record_state: bool = False,
+    direction: str = "long",
+    cost_abs: float = 0.0,
+    session_close: tuple[str, str] | None = None,
 ) -> BacktestResult:
     """Run shared-capital portfolio events without same-bar signal fills.
 
@@ -188,6 +196,20 @@ def run_portfolio(
       stop is not below, or target not above, the fill price is skipped.
     * ``entry_order_type``: ``"stop"`` or ``"limit"`` uses the signal-bar
       ``entry_level`` for up to ``entry_order_validity`` following bars.
+
+    Short / two-way / FX-CFD extras (docs/EVRENSEL_KURALLAR.md D17); the defaults leave every long-only result unchanged:
+
+    * ``direction``: ``"long"`` (default) reads the ``entry``/``exit`` signal columns; ``"short"`` reads
+      ``entry_short``/``exit_short`` (falling back to ``entry``/``exit`` when those are absent); ``"both"`` reads
+      both pairs. A symbol holds one position at a time; a bar carrying both a long and a short entry is skipped.
+      A short mirrors every long rule: stop above the fill, target below it, trailing stop ratchets down from
+      ``close + m*ATR`` / ``low + m*ATR``, a gap through the stop fills at the open, stop before target on the
+      same bar (A3). ``roi_table``, ``partial_profit``, ``profit_lock``, ``level_fns`` and pending entry
+      orders are long-only (``ValueError`` otherwise).
+    * ``cost_abs``: cost per unit of quantity per side in price units (FX pips), added to ``cost_rate`` x notional.
+    * ``session_close``: ``("HH:MM", "<IANA tz>")``; a position is flat-closed at the open of the first bar whose
+      local clock time has passed ``HH:MM`` since its entry bar's session (a session runs from ``HH:MM`` to the next
+      ``HH:MM`` in local time), reason ``seans_sonu``.
     """
 
     if extra_delay_bars < 0:
@@ -201,6 +223,23 @@ def run_portfolio(
     if trail_mode not in ("close", "high", None):
         raise ValueError("trail_mode must be 'close', 'high' or None")
     trail_m = atr_stop_multiple if trail_multiple is None else trail_multiple
+    if direction not in ("long", "short", "both"):
+        raise ValueError("direction must be 'long', 'short' or 'both'")
+    if direction != "long":
+        for name, value in (("roi_table", roi_table), ("partial_profit", partial_profit), ("profit_lock", profit_lock),
+                            ("level_fns", level_fns), ("entry_order_type", entry_order_type)):
+            if value:
+                raise ValueError(f"{name} is long-only (direction={direction!r})")
+    if cost_abs < 0:
+        raise ValueError("cost_abs must be non-negative")
+    session_minutes = None
+    session_zone = None
+    if session_close is not None:
+        clock, zone_name = session_close
+        hour, minute = (int(part) for part in str(clock).split(":"))
+        if not (0 <= hour < 24 and 0 <= minute < 60):
+            raise ValueError("session_close time must be HH:MM")
+        session_minutes, session_zone = hour * 60 + minute, ZoneInfo(str(zone_name))
     start = _as_utc(start)
     end = _as_utc(end)
     # Repeated null draws reuse frames/signals already normalised and aligned by
@@ -248,6 +287,17 @@ def run_portfolio(
             return frame[name].to_numpy(dtype=float) if name in frame.columns else nan_col[symbol]
 
         sig_exit = {symbol: signals[symbol]["exit"].to_numpy().astype(bool) for symbol in symbols}
+        sig_exit_short = {
+            symbol: signals[symbol]["exit_short" if "exit_short" in signals[symbol].columns else "exit"].to_numpy().astype(bool)
+            for symbol in symbols
+        } if direction != "long" else {}
+        sess_key = {}
+        if session_minutes is not None:
+            for symbol in symbols:
+                local = index_of[symbol].tz_convert(session_zone)
+                day_number = np.asarray((local.tz_localize(None).normalize() - pd.Timestamp("1970-01-01")).days, dtype=np.int64)
+                minute_of_day = local.hour.to_numpy() * 60 + local.minute.to_numpy()
+                sess_key[symbol] = day_number + (minute_of_day >= session_minutes).astype(np.int64)
         sig_atr = {symbol: column(symbol, "atr") for symbol in symbols}
         sig_trail = {
             symbol: column(symbol, "trail_atr") if "trail_atr" in signals[symbol].columns else sig_atr[symbol]
@@ -265,6 +315,7 @@ def run_portfolio(
             "sig_trail": sig_trail, "sig_stop_dist": sig_stop_dist, "sig_target_dist": sig_target_dist,
             "sig_stop_pct": sig_stop_pct, "sig_target_pct": sig_target_pct,
             "sig_entry_level": sig_entry_level, "has_stop_dist": has_stop_dist,
+            "sig_exit_short": sig_exit_short, "sess_key": sess_key,
         }
         if runtime_cache is not None:
             runtime_cache["static"] = cached
@@ -277,14 +328,29 @@ def run_portfolio(
         sig_stop_dist, sig_target_dist = cached["sig_stop_dist"], cached["sig_target_dist"]
         sig_stop_pct, sig_target_pct = cached["sig_stop_pct"], cached["sig_target_pct"]
         sig_entry_level, has_stop_dist = cached["sig_entry_level"], cached["has_stop_dist"]
+    sig_exit_short, sess_key = cached["sig_exit_short"], cached["sess_key"]
 
     sig_entry = {symbol: signals[symbol]["entry"].to_numpy().astype(bool) for symbol in symbols}
+    sig_entry_short: dict[str, np.ndarray] = {}
+    if direction != "long":
+        for symbol in symbols:
+            frame = signals[symbol]
+            short_column = "entry_short" if "entry_short" in frame.columns else "entry"
+            sig_entry_short[symbol] = frame[short_column].to_numpy().astype(bool)
+        if direction == "short":
+            sig_entry = sig_entry_short
+        else:  # "both": a bar that signals both ways is ambiguous and is skipped
+            both = {symbol: sig_entry[symbol] & sig_entry_short[symbol] for symbol in symbols}
+            sig_entry = {symbol: sig_entry[symbol] & ~both[symbol] for symbol in symbols}
+            sig_entry_short = {symbol: sig_entry_short[symbol] & ~both[symbol] for symbol in symbols}
 
     # Entry signals per date: only symbols holding a position or flagging an entry need a signal-step visit.
     entry_matrix = np.zeros((len(window), len(symbols)), dtype=bool)
     for column_number, symbol in enumerate(symbols):
         valid = locs[symbol] >= 0
         entry_matrix[valid, column_number] = sig_entry[symbol][locs[symbol][valid]]
+        if direction == "both":
+            entry_matrix[valid, column_number] |= sig_entry_short[symbol][locs[symbol][valid]]
     entry_rows, entry_cols = np.nonzero(entry_matrix)
     entry_starts = np.searchsorted(entry_rows, np.arange(len(window) + 1))
 
@@ -316,15 +382,17 @@ def run_portfolio(
         for symbol, position in positions.items():
             price = mark(symbol, field)
             if np.isfinite(price):
-                marked += position.quantity * price
+                marked += position.side * position.quantity * price
         return marked
 
     def close_position(symbol: str, date: pd.Timestamp, price: float, reason: str) -> None:
         nonlocal cash
         position = positions.pop(symbol)
         exit_cost = position.quantity * price * cost_rate
-        cash += position.quantity * price - exit_cost
-        net_pnl = (price - position.entry_price) * position.quantity - position.entry_cost - exit_cost
+        if cost_abs:
+            exit_cost += position.quantity * cost_abs
+        cash += position.side * position.quantity * price - exit_cost
+        net_pnl = position.side * (price - position.entry_price) * position.quantity - position.entry_cost - exit_cost
         if position.partial_done:
             net_pnl += position.realized
         trades.append(
@@ -342,6 +410,7 @@ def run_portfolio(
                 net_pnl=net_pnl,
                 r_multiple=net_pnl / position.initial_risk if position.initial_risk else np.nan,
                 exit_reason=reason + ("+partial" if position.partial_done else ""),
+                yon="short" if position.side < 0 else "long",
             )
         )
         if record_state:
@@ -352,7 +421,7 @@ def run_portfolio(
             last_exit_loc[symbol] = int(locs[symbol][di])
 
     def size_entry(symbol: str, price: float, signal_atr: float, stop_dist: float, target_dist: float,
-                   stop_pct: float, target_pct: float, sig_loc: int):
+                   stop_pct: float, target_pct: float, sig_loc: int, side: float = 1.0):
         """Quantity and levels of an entry at ``price`` with the book as it is now (no side effects), or ``None``."""
         if symbol in positions or not np.isfinite(signal_atr) or signal_atr <= 0:
             return None
@@ -374,10 +443,10 @@ def run_portfolio(
             return None
         field_name = "close" if fill_at_close else "open"
         portfolio_equity = equity_at(field_name)
-        initial_stop = price - stop_dist
-        risk_per_unit = price - initial_stop
+        initial_stop = price - side * stop_dist
+        risk_per_unit = side * (price - initial_stop)
         existing_risk = sum(
-            max(mark(held, field_name) - position.stop, 0.0) * position.quantity
+            max(position.side * (mark(held, field_name) - position.stop), 0.0) * position.quantity
             for held, position in positions.items()
         )
         gross = sum(position.quantity * mark(held, field_name) for held, position in positions.items())
@@ -387,23 +456,32 @@ def run_portfolio(
         )
         gross_budget = max(max_gross * portfolio_equity - gross, 0.0)
         cash_budget = max(cash / (1 + cost_rate), 0.0)
-        quantity = min(risk_budget / risk_per_unit, gross_budget / price, cash_budget / price)
+        if cost_abs:  # quantity x (price x (1 + rate) + abs cost) must fit in cash
+            quantity = min(risk_budget / risk_per_unit, gross_budget / price,
+                           max(cash, 0.0) / (price * (1 + cost_rate) + cost_abs) if side > 0 else float("inf"))
+        elif side > 0:
+            quantity = min(risk_budget / risk_per_unit, gross_budget / price, cash_budget / price)
+        else:  # a short needs no cash for the position itself; gross and risk budgets bound it
+            quantity = min(risk_budget / risk_per_unit, gross_budget / price)
         if quantity <= 0 or not np.isfinite(quantity):
             return None
         return quantity, initial_stop, risk_per_unit, target_dist
 
     def open_position(symbol: str, date: pd.Timestamp, price: float, signal_atr: float,
                       stop_dist: float, target_dist: float,
-                      stop_pct: float = float("nan"), target_pct: float = float("nan"), sig_loc: int = -1) -> None:
+                      stop_pct: float = float("nan"), target_pct: float = float("nan"), sig_loc: int = -1,
+                      side: float = 1.0) -> None:
         nonlocal cash, max_open_positions
-        sized = size_entry(symbol, price, signal_atr, stop_dist, target_dist, stop_pct, target_pct, sig_loc)
+        sized = size_entry(symbol, price, signal_atr, stop_dist, target_dist, stop_pct, target_pct, sig_loc, side)
         if sized is None:
             return
         quantity, initial_stop, risk_per_unit, target_dist = sized
         entry_cost = quantity * price * cost_rate
-        cash -= quantity * price + entry_cost
+        if cost_abs:
+            entry_cost += quantity * cost_abs
+        cash -= side * quantity * price + entry_cost
         initial_risk = quantity * risk_per_unit
-        target = price + target_dist if np.isfinite(target_dist) and target_dist > 0 else float("nan")
+        target = price + side * target_dist if np.isfinite(target_dist) and target_dist > 0 else float("nan")
         runtime_exit = None
         if exit_builder is not None:
             built = exit_builder(symbol, date, price, initial_stop, target)
@@ -415,7 +493,8 @@ def run_portfolio(
             symbol=symbol, entry_date=date, entry_price=price, quantity=quantity,
             stop=initial_stop, initial_stop=initial_stop, initial_risk=initial_risk,
             entry_cost=entry_cost, target=target, signal_atr=signal_atr,
-            runtime_exit=runtime_exit, orig_quantity=quantity, sig_loc=sig_loc,
+            runtime_exit=runtime_exit, orig_quantity=quantity, sig_loc=sig_loc, side=side,
+            sess_key=int(sess_key[symbol][locs[symbol][di]]) if session_minutes is not None and locs[symbol][di] >= 0 else -1,
         )
         max_open_positions = max(max_open_positions, len(positions))
         if record_state:
@@ -427,6 +506,8 @@ def run_portfolio(
         position = positions[symbol]
         sold = position.quantity * float(partial_profit["oran"])
         part_cost = sold * price * cost_rate
+        if cost_abs:
+            part_cost += sold * cost_abs
         entry_share = position.entry_cost * float(partial_profit["oran"])
         cash += sold * price - part_cost
         position.realized = (price - position.entry_price) * sold - entry_share - part_cost
@@ -502,7 +583,15 @@ def run_portfolio(
             pending.pop(order.symbol, None)
             open_position(order.symbol, date, open_price, order.signal_atr, order.stop_dist,
                           order.target_dist, order.stop_pct, order.target_pct,
-                          int(index_of[order.symbol].get_loc(order.signal_date)))
+                          int(index_of[order.symbol].get_loc(order.signal_date)), order.side)
+
+        # Session flat-close (D17): at the open of the first bar of a new local session every position still open
+        # from an earlier session is closed at that open (a time rule known in advance, so no look-ahead).
+        if session_minutes is not None:
+            for symbol in sorted(positions):
+                loc = locs[symbol][di]
+                if loc >= 0 and int(sess_key[symbol][loc]) > positions[symbol].sess_key:
+                    close_position(symbol, date, float(price_arr[symbol]["open"][loc]), "seans_sonu")
 
         # A pending stop/limit order becomes active only after its signal bar.
         # It fills before protective stops are evaluated, so a stop touched on
@@ -554,6 +643,17 @@ def run_portfolio(
                 if low_price <= position.stop:
                     close_position(symbol, date, position.stop, "stop")
                 continue
+            if position.side < 0:  # short: the stop sits above the fill, the target below (A3: stop first)
+                high_price = float(price_arr[symbol]["high"][loc])
+                if open_price >= position.stop:
+                    close_position(symbol, date, open_price, "gap_stop")
+                elif high_price >= position.stop:
+                    close_position(symbol, date, position.stop, "stop")
+                elif np.isfinite(position.target) and open_price <= position.target:
+                    close_position(symbol, date, open_price, "gap_target")
+                elif np.isfinite(position.target) and low_price <= position.target:
+                    close_position(symbol, date, position.target, "target")
+                continue
             if open_price <= position.stop:
                 close_position(symbol, date, open_price, "gap_stop")
             elif low_price <= position.stop:
@@ -598,12 +698,16 @@ def run_portfolio(
             current_atr = float(sig_trail[symbol][loc])
             if np.isfinite(current_atr):
                 # VARSAYIM: PDF's ATR14x3 trailing stop uses close - ATR14x3.
-                reference = float(price_arr[symbol]["close" if trail_mode == "close" else "high"][loc])
-                position.stop = max(position.stop, reference - trail_m * current_atr)
+                if position.side < 0:  # short: ratchet down from close (or low) + m x ATR
+                    reference = float(price_arr[symbol]["close" if trail_mode == "close" else "low"][loc])
+                    position.stop = min(position.stop, reference + trail_m * current_atr)
+                else:
+                    reference = float(price_arr[symbol]["close" if trail_mode == "close" else "high"][loc])
+                    position.stop = max(position.stop, reference - trail_m * current_atr)
 
         # Closed-bar signals schedule orders for a later open; never this bar.
         # With fill_at_close the order fills at this bar's close (exits first).
-        close_fills: list[tuple[str, float, float, float, float, float]] = []
+        close_fills: list[tuple[str, float, float, float, float, float, float]] = []
         visit = set(positions) | {symbols[c] for c in entry_cols[entry_starts[di]:entry_starts[di + 1]]}
         for symbol in sorted(visit):
             loc = locs[symbol][di]
@@ -611,12 +715,17 @@ def run_portfolio(
                 continue
             position = positions.get(symbol)
             exit_signal = bool(sig_exit[symbol][loc])
+            if position is not None and position.side < 0:
+                exit_signal = bool(sig_exit_short[symbol][loc])
             if position is not None:
                 if position.runtime_exit is not None and bool(position.runtime_exit[loc]):
                     exit_signal = True
                 if time_stop_bars is not None and position.bars_held >= time_stop_bars:
                     exit_signal = True
             entry_signal = bool(sig_entry[symbol][loc])
+            entry_side = -1.0 if direction == "short" else 1.0
+            if direction == "both" and not entry_signal and bool(sig_entry_short[symbol][loc]):
+                entry_signal, entry_side = True, -1.0
             if fill_at_close:
                 if position is not None and exit_signal:
                     close_position(symbol, date, float(price_arr[symbol]["close"][loc]), "signal")
@@ -624,7 +733,7 @@ def run_portfolio(
                     if partial_due(symbol, loc):
                         take_partial(symbol, float(price_arr[symbol]["close"][loc]))
                 elif position is None and entry_signal and cooled_down(symbol):
-                    close_fills.append((symbol, *sizing_at(symbol, loc)))
+                    close_fills.append((symbol, *sizing_at(symbol, loc), entry_side))
                 continue
             if symbol in positions and not exit_signal and symbol not in pending and partial_due(symbol, loc):
                 target_loc = loc + 1 + extra_delay_bars
@@ -665,22 +774,22 @@ def run_portfolio(
                     execute_date = index_of[symbol][target_loc]
                     atr_value, stop_dist, target_dist, stop_pct, target_pct = sizing_at(symbol, loc)
                     order = Order(symbol, "entry", execute_date, date, atr_value,
-                                  stop_dist, target_dist, stop_pct, target_pct)
+                                  stop_dist, target_dist, stop_pct, target_pct, side=entry_side)
                     scheduled.setdefault(execute_date, []).append(order)
                     pending[symbol] = "entry"
                 elif record_state and target_loc >= len(index_of[symbol]):
                     atr_value, stop_dist, target_dist, stop_pct, target_pct = sizing_at(symbol, loc)
                     reference = float(price_arr[symbol]["close"][loc])
-                    sized = size_entry(symbol, reference, atr_value, stop_dist, target_dist, stop_pct, target_pct, int(loc))
+                    sized = size_entry(symbol, reference, atr_value, stop_dist, target_dist, stop_pct, target_pct, int(loc), entry_side)
                     order_log.append({
                         "sinyal_tarihi": date, "sembol": symbol, "tip": "giris", "referans_fiyat": reference,
                         "adet": sized[0] if sized else 0.0, "stop": sized[1] if sized else float("nan"),
                         "hedef": reference + sized[3] if sized and np.isfinite(sized[3]) and sized[3] > 0 else float("nan"),
                     })
-        for symbol, atr_value, stop_dist, target_dist, stop_pct, target_pct in close_fills:
+        for symbol, atr_value, stop_dist, target_dist, stop_pct, target_pct, side in close_fills:
             loc = locs[symbol][di]
             open_position(symbol, date, float(price_arr[symbol]["close"][loc]), atr_value,
-                          stop_dist, target_dist, stop_pct, target_pct, int(loc))
+                          stop_dist, target_dist, stop_pct, target_pct, int(loc), side)
 
         if not trades_only:
             marked_equity = equity_at("close")
@@ -708,6 +817,8 @@ def run_portfolio(
     exposure_points[final_date] = 0.0
 
     trade_frame = pd.DataFrame([vars(trade) for trade in trades])  # asdict() would deep-copy every field
+    if direction == "long" and "yon" in trade_frame.columns:
+        trade_frame = trade_frame.drop(columns="yon")  # long-only results keep the historical column set
     equity = pd.Series(equity_points, name="equity", dtype=float).sort_index()
     exposure = pd.Series(exposure_points, name="exposure", dtype=float).sort_index()
     return BacktestResult(

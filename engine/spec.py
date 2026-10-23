@@ -193,6 +193,30 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
     # exit rules may use entry state (bars_since_entry, giris_fiyati, ...); entries may not
     _check_expression(card.get("giris"), "giris", defined, gost, issues, runtime=False)
     _check_expression(card.get("cikis"), "cikis", defined, gost, issues, runtime=True)
+    # D17: yon / giris_short / cikis_short / seans_sonu_kapat
+    yon = card.get("yon")
+    if yon is not None and yon not in ("long", "short", "iki"):
+        issues.append(Issue("yon", f"yon gecersiz: {yon!r} (long | short | iki)"))
+    if yon == "iki" and not (isinstance(card.get("giris_short"), str) and card["giris_short"].strip()):
+        issues.append(Issue("iki_giris_short", "yon: iki icin giris_short zorunlu"))
+    if yon != "iki":
+        for key in ("giris_short", "cikis_short"):
+            if card.get(key):
+                issues.append(Issue("short_alan", f"{key} yalniz yon: iki kartlarinda kullanilir"))
+    _check_expression(card.get("giris_short"), "giris_short", defined, gost, issues, runtime=False)
+    _check_expression(card.get("cikis_short"), "cikis_short", defined, gost, issues, runtime=True)
+    seans = card.get("seans_sonu_kapat")
+    if seans is not None:
+        clock, _, zone_name = str(seans).partition(" ")
+        try:
+            hour, minute = (int(part) for part in clock.split(":"))
+            from zoneinfo import ZoneInfo  # noqa: PLC0415
+
+            ZoneInfo(zone_name.strip() or "UTC")
+            if not (0 <= hour < 24 and 0 <= minute < 60):
+                raise ValueError(clock)
+        except Exception:  # noqa: BLE001
+            issues.append(Issue("seans_sonu_kapat", f"seans_sonu_kapat 'HH:MM <IANA tz>' olmali: {seans!r}"))
     entry_order = card.get("giris_emri")
     if entry_order is not None:
         if not isinstance(entry_order, dict):

@@ -40,6 +40,10 @@ BASE_COST = {"BIST30": 0.0015, "ABD25": 0.0005, "KRIPTO25": 0.0015, "EMTIA": 0.0
 MARKET_TOKEN = {"BIST30": "BIST", "ABD25": "ABD", "KRIPTO25": "KRIPTO", "EMTIA": "EMTIA"}
 BASE_COST["FX8"] = 0.0001
 MARKET_TOKEN["FX8"] = "FX"
+# T36b (D17): minute FX/CFD market of the T35 short list. Cost is absolute per unit (engine ``cost_abs``, pips from the
+# measured median spread), not a rate, so the rate is 0. Not part of ``MARKETS``: it is run explicitly, on the author's market.
+BASE_COST["FXDK"] = 0.0
+MARKET_TOKEN["FXDK"] = "FXDK"
 BENCHMARK_SYMBOL = {"ABD25": "SPY", "KRIPTO25": "BTCUSDT"}  # BIST30/EMTIA: no index series yet
 MIN_TRADES, MIN_PF, PF_ALARM = 30, 1.1, 4.0
 DAILY_TFS = ("1D", "1W")
@@ -85,7 +89,7 @@ def annualization_for(tf: str, market: str) -> int:
         return 52
     if tf == "1D":
         return 365 if market == "KRIPTO25" else 252
-    if market == "FX8":
+    if market in ("FX8", "FXDK"):
         return (24 * 60 // TF_MINUTES[tf]) * 252  # 24h weekday FX archive
     # 2H/4H US/commodity bars include the closed short final session bucket.
     # Preserve the established 1H factor for existing CI parity results.
@@ -124,6 +128,7 @@ class Prepared:
     start: pd.Timestamp
     end: pd.Timestamp
     runtime_cache: dict[str, Any] = field(default_factory=dict)
+    cost_abs: float = 0.0  # per-side cost in price units for the 1x run (FXDK); scaled by the stress multiplier
 
     def run(
         self,
@@ -147,7 +152,9 @@ class Prepared:
         return run_portfolio(
             self.frames, _unused_signal_function, market=self.market, start=self.start, end=self.end,
             cost_rate=cost, extra_delay_bars=extra_delay_bars,
-            precomputed_signals=signals if signals is not None else self.plan.signals, **kwargs,
+            precomputed_signals=signals if signals is not None else self.plan.signals,
+            **({"cost_abs": self.cost_abs * multiplier * (MOC_COST_FACTOR if fill else 1.0)} if self.cost_abs else {}),
+            **kwargs,
             trusted_inputs=trusted_inputs, trades_only=trades_only,
             runtime_cache=self.runtime_cache if trusted_inputs else None,
         )
@@ -162,8 +169,12 @@ def prepare(
     start: pd.Timestamp = IS_START,
     end: pd.Timestamp = IS_END,
     pit_universe: PITUniverse | None = None,
+    fxdk_spread_pip: float | None = None,
 ) -> Prepared:
-    """Card timeframe frames (weekly for 1W cards), signals and engine arguments for one market."""
+    """Card timeframe frames (weekly for 1W cards), signals and engine arguments for one market.
+
+    ``FXDK`` (D17) needs ``fxdk_spread_pip`` (median spread in pips, T36a) and exactly one symbol: the card is run on
+    its author's instrument."""
     if card.get("rotasyon"):  # T23: rotation books (stage 2 fills at the next open)
         from backtests import rotasyon_asama2  # noqa: PLC0415 - rotasyon_asama2 imports this module
 
@@ -191,7 +202,17 @@ def prepare(
     if card["tf"] not in DAILY_TFS:
         plan.engine_kwargs["fill_at_close"] = False  # no MOC exception for intraday cards (D4)
         plan.dolum_kapanis = False
-    return Prepared(in_period, plan, annualization_for(card["tf"], market), BASE_COST[market], market, start, end)
+    cost_abs = 0.0
+    if market == "FXDK":
+        from engine.maliyet import fxdk_tek_yon_maliyet  # noqa: PLC0415
+
+        if fxdk_spread_pip is None:
+            raise ValueError("FXDK icin fxdk_spread_pip (medyan spread, pip) gerekli")
+        if len(in_period) != 1:
+            raise ValueError("FXDK tek enstrumanla kosulur (yazarin piyasasi)")
+        cost_abs = fxdk_tek_yon_maliyet(next(iter(in_period)), fxdk_spread_pip)
+    return Prepared(in_period, plan, annualization_for(card["tf"], market), BASE_COST[market], market, start, end,
+                    cost_abs=cost_abs)
 
 
 def run_card_market(
@@ -203,11 +224,13 @@ def run_card_market(
     start: pd.Timestamp = IS_START,
     end: pd.Timestamp = IS_END,
     pit_universe: PITUniverse | None = None,
+    fxdk_spread_pip: float | None = None,
 ) -> dict[str, Any]:
     """Run one card on one market's data; returns the metric fields of a tarama row."""
     if card.get("rotasyon"):
         return run_rotation_market(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
-    prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe)
+    prepared = prepare(card, data, market, benchmark=benchmark, start=start, end=end, pit_universe=pit_universe,
+                       fxdk_spread_pip=fxdk_spread_pip)
     plan, annualization = prepared.plan, prepared.annualization
     out: dict[str, Any] = {}
     # intraday books: frames and signals come straight from ``prepare`` (normalised, aligned), so skip the engine's

@@ -11,7 +11,8 @@ Cards carry entry/exit rules as text. This module parses them with Python's
 * ``and`` / ``or`` / ``not``
 * calls to whitelisted functions: ``cross_over``, ``cross_under``, ``mtf``,
   ``ay_islem_gunu_bastan``, ``ay_islem_gunu_sondan``, ``haftanin_gunu``, ``saat_utc``, ``dakika``,
-  ``yeni_gun``, ``ay_gunu``, ``paskalya``, ``valuewhen``, ``highestsince``, ``lowestsince``,
+  ``yeni_gun``, ``ay_gunu``, ``paskalya``, ``saat_yerel``, ``dakika_yerel``, ``ay_gunu_yerel``,
+  ``haftanin_gunu_yerel``, ``ay_son_is_gunu``, ``gotobi`` (local-time calendar, docs D17), ``valuewhen``, ``highestsince``, ``lowestsince``,
   ``max``, ``min``, ``abs``, ``eger(kosul, a, b)`` (if/else), ``barssince(kosul)``
 
 Evaluation is vectorised over pandas Series. NaN comparisons are False.
@@ -41,6 +42,12 @@ FUNCTIONS = frozenset(
         "yeni_gun",
         "ay_gunu",
         "paskalya",
+        "saat_yerel",
+        "dakika_yerel",
+        "ay_gunu_yerel",
+        "haftanin_gunu_yerel",
+        "ay_son_is_gunu",
+        "gotobi",
         "valuewhen",
         "highestsince",
         "lowestsince",
@@ -271,6 +278,14 @@ class _Evaluator:
             if len(args) != 1 or self.index is None:
                 raise ExprError("paskalya expects (k) and an index")
             return takvim.paskalya(self.index, int(args[0]))
+        if name in ("saat_yerel", "dakika_yerel", "ay_gunu_yerel", "haftanin_gunu_yerel", "gotobi"):
+            if self.index is None or len(args) != 1 or not isinstance(args[0], str):
+                raise ExprError(f'{name} expects ("<IANA saat dilimi>") and an index')
+            return getattr(takvim, name)(self.index, args[0])
+        if name == "ay_son_is_gunu":
+            if self.index is None or len(args) not in (1, 2) or not isinstance(args[0], str):
+                raise ExprError('ay_son_is_gunu expects ("<IANA saat dilimi>"[, k]) and an index')
+            return takvim.ay_son_is_gunu(self.index, args[0], int(args[1]) if len(args) == 2 else 1)
         if name == "yeni_gun":
             if self.index is None or args:
                 raise ExprError("yeni_gun() takes no arguments and needs an index")
