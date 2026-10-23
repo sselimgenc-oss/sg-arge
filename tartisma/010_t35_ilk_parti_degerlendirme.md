@@ -41,3 +41,29 @@ Argon kayıtlarını bu oturum açamıyor. Lütfen tarayıcıda şu iki sayfayı
 İkisi tutarsa Argon partisi kabul edilir.
 
 **Sonuç (2026-10-23):** Kullanıcı iki sayfayı açtı, rakamlar tutuyor. SA-006: "de 2020-01-02 até 2021-05-27, houve 37 trades". AF-001: "2010 to March 2026 ... 0.3% a year after costs (Sharpe 0.08, 262 trades)". **Argon partisi kabul edildi.** Not: AF-001'de al-tut yıllık %10,5 getirmiş; strateji al-tutun çok altında, bu da kayda kırmızı bayrak olarak eklendi.
+
+## Ek: Sonnet teslimi (PR #121, 2026-10-23)
+**16 satır (12 strateji)**: Çin 6, Japonya 5, Kore 3, Hindistan 2. Erişim notu: `arastirma/sonnet_erisim.md`.
+
+**Değerlendirme: iyi.** Kaynak çeşitliliği en yüksek kol.
+- **En değerli bulgu: BigQuant 策略广场.** Çinli aracı kurum araştırma raporları (Guosen, Bohai, Tianfeng, Kaiyuan). Maliyet dahil, kurallar yazılı, uzun dönem. CN-001 (CFFEX endeks vadeli açılış momentumu: yıllık %25,8, MDD %7,7, maliyet sonrası) ve CN-002 (SHFE kalay/nikel 5 dk Donchian) Faz 1'de hiç olmayan aileler.
+- **IN-002 (Nifty 30 dk ORB, 2R):** 2017-2026, 2.122 işlem, PF 1,23, MDD %11,2. Uzun dönemli ve şeffaf; maliyetsiz.
+- **Erişim farkı:** Sonnet'in ortamı bigquant, qiita, note.com, velog ve tradingqna'yı açabiliyor. Lider oturumu bunları açamıyor. Bölgesel keşifte Sonnet kolu en güçlü kol.
+
+**Dikkat edilecek kayıtlar:**
+- **JP-002a/b (EURJPY EA, WR %97, "küçük kâr / büyük stop"):** Bu profil tipik olarak nadir ama büyük kayıpla hesap siler. Ayrıca EA satışı olabilir. Kırmızı bayrak: `kucuk_kar_buyuk_stop`.
+- **KR-001 (Upbit volatilite kırılımı):** "son 200 gün, %56" tek sayı; dönem tarihsiz. Kapıyı zor geçiyor; zayıf kayıt.
+- **KR-002a/b (KRX momentum, CAGR %107/%92):** 2020-2026 Kore boğa piyasası; maliyet yok; aşırı iyi. Al-tut (eşit ağırlık) %45,8 verilmiş, iyi.
+- **JP-001:** "10 yıl", tarihsiz.
+- **Faz 1 şüpheli tekrar:** IN-002 → A2-012, JP-003 → A3-009b. Sonnet işaretlemiş; aile aynı, piyasa farklı.
+
+## Güncel toplam (parti 1)
+| Kol | Satır |
+|---|---:|
+| Sonnet | 16 |
+| Argon | 12 (kullanıcı doğrulamalı) |
+| Codex | 10 |
+| Lider | 3 |
+| **Toplam** | **41** |
+
+Sonnet parti 2 görevi: `docs/GOREV_T35_P2.md` (Sonnet bölümü).

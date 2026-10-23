@@ -27,5 +27,13 @@ Parti 1'in 10 kaydı yalnız arXiv'dendi ve 5'i ML modeliydi. Bu partide:
 ## Argon (Afrika + G. Amerika): hedef 15, paket `argon/PAKET_T35P2_latam.md`
 Parti 1 kabul edildi (kullanıcı doğrulaması). QuantBrasil devam, ek olarak Meksika/Kolombiya/Şili/Peru ve Afrika.
 
+## Sonnet (Çin, Japonya, Kore, Hindistan): hedef 15, çıktı `arastirma/sonnet_p2.csv`
+Parti 1 iyi; BigQuant araştırma raporları en değerli kaynak çıktı.
+- **BigQuant 策略广场 / 研报: 6-8 kayıt.** Öncelik gün içi ve vadeli (CFFEX IF/IC/IH/IM, SHFE/DCE/ZCE emtia), maliyet dahil raporlar. Parti 1'deki raporları tekrar alma.
+- **Japonya: 3-4 kayıt.** Qiita/note/Zenn'de Nikkei 225 mini gün içi ve FX (USDJPY/EURJPY) day trade. Yüksek isabetli "küçük kâr / büyük stop" EA'lar ve EA satış sayfaları girmez.
+- **Kore: 2-3 kayıt.** Tarihli dönem şart (parti 1'deki KR-001 gibi "son 200 gün" yetmez). KOSPI200 vadeli gün içi, 변동성 돌파 hisse varyantları.
+- **Hindistan: 2-3 kayıt.** TradingQnA, intradaylab benzeri şeffaf tablolu bloglar. Opsiyon stratejisi girerse `motor_notu: opsiyon`.
+- Erişim notu `arastirma/sonnet_p2_erisim.md`. Teslim PR, başlık `[T35-P2] sonnet ikinci parti`.
+
 ## Lider
 TradingView'de aracı kurum hesapları (DNSE, Genial, Lab106 vb.) ve "out-of-sample / held-out" ifadeli yazılar. Sonnet parti 1'i gelince değerlendirilir.
