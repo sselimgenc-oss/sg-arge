@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`). **Yeni iş: U1, kendi stratejilerimiz (kripto gün içi)** (`docs/GOREV_U1.md`)
+Son güncelleme: 2026-10-23, lider (Opus) — **U1 KAPANDI: 14/14 Reddedildi** (`results/U1_SONUC.md`). FAZ 1 kapandı (`docs/FAZ1_SONUC_RAPORU.md`).
 
 ## Özet (kullanıcı için) — Faz 1 nihai
 - **Geçti 2:** C07, R01 (ABD günlük, PIT evrenle).
@@ -18,10 +18,15 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 | Ajan | Görev |
 |---|---|
-| Lider | Codex'in U1c PR'ını denetler, sonra `results/U1_SONUC.md` |
-| Sonnet | **Şimdi U3** (`docs/GOREV_U3.md`): dünya genelinde 4s/1s kurulum + 15dk/5dk giriş stratejileri, en az 100 kayıt, backtest yok → PR (50'de ara teslim). |
-| Argon | **U-A1** (`argon/PAKET_UA1_uc_enstruman.md`, Gemini 3.8): XU030 endeks kontratı, SPX, XAUUSD için veri kaynakları, kontrat/maliyet, 128 kartın uygunluk ayrımı, yöntem denetimi. Yalnız araştırma; kapsam kripto kalır, test/kod açılmaz (kullanıcı kararı, 2026-10-23) |
-| Codex | **U1c** (`docs/GOREV_U1c_CODEX.md`): 14 coin 1s/15dk/5dk verisi + U1 hunisinin gerçek koşusu → PR (kullanıcı kararı, 2026-10-23: Codex geri döndü). **Sırada U2a** (`docs/GOREV_U2.md`, başlanmadı): kripto short motoru + funding |
+| Lider | U1 kapandı (`results/U1_SONUC.md`): 14/14 Reddedildi. Sıradaki yön için kullanıcı kararı bekleniyor (seyrek işlem / maliyet modeli / U3 seçimi). |
+| Sonnet | Beklemede. U3 53 kayıtla kapandı (`arastirma/U3_mtf.csv`, PR #157, #158; örneklem denetimi 6/6 tuttu). |
+| Argon | Beklemede. U-A1 ve UA2 kapandı (kullanıcı kararı, 2026-10-23; repoya çıktı girmedi). |
+| Codex | U1c tamam (PR #159): 14 coin × 1h/15m/5m veri, 1H/15m huni; 5m huni kullanıcı kararıyla durduruldu (Aşama 1'de zaten elenir). **Sırada U2a** (`docs/GOREV_U2.md`, başlanmadı; yön kararından sonra). |
+
+## U1 sonucu (2026-10-23)
+- **14 varyantın 14'ü Reddedildi.** 1H ve 15m huniden geçirildi; 5m IS PF < 1 (Aşama 1).
+- IS dönemi de zararda. Brüt kenar 15m/5m'de yok; 1H'de küçük (brüt PF 1,15-1,27) ama maliyet üçte birine inse bile PF ≤ 1,10.
+- Kilitli dönem açılmadı. Ayrıntı: `results/U1_SONUC.md`.
 
 ## T35/T36 kapanış özeti
 - **T35 (bölgesel strateji toplama):** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), 4 kol, 2 parti. Kullanıcı örneklem doğrulamaları tuttu. Argon'un türetilmiş PF değerleri temizlendi. Değerlendirmeler: `tartisma/010`, `tartisma/011`. Kısa liste: `tartisma/011`.
