@@ -10,13 +10,13 @@ Hedef (`docs/HEDEF.md`): toplanan stratejilerin hepsini tek ve evrensel kurallar
 |---|---:|---|
 | ✅ **Geçti** | **2** | Bütün kapıları şerhsiz geçti. Paper'a hazır. |
 | 🟡 **Koşullu** | **3** | Kârlı ve sağlam, ama birer şerhi var. |
-| ❌ Reddedildi | 134 | Test edildi, bir kapıda elendi. |
+| ❌ Reddedildi | 132 | Test edildi, bir kapıda elendi. |
 | ⚪ Doğrulanamaz | 273 | Kural, kaynak ya da veri eksik; test edilemedi. |
 | ⏸ Ertelendi / Kapsam dışı | 7 | |
-| ⏳ Bekliyor | 3 | 1 dakikalık veri gerekiyor (bkz. bölüm 5). |
+| ⏳ Test edilmedi | 5 | Kripto/vadeli dakikalık kartlar; kullanıcı kararıyla kapatıldı (bkz. bölüm 5). |
 | **Toplam** | **422** | |
 
-Test edilebilen 139 stratejinin 5'i (%3,6) ayakta kaldı.
+Test edilen 137 stratejinin 5'i (%3,6) ayakta kaldı.
 
 ### Geçenler
 
@@ -52,7 +52,7 @@ C07 + R01 + A6-010 (`results/portfoy.md`):
 
 | Aşama | Ne soruyor | Elenen |
 |---|---|---:|
-| Aşama 1 (tarama) | Maliyetle kâr var mı, en az 30 işlem var mı? | 44 |
+| Aşama 1 (tarama) | Maliyetle kâr var mı, en az 30 işlem var mı? | 42 |
 | Aşama 2a (rastgele giriş) | Kazanç stratejiden mi, piyasanın yükselişinden mi geliyor? | 54 |
 | Aşama 2b (son eleme) | OOS, ön dönem, 2x/3x maliyet, parametre platosu, bootstrap MDD ≤ %15, DSR | 36 |
 
@@ -89,7 +89,7 @@ C07 + R01 + A6-010 (`results/portfoy.md`):
 - **Gün içi bellek/hız (T30):** 5 dakikalık kart taraması 41 dakikadan 2,5 dakikaya indi; sonuçlar birebir aynı.
 
 ## 5. Açık kalanlar
-- **Bekliyor 3:** A3-002a ve A3-002c (kripto, 1 dakikalık) ve O1-064 (Nasdaq vadelisi, 1 dakikalık). Ücretsiz 1 dakikalık veri yok ya da çok büyük. Kriptonun 30m/15m/5m kartlarından hiç aday çıkmadığı için beklenti çok düşük.
+- **Test edilmedi 5:** A3-002d ve A3-002f (kripto, 5 dakikalık), A3-002a ve A3-002c (kripto, 1 dakikalık), O1-064 (Nasdaq vadelisi, 1 dakikalık). Kullanıcı kararıyla Faz 1 bunları beklemeden kapatıldı. Kriptonun 30m/15m/5m kartlarından hiç aday çıkmadığı için beklenti çok düşüktü. T30 sayesinde 5 dakikalık bir kartın taraması artık ~3 dakika sürüyor; istenirse sonradan koşulabilir.
 - **T33'ün kalan 11 kartı:** Codex yeniden açılırsa yapılabilir.
 - **Saatlik Koşullular:** T8-07 ve V2B için ön dönem verisi ücretsiz kaynakta yok. Bu yüzden Koşullu kalırlar; ancak paper'da kanıtlanırlarsa yükselirler.
 
