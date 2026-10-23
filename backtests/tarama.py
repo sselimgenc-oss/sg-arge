@@ -27,6 +27,7 @@ from backtests.run_codex21 import _git_sha, _load_market  # noqa: E402
 from data.evren_pit import PITUniverse, filter_entry_signals, load_pit_universe  # noqa: E402
 from data.bist_1h import normalize_market_1h, quality_gate as bist_1h_quality_gate  # noqa: E402
 from engine import gosterge, rotasyon  # noqa: E402
+from engine import kilit  # noqa: E402
 from engine.kart_sinyal import EndeksYok, MotorDestegiYok, PipsPiyasaDisi, build_plan  # noqa: E402
 from engine.portfolio import calculate_metrics, run_portfolio  # noqa: E402
 from engine.resample import resample_hourly  # noqa: E402
@@ -164,6 +165,10 @@ def prepare(
     pit_universe: PITUniverse | None = None,
 ) -> Prepared:
     """Card timeframe frames (weekly for 1W cards), signals and engine arguments for one market."""
+    if str(card.get("id", "")).startswith("U1-"):
+        data = kilit.uygula(data)
+        if benchmark is not None:
+            benchmark = kilit.kes(benchmark)
     if card.get("rotasyon"):  # T23: rotation books (stage 2 fills at the next open)
         from backtests import rotasyon_asama2  # noqa: PLC0415 - rotasyon_asama2 imports this module
 
