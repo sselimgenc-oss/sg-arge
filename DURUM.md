@@ -18,16 +18,16 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 | Ajan | Görev |
 |---|---|
-| Lider | Faz 2 paper'ı başlattı; sıradaki iş: pano + işlem açıklamaları + koç bulguları görevleri (`docs/FAZ2_NOTLAR.md` 2a, 2b, 3). |
+| Lider | Faz 2 paper başladı. **F2-PANO B** (`docs/GOREV_F2_PANO.md`): pano reposu `sg-pano` temizliği. |
 | Sonnet | Beklemede. U3 53 kayıtla kapandı (`arastirma/U3_mtf.csv`, PR #157, #158; örneklem denetimi 6/6 tuttu). |
 | Argon | Beklemede. U-A1 ve UA2 kapandı (kullanıcı kararı, 2026-10-23; repoya çıktı girmedi). |
-| Codex | U1c tamam (PR #159): 14 coin × 1h/15m/5m veri, 1H/15m huni; 5m huni kullanıcı kararıyla durduruldu (Aşama 1'de zaten elenir). **Sırada U2a** (`docs/GOREV_U2.md`, başlanmadı; yön kararından sonra). |
+| Codex | **F2-PANO A** (`docs/GOREV_F2_PANO.md`): yarım bar koruması, saatlik anlık değerleme, saatlik `paper.yml`, panoya gönderme → PR `codex/f2-saatlik`. U2a askıda. |
 
 ## Faz 2 paper (kullanıcı kararı, 2026-10-23)
 - **Kapsam kararı değişti:** "yalnız kripto" zorunlu değil; başlangıçtaki strateji (Faz 1 kazananları + yeni strateji arayışı) sürer.
 - **Paper portföyü (seçenek b):** C07 + R01 (ABD günlük) + A6-010 (emtia günlük), eşit ağırlık, 5.000 USD sanal (`paper/portfoy.yaml`). Gerçek para yok.
 - **Başlangıç 2026-10-23** (ilk sinyaller o günün kapanışında, dolum ertesi işlem günü açılışında). Defter `paper-defter` dalında; alarmlar: MDD %10 uyarı, %15 durdur.
-- **Çalıştırma:** `paper.yml` (Actions → Paper trade → Run workflow). Hafta içi otomatik zamanlama kullanıcı onayıyla eklenecek.
+- **Çalıştırma:** kullanıcı kararı: saatlik otomatik; pano `sg-pano` (public, GitHub Pages). Defter yalnız günlük kapanışla, açık pozisyonlar saatlik fiyatla değerlenir (`docs/GOREV_F2_PANO.md`).
 
 ## U1 sonucu (2026-10-23)
 - **14 varyantın 14'ü Reddedildi.** 1H ve 15m huniden geçirildi; 5m IS PF < 1 (Aşama 1).
