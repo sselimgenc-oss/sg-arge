@@ -14,7 +14,7 @@ Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONU
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## Şu an
-**U1: Kendi stratejilerimiz, kripto gün içi** (`docs/GOREV_U1.md`, revize 2026-10-23: swing iptal, 1 saat kurulum + 15/5 dk giriş, Hat 0 = T8-07/V2B kriptoda). **Hedef:** yılda %20-30 net, MDD ≤ %15.
+**Kapsam: yalnız kripto** (kullanıcı kararı, 2026-10-23; BIST/ABD/emtia/FX iptal, Dukascopy çalışması kapsam dışı). **U1: Kendi stratejilerimiz, kripto gün içi** (`docs/GOREV_U1.md`, revize 2026-10-23: swing iptal, 1 saat kurulum + 15/5 dk giriş, Hat 0 = T8-07/V2B kriptoda). **Hedef:** yılda %20-30 net, MDD ≤ %15.
 
 | Ajan | Görev |
 |---|---|

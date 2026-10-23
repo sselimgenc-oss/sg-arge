@@ -7,6 +7,7 @@
 - Algo-trade en kolay **kriptoda** yapıldığı için ana piyasa kripto.
 - Faz 1 kazananlarının kriptoya taşınıp taşınmadığı test edilecek.
 - Bu yüzden eski Hat 1 (swing sepeti) **iptal.** Önceki sürüm git geçmişinde.
+- **Kapsam (kullanıcı kararı, 2026-10-23): yalnız kripto.** BIST, ABD hisse, emtia ve FX/CFD çalışmaları iptal. Hat 0 kartları (T8-07, V2B) emtiada bulundu, ama burada yalnız kriptoda koşulur.
 
 **Token kuralı:** Lider kod/veri işi yapmaz. Lider görev yazar, ön kaydı belirler, PR'ları denetler, huniyi koşar ve sonuç raporunu yazar.
 
@@ -67,12 +68,12 @@ Her kartta `giris_tf ∈ {15m, 5m}` ızgaranın bir parçasıdır. Stop, giriş 
 
 **Maliyet uyarısı:** Kriptoda %0,15 gidiş-dönüş maliyet, 5 dakikalık barların tipik hareketine göre büyüktür. 5m varyantları büyük olasılıkla maliyette elenir. Bu bilinçli bir test, sonuç ne çıkarsa raporlanır.
 
-Short yok. PR #136 (T36b) short desteği içeriyor. U1 umut verirse U2'de ele alınır, kriptoda düşüş piyasası için önemli.
+Short yok. PR #136 (T36b) short desteği içeriyor. U1 umut verirse U2'de ele alınır. Kriptoda düşüş piyasaları uzun sürdüğü için bu önemli.
 
-**Sonraki adım (U2, U1'den sonra):** ABD hisse ve emtia gün içi.
-- Bu piyasalar için saatlik veri yalnız ~2 yıl, dakikalık veri yok.
-- Dukascopy'den NQ, altın ve petrol CFD 1 dk verisi indirilip aynı kartlar orada koşulur.
-- Kazanan kurallar kriptodan oraya da taşınabilir.
+**Sonraki adım (U2, U1'den sonra, yine yalnız kripto):**
+- short desteği;
+- U1'de geçen kurallardan sepet;
+- gerekirse yeni hipotezler (ön kayıtla).
 
 ## 5. İşler
 ### U1a: Sonnet (Codex'ten devralındı, 2026-10-23; veri + denetim araçları)
