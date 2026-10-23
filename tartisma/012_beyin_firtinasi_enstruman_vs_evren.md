@@ -35,6 +35,16 @@ Kullanıcının sezgisi:
 3. Yalnız tek enstrümanda çalışıyorsa, ancak **yapısal bir sebep** varsa kabul edilir (ör. Gotobi yalnız JPY'de). Sebep yoksa aşırı uyum sayılır.
 4. Swing'de ayrım şu: zaman serisi stratejisi ("bu hisse yükseliyor mu") ile kesitsel strateji ("evrenin en güçlü %10'u") farklı tasarlanır. Kesitsel strateji en baştan evrende kurulur.
 
+## 2b. Kullanıcının hedefi ve evreni (2026-10-23)
+- **Neden yeni üretim:** Mevcut adayların getirisi düşük. C07+R01+A6-010 portföyü OOS'ta yılda ~%4, MDD %2,9, işlem başına risk %0,5.
+- **Hedef:** aylık ~%5 **net** (bileşik yılda ~%80). Tarz fark etmez: scalp, day ya da swing.
+- **Evren (gerekirse daraltılır, ~80 enstrüman):**
+  - BIST30 hisseleri;
+  - ABD'nin en büyük ~20 hissesi;
+  - stabil coinler hariç en büyük 25 kripto;
+  - 7-8 emtia.
+- **Liderin gerçekçilik notu:** Aylık %5 net, sürekli olarak, profesyonel fonların bile nadiren ulaştığı bir seviye. Faz 1'de onaylanan MDD bütçesi %15. Bu hedef o bütçeyle büyük olasılıkla uyumsuz. Mevcut portföyde risk 3 katına çıkarılırsa kabaca yılda %10-12 getiri ve ~%9 MDD beklenir. Tartışmada hedefle risk arasındaki bu ilişki açıkça ele alınmalı.
+
 ## 3. Sorular (her katılımcı hepsini cevaplasın)
 1. **Genel görüş:** Liderin "niş geliştir, geniş doğrula" önerisine katılıyor musun? Nerede yanlış ya da eksik?
 2. **Scalp/day:** Niş çalışma için hangi enstrümanlar mantıklı? Seçim ölçütleri neler olmalı (maliyet/ATR oranı, likidite, veri erişimi)? Elimizdeki veri: Binance kripto dakikalık 2017→, Dukascopy FX/CFD dakikalık (indirici hazır), BIST/ABD saatlik ~2 yıl.
@@ -42,7 +52,8 @@ Kullanıcının sezgisi:
 4. **Kardeş doğrulama:** "Kardeş enstrüman" nasıl seçilir? Kaç kardeşte, hangi oranda çalışması "genellenebilir" sayılmalı (ör. 10'un 7'sinde PF > 1)?
 5. **Havuzlama:** Bir evrende parametreler tek tek mi optimize edilmeli, yoksa tüm evrende ortak tek parametre seti mi olmalı? (Lider görüşü: ortak set; enstrümana özel ayar aşırı uyumdur.)
 6. **Literatür/pratik:** Bu konuda bildiğin akademik bulgu, profesyonel uygulama (CTA'lar, prop firmalar, kripto market maker'lar) ya da kendi deneyimin var mı? Kaynak verirsen adını yaz, uydurma.
-7. **Bizim için öneri:** Kendi strateji üretimimize hangi tarz/piyasa ikilisiyle başlamalıyız ve neden? (Bir ya da iki somut öneri.)
+7. **Bizim için öneri:** Kullanıcının evreni (2b) içinde kendi strateji üretimimize hangi tarz/piyasa ikilisiyle başlamalıyız ve neden? (Bir ya da iki somut öneri.)
+8. **Hedef gerçekçiliği:** Aylık %5 net hedefi sence ulaşılabilir mi? Hangi MDD ve hangi kaldıraç/risk seviyesini gerektirir? Hangi yaklaşım bu hedefe en çok yaklaşır? (Tek strateji mi, çok sayıda düşük korelasyonlu strateji mi, kaldıraç mı?)
 
 ## 4. Cevap kuralları
 - Dosya: `tartisma/012_cevap_<ad>.md` (Argon için kullanıcı yapıştırır, lider dosyaya yazar).
