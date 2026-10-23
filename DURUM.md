@@ -18,8 +18,8 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 | Ajan | İş | Hedef | Durum |
 |---|---|---|---|
-| Sonnet | T35 parti 1: Çin, Japonya, Kore (Hindistan son) | 15-20 kayıt | Bekleniyor |
-| Codex | T35 parti 1 tamam (PR #118, 10 kayıt, yalnız arXiv). **Parti 2:** Avrupa forumları + Amerika (`docs/GOREV_T35_P2.md`) | 10-12 kayıt | Başlayacak (Issue #1) |
+| Sonnet | T35 parti 1 tamam (PR #121, 16 satır). **Parti 2:** `docs/GOREV_T35_P2.md` Sonnet bölümü | 15 kayıt | Başlayacak (kullanıcı tetikler) |
+| Codex | T35 parti 1 tamam (PR #118, 10 kayıt, yalnız arXiv). **Parti 2:** Avrupa forumları + Amerika (`docs/GOREV_T35_P2.md`) | 10-12 kayıt | Issue #1'e yazıldı |
 | Argon | T35 parti 1 kabul (12 kayıt, kullanıcı doğruladı). **Parti 2:** `argon/PAKET_T35P2_latam.md` | 15 kayıt | Başlayacak (kullanıcı aracılığıyla) |
 | Lider | T35 parti 1 tamam (3 kayıt, TradingView). Değerlendirme `tartisma/010` | — | Sürüyor |
 
