@@ -46,3 +46,6 @@ Kullanıcı Sonnet'e yalnız **"görev geldi"** der. Görev her zaman GitHub Iss
 - **Sonnet:** Issue #1'deki son **`[SONNET GÖREVİ]`** başlıklı yorumu okur. `@claude` etiketi kullanılmaz; Actions'ı boşuna tetikler.
 
 Yorum kısa özet + `docs/GOREV_*.md` bağlantısı içerir. Görev ayrıca `DURUM.md` "Şu an" tablosunda da yazılır (Sonnet'in yeni oturumu Issue'yu görmezse oradan okur). Ajan main'i çeker, görevi yapar, PR ile teslim eder.
+
+## Codex geri döndü (kullanıcı kararı, 2026-10-23)
+Codex yeniden ekipte; ilk işi U1c (`docs/GOREV_U1c_CODEX.md`). Tetikleme: kullanıcı Codex'e "görev geldi" der, Codex Issue #1'deki son **`[CODEX GÖREVİ]`** başlıklı yorumu okur. Teslim PR ile; lider denetler.
