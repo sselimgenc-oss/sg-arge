@@ -19,7 +19,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Sonnet | T30 tamam (PR #113). Beklemede | Beklemede | Yok |
 | Codex | **Pasif** (kullanıcı kararı: limit bitti; ikinci talimata kadar kullanılmıyor). T33 parti 1 tamam (PR #112: A1-027 yazıldı, A6-015/P3-010/M019 tanim_belirsiz); parti 2-4 (11 kart) denenmedi | Beklemede | Yok |
 | Argon | **Kullanılmıyor** (kullanıcı kararı: ikinci talimata kadar; limit ekran görüntüsü gezintisiyle tükeniyor) | Beklemede | Yok |
-| Lider | Faz 1 kapandı; Faz 2 için kullanıcı kararı bekleniyor (paper kapsamı: a/b/c) | Bekliyor | Faz 2 kararı |
+| Lider | Faz 1 kapandı. Kullanıcı kararı: paper açılmayacak, Faz 2 askıda. Sistem yeni stratejileri denemek için süzgeç olarak duruyor | Kapandı | Yok |
 
 ## Tamamlananlar (son)
 - **T32 (Codex/Terra) tamam:** 2H/4H mumlar (D16) ve FX8 piyasası + pip stop. Gerçek koşu: M013 (FX8 4H, PF 0.79) ve O2-005 (FX8 1H, PF 0.62) Aşama 1’de Reddedildi. Not: lider ilk tahmini (~80 kart) yanlıştı; bu piyasalara bağlı kartların çoğu kural eksik/özel kod. SONUC: Geçti 2, Koşullu 3, Reddedildi 132, Bekliyor 5.
