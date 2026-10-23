@@ -5,7 +5,7 @@ Tarih: 2026-10-23. Durum: Sonnet bekleniyor; Codex, Argon ve lider kolları tesl
 ## Özet
 | Kol | Dosya | Kayıt | Kaynak çeşitliliği | Kalite | Lider doğrulaması |
 |---|---|---:|---|---|---|
-| Argon (Afrika, G. Amerika) | `arastirma/argon.csv` | 12 | QuantBrasil 10, Atlas Chile 1, mdingi (JSE) 1 | **İyi.** Kural tam, Python kodu, işlem sayısı ve dönem var | **Yapılamadı.** Siteler bu oturumdan açılmıyor; arama motoru da sayfaları bulamadı. Kullanıcı 2 linki tarayıcıda kontrol edecek |
+| Argon (Afrika, G. Amerika) | `arastirma/argon.csv` | 12 | QuantBrasil 10, Atlas Chile 1, mdingi (JSE) 1 | **İyi.** Kural tam, Python kodu, işlem sayısı ve dönem var | **Örneklem doğrulandı** (kullanıcı, 2 link: SA-006 ve AF-001 tutuyor). Parti kabul edildi |
 | Codex (Avrupa, Amerika) | `arastirma/codex.csv` (PR #118) | 10 | **Yalnız arXiv** | Orta. 5'i ML/derin öğrenme (kural kısmen), 2'si tick verisi, 1'i yılda 1 işlem | Kısmen. 2206.12282'nin varlığı ve dönemi (2015-01-01 → 2021-08-28) doğrulandı |
 | Lider (TradingView) | `arastirma/lider.csv` | 3 | TradingView | Zayıf-orta. ~30 sayfa okundu, 4 geçti; biri Faz 1 tekrarı (A1-019) olduğu için çıkarıldı | Kendisi okudu |
 | Sonnet (Çin, Japonya, Kore, Hindistan) | — | — | — | Bekleniyor | — |
@@ -39,3 +39,5 @@ Argon kayıtlarını bu oturum açamıyor. Lütfen tarayıcıda şu iki sayfayı
 - AF-001: https://mdingi.co.za/work/jse-statistical-arbitrage (262 işlem, maliyet öncesi Sharpe 0,74/0,64)
 
 İkisi tutarsa Argon partisi kabul edilir.
+
+**Sonuç (2026-10-23):** Kullanıcı iki sayfayı açtı, rakamlar tutuyor. SA-006: "de 2020-01-02 até 2021-05-27, houve 37 trades". AF-001: "2010 to March 2026 ... 0.3% a year after costs (Sharpe 0.08, 262 trades)". **Argon partisi kabul edildi.** Not: AF-001'de al-tut yıllık %10,5 getirmiş; strateji al-tutun çok altında, bu da kayda kırmızı bayrak olarak eklendi.
