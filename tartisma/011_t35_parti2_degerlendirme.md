@@ -25,3 +25,32 @@ Codex bulut ortamı iki kez açılmadı. Bu yüzden kol `argon/PAKET_T35P2_chatg
 Lider oturumu smart-lab.ru ve stsfutures.com'u açamıyor. Kullanıcıdan 2 örneklem kontrolü isteniyor:
 - **EU-015:** https://smart-lab.ru/blog/1310045.php → CAGR %31, MDD -%11, Sharpe 2,79.
 - **US-009:** https://stsfutures.com/learn/nq-overnight-strategy-backtest → 796 işlem, PF 1,57, $194.333 net, MDD $20.073.
+
+## Argon kolu (Afrika + G. Amerika): `arastirma/argon_p2.csv`
+**Teslim:** 30 satır. 13'ü parti 1'in tekrarıydı, atlandı; 17 yeni satır kaldı. Lider denetiminden sonra **13 satır**.
+
+### Çıkarılanlar (4)
+| id | Ad | Neden |
+|---|---|---|
+| SA-011 | B3 Day Trade canlı portföyü | Canlı day trade portföyü zararda (yazar "péssimo resultado" diyor); kârlılık iddiası yok. Tek strateji değil, 28 karışık sinyal. |
+| SA-013 | B3 Day Trade M10 | Strateji değil: canlı portföyün 10 dk zaman dilimi alt kümesi. Yalnız WR var, 18 işlem. |
+| SA-014 | B3 Swing Trade H1 | Strateji değil: canlı portföyün 60 dk zaman dilimi alt kümesi. Yalnız WR var. |
+| AF-003 | NSE 20 contrarian EMA | Sayısal metrik yok ("al-tutun üstünde anlamlı alfa" ifadesi); kapı 1. |
+
+### Düzeltmeler: kural ihlalleri
+- **SA-010: Argon PF'yi kendisi hesaplamış.** Kayıtta "(0.59*2)/0.41 = 2.88" yazıyordu. Bu yazar beyanı değil, türetilmiş bir değer; `iddia_pf` boşaltıldı. Paketteki "uydurma yok, kaynakta olmayanı boş bırak" kuralına aykırı.
+- **SA-012: "fator 1.97" PF değil.** Ortalama kazanç / ortalama kayıp oranı. Aynı hata SA-011'de de vardı (1.55). `iddia_pf` boşaltıldı, açıklama `not`'a yazıldı.
+- **SA-016/017 (QuantBrasil Feed):** Kaynak yalnız sonuç tablosunu veriyor. Argon'un yazdığı "sistemik filtreler ve dip reversiyon teyidi" gibi giriş/çıkış ifadeleri kaynakta yok. Alanlar boşaltıldı, `kural_tam: hayir`.
+
+### İçerik
+- **İyi kayıtlar:**
+  - SA-008a/b ve SA-009/010 (Setup 123, Eden dos Traders): kural tam, B3.
+  - SA-012: canlı swing portföyü, 6 ayda %20; IBOV aynı dönemde %6. Canlı hesap, ama karma sinyal.
+  - AF-005 (EGX30 klasik formasyonlar): 1998-2016, 598 desen.
+- **Kapsam şüphesi:** SA-018 (BMV copula-GARCH), SA-019 (COLCAP Markowitz) ve AF-002 (JSE Max Sharpe) al-sat stratejisi değil, akademik portföy optimizasyonu. Kaldılar, ama `kapsam_supheli` olarak işaretlendi. SA-019'daki "966 işlem / WR %64" büyük ihtimalle gün sayısı.
+- **AF-004 (Nijerya Random Forest):** ML modeli, Sharpe 5,6; aşırı uyum şüphesi.
+
+**Genel:** Argon'un parti 2 kalitesi parti 1'in altında. QuantBrasil kayıtları iyi, ama yeni ülkelerde akademik makalelere kaymış. Ayrıca iki kural ihlali var: türetilmiş PF ve kaynakta olmayan kural metni.
+
+**Doğrulama:** UdeM ve SciELO sayfaları lider oturumundan açılmıyor. Kullanıcıdan 1 örneklem kontrolü:
+- SA-008a: https://quantbrasil.com.br/blog/backtest-da-estrategia-123-utilizando-python/ → 48 işlem, %54, PF 1.15, DD %9.52.
