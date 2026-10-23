@@ -309,6 +309,32 @@ def _eval_series(text: str, env: Mapping[str, Any], index: pd.Index, mtf: Callab
     return _series(_expr.parse(text).evaluate(env, index=index, mtf=mtf), index)
 
 
+def _clock_minutes(text: Any) -> int:
+    hours, minutes = str(text).split(":")
+    return int(hours) * 60 + int(minutes)
+
+
+def intraday_cutoffs(card: Mapping[str, Any], index: pd.DatetimeIndex, entry: pd.Series, exit_: pd.Series) -> tuple[pd.Series, pd.Series]:
+    """U1 day rules: ``cikis_saati`` / ``gun_sonu`` ("HH:MM", UTC) as exit signals, and no entry that could not exit in time.
+
+    A bar that opens at minute ``m`` and lasts ``L`` minutes closes (signal) at ``m + L`` and fills at the next open, so the
+    exit signal fires on every bar with ``m + L >= cutoff`` of the day: the fill is the cutoff open (or the next bar). An
+    entry signalled at ``m`` fills at ``m + L``; its own exit bar then closes at ``m + 2L``, so entries need ``m + 2L <=
+    cutoff`` and the position is flat by the cutoff.
+    """
+    cutoffs = [_clock_minutes(card[key]) for key in ("cikis_saati", "gun_sonu") if card.get(key)]
+    if not cutoffs:
+        return entry, exit_
+    utc = index.tz_convert("UTC") if index.tz is not None else index
+    minute = pd.Series(utc.hour * 60 + utc.minute, index=index)
+    length = float(index.to_series().diff().median().total_seconds() / 60.0)
+    closes = minute + length
+    leave = pd.Series(False, index=index)
+    for cutoff in cutoffs:
+        leave |= closes >= cutoff
+    return entry & (minute + 2 * length <= min(cutoffs)), exit_ | leave
+
+
 def card_frame_signals(
     card: Mapping[str, Any],
     frame: pd.DataFrame,
@@ -353,6 +379,7 @@ def card_frame_signals(
     else:
         exit_static = _bool(_expr.parse(exit_text).evaluate(env, index=index, mtf=mtf), index)
 
+    entry, exit_static = intraday_cutoffs(card, index, entry, exit_static)
     atr_sizing = _ind.atr(frame, SIZING_ATR)
     out = pd.DataFrame({"entry": entry, "exit": exit_static, "atr": atr_sizing}, index=index)
 
@@ -501,6 +528,8 @@ def build_plan(
         kwargs["time_stop_bars"] = int(zaman["bar"])
     if card.get("cooldown_bar"):
         kwargs["cooldown_bars"] = int(card["cooldown_bar"])
+    if card.get("gunde_en_fazla"):
+        kwargs["max_entries_per_day"] = int(card["gunde_en_fazla"])
     levels: dict[str, Callable[..., float]] = {}
     stop_card, target_card = card.get("stop"), card.get("hedef")
     if stop_card and stop_card.get("tip") == "seviye":

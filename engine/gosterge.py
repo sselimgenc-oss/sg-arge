@@ -275,6 +275,33 @@ def vwap(df: pd.DataFrame, anchor: str = "D") -> pd.Series:
     return (pv / v.where(v != 0)).fillna(tp)
 
 
+def bb_genislik_yuzdelik(df: pd.DataFrame, src: str = "close", n: int = 20, carpan: float = 2.0, pencere: int = 100) -> pd.Series:
+    """Percent rank (0-100) of the Bollinger width ``(upper - lower) / basis`` inside the last ``pencere`` bars (current included).
+
+    100 x share of the window whose width is <= the current width, so a value <= 20 means the width is among the narrowest 20 %.
+    """
+    bands = bb(df, src, n, carpan)
+    width = (bands["upper"] - bands["lower"]) / bands["basis"]
+    window = int(pencere)
+    rank = width.rolling(window).apply(lambda w: 100.0 * float((w <= w[-1]).sum()) / len(w), raw=True)
+    return rank
+
+
+def donchian_kirilim(df: pd.DataFrame, n: int = 24, bar: int = 3) -> pd.Series:
+    """1 when ``close`` closed above the highest high of the *previous* ``n`` bars on any of the last ``bar`` bars (current included)."""
+    prior_high = _col(df, "high").rolling(int(n)).max().shift(1)
+    broke = (_col(df, "close") > prior_high).astype(float).where(prior_high.notna())
+    return broke.rolling(int(bar), min_periods=1).max()
+
+
+def gun_acilis(df: pd.DataFrame) -> pd.Series:
+    """Open of the first bar of the bar's UTC day (known from that bar on: no look-ahead)."""
+    if not isinstance(df.index, pd.DatetimeIndex):
+        raise ValueError("gun_acilis needs a DatetimeIndex")
+    day = df.index.tz_localize(None).normalize() if df.index.tz is not None else df.index.normalize()
+    return _col(df, "open").groupby(day).transform("first")
+
+
 def kama(df: pd.DataFrame, src: str = "close", n: int = 10, fast: int = 2, slow: int = 30) -> pd.Series:
     s = source(df, src)
     n = int(n)
@@ -784,7 +811,7 @@ def _price(name: str) -> Callable[..., pd.Series]:
 REGISTRY: dict[str, Callable[..., pd.Series | pd.DataFrame]] = {
     "sma": sma, "ema": ema, "wma": wma, "rsi": rsi, "atr": atr, "adx": adx, "dmi": dmi, "cci": cci,
     "macd": macd, "bb": bb, "kc": kc, "donchian": donchian, "stoch": stoch, "obv": obv, "mfi": mfi,
-    "vwap": vwap, "kama": kama, "ichimoku": ichimoku, "supertrend": supertrend, "roc": roc,
+    "vwap": vwap, "bb_genislik_yuzdelik": bb_genislik_yuzdelik, "donchian_kirilim": donchian_kirilim, "gun_acilis": gun_acilis, "kama": kama, "ichimoku": ichimoku, "supertrend": supertrend, "roc": roc,
     "zscore": zscore, "highest": highest, "lowest": lowest, "ott": ott, "pmax": pmax, "rvol": rvol,
     "stdev": stdev, "var": var, "rrs": rrs, "atr_ratio": atr_ratio,
     "williams_fractal": williams_fractal, "renko_sayac": renko_sayac, "tr": tr, "linreg": linreg,

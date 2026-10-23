@@ -1,0 +1,76 @@
+id: U1-H2-A
+ad: U1 Hat 2 - Kripto 1 saat sikismasindan 15 dk / 5 dk kirilim
+kart_yazari: sonnet
+kaynak:
+  dosya: docs/GOREV_U1.md
+  url: null
+  sayfa: null
+  not: "Kendi stratejimiz; mekanizma: volatilite kumelenmesi, sikisma sonrasi genisleme. On kayit tartisma/012_ozet_karar.md"
+tarz: day
+tf: 15m
+mtf: 1H
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler:
+  bbw_1s:
+    f: bb_genislik_yuzdelik
+    src: close
+    n: 20
+    carpan: 2
+    pencere: 100
+    tf: 1H
+  close_1s:
+    f: close
+    tf: 1H
+  ema50_1s:
+    f: ema
+    src: close
+    n: 50
+    tf: 1H
+  bb_1s:
+    f: bb
+    src: close
+    n: 20
+    carpan: 2
+    tf: 1H
+ozel_kod: false
+giris: bbw_1s <= 20 and close_1s > ema50_1s and close > bb_1s.upper
+cikis: null
+stop:
+  tip: atr
+  n: 14
+  carpan: 2
+hedef:
+  tip: atr
+  n: 14
+  carpan: 3
+gun_sonu: "23:45"
+stop_eklendi: false
+piyasa_kisiti: [KRIPTO]
+parametreler:
+  giris_tf: 15m
+  R: 1.5
+izgara:
+  # on kayit (docs/GOREV_U1.md bolum 3): giris_tf x R = 4 deneme. hedef.carpan = stop ATR carpani (2) x R
+  - yol: tf
+    degerler: [15m, 5m]
+  - yol: hedef.carpan
+    degerler: [3, 5]
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+deneme_sayisi_kaynakta: 4
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- "U1 on kaydi: IS 2018-01-01 -> 2023-09-30, OOS 2023-10-01 -> 2025-09-30, kilitli 2025-10-01 -> bugun (yalniz lider acar). Gecme: GOREV_U1 bolum 4."
+- "Kurulum 1 saatlik KAPANMIS bardan okunur (gosterge tf: 1H, onceki tamamlanmis saatlik bar; ileriye bakma yok). bb_genislik_yuzdelik = (BB ust - BB alt) / orta bandin son 100 saatlik bardaki (guncel dahil) yuzdelik sirasi (0-100); 'en dusuk %20' = <= 20, esitlikler <= sayilir. 'close > ema(50)' kurulumda 1 saatlik kapanis > 1 saatlik EMA50."
+- "Giris tetigi: giris TF kapanisi > 1 saatlik BB ust (son kapanmis saatlik barin ust bandi)."
+- "Stop = giris TF ATR(14) x 2. Hedef 'R x risk' = 2 ATR x R; R=1,5 -> 3 ATR, R=2,5 -> 5 ATR. Cikis: hedef, stop ya da gun sonu (gun_sonu: UTC 23:45 acilisinda flat; giris TF'ye gore son girisi motor otomatik keser)."
+- "5m varyantinda tum bar sayilari (ATR14) 5 dk barlardir; kurulum her iki varyantta ayni 1 saatlik gostergelerdir."

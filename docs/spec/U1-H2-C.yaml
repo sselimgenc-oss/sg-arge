@@ -1,0 +1,72 @@
+id: U1-H2-C
+ad: U1 Hat 2 - Kripto trend icinde geri cekilme (1 saat kurulum, 15 dk / 5 dk giris)
+kart_yazari: sonnet
+kaynak:
+  dosya: docs/GOREV_U1.md
+  url: null
+  sayfa: null
+  not: "Kendi stratejimiz; mekanizma: kirilim sonrasi trend icinde geri cekilmede devam. On kayit tartisma/012_ozet_karar.md"
+tarz: day
+tf: 15m
+mtf: 1H
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler:
+  kirilim_1s:
+    f: donchian_kirilim
+    n: 24
+    bar: 3
+    tf: 1H
+  close_1s:
+    f: close
+    tf: 1H
+  ema50_1s:
+    f: ema
+    src: close
+    n: 50
+    tf: 1H
+  ema20:
+    f: ema
+    src: close
+    n: 20
+ozel_kod: false
+giris: kirilim_1s == 1 and close_1s > ema50_1s and low <= ema20 and close > ema20
+cikis: null
+stop:
+  tip: atr
+  n: 14
+  carpan: 2
+hedef: null
+iz_suren:
+  tip: atr_kapanis_zirve
+  n: 14
+  carpan: 2
+gun_sonu: "23:45"
+stop_eklendi: false
+piyasa_kisiti: [KRIPTO]
+parametreler:
+  giris_tf: 15m
+  donchian_n: 24
+izgara:
+  # on kayit: giris_tf x N = 4 deneme (donchian N, gostergeler.kirilim_1s.n)
+  - yol: tf
+    degerler: [15m, 5m]
+  - yol: gostergeler.kirilim_1s.n
+    degerler: [12, 24]
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+deneme_sayisi_kaynakta: 4
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- "U1 on kaydi: IS 2018-01-01 -> 2023-09-30, OOS 2023-10-01 -> 2025-09-30, kilitli 2025-10-01 -> bugun (yalniz lider acar). Gecme: GOREV_U1 bolum 4."
+- "Kurulum (1 saatlik kapanmis barlar): 'close > donchian(N).ust son 3 barda gerceklesmis' = son 3 saatlik barin herhangi birinde kapanis, ONCEKI N saatlik barin en yuksek high'ini asti (donchian_kirilim; guncel bar dahil olsaydi kosul saglanmazdi) VE saatlik kapanis > saatlik EMA50."
+- "Giris: giris TF'de low <= ema(20) (fiyat EMA'ya degdi) ve close > ema(20) (ustunde kapandi). Kurulum sartlari o anki son kapanmis saatlik bardan okunur."
+- "Stop ATR(14,giris TF) x 2; cikis: iz suren stop atr_kapanis_zirve ATR x 2 (D5) ya da gun sonu (UTC 23:45 acilisinda flat)."
