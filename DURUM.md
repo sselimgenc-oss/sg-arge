@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`)
+Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`). **Yeni iş: T35 bölgesel strateji toplama** (`docs/GOREV_T35.md`, karar `tartisma/009_ozet_karar.md`)
 
 ## Özet (kullanıcı için) — Faz 1 nihai
 - **Geçti 2:** C07, R01 (ABD günlük, PIT evrenle).
@@ -14,12 +14,14 @@ Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONU
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## Şu an
-| Ajan | İş | Durum | Kullanıcıdan beklenen |
+**T35 (bölgesel strateji toplama, ilk parti):** Faz 1'in 422 stratejisi dışında, yazarının rakamla kârlı dediği scalp/day/swing stratejileri yazarın piyasasıyla kaydedilir. Backtest yok. Şablon `arastirma/SABLON.csv`, çıktı `arastirma/<kol>.csv`.
+
+| Ajan | İş | Hedef | Durum |
 |---|---|---|---|
-| Sonnet | T30 tamam (PR #113). Beklemede | Beklemede | Yok |
-| Codex | **Pasif** (kullanıcı kararı: limit bitti; ikinci talimata kadar kullanılmıyor). T33 parti 1 tamam (PR #112: A1-027 yazıldı, A6-015/P3-010/M019 tanim_belirsiz); parti 2-4 (11 kart) denenmedi | Beklemede | Yok |
-| Argon | **Kullanılmıyor** (kullanıcı kararı: ikinci talimata kadar; limit ekran görüntüsü gezintisiyle tükeniyor) | Beklemede | Yok |
-| Lider | Faz 1 kapandı. Kullanıcı kararı: paper açılmayacak, Faz 2 askıda. Sistem yeni stratejileri denemek için süzgeç olarak duruyor | Kapandı | Yok |
+| Sonnet | T35: Çin, Japonya, Kore (Hindistan son) | 15-20 kayıt | Başlayacak |
+| Codex | T35: Avrupa, Amerika | 8-10 kayıt | Başlayacak |
+| Argon | T35: Afrika, G. Amerika (`argon/PAKET_T35_afrika_gamerika.md`) | 8-12 kayıt | Başlayacak (kullanıcı aracılığıyla) |
+| Lider | T35: TradingView bölgesel + denetim | ~10 kayıt | Başlayacak |
 
 ## Tamamlananlar (son)
 - **T32 (Codex/Terra) tamam:** 2H/4H mumlar (D16) ve FX8 piyasası + pip stop. Gerçek koşu: M013 (FX8 4H, PF 0.79) ve O2-005 (FX8 1H, PF 0.62) Aşama 1’de Reddedildi. Not: lider ilk tahmini (~80 kart) yanlıştı; bu piyasalara bağlı kartların çoğu kural eksik/özel kod. SONUC: Geçti 2, Koşullu 3, Reddedildi 132, Bekliyor 5.
