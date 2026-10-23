@@ -72,3 +72,49 @@ QuantBrasil sonuç tablosu PF vermiyor. Argon'un yazdığı PF'ler hesaplandı:
 **Karar:** Yazarın açıkça "Fator de Lucro" yazdığı SA-016 ve SA-017 dışındaki tüm QuantBrasil kayıtlarında `iddia_pf` boşaltıldı: SA-001a/b, SA-003, SA-008a/b, SA-009. Değerler `not` alanına açıklamayla taşındı. Diğer rakamlar (işlem, WR, getiri, DD) doğru çıktı; Argon kayıtları uydurma değil, ama PF alanı güvenilmez.
 
 **Sonraki Argon paketine kural:** "PF yalnız kaynakta 'profit factor / fator de lucro / factor de beneficio' diye yazıyorsa; hesaplama yapma."
+
+## Sonnet kolu (Çin, Japonya, Kore, Hindistan): `arastirma/sonnet_p2.csv` (PR #130)
+**16 satır, hepsi kabul.** En kaliteli teslim: kaynaklar API üzerinden tam metin okunmuş, elenenler gerekçesiyle listelenmiş (`arastirma/sonnet_p2_erisim.md`), metin-tablo çelişkisi bile not edilmiş (CN-008a).
+- **Çin (BigQuant, 7):** aracı kurum raporları, hepsi maliyet dahil. CN-007a (gürültü bölgesi gün içi momentum, 2013-2024, Sharpe 2,11) ve CN-008b (IF R-Breaker, 440 işlem, Sharpe 1,89) güçlü.
+- **Japonya (note.com, 4):**
+  - **JP-005:** USDJPY 5 dk RSI + SMA200, 2010-2026, 2.477 işlem, PF 1,56, maliyet dahil. Bu turun en güçlü scalp kaydı.
+  - **JP-004:** Gotobi günü, 946 işlem, PF 1,37, maliyet duyarlılığı ve 1.000 rastgele gün permütasyon testi var. Faz 1'deki null testimize benzer bir yaklaşım.
+- **Kore (3), Hindistan (2):** IN-004 (SBIN Keltner, 10 yıl, PF 1,70, maliyet dahil) ama al-tutun altında.
+
+**Lider bayrakları:**
+- CN-006a: ML (sınıflandırma ağacı).
+- KR-003: stopsuz, 221/221 kazanç, MDD %39,7. Connors RSI2 ailesinden.
+- CN-008a: metin-tablo çelişkisi.
+- IN-003: tarihsiz dönem.
+
+## Parti 2 sonucu ve toplam
+| Kol | Parti 1 | Parti 2 | Toplam |
+|---|---:|---:|---:|
+| Sonnet | 16 | 16 | 32 |
+| Argon | 12 | 13 | 25 |
+| Codex / ChatGPT | 10 | 9 | 19 |
+| Lider | 3 | 1 | 4 |
+| **Toplam** | **41** | **39** | **80** |
+
+Türlere göre: swing 43, day 26, scalp 6, belirsiz 5. Birleşik dosya: `arastirma/TUM_KAYITLAR.csv`.
+
+## Lider kısa listesi: sonraki backtest için öncelik
+Ölçüt: uzun dönem (en az ~5 yıl) ya da kullanıcı doğrulaması; maliyet dahil ya da şeffaf; kural tam ya da tama yakın; en az ~100 işlem; tek ürün reklamı değil.
+
+| # | id | Strateji | Piyasa / TF | Neden |
+|---|---|---|---|---|
+| 1 | JP-005 | USDJPY RSI(14) geri dönüş + SMA200 | FX, 5 dk (scalp) | 2010-2026, 2.477 işlem, PF 1,56, maliyet dahil, 17 yılın 16'sı artıda |
+| 2 | CN-007a | Gürültü bölgesi gün içi momentum | CSI 500 endeks/ETF, 1 dk | 2013-2024, Sharpe 2,11, maliyet dahil, kural tam (aracı kurum raporu) |
+| 3 | JP-004 | USDJPY Gotobi 仲値 saat etkisi | FX, 1 dk (day) | 946 işlem, PF 1,37, maliyet duyarlılığı + permütasyon testi |
+| 4 | CN-008b | IF R-Breaker gün içi | CFFEX IF, 1 dk | 440 işlem, Sharpe 1,89, maliyet dahil (2010-2014, eski) |
+| 5 | CN-001 | Endeks vadelisi açılış momentumu | CFFEX IF/IC/IH, 15 dk | yıllık %25,8, MDD %7,7, maliyet sonrası |
+| 6 | US-009 | NQ overnight momentum | NQ vadeli | doğrulandı; 796 işlem, PF 1,57, Sharpe 1,06; satıcı, kural kısmi |
+| 7 | IN-002 | Nifty 30 dk ORB, 2R | Nifty, 15 dk | 2017-2026, 2.122 işlem, PF 1,23; maliyetsiz |
+| 8 | SA-003 | Yavaş Stokastik + MME80, 2R | ITUB4, 120 dk | 2013-2021, 159 işlem, kural tam; maliyetsiz, tek hisse |
+| 9 | IN-004 | SBIN Keltner kırılımı | NSE, 1 saat | 10 yıl, PF 1,70, maliyet dahil; al-tutun altında |
+| 10 | SA-006 | Gap Trap | WDO, 15 dk | doğrulandı; kural tam; yalnız 37 işlem |
+
+**Not:** Bu sıralama yazar beyanına göredir; kanıt değildir. Kısa listenin gerçek değeri, sonraki aşamada bizim motorumuzda (Faz 1 hunisi: maliyet, null testi, OOS) yeniden üretilince ortaya çıkar. Ön koşullar:
+- vadeli/FX/dakikalık veri (CFFEX, NQ, USDJPY 1-5 dk);
+- motorda seans saati ilkeli;
+- short desteği.
