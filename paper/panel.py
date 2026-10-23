@@ -321,7 +321,7 @@ def uret(
     day_count = (pd.Timestamp(last_day) - portfoy.baslangic.tz_localize(None)).days + 1 if last_day is not None else 0
     meta = {
         "title": "Kağıt Hesaplar", "subtitle": f"sg-arge Paper Portföyü: {', '.join(r.id for r in portfoy.satirlar)} / {initial:,.0f} $ sanal sermaye (1/N)",
-        "last_update": now_trt.strftime("%d/%m %H:%M"), "test_period": f"gün {day_count} - {_dmy(portfoy.baslangic)} başlangıç (yer tutucu, kullanıcı onayı bekler)",
+        "last_update": now_trt.strftime("%d/%m %H:%M"), "test_period": f"gün {day_count} - {_dmy(portfoy.baslangic)} başlangıç",
         "exchange_rate": _clean(usdtry, 4), "currency": "USD", "fiat_currency": "TRY",
         "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; "
                        "durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
