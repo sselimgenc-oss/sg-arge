@@ -19,7 +19,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | Görev |
 |---|---|
 | Lider | Veri indiriliyor (14 coin, 1s/15dk/5dk); IS/OOS ilk koşu; U1d gelince huni + `results/U1_SONUC.md` |
-| Sonnet | U1a (PR #149) ve U1b (PR #147) birleşti. **Şimdi U1d:** `backtests/u1_huni.py` (null testi, +1 bar gecikme, bootstrap MDD95, DSR, kardeş raporu, karar) → PR |
+| Sonnet | U1d bitti (PR #152). **Şimdi U2a** (`docs/GOREV_U2.md`): kripto short motoru (PR #136'dan), funding maliyeti ve verisi → PR |
 | Argon | Beklemede |
 | ~~Codex~~ | Projeden çıkarıldı (kullanıcı kararı, 2026-10-23; ortam açılmıyor) |
 
