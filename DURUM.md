@@ -18,10 +18,10 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 | Ajan | Görev |
 |---|---|
-| Lider | Cevapları bekliyor, sonra `tartisma/012_ozet_karar.md` |
-| Sonnet | 012'nin 8 sorusunu cevapla → `tartisma/012_cevap_sonnet.md`, PR aç |
-| Codex | 012'nin 8 sorusunu cevapla → `tartisma/012_cevap_codex.md`, PR aç |
-| Argon | `argon/PAKET_012_enstruman_vs_evren.md` (kullanıcı yapıştırır) |
+| Lider | `tartisma/012_ozet_karar.md` yazıldı; kullanıcıdan hedef/risk onayı bekleniyor |
+| Sonnet | Tamamlandı (PR #141), beklemede |
+| Codex | Tamamlandı, beklemede |
+| Argon | Tamamlandı, beklemede |
 
 ## T35/T36 kapanış özeti
 - **T35 (bölgesel strateji toplama):** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), 4 kol, 2 parti. Kullanıcı örneklem doğrulamaları tuttu. Argon'un türetilmiş PF değerleri temizlendi. Değerlendirmeler: `tartisma/010`, `tartisma/011`. Kısa liste: `tartisma/011`.
