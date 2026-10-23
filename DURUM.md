@@ -18,10 +18,10 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 | Ajan | İş | Hedef | Durum |
 |---|---|---|---|
-| Sonnet | T35: Çin, Japonya, Kore (Hindistan son) | 15-20 kayıt | Başlayacak |
-| Codex | T35: Avrupa, Amerika | 8-10 kayıt | Başlayacak |
-| Argon | T35: Afrika, G. Amerika (`argon/PAKET_T35_afrika_gamerika.md`) | 8-12 kayıt | Başlayacak (kullanıcı aracılığıyla) |
-| Lider | T35: TradingView bölgesel + denetim | ~10 kayıt | Başlayacak |
+| Sonnet | T35 parti 1: Çin, Japonya, Kore (Hindistan son) | 15-20 kayıt | Bekleniyor |
+| Codex | T35 parti 1 tamam (PR #118, 10 kayıt, yalnız arXiv). **Parti 2:** Avrupa forumları + Amerika (`docs/GOREV_T35_P2.md`) | 10-12 kayıt | Başlayacak (Issue #1) |
+| Argon | T35 parti 1 kabul (12 kayıt, kullanıcı doğruladı). **Parti 2:** `argon/PAKET_T35P2_latam.md` | 15 kayıt | Başlayacak (kullanıcı aracılığıyla) |
+| Lider | T35 parti 1 tamam (3 kayıt, TradingView). Değerlendirme `tartisma/010` | — | Sürüyor |
 
 ## Tamamlananlar (son)
 - **T32 (Codex/Terra) tamam:** 2H/4H mumlar (D16) ve FX8 piyasası + pip stop. Gerçek koşu: M013 (FX8 4H, PF 0.79) ve O2-005 (FX8 1H, PF 0.62) Aşama 1’de Reddedildi. Not: lider ilk tahmini (~80 kart) yanlıştı; bu piyasalara bağlı kartların çoğu kural eksik/özel kod. SONUC: Geçti 2, Koşullu 3, Reddedildi 132, Bekliyor 5.
