@@ -14,14 +14,14 @@ Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONU
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## Şu an
-**T35 (bölgesel strateji toplama, ilk parti):** Faz 1'in 422 stratejisi dışında, yazarının rakamla kârlı dediği scalp/day/swing stratejileri yazarın piyasasıyla kaydedilir. Backtest yok. Şablon `arastirma/SABLON.csv`, çıktı `arastirma/<kol>.csv`.
+**T35 tamam:** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), kısa liste `tartisma/011`. **T36 başladı:** kısa listenin Faz 1 hunisiyle testi (`docs/GOREV_T36.md`).
 
-| Ajan | İş | Hedef | Durum |
-|---|---|---|---|
-| Sonnet | T35 parti 1 tamam (PR #121, 16 satır). **Parti 2:** `docs/GOREV_T35_P2.md` Sonnet bölümü | 15 kayıt | Başlayacak (kullanıcı tetikler) |
-| Codex | T35 parti 1 tamam (PR #118, 10 kayıt, yalnız arXiv). **Parti 2:** Avrupa forumları + Amerika (`docs/GOREV_T35_P2.md`) | 10-12 kayıt | Issue #1'e yazıldı |
-| Argon | T35 parti 1 kabul (12 kayıt, kullanıcı doğruladı). **Parti 2:** `argon/PAKET_T35P2_latam.md` | 15 kayıt | Başlayacak (kullanıcı aracılığıyla) |
-| Lider | T35 parti 1 tamam (3 kayıt, TradingView). Değerlendirme `tartisma/010` | — | Sürüyor |
+| Ajan | İş | Durum |
+|---|---|---|
+| Lider | T36a veri (Dukascopy 1 dk: USDJPY, USDCHF, Nasdaq-100 CFD) + T36c kartlar | Kullanıcının alan adı iznini bekliyor (`datafeed.dukascopy.com`) |
+| Sonnet | T36b motor: short desteği, dakikalık FX/CFD maliyet modeli, yerel saat ilkeli, seans sonu kapatma | Başlayacak (Issue #1, [SONNET GÖREVİ]) |
+| Codex | Bulut ortamı açılmıyor; T36b'yi devralabilir | Pasif |
+| Argon | T35 bitti | Beklemede |
 
 ## Tamamlananlar (son)
 - **T32 (Codex/Terra) tamam:** 2H/4H mumlar (D16) ve FX8 piyasası + pip stop. Gerçek koşu: M013 (FX8 4H, PF 0.79) ve O2-005 (FX8 1H, PF 0.62) Aşama 1’de Reddedildi. Not: lider ilk tahmini (~80 kart) yanlıştı; bu piyasalara bağlı kartların çoğu kural eksik/özel kod. SONUC: Geçti 2, Koşullu 3, Reddedildi 132, Bekliyor 5.
