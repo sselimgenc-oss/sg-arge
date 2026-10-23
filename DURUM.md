@@ -18,10 +18,10 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 | Ajan | Görev |
 |---|---|
-| Lider | Veri indiriliyor (14 coin, 1s/15dk/5dk); IS/OOS ilk koşu; U1d gelince huni + `results/U1_SONUC.md` |
+| Lider | Codex'in U1c PR'ını denetler, sonra `results/U1_SONUC.md` |
 | Sonnet | U1d bitti (PR #152). **Şimdi U2a** (`docs/GOREV_U2.md`): kripto short motoru (PR #136'dan), funding maliyeti ve verisi → PR |
 | Argon | Beklemede |
-| ~~Codex~~ | Projeden çıkarıldı (kullanıcı kararı, 2026-10-23; ortam açılmıyor) |
+| Codex | **U1c** (`docs/GOREV_U1c_CODEX.md`): 14 coin 1s/15dk/5dk verisi + U1 hunisinin gerçek koşusu → PR (kullanıcı kararı, 2026-10-23: Codex geri döndü) |
 
 ## T35/T36 kapanış özeti
 - **T35 (bölgesel strateji toplama):** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), 4 kol, 2 parti. Kullanıcı örneklem doğrulamaları tuttu. Argon'un türetilmiş PF değerleri temizlendi. Değerlendirmeler: `tartisma/010`, `tartisma/011`. Kısa liste: `tartisma/011`.
