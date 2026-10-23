@@ -54,3 +54,21 @@ Lider oturumu smart-lab.ru ve stsfutures.com'u açamıyor. Kullanıcıdan 2 örn
 
 **Doğrulama:** UdeM ve SciELO sayfaları lider oturumundan açılmıyor. Kullanıcıdan 1 örneklem kontrolü:
 - SA-008a: https://quantbrasil.com.br/blog/backtest-da-estrategia-123-utilizando-python/ → 48 işlem, %54, PF 1.15, DD %9.52.
+
+## Doğrulama sonuçları (kullanıcı, ekran görüntüleri, 2026-10-23)
+| Kayıt | Sonuç |
+|---|---|
+| EU-015 (smart-lab grid) | ✅ CAGR %31, MDD -%11, Sharpe 2,79 birebir. Ek: volatilite %11,1, beta 0,0. |
+| US-009 (STS NQ overnight) | ✅ $194.333, 796 işlem, 14 yıl, WR %56,3, Sharpe 1,06 birebir. Yazar "tek başına edge değil, çeşitlendirici" diyor. |
+| SA-008a (QuantBrasil 123) | ✅ 48 işlem, %54, %3,35, DD 9,52 birebir. ❌ **Tabloda PF satırı yok.** |
+
+### Sistematik Argon hatası: türetilmiş PF
+QuantBrasil sonuç tablosu PF vermiyor. Argon'un yazdığı PF'ler hesaplandı:
+- SA-008a: 26 × 965,27 / (22 × 988,41) = **1,154** (Argon 1,15)
+- SA-008b: 8 × 1216,62 / (4 × 1296,75) = **1,876** (Argon 1,88)
+- SA-009: 29 × 1860,86 / (15 × 1897,80) = **1,896** (Argon 1,90)
+- SA-001b: 1793 / 994 = **1,80** (Argon 1,80). Bu PF bile değil, payoff oranı.
+
+**Karar:** Yazarın açıkça "Fator de Lucro" yazdığı SA-016 ve SA-017 dışındaki tüm QuantBrasil kayıtlarında `iddia_pf` boşaltıldı: SA-001a/b, SA-003, SA-008a/b, SA-009. Değerler `not` alanına açıklamayla taşındı. Diğer rakamlar (işlem, WR, getiri, DD) doğru çıktı; Argon kayıtları uydurma değil, ama PF alanı güvenilmez.
+
+**Sonraki Argon paketine kural:** "PF yalnız kaynakta 'profit factor / fator de lucro / factor de beneficio' diye yazıyorsa; hesaplama yapma."
