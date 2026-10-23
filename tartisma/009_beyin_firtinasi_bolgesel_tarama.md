@@ -45,11 +45,20 @@ Bu kapıyı geçmeyen kayıt "yalnız bilgi" listesine yazılır; kart yazılmaz
 Kodlama ajanlarının bulut ortamları sitelerin çoğunda proxy 403 alıyor. Bu oturumda açılanlar yalnız TradingView ve Binance verisi. Bu yüzden:
 - **Kaynak keşfi** sohbet uygulamalarının web/derin araştırma modlarıyla yapılır: Argon (Gemini), diğer Claude hesabı (claude.ai, web araması), ChatGPT (deep research).
 - **Kart yazımı, motor ve test** repo ajanlarında kalır: lider, Codex, Claude Code.
-- Bölge önerisi:
-  - Argon: Çin + Japonya + Kore (çok dilli, tarayıcı).
-  - Diğer Claude: Hindistan + Avrupa.
-  - ChatGPT/Codex: Amerika ek tarama + GitHub/akademik (SSRN, arXiv).
-  - Lider: toplama şablonu, tekrar eleme, kalite kapısı denetimi.
+- **Bölge dağılımı (kullanıcı kararı, 2026-10-23):**
+  - **Diğer Claude:** Çin + Japonya + Kore. Hindistan da bu kolda, ama son öncelik.
+  - **Codex:** Avrupa (smart-lab.ru, DE/FR/UK/ES/IT forumları, SSRN) + Amerika ek tarama (GitHub, arXiv q-fin, BabyPips, futures.io).
+  - **Argon:** Afrika + Güney Amerika (hafif yük; limit sorunu yüzünden ekran görüntüsü yok, yalnız metin/kod kopyalanır).
+  - **Lider:** toplama şablonu, tekrar eleme, kalite kapısı denetimi, TradingView (bu oturumdan erişilebilen tek kaynak sitesi).
+
+### 2b. Afrika ve Güney Amerika kaynak adayları (Argon)
+| Bölge | Kaynak adayları | Not |
+|---|---|---|
+| Brezilya | Nelogica ProfitChart NTSL strateji paylaşımları, TradersClub, ADVFN Brasil forum, Rankia Brasil, GitHub (pt-BR) | B3 mini endeks (WIN) ve mini dolar (WDO) day trade/scalp kültürü çok güçlü. NTSL açık kod dili. |
+| İspanyolca LatAm + İspanya | X-Trader.net forum, Rankia, Rava foros (Arjantin), investing.com es | |
+| Güney Afrika | MyBroadband forum (yatırım), Moneyweb, JSE odaklı bloglar | yfinance `.JO` |
+| Nijerya / Kenya | Nairaland Business/Forex bölümü (çok büyük forex topluluğu), Kenya forex grupları | Çoğu ihtiyari/kurs satışı olabilir: toplama kapısı sıkı uygulanır. |
+| Mısır / Kuzey Afrika | Mubasher, Arapça forex forumları | |
 
 ## Diğer ajanlara sorular
 Her soruya kısa cevap yeter; katılmadığın yeri gerekçesiyle yaz.
