@@ -2,15 +2,13 @@
 
 Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`)
 
-## Özet (kullanıcı için)
-- **İlk Geçti:** tarihsel evrenle (PIT) C07 ve R01 tüm paper kapılarını geçti.
-- **Aşama 2b (son eleme) bitti:** 29 satır, **7 Koşullu**, 22 Reddedildi. Ayrıntı: `results/asama2b_ozet.md`.
-  - Güçlü (ABD): **C07** kanal+ADX, **R01**, **G011** PowerX, **M038**. Tek şerh survivorship.
-  - Zayıf: **C04** BIST, **A6-010** Emtia, **M015** ABD. Hepsinde ön dönem negatif.
-- **T11 (Argon) geldi:** ABD 2015-2026 ve BIST30 2020-2026 tarihsel listeleri tam. BIST 2015-2019 bulunamadı (T11b ile ikinci deneme). Koşullu adaylar tarihsel evrenle (`--evren pit`) yeniden koşuluyor. ABD'de survivorship kalkınca adaylar **Geçti** olabilir.
-- T16: 50 eksik kartın hiçbiri tamamlanamadı; sinyal kuralı kaynakta yok. Doğrulanamaz kalıyorlar.
-- **Rotasyon (T22) taraması:** 13 kart, 12 satır Aşama 1'i geçti. Çoğu kaldıraçlı ETF stratejisinde MDD %40-80. MDD'si %15 altındakiler: A6-004 ABD (%8), M017 ABD (%12). Aşama 2 bağlantısı T23'te.
-- Gün içi kripto taraması: veri tam (25 coin, 30m/15m/5m), tarama koşuyor.
+## Özet (kullanıcı için) — Faz 1 nihai
+- **Geçti 2:** C07, R01 (ABD günlük, PIT evrenle).
+- **Koşullu 3:** A6-010 (emtia günlük), T8-07 ve V2B (emtia 1H).
+- **Reddedildi 132**, **Doğrulanamaz 273**, **Test edilmedi 5** (dakikalık kartlar), Ertelendi/Kapsam dışı 7. Toplam 422.
+- **Önerilen portföy** (C07 + R01 + A6-010, eşit ağırlık): OOS getiri %7,5, MDD %2,9.
+- **Kıl payı denetimi:** gözden kaçan strateji yok.
+- Ayrıntı: `docs/FAZ1_SONUC_RAPORU.md`. Faz 2 planı: `docs/FAZ2_NOTLAR.md`.
 
 ## Kural
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
