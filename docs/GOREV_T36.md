@@ -1,3 +1,5 @@
+> **KAPATILDI (kullanıcı kararı, 2026-10-23).** T36a kodu birleşti (PR #135), veri indirmesi ve T36b/c yapılmadı.
+
 # T36: T35 kısa listesinin testi (Faz 1 hunisiyle)
 
 Karar: kullanıcı, lider önerisi (b) ile kabul etti (2026-10-23). Kaynak: `tartisma/011_t35_parti2_degerlendirme.md`, "Lider kısa listesi".

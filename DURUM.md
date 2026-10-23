@@ -14,14 +14,21 @@ Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONU
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## Şu an
-**T35 tamam:** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), kısa liste `tartisma/011`. **T36 başladı:** kısa listenin Faz 1 hunisiyle testi (`docs/GOREV_T36.md`).
+**T35/T36 kapandı (kullanıcı kararı, 2026-10-23).** Yeni bir çalışma açılacak.
 
-| Ajan | İş | Durum |
-|---|---|---|
-| Lider | Denetim + T36d huni ve sonuç raporu (token tasarrufu: kod/veri işi yok) | T36b/a/c teslimlerini bekliyor |
-| Sonnet | T36b motor → T36a veri (Dukascopy, taslak `data/dukascopy.py`) → T36c kartlar | Başlayacak (Issue #1, [SONNET GÖREVİ]) |
-| Codex | Bulut ortamı açılmıyor; T36b'yi devralabilir | Pasif |
-| Argon | T35 bitti | Beklemede |
+| Ajan | Durum |
+|---|---|
+| Lider | Beklemede |
+| Sonnet | Beklemede (T36b/c iptal) |
+| Codex | Beklemede (T36a kodu birleşti, PR #135; veri indirmesi iptal) |
+| Argon | Beklemede |
+
+## T35/T36 kapanış özeti
+- **T35 (bölgesel strateji toplama):** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), 4 kol, 2 parti. Kullanıcı örneklem doğrulamaları tuttu. Argon'un türetilmiş PF değerleri temizlendi. Değerlendirmeler: `tartisma/010`, `tartisma/011`. Kısa liste: `tartisma/011`.
+- **T36 (kısa liste testi):** Kapatıldı.
+  - Ücretsiz dakikalık veri yalnız USDJPY/Nasdaq için Dukascopy'de var. İndirici hazır (`data/dukascopy.py`), indirme yapılmadı.
+  - Çin/WDO/Nifty adayları veri yokluğundan Doğrulanamaz.
+- **Lider değerlendirmesi:** Paper'a en sağlam adaylar hâlâ Faz 1'in C07 + R01 (+ A6-010) üçlüsü. Yeni listeden en umutlu olanlar JP-005 ve JP-004 (USDJPY); test edilmedi.
 
 ## Tamamlananlar (son)
 - **T32 (Codex/Terra) tamam:** 2H/4H mumlar (D16) ve FX8 piyasası + pip stop. Gerçek koşu: M013 (FX8 4H, PF 0.79) ve O2-005 (FX8 1H, PF 0.62) Aşama 1’de Reddedildi. Not: lider ilk tahmini (~80 kart) yanlıştı; bu piyasalara bağlı kartların çoğu kural eksik/özel kod. SONUC: Geçti 2, Koşullu 3, Reddedildi 132, Bekliyor 5.
