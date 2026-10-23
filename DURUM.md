@@ -19,9 +19,9 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 | Ajan | Görev |
 |---|---|
 | Lider | Codex'in U1c PR'ını denetler, sonra `results/U1_SONUC.md` |
-| Sonnet | U1d bitti (PR #152). **Şimdi U2a** (`docs/GOREV_U2.md`): kripto short motoru (PR #136'dan), funding maliyeti ve verisi → PR |
-| Argon | Beklemede |
-| Codex | **U1c** (`docs/GOREV_U1c_CODEX.md`): 14 coin 1s/15dk/5dk verisi + U1 hunisinin gerçek koşusu → PR (kullanıcı kararı, 2026-10-23: Codex geri döndü) |
+| Sonnet | **Şimdi U3** (`docs/GOREV_U3.md`): dünya genelinde 4s/1s kurulum + 15dk/5dk giriş stratejileri, en az 100 kayıt, backtest yok → PR (50'de ara teslim). |
+| Argon | **U-A1** (`argon/PAKET_UA1_uc_enstruman.md`, Gemini 3.8): XU030 endeks kontratı, SPX, XAUUSD için veri kaynakları, kontrat/maliyet, 128 kartın uygunluk ayrımı, yöntem denetimi. Yalnız araştırma; kapsam kripto kalır, test/kod açılmaz (kullanıcı kararı, 2026-10-23) |
+| Codex | **U1c** (`docs/GOREV_U1c_CODEX.md`): 14 coin 1s/15dk/5dk verisi + U1 hunisinin gerçek koşusu → PR (kullanıcı kararı, 2026-10-23: Codex geri döndü). **Sırada U2a** (`docs/GOREV_U2.md`, başlanmadı): kripto short motoru + funding |
 
 ## T35/T36 kapanış özeti
 - **T35 (bölgesel strateji toplama):** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), 4 kol, 2 parti. Kullanıcı örneklem doğrulamaları tuttu. Argon'un türetilmiş PF değerleri temizlendi. Değerlendirmeler: `tartisma/010`, `tartisma/011`. Kısa liste: `tartisma/011`.

@@ -7,7 +7,7 @@
 
 **Ön kayıt kuralı:** Bu aşamada yalnız **motor ve veri** hazırlanır. Short strateji kartları ve ızgaraları U1 sonuçları görüldükten sonra lider tarafından ön kayıtla yazılır. U1 verisine bakarak kart yazılmaz.
 
-## U2a: Sonnet (motor + maliyet + veri)
+## U2a: Codex (motor + maliyet + veri; U1c'den sonra, kullanıcı kararı 2026-10-23)
 1. **Short motoru:** PR #136'daki (T36b) short desteğini main'e taşı. Gerekenler:
    - `yon: long | short | iki`;
    - aynalanmış stop, hedef ve iz süren;
