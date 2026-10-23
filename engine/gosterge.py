@@ -287,6 +287,13 @@ def bb_genislik_yuzdelik(df: pd.DataFrame, src: str = "close", n: int = 20, carp
     return rank
 
 
+def donchian_kirilim(df: pd.DataFrame, n: int = 24, bar: int = 3) -> pd.Series:
+    """1 when ``close`` closed above the highest high of the *previous* ``n`` bars on any of the last ``bar`` bars (current included)."""
+    prior_high = _col(df, "high").rolling(int(n)).max().shift(1)
+    broke = (_col(df, "close") > prior_high).astype(float).where(prior_high.notna())
+    return broke.rolling(int(bar), min_periods=1).max()
+
+
 def gun_acilis(df: pd.DataFrame) -> pd.Series:
     """Open of the first bar of the bar's UTC day (known from that bar on: no look-ahead)."""
     if not isinstance(df.index, pd.DatetimeIndex):
@@ -804,7 +811,7 @@ def _price(name: str) -> Callable[..., pd.Series]:
 REGISTRY: dict[str, Callable[..., pd.Series | pd.DataFrame]] = {
     "sma": sma, "ema": ema, "wma": wma, "rsi": rsi, "atr": atr, "adx": adx, "dmi": dmi, "cci": cci,
     "macd": macd, "bb": bb, "kc": kc, "donchian": donchian, "stoch": stoch, "obv": obv, "mfi": mfi,
-    "vwap": vwap, "bb_genislik_yuzdelik": bb_genislik_yuzdelik, "gun_acilis": gun_acilis, "kama": kama, "ichimoku": ichimoku, "supertrend": supertrend, "roc": roc,
+    "vwap": vwap, "bb_genislik_yuzdelik": bb_genislik_yuzdelik, "donchian_kirilim": donchian_kirilim, "gun_acilis": gun_acilis, "kama": kama, "ichimoku": ichimoku, "supertrend": supertrend, "roc": roc,
     "zscore": zscore, "highest": highest, "lowest": lowest, "ott": ott, "pmax": pmax, "rvol": rvol,
     "stdev": stdev, "var": var, "rrs": rrs, "atr_ratio": atr_ratio,
     "williams_fractal": williams_fractal, "renko_sayac": renko_sayac, "tr": tr, "linreg": linreg,

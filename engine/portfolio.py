@@ -145,6 +145,7 @@ def run_portfolio(
     fill_at_close: bool = False,
     time_stop_bars: int | None = None,
     cooldown_bars: int = 0,
+    max_entries_per_day: int | None = None,
     profit_lock: dict | None = None,
     exit_builder: Callable[..., pd.Series | None] | None = None,
     partial_profit: dict | None = None,
@@ -168,7 +169,8 @@ def run_portfolio(
     * ``trail_mode``: ``"close"`` ratchets ``close - m*ATR``, ``"high"`` ratchets
       ``high - m*ATR``, ``None`` keeps the initial stop;
     * ``fill_at_close``: signal-bar close fills (MOC); costs are the caller's job;
-    * ``time_stop_bars``, ``cooldown_bars``, ``profit_lock`` (``trigger_atr`` and a
+    * ``max_entries_per_day``: at most that many fills per symbol and UTC day (U1; counted at the fill, a signal that
+      follows the day's last allowed entry is ignored); ``time_stop_bars``, ``cooldown_bars``, ``profit_lock`` (``trigger_atr`` and a
       ``stop_fn(entry_price)`` returning the locked stop), ``exit_builder`` (position
       state dependent exit series, called as ``(symbol, entry_date, entry_price,
       initial_stop, target)``);
@@ -300,6 +302,7 @@ def run_portfolio(
     exposure_points: dict[pd.Timestamp, float] = {}
     max_open_positions = 0
     last_exit_loc: dict[str, int] = {}
+    entries_per_day: dict[tuple[str, pd.Timestamp], int] = {}
     di = 0  # index of the current date in ``dates``
     roi_keys = sorted(roi_table) if roi_table else []
     roi_values = [roi_table[key] for key in roi_keys]
@@ -418,6 +421,9 @@ def run_portfolio(
             runtime_exit=runtime_exit, orig_quantity=quantity, sig_loc=sig_loc,
         )
         max_open_positions = max(max_open_positions, len(positions))
+        if max_entries_per_day is not None:
+            key = (symbol, date.floor("D"))
+            entries_per_day[key] = entries_per_day.get(key, 0) + 1
         if record_state:
             fill_log.append({"tarih": date, "sembol": symbol, "tip": "giris", "fiyat": price, "adet": quantity,
                              "maliyet": entry_cost, "stop": initial_stop, "hedef": target})
@@ -451,6 +457,8 @@ def run_portfolio(
         return float(price_arr[symbol]["close"][loc]) - position.entry_price >= trigger
 
     def cooled_down(symbol: str) -> bool:
+        if max_entries_per_day is not None and entries_per_day.get((symbol, dates[di].floor("D")), 0) >= max_entries_per_day:
+            return False
         if cooldown_bars <= 0 or symbol not in last_exit_loc:
             return True
         return int(locs[symbol][di]) - last_exit_loc[symbol] > cooldown_bars
