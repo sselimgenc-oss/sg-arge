@@ -1,7 +1,7 @@
 # Kart kontrol raporu
 
-Kart sayisi: 403 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 136
-T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **105**; ayrica `dakikalik` (yalniz kripto testi) hazir: **25**
+Kart sayisi: 408 | `tam` kartlarda hata: **0** | sorun bildirilen kart: 131
+T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **110**; ayrica `dakikalik` (yalniz kripto testi) hazir: **25**
 
 
 ## Durum dagilimi
@@ -13,7 +13,7 @@ T5b taramasina hazir kart (`tam`, hatasiz, `ozel_kod: false`): **105**; ayrica `
 | sadece_short | 3 |
 | eksik | 159 |
 | dakikalik | 62 |
-| tam | 126 |
+| tam | 131 |
 | kapsam_disi | 4 |
 
 ## `tam` kartlarda hatalar (T5'e engel)
@@ -166,5 +166,5 @@ Toplam: 7 (durum `tam` olanlar once)
 
 ## Diger kartlarda sorun sayisi
 
-`tam` olmayan 126 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
+`tam` olmayan 121 kartta bilgi amacli bulgu var (ayrintilar yukaridaki tablolarda); kartlar degistirilmedi.
 

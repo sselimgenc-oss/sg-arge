@@ -1,0 +1,66 @@
+id: U1-H1-TS
+ad: U1 Hat 1 - Cok varlikli zaman serisi trend sepeti
+kart_yazari: sonnet
+kaynak:
+  dosya: docs/GOREV_U1.md
+  url: null
+  sayfa: null
+  not: "Kendi stratejimiz. Dayanak: Moskowitz-Ooi-Pedersen 2012 (zaman serisi momentum), Hurst-Ooi-Pedersen (trend); on kayit tartisma/012_ozet_karar.md K6"
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: BIST30 + ABD25 + KRIPTO25 + EMTIA
+gostergeler:
+  roc126:
+    f: roc
+    src: close
+    n: 126
+  sma200:
+    f: sma
+    src: close
+    n: 200
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+rotasyon:
+  kip: trend_sepet
+  dengeleme:
+    tip: ay
+  filtre: roc126 > 0 and close > sma200
+  agirlik: ters_vol
+  vol_n: 60
+  sinif_butce:
+    BIST30: 0.25
+    ABD25: 0.25
+    KRIPTO25: 0.25
+    EMTIA: 0.25
+parametreler:
+  roc126.n: 126
+  sma200.n: 200
+  vol_n: 60
+izgara:
+  # on kayit (docs/GOREV_U1.md bolum 1): 3 x 2 = 6 deneme; baska varyant denenmez
+  - yol: gostergeler.roc126.n
+    degerler: [63, 126, 252]
+  - yol: rotasyon.dengeleme.tip
+    degerler: [hafta, ay]
+deneme_sayisi_kaynakta: 6
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- "U1 on kaydi: donemler IS veri basi -> 2023-09-30, OOS 2023-10-01 -> 2025-09-30, kilitli 2025-10-01 -> bugun (yalniz lider acar)."
+- "Sinif adlari data/evren.csv 'piyasa' sutunudur (BIST30 USD bazinda, ABD25 PIT uyelik, KRIPTO25, EMTIA). Kosucu 'siniflar' sozlugunu (sembol -> sinif) rotasyon.kos'a vermelidir."
+- "Ters volatilite payi: her sembol, kendi sinifinin TUM islem gorebilir uyeleri arasindaki ters-vol payini alir (sinif butcesi x pay). Filtresi yanlis sembolun payi nakitte kalir ('Sinyali olmayan pay nakitte kalir'); sinifta hic sinyal yoksa sinif nakittir. GOREV_U1 metni 'sinyali olmayan pay' ifadesini bu sekilde okudum; payin kalan semboller arasinda yeniden dagitilmasi (her sinif her zaman %25 yatirimli) ayri bir kural olur ve izgaraya girmedi. LIDER ONAYI BEKLENIR."
+- "getiri(L) = roc (yuzde degisim, L bar); roc126 > 0 ile (close/close[126] - 1) > 0 ayni isarettir."
+- "vol_n = 60 bar: sembolun kendi takvimindeki gunluk getirilerin std'si (kripto 7/24, hisse is gunu). Kaldirac yok, toplam agirlik <= 1 (sinif butceleri toplami 1)."

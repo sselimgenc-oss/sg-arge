@@ -1,0 +1,52 @@
+id: U1-H2-B
+ad: U1 Hat 2 - Kripto 1 saat ABD seans acilisi akisi
+kart_yazari: sonnet
+kaynak:
+  dosya: docs/GOREV_U1.md
+  url: null
+  sayfa: null
+  not: "Kendi stratejimiz; mekanizma: ABD seans acilisinda (UTC 13:30-14:30) kripto-hisse akisi ve gun ici momentum. On kayit tartisma/012_ozet_karar.md K6"
+tarz: day
+tf: 1H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto
+gostergeler:
+  gun_acilis_fiyat:
+    f: gun_acilis
+  vwap_gun:
+    f: vwap
+    anchor: D
+ozel_kod: false
+giris: saat_utc() == 13 and close > gun_acilis_fiyat and close > vwap_gun
+cikis: saat_utc() == 19
+stop:
+  tip: atr
+  n: 14
+  carpan: 2
+hedef: null
+stop_eklendi: false
+piyasa_kisiti: [KRIPTO]
+parametreler:
+  cikis_saati_utc: 20
+izgara:
+  # on kayit: 2 deneme. cikis saati 17:00 icin cikis: saat_utc() == 16 ; 20:00 icin saat_utc() == 19
+  - yol: cikis
+    degerler: ["saat_utc() == 16", "saat_utc() == 19"]
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT]
+kardesler: [XRPUSDT, ADAUSDT, DOGEUSDT, TRXUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+deneme_sayisi_kaynakta: 2
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- "U1 on kaydi: donemler IS veri basi -> 2023-09-30, OOS 2023-10-01 -> 2025-09-30, kilitli 2025-10-01 -> bugun. Gecme: docs/GOREV_U1.md bolum 2 (kardes dogrulama K3)."
+- "'UTC 13:00 barinin kapanisinda' = UTC 13:00 ACILISLI saatlik bar (13:00-14:00); sinyal 14:00'te bar kapaninca verilir, dolum 14:00 acilisinda (A1). saat_utc() barin acilis saatini verir, bu yuzden giris saat_utc() == 13."
+- "Cikis 'UTC 20:00' = 20:00 acilisinda dolum; 19:00 acilisli bar kapaninca sinyal (saat_utc() == 19). 17:00 varyanti saat_utc() == 16. Stop ATR14 x 2, hedef yok, gunde en fazla bir giris (tek saatlik kosul)."
+- "'Gun acilisi' = UTC gununun ilk saatlik barinin acilisi (gosterge gun_acilis, UTC 00:00); vwap UTC gunune sabitlenir (anchor D, engine/gosterge.py vwap)."

@@ -7,6 +7,11 @@ from a comparison across instruments. Three modes, all declared in the card's ``
                     (optional absolute ``filtre`` per symbol, optional market ``rejim`` gate).
 * ``sirali_giris``  per-symbol ``giris``/``cikis`` rules, at most ``max_pozisyon`` slots, new entries ranked by ``skor``.
 * ``gecis``         named instruments and an if/else tree (``agac``) that is evaluated every bar.
+* ``trend_sepet``   (U1) every symbol whose ``filtre`` is true is held; the weight comes from a per-class budget
+                    (``sinif_butce``) split by inverse volatility (``agirlik: ters_vol``). Optional cross-sectional
+                    cut: ``skor`` + ``grup`` + ``k`` keep only the top-k symbols of each group.
+
+``agirlik`` (``esit`` | ``ters_vol``, ``vol_n`` default 60) is also read by ``kesitsel`` (weights of the chosen N, total 1).
 
 Execution follows EVRENSEL_KURALLAR A: the decision uses closed bars only and fills at the next bar's open;
 cost is charged on traded notional; no leverage (leveraged ETFs are plain instruments). There is no per-trade stop
@@ -28,7 +33,8 @@ from engine import expr as _expr
 from engine import gosterge as _ind
 from engine.portfolio import BacktestResult
 
-MODES = ("kesitsel", "sirali_giris", "gecis")
+MODES = ("kesitsel", "sirali_giris", "gecis", "trend_sepet")
+WEIGHTINGS = ("esit", "ters_vol")
 REBALANCE_TYPES = ("gun", "hafta", "ay")
 CASH = "nakit"
 _CARRY_BARS = 3
@@ -125,6 +131,41 @@ def dogrula(card: Mapping[str, Any]) -> list[str]:
             problems.append("sirali_giris: rotasyon.max_pozisyon pozitif tam sayi olmali")
     if mode == "gecis":
         problems += _check_tree(block.get("agac"), card)
+    if mode == "trend_sepet":
+        problems += _check_sepet(block)
+    if block.get("agirlik") is not None and block["agirlik"] not in WEIGHTINGS:
+        problems.append(f"rotasyon.agirlik gecersiz: {block['agirlik']!r} (gecerli: {', '.join(WEIGHTINGS)})")
+    if block.get("vol_n") is not None and not (isinstance(block["vol_n"], int) and not isinstance(block["vol_n"], bool) and block["vol_n"] >= 2):
+        problems.append("rotasyon.vol_n >= 2 tam sayi olmali")
+    return problems
+
+
+def _check_sepet(block: Mapping[str, Any]) -> list[str]:
+    problems: list[str] = []
+    if not (isinstance(block.get("filtre"), str) and block["filtre"].strip()):
+        problems.append("trend_sepet: rotasyon.filtre gerekli")
+    budget = block.get("sinif_butce")
+    if not (isinstance(budget, Mapping) and budget and all(isinstance(v, (int, float)) and not isinstance(v, bool) and v > 0 for v in budget.values())):
+        problems.append("trend_sepet: rotasyon.sinif_butce {sinif: oran > 0} gerekli")
+    elif sum(budget.values()) > 1 + 1e-9:
+        problems.append("trend_sepet: sinif_butce toplami 1'i gecemez (kaldirac yok)")
+    ranked = [key for key in ("skor", "grup", "k") if block.get(key) is not None]
+    if ranked and len(ranked) != 3:
+        problems.append("trend_sepet: kesitsel kesim icin skor, grup ve k birlikte verilmeli")
+    if len(ranked) == 3:
+        group, picks = block["grup"], block["k"]
+        if not (isinstance(group, Mapping) and isinstance(picks, Mapping)):
+            problems.append("trend_sepet: grup {sinif: grup} ve k {grup: sayi} sozluk olmali")
+        else:
+            if isinstance(budget, Mapping) and set(group) != set(budget):
+                problems.append("trend_sepet: grup anahtarlari sinif_butce siniflariyla ayni olmali")
+            if set(group.values()) != set(picks):
+                problems.append("trend_sepet: k anahtarlari grup adlariyla ayni olmali")
+            if not all(isinstance(v, int) and not isinstance(v, bool) and v >= 1 for v in picks.values()):
+                problems.append("trend_sepet: k degerleri pozitif tam sayi olmali")
+    scale = block.get("k_carpan", 1)
+    if not (isinstance(scale, (int, float)) and not isinstance(scale, bool) and scale > 0):
+        problems.append("trend_sepet: k_carpan pozitif sayi olmali")
     return problems
 
 
@@ -373,6 +414,7 @@ def _kesitsel_weights(card: Mapping[str, Any], frames: Mapping[str, pd.DataFrame
     eligible_values = eligible.to_numpy(bool)
     gate_values = entry_gate.to_numpy(bool) if entry_gate is not None else None
     decision_locs = np.flatnonzero(decide.to_numpy())
+    inverse = _inverse_vol(frames, calendar, columns, block) if block.get("agirlik") == "ters_vol" else None
 
     def assign(values: pd.DataFrame) -> pd.DataFrame:
         scores = values.to_numpy(float)
@@ -387,12 +429,114 @@ def _kesitsel_weights(card: Mapping[str, Any], frames: Mapping[str, pd.DataFrame
             if gate_values is not None:
                 chosen = [i for i in chosen if i in held or gate_values[loc, i]]
                 held = set(chosen)
-            out[loc, chosen] = 1.0 / count
+            out[loc, chosen] = 1.0 / count if inverse is None else _split(inverse[loc, chosen], 1.0)
         weights = pd.DataFrame(out, index=calendar, columns=columns)
         weights.attrs["karar"] = decide
         return weights
 
     return assign(score), lambda rng: assign(_random_scores(score, rng))
+
+
+# --------------------------------------------------------------------------------------------- weighting (U1)
+def _inverse_vol(frames: Mapping[str, pd.DataFrame], calendar: pd.DatetimeIndex, columns: list[str], block: Mapping[str, Any]) -> np.ndarray:
+    """1 / (std of the symbol's own daily returns over ``vol_n`` bars), calendar x columns; NaN until the window fills."""
+    window = int(block.get("vol_n", 60))
+    table = {symbol: frames[symbol]["close"].pct_change().rolling(window).std() for symbol in columns}
+    vol = pd.DataFrame(table).reindex(calendar).ffill(limit=_CARRY_BARS)
+    return (1.0 / vol.replace(0.0, np.nan)).to_numpy(float)
+
+
+def _split(inverse: np.ndarray, total: float) -> np.ndarray:
+    """``total`` shared by inverse volatility; a symbol without history gets the average share."""
+    usable = ~np.isnan(inverse)
+    if not usable.any():
+        return np.full(len(inverse), total / len(inverse))
+    shares = np.where(usable, inverse, np.nanmean(inverse))
+    return total * shares / shares.sum()
+
+
+def _sepet_weights(card: Mapping[str, Any], frames: Mapping[str, pd.DataFrame], calendar: pd.DatetimeIndex,
+                   benchmark: pd.DataFrame | None, week_end: str, membership: pd.DataFrame | None,
+                   classes: Mapping[str, str] | None):
+    """(real weights, null function) of a ``trend_sepet`` book.
+
+    Trend-only: a symbol is held when its ``filtre`` is true and receives ``sinif_butce[class]`` x its inverse-vol share
+    among *all* tradable members of the class, so the slice of a symbol without a signal stays in cash.
+    With ``skor``/``grup``/``k``: scores are z-scored inside each class, the filter passers of a group are ranked and the
+    top ``k x k_carpan`` are kept; the group's budget (sum of its classes' budgets) is split by inverse vol among them.
+    The null keeps the holding count of every unit (class, or group when ranking) and picks the holdings at random.
+    """
+    block = card["rotasyon"]
+    columns = list(frames)
+    if not classes or any(s not in classes for s in columns):
+        raise RotasyonVeriYok("sinif_yok", [s for s in columns if not classes or s not in classes])
+    budget = {name: float(v) for name, v in block["sinif_butce"].items()}
+    unknown = sorted({classes[s] for s in columns} - set(budget))
+    if unknown:
+        raise RotasyonVeriYok("sinif_butcesi_yok", unknown)
+    ranked = block.get("grup") is not None
+    tables = _per_symbol(card, frames, calendar, benchmark, week_end, ("skor", "filtre") if ranked else ("filtre",))
+    passes = tables["filtre"].reindex(columns=columns).fillna(False).astype(bool)
+    inverse = _inverse_vol(frames, calendar, columns, block)
+    tradable = _member(pd.DataFrame(~np.isnan(inverse), index=calendar, columns=columns), membership)
+    tradable_values = tradable.to_numpy(bool)
+    pass_values = (passes & tradable).to_numpy(bool)
+    equal = block.get("agirlik", "ters_vol") == "esit"
+    cls = np.array([classes[s] for s in columns])
+    unit_of = np.array([block["grup"][classes[s]] for s in columns]) if ranked else cls
+    units = list(dict.fromkeys(unit_of))
+    unit_budget = {u: sum(v for c, v in budget.items() if (block["grup"][c] if ranked else c) == u) for u in units}
+    limits = {u: max(1, int(round(block["k"][u] * float(block.get("k_carpan", 1))))) for u in units} if ranked else {}
+    decide = _decision_days(calendar, block["dengeleme"])
+    decision_locs = np.flatnonzero(decide.to_numpy())
+
+    z_values = None
+    if ranked:
+        score = tables["skor"].reindex(columns=columns)
+        z = score.copy()
+        for name in dict.fromkeys(cls):  # z-score inside a class on every date, so BIST and US stocks rank on one scale
+            members = [i for i, c in enumerate(cls) if c == name]
+            part = score.iloc[:, members].where(tradable.iloc[:, members])
+            spread = part.std(axis=1, ddof=0).replace(0.0, np.nan)
+            z.iloc[:, members] = part.sub(part.mean(axis=1), axis=0).div(spread, axis=0)
+        z_values = z.to_numpy(float)
+        pass_values = pass_values & ~np.isnan(z_values)
+
+    def shares(loc: int, held: list[int], unit: str) -> dict[int, float]:
+        if not held:
+            return {}
+        if equal:
+            return {i: unit_budget[unit] / len(held) for i in held}
+        if ranked:  # the picks share the group's budget
+            return dict(zip(held, _split(inverse[loc, held], unit_budget[unit])))
+        pool = np.flatnonzero((unit_of == unit) & tradable_values[loc])
+        total = float(np.nansum(inverse[loc, pool]))
+        return {i: unit_budget[unit] * inverse[loc, i] / total for i in held} if total > 0 else {}
+
+    def assign(pick: Callable[[int, str, list[int]], list[int]]) -> pd.DataFrame:
+        out = np.zeros((len(calendar), len(columns)))
+        for loc in decision_locs:
+            for unit in units:
+                members = np.flatnonzero(unit_of == unit)
+                real = [int(i) for i in members if pass_values[loc, i]]
+                if ranked and real:
+                    real = sorted(real, key=lambda i: -z_values[loc, i])[: limits[unit]]  # stable: ties keep the column order
+                for i, share in shares(loc, pick(loc, unit, real), unit).items():
+                    out[loc, i] = share
+        weights = pd.DataFrame(out, index=calendar, columns=columns)
+        weights.attrs["karar"] = decide
+        return weights
+
+    def null(rng: np.random.Generator) -> pd.DataFrame:
+        def pick(loc: int, unit: str, real: list[int]) -> list[int]:
+            ready = tradable_values[loc] & ~np.isnan(z_values[loc]) if ranked else tradable_values[loc]
+            pool = np.flatnonzero((unit_of == unit) & ready)
+            count = min(len(real), len(pool))
+            return sorted(int(i) for i in rng.choice(pool, size=count, replace=False)) if count else []
+
+        return assign(pick)
+
+    return assign(lambda loc, unit, real: real), null
 
 
 def _sirali_weights(card: Mapping[str, Any], frames: Mapping[str, pd.DataFrame], calendar: pd.DatetimeIndex,
@@ -460,6 +604,7 @@ def hazirla(
     benchmark: pd.DataFrame | None = None,
     week_end: str = "FRI",
     membership: pd.DataFrame | None = None,
+    siniflar: Mapping[str, str] | None = None,
 ) -> Baglam:
     """Weights decided on each bar's close and the null generator (index = signal bar, columns = instruments)."""
     block = card["rotasyon"]
@@ -470,6 +615,9 @@ def hazirla(
         return Baglam(real, lambda rng: _gecis_null(real, rng))
     if len(frames) < int(block.get("min_evren", 8)):
         raise RotasyonVeriYok("evren_kucuk", [str(len(frames))])
+    if block["kip"] == "trend_sepet":
+        real, null = _sepet_weights(card, frames, calendar, benchmark, week_end, membership, siniflar)
+        return Baglam(real, null)
     build = _kesitsel_weights if block["kip"] == "kesitsel" else _sirali_weights
     real, null = build(card, frames, calendar, benchmark, week_end, membership)
     return Baglam(real, null)
@@ -482,9 +630,10 @@ def agirliklar(
     benchmark: pd.DataFrame | None = None,
     week_end: str = "FRI",
     membership: pd.DataFrame | None = None,
+    siniflar: Mapping[str, str] | None = None,
 ) -> pd.DataFrame:
     """Target weights decided on each bar's close (index = signal bar, columns = instruments)."""
-    return hazirla(card, frames, benchmark=benchmark, week_end=week_end, membership=membership).weights
+    return hazirla(card, frames, benchmark=benchmark, week_end=week_end, membership=membership, siniflar=siniflar).weights
 
 
 # --------------------------------------------------------------------------------------------- simulation
@@ -597,10 +746,11 @@ def kos(
     membership: pd.DataFrame | None = None,
     weights: pd.DataFrame | None = None,
     fill_at_close: bool = False,
+    siniflar: Mapping[str, str] | None = None,
 ) -> BacktestResult:
     """One rotation book over ``[start, end]``; indicators warm up on all earlier data (``weights``: reuse a computed table)."""
     if weights is None:
-        weights = agirliklar(card, frames, benchmark=benchmark, week_end=week_end, membership=membership)
+        weights = agirliklar(card, frames, benchmark=benchmark, week_end=week_end, membership=membership, siniflar=siniflar)
     if card["rotasyon"]["kip"] == "gecis":
         late = [s for s in needed_symbols(card) if frames[s].index[0] > start + pd.Timedelta(days=7)]
         if late:
