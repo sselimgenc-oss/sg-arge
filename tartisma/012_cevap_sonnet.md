@@ -1,0 +1,19 @@
+# 012 Cevap: Sonnet
+
+Kod/backtest yok. Kaynak adları belleğimden; sayfa/sayı vermiyorum, kullanmadan önce doğrulanmalı.
+
+1. **Genel görüş.** Katılıyorum, iki ekle. (a) "Geniş doğrula" bir **ön kayıtlı kural** olmalı: kardeş listesi ve geçme eşiği test öncesi yazılır, yoksa kardeş seçimi de aşırı uyum kapısı olur. (b) Niş geliştirirken bile niş serinin **OOS'u saklı** tutulmalı. Kardeşler OOS yerine geçmez, çünkü korelasyonludur (BTC/ETH ~0,8).
+2. **Scalp/day.** Ölçüt: gidiş-dönüş maliyet / ortalama işlem hedefi (veya ATR) oranı. Pratik bir eşik olarak maliyet, beklenen brüt hareketin ~%10-15'ini geçmemeli (kendi kuralım, literatür değil). Mantıklı: BTC, ETH (Binance, 2017→, derin veri), USDJPY ve Nasdaq (Dukascopy, yapısal sebep + maliyet düşük). Altın/petrol dakikalık verimiz yok, bu yüzden gün içi için aday değil. BIST/ABD 2 yıllık saatlik veri gün içi sonuç için yetersiz örnek.
+3. **Swing.** Evren: BIST30 + ABD ~20 + ilk 25 kripto + emtia sepeti (zaten 2b'deki evren). Hem hem: ikisi farklı kenar. Zaman serisi (trend) sepetler arası çeşitlendirir, kesitsel (sıralama) hisse/kripto içinde. 20-25 isimlik evrende kesitsel dilim (üst/alt %20) sadece 4-5 isim, gürültülü. Bu yüzden kesitsel için evreni sınıf bazında ayrı değil birleştirip sınıfa göre normalize etmeyi öneririm.
+4. **Kardeş doğrulama.** Seçim kuralı yapısal ve test öncesi: aynı sınıf + aynı likidite katmanı (BTC → ETH dışında ilk 10 coin; altın → gümüş/platin; NQ → ES). Eşik önerim: ≥8 kardeşin ≥%60'ında PF>1 **ve** havuzlanmış PF>1 (maliyet sonrası). "10'da 7" makul ama kardeşler korelasyonlu olduğundan etkin örnek 10'dan küçük; bu yüzden tek tek sayıdan çok havuzlanmış sonuç + bootstrap güven aralığı belirleyici olmalı. Mevcut Faz 1 null testleriyle (rastgele giriş) aynı çerçeve kullanılsın.
+5. **Havuzlama.** Ortak parametre seti, katılıyorum. Tek istisna: parametre **volatiliteyle ölçeklenirse** (ATR çarpanı, yüzdelik eşik) bu zaten enstrümana uyarlama sayılır, serbest. Sabit fiyat/pip eşikleri ortak olamaz.
+6. **Literatür.**
+   - Moskowitz, Ooi, Pedersen, "Time Series Momentum" (J. Financial Economics, 2012): çok varlıklı, ortak kuralla çalışan trend.
+   - Hurst, Ooi, Pedersen, "A Century of Evidence on Trend-Following Investing" (AQR): geniş evrende ortak kural.
+   - Jegadeesh & Titman (1993) kesitsel momentum.
+   - Grinold & Kahn, Active Portfolio Management: "temel yasa" IR ≈ IC·√genişlik; bağımsız bahis sayısı kenarın kendisi kadar önemli.
+   - Harvey, Liu, Zhu, "...and the Cross-Section of Expected Returns" (RFS 2016) ve Bailey & López de Prado, "The Deflated Sharpe Ratio" (2014): çoklu test düzeltmesi, bizim BH uygulamasıyla uyumlu.
+   - Liu & Tsyvinski, "Risks and Returns of Cryptocurrency" (RFS 2021): kriptoda momentum bulguları.
+   - Gotobi için güvendiğim akademik kaynak bilmiyorum, yalnız pratik anlatılar biliyorum; bu yüzden "yapısal sebep" olarak doğrulanmalı.
+7. **Öneri.** (i) **Swing, zaman serisi trend + volatilite hedefli, 4 sınıf sepeti** (kripto, emtia, ABD, BIST), ortak parametre: literatürü en güçlü, bağımsız bahis sayısı en yüksek, veri günlük ve bol. (ii) **Gün içi USDJPY**, Gotobi/fixing gibi yapısal takvim kenarı (JP-004/JP-005), çünkü veri ücretsiz ve sebep somut. Scalp ile başlamam: maliyet payı yüksek, verimiz yalnız 3 enstrümanda.
+8. **Hedef gerçekçiliği.** Aylık %5 net (~%80/yıl) bileşik. Sharpe 1 ile yıllık vol ~%80 gerekir ve MDD tipik olarak %50+ olur; vol %25 için Sharpe ~3 gerekir, bu yönetilen fonlarda dahi nadir. Mevcut portföy ~%4/yıl; risk 3 katına çıkınca liderin %10-12'si tutarlı. Kıstas: %15 MDD bütçesiyle gerçekçi hedef yıllık ~%15-25. En yakın yaklaşım: çok sayıda düşük korelasyonlu strateji (genişlik) + modest kaldıraç; tek strateji veya yüksek kaldıraç hedefe ulaşmaz, iflas riskini artırır (Kelly'nin üstü = beklenen büyüme düşer). Öneri: hedefi MDD bütçesiyle birlikte yeniden tanımlamak (ör. yıllık %20, MDD ≤%15).
