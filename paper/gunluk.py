@@ -362,7 +362,7 @@ def rapor_yaz(portfoy: Portfoy, ozet: dict[str, Any], defter: Path = LEDGER_DIR,
     fills = _read(defter, "dolumlar")
     lines = [
         "# Paper trade takip raporu", "",
-        f"Son kapanmış bar: **{_day(ozet['bitis'])}** · Paper başlangıcı: {_day(portfoy.baslangic)} (yer tutucu, kullanıcı onayı bekler) · Durum: **{status}**", "",
+        f"Son kapanmış bar: **{_day(ozet['bitis'])}** · Paper başlangıcı: {_day(portfoy.baslangic)} · Durum: **{status}**", "",
         "Sanal defter; gerçek para ve aracı kurum bağlantısı yoktur. Sinyal ve dolumlar backtest motoruyla aynı yoldan üretilir (`paper/gunluk.py`).", "",
         "## Portföy", "", "| Sanal sermaye | Özkaynak | Getiri | MDD | MDD uyarı / durdur |", "|---:|---:|---:|---:|---|",
         f"| {sermaye:,.0f} USD | {ozet['ozkaynak']:,.0f} USD | {ozet['ozkaynak'] / sermaye - 1:.2%} | {ozet['mdd']:.2%} | "
