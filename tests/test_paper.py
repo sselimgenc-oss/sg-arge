@@ -11,7 +11,8 @@ import pytest
 
 from backtests import tarama
 from engine.portfolio import run_portfolio  # noqa: F401
-from paper import gunluk, panel, parite
+from data import fetch
+from paper import anlik, gunluk, panel, parite
 from tests.test_tarama import synthetic
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -169,6 +170,28 @@ def test_missing_bar_keeps_the_order_waiting_and_never_invents_a_fill(tmp_path: 
         assert row["fiyat"] == pytest.approx(frame.at[pd.Timestamp(row["tarih"], tz="UTC"), "open"])
 
 
+def test_incomplete_us_daily_bar_is_excluded_until_close_plus_30_minutes() -> None:
+    index = pd.DatetimeIndex(["2026-10-23", "2026-10-26"], tz="UTC")
+    frame = pd.DataFrame({"open": [1.0, 2.0], "high": [2.0, 3.0], "low": [0.0, 1.0], "close": [1.5, 2.5], "volume": [1, 1]}, index=index)
+    data = gunluk.Veri({"ABD25": {"AAA": frame}, "EMTIA": {"BBB": frame}}, {"ABD25": frame}, "half")
+    before = gunluk.kapanmamis_gunluk_bari_at(data, pd.Timestamp("2026-10-26 15:00", tz="UTC"))
+    after = gunluk.kapanmamis_gunluk_bari_at(data, pd.Timestamp("2026-10-26 21:30", tz="UTC"))
+    assert before.frames["ABD25"]["AAA"].index[-1] == pd.Timestamp("2026-10-23", tz="UTC")
+    assert before.frames["EMTIA"]["BBB"].index[-1] == pd.Timestamp("2026-10-23", tz="UTC")
+    assert after.frames["ABD25"]["AAA"].index[-1] == pd.Timestamp("2026-10-26", tz="UTC")
+
+
+def test_indir_forwards_the_requested_data_directory(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    calls = []
+
+    def fake_fetch(asset, interval, *, append, directory, **_kwargs):
+        calls.append((asset.symbol, interval, append, directory))
+
+    monkeypatch.setattr(fetch, "fetch_asset", fake_fetch)
+    assert gunluk.indir(portfoy(), tmp_path) == []
+    assert calls and all(call[1:] == ("1d", False, tmp_path) for call in calls)
+
+
 # ------------------------------------------------------------------------------------------ append-only ledger
 def test_ledger_is_append_only_and_a_data_revision_only_raises_an_alarm(tmp_path: Path) -> None:
     data, p = veri(5), portfoy("2016-06-01")
@@ -196,6 +219,24 @@ def test_no_fallback_prices_anywhere() -> None:
     for name in ("gunluk.py", "panel.py", "parite.py"):
         source = (ROOT / "paper" / name).read_text(encoding="utf-8")
         assert "FALLBACK" not in source and "fallback_price" not in source.lower()
+
+
+def test_hourly_valuation_only_changes_dashboard_data_not_the_ledger(tmp_path: Path) -> None:
+    data, p = veri(6), portfoy("2016-06-01")
+    gunluk.calistir(p, data, tmp_path, git_sha="t")
+    dashboard = tmp_path / "data.json"
+    panel.yaz(panel.uret(tmp_path, p, ROOT / "results" / "SONUC.csv"), dashboard)
+    before = {path.name: path.read_bytes() for path in tmp_path.glob("*.csv")}
+    payload = anlik.guncelle(
+        tmp_path, dashboard,
+        fiyat_al=lambda _symbol: (123.45, pd.Timestamp("2026-10-26 15:00", tz="UTC")),
+        simdi=pd.Timestamp("2026-10-26 15:01", tz="UTC"),
+    )
+    assert {path.name: path.read_bytes() for path in tmp_path.glob("*.csv")} == before
+    assert payload["meta"]["fiyat_kaynagi"] == "anlik"
+    assert payload["meta"]["fiyat_zamani"] == "2026-10-26T15:00:00+00:00"
+    assert payload["meta"]["anlik_not"] == anlik.ANLIK_NOT
+    assert all(item["current_price"] == 123.45 for item in payload["open_positions"])
 
 
 # ------------------------------------------------------------------------------------------ dashboard file
@@ -274,11 +315,14 @@ def test_workflow_writes_only_to_the_paper_branch_and_guards_the_panel_token() -
     text = (ROOT / ".github" / "workflows" / "paper.yml").read_text(encoding="utf-8")
     flow = yaml.safe_load(text)
     triggers = flow[True]  # YAML reads the key `on` as True
-    assert "schedule" not in triggers and "workflow_dispatch" in triggers  # Faz 2: schedule off until the user starts paper
+    assert triggers["schedule"] == [{"cron": "17 * * * *"}] and "workflow_dispatch" in triggers
     assert flow["permissions"] == {"contents": "write"}
     steps = flow["jobs"]["paper"]["steps"]
     publish = next(s for s in steps if "dashboard repo" in s.get("name", ""))
     assert publish["if"] == "env.PANEL_TOKEN != ''" and "secrets.PANEL_TOKEN" in flow["jobs"]["paper"]["env"]["PANEL_TOKEN"]
     pushes = [line.strip() for line in text.splitlines() if "git push" in line]
     assert pushes and all("paper-defter" in line or "origin HEAD" in line for line in pushes)  # never `main`
-    assert "git push origin main" not in text and "sg-test-panel" in text and "bot_engine" not in text
+    assert flow["jobs"]["paper"]["timeout-minutes"] == 10
+    assert flow["jobs"]["paper"]["env"]["PANEL_REPO"] == "sselimgenc-oss/sg-pano"
+    assert any(step.get("run") == "python paper/anlik.py" for step in steps)
+    assert "git push origin main" not in text and "${PANEL_REPO}" in text and "sg-test-panel" not in text and "bot_engine" not in text

@@ -387,9 +387,11 @@ def write_binance_quality_report(
 
 
 def fetch_asset(
-    asset: Asset, interval: str, *, append: bool, start_override: pd.Timestamp | None = None
+    asset: Asset, interval: str, *, append: bool, start_override: pd.Timestamp | None = None,
+    directory: Path | None = None,
 ) -> tuple[Path, pd.DataFrame]:
-    path = archive_dir(interval) / asset.filename
+    """Fetch one asset into its normal archive, or an explicit caller-provided directory."""
+    path = (directory or archive_dir(interval)) / asset.filename
     existing = _read_archive(path) if append else normalize_ohlcv(pd.DataFrame())
     if asset.source == "binance":
         start = existing.index[-1] + pd.Timedelta(1, unit="ms") if not existing.empty else start_override
