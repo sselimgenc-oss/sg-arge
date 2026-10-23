@@ -26,7 +26,7 @@ def test_decision_all_gates_pass():
 @pytest.mark.parametrize(("change", "word"), [
     ({"null_gecti": False}, "null"), ({"oos_ortR": -0.1}, "OOS ortR"), ({"oos_PF_2x": 1.1}, "2x PF"),
     ({"oos_net_3x": -0.01}, "3x net"), ({"net_gecikme": 0.0}, "+1 bar"), ({"mdd_p95": 0.16}, "MDD95"),
-    ({"mdd_p95": float("nan")}, "MDD95"),
+    ({"mdd_p95": float("nan")}, "MDD95"), ({"kardes_oran": 0.5, "kardes_gecen": "4/8"}, "kardes"),
 ])
 def test_funnel_gate_failures_reject(change, word):
     decision, reason = u1_huni.decide(passing_row(**change))
@@ -34,7 +34,7 @@ def test_funnel_gate_failures_reject(change, word):
 
 
 @pytest.mark.parametrize(("change", "word"), [
-    ({"kardes_oran": 0.5, "kardes_gecen": "4/8"}, "kardes"), ({"en_buyuk_kar_payi": 0.4}, "kar payi"),
+    ({"en_buyuk_kar_payi": 0.4}, "kar payi"),
     ({"en_iyi_ay_haric_pf": 0.95}, "en iyi ay"), ({"oos_islem": 20}, "ornek"),
 ])
 def test_sibling_gate_failures_are_conditional(change, word):
@@ -44,7 +44,7 @@ def test_sibling_gate_failures_are_conditional(change, word):
 
 def test_sibling_threshold_is_sixty_percent_of_eight():
     assert u1_huni.decide(passing_row(kardes_oran=5 / 8, kardes_gecen="5/8"))[0] == "Gecti"
-    assert u1_huni.decide(passing_row(kardes_oran=4 / 8, kardes_gecen="4/8"))[0] == "Kosullu"
+    assert u1_huni.decide(passing_row(kardes_oran=4 / 8, kardes_gecen="4/8"))[0] == "Reddedildi"
 
 
 def test_trials_add_the_source_count_for_hat0_only():

@@ -67,7 +67,8 @@ def decide(row: dict[str, Any]) -> tuple[str, str]:
     """Karar from GOREV_U1 section 4 and the Faz 1 gate order of ``asama2b.decide`` (no new thresholds).
 
     Reddedildi: a Faz 1 funnel gate fails (null, OOS mean R, 2x PF < 1.2, 3x net <= 0, +1 bar net <= 0, bootstrap MDD95 > 15 %).
-    Kosullu: the funnel passes but a sibling gate fails (section 4: sibling ratio, symbol share, best month) or OOS has < 30 trades.
+    The sibling ratio (section 4.1) is a hard gate too (leader decision, PR #152).
+    Kosullu: the funnel passes but symbol share or best month (section 4.3/4.4) fails, or OOS has < 30 trades.
     Gecti: everything passes.
     """
     rejected, conditional = [], []
@@ -85,8 +86,8 @@ def decide(row: dict[str, Any]) -> tuple[str, str]:
         rejected.append("bootstrap MDD95>%15")
     if row.get("oos_islem", 0) < MIN_OOS_TRADES:
         conditional.append("OOS ornek<30")
-    if not row.get("kardes_oran", float("nan")) >= MIN_SIBLING_RATIO:
-        conditional.append(f"kardes PF>1,1 orani<%{MIN_SIBLING_RATIO * 100:.0f} ({row.get('kardes_gecen', '?')})")
+    if not row.get("kardes_oran", float("nan")) >= MIN_SIBLING_RATIO:  # lider karari: genelleme ana kanit, sert kapi
+        rejected.append(f"kardes PF>1,1 orani<%{MIN_SIBLING_RATIO * 100:.0f} ({row.get('kardes_gecen', '?')})")
     if not row.get("en_buyuk_kar_payi", float("nan")) <= MAX_SYMBOL_SHARE:
         conditional.append(f"tek coin kar payi>%{MAX_SYMBOL_SHARE * 100:.0f}")
     if not row.get("en_iyi_ay_haric_pf", float("nan")) > 1.0:
