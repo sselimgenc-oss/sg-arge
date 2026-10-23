@@ -101,6 +101,27 @@ Short yok. PR #136 (T36b) short desteği içeriyor. U1 umut verirse U2'de ele al
 3. **Hat 0:** `T8-07` ve `V2B` kartlarını kripto 1 saatte koşacak çalıştırma ayarı. Kart **değişmez**, yalnız evren veya piyasa ayarı yapılır. Kripto 4H üst zaman dilimi 1 saatten yeniden örneklenir.
 4. CI paritesi. PR.
 
+### U1d: Sonnet (huni entegrasyonu, 2026-10-23)
+`backtests/u1.py` şu an yalnız IS/OOS metriklerini ve 1x/2x/3x maliyeti üretiyor. 4. bölümdeki geçme ölçütlerinin geri kalanını hesaplayan bir huni koşucusu gerekiyor: `backtests/u1_huni.py`. Yeni hesap yazılmaz, mevcut fonksiyonlar kullanılır.
+
+1. **Aşama 2a, rastgele giriş null testi:** `asama2a.random_entry_signals` / `null_distribution`. Her varyantın **havuzlanmış** (14 coin) gerçek işlem sayısı ve ortalama tutma süresi korunur.
+   - Ölçüt: PF ve ortalama R, null dağılımının %95'inin üstünde olmalı.
+   - Tekrar sayısı parametre olsun (varsayılan 200).
+   - `--isci` ile paralel çalışsın.
+2. **Aşama 2b (OOS üzerinde):**
+   - **Gecikme:** +1 bar gecikmeli giriş.
+   - **Bootstrap:** `asama2b.block_bootstrap` ile MDD95.
+   - **DSR:** `asama2b.deflated_sharpe_ratio`. Deneme sayısı U1 için 14. Hat 0 kartlarında kaynağın deneme sayısı da eklenir (T8-07: 256).
+3. **Kardeş raporu:** her varyantın OOS işlem CSV'si için `scripts/kardes_rapor.py` çağrılır.
+4. **Karar sütunu:** `Geçti / Koşullu / Reddedildi` ve sebebi. Kurallar `GOREV_U1.md` 4. bölümden birebir alınır, eşik uydurulmaz. Belirsiz kalan yer PR'da sorulur.
+5. **Kilit ve bellek:**
+   - `kilit=True` her koşuda zorunlu.
+   - 5 dk verisi büyük (14 coin × ~9 yıl). Faz 1'deki T30 bellek sorununu tekrarlamamak için sembol sembol ya da parça parça işle. Gerekirse null testini önce 1 saat ve 15 dk varyantlarında koşacak bir `--tf` filtresi ekle.
+6. **Çıktılar:** `results/u1/huni_ozet.csv` ve kısa `results/u1/huni_ozet.md`.
+7. Sentetik veride uçtan uca test. CI geçsin. PR.
+
+Gerçek veriyle koşuyu lider yapar (veri lider ortamında). Sonnet'in ortamında veri yoksa sentetik test yeterli.
+
 ### U1c: Lider
 PR denetimi → huni koşusu (IS → OOS) → `results/U1_SONUC.md`. Raporda 250 bin TL ile uygulanabilirlik de yer alır: pozisyon büyüklüğü ve komisyon etkisi. Kilitli dönem en son, yalnız aday kalırsa açılır.
 
