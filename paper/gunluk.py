@@ -106,6 +106,36 @@ class Veri:
         return Veri(cut, bench, self.data_hash)
 
 
+def kapanmamis_gunluk_bari_at(veri: Veri, simdi: pd.Timestamp | None = None) -> Veri:
+    """Drop today's daily bar until the relevant US session is closed plus 30 minutes.
+
+    Daily archives label a bar by its UTC calendar date.  An older final bar (for a
+    weekend or exchange holiday) is therefore retained: only a bar labelled with
+    today's New York date can be an in-progress session bar.
+    """
+    now = simdi or pd.Timestamp.now(tz="UTC")
+    now = pd.Timestamp(now)
+    now = now.tz_localize("UTC") if now.tzinfo is None else now.tz_convert("UTC")
+    new_york_today = now.tz_convert("America/New_York").date()
+    frames = {market: dict(series) for market, series in veri.frames.items()}
+    benchmarks = dict(veri.benchmarks)
+    for market in ("ABD25", "EMTIA"):
+        market_frames = frames.get(market, {})
+        dates = [frame.index[-1].tz_convert("UTC").date() for frame in market_frames.values() if len(frame)]
+        if not dates:
+            continue
+        last_date = max(dates)
+        close = pd.Timestamp(last_date, tz="America/New_York") + pd.Timedelta("16h30min")
+        if last_date != new_york_today or now > close.tz_convert("UTC"):
+            continue
+        for symbol, frame in market_frames.items():
+            frames[market][symbol] = frame[frame.index.tz_convert("UTC").date != last_date]
+        benchmark = benchmarks.get(market)
+        if benchmark is not None:
+            benchmarks[market] = benchmark[benchmark.index.tz_convert("UTC").date != last_date]
+    return Veri(frames, benchmarks, veri.data_hash)
+
+
 def indir(portfoy: Portfoy, directory: Path = DATA_DIR) -> list[str]:
     """Download only the symbols the portfolio needs (yfinance daily); returns the symbols that failed (their old archive stays)."""
     from backtests.run_codex21 import _symbols_for_market  # noqa: PLC0415
@@ -118,7 +148,10 @@ def indir(portfoy: Portfoy, directory: Path = DATA_DIR) -> list[str]:
             symbols.append(tarama.BENCHMARK_SYMBOL[market])
         for symbol in dict.fromkeys(symbols):
             try:
-                fetch_asset(Asset(symbol, market, "binance" if market == "KRIPTO25" else "yfinance"), "1d", append=False)
+                fetch_asset(
+                    Asset(symbol, market, "binance" if market == "KRIPTO25" else "yfinance"),
+                    "1d", append=False, directory=directory,
+                )
             except Exception as exc:  # noqa: BLE001 - keep the stale archive, the staleness alarm reports it
                 failed.append(f"{symbol} ({type(exc).__name__})")
     return failed
@@ -435,7 +468,7 @@ def main() -> int:
         failed = indir(portfoy, args.veri_dir)
         if failed:
             print("UYARI indirilemeyen semboller (eski arsiv kullanilir):", ", ".join(failed), file=sys.stderr)
-    veri = yukle_veri(portfoy, args.veri_dir)
+    veri = kapanmamis_gunluk_bari_at(yukle_veri(portfoy, args.veri_dir))
     ozet = calistir(portfoy, veri, args.defter)
     rapor_yaz(portfoy, ozet, args.defter, args.rapor)
     print(json.dumps({"bitis": str(ozet["bitis"].date()), "ozkaynak": round(ozet["ozkaynak"], 2), "mdd": round(ozet["mdd"], 4),

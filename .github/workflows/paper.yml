@@ -5,8 +5,8 @@ name: Paper trade (gunluk sanal defter)
 # paper/portfoy.yaml `baslangic` tarihi kullanici onayina kadar yer tutucudur.
 
 on:
-  # Faz 2'ye kadar KAPALI (kullanici karari 2026-10-22): tum stratejiler bitince paper toplu baslar.
-  # Etkinlestirmek icin: schedule: - cron: "30 22 * * 1-5"  (22:30 UTC, ABD kapanisindan sonra)
+  schedule:
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -19,9 +19,10 @@ concurrency:
 jobs:
   paper:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 10
     env:
       PANEL_TOKEN: ${{ secrets.PANEL_TOKEN }}   # bos ise panel aktarimi atlanir
+      PANEL_REPO: sselimgenc-oss/sg-pano
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,6 +41,8 @@ jobs:
         run: python paper/gunluk.py --indirme
       - name: Dashboard file (paper/panel/data.json)
         run: python paper/panel.py
+      - name: Hourly dashboard-only valuation
+        run: python paper/anlik.py
       - name: Commit ledger, report and panel file to paper-defter
         run: |
           set -e
@@ -68,7 +71,7 @@ jobs:
         if: env.PANEL_TOKEN != ''
         run: |
           set -e
-          git clone --depth 1 "https://x-access-token:${PANEL_TOKEN}@github.com/sselimgenc-oss/sg-test-panel.git" /tmp/panel-repo
+          git clone --depth 1 "https://x-access-token:${PANEL_TOKEN}@github.com/${PANEL_REPO}.git" /tmp/panel-repo
           cp paper/panel/data.json /tmp/panel-repo/data.json
           cd /tmp/panel-repo
           git config user.name "github-actions[bot]"
