@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`). **Yeni iş: U1, kendi stratejilerimiz** (`docs/GOREV_U1.md`)
+Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`). **Yeni iş: U1, kendi stratejilerimiz (kripto gün içi)** (`docs/GOREV_U1.md`)
 
 ## Özet (kullanıcı için) — Faz 1 nihai
 - **Geçti 2:** C07, R01 (ABD günlük, PIT evrenle).
@@ -14,13 +14,13 @@ Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONU
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## Şu an
-**U1: Kendi stratejilerimiz, ilk iki hat** (`docs/GOREV_U1.md`). Kararlar: `tartisma/012_ozet_karar.md`. **Hedef (kullanıcı, seçenek a):** yılda %20-30 net, portföy MDD ≤ %15.
+**U1: Kendi stratejilerimiz, kripto gün içi** (`docs/GOREV_U1.md`, revize 2026-10-23: swing iptal, 1 saat kurulum + 15/5 dk giriş, Hat 0 = T8-07/V2B kriptoda). **Hedef:** yılda %20-30 net, MDD ≤ %15.
 
 | Ajan | Görev |
 |---|---|
 | Lider | PR denetimi; sonra U1c (huni + `results/U1_SONUC.md`) |
-| Codex | **U1a:** Binance 15 dk/1 saat arşivi (14 coin), `engine/kilit.py`, `scripts/kardes_rapor.py` → PR |
-| Sonnet | **U1b:** `engine/rotasyon.py` (ters_vol, sinif_butce, trend_sepet) + 5 U1 kartı → PR |
+| Codex | **U1a:** Binance 5 dk/15 dk/1 saat arşivi (14 coin), `engine/kilit.py`, `scripts/kardes_rapor.py` → PR |
+| Sonnet | **U1b (revize):** U1-H2-A/B/C kartları + gün içi ilkeller + Hat 0 çalıştırma ayarı → PR. Rotasyon işi iptal |
 | Argon | Beklemede |
 
 ## T35/T36 kapanış özeti
