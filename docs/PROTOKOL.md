@@ -49,3 +49,6 @@ Yorum kısa özet + `docs/GOREV_*.md` bağlantısı içerir. Görev ayrıca `DUR
 
 ## Codex geri döndü (kullanıcı kararı, 2026-10-23)
 Codex yeniden ekipte; ilk işi U1c (`docs/GOREV_U1c_CODEX.md`). Tetikleme: kullanıcı Codex'e "görev geldi" der, Codex Issue #1'deki son **`[CODEX GÖREVİ]`** başlıklı yorumu okur. Teslim PR ile; lider denetler.
+
+## Argon denetçi rolü (kullanıcı kararı, 2026-10-23)
+Argon (Gemini 3.8) artık araştırmacı + denetçi. Bulguları kaynaklı yazar; ekibin yöntemini eleştirebilir. Çıktısını yine lider denetler. İlk iş: U-A1 (`argon/PAKET_UA1_uc_enstruman.md`). Bu iş kripto kapsamını değiştirmez.

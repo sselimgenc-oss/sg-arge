@@ -20,7 +20,7 @@ Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 |---|---|
 | Lider | Codex'in U1c PR'ını denetler, sonra `results/U1_SONUC.md` |
 | Sonnet | U1d bitti (PR #152). **Şimdi U2a** (`docs/GOREV_U2.md`): kripto short motoru (PR #136'dan), funding maliyeti ve verisi → PR |
-| Argon | Beklemede |
+| Argon | **U-A1** (`argon/PAKET_UA1_uc_enstruman.md`, Gemini 3.8): XU030 endeks kontratı, SPX, XAUUSD için veri kaynakları, kontrat/maliyet, 128 kartın uygunluk ayrımı, yöntem denetimi. Yalnız araştırma; kapsam kripto kalır, test/kod açılmaz (kullanıcı kararı, 2026-10-23) |
 | Codex | **U1c** (`docs/GOREV_U1c_CODEX.md`): 14 coin 1s/15dk/5dk verisi + U1 hunisinin gerçek koşusu → PR (kullanıcı kararı, 2026-10-23: Codex geri döndü) |
 
 ## T35/T36 kapanış özeti
