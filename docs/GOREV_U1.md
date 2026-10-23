@@ -54,6 +54,22 @@
 
 Short yok. Short desteği PR #136'da (T36b) beklemede; U1 sonucu umut verirse U2'de ele alınır.
 
+## 2b. İşlem evreni (kullanıcı, 2026-10-23)
+Kullanıcı tüm evreni izliyor, ama işlem yapacağı enstrümanlar daha az (~34). **Sermaye:** bu çalışma için ~250 bin TL.
+
+| Sınıf | Kullanıcının işlem evreni |
+|---|---|
+| BIST | Güvendiği 10-12 hisse (liste kullanıcıdan) |
+| ABD | Magnificent 7 + 7-8 büyük şirket, toplam ~15 |
+| Kripto | BTC, ETH, XRP, SOL, BNB, TRX |
+| Emtia | Altın (GLD), petrol (USO) |
+
+**Kurallar:**
+- **Karar geniş evrende verilir.** Geçti/elendi kararı bölüm 1-2'deki araştırma evrenine göre verilir.
+- **İşlem evreni ayrıca raporlanır.** Aynı kart, aynı parametrelerle yalnız işlem evreninde de koşulur. Bu rapor bilgi amaçlıdır, karar ölçütü değildir.
+- **Uyarı:** İşlem evreni bugünün kazananlarından seçildi (örn. Mag7). Bu seçimde geriye dönük bakış yanlılığı vardır, bu yüzden geçmiş sonucu iyimser görünür.
+- **Uygulanabilirlik raporu (U1c):** ~250 bin TL ile sınıf başına pozisyon büyüklüğü, ABD için kesirli hisse ihtiyacı ve komisyonun getiriye etkisi ölçülür. Pozisyonlar komisyona göre çok küçük kalıyorsa sepet daraltılır.
+
 ## 3. İşler
 ### U1a: Codex (veri + denetim araçları)
 1. **Binance gün içi arşivi:** 14 coin (çekirdek + kardeşler), **15 dk ve 1 saat**, Binance başlangıcından bugüne. `data/fetch.py` Binance yolu kullanılır. Günlük veri gibi yeniden üretilebilir: Parquet `.gitignore`'da kalır, `data/MANIFEST.csv` güncellenir. Kalite raporu: boşluk, tekrar, sıfır hacim.
