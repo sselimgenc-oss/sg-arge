@@ -1,6 +1,6 @@
 # U3 erişim ve tarama notları (Sonnet, 2026-10-23; tur 2 – kod izinden arama)
 
-Kayıt sayısı bu sürümde: **50** (`arastirma/U3_mtf.csv`). Hedef ≥100; aşağıdaki "Durma nedeni" bölümüne bak.
+Kayıt sayısı bu sürümde: **53** (parti 1: 50, parti 2: +3, MTF-051..053) (`arastirma/U3_mtf.csv`). Hedef ≥100; aşağıdaki "Durma nedeni" bölümüne bak.
 Ortam: bulut kapsayıcısı, çıkışlar proxy'den. `raw.githubusercontent.com` ve `git clone` (açık depolar) çalışıyor, `github.com/api` ve HTML sayfaları oturum kapsamı dışında 403.
 
 ## 1. İncelenen kaynaklar (depo / platform / sayfa grubu) ve sonuç
@@ -62,6 +62,31 @@ Ortam: bulut kapsayıcısı, çıkışlar proxy'den. `raw.githubusercontent.com`
 - Qiita/Zenn/note/velog: MTF kodlu yazı araması yapılmadı.
 - TradingView: korumalı olmayan ama listelerde/öneri API'sinde görünmeyen betikler (uzun kuyruk) kapsam dışı.
 
-## 5. Durma nedeni (ara sürüm, 50 kayıt)
+## 5. Durma nedeni (ara sürüm, parti 1 sonu: 50 kayıt)
 
 Ana darboğaz kaynak sayısı değil, kaynakta **iki katmanlı TF + tam kural** bir arada bulunması: açık Pine betiklerinin %0,5'i (yaklaşık 3207 açık strateji içinden 21), freqtrade dosyalarının %5'i (≈400 dosyadan 20) ve MQL5 EA'larının %0,1'i bu kapıyı geçiyor. Otomatik süzgeç TradingView ve freqtrade için büyük ölçüde tükendi; 100'e ulaşmak için ProRealCode forum taraması, Qiita/Zenn ve bölgesel kaynaklar sürüyor.
+
+
+## 6. Parti 2 (MTF-051..053): ek tarama ve durma nedeni
+
+Lider yönergesi: kripto payını artır; ProRealCode forum ikinci geçişi, Qiita/Zenn/note, velog, BigQuant, smart-lab; sürümleri çoğaltma; `tf_sinir_disi` ≤ 10 (şu an 2).
+
+| # | Kaynak | Ne denendi | Sonuç | Kayıt |
+|---|---|---|---|---|
+| 24 | TradingView `pubscripts-suggest-json?type=2` | 5284 sorgu; 3207 açık strateji kaynağı `pine-facade` ile okundu; zincirleme bağımlılık süzgeci + kullanıcı fonksiyonu içinde `request.security("60")` | 8 yeni aday, +2 (fonksiyon sarmalı) = 10; el okuma: 1 alındı (Weekend Hunter, kripto), 1 fonksiyon-sarmalı BTC betiği (eIRzdfgo) grafik TF'si 60 → elendi | 1 |
+| 25 | TradingView, "grafik barlarında HTF kapanış serisi üzerinden gösterge" kusuru | G3BQYazv, tPyR1wRW, GOwfPvo1 | HTF "kapanış" serisi 15m barlarına yayılıp chart-TF periyoduyla hesaplanıyor → gerçek 4H/1H göstergesi değil, elendi | 0 |
+| 26 | TradingView Caldera Meridian, Pro Scalper v9, DeFiers-SMC, Squared9 | tam okuma | HTF 100 puanlık skorda 1/7-8/100 ağırlık (kurulum katmanı değil) ya da çok katmanlı Gann/Markov skoru → elendi | 0 |
+| 27 | Qiita API (9 sorgu × ≤3 sayfa = 219 yazı) | gövde, TF çifti + kod + kural süzgeci | 24 eşleşme: hepsi gösterge anlatımı / AI yazıları, strateji kuralı yok | 0 |
+| 28 | Zenn API (20 konu, 374 yazı) | gövde süzgeci | 9 eşleşme: doğrulama günlüğü, strateji adı/kuralı gizli ("fx-strategy-5-rejected") ya da gösterge testi | 0 |
+| 29 | note.com API (20 etiket × ≤10 sayfa = 7074 not) | gövde süzgeci | 405 eşleşme; el taraması: günlük piyasa yorumu, MT4/TV tanıtım; kuralı + 1H/15m olan: "Giorno-shiki" (yalnız 1H), "Gold 4 kural" (1m/5m/1H ayrı, 1H tek başına) → alınmadı | 0 |
+| 30 | velog (GraphQL), BigQuant, smart-lab.ru | T35 notlarındaki yöntemler | bu turda MTF kodlu kripto yazısı için sorgu yapılmadı: aynı tür sonuçlar (görsel sonuç, tek TF) T35'te görülmüştü; **tamamlanmadı** | 0 |
+| 31 | ProRealCode forum, 2. geçiş | anahtar sözcükle süzülmüş ~7 360 konu, `TIMEFRAME(1 hour/4 hours)` + piyasa emri | ~70 konu; yardım istekleri ve DAX/endeks MTF örnekleri (cowabunga, daxophone vb.); kripto yok, kod blokları HTML'de kaçışlı; el okumada kural tam bir strateji ayıklanamadı | 0 |
+| 32 | jesse-ai/example-strategies, jesse-ai/jesse | klon, `get_candles`/`timeframe` taraması | tek TF'li örnekler | 0 |
+| 33 | hummingbot/hummingbot (controllers/directional_trading) | klon | her denetleyici tek mum aralığı | 0 |
+| 34 | Drakkar-Software/OctoBot-Tentacles, nautechsystems/nautilus_trader, freqtrade/freqtrade (çekirdek) | klon | OctoBot: zaman dilimi yapılandırması, kural yok; Nautilus/freqtrade: şablon | 0 |
+| 35 | dev.to API (30 etiket, 8752 makale) | gövde süzgeci | 13 eşleşme, hiçbirinde tam kural yok ("basitleştirilmiş") | 0 |
+| 36 | AdvancedFuturesSwingStrategy (Chris6622) | tam okuma | 1H+4H+1D rejimi + 15m dört kollu mantık, kural tam → alındı (MTF-051) | 1 |
+| 37 | AI MES Globex (lylerh) | tam okuma | alındı (MTF-053); Asia/London/Structure Break aynı motor, ayrı sayılmadı | 1 |
+
+**Sayım:** 53 kayıt (kripto ve karma kripto ~27; kalan: FX/altın/gümüş, endeks vadeli, piyasası belirtilmemiş).
+**Neden 100'e ulaşılamadı:** açık kaynak MTF stratejilerin kapıyı geçme oranı çok düşük (TradingView ~%0,7; freqtrade ~%5; MQL5 ~%0,1; forum/blog kaynaklarında kural tam + iki katmanlı TF birlikte hemen hiç yok). Aynı strateji sürümlerini ayrı sayma yasağı nedeniyle freqtrade/NFI/Cluc/Ichi/Elliot aileleri tek kayıtta kaldı. Kalan kaynaklar (velog, BigQuant, smart-lab) için yöntem T35'te biliniyor ama bu turda MTF kodu içeren yazı bulma beklentisi düşük; denenirse parti 3.
