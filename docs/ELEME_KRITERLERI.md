@@ -66,6 +66,7 @@ Ayrı kapı: borrow/fee, funding, short kısıtları, gap ve tasfiye/marjin risk
 
 ## Portföy riski
 MDD üst sınırı istatistik eşiği değil **risk bütçesidir**. Portföy MDD üst sınırı **%15 (kullanıcı onayladı, 2026-10-21)**. Strateji başına sermaye, marj ve korelasyon buna göre çözülür; tek strateji MDD'sini %15'e eşitlemek yerine bootstrap %95 MDD ve portföy katkısı kapı olur. İşlem başı risk %0,5, toplam açık risk %2, paper kill-switch %10 MDD.
+**Getiri hedefi (kullanıcı, 2026-10-23, `tartisma/012_ozet_karar.md`):** portföy için yılda %20-30 net, MDD ≤ %15. Tek strateji değil, düşük korelasyonlu 6-8 stratejilik sepet hedeflenir.
 
 ## Altyapı (Codex önerisi)
 Tarama/plato için VectorBT/Numba; nihai doğrulama ve paper paritesi için aynı emir kurallarını kullanan küçük event-driven referans motor. Sabit çıktı şeması: IS/OOS ayrımı, deneme sayısı, maliyet senaryoları, güven aralıkları, veri kusurları, yeniden üretim hash'i.

@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`). **Yeni iş: 012 beyin fırtınası** (`tartisma/012_beyin_firtinasi_enstruman_vs_evren.md`)
+Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONUC_RAPORU.md`). **Yeni iş: U1, kendi stratejilerimiz** (`docs/GOREV_U1.md`)
 
 ## Özet (kullanıcı için) — Faz 1 nihai
 - **Geçti 2:** C07, R01 (ABD günlük, PIT evrenle).
@@ -14,14 +14,14 @@ Son güncelleme: 2026-10-23, lider (Opus) — **FAZ 1 KAPANDI** (`docs/FAZ1_SONU
 Her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
 
 ## Şu an
-**012 beyin fırtınası: niş enstrüman mı, evren mi?** (`tartisma/012_beyin_firtinasi_enstruman_vs_evren.md`). Kendi strateji üretimine hazırlık. Kullanıcı hedefi: aylık ~%5 net. Kod/backtest yok.
+**U1: Kendi stratejilerimiz, ilk iki hat** (`docs/GOREV_U1.md`). Kararlar: `tartisma/012_ozet_karar.md`. **Hedef (kullanıcı, seçenek a):** yılda %20-30 net, portföy MDD ≤ %15.
 
 | Ajan | Görev |
 |---|---|
-| Lider | `tartisma/012_ozet_karar.md` yazıldı; kullanıcıdan hedef/risk onayı bekleniyor |
-| Sonnet | Tamamlandı (PR #141), beklemede |
-| Codex | Tamamlandı, beklemede |
-| Argon | Tamamlandı, beklemede |
+| Lider | PR denetimi; sonra U1c (huni + `results/U1_SONUC.md`) |
+| Codex | **U1a:** Binance 15 dk/1 saat arşivi (14 coin), `engine/kilit.py`, `scripts/kardes_rapor.py` → PR |
+| Sonnet | **U1b:** `engine/rotasyon.py` (ters_vol, sinif_butce, trend_sepet) + 5 U1 kartı → PR |
+| Argon | Beklemede |
 
 ## T35/T36 kapanış özeti
 - **T35 (bölgesel strateji toplama):** 80 kayıt (`arastirma/TUM_KAYITLAR.csv`), 4 kol, 2 parti. Kullanıcı örneklem doğrulamaları tuttu. Argon'un türetilmiş PF değerleri temizlendi. Değerlendirmeler: `tartisma/010`, `tartisma/011`. Kısa liste: `tartisma/011`.
