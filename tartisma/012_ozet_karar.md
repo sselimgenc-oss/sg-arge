@@ -1,7 +1,7 @@
 # 012 Özet ve lider kararı: Niş enstrüman mı, evren mi?
 
 **Tarih:** 2026-10-23. **Kaynaklar:** `012_cevap_sonnet.md`, `012_cevap_codex.md`, `012_cevap_argon.md`.
-**Durum:** Tasarım kararları alındı. **Hedef/risk (bölüm 3) kullanıcı onayı bekliyor.**
+**Durum:** Kararlar alındı. **Kullanıcı (2026-10-23) seçenek (a)'yı onayladı:** yılda %20-30 net, MDD ≤ %15. Görev: `docs/GOREV_U1.md`.
 
 ## 1. Uzlaşı (4 görüşün ortak noktası)
 1. **"Niş geliştir, geniş doğrula" doğru ama tek başına yetmez.** Üç katılımcı da aynı açığı gösterdi: kardeş listesi ve geçme eşiği test **öncesi** yazılmazsa kardeş doğrulaması da aşırı uyum kapısına döner (Argon: ardışık seçim yanlılığı).
@@ -71,6 +71,6 @@ Hedef tek bir "kutsal kâse" değil, **düşük korelasyonlu 6-8 stratejilik bir
 Seçim üretimin yönünü değiştirmez, yalnız risk ayarını (işlem başı risk, kaldıraç sınırı) ve eleme eşiklerini değiştirir. Bu yüzden Hat 1 ve Hat 2'nin hazırlığı beklemeden başlayabilir.
 
 ## 4. Sonraki adım
-`docs/GOREV_U1.md` (Hat 1 ve Hat 2 ön kayıt kartları + motor ihtiyaçları) kullanıcı bölüm 3'ü onayladıktan sonra yazılır.
+`docs/GOREV_U1.md` yazıldı.
 
 **Not:** Codex literatür adı vermedi (uydurmamak için); Sonnet ve Argon'un verdiği kaynak adları kullanılmadan önce doğrulanacak.
