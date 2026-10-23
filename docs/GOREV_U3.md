@@ -1,7 +1,7 @@
 # U3: Dünya genelinde MTF strateji toplama (4 saat / 1 saat kurulum, 15 dk / 5 dk giriş)
 
 **Sahip:** Sonnet. **Denetim:** lider. **Karar:** kullanıcı, 2026-10-23.
-**Sıra:** hemen başlar. U2a (kripto short motoru) yapılmadı, U3'ten sonra sıraya girer (her ajanda aynı anda tek iş).
+**Sıra:** hemen başlar.
 **Hedef:** en az **100 kayıt**.
 **Backtest yok. Kod yazılmaz.** `engine/`, `backtests/`, `docs/spec/`, `state.json` ve `DURUM.md` değiştirilmez.
 
