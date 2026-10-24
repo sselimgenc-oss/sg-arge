@@ -2,7 +2,7 @@ name: Paper trade (gunluk sanal defter)
 
 # Gercek para ve araci kurum baglantisi YOK. Hafta ici ABD kapanisindan sonra calisir; defteri, raporu ve panel dosyasini
 # yalniz `paper-defter` dalina yazar (ana dala yazmaz). Etkinlestirme (schedule) ve baslangic tarihi: lider/kullanici karari.
-# paper/portfoy.yaml `baslangic` tarihi kullanici onayina kadar yer tutucudur.
+# Baslangic tarihi: paper/portfoy.yaml (2026-10-23, kullanici karari). Saatlik: defter yalniz kapanmis gunluk barla, pano anlik degerlemeyle.
 
 on:
   schedule:
