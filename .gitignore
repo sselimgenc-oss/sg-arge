@@ -24,3 +24,5 @@ results/tarama_islemler/
 results/trades/
 results/u1/**/islemler_*.csv
 results/u1/islemler_*.csv
+results/u4/**/islemler_*.csv
+results/u4/islemler_*.csv
