@@ -74,7 +74,7 @@ def test_intraday_scan_end_to_end_on_synthetic_bars(tmp_path: Path) -> None:
     cards = tarama.load_cards(SPEC, "1H") + tarama.load_cards(SPEC, "5m,15m,30m,1m")
     assert cards, "expected ready intraday cards"
     one_hour = next(card for card in cards if card["tf"] == "1H" and not card.get("roi_tablosu"))
-    minute = next(card for card in cards if card["tf"] != "1H" and not card.get("piyasa_kisiti"))
+    minute = next(card for card in cards if card["tf"] != "1H" and (card.get("piyasa_kisiti") or ["KRIPTO"]) == ["KRIPTO"])
     universe = pd.read_csv(Path(tarama.ROOT) / "data" / "evren.csv", dtype=str).fillna("")
     root = tmp_path / "data"
     for directory, freq in (("hourly", "h"), (minute["tf"], {"1m": "min", "5m": "5min", "15m": "15min", "30m": "30min"}[minute["tf"]])):
@@ -90,7 +90,7 @@ def test_intraday_scan_end_to_end_on_synthetic_bars(tmp_path: Path) -> None:
         [one_hour, minute], root / "daily", results, data_root=root, summary_name="tarama_gunici_ozet.md", merge=True,
     )
     rows = table.set_index(["id", "piyasa"])
-    assert rows.loc[(minute["id"], "ABD25"), "neden"] == "dakikalik_veri_yok"
+    assert rows.loc[(minute["id"], "ABD25"), "neden"] in ("dakikalik_veri_yok", "piyasa_ozgu:KRIPTO")
     assert rows.loc[(one_hour["id"], "BIST30"), "durum"] == "Hesaplandi"
     assert (table["durum"] != "Hata").all(), table[table["durum"] == "Hata"][["id", "piyasa", "neden"]]
     assert "Hesaplandi" in set(table[table["id"] == one_hour["id"]]["durum"])

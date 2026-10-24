@@ -34,7 +34,7 @@ rapor:
   islem: 88
   wr: '%75.0'
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: eksik
 ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
@@ -43,3 +43,6 @@ belirsiz:
 - Yazarın test penceresi çok kısa (2023-06-18/07-14), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
 bias_varsayim: false
+dogrulanamaz:
+  neden: ceviri
+  ayrinti: 'U7 dakikalik sınıflaması: Yazarın stopu (bb_alt - 1,5 x (bb_orta - bb_alt)) ve hedefi kartta stop/hedef olarak yok; çıkıştaki giris_stop motorun ATR stopu olur, yazarın stopu değil.'

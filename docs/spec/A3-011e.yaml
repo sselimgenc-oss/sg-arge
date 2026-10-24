@@ -31,17 +31,17 @@ gostergeler:
     f: dmi
     n: 14
   fisher:
-    f: "fisher_rsi"
+    f: fisher_rsi
     n: 14
   fisher_norma:
-    f: "seri"
-    ifade: "50 * (fisher + 1)"
+    f: seri
+    ifade: 50 * (fisher + 1)
   fast:
-    f: "stoch"
+    f: stoch
     k: 5
     d: 3
     smooth: 1
-giris: "volume > vol_sma70 * 4 and close < sma40 and fast.d > fast.k and rsi14 > 30 and fast.d > 30 and fisher_norma < 30"
+giris: volume > vol_sma70 * 4 and close < sma40 and fast.d > fast.k and rsi14 > 30 and fast.d > 30 and fisher_norma < 30
 cikis: cross_over(rsi14, 70) and macd.macd < 0 and dmi14.minus > 50
 stop:
   tip: yuzde
@@ -58,7 +58,7 @@ rapor:
   islem: 180
   wr: null
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: tam
 ozel_kod: false
 belirsiz:
 - Fisher RSI normalize (50*(fisher+1)) ve STOCHF listede yok
@@ -66,7 +66,8 @@ belirsiz:
 - Çıkış tetikleyicisi varsayılan 'rsi-macd-minusdi'
 - 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy005.py'
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
-- "T8: ozel_kod true -> false (fisher_rsi eklendi (A3-010c ile ortak); fisher_rsi_norma = 50*(fisher+1) seri olarak yazildi; dmi14.minus TA-Lib MINUS_DI ile 1e-13 uyumlu; 5m kart yalniz kripto testine gider); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
+- 'T8: ozel_kod true -> false (fisher_rsi eklendi (A3-010c ile ortak); fisher_rsi_norma = 50*(fisher+1) seri olarak yazildi; dmi14.minus TA-Lib MINUS_DI ile 1e-13 uyumlu; 5m kart yalniz kripto testine gider); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi'
+- 'U7 dakikalik: yazar piyasasi ''Kripto''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (5m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok.'
 roi_tablosu:
   0: 0.05
   20: 0.04
@@ -74,3 +75,23 @@ roi_tablosu:
   80: 0.02
   1440: 0.01
 bias_varsayim: false
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

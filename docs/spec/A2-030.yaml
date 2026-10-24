@@ -47,12 +47,13 @@ rapor:
   islem: null
   wr: 57.5
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi M15 (1 saatin altında)
-- 'Özel kod mantığı: EMA(33, close) sinyal çizgisi, EMA(55, high) üst kanal bandını yukarı kestiğinde (cross_over(ema33_close, ema55_high)) Long sinyali oluşur; kesişim anında fiyat kanala yakınsa (40-50
-  pip SL kanalın altına düşüyorsa) hemen girilir, aşırı volatilite nedeniyle fiyat kanaldan >40 pip uzaktaysa EMA(33, close) seviyesine bekleyen limit emir (Delayed Entry) bırakılır; çıkış için 3 seçenek
-  sunulmuştur: (1) 40 pip sabit TP ve 20-25 pipte BE, (2) 210 pip esnek TP ve seans sonunda kapatma, (3) ters sinyalde kapatıp tersine dönme'
+- 'Özel kod mantığı: EMA(33, close) sinyal çizgisi, EMA(55, high) üst kanal bandını yukarı kestiğinde (cross_over(ema33_close, ema55_high)) Long sinyali oluşur; kesişim anında fiyat kanala yakınsa (40-50 pip SL kanalın altına düşüyorsa) hemen girilir, aşırı volatilite nedeniyle fiyat kanaldan >40 pip uzaktaysa EMA(33, close) seviyesine bekleyen limit emir (Delayed Entry) bırakılır; çıkış için 3 seçenek sunulmuştur: (1) 40 pip sabit TP ve 20-25 pipte BE, (2) 210 pip esnek TP ve seans sonunda kapatma, (3) ters sinyalde kapatıp tersine dönme'
 - 'short kuralı var: cross_under(ema33_close, ema55_low) olduğunda aynı normal/gecikmeli giriş ve SL/TP kurallarıyla short açılır'
-- "ozel_kod_nedeni: bekleyen_emir (fiyat kanaldan >40 pip uzaksa EMA(33)'e bekleyen limit emir (Delayed Entry), pip bazli 3 cikis secenegi)"
+- 'ozel_kod_nedeni: bekleyen_emir (fiyat kanaldan >40 pip uzaksa EMA(33)''e bekleyen limit emir (Delayed Entry), pip bazli 3 cikis secenegi)'
 kart_yazari: argon
+dogrulanamaz:
+  neden: ceviri
+  ayrinti: 'U7 dakikalik sınıflaması: Kanala uzaksa EMA(33)''e bekleyen limit emir (gecikmeli giriş) ve pip bazlı üç çıkış seçeneği; kart dilinde karşılığı yok.'

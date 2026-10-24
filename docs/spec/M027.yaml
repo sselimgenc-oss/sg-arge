@@ -23,7 +23,8 @@ stop:
 hedef: null
 stop_eklendi: false
 ozel_kod: false
-piyasa_kisiti: [GER40]
+piyasa_kisiti:
+- GER40
 parametreler:
   bricksize: 22
   BIfirst: 1
@@ -47,12 +48,11 @@ rapor:
   islem: 692
   wr: 41.47
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
-- '15 dakikalık bar kapanışları üzerinde sentetik Renko tuğlası hesaplama ve sinyal mantığı (ozel_kod: true): 1) İlk barda (barindex == BIfirst, varsayılan 1) upbrick = close ve downbrick = close - bricksize
-  (bricksize=22 puan) olarak başlatılır. 2) Her 15m barda eğer close >= upbrick + bricksize ise: newbricksup = round(((close - upbrick) / bricksize) - 0.5); diffup = newbricksup * bricksize; downbrick =
-  downbrick + diffup; upbrick = upbrick + diffup; totalbricksup = totalbricksup + newbricksup; totalbricksdown = 0. Eğer (totalbricksup[1] == 0 veya totalbricksup[1] == 1) ve totalbricksup >= 2 ise (en
-  az 2 yükseliş tuğlası oluştuğunda) sonraki bar açılışında long (buy at market) girilir. 3) Eğer close <= downbrick - bricksize ise: newbricksdown = round(((downbrick - close) / bricksize) - 0.5); diffdown
-  = newbricksdown * bricksize; upbrick = upbrick - diffdown; downbrick = downbrick - diffdown; totalbricksdown = totalbricksdown + newbricksdown; totalbricksup = 0. Eğer (totalbricksdown[1] == 0 veya totalbricksdown[1]
-  == 1) ve totalbricksdown >= 2 ise long kapatılıp short (sellshort at market) açılır. 4) Ayrıca 120 puanlık sabit stop-loss (set stop ploss 120) uygulanır.'
-- "T20: kapanis bazli sentetik Renko sayaci renko_sayac(kutu=22, ilk_bar=1) ilkeli (tugla yalniz kapanmis barla olusur, look-ahead yok); 120 puan stop; kaynaktaki short/reversal kolu long-only modda yok. Puan birimi GER40 icin: piyasa_kisiti GER40 oldugundan evrenimizde Dogrulanamaz"
+- '15 dakikalık bar kapanışları üzerinde sentetik Renko tuğlası hesaplama ve sinyal mantığı (ozel_kod: true): 1) İlk barda (barindex == BIfirst, varsayılan 1) upbrick = close ve downbrick = close - bricksize (bricksize=22 puan) olarak başlatılır. 2) Her 15m barda eğer close >= upbrick + bricksize ise: newbricksup = round(((close - upbrick) / bricksize) - 0.5); diffup = newbricksup * bricksize; downbrick = downbrick + diffup; upbrick = upbrick + diffup; totalbricksup = totalbricksup + newbricksup; totalbricksdown = 0. Eğer (totalbricksup[1] == 0 veya totalbricksup[1] == 1) ve totalbricksup >= 2 ise (en az 2 yükseliş tuğlası oluştuğunda) sonraki bar açılışında long (buy at market) girilir. 3) Eğer close <= downbrick - bricksize ise: newbricksdown = round(((downbrick - close) / bricksize) - 0.5); diffdown = newbricksdown * bricksize; upbrick = upbrick - diffdown; downbrick = downbrick - diffdown; totalbricksdown = totalbricksdown + newbricksdown; totalbricksup = 0. Eğer (totalbricksdown[1]
+  == 0 veya totalbricksdown[1] == 1) ve totalbricksdown >= 2 ise long kapatılıp short (sellshort at market) açılır. 4) Ayrıca 120 puanlık sabit stop-loss (set stop ploss 120) uygulanır.'
+- 'T20: kapanis bazli sentetik Renko sayaci renko_sayac(kutu=22, ilk_bar=1) ilkeli (tugla yalniz kapanmis barla olusur, look-ahead yok); 120 puan stop; kaynaktaki short/reversal kolu long-only modda yok. Puan birimi GER40 icin: piyasa_kisiti GER40 oldugundan evrenimizde Dogrulanamaz'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız GER40 piyasasına bağlı (yazar piyasası: Endeks (DAX)); kripto verisinde karşılığı yok. Seans açılış aralığına/saatine bağlı kural.'

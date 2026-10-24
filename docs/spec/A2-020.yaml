@@ -37,15 +37,16 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: hayir
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi M1 (1 saatin altında)
 - 'REPAINT: Quantum göstergesi (ZigZag/kanal ekstrem kutuları) geçmişe dönük grafik yenilendiğinde veya zaman dilimi değiştirildiğinde repaint yapar (18. ve 20. mesajlarda teyit edilmiştir)'
-- 'Özel kod mantığı (Grid / Sepet): 05:00 GMT (Frankfurt açılışı öncesi) sonrasında Quantum göstergesi mavi kutu (yeni dip) çizdiğinde takip eden M1 mumunun açılışında Long açılır; her yeni mavi kutuda
-  artan lotlarla (1-12: 0.01, 13-21: 0.02, 22-29: 0.05, 30-36: 0.13, 37-39: 0.34, 40: 0.89 lot) sepete yeni Long eklenir; kırmızı kutu (yeni tepe) oluştuğunda sonraki mum açılışında sepetteki tüm işlemler
-  kapatılır; stop-loss yoktur'
+- 'Özel kod mantığı (Grid / Sepet): 05:00 GMT (Frankfurt açılışı öncesi) sonrasında Quantum göstergesi mavi kutu (yeni dip) çizdiğinde takip eden M1 mumunun açılışında Long açılır; her yeni mavi kutuda artan lotlarla (1-12: 0.01, 13-21: 0.02, 22-29: 0.05, 30-36: 0.13, 37-39: 0.34, 40: 0.89 lot) sepete yeni Long eklenir; kırmızı kutu (yeni tepe) oluştuğunda sonraki mum açılışında sepetteki tüm işlemler kapatılır; stop-loss yoktur'
 - Quantum.mq4 içindeki varsayılan eintDepth3 (kanal periyodu) sayısal değeri ilk mesaj metninde yazmayıp ekli .mq4/.tpl dosyasındadır
 - 'short kuralı var: 05:00 GMT sonrası kırmızı kutularda kademeli short sepeti açılır ve ilk mavi kutuda tüm sepet kapatılır'
-- "ozel_kod_nedeni: durum_makinesi (kademeli lot artan sepet (grid) ve repaint eden Quantum gostergesi)"
-- "T20: motorda kalmadi. Artan lotlu sepet (grid: ayni yonde 40'a kadar kademeli pozisyon) ve repaint eden Quantum gostergesi; motor sembol basina tek pozisyon tutar, gostergenin periyodu kaynakta yok"
+- 'ozel_kod_nedeni: durum_makinesi (kademeli lot artan sepet (grid) ve repaint eden Quantum gostergesi)'
+- 'T20: motorda kalmadi. Artan lotlu sepet (grid: ayni yonde 40''a kadar kademeli pozisyon) ve repaint eden Quantum gostergesi; motor sembol basina tek pozisyon tutar, gostergenin periyodu kaynakta yok'
 kart_yazari: argon
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: 05:00 GMT seans saatine bağlı kademeli lot artan sepet (grid) ve repaint eden Quantum göstergesi; yazar piyasası FX (GBPUSD).'

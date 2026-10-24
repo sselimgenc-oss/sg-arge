@@ -29,7 +29,8 @@ hedef:
   carpan: 2.0
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [FX]
+piyasa_kisiti:
+- FX
 ozel_kod_nedeni: desen
 parametreler:
   RiskPercent: 1.5
@@ -50,12 +51,14 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi M15 (1 saatin altında, optimize M15/H1/H4)
-- 'MQL5 CodeBase sayfasından kurallar ve girdiler okundu (Lakshya Pandey / UXL Capital): EMA(20) > EMA(50) yükseliş trendinde destek seviyelerinde oluşan Boğa Pin Barı (fitil/gövde oranı >= 2.0), Boğa Engulfing
-  veya Inside Bar yukarı kırılımında Long açılır; TakeProfitRatio=2.0 (1:2 risk/ödül) kar hedefi, 20 pip SL, başabaş (breakeven) ve iz süren stop içerir'
+- 'MQL5 CodeBase sayfasından kurallar ve girdiler okundu (Lakshya Pandey / UXL Capital): EMA(20) > EMA(50) yükseliş trendinde destek seviyelerinde oluşan Boğa Pin Barı (fitil/gövde oranı >= 2.0), Boğa Engulfing veya Inside Bar yukarı kırılımında Long açılır; TakeProfitRatio=2.0 (1:2 risk/ödül) kar hedefi, 20 pip SL, başabaş (breakeven) ve iz süren stop içerir'
 - 'short kuralı var: EMA(20) < EMA(50) düşüş trendinde direnç seviyelerinde Ayı Pin Barı, Engulfing veya Inside Bar aşağı kırılımında short açılır'
-- "ozel_kod_nedeni: desen (pin bar / engulfing / inside bar mum formasyonlari ve 'destek seviyesinde' kosulu (destek tanimi yok))"
-- "piyasa_kisiti: ['FX'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
-- "T20: motorda kalmadi. 'Destek seviyesinde' kosulunun tanimi kaynakta yok (SRLookback=20 yalniz parametre adi); pin bar/engulfing/inside bar tanimlari ise standart, ama destek tanimi olmadan sinyal eksik kalir"
+- 'ozel_kod_nedeni: desen (pin bar / engulfing / inside bar mum formasyonlari ve ''destek seviyesinde'' kosulu (destek tanimi yok))'
+- 'piyasa_kisiti: [''FX''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
+- 'T20: motorda kalmadi. ''Destek seviyesinde'' kosulunun tanimi kaynakta yok (SRLookback=20 yalniz parametre adi); pin bar/engulfing/inside bar tanimlari ise standart, ama destek tanimi olmadan sinyal eksik kalir'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız FX piyasasına bağlı (yazar piyasası: Forex (EURUSD, GBPUSD) / Emtia (XAUUSD)); kripto verisinde karşılığı yok.'

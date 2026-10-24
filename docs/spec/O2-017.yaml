@@ -56,11 +56,13 @@ rapor:
   islem: 67
   wr: 76.12
   maliyet_dahil: evet
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi 30m (1 saatin altında); üst zaman dilimi 4h
-- 'Jesse.Trade sayfasından yazarın (saleh) strateji açıklaması ve backtest raporu okundu: 30 dakikalık grafikte TEMA(10) > TEMA(80) yukarı kesişimi + 4 saatlik grafikte TEMA(20) > TEMA(70) trend teyidi
-  + ADX > 40 ve CMO filtresi ile 3x kaldıraçlı Long girilir; 4 ATR stop loss ve 3 ATR kar hedefi uygulanır'
+- 'Jesse.Trade sayfasından yazarın (saleh) strateji açıklaması ve backtest raporu okundu: 30 dakikalık grafikte TEMA(10) > TEMA(80) yukarı kesişimi + 4 saatlik grafikte TEMA(20) > TEMA(70) trend teyidi + ADX > 40 ve CMO filtresi ile 3x kaldıraçlı Long girilir; 4 ATR stop loss ve 3 ATR kar hedefi uygulanır'
 - 'short kuralı var: TEMA kesişimi ve 4h trend filtresi aşağı döndüğünde short açılır'
-- "ozel_kod_nedeni: tanim_belirsiz (TEMA ve CMO onayi: CMO esigi ve TEMA 20/70 (4H) kartta yok; gostergeler'deki 'wma' yer tutucu)"
-- "T21: kaynak erisilemedi (https://jesse.trade/strategies/tematrendfollowing) -> Argon T19. CMO esigi ve TEMA 20/70 (4H) parametre degerleri kartta yok, 'tema' kutuphanede yok"
+- 'ozel_kod_nedeni: tanim_belirsiz (TEMA ve CMO onayi: CMO esigi ve TEMA 20/70 (4H) kartta yok; gostergeler''deki ''wma'' yer tutucu)'
+- 'T21: kaynak erisilemedi (https://jesse.trade/strategies/tematrendfollowing) -> Argon T19. CMO esigi ve TEMA 20/70 (4H) parametre degerleri kartta yok, ''tema'' kutuphanede yok'
+dogrulanamaz:
+  neden: ceviri
+  ayrinti: 'U7 dakikalik sınıflaması: TEMA göstergesi kütüphanede yok (wma yer tutucu), mtf''deki tema20/tema70 tanımsız, CMO eşiği kartta yok.'

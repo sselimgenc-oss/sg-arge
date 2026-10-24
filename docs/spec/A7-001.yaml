@@ -35,7 +35,8 @@ hedef:
   tip: rr
   deger: 0.75
 stop_eklendi: false
-piyasa_kisiti: [NQ]
+piyasa_kisiti:
+- NQ
 parametreler:
   ema_fast_5m: 20
   ema_trend_1h: 50
@@ -50,10 +51,11 @@ rapor:
   islem: null
   wr: 62.9
   maliyet_dahil: true
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
-- EliteTrader kullanicisi realvasline tarafindan 37 unlu strateji (106 backtest) icinde komisyon sonrasi ayakta kalan tek strateji olarak paylasilmistir (~80 gunluk test, komisyon dahil ancak kayma/slippage
-  haric).
-- 'Kurallar (ozel_kod: true): 1) Yalniz NY seansinda islem yapilir. 2) 1H trend filtresi: fiyat 1 saatlik 50 EMA''nin uzerinde olmali (close > mtf("1H", ema50_1h); short icin altinda). 3) 5m grafikte fiyatin
-  20 EMA''ya geri cekilmesinde (pullback) trend yonunde girilir. 4) Stop-loss 1.5 * ATR (periyot belirtilmemis, 14 varsayildi), kar hedefi 0.75R (yani 1.125 * ATR).'
-- "T10: ozel_kod_nedeni: seans_saat (yalniz NY seansi; hedef 0.75R (rr tipi) motorda yok)"
+- EliteTrader kullanicisi realvasline tarafindan 37 unlu strateji (106 backtest) icinde komisyon sonrasi ayakta kalan tek strateji olarak paylasilmistir (~80 gunluk test, komisyon dahil ancak kayma/slippage haric).
+- 'Kurallar (ozel_kod: true): 1) Yalniz NY seansinda islem yapilir. 2) 1H trend filtresi: fiyat 1 saatlik 50 EMA''nin uzerinde olmali (close > mtf("1H", ema50_1h); short icin altinda). 3) 5m grafikte fiyatin 20 EMA''ya geri cekilmesinde (pullback) trend yonunde girilir. 4) Stop-loss 1.5 * ATR (periyot belirtilmemis, 14 varsayildi), kar hedefi 0.75R (yani 1.125 * ATR).'
+- 'T10: ozel_kod_nedeni: seans_saat (yalniz NY seansi; hedef 0.75R (rr tipi) motorda yok)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız NQ piyasasına bağlı (yazar piyasası: Vadeli (NQ - Nasdaq 100 Futures)); kripto verisinde karşılığı yok.'

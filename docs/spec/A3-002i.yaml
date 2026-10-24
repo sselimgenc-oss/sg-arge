@@ -49,7 +49,7 @@ rapor:
   islem: 435
   wr: '%70.57'
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: tam
 ozel_kod: false
 ters_sinyal: true
 belirsiz:
@@ -57,5 +57,26 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/LRCUTB.pine'
 - Yazarın test penceresi çok kısa (2023-08-01/10-27), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T21: Pine kaynagi (LRCUTB.pine, raw.githubusercontent) birebir portlandi; D3 geregi reverse=true halinin long kolu: UT Bot SAT sinyali (close, ut_bot izleyen stopun altina iner) ve close < SMA(linreg kapanis(11), 7) iken long; hedef = lowest-high(7) yani highest(high, 7) (strategy.exit yalniz limit verir, kaynakta stop yok: A7 standart ATR14 x 3 stop eklendi); cikis: linreg mumu kirmizidan yesile doner. UT Bot (carpan 2, ATR periyodu 1) kutuphane ilkeli, linreg mumlari linreg ilkelinden. Hedef dolum fiyatinin altindaysa (gap) giris atlanir"
+- 'T21: Pine kaynagi (LRCUTB.pine, raw.githubusercontent) birebir portlandi; D3 geregi reverse=true halinin long kolu: UT Bot SAT sinyali (close, ut_bot izleyen stopun altina iner) ve close < SMA(linreg kapanis(11), 7) iken long; hedef = lowest-high(7) yani highest(high, 7) (strategy.exit yalniz limit verir, kaynakta stop yok: A7 standart ATR14 x 3 stop eklendi); cikis: linreg mumu kirmizidan yesile doner. UT Bot (carpan 2, ATR periyodu 1) kutuphane ilkeli, linreg mumlari linreg ilkelinden. Hedef dolum fiyatinin altindaysa (gap) giris atlanir'
+- 'U7 dakikalik: yazar piyasasi ''USDCHF''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (15m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok. Kartta stop yok: ATR14 x 3 eklenir (stop_eklendi: true).'
 bias_varsayim: false
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

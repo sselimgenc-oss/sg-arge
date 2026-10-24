@@ -44,7 +44,7 @@ rapor:
   islem: 172
   wr: '%76.7'
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: tam
 ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
@@ -52,5 +52,26 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/3MAF.pine'
 - Yazarın test penceresi çok kısa (2023-01-02/07-13), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T20: Pine kaynagi (3MAF.pine, raw.githubusercontent) okundu. Williams fraktali williams_fractal(n=2) ilkeli (kaynaktaki genisletilmis sinir varyantlariyla; fraktal n bar sonra bilinir, look-ahead yok). stop = low > ema50 ise ema50 yoksa ema100 (sinyal bari), hedef = giris + 1 x (giris - stop) (tpCoef = 1). Kaynaktaki reverse = false (varsayilan) long kolu kullanildi"
+- 'T20: Pine kaynagi (3MAF.pine, raw.githubusercontent) okundu. Williams fraktali williams_fractal(n=2) ilkeli (kaynaktaki genisletilmis sinir varyantlariyla; fraktal n bar sonra bilinir, look-ahead yok). stop = low > ema50 ise ema50 yoksa ema100 (sinyal bari), hedef = giris + 1 x (giris - stop) (tpCoef = 1). Kaynaktaki reverse = false (varsayilan) long kolu kullanildi'
+- 'U7 dakikalik: yazar piyasasi ''EURUSD''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (30m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok.'
 bias_varsayim: false
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

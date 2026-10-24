@@ -50,17 +50,38 @@ rapor:
   islem: 158
   wr: null
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: tam
 ozel_kod: false
 belirsiz:
 - '5m zaman dilimi: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Test penceresi ~1 ay (2017-11/2018-01), maliyet yok: kanıt değeri çok düşük'
 - Fork içeriği resmi depodakiyle karşılaştırılmadı; kural resmi depo koduna dayanıyor
 - 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy002.py'
-- "T21: Strategy002.py (freqtrade/freqtrade-strategies, raw.githubusercontent) birebir portlandi: RSI(14), TA-Lib STOCH varsayilani (fastk 5, slowk SMA 3), tipik fiyatin Bollinger alt bandi (20, 2; qtpylib orneklem sapmasi: bb ddof=1), SAR(0,02; 0,2), Fisher RSI = tanh(0,1 x (RSI - 50)), TA-Lib CDLHAMMER (cdl_hammer ilkeli, TA-Lib ile 0 fark). ROI tablosu (0: %5, 20: %4, 30: %3, 60: %1) ve %10 stop kaynaktaki degerler. Kaynakta exit_profit_only = True: cikis sinyali yalniz karda gecerli; 'close > giris_fiyati' ile yaklasildi (freqtrade komisyonlu kar orani kullanir). ROI tablosu motor roi_tablosu (D9)"
+- 'T21: Strategy002.py (freqtrade/freqtrade-strategies, raw.githubusercontent) birebir portlandi: RSI(14), TA-Lib STOCH varsayilani (fastk 5, slowk SMA 3), tipik fiyatin Bollinger alt bandi (20, 2; qtpylib orneklem sapmasi: bb ddof=1), SAR(0,02; 0,2), Fisher RSI = tanh(0,1 x (RSI - 50)), TA-Lib CDLHAMMER (cdl_hammer ilkeli, TA-Lib ile 0 fark). ROI tablosu (0: %5, 20: %4, 30: %3, 60: %1) ve %10 stop kaynaktaki degerler. Kaynakta exit_profit_only = True: cikis sinyali yalniz karda gecerli; ''close > giris_fiyati'' ile yaklasildi (freqtrade komisyonlu kar orani kullanir). ROI tablosu motor roi_tablosu (D9)'
+- 'U7 dakikalik: yazar piyasasi ''Kripto''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (5m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok.'
 roi_tablosu:
   0: 0.05
   20: 0.04
   30: 0.03
   60: 0.01
 bias_varsayim: false
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

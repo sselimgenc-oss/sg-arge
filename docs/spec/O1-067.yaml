@@ -17,7 +17,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [ABD]
+piyasa_kisiti:
+- ABD
 ozel_kod_nedeni: renko
 parametreler:
   NumBricksForEntry: 2
@@ -32,15 +33,15 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
-- NinjaTrader sayfasının referans verdiği Aralık 2019 Stocks & Commodities Traders' Tips sayfası (https://traders.com/Documentation/FEEDbk_docs/2019/12/TradersTips.html, John Devcic 'Using Renko Charts')
-  üzerinden tam strateji kodu okundu
+- NinjaTrader sayfasının referans verdiği Aralık 2019 Stocks & Commodities Traders' Tips sayfası (https://traders.com/Documentation/FEEDbk_docs/2019/12/TradersTips.html, John Devcic 'Using Renko Charts') üzerinden tam strateji kodu okundu
 - 'Karar zaman dilimi gün içi 2-Renko (veya Adaptive ATR Renko) tuğla grafiğidir (1 saatin altında / bar bazlı olduğundan spec_durumu: dakikalik)'
-- 'Özel kod mantığı: Renko grafiğinde ardışık yükseliş/düşüş tuğlaları sayılır (SequenceCount); ardışık 2 yeşil tuğla (SequenceCount >= NumBricksForEntry, NumBricksForEntry=2) oluştuğunda sonraki bar açılışında
-  Long açılır; ardışık 2 kırmızı tuğla (SequenceCount <= -2) oluştuğunda pozisyon kapatılıp short''a dönülür (AllowReversal=true); ayrıca hisse başına maksimum açık kârdan $0.20 geri çekilmede (DollarStopAmtPerShare
-  = 0.20) iz süren dolar stopu uygulanır'
+- 'Özel kod mantığı: Renko grafiğinde ardışık yükseliş/düşüş tuğlaları sayılır (SequenceCount); ardışık 2 yeşil tuğla (SequenceCount >= NumBricksForEntry, NumBricksForEntry=2) oluştuğunda sonraki bar açılışında Long açılır; ardışık 2 kırmızı tuğla (SequenceCount <= -2) oluştuğunda pozisyon kapatılıp short''a dönülür (AllowReversal=true); ayrıca hisse başına maksimum açık kârdan $0.20 geri çekilmede (DollarStopAmtPerShare = 0.20) iz süren dolar stopu uygulanır'
 - 'short kuralı var: SequenceCount <= -2 (ardışık 2 kırmızı Renko tuğlası) olduğunda short pozisyona geçilir ve hisse başına $0.20 iz süren stop uygulanır'
-- "ozel_kod_nedeni: renko (2 Renko tuglasi dizisi (SequenceCount) ve dolar iz suren stop)"
-- "piyasa_kisiti: ['ABD'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
-- "T20: motorda kalmadi. NT8 Renko tugla boyutu ('2r' = 2 tugla/adaptif ATR) ve hisse basina dolar iz suren stop tanimlari kartta kesin degil; ABD gun ici veri de yok"
+- 'ozel_kod_nedeni: renko (2 Renko tuglasi dizisi (SequenceCount) ve dolar iz suren stop)'
+- 'piyasa_kisiti: [''ABD''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
+- 'T20: motorda kalmadi. NT8 Renko tugla boyutu (''2r'' = 2 tugla/adaptif ATR) ve hisse basina dolar iz suren stop tanimlari kartta kesin degil; ABD gun ici veri de yok'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız ABD piyasasına bağlı (yazar piyasası: ABD Hisse / Forex); kripto verisinde karşılığı yok. Seans açılış aralığına/saatine bağlı kural.'

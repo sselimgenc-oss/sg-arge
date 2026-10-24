@@ -23,13 +23,14 @@ gostergeler:
     f: lowest
     src: low
     n: 46
-giris: "(major_trend_bull and (tott1_bull and sott1_bull and high > hhv8_ott and high > hhv16[1])) or (not major_trend_bull and (firsatci_bull and tott2_bull and sott2_bull and high > hhv11_ott and high > hhv22[1]))"
-cikis: "(major_trend_bull and (tott3_bear and sott3_bear and low < llv23_ott and low < llv46[1])) or (not major_trend_bull and (tott4_bear and sott4_bear and low < llv23_ott and low < llv46[1]))"
+giris: (major_trend_bull and (tott1_bull and sott1_bull and high > hhv8_ott and high > hhv16[1])) or (not major_trend_bull and (firsatci_bull and tott2_bull and sott2_bull and high > hhv11_ott and high > hhv22[1]))
+cikis: (major_trend_bull and (tott3_bear and sott3_bear and low < llv23_ott and low < llv46[1])) or (not major_trend_bull and (tott4_bear and sott4_bear and low < llv23_ott and low < llv46[1]))
 stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [BIST]
+piyasa_kisiti:
+- BIST
 ozel_kod_nedeni: tanim_belirsiz
 parametreler:
   MajorTrend_OttPeriod: 15
@@ -65,13 +66,15 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi C# kodunda SymbolPeriod.Min olarak tanımlı olup gün içi seans saatlidir (10:03 - 17:58, 1 saatin altında, dakikalık)
 - Algo Kütüphanesi MatriksIq C# kodundan tüm bölge parametreleri ve kuralları eksiksiz okundu; sadece LONG işlem yapmaktadır
-- 'Özel kod mantığı: MajorTrend = MOV(C, 15, VAR) > OTT(C, 15, 7.0). Major trend boğa iken 1. Bölge (TOTT 25/0.6, SOTT 300/150, HHV(8) OTT ve H > HHV(16)[1]) ile Long açılır. Fırsatçı Trend aktifken 2.
-  Bölge koşullarıyla Long açılır. Long kapama 3. ve 4. bölge LLV(46) koşullarıyla yapılır'
-- "T7 sozdizimi: ternary (c ? a : b) '(c and a) or (not c and b)' bicimine cevrildi; anlam ayni"
-- "ozel_kod_nedeni: tanim_belirsiz (TOTT/SOTT/HHV-OTT bolge kosullari kartta tanimli degil)"
-- "piyasa_kisiti: ['BIST'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
-- "T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/FirsatciTrend-4Bölge-LONG) -> Argon T19. TOTT/SOTT/HHV-OTT bolge kosullari kartta tanimli degil; seans penceresi"
+- 'Özel kod mantığı: MajorTrend = MOV(C, 15, VAR) > OTT(C, 15, 7.0). Major trend boğa iken 1. Bölge (TOTT 25/0.6, SOTT 300/150, HHV(8) OTT ve H > HHV(16)[1]) ile Long açılır. Fırsatçı Trend aktifken 2. Bölge koşullarıyla Long açılır. Long kapama 3. ve 4. bölge LLV(46) koşullarıyla yapılır'
+- 'T7 sozdizimi: ternary (c ? a : b) ''(c and a) or (not c and b)'' bicimine cevrildi; anlam ayni'
+- 'ozel_kod_nedeni: tanim_belirsiz (TOTT/SOTT/HHV-OTT bolge kosullari kartta tanimli degil)'
+- 'piyasa_kisiti: [''BIST''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
+- 'T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/FirsatciTrend-4Bölge-LONG) -> Argon T19. TOTT/SOTT/HHV-OTT bolge kosullari kartta tanimli degil; seans penceresi'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız BIST piyasasına bağlı (yazar piyasası: BIST (EREGL) / VIOP / BINANCE); kripto verisinde karşılığı yok.'

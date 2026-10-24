@@ -24,7 +24,8 @@ hedef:
   tip: yuzde
   deger: 1.5
 stop_eklendi: false
-piyasa_kisiti: [GER40]
+piyasa_kisiti:
+- GER40
 parametreler:
   ema6.n: 6
   giris_saati: 133000
@@ -42,10 +43,11 @@ rapor:
 varyantlar:
 - ad: DANY Yorum Varyanti (Long/Short + RSI2)
   not: Long icin close > ema6 ve RSI[2](close) > 65 (13:30 giris, 08:00 cikis); Short icin close < ema6 ve not (dlow(1) > dlow(5)) (13:30 giris, 21:30 cikis); SL %3, TP %3.
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Yazar (JohnScher) ana stratejiyi yalniz long olarak kurgulamistir (defparam cumulateorders = false).
-- 'Takvim ve saat kurallari (ozel_kod: true): 1) Yaz aylari haric tutulur: openmonth != 6 and openmonth != 7 and openmonth != 8. 2) Cuma haric Pazartesi-Persembe gunleri (1 <= opendayofweek <= 4) saat 13:30
-  barinda (time == 133000, Europe/Berlin) close > EMA[6](close) ise 1 kontrat long acilir. 3) Pozisyon gece boyu tasinir ve ertesi sabah saat 08:00 barinda (time == 080000) piyasadan kapatilir veya %1.5
-  kar hedefiyle (set target %profit 1.5) cikar; stop-loss yoktur.'
-- "T10: ozel_kod_nedeni: seans_saat (13:30 giris / ertesi 08:00 cikis ve Haziran-Agustos haric ay filtresi)"
+- 'Takvim ve saat kurallari (ozel_kod: true): 1) Yaz aylari haric tutulur: openmonth != 6 and openmonth != 7 and openmonth != 8. 2) Cuma haric Pazartesi-Persembe gunleri (1 <= opendayofweek <= 4) saat 13:30 barinda (time == 133000, Europe/Berlin) close > EMA[6](close) ise 1 kontrat long acilir. 3) Pozisyon gece boyu tasinir ve ertesi sabah saat 08:00 barinda (time == 080000) piyasadan kapatilir veya %1.5 kar hedefiyle (set target %profit 1.5) cikar; stop-loss yoktur.'
+- 'T10: ozel_kod_nedeni: seans_saat (13:30 giris / ertesi 08:00 cikis ve Haziran-Agustos haric ay filtresi)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız GER40 piyasasına bağlı (yazar piyasası: Endeks (DAX40)); kripto verisinde karşılığı yok. Seans açılış aralığına/saatine bağlı kural.'

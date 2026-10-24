@@ -42,7 +42,8 @@ zaman_stop:
   bar: 23
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [JP225]
+piyasa_kisiti:
+- JP225
 ozel_kod_nedeni: seans_saat
 parametreler:
   ma_period: 34
@@ -64,13 +65,14 @@ rapor:
   islem: 309
   wr: 61.8
   maliyet_dahil: evet
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi M15 (1 saatin altında)
 - MQL5 CodeBase sayfasından yazarın (Tomasz Wojciech Forszpaniak) açık kaynak kodu eksiksiz okundu
-- 'Özel kod mantığı: Kapanan son barda 3 koşul aranır: (1) Fiyat yukarı meyilli: close > SMA(34) + 0.5*StdDev(34), (2) Momentum aşırı gergin değil: MACD histogram / ATR(14) < 0.2, (3) Hacim sakin: son 20
-  günün aynı 15 dakikalık dilimi ortalamasının %60''ından az hacim. Seans saati 11:15-15:00 arasında sonraki bar açılışında Long açılır; stop-loss 4 ATR, kâr hedefi 3.5 ATR ve saat 17:00 sunucu saatinde
-  gün sonu tüm pozisyonlar kapatılır'
+- 'Özel kod mantığı: Kapanan son barda 3 koşul aranır: (1) Fiyat yukarı meyilli: close > SMA(34) + 0.5*StdDev(34), (2) Momentum aşırı gergin değil: MACD histogram / ATR(14) < 0.2, (3) Hacim sakin: son 20 günün aynı 15 dakikalık dilimi ortalamasının %60''ından az hacim. Seans saati 11:15-15:00 arasında sonraki bar açılışında Long açılır; stop-loss 4 ATR, kâr hedefi 3.5 ATR ve saat 17:00 sunucu saatinde gün sonu tüm pozisyonlar kapatılır'
 - Yalnızca Long yönlü bir stratejidir (short kuralı yoktur)
-- "ozel_kod_nedeni: seans_saat (sunucu saati 11:15-15:00 penceresi, 17:00 zorunlu kapanis, ayni 15 dk dilimin 20 gunluk tick hacmi ortalamasi)"
-- "piyasa_kisiti: ['JP225'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- 'ozel_kod_nedeni: seans_saat (sunucu saati 11:15-15:00 penceresi, 17:00 zorunlu kapanis, ayni 15 dk dilimin 20 gunluk tick hacmi ortalamasi)'
+- 'piyasa_kisiti: [''JP225''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız JP225 piyasasına bağlı (yazar piyasası: Endeks CFD (JPN225 / Nikkei 225)); kripto verisinde karşılığı yok. Seans açılış aralığına/saatine bağlı kural.'

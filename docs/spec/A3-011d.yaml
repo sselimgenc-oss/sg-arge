@@ -25,7 +25,7 @@ rapor:
   islem: 37
   wr: null
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: eksik
 ozel_kod: false
 belirsiz:
 - A3-010d ile aynı strateji kabul edildi (resmi depo Strategy004); fork kodu karşılaştırılmadı
@@ -33,3 +33,6 @@ belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 alias_of: A3-010d
 bias_varsayim: false
+dogrulanamaz:
+  neden: ceviri
+  ayrinti: 'U7 dakikalik sınıflaması: Kartta kural yok (boş gostergeler/giris/cikis): A3-010d''nin fork kopyası, fork kodu karşılaştırılmadı.'

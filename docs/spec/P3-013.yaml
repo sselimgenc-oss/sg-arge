@@ -17,7 +17,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [ABD]
+piyasa_kisiti:
+- ABD
 ozel_kod_nedeni: seans_saat
 parametreler:
   orb_minutes: 15
@@ -31,11 +32,13 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi 5m (1 saatin altında)
-- 'PyneSys (https://wild.pynesys.io/scripts/orb-strategy-lucitech-10yYqaY7) ve TradeThatSwing incelemesinden TradesLuci (LuciTech) stratejisi okundu: 15 dakikalık seans açılış aralığının (ORB) üzerine mum
-  kapandığında Long girilir; hedef 1.5R, stop ters aralık seviyesidir'
+- 'PyneSys (https://wild.pynesys.io/scripts/orb-strategy-lucitech-10yYqaY7) ve TradeThatSwing incelemesinden TradesLuci (LuciTech) stratejisi okundu: 15 dakikalık seans açılış aralığının (ORB) üzerine mum kapandığında Long girilir; hedef 1.5R, stop ters aralık seviyesidir'
 - 'short kuralı var: Fiyat ORB alt bandını aşağı kırdığında short girilir'
-- "ozel_kod_nedeni: seans_saat (seans acilisindan itibaren 15 dk acilis araligi (ORB); seans acilis saati piyasaya gore tanimsiz)"
-- "piyasa_kisiti: ['ABD'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- 'ozel_kod_nedeni: seans_saat (seans acilisindan itibaren 15 dk acilis araligi (ORB); seans acilis saati piyasaya gore tanimsiz)'
+- 'piyasa_kisiti: [''ABD''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız ABD piyasasına bağlı (yazar piyasası: ABD Hisse (TQQQ) / Kripto); kripto verisinde karşılığı yok. Seans açılış aralığına/saatine bağlı kural.'
