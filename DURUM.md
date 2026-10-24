@@ -20,6 +20,7 @@ Son güncelleme: 2026-10-24, lider (Opus).
 **Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
 
 ## Sırada (kullanıcı kararı bekleyen)
+- **Kararlar 2026-10-24 (denetim):** düşüş kapısı → getiri/düşüş ≥ 0,5; DSR aile bazlı, eleyici değil (Koşullu(DSR) → gölge kitapta canlı teyit); 942 TV stratejisinin hepsi test edilecek (`docs/GOREV_TV2.md`); short fazı U7'den sonra. Bekleyen: Dukascopy gün içi veri (K8), Pine içi ML (K5).
 1. **U7** (`docs/GOREV_U7.md`, kullanıcı kararı 2026-10-24): kilit kaldırıldı; test edilebilir bütün kartlar (Faz 1 126, U1, U4, U6 74) bugüne kadar aynı huniden, DSR N = toplam varyant. Geçenler paper'a önerilir.
 0. ~~Yeni strateji arayışı~~ → **U4 bitti** (kullanıcı kararı 2026-10-24: kripto 4H/1D + ABD/emtia 1D, kendi hipotezlerimiz, yalnız long).
 2. Faz 2 pano modülleri (`docs/FAZ2_NOTLAR.md`): koç bulguları, öğrenen koç (gölge mod), strateji radarı.
