@@ -223,7 +223,13 @@ def test_shadow_equity_records_a_same_day_4h_close(monkeypatch: pytest.MonkeyPat
         open_positions=[], next_orders=[],
         trades=pd.DataFrame({"exit_reason": ["target"], "net_pnl": [100.0]}),
     )
-    monkeypatch.setattr(gunluk, "kitap", lambda *_args, **_kwargs: (result, times[-1]))
+    seen = {}
+
+    def fake_kitap(*_args, **kwargs):
+        seen.update(kwargs)
+        return result, times[-1]
+
+    monkeypatch.setattr(gunluk, "kitap", fake_kitap)
     hourly = pd.date_range("2026-10-24 00:00", periods=12, freq="1h", tz="UTC")
     frame = pd.DataFrame({"open": 100.0, "high": 200.0, "low": 90.0, "close": 100.0, "volume": 1.0}, index=hourly)
     shadow_dir = tmp_path / "defter" / "golge"
@@ -236,6 +242,7 @@ def test_shadow_equity_records_a_same_day_4h_close(monkeypatch: pytest.MonkeyPat
     row = equity[(equity["satir"] == gunluk.PORTFOLIO_ROW) & (equity["tarih"] == closed_at)]
     assert len(row) == 1 and row.iloc[0]["ozkaynak"] == pytest.approx(5100.0)
     assert equity[equity["satir"] == gunluk.PORTFOLIO_ROW]["tarih"].nunique() == 3
+    assert seen["tf_override"] == "4H"
     payload = panel.uret(tmp_path / "defter", gunluk.yukle_portfoy(), ROOT / "results" / "SONUC.csv")
     assert payload["golge"]["kitaplar"][0]["ozkaynak"] == pytest.approx(5100.0)
 

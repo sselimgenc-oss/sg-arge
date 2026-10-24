@@ -280,14 +280,17 @@ def _card(card_id: str) -> dict[str, Any]:
 
 
 def kitap(satir: Satir, veri: Veri, baslangic: pd.Timestamp, sermaye: float, *, maske_tarihi: pd.Timestamp | None = None,
-          risk_per_trade: float = .005, max_total_risk: float = .02):
+          risk_per_trade: float = .005, max_total_risk: float = .02, tf_override: str | None = None):
     """Run one portfolio row from ``baslangic`` to its last closed bar; entry signals on/after ``maske_tarihi`` are switched off (stop)."""
     frames = veri.frames[satir.piyasa]
     bitis = max(f.index[-1] for f in frames.values())
     if satir.kaynak == "codex":
         prepared = asama2b.prepare_codex(ROWS[satir.id], frames, baslangic, bitis)
     else:
-        prepared = tarama.prepare(_card(satir.id), frames, satir.piyasa, benchmark=veri.benchmarks.get(satir.piyasa), start=baslangic, end=bitis)
+        card = _card(satir.id)
+        if tf_override is not None:
+            card = {**card, "tf": tf_override}
+        prepared = tarama.prepare(card, frames, satir.piyasa, benchmark=veri.benchmarks.get(satir.piyasa), start=baslangic, end=bitis)
     signals = prepared.plan.signals
     if maske_tarihi is not None:
         signals = {s: f.assign(entry=f["entry"].astype(bool) & ~(f.index >= maske_tarihi)) for s, f in signals.items()}
@@ -381,7 +384,7 @@ def _kayma(order_rows: pd.DataFrame, satir: str, fill: dict[str, Any], signal_da
 def calistir(
     portfoy: Portfoy, veri: Veri, defter: Path = LEDGER_DIR, *, git_sha: str | None = None,
     bugun: pd.Timestamp | None = None, risk_per_trade: float = .005, max_total_risk: float = .02,
-    zaman_damgali: bool = False,
+    zaman_damgali: bool = False, tf_override: str | None = None,
 ) -> dict[str, Any]:
     """Re-run every row, append what is new to the ledger, evaluate the alarms. ``veri`` must already end at the day being run."""
     stamp = {"git_sha": git_sha or _git_sha(), "data_hash": veri.data_hash}
@@ -392,7 +395,7 @@ def calistir(
 
     def run_all(mask: pd.Timestamp | None):
         return {r.etiket: kitap(r, veri, portfoy.baslangic, sermaye[r.etiket], maske_tarihi=mask,
-                                risk_per_trade=risk_per_trade, max_total_risk=max_total_risk)[0] for r in portfoy.satirlar}
+                                risk_per_trade=risk_per_trade, max_total_risk=max_total_risk, tf_override=tf_override)[0] for r in portfoy.satirlar}
 
     results = run_all(stop_date)
     series = {e: ozkaynak_serisi(res, sermaye[e]).loc[lambda s: s.index >= portfoy.baslangic] for e, res in results.items()}
@@ -497,7 +500,7 @@ def calistir_golge_kitap(kitap: GolgeKitap, veri: Veri, defter: Path = GOLGE_LED
     if not frames or max(frame.index[-1] for frame in frames.values()) < kitap.portfoy.baslangic:
         return None
     return calistir(kitap.portfoy, Veri({market: frames}, {}, veri.data_hash), defter / kitap.id, risk_per_trade=.0025, max_total_risk=.01,
-                    zaman_damgali=True)
+                    zaman_damgali=True, tf_override=kitap.tf)
 
 
 def calistir_golge(portfoy: Portfoy, veri: Veri, defter: Path = GOLGE_LEDGER_DIR, *, simdi: pd.Timestamp | None = None) -> dict[str, Any] | None:
