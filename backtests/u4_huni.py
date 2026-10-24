@@ -148,9 +148,10 @@ def evaluate_variant(variant: str, card: dict[str, Any], market: str, data: dict
     return row
 
 
-def write_outputs(table: pd.DataFrame, results_dir: Path) -> None:
+def write_outputs(table: pd.DataFrame, results_dir: Path, *, trials: int | None = None, title: str = "U4") -> None:
     table.to_csv(results_dir / "huni_ozet.csv", index=False)
-    lines = ["# U4 huni ozeti", "", "Kilitli donem acilmadi. DSR deneme sayisi: 16.", "",
+    trials = TRIALS if trials is None else trials
+    lines = [f"# {title} huni ozeti", "", f"Kilitli donem acilmadi. DSR deneme sayisi: {trials}.", "",
              "| varyant | IS PF/islem | null | OOS PF 2x | DSR | karar | neden |", "|---|---|---|---|---:|---|---|"]
     for r in table.to_dict("records"):
         f = lambda value: "-" if pd.isna(value) else f"{value:.2f}"
