@@ -664,8 +664,8 @@ class Yorumlayici:
         if na(n):
             return NA
         n = int(n)
-        if n < 0:
-            raise PineHatasi("negatif geçmiş indeksi")
+        if n < 0:            # sabit negatif indeks derlenmez; döngüde oluşan (ör. 1'den -3'e sayan for) yayımlanmış
+            return NA        # betiklerde çalışıyor: TradingView hata vermiyor, na kabul edilir
         hedef = e.value
         if isinstance(hedef, A.Name):
             y = self._bul(hedef.id)
