@@ -46,30 +46,32 @@ def _page_metadata(page: str, fallback_tf: str) -> tuple[str, str]:
 
 def _version_rows(client: requests.Session, pub: str) -> tuple[str, str, str, str, int]:
     encoded = requests.utils.quote(pub, safe="")
+    versions = client.get(f"https://pine-facade.tradingview.com/pine-facade/versions/{encoded}", timeout=25)
+    if versions.status_code in (401, 403):
+        return "", "", "", "kaynak gizli", 0
+    if versions.status_code == 404:
+        return "", "", "", "script bulunamadi veya kapali", 0
+    versions.raise_for_status()
+    history = versions.json()
+    if not isinstance(history, list) or not history:
+        return "", "", "", "surum gecmisi yok", 0
+
+    # The versions endpoint is the source of record.  Do not infer history
+    # from numeric Pine endpoints: minor revisions are otherwise lost.
+    dated = [item for item in history if isinstance(item, dict) and item.get("created")]
+    if not dated:
+        return "", "", "", "surum tarihinde created yok", len(history)
+    dated.sort(key=lambda item: str(item["created"]))
+    first, latest = dated[0], dated[-1]
+
     last = client.get(f"https://pine-facade.tradingview.com/pine-facade/get/{encoded}/last", timeout=25)
     if last.status_code in (401, 403):
         return "", "", "", "kaynak gizli", 0
-    if last.status_code == 404:
-        return "", "", "", "script bulunamadi veya kapali", 0
     last.raise_for_status()
     payload: dict[str, Any] = last.json()
     if not payload.get("source"):
         return "", "", "", "kaynak gizli", 0
-    try:
-        major = int(float(str(payload.get("lastVersionMaj", "1"))))
-    except ValueError:
-        major = 1
-    dates: list[str] = []
-    for version in range(1, max(major, 1) + 1):
-        response = client.get(f"https://pine-facade.tradingview.com/pine-facade/get/{encoded}/{version}", timeout=25)
-        if response.status_code == 200:
-            created = str(response.json().get("created") or "")
-            if created:
-                dates.append(created)
-    dates = sorted(set(dates))
-    last_date = str(payload.get("created") or "")
-    first_date = dates[0] if dates else last_date
-    return str(payload.get("lastVersionMaj") or ""), last_date, first_date, "acik", len(dates) or 1
+    return str(latest.get("version") or ""), str(latest["created"]), str(first["created"]), "acik", len(history)
 
 
 def collect(row: dict[str, str]) -> dict[str, str]:
