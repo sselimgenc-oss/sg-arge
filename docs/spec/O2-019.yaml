@@ -56,11 +56,13 @@ rapor:
   islem: 95
   wr: 52.63
   maliyet_dahil: evet
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi 15m (1 saatin altında)
-- 'Jesse.Trade sayfasından yazarın (saleh) strateji açıklaması ve backtest raporu okundu: Ichimoku Bulutu üzerinde trend teyidi + ADX trend gücü filtresi + Bollinger Bant Genişliği (BBW) volatilite filtresi
-  ile Long açılır; ATR tabanlı stop loss ve take profit uygulanır'
+- 'Jesse.Trade sayfasından yazarın (saleh) strateji açıklaması ve backtest raporu okundu: Ichimoku Bulutu üzerinde trend teyidi + ADX trend gücü filtresi + Bollinger Bant Genişliği (BBW) volatilite filtresi ile Long açılır; ATR tabanlı stop loss ve take profit uygulanır'
 - 'short kuralı var: Fiyat Kumo bulutu altına indiğinde ve ADX teyit verdiğinde short açılır'
-- "ozel_kod_nedeni: tanim_belirsiz (bbw_expansion (Bollinger genisligi genislemesi) ve ADX/BB esikleri kartta tanimli degil)"
-- "T21: kaynak erisilemedi (https://jesse.trade/strategies/cloudscalper) -> Argon T19. bbw_expansion tanimi (Bollinger genisligi genislemesi) ve esikleri kartta yok"
+- 'ozel_kod_nedeni: tanim_belirsiz (bbw_expansion (Bollinger genisligi genislemesi) ve ADX/BB esikleri kartta tanimli degil)'
+- 'T21: kaynak erisilemedi (https://jesse.trade/strategies/cloudscalper) -> Argon T19. bbw_expansion tanimi (Bollinger genisligi genislemesi) ve esikleri kartta yok'
+dogrulanamaz:
+  neden: ceviri
+  ayrinti: 'U7 dakikalik sınıflaması: bbw_expansion (Bollinger genişliği genişlemesi) tanımsız, eşikleri kartta yok.'

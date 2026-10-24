@@ -45,12 +45,33 @@ rapor:
   islem: 97
   wr: '%50.52'
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: tam
 ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/NWERSIASF.pine'
 - Yazarın test penceresi çok kısa (2023-08-15/10-20), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T21: Pine kaynagi (NWERSIASF.pine, raw.githubusercontent) birebir portlandi: nadaraya_watson(h=8, carpan=3, n=500) ilkeli (tekrar boyamayan uc nokta surumu, 500 katsayi, 499 bar MAE). stop = low - 0,5 x SMA(TR, 14) (ASF varsayilani SMA, carpan 0,5), hedef = kapanis + 1,5 x (kapanis - stop); sinyal barinda sabit (D10). Ilk ~1000 barda zarf yok (499 + 499 bar isinma)"
+- 'T21: Pine kaynagi (NWERSIASF.pine, raw.githubusercontent) birebir portlandi: nadaraya_watson(h=8, carpan=3, n=500) ilkeli (tekrar boyamayan uc nokta surumu, 500 katsayi, 499 bar MAE). stop = low - 0,5 x SMA(TR, 14) (ASF varsayilani SMA, carpan 0,5), hedef = kapanis + 1,5 x (kapanis - stop); sinyal barinda sabit (D10). Ilk ~1000 barda zarf yok (499 + 499 bar isinma)'
+- 'U7 dakikalik: yazar piyasasi ''USDJPY''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (15m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok.'
 bias_varsayim: false
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

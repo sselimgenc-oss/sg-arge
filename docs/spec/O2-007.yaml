@@ -37,7 +37,8 @@ hedef:
   deger: 50
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [FX]
+piyasa_kisiti:
+- FX
 ozel_kod_nedeni: seans_saat
 parametreler:
   fast_ema: 10
@@ -54,11 +55,13 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi M15 (1 saatin altında)
-- 'ForexFactory konusu Post #1 (loveevery1) ve topluluk kılavuzundan okundu: 15 dakikalık grafikte 10 EMA, 200 EMA (günlük 50 EMA dengi) ve 800 EMA (4 saatlik 50 EMA dengi) kullanılır; fiyat 200 ve 800
-  EMA üzerindeyken 10 EMA''nın 200 EMA''dan sıçraması / yukarı kesmesi ve TDI yeşil çizgisinin kırmızıyı yukarı kesmesiyle Long girilir; sabit 50 pip kar hedefi ve 50 pip stop-loss uygulanır'
+- 'ForexFactory konusu Post #1 (loveevery1) ve topluluk kılavuzundan okundu: 15 dakikalık grafikte 10 EMA, 200 EMA (günlük 50 EMA dengi) ve 800 EMA (4 saatlik 50 EMA dengi) kullanılır; fiyat 200 ve 800 EMA üzerindeyken 10 EMA''nın 200 EMA''dan sıçraması / yukarı kesmesi ve TDI yeşil çizgisinin kırmızıyı yukarı kesmesiyle Long girilir; sabit 50 pip kar hedefi ve 50 pip stop-loss uygulanır'
 - 'short kuralı var: Fiyat 200 ve 800 EMA altında iken 10 EMA aşağı kesişimi ve TDI teyidi ile 50 pip TP / 50 pip SL ile short açılır'
-- "ozel_kod_nedeni: seans_saat (Londra acilisi sonrasi pencere, TDI cizgi parametreleri kartta yok, 50 pip stop/hedef)"
-- "piyasa_kisiti: ['FX'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- 'ozel_kod_nedeni: seans_saat (Londra acilisi sonrasi pencere, TDI cizgi parametreleri kartta yok, 50 pip stop/hedef)'
+- 'piyasa_kisiti: [''FX''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız FX piyasasına bağlı (yazar piyasası: Forex); kripto verisinde karşılığı yok. Seans açılış aralığına/saatine bağlı kural.'

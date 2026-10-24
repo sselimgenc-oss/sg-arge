@@ -40,7 +40,8 @@ hedef: null
 stop_eklendi: false
 ozel_kod: true
 ozel_kod_nedeni: ozel_gosterge
-piyasa_kisiti: [ES]
+piyasa_kisiti:
+- ES
 parametreler:
   Price: high
   Amplitude: 25
@@ -63,14 +64,12 @@ rapor:
   islem: 1270
   wr: null
   maliyet_dahil: hayir
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
-- 'HalfTrend + Deviation Bands hesaplama adımları (ozel_kod: true): 1) lowpricei = lowest(low, Amplitude), highpricei = highest(high, Amplitude), lowma = sma(low, Amplitude), highma = sma(high, Amplitude).
-  2) nexttrend[1] == 1 iken: maxlowprice = max(lowpricei, maxlowprice[1]); eğer highma < maxlowprice[1] ve close < low[1] ise trend = 1, nexttrend = 0, minhighprice = highpricei olur. 3) nexttrend[1] ==
-  0 iken: minhighprice = min(highpricei, minhighprice[1]); eğer lowma > minhighprice[1] ve close > high[1] ise trend = 0, nexttrend = 1, maxlowprice = lowpricei olur. 4) trend == 0 iken up = (trend[1] !=
-  0 ise down[1] değilse max(maxlowprice[1], up[1])), down = 0; trend == 1 iken down = (trend[1] != 1 ise up[1] değilse min(minhighprice, down[1])), up = 0. 5) halftrend (MidLine) = (up > 0 ise up değilse
-  down); LowerBand = halftrend + Num_Dev_Dn; UpperBand = halftrend + Num_Dev_up.'
-- 'Long giriş (BUY_auto): Price (varsayılan high, 5m ayarında low) MidLine''ı yukarı keser ve up > 0 ise VEYA Price UpperBand''ı yukarı keserse. Çıkış / Short dönüş (SELL_auto): Price LowerBand''ı aşağı
-  keserse VEYA (Price MidLine''ı aşağı keser ve down > 0 ise). Ayrıca ATR(14) * stop_mult seviyesinde stop-loss vardır.'
-- "T10: ozel_kod_nedeni: ozel_gosterge (HalfTrend gostergesi kutuphanede yok)"
-- "T21: kaynak erisilemedi (https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/) -> Argon T19. Price girdisi celisiyor: kart high kullanir, kaynak metni 5m ayarinda low der; ayrica yalniz ES vadeli (piyasa_kisiti ES). HalfTrend adimlari kartta var ama bu girdi netlesmeden yazilmadi"
+- 'HalfTrend + Deviation Bands hesaplama adımları (ozel_kod: true): 1) lowpricei = lowest(low, Amplitude), highpricei = highest(high, Amplitude), lowma = sma(low, Amplitude), highma = sma(high, Amplitude). 2) nexttrend[1] == 1 iken: maxlowprice = max(lowpricei, maxlowprice[1]); eğer highma < maxlowprice[1] ve close < low[1] ise trend = 1, nexttrend = 0, minhighprice = highpricei olur. 3) nexttrend[1] == 0 iken: minhighprice = min(highpricei, minhighprice[1]); eğer lowma > minhighprice[1] ve close > high[1] ise trend = 0, nexttrend = 1, maxlowprice = lowpricei olur. 4) trend == 0 iken up = (trend[1] != 0 ise down[1] değilse max(maxlowprice[1], up[1])), down = 0; trend == 1 iken down = (trend[1] != 1 ise up[1] değilse min(minhighprice, down[1])), up = 0. 5) halftrend (MidLine) = (up > 0 ise up değilse down); LowerBand = halftrend + Num_Dev_Dn; UpperBand = halftrend + Num_Dev_up.'
+- 'Long giriş (BUY_auto): Price (varsayılan high, 5m ayarında low) MidLine''ı yukarı keser ve up > 0 ise VEYA Price UpperBand''ı yukarı keserse. Çıkış / Short dönüş (SELL_auto): Price LowerBand''ı aşağı keserse VEYA (Price MidLine''ı aşağı keser ve down > 0 ise). Ayrıca ATR(14) * stop_mult seviyesinde stop-loss vardır.'
+- 'T10: ozel_kod_nedeni: ozel_gosterge (HalfTrend gostergesi kutuphanede yok)'
+- 'T21: kaynak erisilemedi (https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/) -> Argon T19. Price girdisi celisiyor: kart high kullanir, kaynak metni 5m ayarinda low der; ayrica yalniz ES vadeli (piyasa_kisiti ES). HalfTrend adimlari kartta var ama bu girdi netlesmeden yazilmadi'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız ES piyasasına bağlı (yazar piyasası: Vadeli (ES Futures)); kripto verisinde karşılığı yok.'

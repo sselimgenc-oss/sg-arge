@@ -39,7 +39,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [ABD]
+piyasa_kisiti:
+- ABD
 ozel_kod_nedeni: seans_saat
 parametreler:
   EMA1: 5
@@ -70,15 +71,14 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi 5m (1 saatin altında); ayrıca kodda 1m, 2m, 3m, 10m, 15m, 30m için ayrı EMASepThrHld eşikleri tanımlıdır
-- 'Kod ile açıklama çelişkileri (kod esas alındı): (1) Açıklamada ''Low > Pre-Market High'' yazarken kodda PreMarketBull = close > Pre_Market_High olarak kodlanmıştır, (2) Açıklamada ''TSI > 10 and trending
-  up'' yazarken kodda ''> 10'' şartı yorum satırına alınmış ve yalnızca TSIBull = TSIRound > TSIRound[2] bırakılmıştır, (3) Açıklamada ''MACD Trending Up'' yazarken kodda MACDAverage > MACDAverage[1] yorum
-  satırına alınmış ve yerine MACDBull = TSIRound > MACDAverage (TSI değerinin MACD sinyal çizgisinden büyük olması) yazılmıştır'
-- 'Özel kod mantığı (ThinkScript v10.4 kodundan): Seans 09:30-15:00 EST arasında LongBuyInd = TradingDay and (EMA5 > EMA12) and (EMAPctBullRound > 0.2 and EMAPctBullRound >= EMAPctBullRound[1]) and (TSIRound
-  > MACDAverage) and (TSIRound > TSIRound[2]) and (close > Pre_Market_High); önceki 1 veya 2 barda LongBuyInd aktifken cari barda da aktifse ve fiyat EMA5*1.0025 seviyesine geri çekilirse (low <= EMA5 *
-  1.0025) EMA5*1.0025 fiyattan Long girilir; LongSellInd şartı gerçekleştiğinde veya saat 15:55 EST''de (EndDay) kapatılır'
+- 'Kod ile açıklama çelişkileri (kod esas alındı): (1) Açıklamada ''Low > Pre-Market High'' yazarken kodda PreMarketBull = close > Pre_Market_High olarak kodlanmıştır, (2) Açıklamada ''TSI > 10 and trending up'' yazarken kodda ''> 10'' şartı yorum satırına alınmış ve yalnızca TSIBull = TSIRound > TSIRound[2] bırakılmıştır, (3) Açıklamada ''MACD Trending Up'' yazarken kodda MACDAverage > MACDAverage[1] yorum satırına alınmış ve yerine MACDBull = TSIRound > MACDAverage (TSI değerinin MACD sinyal çizgisinden büyük olması) yazılmıştır'
+- 'Özel kod mantığı (ThinkScript v10.4 kodundan): Seans 09:30-15:00 EST arasında LongBuyInd = TradingDay and (EMA5 > EMA12) and (EMAPctBullRound > 0.2 and EMAPctBullRound >= EMAPctBullRound[1]) and (TSIRound > MACDAverage) and (TSIRound > TSIRound[2]) and (close > Pre_Market_High); önceki 1 veya 2 barda LongBuyInd aktifken cari barda da aktifse ve fiyat EMA5*1.0025 seviyesine geri çekilirse (low <= EMA5 * 1.0025) EMA5*1.0025 fiyattan Long girilir; LongSellInd şartı gerçekleştiğinde veya saat 15:55 EST''de (EndDay) kapatılır'
 - 'short kuralı var: EMA5 < EMA12, EMAPctBearRound < -0.2, TSIRound < MACDAverage, TSIRound < TSIRound[2] ve close < Pre_Market_Low sonrası high >= EMA5 * 0.9975 geri çekilmesinde short açılır'
-- "ozel_kod_nedeni: seans_saat (09:30-15:00 EST seans, premarket high/low ve TSI (ozel gosterge))"
-- "piyasa_kisiti: ['ABD'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- 'ozel_kod_nedeni: seans_saat (09:30-15:00 EST seans, premarket high/low ve TSI (ozel gosterge))'
+- 'piyasa_kisiti: [''ABD''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız ABD piyasasına bağlı (yazar piyasası: ABD Hisse / Opsiyon); kripto verisinde karşılığı yok.'

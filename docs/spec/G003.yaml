@@ -54,17 +54,37 @@ rapor:
   islem: 7572
   wr: 62.8
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: tam
 roi_tablosu:
   0: 0.398
   102: 0.11
   269: 0.04
   600: 0
 belirsiz:
-- 'Kod: https://raw.githubusercontent.com/IvanLetteri/AITA---Strategies/main/reinforced-smooth-scalp-berlinguyinca/ReinforcedSmoothScalp.py; parametreler sonuc dosyasindaki hyperopt JSON''undan (buy_adx
-  35, buy_fastd 19, sell_cci 114, sell_fastk 57, sell_adx 100; mfi/fastk giris ve fastd/mfi cikis kapali)'
+- 'Kod: https://raw.githubusercontent.com/IvanLetteri/AITA---Strategies/main/reinforced-smooth-scalp-berlinguyinca/ReinforcedSmoothScalp.py; parametreler sonuc dosyasindaki hyperopt JSON''undan (buy_adx 35, buy_fastd 19, sell_cci 114, sell_fastk 57, sell_adx 100; mfi/fastk giris ve fastd/mfi cikis kapali)'
 - '15m: 1H alti, yalniz kripto (Binance) testine gider; BIST/ABD/emtia Dogrulanamaz (dakikalik veri yok)'
 - 'Zaman bazli ROI tablosu (dakika) ve %34.7 sabit stop: roi_tablosu motorda desteklenmiyor (T5b-2''de gerekli)'
 - 'Ust periyot filtresi: freqtrade 5x zaman dilimi = 75m SMA50; tf: 75m ile onceki tamamlanmis 75m bari kullanilir (freqtrade resampled_merge benzeri)'
 - 'Parametreler tum donem uzerinde optimize edilmis (2017-08..2022-01): asiri uyum riski; PDF: seans sonu cikisi yok, ortalama kaybeden 14s19dk'
 - 'Freqtrade acilis dolumu: sinyal mumu kapanisinda, sonraki mum acilisinda (A1 ile uyumlu)'
+- 'U7 dakikalik: yazar piyasasi ''Kripto (Binance USDT)''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (15m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok.'
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

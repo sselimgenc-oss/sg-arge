@@ -33,7 +33,8 @@ hedef:
   tip: puan
   deger: 200
 stop_eklendi: false
-piyasa_kisiti: [US100]
+piyasa_kisiti:
+- US100
 parametreler:
   K: 16
   u: 26
@@ -55,9 +56,12 @@ varyantlar:
   not: Sabit SL/TP yerine trailingstop = 0.42 * close / 100 (%0.42) MFE tabanli iz suren stop kullanir.
 - ad: ncdo ve superfalcio SL/TP Varyantlari
   not: 'ncdo: SL 125, TP 275; superfalcio: SL 400, TP 600 puan.'
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Strateji yalniz long yonludur (DEFPARAM CumulateOrders = False).
 - 'Takvim/saat filtresi (ozel_kod: true): Giris yalniz haftanin ilk 3 gunu yapilir (finestra: dayofweek == 1 or dayofweek == 2 or dayofweek == 3, yani Pazartesi, Sali, Carsamba).'
 - 'Zaman cikisi: Persembe gunu saat 17:50 ve sonrasinda (currentdayofweek == 4 and time >= 175000) pozisyon piyasadan kapatilir (SELL n CONTRACT AT MARKET).'
-- "T10: ozel_kod_nedeni: seans_saat (giris yalniz Pzt-Car, Persembe 17:50 zaman cikisi; saat/gun-ici dakika ilkeli yok)"
+- 'T10: ozel_kod_nedeni: seans_saat (giris yalniz Pzt-Car, Persembe 17:50 zaman cikisi; saat/gun-ici dakika ilkeli yok)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız US100 piyasasına bağlı (yazar piyasası: Endeks (NASDAQ)); kripto verisinde karşılığı yok.'

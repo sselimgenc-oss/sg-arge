@@ -38,17 +38,17 @@ gostergeler:
     src: close
     n: 100
   fisher:
-    f: "fisher_rsi"
+    f: fisher_rsi
     n: 14
   sar:
-    f: "sar"
+    f: sar
   fast:
-    f: "stoch"
+    f: stoch
     k: 5
     d: 3
     smooth: 1
-giris: "rsi14 < 28 and rsi14 > 0 and close < sma40 and fisher < -0.94 and mfi < 16 and (ema50 > ema100 or cross_over(ema5, ema10)) and fast.d > fast.k and fast.d > 0"
-cikis: "sar > close and fisher > 0.3"
+giris: rsi14 < 28 and rsi14 > 0 and close < sma40 and fisher < -0.94 and mfi < 16 and (ema50 > ema100 or cross_over(ema5, ema10)) and fast.d > fast.k and fast.d > 0
+cikis: sar > close and fisher > 0.3
 stop:
   tip: yuzde
   deger: 10
@@ -64,7 +64,7 @@ rapor:
   islem: 147
   wr: null
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: tam
 ozel_kod: false
 belirsiz:
 - '5m zaman dilimi: 1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
@@ -73,10 +73,31 @@ belirsiz:
 - Fork içeriği resmi depodakiyle karşılaştırılmadı; kural resmi depo koduna dayanıyor
 - SAR ve Fisher RSI listede yok; STOCHF (fast stoch)
 - 'Kaynak: https://raw.githubusercontent.com/freqtrade/freqtrade-strategies/main/user_data/strategies/Strategy003.py'
-- "T8: ozel_kod true -> false (sar (TA-Lib TA_SAR portu, TA-Lib ile 1e-14 uyumlu) ve fisher_rsi (tanh(0.1*(RSI-50))) kutuphaneye eklendi; STOCHF(5,3) = stoch(k=5,d=3,smooth=1) (TA-Lib ile uyumlu); 'sar'/'fisher_rsi'/'fastd/fastk' adlari gostergelere baglandi; 5m kart yalniz kripto testine gider); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi"
+- 'T8: ozel_kod true -> false (sar (TA-Lib TA_SAR portu, TA-Lib ile 1e-14 uyumlu) ve fisher_rsi (tanh(0.1*(RSI-50))) kutuphaneye eklendi; STOCHF(5,3) = stoch(k=5,d=3,smooth=1) (TA-Lib ile uyumlu); ''sar''/''fisher_rsi''/''fastd/fastk'' adlari gostergelere baglandi; 5m kart yalniz kripto testine gider); kural ifade diline ve engine/gosterge.py kutuphanesine cevrildi, anlam degismedi'
+- 'U7 dakikalik: yazar piyasasi ''Kripto''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (5m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok.'
 roi_tablosu:
   0: 0.05
   20: 0.04
   30: 0.03
   60: 0.01
 bias_varsayim: false
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

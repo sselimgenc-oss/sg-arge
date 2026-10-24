@@ -24,7 +24,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [XAUUSD]
+piyasa_kisiti:
+- XAUUSD
 ozel_kod_nedeni: seans_saat
 parametreler:
   InpFastEMA: 10
@@ -45,11 +46,14 @@ rapor:
   islem: 22
   wr: null
   maliyet_dahil: evet
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi M15 (1 saatin altında)
 - 'Özel kod mantığı: WIB seans saatleri (19:00-22:00 UTC+7) içinde ve spread <= 100 puan iken M15 kapanmış barda EMA(10) EMA(30)''u yukarı kestiğinde Long açılır; sabit 70 puan SL ve 200 puan TP ile kapatılır'
 - 'short kuralı var: Aynı seans ve spread filtresi altında cross_under(ema10, ema30) olduğunda 70 puan SL ve 200 puan TP ile short açılır'
-- "ozel_kod_nedeni: seans_saat (WIB 19:00-22:00 seans penceresi, spread <= 100 puan filtresi, sabit puan SL/TP)"
-- "piyasa_kisiti: ['XAUUSD'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- 'ozel_kod_nedeni: seans_saat (WIB 19:00-22:00 seans penceresi, spread <= 100 puan filtresi, sabit puan SL/TP)'
+- 'piyasa_kisiti: [''XAUUSD''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
 kart_yazari: argon
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız XAUUSD piyasasına bağlı (yazar piyasası: Emtia (XAUUSD)); kripto verisinde karşılığı yok.'

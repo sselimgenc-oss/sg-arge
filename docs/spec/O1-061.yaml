@@ -58,14 +58,14 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi 4m (yazarın /ES backtest grafiği 4 dakikalık, 1 saatin altında)
-- 'REPAINT: Konu başlığında ''Repaints'' etiketi vardır; kodda Hull Moving Average (HMA 60) tepe/dip dönüş noktaları plot MA_Max = if HMA[-1] < HMA and HMA > HMA[1] ve plot MA_Min = if HMA[-1] > HMA and
-  HMA < HMA[1] şeklinde 1 bar gelecekteki HMA[-1] değerini kullanarak hesaplanır'
-- 'Özel kod mantığı: (1) HMA(60, HL2) dip dönüş üçgeni (MA_Min) oluşup son dip değeri L_stoploss olarak kaydedilir, (2) Donchian Trend Ribbon (20) yeşil (alıcı) renkte olmalı, (3) Fiyat Hull tabanlı SuperTrend(nATR=12,
-  STAtrMult=2.75) üst bandını yukarı kırdığında (LongTrigger) Long girilir (kod içinde ayrıca LinReg(80) ve EMA(LinReg, 20) tabanlı DYNO Long_Entry / Long_Exit durum makinesi de yer alır), (4) Stop-loss
-  L_stoploss (HMA dip noktası) seviyesidir; hedefler risk mesafesinin (L_Entry - L_Stoploss) 0.5x, 1x, 2x, 3x ve 4x katlarıdır veya fiyat HMA(60) altına kırdığında çıkılır'
+- 'REPAINT: Konu başlığında ''Repaints'' etiketi vardır; kodda Hull Moving Average (HMA 60) tepe/dip dönüş noktaları plot MA_Max = if HMA[-1] < HMA and HMA > HMA[1] ve plot MA_Min = if HMA[-1] > HMA and HMA < HMA[1] şeklinde 1 bar gelecekteki HMA[-1] değerini kullanarak hesaplanır'
+- 'Özel kod mantığı: (1) HMA(60, HL2) dip dönüş üçgeni (MA_Min) oluşup son dip değeri L_stoploss olarak kaydedilir, (2) Donchian Trend Ribbon (20) yeşil (alıcı) renkte olmalı, (3) Fiyat Hull tabanlı SuperTrend(nATR=12, STAtrMult=2.75) üst bandını yukarı kırdığında (LongTrigger) Long girilir (kod içinde ayrıca LinReg(80) ve EMA(LinReg, 20) tabanlı DYNO Long_Entry / Long_Exit durum makinesi de yer alır), (4) Stop-loss L_stoploss (HMA dip noktası) seviyesidir; hedefler risk mesafesinin (L_Entry - L_Stoploss) 0.5x, 1x, 2x, 3x ve 4x katlarıdır veya fiyat HMA(60) altına kırdığında çıkılır'
 - 'short kuralı var: HMA(60) tepe karesi (MA_Max / S_stoploss) + kırmızı Donchian Trend Ribbon + SuperTrend aşağı kırılımında (ShortTrigger) short açılır'
-- "T7 sozdizimi: 'st.yon' -> 'st.dir' (kutuphane Supertrend yonu: +1 yukselis, -1 dusus; kartin yon==1 ifadesi yukselis olarak okundu, onay gerekir)"
-- "ozel_kod_nedeni: durum_makinesi (HMA dip donus ucgeni, Donchian trend seridi ve DYNO Long_Entry/Long_Exit durum makinesi)"
+- 'T7 sozdizimi: ''st.yon'' -> ''st.dir'' (kutuphane Supertrend yonu: +1 yukselis, -1 dusus; kartin yon==1 ifadesi yukselis olarak okundu, onay gerekir)'
+- 'ozel_kod_nedeni: durum_makinesi (HMA dip donus ucgeni, Donchian trend seridi ve DYNO Long_Entry/Long_Exit durum makinesi)'
+dogrulanamaz:
+  neden: ceviri
+  ayrinti: 'U7 dakikalik sınıflaması: hma60 tanımsız; kaynak repaint ediyor (HMA[-1] gelecek değeri) ve durum makinesi kartta yok.'

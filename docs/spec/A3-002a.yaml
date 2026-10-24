@@ -44,7 +44,7 @@ rapor:
   islem: 457
   wr: '%70.2'
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: tam
 ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
@@ -52,5 +52,26 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/CEZLSMA.pine'
 - Yazarın test penceresi çok kısa (2023-07-02/07-12 (10 gün)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T21: Pine kaynagi (CEZLSMA.pine, raw.githubusercontent) birebir portlandi: chandelier(n=1, carpan=2) ilkeli (ratchet long_stop/short_stop ve dir bayragi), ZLSMA = lsma + (lsma - linreg(lsma, 50)) linreg ilkelinden. Giris: dir -1'den +1'e doner ve close > zlsma; cikis: close zlsma'yi asagi keser; stop sinyal barindaki long_stop'ta sabit (D10). Kaynak kodu 'close' kullanir; yazar videoda Heikin Ashi grafikte calistiriyor olabilir (kod HA donusumu yapmaz), duz mumlar kullanildi"
+- 'T21: Pine kaynagi (CEZLSMA.pine, raw.githubusercontent) birebir portlandi: chandelier(n=1, carpan=2) ilkeli (ratchet long_stop/short_stop ve dir bayragi), ZLSMA = lsma + (lsma - linreg(lsma, 50)) linreg ilkelinden. Giris: dir -1''den +1''e doner ve close > zlsma; cikis: close zlsma''yi asagi keser; stop sinyal barindaki long_stop''ta sabit (D10). Kaynak kodu ''close'' kullanir; yazar videoda Heikin Ashi grafikte calistiriyor olabilir (kod HA donusumu yapmaz), duz mumlar kullanildi'
+- 'U7 dakikalik: yazar piyasasi ''EURJPY''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (1m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok.'
 bias_varsayim: false
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

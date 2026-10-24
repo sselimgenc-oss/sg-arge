@@ -28,7 +28,7 @@ giris: cross_over(ma_rsi15, ma_rsi98)
 cikis: cross_under(ma_rsi15, ma_rsi98)
 stop: null
 hedef: null
-stop_eklendi: false
+stop_eklendi: true
 parametreler:
   rsi14.n: 14
   ma_rsi15.n: 15
@@ -42,8 +42,29 @@ rapor:
   islem: 311
   wr: 37
   maliyet_dahil: true
-spec_durumu: dakikalik
+spec_durumu: tam
 belirsiz:
 - Egemen Ozturk (Bilge Yatirimci, 18 Temmuz 2019) tarafindan iDeal platformunda VIP-X030 5 dk periyotta optimize edilmis ornek long-only sistemdir.
 - Komisyon ve kaymalar oncesi 27175 puan (PF 1.30), komisyon ve kaymalar sonrasi 7635 puan net getiri (PF 1.07, 311 islem, %37 karli islem, 13 ardisik zararda -7025 puan) raporlanmistir.
-- "T10: ozel_kod true -> false; RSI(14) uzerinde SMA(15)/SMA(98) kesisimi kutuphane gostergeleriyle tam; 5m kart yalniz kriptoda taranir (D3, B)"
+- 'T10: ozel_kod true -> false; RSI(14) uzerinde SMA(15)/SMA(98) kesisimi kutuphane gostergeleriyle tam; 5m kart yalniz kriptoda taranir (D3, B)'
+- 'U7 dakikalik: yazar piyasasi ''BIST Vadeli (VIP-X030 / VIOP30)''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (5m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok. Kartta stop yok: ATR14 x 3 eklenir (stop_eklendi: true).'
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

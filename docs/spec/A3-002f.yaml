@@ -74,7 +74,7 @@ rapor:
   islem: 23
   wr: '%69.5'
   maliyet_dahil: belirtilmemiş
-spec_durumu: dakikalik
+spec_durumu: tam
 ozel_kod: false
 belirsiz:
 - '1H altı zaman dilimi: yalnız kripto (Binance) testine gider, BIST/ABD/emtia için Doğrulanamaz'
@@ -82,5 +82,26 @@ belirsiz:
 - 'Pine kaynağı: https://raw.githubusercontent.com/geraked/tradingview/master/strategies/DHLAOS.pine'
 - Yazarın test penceresi çok kısa (2023-08-06/09-03 (4 hafta)), maliyet/kayma belirtilmemiş
 - Kaynak long/short; temel mod long-only
-- "T21: Pine kaynagi (DHLAOS.pine, raw.githubusercontent) okundu. Andean Oscillator andean(n=50, sinyal=9) ilkeli. Kaynaktaki 300 barlik geriye dogru dongu (en yakin olay: bull'un bear/sinyal'i asagi kesmesi ya da sinyali yukari kesmesi iptal eder; bull'un bear'i yukari kesmesi kurar) ve 51 barlik 'bar onceki gun dususunun altinda ve bull < bear' penceresi ifade diliyle yazildi (iptal/isaret/tip serileri, valuewhen, barssince). 300 bar icinde olay yoksa kaynak onceki 'li' degiskenini kullanir (bayat durum); burada giris atlanir. 1D dusuk = onceki tamamlanmis gunun dusugu (request.security + [1]). stop = lowest(low, 5), hedef = kapanis + 1,5 x (kapanis - stop) sinyal barinda sabit (D10). Kaynak pyramiding=10: ayni sembolde birden cok pozisyon acabilir, motor sembol basina tek pozisyon tutar"
+- 'T21: Pine kaynagi (DHLAOS.pine, raw.githubusercontent) okundu. Andean Oscillator andean(n=50, sinyal=9) ilkeli. Kaynaktaki 300 barlik geriye dogru dongu (en yakin olay: bull''un bear/sinyal''i asagi kesmesi ya da sinyali yukari kesmesi iptal eder; bull''un bear''i yukari kesmesi kurar) ve 51 barlik ''bar onceki gun dususunun altinda ve bull < bear'' penceresi ifade diliyle yazildi (iptal/isaret/tip serileri, valuewhen, barssince). 300 bar icinde olay yoksa kaynak onceki ''li'' degiskenini kullanir (bayat durum); burada giris atlanir. 1D dusuk = onceki tamamlanmis gunun dusugu (request.security + [1]). stop = lowest(low, 5), hedef = kapanis + 1,5 x (kapanis - stop) sinyal barinda sabit (D10). Kaynak pyramiding=10: ayni sembolde birden cok pozisyon acabilir, motor sembol basina tek pozisyon tutar'
+- 'U7 dakikalik: yazar piyasasi ''AUDUSD''; kural ve parametreler degistirilmeden KRIPTO25 kolunda, kartin kendi tf''inde (5m) Binance verisiyle kosulur. Kartta seans saatine bagli kural yok.'
 bias_varsayim: false
+piyasa_kisiti:
+- KRIPTO
+kollar:
+- KRIPTO25
+cekirdek:
+- BTCUSDT
+- ETHUSDT
+- SOLUSDT
+- BNBUSDT
+- XRPUSDT
+- TRXUSDT
+kardesler:
+- ADAUSDT
+- DOGEUSDT
+- LTCUSDT
+- LINKUSDT
+- DOTUSDT
+- AVAXUSDT
+- BCHUSDT
+- NEARUSDT

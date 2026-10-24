@@ -17,7 +17,8 @@ stop: null
 hedef: null
 stop_eklendi: false
 ozel_kod: true
-piyasa_kisiti: [US100]
+piyasa_kisiti:
+- US100
 ozel_kod_nedeni: seans_saat
 parametreler:
   range_start_server: '16:30'
@@ -34,12 +35,13 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi 1m (1 saatin altında, açılış aralığı M1 verisinden hesaplanır)
-- 'MQL5 CodeBase sayfasından kurallar okundu (Matas Kerys): ABD seans açılışından (varsayılan 16:30 sunucu saati) itibaren ilk dakikaların en yüksek ve en düşüğü açılış aralığı (ORB) olarak kaydedilir;
-  aralığın üstüne Buy Stop, altına Sell Stop konulur (biri tetiklendiğinde diğeri silinir, OCO); günde en fazla 1 işlem yapılır ve tüm işlemler seans kapanışından önce kapatılır; stop mesafesi aralık genişliğine
-  göredir'
+- 'MQL5 CodeBase sayfasından kurallar okundu (Matas Kerys): ABD seans açılışından (varsayılan 16:30 sunucu saati) itibaren ilk dakikaların en yüksek ve en düşüğü açılış aralığı (ORB) olarak kaydedilir; aralığın üstüne Buy Stop, altına Sell Stop konulur (biri tetiklendiğinde diğeri silinir, OCO); günde en fazla 1 işlem yapılır ve tüm işlemler seans kapanışından önce kapatılır; stop mesafesi aralık genişliğine göredir'
 - 'short kuralı var: low <= orb_low - buffer olduğunda Sell Stop tetiklenerek short açılır'
-- "ozel_kod_nedeni: seans_saat (acilis araligi sunucu saati 16:30'dan baslar, OCO Buy/Sell Stop, gunde 1 islem ve seans kapanisi)"
-- "piyasa_kisiti: ['US100'] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)"
+- 'ozel_kod_nedeni: seans_saat (acilis araligi sunucu saati 16:30''dan baslar, OCO Buy/Sell Stop, gunde 1 islem ve seans kapanisi)'
+- 'piyasa_kisiti: [''US100''] (mutlak fiyat/pip/tick birimi ya da seans saati yazarin piyasasina ozgu; diger piyasalarda Dogrulanamaz (piyasa ozgu); BIST/ABD/KRIPTO/EMTIA disindaki ad yazarin evrenimizde olmayan piyasasidir)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Yalnız US100 piyasasına bağlı (yazar piyasası: Endeks CFD (US100 / Nasdaq 100)); kripto verisinde karşılığı yok. Seans açılış aralığına/saatine bağlı kural.'

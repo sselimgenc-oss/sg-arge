@@ -43,10 +43,12 @@ rapor:
   islem: 5557
   wr: null
   maliyet_dahil: evet
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi tick / 1m (1 saatin altında, anlık tick hareketlerine dayalı scalper)
-- 'MQL5 CodeBase sayfasından yazarın (Ali Rajput) kodu okundu: 4 saniyelik hareketli penceredeki fiyat değişiminin z-skoru 3.0 standart sapmayı aştığında patlama yönünde (Momentum) Long girilir; Stop Loss
-  0.55 ATR, Take Profit 0.35 ATR olarak belirlenir ve InpMaxHoldSeconds süresinde kapanmayan işlemler zorunlu kapatılır'
+- 'MQL5 CodeBase sayfasından yazarın (Ali Rajput) kodu okundu: 4 saniyelik hareketli penceredeki fiyat değişiminin z-skoru 3.0 standart sapmayı aştığında patlama yönünde (Momentum) Long girilir; Stop Loss 0.55 ATR, Take Profit 0.35 ATR olarak belirlenir ve InpMaxHoldSeconds süresinde kapanmayan işlemler zorunlu kapatılır'
 - 'short kuralı var: Z-skoru aşağı yönde -3.0 aşıldığında short açılır'
-- "ozel_kod_nedeni: tick_veri (4 saniyelik pencerede fiyat z-skoru; 1 dk verisiyle test edilemez)"
+- 'ozel_kod_nedeni: tick_veri (4 saniyelik pencerede fiyat z-skoru; 1 dk verisiyle test edilemez)'
+dogrulanamaz:
+  neden: veri
+  ayrinti: 'U7 dakikalik sınıflaması: Tick verisine dayalı (4 saniyelik pencerede fiyat z-skoru, azami 120 sn tutuş); 1m kripto verisiyle test edilemez.'

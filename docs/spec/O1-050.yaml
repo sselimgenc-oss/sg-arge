@@ -45,14 +45,14 @@ rapor:
   islem: null
   wr: null
   maliyet_dahil: belirtilmemis
-spec_durumu: dakikalik
+spec_durumu: eksik
 belirsiz:
 - Karar zaman dilimi 15m (1 saatin altında)
-- 'Özel kod mantığı (ProBuilder kaynak kodundan): (1) Cumartesi/Pazar hariç saat 00:00-20:00 arasında çalışır, (2) MM = Average[56, 3](totalprice) (totalprice=(O+H+L+C)/4 üzerine 56 periyot TEMA), Newhighest
-  = max(DHigh(0), DHigh(1)), Newlowest = min(DLow(0), DLow(1)), Milieu = (Newhighest + Newlowest) / 2, Surachat = Average[10, 4]((Newhighest + Milieu) / 2) (10 periyot Triangular MA), Survente = Average[10,
-  4]((Newlowest + Milieu) / 2), (3) Long Giriş: MM > Surachat ve cross_over(close, Milieu) olduğunda 4 kontrat Long açılır, (4) Çıkış: +18 pip, +20 pip ve +40 pip seviyelerinde 1''er kontrat kısmi kâr (limit
-  emir), 33 pip MFE iz süren stop ve 200 pip ana stop-loss (SET STOP pLOSS 200)'
+- 'Özel kod mantığı (ProBuilder kaynak kodundan): (1) Cumartesi/Pazar hariç saat 00:00-20:00 arasında çalışır, (2) MM = Average[56, 3](totalprice) (totalprice=(O+H+L+C)/4 üzerine 56 periyot TEMA), Newhighest = max(DHigh(0), DHigh(1)), Newlowest = min(DLow(0), DLow(1)), Milieu = (Newhighest + Newlowest) / 2, Surachat = Average[10, 4]((Newhighest + Milieu) / 2) (10 periyot Triangular MA), Survente = Average[10, 4]((Newlowest + Milieu) / 2), (3) Long Giriş: MM > Surachat ve cross_over(close, Milieu) olduğunda 4 kontrat Long açılır, (4) Çıkış: +18 pip, +20 pip ve +40 pip seviyelerinde 1''er kontrat kısmi kâr (limit emir), 33 pip MFE iz süren stop ve 200 pip ana stop-loss (SET STOP pLOSS 200)'
 - 'İçsel gün içi güncellenme notu: DHigh(0) ve DLow(0) cari günün o ana kadarki en yüksek/düşük değerini kullanır'
 - 'short kuralı var: MM < Survente ve cross_under(close, Milieu) olduğunda 3 kontrat short açılır (+40 pip ve +78 pip kısmi kâr, 33 pip iz süren stop, 200 pip SL)'
-- "ozel_kod_nedeni: ozel_gosterge (TEMA/ucgen MA ve Dhigh/Dlow (cari gun) tabanli Milieu/Surachat; ProBuilder gunluk ust-alt fonksiyonlari)"
-- "T21: kaynak erisilemedi (https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/) -> Argon T19. pip cinsinden kismi kar/izsuren (FX), TEMA/ucgen MA ve cari gun Dhigh/Dlow, seans penceresi; ProBuilder kodu okunamadi"
+- 'ozel_kod_nedeni: ozel_gosterge (TEMA/ucgen MA ve Dhigh/Dlow (cari gun) tabanli Milieu/Surachat; ProBuilder gunluk ust-alt fonksiyonlari)'
+- 'T21: kaynak erisilemedi (https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/) -> Argon T19. pip cinsinden kismi kar/izsuren (FX), TEMA/ucgen MA ve cari gun Dhigh/Dlow, seans penceresi; ProBuilder kodu okunamadi'
+dogrulanamaz:
+  neden: ceviri
+  ayrinti: 'U7 dakikalik sınıflaması: Kaynak erişilemedi; milieu, surachat, mm tanımsız (TEMA/üçgen MA, cari gün Dhigh/Dlow), pip bazlı kısmi kâr/iz süren.'
