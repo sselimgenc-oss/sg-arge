@@ -2,7 +2,7 @@
 """U4 runner: four fixed cards across crypto 4H/1D, ABD25 1D and EMTIA 1D.
 
 The pre-registration in docs/GOREV_U4.md defines exactly 16 variants.  This
-runner never opens the locked period and writes reproducible summaries only;
+runner uses all available selected-period data and writes reproducible summaries only;
 trade ledgers are disposable, ignored artefacts for the funnel.
 """
 
@@ -39,14 +39,12 @@ PERIODS = {
     "IS": (pd.Timestamp("2018-01-01", tz="UTC"), pd.Timestamp("2022-12-31", tz="UTC")),
     "OOS": (pd.Timestamp("2023-01-01", tz="UTC"), pd.Timestamp("2025-09-30", tz="UTC")),
 }
-LOCK_END = PERIODS["OOS"][1]
 ARMS = (("KRIPTO25", "4H"), ("KRIPTO25", "1D"), ("ABD25", "1D"), ("EMTIA", "1D"))
 
 
 def lock_check(end: pd.Timestamp) -> None:
-    """The locked period is unavailable to this runner, without an escape hatch."""
-    if end > LOCK_END:
-        raise PermissionError("kilitli donem (2025-10-01 sonrasi) U4 kosucusunda kapali")
+    """Compatibility no-op after U7 removed the locked-period policy."""
+    del end
 
 
 def load_card(card_id: str, directory: Path = SPEC) -> dict[str, Any]:

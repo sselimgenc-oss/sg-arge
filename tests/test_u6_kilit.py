@@ -24,9 +24,9 @@ def test_candidate_order_limit_and_dsr_only_fallback() -> None:
     assert list(chosen["varyant"]) == ["passed-high", "passed-low", "conditional", "dsr-only"]
 
 
-def test_locked_command_requires_explicit_override(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
+def test_retired_locked_command_has_no_environment_guard(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
     monkeypatch.delenv("KILIT_AC", raising=False)
-    with pytest.raises(PermissionError):
+    with pytest.raises(FileNotFoundError):
         u6_kilit.main(["--results-dir", str(tmp_path)])
 
 

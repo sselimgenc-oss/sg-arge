@@ -49,6 +49,5 @@ def test_funnel_writes_the_same_unverifiable_card_report(tmp_path, monkeypatch: 
     assert report == [{"id": "TV-SKIP", "neden": "piyasa bulunamayan"}]
 
 
-def test_locked_period_remains_closed() -> None:
-    with pytest.raises(PermissionError):
-        u4.lock_check(pd.Timestamp("2025-10-01", tz="UTC"))
+def test_former_locked_period_is_available() -> None:
+    assert u4.lock_check(pd.Timestamp("2025-10-01", tz="UTC")) is None
