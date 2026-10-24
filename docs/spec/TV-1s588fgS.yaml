@@ -1,0 +1,29 @@
+id: TV-1s588fgS
+ad: Bollinger Bands  + RSI Live Radar Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/1s588fgS/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar atreynolds19; yayin sembolu BITSTAMP:BTCUSD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITSTAMP:BTCUSD)
+kol: KRIPTO-4H
+yayin_sembolu: BITSTAMP:BTCUSD
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
+giris: null
+cikis: null
+kural_ozeti: {giris: 'kapanis alt Bollinger bandinin altindan geri girer (onceki kapanis < onceki alt bant, kapanis > alt bant), RSI > 30, kapanis > EMA(200), pozisyon yok', cikis: 'yalniz %1,5 stop ve %3 hedef (dolum fiyatindan)'}
+stop: {tip: yuzde, deger: 1.5}
+hedef: {tip: yuzde, deger: 3.0}
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H, bb_length: 20, bb_mult: 2.0, rsi_length: 14, rsi_oversold: 30.0, rsi_overbought: 70.0, take_profit_pct: 3.0, stop_loss_pct: 1.5, ema_length: 200}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: Trade Mode = Both, Entry Style = Reclaim Band, TP %3, SL %1,5, EMA(200) trend filtresi acik. Short bacak (ust banttan geri donus, RSI < 70, kapanis < EMA(200)) ticarete verilmez ama Pine''da acik short `position_size == 0` kapisini tutar; pozisyon kapisi sinyal uretiminde benzetilir.', 'Pine strategy.exit stop/limit seviyelerini strategy.position_avg_price''tan (dolum fiyati) kurar ve pozisyon acikken her barda ayni degerle yeniler (sabit). strategy.exit dolum barinin kapanisinda verilir, sonraki bardan etkin; motor stop/hedefi dolum barindan etkin sayar.', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_1s588fgs.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

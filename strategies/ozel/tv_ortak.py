@@ -226,7 +226,7 @@ def simulate_two_sided(
     long_ok: np.ndarray, short_ok: np.ndarray,
     long_sl: np.ndarray, long_tp: np.ndarray, short_sl: np.ndarray, short_tp: np.ndarray,
     *, cooldown: int = 0, exits_from_fill_bar: bool = False,
-    flat_only: bool = False, cooldown_from_exit: bool = False,
+    flat_only: bool = False, cooldown_from_exit: bool = False, fill_pct: tuple[float, float] | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Pine `strategy.position_size` kapisi ve `lastTradeBar` bekleme suresi icin iki yonlu tek pozisyon benzetimi.
 
@@ -237,6 +237,9 @@ def simulate_two_sided(
 
     `flat_only`: giris yalniz pozisyon yokken (ters cevirme yok, `strategy.position_size == 0` kapisi); `cooldown_from_exit`:
     bekleme suresi pozisyonun stop/hedefle kapandigi bardan da sayilir (Pine `lastTradeBar` hem giriste hem kapanista guncellenir).
+
+    `fill_pct` = (stop, hedef) orani: seviyeler dolum fiyatindan (Pine `strategy.position_avg_price`) olculur; verilirse `*_sl/*_tp`
+    dizileri yok sayilir.
 
     Doner: (long giris sinyal bari, long'u ters cevirerek kapatan short giris sinyal bari)."""
     o, h, l, c = (frame[k].to_numpy(dtype=float) for k in ("open", "high", "low", "close"))
@@ -253,6 +256,9 @@ def simulate_two_sided(
             side, p_sl, p_tp = pending
             pending = None
             pos, sl, tp, fill_bar = side, p_sl, p_tp, i
+            if fill_pct is not None:
+                sl = o[i] * (1.0 - side * fill_pct[0])
+                tp = o[i] * (1.0 + side * fill_pct[1])
         if pos != 0 and (fill_bar < i or exits_from_fill_bar):
             was_open = pos
             if pos == 1:

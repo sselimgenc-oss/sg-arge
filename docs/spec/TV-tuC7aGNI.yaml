@@ -1,0 +1,34 @@
+id: TV-tuC7aGNI
+ad: Strategy 432 BTC - Donchian Breakout Continuation
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/tuC7aGNI/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar Fran_Pineda; yayin sembolu BINANCE:BTCUSDT; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BINANCE:BTCUSDT)
+kol: KRIPTO-4H
+yayin_sembolu: BINANCE:BTCUSDT
+gostergeler:
+  hh30: {f: highest, src: high, n: 30, kaydir: 1}
+  ll30: {f: lowest, src: low, n: 30, kaydir: 1}
+  atr14: {f: atr, n: 14}
+  ema200: {f: ema, src: close, n: 200}
+  dm: {f: dmi, n: 14}
+ozel_kod: false
+giris: close > hh30 and dm.adx >= 22 and close > ema200 and (close - hh30) / atr14 >= 0.5
+cikis: close < ll30
+stop: null
+hedef: null
+zaman_stop: {bar: 20}
+dolum: kapanis
+stop_eklendi: true
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: Donchian 30 (onceki barlarin high/low), ADX(14) >= 22, EMA(200), asgari kirilim 0,5 ATR, en fazla 20 bar pozisyon, shorts kapali (allowShorts = false). process_orders_on_close = true: giris ve cikis sinyal barinin KAPANISINDA dolar (dolum: kapanis; maliyet 2x baz, ertesi acilis (b) varyanti da raporlanir).', 'Zaman cikisi: barsHeld = bar_index - entryBarIndex >= 20, entryBarIndex sinyal barindadir; motor zaman_stop semantigi ayni (dolum bari sonrasi, bars_held >= 20, kapanista cikis). Stop/hedef yok; ATR x 3 stop eklendi.', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

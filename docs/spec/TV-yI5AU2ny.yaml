@@ -1,0 +1,26 @@
+id: TV-yI5AU2ny
+ad: Bucket 3 Momentum
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/yI5AU2ny/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar Bonestorm007; yayin sembolu ASX:SXE; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: DIGER (ASX:SXE)
+kol: DIGER-1D
+yayin_sembolu: ASX:SXE
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [DIGER]
+parametreler: {kol: DIGER-1D}
+dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu ASX:SXE FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu ASX:SXE FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

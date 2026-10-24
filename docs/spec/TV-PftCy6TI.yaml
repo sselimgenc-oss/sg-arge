@@ -1,0 +1,26 @@
+id: TV-PftCy6TI
+ad: Concordia Regime Execution [JOAT]
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/PftCy6TI/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar officialjackofalltrades; yayin sembolu TVC:GOLD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: EMTIA (TVC:GOLD)
+kol: EMTIA-4H
+yayin_sembolu: TVC:GOLD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [EMTIA]
+parametreler: {kol: EMTIA-4H}
+dogrulanamaz: {neden: veri, ayrinti: 'EMTIA icin 4H uzun veri yok (yayin sembolu TVC:GOLD). Kural cevrilmedi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (veri): EMTIA icin 4H uzun veri yok (yayin sembolu TVC:GOLD). Kural cevrilmedi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
