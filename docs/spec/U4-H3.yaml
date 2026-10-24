@@ -1,0 +1,67 @@
+id: U4-H3
+ad: U4 H3 - Dusuk volatilite rejiminde trend (EMA20/50, SMA200, ATR14/ATR100 < 1)
+kart_yazari: sonnet
+kaynak:
+  dosya: docs/GOREV_U4.md
+  url: null
+  sayfa: null
+  not: "Kendi hipotezimiz. Volatilite kumelenmesi; Moreira & Muir (2017)."
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto, ABD, Emtia
+gostergeler:
+  ema20:
+    f: ema
+    src: close
+    n: 20
+  ema50:
+    f: ema
+    src: close
+    n: 50
+  sma200:
+    f: sma
+    src: close
+    n: 200
+  atr14:
+    f: atr
+    n: 14
+  atr100:
+    f: atr
+    n: 100
+giris: ema20 > ema50 and close > sma200 and atr14 / atr100 < 1
+cikis: ema20 < ema50
+stop:
+  tip: atr
+  n: 14
+  carpan: 3
+hedef: null
+stop_eklendi: false
+ozel_kod: false
+piyasa_kisiti: [KRIPTO, ABD, EMTIA]
+parametreler:
+  kollar: [KRIPTO-4H, KRIPTO-1D, ABD-1D, EMTIA-1D]
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+deneme_sayisi_kaynakta: 4
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- "Giris: ema(close,20) > ema(close,50) ve close > sma(close,200) ve atr(14)/atr(100) < 1 (hepsi bar kapanisinda). Cikis: ema(close,20) < ema(close,50) ya da stop. Esitlikte giris yok, cikis yok."
+- "ATR tanimi motorun atr gostergesi (Wilder/RMA, true range). On kayit ATR turunu (SMA/Wilder) belirtmiyor; motor varsayilani kullanildi."
+- "Rejim filtresi yalniz girisi kapatir: pozisyondayken atr14/atr100 >= 1 olsa da cikis olmaz (cikis kurali yalniz EMA kesisi ya da stop)."
+- "Koruma stopu ATR(14) x 3 (sinyal bari, sabit)."
+- "Isinma: sma200 ilk 200 barda tanimsiz; o barlarda sinyal yok."
+- "On kayit: docs/GOREV_U4.md (lider, sonuc gorulmeden). Kural, parametre, donem, maliyet ve kapilar sonuca bakilarak degistirilmez; izgara yok."
+- "tf alani kolun bar araligini tasir ve kol tarafindan belirlenir: kripto 4H, kripto 1D, ABD 1D, emtia 1D (YAML'da yer tutucu 1D). Kural metni dort kolda aynidir; tum bar sayilari o kolun barlaridir (4H'de 100 bar ~ 17 gun, 1D'de 100 gun)."
+- "Donemler (kripto 4H/1D ve ABD/emtia 1D): IS 2018-01-01 -> 2022-12-31, OOS 2023-01-01 -> 2025-09-30, kilitli 2025-10-01 -> (yalniz lider acar). ABD/emtia on donem 2015-2017 yalniz isaret. Isinma icin donem oncesi veri kullanilabilir, o donemde islem acilmaz."
+- "Evren: kripto 14 coin (cekirdek 6 + kardes 8, Binance spot USDT; 4H bar 1H veriden UTC 00/04/08/12/16/20 ile yeniden orneklenir), ABD ABD25 (tarihsel uyelik), emtia EMTIA (GLD, SLV, USO, UNG, DBA, CPER). Her kol bir havuz portfoyudur."
+- "Maliyet tek yon: kripto %0,15, ABD %0,05, emtia ETF %0,05. Sinyal bar kapanisinda, dolum sonraki barin acilisinda; ayni barda stop ve hedef birlikte vurulursa once stop. Pozisyondayken ayni sembolde yeni giris yok (piramit yok). Yalniz long."

@@ -1,0 +1,66 @@
+id: U4-H4
+ad: U4 H4 - Yukselen trendde kisa geri cekilme (SMA200 + RSI(2) < 10)
+kart_yazari: sonnet
+kaynak:
+  dosya: docs/GOREV_U4.md
+  url: null
+  sayfa: null
+  not: "Kendi hipotezimiz. Connors ve Alvarez, kisa vadeli RSI(2) geri cekilme stratejileri."
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: Kripto, ABD, Emtia
+gostergeler:
+  sma200:
+    f: sma
+    src: close
+    n: 200
+  sma5:
+    f: sma
+    src: close
+    n: 5
+  rsi2:
+    f: rsi
+    src: close
+    n: 2
+  atr14:
+    f: atr
+    n: 14
+giris: close > sma200 and rsi2 < 10
+cikis: close > sma5
+stop:
+  tip: atr
+  n: 14
+  carpan: 3
+hedef: null
+zaman_stop:
+  bar: 10
+stop_eklendi: false
+ozel_kod: false
+piyasa_kisiti: [KRIPTO, ABD, EMTIA]
+parametreler:
+  kollar: [KRIPTO-4H, KRIPTO-1D, ABD-1D, EMTIA-1D]
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+deneme_sayisi_kaynakta: 4
+rapor:
+  pf: null
+  sharpe: null
+  getiri: null
+  mdd: null
+  islem: null
+  wr: null
+  maliyet_dahil: belirtilmemis
+spec_durumu: tam
+belirsiz:
+- "Giris: close > sma(close,200) ve rsi(close,2) < 10. Cikis: close > sma(close,5) ya da zaman stopu 10 bar ya da stop."
+- "Zaman stopu 10 bar = kolun 10 bari: 1D kollarda 10 gun, kripto 4H kolunda 10 x 4 saat = 40 saat. Motor semantigi (EVRENSEL_KURALLAR A7 zaman_stop): pozisyon dolum barindan sayilarak 10 bar piyasada kalinca cikis emri sonraki acilista verilir."
+- "RSI(2) tanimi motorun rsi gostergesi (Wilder/RMA, n=2). Connors orijinalinde de Wilder yumusatma kullanilir; yine de on kayit turu belirtmiyor, motor varsayilani alindi."
+- "Koruma stopu ATR(14) x 3 (sinyal bari, sabit). Kisa vadeli giris icin 3 ATR genis, zaman stopu ve sma5 cikisi genelde once devreye girer; on kayit boyle."
+- "Isinma: sma200 ilk 200 barda tanimsiz; o barlarda sinyal yok."
+- "On kayit: docs/GOREV_U4.md (lider, sonuc gorulmeden). Kural, parametre, donem, maliyet ve kapilar sonuca bakilarak degistirilmez; izgara yok."
+- "tf alani kolun bar araligini tasir ve kol tarafindan belirlenir: kripto 4H, kripto 1D, ABD 1D, emtia 1D (YAML'da yer tutucu 1D). Kural metni dort kolda aynidir; tum bar sayilari o kolun barlaridir (4H'de 100 bar ~ 17 gun, 1D'de 100 gun)."
+- "Donemler (kripto 4H/1D ve ABD/emtia 1D): IS 2018-01-01 -> 2022-12-31, OOS 2023-01-01 -> 2025-09-30, kilitli 2025-10-01 -> (yalniz lider acar). ABD/emtia on donem 2015-2017 yalniz isaret. Isinma icin donem oncesi veri kullanilabilir, o donemde islem acilmaz."
+- "Evren: kripto 14 coin (cekirdek 6 + kardes 8, Binance spot USDT; 4H bar 1H veriden UTC 00/04/08/12/16/20 ile yeniden orneklenir), ABD ABD25 (tarihsel uyelik), emtia EMTIA (GLD, SLV, USO, UNG, DBA, CPER). Her kol bir havuz portfoyudur."
+- "Maliyet tek yon: kripto %0,15, ABD %0,05, emtia ETF %0,05. Sinyal bar kapanisinda, dolum sonraki barin acilisinda; ayni barda stop ve hedef birlikte vurulursa once stop. Pozisyondayken ayni sembolde yeni giris yok (piramit yok). Yalniz long."
