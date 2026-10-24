@@ -40,6 +40,14 @@ REQUIRED_KEYS = (
 )
 
 
+def _donem_notu(portfoy, day_count: int) -> str:
+    """Paper period label; the part before ``canli_baslangic`` is a retrospective run and is named so."""
+    if portfoy.canli_baslangic is not None and portfoy.canli_baslangic > portfoy.baslangic:
+        geri = _dmy(portfoy.canli_baslangic - pd.DateOffset(days=1))
+        return f"gün {day_count} · {_dmy(portfoy.baslangic)}–{geri} geriye dönük (aynı kurallar, gerçek veri) · {_dmy(portfoy.canli_baslangic)}'dan itibaren canlı paper"
+    return f"gün {day_count} - {_dmy(portfoy.baslangic)} başlangıç"
+
+
 def _clean(value: Any, digits: int | None = None) -> Any:
     """JSON-safe number: NaN/inf -> None, numpy scalars -> python."""
     if value is None:
@@ -321,7 +329,7 @@ def uret(
     day_count = (pd.Timestamp(last_day) - portfoy.baslangic.tz_localize(None)).days + 1 if last_day is not None else 0
     meta = {
         "title": "Kağıt Hesaplar", "subtitle": f"sg-arge Paper Portföyü: {', '.join(r.id for r in portfoy.satirlar)} / {initial:,.0f} $ sanal sermaye (1/N)",
-        "last_update": now_trt.strftime("%d/%m %H:%M"), "test_period": f"gün {day_count} - {_dmy(portfoy.baslangic)} başlangıç",
+        "last_update": now_trt.strftime("%d/%m %H:%M"), "test_period": _donem_notu(portfoy, day_count),
         "exchange_rate": _clean(usdtry, 4), "currency": "USD", "fiat_currency": "TRY",
         "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; "
                        "durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",

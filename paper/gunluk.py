@@ -79,6 +79,7 @@ class Portfoy:
     baslangic: pd.Timestamp
     satirlar: list[Satir]
     alarm: dict[str, float]
+    canli_baslangic: pd.Timestamp | None = None  # bars before this date are a retrospective run, not live paper
 
 
 def yukle_portfoy(path: Path = PORTFOLIO_PATH) -> Portfoy:
@@ -87,7 +88,8 @@ def yukle_portfoy(path: Path = PORTFOLIO_PATH) -> Portfoy:
     if abs(sum(r.agirlik for r in rows) - 1.0) > 1e-4:
         raise ValueError("portfoy.yaml: agirliklar 1'e toplanmali")
     start = pd.Timestamp(str(raw["baslangic"]), tz="UTC")
-    return Portfoy(float(raw["sanal_sermaye"]), start, rows, {k: float(v) for k, v in (raw.get("alarmlar") or {}).items()})
+    live = pd.Timestamp(str(raw["canli_baslangic"]), tz="UTC") if raw.get("canli_baslangic") else None
+    return Portfoy(float(raw["sanal_sermaye"]), start, rows, {k: float(v) for k, v in (raw.get("alarmlar") or {}).items()}, live)
 
 
 # ----------------------------------------------------------------------------------------------- data
