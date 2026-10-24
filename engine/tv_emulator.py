@@ -449,12 +449,16 @@ def gercekci(ayarlar: Ayarlar, kripto: bool) -> dict[str, Any]:
             "slippage": max(ayarlar.slippage, 0 if kripto else 1)}
 
 
-def nedensellik(modul: Any, df: pd.DataFrame, kesimler: tuple[float, ...] = (.4, .6, .8)) -> list[str]:
-    """Adım 0: veriyi kesince kesimden önceki emirler değişiyorsa modül geleceği görüyordur. Boş liste = temiz."""
+def nedensellik(modul: Any, df: pd.DataFrame, kesimler: tuple[float, ...] = (.3, .42, .54, .66, .78, .9)) -> list[str]:
+    """Adım 0: veriyi kesince kesimden önceki emirler değişiyorsa modül geleceği görüyordur. Boş liste = temiz.
+
+    Kesimler yüksek zaman dilimi barlarının (gün, hafta) ortasına düşsün diye küçük asal kaydırmalarla seçilir:
+    sınırda kesilen veri, bir sonraki barı gören koda (lookahead) sızıntıyı göstermez.
+    """
     tam = calistir(modul, df).emir_kaydi
     hatalar = []
-    for oran in kesimler:
-        k = int(len(df) * oran)
+    for sira, oran in enumerate(kesimler):
+        k = min(int(len(df) * oran) + (7, 13, 19, 23, 29, 31)[sira % 6], len(df) - 1)
         kisa = calistir(modul, df.iloc[:k]).emir_kaydi
         once = [e for e in tam if e[0] < k]
         kisa_once = [e for e in kisa if e[0] < k]
