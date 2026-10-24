@@ -1,0 +1,26 @@
+id: TV-Iv1wlVa8
+ad: Monthly Returns with Benchmark
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/Iv1wlVa8/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar QuantNomad; yayin sembolu BINANCE:XRPUSDT; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BINANCE:XRPUSDT)
+kol: KRIPTO-4H
+yayin_sembolu: BINANCE:XRPUSDT
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+dogrulanamaz: {neden: ceviri, ayrinti: 'ta.pivothigh/ta.pivotlow(2, 1) kutuphanede yok ve esit-deger kurallari dogrulanmadi; stop emriyle giris seviyesi (le/se mandali, seviye asilirsa iptal) ve ters yone cevirme ile calisan ''Pivot Reversal'' ornegi. Ayrica script aylik getiri tablosu icin yazilmis bir sablondur.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): ta.pivothigh/ta.pivotlow(2, 1) kutuphanede yok ve esit-deger kurallari dogrulanmadi; stop emriyle giris seviyesi (le/se mandali, seviye asilirsa iptal) ve ters yone cevirme ile calisan ''Pivot Reversal'' ornegi. Ayrica script aylik getiri tablosu icin yazilmis bir sablondur.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -1,0 +1,26 @@
+id: TV-dwgn7hrE
+ad: Coil Breaker | RSI Range Compression
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/dwgn7hrE/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu NASDAQ:AMD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:AMD)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:AMD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'ta.percentrank(RSI araligi, 100) kutuphanede/ifade dilinde yok. Ayrica Pine''da hedef ''targetPrice = close + stopPrice * rMultiple'' yazilmis (stopPrice fiyat oldugundan hedef ~3x fiyat, yazar hatasi gorunuyor); birebir cevrilse hedef hic vurulmaz, duzeltilirse yazarin kodu degismis olur. ozel_kod adayi: evet (durumsuz sinyal), ancak hedef hatasi belirsiz.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): ta.percentrank(RSI araligi, 100) kutuphanede/ifade dilinde yok. Ayrica Pine''da hedef ''targetPrice = close + stopPrice * rMultiple'' yazilmis (stopPrice fiyat oldugundan hedef ~3x fiyat, yazar hatasi gorunuyor); birebir cevrilse hedef hic vurulmaz, duzeltilirse yazarin kodu degismis olur. ozel_kod adayi: evet (durumsuz sinyal), ancak hedef hatasi belirsiz.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

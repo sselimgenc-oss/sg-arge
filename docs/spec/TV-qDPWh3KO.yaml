@@ -1,0 +1,26 @@
+id: TV-qDPWh3KO
+ad: TrendGuard Flag Finder - Strategy [presentTrading]
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/qDPWh3KO/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar PresentTrading; yayin sembolu BITFINEX:BTCUSD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITFINEX:BTCUSD)
+kol: KRIPTO-4H
+yayin_sembolu: BITFINEX:BTCUSD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Bayrak (flag) deseni 25''ten fazla ''var'' degiskenli durum makinesiyle tespit edilir (baseHigh/baseLow/flagLength mandallari, direk tarama dongusu, kirilim bayragi). Motorda desen/durum makinesi yok. ozel_kod adayi: evet (durumsuz sinyal) ama kural cok uzun ve ince.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Bayrak (flag) deseni 25''ten fazla ''var'' degiskenli durum makinesiyle tespit edilir (baseHigh/baseLow/flagLength mandallari, direk tarama dongusu, kirilim bayragi). Motorda desen/durum makinesi yok. ozel_kod adayi: evet (durumsuz sinyal) ama kural cok uzun ve ince.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -1,0 +1,26 @@
+id: TV-1OnkbAiE
+ad: HVN Fade & Break | Volume Profile Fade & Breakout Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/1OnkbAiE/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu NASDAQ:QQQ; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:QQQ)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:QQQ
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Hacim profili (satir bazli hacim dagitimi, value area, HVN tepe/zone tespiti, naked POC listesi) dizilerle ve donguylerle hesaplanir; ayrica kod grafik zaman dilimi profil periyodundan kucuk olmazsa runtime.error verir (1D grafikte profil D ise calismaz). Motorda karsiligi yok.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Hacim profili (satir bazli hacim dagitimi, value area, HVN tepe/zone tespiti, naked POC listesi) dizilerle ve donguylerle hesaplanir; ayrica kod grafik zaman dilimi profil periyodundan kucuk olmazsa runtime.error verir (1D grafikte profil D ise calismaz). Motorda karsiligi yok.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

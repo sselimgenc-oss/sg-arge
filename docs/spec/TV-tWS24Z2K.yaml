@@ -1,0 +1,26 @@
+id: TV-tWS24Z2K
+ad: Two level TP + TrailStp exits example
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/tWS24Z2K/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar adolgov; yayin sembolu NASDAQ:AAPL; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:AAPL)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:AAPL
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Kismi cikis (qty_percent=50, profit=1000 tick) ve 1000 tick''lik izleyen stop (trail_points/trail_offset, fiyat adimi biriminde). Motorda kismi cikis bu bicimde ve tick birimli izleyen stop yok. Giris SMA(14)/SMA(28) kesisimi (egitim ornegi) cevrilebilirdi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Kismi cikis (qty_percent=50, profit=1000 tick) ve 1000 tick''lik izleyen stop (trail_points/trail_offset, fiyat adimi biriminde). Motorda kismi cikis bu bicimde ve tick birimli izleyen stop yok. Giris SMA(14)/SMA(28) kesisimi (egitim ornegi) cevrilebilirdi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

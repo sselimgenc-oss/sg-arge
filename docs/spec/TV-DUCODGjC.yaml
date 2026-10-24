@@ -1,0 +1,33 @@
+id: TV-DUCODGjC
+ad: Trendline Angle Pro V6 (Degree + Strategy)
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/DUCODGjC/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar dewanpro; yayin sembolu NASDAQ:GOOGL; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:GOOGL)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:GOOGL
+gostergeler:
+  atr14: {f: atr, n: 14}
+  emaf: {f: ema, src: close, n: 9}
+  emas: {f: ema, src: close, n: 50}
+  lr0: {f: linreg, src: close, n: 20, offset: 0}
+  lr1: {f: linreg, src: close, n: 20, offset: 1}
+  egim: {f: seri, ifade: (lr0 - lr1) / atr14 * 5.0}
+  long_sig: {f: seri, ifade: 'egim >= 0.36397023426620234 and emaf > emas and close > emas and cross_over(close, emaf)'}
+  short_sig: {f: seri, ifade: 'egim <= -0.36397023426620234 and emaf < emas and close < emas and cross_under(close, emaf)'}
+ozel_kod: false
+giris: long_sig
+cikis: short_sig or abs(egim) < 0.36397023426620234
+stop: {tip: atr, n: 14, carpan: 1.5}
+hedef: {tip: atr, n: 14, carpan: 3.0}
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Pine acisi angR = atan((linreg(close,20,0) - linreg(close,20,1)) / ATR(14) * k45) derece; ifade dilinde atan yok. atan monoton oldugundan ''angR >= 20 derece'' esdeger olarak egim >= tan(20 derece) = 0.36397023426620234 yazildi (yaklasik degil, ayni esitsizlik). minEntry=20, modAng=20, steepAng=45 (allowSteep=true: ust sinir yok), k45=5.', 'Cikis: aci duzlesince (|angR| < modAng=20 derece, exitFlat=true) strategy.close, ya da short sinyali (ters yonde strategy.entry). Stop = dolum - 1.5 x ATR(14), hedef = dolum + 1.5 x 2.0 (RR) x ATR(14) = 3 x ATR; ATR sinyal bari degeri (Pine entATR).', 'Cizim/etiket/tablo kodlari (trendlines, Gann yelpazesi, major swing pivotlari) islem kuralina girmez; yok sayildi. Hisse kolu: yazar ''Hindistan nakit hisseleri icin short kapat'' diyor; short bacak zaten yok.', 'Pine''da strategy.exit koruma emirleri pozisyon acildiktan sonra, dolum barinin kapanisinda verilir ve sonraki bardan etkindir; motorda stop/hedef dolum barindan itibaren etkindir (D8): dolum barinda stop/hedef vurulursa motor cikar, Pine cikmaz. Stop/hedef mesafesi sinyal barinin ATR''sine sabitlenir, dolum fiyatindan olculur (Pine: strategy.position_avg_price).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

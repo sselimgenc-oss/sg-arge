@@ -1,0 +1,26 @@
+id: TV-ouvmvItR
+ad: Volume Vault | Volume Order Block Retest Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/ouvmvItR/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu BITSTAMP:BTCUSD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITSTAMP:BTCUSD)
+kol: KRIPTO-1D
+yayin_sembolu: BITSTAMP:BTCUSD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Hacim emir blogu (order block) bolgeleri bir dizide (array<OB>) tutulur; her bolge ayri durum (kullanildi/yasi/dokunus) tasir, ilk dokunusta tuketilir, break-even stop (R carpanina bagli) ve zaman stopu var. Motorun ifade dili bolge dizisi ve bolge basina durum tasimaz; yaklasik donusum yapilmadi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Hacim emir blogu (order block) bolgeleri bir dizide (array<OB>) tutulur; her bolge ayri durum (kullanildi/yasi/dokunus) tasir, ilk dokunusta tuketilir, break-even stop (R carpanina bagli) ve zaman stopu var. Motorun ifade dili bolge dizisi ve bolge basina durum tasimaz; yaklasik donusum yapilmadi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

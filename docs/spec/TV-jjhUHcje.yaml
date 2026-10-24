@@ -1,0 +1,26 @@
+id: TV-jjhUHcje
+ad: Stepped trailing strategy example
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/jjhUHcje/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar adolgov; yayin sembolu NASDAQ:AAPL; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:AAPL)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:AAPL
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Uc asamali (stage 1-3) kademeli stop/hedef yonetimi: asama durum degiskeni (var stage) giristen sonra kar noktasina gore ilerler, stop %5 -> basabas -> TP1, hedef %15; motor bu kademeli stop kaydirmayi yapmaz (kar_kilidi ATR-tetikli, tek kademe). Giris SMA(14)/SMA(28) kesisimi cevrilebilirdi (egitim ornegi).'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Uc asamali (stage 1-3) kademeli stop/hedef yonetimi: asama durum degiskeni (var stage) giristen sonra kar noktasina gore ilerler, stop %5 -> basabas -> TP1, hedef %15; motor bu kademeli stop kaydirmayi yapmaz (kar_kilidi ATR-tetikli, tek kademe). Giris SMA(14)/SMA(28) kesisimi cevrilebilirdi (egitim ornegi).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

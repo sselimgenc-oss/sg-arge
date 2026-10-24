@@ -1,0 +1,26 @@
+id: TV-TIpnJpU8
+ad: PresentTrend - Strategy [presentTrading]
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/TIpnJpU8/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar PresentTrading; yayin sembolu BINANCE:BTCUSDT; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BINANCE:BTCUSDT)
+kol: KRIPTO-4H
+yayin_sembolu: BINANCE:BTCUSDT
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+dogrulanamaz: {neden: ceviri, ayrinti: 'PresentTrend serisi kendi onceki degerine bagli ozyinelemeli (PresentTrend := ... nz(PresentTrend[1]) ile esik takibi) ve trendDirection barssince karsilastirmalariyla mandalli. Ifade dilinde ozyineleme yok. ozel_kod adayi: evet (durumsuz sinyal).'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): PresentTrend serisi kendi onceki degerine bagli ozyinelemeli (PresentTrend := ... nz(PresentTrend[1]) ile esik takibi) ve trendDirection barssince karsilastirmalariyla mandalli. Ifade dilinde ozyineleme yok. ozel_kod adayi: evet (durumsuz sinyal).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

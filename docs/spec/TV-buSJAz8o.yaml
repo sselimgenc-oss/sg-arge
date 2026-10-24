@@ -1,0 +1,26 @@
+id: TV-buSJAz8o
+ad: Golden Ratio | Fibonacci Trend Confirmation Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/buSJAz8o/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu BITSTAMP:BTCUSD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITSTAMP:BTCUSD)
+kol: KRIPTO-1D
+yayin_sembolu: BITSTAMP:BTCUSD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: '(1) ''Cooldown Between Entries'' (5 bar) son GIRIS barindan (long ya da short) sayilir; giris olup olmadigi pozisyon durumuna bagli, kart ifadesiyle ve motor cooldown_bar''i (cikistan sayar) ile esdeger degil. (2) ta.pivothigh/ta.pivotlow(5,5) kutuphanede yok; esit-deger (tie) kurallari dogrulanmadan ifadeyle yeniden kurulmadi. ozel_kod adayi: hayir (cooldown pozisyon durumuna baglidir; sinyal modulu pozisyonu bilmez).'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): (1) ''Cooldown Between Entries'' (5 bar) son GIRIS barindan (long ya da short) sayilir; giris olup olmadigi pozisyon durumuna bagli, kart ifadesiyle ve motor cooldown_bar''i (cikistan sayar) ile esdeger degil. (2) ta.pivothigh/ta.pivotlow(5,5) kutuphanede yok; esit-deger (tie) kurallari dogrulanmadan ifadeyle yeniden kurulmadi. ozel_kod adayi: hayir (cooldown pozisyon durumuna baglidir; sinyal modulu pozisyonu bilmez).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
