@@ -1,5 +1,7 @@
 # Paper Trading Aday Eleme Kriterleri (v0.3)
 
+> **2026-10-24: eleyici değil.** Kullanıcı kararıyla yerini `docs/TEST_YAPISI.md` aldı. Bu dosyadaki testler bilgi sütunu olarak raporlanmaya devam eder.
+
 Durum: Claude-Mod önerisi + Codex görüşü (Issue #1) + **lider/denetçi (Opus) kararları** (`tartisma/001_cevap_opus.md`). Lider ve kullanıcı onaylı (2026-10-21).
 Eşikler evrensel yasa değil, kural-ı pratik (Pardo, Bailey & López de Prado, Harvey-Liu-Zhu, Davey, Carver).
 

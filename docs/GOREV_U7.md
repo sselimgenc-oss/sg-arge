@@ -68,3 +68,6 @@ Bu yapılar yüzünden "Doğrulanamaz (çeviri)" kalan kartlar (TradingView ~35)
 3. Diğer kapılar değişmez (Aşama 1, null, OOS ortR, 2x PF ≥ 1,2, 3x net, +1 bar, kardeş).
 4. **TV-2:** U5'te yalnız zaman dilimi yüzünden ayrılan 942 TradingView stratejisinin **hepsi** çevrilip test edilir (`docs/GOREV_TV2.md`). Kendi ailesi.
 5. **Short fazı (U2a):** U7 bittikten sonra takvime alınır.
+
+## Ek 6 (kullanıcı onayı, 2026-10-24): test yapısı v2
+U7 koşusu Ek 5'teki huniyle değil `docs/TEST_YAPISI.md` ile değerlendirilir. Koşu aynen yapılır (bütün metrikler `huni_ozet.csv`'de kalır), ama karar sütunu: Adım 2 kapısı (Adım 0 geçti + OOS uygulanabilir net > 0), izle listesi (OOS işlem haftası < 10), koruma listesi. Eski huni kararı ayrı sütunda bilgi olarak durur. Aile etiketi `tarih_belirsiz`. Sıralama ve kopya ayıklama Adım 3'e göre (lider, `U7_SONUC.md`).

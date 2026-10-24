@@ -14,14 +14,15 @@ Son güncelleme: 2026-10-24, lider (Opus).
 |---|---|
 | Lider | Lider + **denetçi** (6 saatte bir, `docs/denetim/`). U7 denetimi, `results/U7_SONUC.md`. |
 | Codex | **U7** koşusu (`docs/GOREV_U7.md`, Ek 1-4), taslak #200: U4 ve U1 koşuldu; U6 + Faz 1 + Reddit + motor kartları kaldı. |
-| Sonnet | GOREV_U7 Ek 4: motor eki sonrası ~40 TV kartının yeniden çevirisi. |
+| Sonnet | **Limit bitti, 2026-10-27 Salı 18:00'e kadar görev yok.** Son iş: GOREV_U7 Ek 4 (#206, birleşti): 17 kart çevrildi, 21 Doğrulanamaz (çoğu durum makinesi/açık kâr/izleyen stop: TV-2 yürütücüsüyle yeniden ele alınır). |
 | Argon | `arastirma/argon/GOREV_ARGON_1.md`: erişilemeyen kaynaklardan 40 stratejinin kodunu birebir aktarma. |
 
 **Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
 
 ## Sırada (kullanıcı kararı bekleyen)
 - **Kararlar 2026-10-24 (denetim):** düşüş kapısı → getiri/düşüş ≥ 0,5; DSR aile bazlı, eleyici değil (Koşullu(DSR) → gölge kitapta canlı teyit); 942 TV stratejisinin hepsi test edilecek (`docs/GOREV_TV2.md`); short fazı U7'den sonra. Bekleyen: Dukascopy gün içi veri (K8), Pine içi ML (K5).
-1. **U7** (`docs/GOREV_U7.md`, kullanıcı kararı 2026-10-24): kilit kaldırıldı; test edilebilir bütün kartlar (Faz 1 126, U1, U4, U6 74) bugüne kadar aynı huniden, DSR N = toplam varyant. Geçenler paper'a önerilir.
+- **Test yapısı v2 (kullanıcı onayı 2026-10-24, `docs/TEST_YAPISI.md`):** huni eleyici değil. Nedensellik denetimi → sadık test (yazarın sembolü/tf/kodu, long+short; sınama = sürüm tarihi sonrası) → tek kapı (uygulanabilir sonuçta sınama net > 0) → belirsizlik + kopya ayıklama ile sıralama → sanal havuz + 20 gölge kitap → canlı karar (zarar bütçesi %10, aylık kalibre kontrol). Bütün ailelere uygulanır.
+1. **U7** (`docs/GOREV_U7.md`, kullanıcı kararı 2026-10-24): kilit kaldırıldı; test edilebilir bütün kartlar (Faz 1 126, U1, U4, U6 74) bugüne kadar; değerlendirme `docs/TEST_YAPISI.md` (Ek 6).
 0. ~~Yeni strateji arayışı~~ → **U4 bitti** (kullanıcı kararı 2026-10-24: kripto 4H/1D + ABD/emtia 1D, kendi hipotezlerimiz, yalnız long).
 2. Faz 2 pano modülleri (`docs/FAZ2_NOTLAR.md`): koç bulguları, öğrenen koç (gölge mod), strateji radarı.
 3. Küçük iyileştirmeler: hesap kartları saatlik değerlenmiyor (yalnız toplam); fiyat zamanı saatlik barın başlangıcını gösteriyor.
