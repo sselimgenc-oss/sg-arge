@@ -105,6 +105,22 @@ class _Cizim:
         self.tur, self.alan = tur, alan
 
 
+class _Enum:
+    """enum alanı: kimliği (enum, alan); str.tostring başlığı (yoksa alan adı) verir."""
+
+    def __init__(self, tur: str, alan: str, baslik: str) -> None:
+        self.tur, self.alan, self.baslik = tur, alan, baslik
+
+    def __eq__(self, o) -> bool:
+        return isinstance(o, _Enum) and (o.tur, o.alan) == (self.tur, self.alan)
+
+    def __hash__(self) -> int:
+        return hash((self.tur, self.alan))
+
+    def __str__(self) -> str:
+        return self.baslik
+
+
 class _Matris:
     """Pine matrix: satır listeleri."""
 
@@ -202,6 +218,7 @@ class Yorumlayici:
         self.yontemler: dict[str, list[_Fonksiyon]] = {}
         self.tipler: dict[str, A.TypeDef] = {}
         self.eksik_kutuphane: dict[str, str] = {}
+        self.enumlar: dict[str, dict[str, _Enum]] = {}
         self.yol: tuple = ()
         self.kapsam: list[dict[str, _Yuva]] = [{}]
         self.ctx = None
@@ -250,7 +267,15 @@ class Yorumlayici:
             elif isinstance(d, A.Import):
                 self._kutuphane(d)
             elif isinstance(d, A.EnumDef):
-                raise Desteklenmiyor("enum")
+                self._enum(d, d.name)
+
+    def _enum(self, d: A.EnumDef, ad: str) -> None:
+        alanlar = {}
+        for a in d.body:
+            if isinstance(a, A.Assign) and isinstance(a.target, A.Name):
+                baslik = a.value.value if isinstance(a.value, A.Constant) else a.target.id
+                alanlar[a.target.id] = _Enum(ad, a.target.id, str(baslik))
+        self.enumlar[ad] = alanlar
 
     def _kutuphane(self, d: A.Import) -> None:
         """`import kullanıcı/ad/sürüm as takma`: dışa açık fonksiyon ve tipler `takma.ad` olarak, iç yardımcılar (çakışmazsa)
@@ -277,7 +302,8 @@ class Yorumlayici:
             elif isinstance(x, A.Import):
                 self._kutuphane(x)
             elif isinstance(x, A.EnumDef):
-                raise Desteklenmiyor("enum")
+                self._enum(x, f"{takma}.{x.name}")
+                self.enumlar.setdefault(x.name, self.enumlar[f"{takma}.{x.name}"])
 
     # ------------------------------------------------------------------ bar
     def anlik(self) -> tuple:
@@ -300,7 +326,7 @@ class Yorumlayici:
         self.kapsam = [self.kapsam[0]]
         self.yol = ()
         for d in self.p.body:
-            if isinstance(d, (A.FunctionDef, A.TypeDef, A.Comment)):
+            if isinstance(d, (A.FunctionDef, A.TypeDef, A.Comment, A.EnumDef, A.Import)):
                 continue
             self._calistir(d)
         if not kesinlestir:
@@ -684,6 +710,8 @@ class Yorumlayici:
             return self._yerlesik_degisken("timeframe.multiplier")
         if ad in ("isconfirmed", "islast", "isfirst", "ishistory", "isrealtime", "isnew"):
             return self._yerlesik_degisken("barstate." + ad)
+        if ad in ("tickerid", "last_bar_time", "last_bar_index"):
+            return self._yerlesik_degisken(ad)
         raise Desteklenmiyor(f"ad: {ad}")
 
     def _ta_gecmis(self, ad: str, n: int) -> Any:
@@ -761,6 +789,9 @@ class Yorumlayici:
         raise Desteklenmiyor(f"öznitelik {e.attr} ({type(nesne).__name__})")
 
     def _yerlesik_degisken(self, ad: str) -> Any:
+        kok, _, alan = ad.rpartition(".")
+        if kok in self.enumlar and alan in self.enumlar[kok]:
+            return self.enumlar[kok][alan]
         c = self.ctx
         s = {
             "strategy.long": LONG, "strategy.short": SHORT,
@@ -787,6 +818,10 @@ class Yorumlayici:
             "barmerge.lookahead_on": True, "barmerge.lookahead_off": False, "barmerge.gaps_on": True,
             "barmerge.gaps_off": False, "session.regular": "regular", "session.extended": "extended",
             "order.ascending": 1, "order.descending": -1, "na": NA,
+            "tickerid": self.sembol, "syminfo.description": self.sembol.split(":")[-1],
+            "syminfo.mincontract": 1e-8 if self.tz == "UTC" else 1.0,
+            "last_bar_time": int(self.zaman_ms[-1]) if self.df is not None else NA,
+            "last_bar_index": self.n - 1 if self.df is not None else NA,
         }
         if ad in s:
             return s[ad]
@@ -846,6 +881,12 @@ class Yorumlayici:
             return c.netprofit / c.a.initial_capital * 100
         if ad == "openprofit_percent":
             return c.openprofit / c.a.initial_capital * 100
+        if ad == "account_currency":
+            return "USD"
+        if ad == "max_runup":                          # en düşük özkaynaktan sonraki en büyük yükseliş (para birimi)
+            self.dip = min(getattr(self, "dip", c.equity), c.equity)
+            self.maks_yukselis = max(getattr(self, "maks_yukselis", 0.0), c.equity - self.dip)
+            return self.maks_yukselis
         if ad == "position_entry_name":
             return c.acik[-1].entry_id if c.acik else ""
         if ad == "cash":
@@ -1048,6 +1089,18 @@ class Yorumlayici:
             return self._takvim_ms(ad, konum[0] if konum else adli.get("time"), konum[1] if len(konum) > 1 else adli.get("timezone"))
         if ad == "timestamp":
             return self._zaman_damgasi(konum, adli)
+        if ad == "timeframe.from_seconds":
+            sn = int(konum[0] if konum else adli["seconds"])
+            if sn < 60:
+                return f"{sn}S"
+            dk = sn // 60
+            if dk % 43200 == 0:
+                return f"{dk // 43200}M"
+            if dk % 10080 == 0:
+                return f"{dk // 10080}W"
+            if dk % 1440 == 0:
+                return f"{dk // 1440}D"
+            return str(dk)
         if ad == "timeframe.in_seconds":
             tf = konum[0] if konum else adli.get("timeframe", tf_metin(self.tf_dk))
             return tf_dakika(tf) * 60
@@ -1949,6 +2002,9 @@ def _dizi(ad: str, konum, adli) -> Any:
     if ad == "reverse":
         a.reverse()
         return None
+    if ad == "sort_indices":
+        sira = konum[1] if len(konum) > 1 else adli.get("order", 1)
+        return sorted(range(len(a)), key=lambda k: (na(a[k]), a[k]), reverse=(sira == -1))
     if ad == "sort":
         sira = konum[1] if len(konum) > 1 else adli.get("order", 1)
         a.sort(key=lambda v: (na(v), v), reverse=(sira == -1))
@@ -2075,6 +2131,8 @@ def _harita(ad: str, konum, adli) -> Any:
 def _metin(ad: str, konum, adli) -> Any:
     x = konum[0] if konum else adli.get("value", adli.get("source", ""))
     if ad == "tostring":
+        if isinstance(x, _Enum):
+            return x.baslik
         if na(x):
             return "NaN"
         if isinstance(x, bool):
@@ -2108,6 +2166,35 @@ def _metin(ad: str, konum, adli) -> Any:
         return str(x)
     if ad == "trim":
         return x.strip()
+    if ad == "repeat":
+        n = konum[1] if len(konum) > 1 else adli.get("repeat", 0)
+        ayrac = konum[2] if len(konum) > 2 else adli.get("separator", "")
+        return ayrac.join([x] * int(n))
+    if ad == "format_time":
+        t = konum[0] if konum else adli.get("time")
+        bicim = konum[1] if len(konum) > 1 else adli.get("format", "yyyy-MM-dd'T'HH:mm:ssZ")
+        tz = konum[2] if len(konum) > 2 else adli.get("timezone", "UTC")
+        if na(t):
+            return ""
+        z = pd.Timestamp(int(t), unit="ms", tz="UTC").tz_convert(_tz(tz) if tz else "UTC")
+        cevir = [("yyyy", "%Y"), ("yy", "%y"), ("MMMM", "%B"), ("MMM", "%b"), ("MM", "%m"), ("dd", "%d"), ("HH", "%H"),
+                 ("hh", "%I"), ("mm", "%M"), ("ss", "%S"), ("EEEE", "%A"), ("EEE", "%a"), ("a", "%p"), ("Z", "%z")]
+        out, k = "", 0
+        while k < len(bicim):
+            if bicim[k] == "'":
+                son = bicim.find("'", k + 1)
+                out += bicim[k + 1:son if son > 0 else None]
+                k = son + 1 if son > 0 else len(bicim)
+                continue
+            for tok, py in cevir:
+                if bicim.startswith(tok, k):
+                    out += z.strftime(py)
+                    k += len(tok)
+                    break
+            else:
+                out += bicim[k]
+                k += 1
+        return out
     raise Desteklenmiyor("str." + ad)
 
 

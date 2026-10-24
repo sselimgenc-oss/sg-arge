@@ -385,3 +385,17 @@ def test_library_import_registers_exported_functions_and_missing_library_fails_o
     _seri("//@version=5\nimport yok/n/1 as nn\nindicator('t')\nx = close\n", df)      # kullanılmayan eksik kütüphane sorun değil
     with pytest.raises(Desteklenmiyor):
         _seri("//@version=5\nimport yok/n/1 as nn\nindicator('t')\nx = nn.f(close)\n", df)
+
+
+def test_enum_and_small_builtins() -> None:
+    df = _veri(10)
+    kod = ("//@version=6\nenum Yon\n    uzun = 'Uzun'\n    kisa\nindicator('t')\ny = input.enum(Yon.kisa, 'yon')\n"
+           "x = y == Yon.kisa ? 1 : 0\ns = str.tostring(Yon.uzun) + str.repeat('-', 2) + timeframe.from_seconds(14400)\n"
+           "z = array.get(array.sort_indices(array.from(3, 1, 2)), 0)\n"
+           "f = str.format_time(0, 'yyyy-MM-dd HH:mm', 'UTC')\nb = last_bar_time\n")
+    y = Yorumlayici(parse(kod), df, tf_dk=240, sembol="BINANCE:TEST")
+    y.surum = 6
+    for i in range(len(df)):
+        y.adim(None, i)
+    assert y._bul("x").deger == 1 and y._bul("s").deger == "Uzun--240" and y._bul("z").deger == 1
+    assert y._bul("f").deger == "1970-01-01 00:00" and y._bul("b").deger == int(df.index[-1].value // 1_000_000)
