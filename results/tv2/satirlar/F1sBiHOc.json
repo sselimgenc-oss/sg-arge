@@ -1,1 +1,1 @@
-{"id": "F1sBiHOc", "karar": "hata", "neden": "ProxyError: HTTPSConnectionPool(host='data-api.binance.vision', port=443): Max retries exceeded with url: /api/v3/klines?symbol=BTCUSDT&interval=1m&startTime=1715546760001&endTime=1792872940033&limit=1000 (Caused by ProxyError('Unable to connect to proxy', ConnectionResetError(104, 'Connection reset"}
+{"id": "F1sBiHOc", "karar": "zaman_asimi", "neden": "ko\u015fu s\u00fcre s\u0131n\u0131r\u0131nda kesildi"}
