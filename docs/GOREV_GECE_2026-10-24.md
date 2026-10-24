@@ -33,3 +33,17 @@ Her adım bitince bu dosyadaki kutuyu işaretle, `#200` dalına veya `claude/mag
 ### Not 2 (lider, ~21:20 UTC)
 - Yorumlayıcıya eklendi: `matrix`, `request.security_lower_tf` ve düşük dilimli `request.security`, döngüde oluşan negatif geçmiş indeksi (na). Koşudan önce `git pull`.
 - **Kütüphane `import`:** pine-facade kütüphane kaynağını yol adıyla (`kullanıcı/ad/sürüm`) vermiyor, PUB kimliği gerekiyor. Kripto dışı kaynakları çekerken her `import` satırını `arastirma/tv2_kutuphaneler.csv`'ye yaz (sütunlar: kullanıcı, ad, sürüm, kullanan id'ler). Kütüphane sayfasını ve PUB kimliğini lider bulacak.
+
+### Not 3 (lider, 23:35 UTC): Actions koşusu 40130058265 incelemesi
+Koşu 20:30–22:27 sürdü, 4 iş düştü:
+1. **Commit adımları (u1_5m, faz1_u7):** push reddedildi (`fetch first`), çünkü koşu sırasında dala başka commit geldi. Düzeltme, `huni.yml` 69. ve 106. satırlar:
+   ```
+   for i in 1 2 3 4; do
+     git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:${{ github.ref_name }} && break
+     sleep $((i*5))
+   done
+   ```
+   (yalnız `results/` dosyaları; çakışma beklenmez).
+2. **U1 5m sonuçları kaybolmadı.** "Resume U1 5m funnel" adımı başarılı, artifact yüklendi (14 gün saklanır). Artifact'ı indirip `#200` dalına commit'le; yeniden koşma.
+3. **asama2a:** `data/daily/USDTRY_X.parquet yok`. "veri" işi `fetch_asset(USDTRY=X)` çağırıyor ama dosya artifact'a girmiyor ya da başka adla yazılıyor. Dosya yolunu ve artifact `path`'ini kontrol et. **faz1_u7**'nin "Run U7 Faz 1 stages" adımı da 5 dakikada düştü; büyük olasılıkla aynı sebep. O adımın logunu kontrol et ve iş içinde USDTRY'yi de indir.
+4. **Kuyruk 3 (TV-2 kalan kripto, 204 id)** henüz iş akışında yok. Eklenecek; `claude/magical-ride-c7apbp` dalından çalışmalı (yorumlayıcı oradadır).
