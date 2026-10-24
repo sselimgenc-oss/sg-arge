@@ -28,6 +28,7 @@ import pandas as pd
 import requests
 
 from data.fetch import Asset, fetch_binance
+import engine.pine.yorumlayici as yorumlayici
 from engine.pine.yorumlayici import Desteklenmiyor, PineHatasi, PineStrateji
 from engine.tv_emulator import Sonuc, calistir, gercekci, nedensellik
 
@@ -181,6 +182,30 @@ def pine_kaynak(kimlik: str, pub: str) -> str | None:
         yol.parent.mkdir(parents=True, exist_ok=True)
         yol.write_text(r.text)
     return json.loads(yol.read_text()).get("source")
+
+
+KUTUPHANELER = ROOT / "arastirma" / "tv2_kutuphaneler.csv"
+
+
+def kutuphane_kaynak(kullanici: str, ad: str, surum: int) -> str | None:
+    """Pine kütüphanesi kaynağı: `arastirma/tv2_kutuphaneler.csv` (yol -> PUB) + pine-facade sürüm; önbellek data/tv2/kutuphane."""
+    yol = f"{kullanici}/{ad}"
+    if not KUTUPHANELER.exists():
+        return None
+    tablo = pd.read_csv(KUTUPHANELER, dtype=str)
+    satir = tablo[tablo["yol"] == yol]
+    if satir.empty:
+        return None
+    dosya = CACHE / "kutuphane" / f"{kullanici}_{ad}_{surum}.json"
+    if not dosya.exists():
+        q = urllib.parse.quote(satir.iloc[0]["pub"])
+        r = requests.get(f"https://pine-facade.tradingview.com/pine-facade/get/{q}/{surum}?no_4xx=true", timeout=30)
+        dosya.parent.mkdir(parents=True, exist_ok=True)
+        dosya.write_text(r.text)
+    return json.loads(dosya.read_text()).get("source")
+
+
+yorumlayici.KUTUPHANE_SAGLAYICI = kutuphane_kaynak
 
 
 def strateji(kimlik: str):

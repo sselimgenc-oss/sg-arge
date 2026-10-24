@@ -373,3 +373,15 @@ def test_vwap_anchor_bands_and_lower_tf_tuple() -> None:
     ps.veri_saglayici = lambda s, dk: alt
     calistir(ps, grafik)
     assert ps.y._bul("x").deger == 4 and ps.y._bul("y").deger == pytest.approx(alt["open"].iloc[-4])
+
+
+def test_library_import_registers_exported_functions_and_missing_library_fails_on_call(monkeypatch) -> None:
+    import engine.pine.yorumlayici as Y
+    lib = "//@version=5\nlibrary('m')\nyardimci(x) => x * 2\nexport ikiye(float x) => yardimci(x) + 1\n"
+    monkeypatch.setattr(Y, "KUTUPHANE_SAGLAYICI", lambda k, a, s: lib if (k, a, s) == ("ben", "m", 3) else None)
+    df = _veri(10)
+    x = _seri("//@version=5\nimport ben/m/3 as mm\nindicator('t')\nx = mm.ikiye(close)\n", df)
+    _ayni(x, df["close"].to_numpy() * 2 + 1)
+    _seri("//@version=5\nimport yok/n/1 as nn\nindicator('t')\nx = close\n", df)      # kullanılmayan eksik kütüphane sorun değil
+    with pytest.raises(Desteklenmiyor):
+        _seri("//@version=5\nimport yok/n/1 as nn\nindicator('t')\nx = nn.f(close)\n", df)

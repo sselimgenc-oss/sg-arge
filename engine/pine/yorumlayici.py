@@ -201,6 +201,7 @@ class Yorumlayici:
         self.fonksiyonlar: dict[str, list[_Fonksiyon]] = {}
         self.yontemler: dict[str, list[_Fonksiyon]] = {}
         self.tipler: dict[str, A.TypeDef] = {}
+        self.eksik_kutuphane: dict[str, str] = {}
         self.yol: tuple = ()
         self.kapsam: list[dict[str, _Yuva]] = [{}]
         self.ctx = None
@@ -247,8 +248,35 @@ class Yorumlayici:
             elif isinstance(d, A.TypeDef):
                 self.tipler[d.name] = d
             elif isinstance(d, A.Import):
-                raise Desteklenmiyor("import (kütüphane)")
+                self._kutuphane(d)
             elif isinstance(d, A.EnumDef):
+                raise Desteklenmiyor("enum")
+
+    def _kutuphane(self, d: A.Import) -> None:
+        """`import kullanıcı/ad/sürüm as takma`: dışa açık fonksiyon ve tipler `takma.ad` olarak, iç yardımcılar (çakışmazsa)
+        çıplak adla kaydedilir. Kaynak bulunamazsa takma ad 'eksik' işaretlenir; çağrıldığında Desteklenmiyor."""
+        yol = f"{d.namespace}/{d.name}/{d.version}"
+        takma = d.alias or d.name
+        kaynak = KUTUPHANE_SAGLAYICI(d.namespace, d.name, int(d.version)) if KUTUPHANE_SAGLAYICI else None
+        if not kaynak:
+            self.eksik_kutuphane[takma] = yol
+            return
+        lib = parse(on_isle(kaynak))
+        for x in lib.body:
+            if isinstance(x, A.FunctionDef):
+                f = _Fonksiyon(x.name, x, bool(x.method))
+                if x.method:
+                    self.yontemler.setdefault(x.name, []).append(f)
+                    continue
+                self.fonksiyonlar.setdefault(f"{takma}.{x.name}", []).append(f)
+                if x.name not in self.fonksiyonlar:
+                    self.fonksiyonlar[x.name] = [f]
+            elif isinstance(x, A.TypeDef):
+                self.tipler[f"{takma}.{x.name}"] = x
+                self.tipler.setdefault(x.name, x)
+            elif isinstance(x, A.Import):
+                self._kutuphane(x)
+            elif isinstance(x, A.EnumDef):
                 raise Desteklenmiyor("enum")
 
     # ------------------------------------------------------------------ bar
@@ -362,8 +390,8 @@ class Yorumlayici:
             return NA
         if t is A.Comment:
             return NA
-        if t is A.Import:
-            raise Desteklenmiyor("import (kütüphane)")
+        if t is A.Import:              # başlangıçta (_kaydet) kaydedildi
+            return NA
         return self._deger(d)
 
     def _yuva(self, ad: str, d, kalici: bool, ip: bool = False) -> _Yuva:
@@ -864,6 +892,15 @@ class Yorumlayici:
             kullanici = isinstance(kok, A.Name) and (self._bul(kok.id) is not None)
             if not kullanici and isinstance(kok, A.Name) and kok.id in self.tipler and f.attr in ("new", "copy"):
                 return self._tip_yeni(kok.id, e) if f.attr == "new" else self._tip_kopya(e)
+            if not kullanici and isinstance(kok, A.Name) and kok.id in self.eksik_kutuphane:
+                raise Desteklenmiyor(f"import {self.eksik_kutuphane[kok.id]}")
+            if not kullanici and isinstance(f.value, (A.Name, A.Attribute)):
+                nokta = _nokta(f)
+                if nokta in self.fonksiyonlar:
+                    return self._kullanici(e, self.fonksiyonlar[nokta], None)
+                tip = _nokta(f.value)
+                if tip in self.tipler and f.attr in ("new", "copy"):
+                    return self._tip_yeni(tip, e) if f.attr == "new" else self._tip_kopya(e)
             if not kullanici and not (isinstance(f.value, A.Call) or isinstance(f.value, A.Subscript)):
                 return self._yerlesik(_nokta(f), e)
             nesne = self._deger(f.value)
@@ -1602,6 +1639,7 @@ class Yorumlayici:
 
 # ---------------------------------------------------------------------- yardımcılar
 HA_ONEK = "HEIKINASHI|"
+KUTUPHANE_SAGLAYICI = None   # (kullanıcı, ad, sürüm) -> Pine kaynağı | None; koşucu (backtests.tv2) bağlar
 
 
 def heikin_ashi(df: pd.DataFrame) -> pd.DataFrame:
