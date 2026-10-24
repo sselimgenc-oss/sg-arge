@@ -16,11 +16,11 @@ from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_BIST = ROOT / "argon" / "T11_bist30.csv"
-DEFAULT_BIST_ONCE = ROOT / "argon" / "T11b_bist30_2015_2019.csv"  # T11b: 2015-2019 lists from Borsa Istanbul notices
+DEFAULT_BIST = ROOT / "data" / "T11_bist30.csv"
+DEFAULT_BIST_ONCE = ROOT / "data" / "T11b_bist30_2015_2019.csv"  # T11b: 2015-2019 lists from Borsa Istanbul notices
 # Old BIST codes in the 2015-2019 notices that trade under a new code today (same company; data layer uses the new one).
 BIST_RENAMES = {"KOZAL": "TRALT", "KOZAA": "TRMET"}
-DEFAULT_ABD = ROOT / "argon" / "T11_abd25.csv"
+DEFAULT_ABD = ROOT / "data" / "T11_abd25.csv"
 DEFAULT_SYMBOLS = ROOT / "data" / "evren_pit_semboller.csv"
 LOGGER = logging.getLogger(__name__)
 
