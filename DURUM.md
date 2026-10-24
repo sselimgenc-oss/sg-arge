@@ -12,13 +12,13 @@ Son güncelleme: 2026-10-24, lider (Opus).
 
 | Ajan | Görev |
 |---|---|
-| Lider | U6 denetimleri; resmî koşu sonrası en çok 5 aday listesi, kilitli dönem koşusu (kullanıcı onayıyla), `results/U6_SONUC.md`. Pano gölge sekmesi. |
-| Codex | **F2-GÖLGE Ek 2**: gölge kitap 3 strateji, 2026-09-01'den, gün içi özkaynak. Sonra U6 resmî koşusu (N=205). U6 motoru, koşucusu ve kilitli dönem altyapısı tamam. |
+| Lider | U7 denetimi ve `results/U7_SONUC.md`. Pano gölge sekmesi. |
+| Codex | **F2-GÖLGE Ek 2**: gölge kitap 3 strateji, 2026-09-01'den, gün içi özkaynak. Sonra **U7** (`docs/GOREV_U7.md`). U6 motoru, koşucusu ve kilitli dönem altyapısı tamam. |
 | Sonnet | U6 çevirisi bitti (205/205 işlendi, motor kartları dahil; #187). Haftalık limit nedeniyle salıya kadar görev yok. |
 | Argon | Beklemede. |
 
 ## Sırada (kullanıcı kararı bekleyen)
-1. U6 resmî koşusu → en çok 5 aday → kilitli dönem testi (**kilidi açmak kullanıcı onayı ister**).
+1. **U7** (`docs/GOREV_U7.md`, kullanıcı kararı 2026-10-24): kilit kaldırıldı; test edilebilir bütün kartlar (Faz 1 126, U1, U4, U6 74) bugüne kadar aynı huniden, DSR N = toplam varyant. Geçenler paper'a önerilir.
 0. ~~Yeni strateji arayışı~~ → **U4 bitti** (kullanıcı kararı 2026-10-24: kripto 4H/1D + ABD/emtia 1D, kendi hipotezlerimiz, yalnız long).
 2. Faz 2 pano modülleri (`docs/FAZ2_NOTLAR.md`): koç bulguları, öğrenen koç (gölge mod), strateji radarı.
 3. Küçük iyileştirmeler: hesap kartları saatlik değerlenmiyor (yalnız toplam); fiyat zamanı saatlik barın başlangıcını gösteriyor.

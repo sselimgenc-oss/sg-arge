@@ -1,5 +1,7 @@
 # U6: TradingView açık kaynak 205 stratejinin testi (ön kayıt)
 
+> **2026-10-24 güncelleme (kullanıcı kararı):** kilitli dönem kaldırıldı. Kilitli dönem adımı (bölüm 1-2 teyit, bölüm 4) iptal; U6 koşusu `docs/GOREV_U7.md` içinde, bütün kartlarla birlikte bugüne kadar yapılır.
+
 **Karar:** kullanıcı, 2026-10-24: "205'in hepsi test edilsin."
 **Ön kayıt sahibi:** lider. Sonuç görülmeden yazıldı. Kurallar sonuca bakılarak değiştirilmez.
 **Kaynak:** `arastirma/U5_tv.csv`, `suzgec_sonucu == gecti` (205 script, PR #173).
