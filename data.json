@@ -2,29 +2,29 @@
   "meta": {
     "title": "Kağıt Hesaplar",
     "subtitle": "sg-arge Paper Portföyü: C07, R01, A6-010 / 5,000 $ sanal sermaye (1/N)",
-    "last_update": "24/10 03:26",
-    "test_period": "gün 52 · 01.09.2026–23.10.2026 geriye dönük (aynı kurallar, gerçek veri) · 24.10.2026'dan itibaren canlı paper",
+    "last_update": "24/10 07:39",
+    "test_period": "gün 53 · 01.09.2026–23.10.2026 geriye dönük (aynı kurallar, gerçek veri) · 24.10.2026'dan itibaren canlı paper",
     "exchange_rate": null,
     "currency": "USD",
     "fiat_currency": "TRY",
     "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
     "data_version": "sgarge_paper_v1",
     "veri_notu": null,
-    "updated_at": "2026-10-24T00:26:18.395848+00:00",
+    "updated_at": "2026-10-24T04:39:09.611441+00:00",
     "fiyat_zamani": "2026-10-23T19:30:00+00:00",
     "fiyat_kaynagi": "anlik",
     "anlik_not": "Açık pozisyonlar saatlik fiyatla değerlenir; işlemler ve defter yalnız günlük kapanışta güncellenir."
   },
   "kpis": {
-    "total_value": 5032.95,
-    "total_return_pct": 0.66,
-    "last_day_pct": 0.7,
-    "open_positions_count": 10,
+    "total_value": 5035.9,
+    "total_return_pct": 0.72,
+    "last_day_pct": -0.26,
+    "open_positions_count": 11,
     "closed_trades_count": 19,
     "win_rate_pct": 21.1,
     "total_try": null,
     "initial_total_capital": 5000.0,
-    "net_pnl": 32.95
+    "net_pnl": 35.9
   },
   "alerts": [
     {
@@ -34,13 +34,19 @@
     }
   ],
   "last_24h": {
-    "summary": "Son bar 22.10.2026: 1 dolum, 4 emir yarın açılışta bekliyor, 10 açık pozisyon.",
+    "summary": "Son bar 23.10.2026: 2 dolum, 2 emir yarın açılışta bekliyor, 11 açık pozisyon.",
     "chips": [
       {
         "label": "BRK-B alış",
         "type": "open",
         "action": "giris",
         "asset": "BRK-B"
+      },
+      {
+        "label": "COST satış",
+        "type": "close",
+        "action": "kismi",
+        "asset": "COST"
       }
     ]
   },
@@ -50,25 +56,25 @@
       "name": "C07 · ABD25",
       "strategies_label": "Codex Algo 21: wd_adx_breakout_risk",
       "status": "pozisyonda",
-      "current_value": 1672.62,
+      "current_value": 1670.72,
       "initial_capital": 1666.66,
-      "total_return_pct": 0.36,
-      "last_day_pct": 0.18,
+      "total_return_pct": 0.24,
+      "last_day_pct": -0.11,
       "max_drawdown_pct": 0.92,
       "win_rate_pct": 0.0,
       "profit_factor": 0.0,
       "closed_trades": 2,
-      "open_trades": 5,
+      "open_trades": 6,
       "avg_holding_time": "15.5 gün",
-      "last_run": "22.10.2026",
+      "last_run": "23.10.2026",
       "sparkline": [
-        1654.96,
         1664.12,
         1664.14,
         1663.91,
         1669.8,
         1669.66,
-        1672.62
+        1672.62,
+        1670.72
       ],
       "luck_prob": "veri yok",
       "expectation_desc": "Backtest: Gecti · PF (IS, 1x) 2.18 · OOS getiri 13.0% · bootstrap MDD95 10.1% · evren pit",
@@ -80,25 +86,25 @@
       "name": "R01 · ABD25",
       "strategies_label": "Qullamaggie breakout continuation + episodic pivot",
       "status": "pozisyonda",
-      "current_value": 1716.31,
+      "current_value": 1700.96,
       "initial_capital": 1666.66,
-      "total_return_pct": 2.98,
-      "last_day_pct": 1.81,
-      "max_drawdown_pct": 0.77,
+      "total_return_pct": 2.06,
+      "last_day_pct": -0.89,
+      "max_drawdown_pct": 0.89,
       "win_rate_pct": 33.3,
       "profit_factor": 1.01,
       "closed_trades": 3,
       "open_trades": 4,
       "avg_holding_time": "11.3 gün",
-      "last_run": "22.10.2026",
+      "last_run": "23.10.2026",
       "sparkline": [
-        1682.55,
         1681.29,
         1686.14,
         1685.84,
         1688.48,
         1685.75,
-        1716.31
+        1716.31,
+        1700.96
       ],
       "luck_prob": "veri yok",
       "expectation_desc": "Backtest: Gecti · PF (IS, 1x) 2.02 · OOS getiri 1.6% · bootstrap MDD95 13.8% · evren pit",
@@ -110,25 +116,25 @@
       "name": "A6-010 · EMTIA",
       "strategies_label": "The Gap Momentum System",
       "status": "pozisyonda",
-      "current_value": 1659.72,
+      "current_value": 1663.78,
       "initial_capital": 1666.67,
-      "total_return_pct": -0.42,
-      "last_day_pct": 0.09,
+      "total_return_pct": -0.17,
+      "last_day_pct": 0.24,
       "max_drawdown_pct": 1.55,
       "win_rate_pct": 21.4,
       "profit_factor": 0.6,
       "closed_trades": 14,
       "open_trades": 1,
       "avg_holding_time": "8.1 gün",
-      "last_run": "22.10.2026",
+      "last_run": "23.10.2026",
       "sparkline": [
-        1655.42,
         1654.65,
         1658.36,
         1657.52,
         1658.63,
         1658.16,
-        1659.72
+        1659.72,
+        1663.78
       ],
       "luck_prob": "veri yok",
       "expectation_desc": "Backtest: Kosullu · PF (IS, 1x) 1.38 · OOS getiri 7.8% · bootstrap MDD95 10.6% · evren sabit",
@@ -411,13 +417,27 @@
       "asset": "ABBV",
       "type": "Alış",
       "entry_date": "12.10.2026",
-      "duration": "10 gün",
+      "duration": "11 gün",
       "entry_price": 275.9556,
       "stop_price": 269.5674,
       "size_usd": 134.93,
       "unrealized_pnl": 4.6,
-      "r": 0.53,
+      "r": 0.55,
       "current_price": 285.7
+    },
+    {
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "BRK-B",
+      "type": "Alış",
+      "entry_date": "23.10.2026",
+      "duration": "0 gün",
+      "entry_price": 545.37,
+      "stop_price": 526.2967,
+      "size_usd": 104.22,
+      "unrealized_pnl": -0.56,
+      "r": -0.17,
+      "current_price": 542.46
     },
     {
       "account": "C07 · ABD25",
@@ -425,12 +445,12 @@
       "asset": "CVX",
       "type": "Alış",
       "entry_date": "19.10.2026",
-      "duration": "3 gün",
+      "duration": "4 gün",
       "entry_price": 223.88,
-      "stop_price": 213.3325,
+      "stop_price": 218.8724,
       "size_usd": 108.91,
       "unrealized_pnl": 4.35,
-      "r": 0.21,
+      "r": 0.68,
       "current_price": 233.2
     },
     {
@@ -439,12 +459,12 @@
       "asset": "MA",
       "type": "Alış",
       "entry_date": "14.10.2026",
-      "duration": "8 gün",
+      "duration": "9 gün",
       "entry_price": 605.5,
       "stop_price": 603.5938,
       "size_usd": 170.12,
       "unrealized_pnl": 4.9,
-      "r": 0.91,
+      "r": 0.6,
       "current_price": 623.47
     },
     {
@@ -453,12 +473,12 @@
       "asset": "MSFT",
       "type": "Alış",
       "entry_date": "06.10.2026",
-      "duration": "16 gün",
+      "duration": "17 gün",
       "entry_price": 531.68,
       "stop_price": 509.1609,
       "size_usd": 122.44,
       "unrealized_pnl": -1.67,
-      "r": -0.3,
+      "r": -0.2,
       "current_price": 524.525
     },
     {
@@ -467,12 +487,12 @@
       "asset": "V",
       "type": "Alış",
       "entry_date": "14.10.2026",
-      "duration": "8 gün",
+      "duration": "9 gün",
       "entry_price": 395.91,
       "stop_price": 394.2206,
       "size_usd": 170.08,
       "unrealized_pnl": 5.02,
-      "r": 0.93,
+      "r": 0.6,
       "current_price": 407.94
     },
     {
@@ -481,12 +501,12 @@
       "asset": "BRK-B",
       "type": "Alış",
       "entry_date": "21.10.2026",
-      "duration": "1 gün",
+      "duration": "2 gün",
       "entry_price": 539.5,
       "stop_price": 531.2243,
       "size_usd": 552.35,
       "unrealized_pnl": 3.01,
-      "r": 0.9,
+      "r": 0.33,
       "current_price": 542.46
     },
     {
@@ -495,12 +515,12 @@
       "asset": "COST",
       "type": "Alış",
       "entry_date": "15.10.2026",
-      "duration": "7 gün",
+      "duration": "8 gün",
       "entry_price": 998.11,
-      "stop_price": 977.2185,
-      "size_usd": 405.39,
-      "unrealized_pnl": 2.11,
-      "r": 0.96,
+      "stop_price": 999.1081,
+      "size_usd": 243.24,
+      "unrealized_pnl": 1.26,
+      "r": 0.25,
       "current_price": 1003.32
     },
     {
@@ -509,12 +529,12 @@
       "asset": "MA",
       "type": "Alış",
       "entry_date": "14.10.2026",
-      "duration": "8 gün",
+      "duration": "9 gün",
       "entry_price": 605.5,
       "stop_price": 606.1055,
       "size_usd": 77.77,
       "unrealized_pnl": 2.24,
-      "r": 2.03,
+      "r": 1.32,
       "current_price": 623.47
     },
     {
@@ -523,12 +543,12 @@
       "asset": "PG",
       "type": "Alış",
       "entry_date": "09.10.2026",
-      "duration": "13 gün",
-      "entry_price": 150.57,
-      "stop_price": 150.7206,
-      "size_usd": 240.73,
-      "unrealized_pnl": 15.75,
-      "r": 4.49,
+      "duration": "14 gün",
+      "entry_price": 149.5798,
+      "stop_price": 149.7294,
+      "size_usd": 242.32,
+      "unrealized_pnl": 17.34,
+      "r": 4.86,
       "current_price": 161.11
     },
     {
@@ -537,12 +557,12 @@
       "asset": "USO",
       "type": "Alış",
       "entry_date": "16.10.2026",
-      "duration": "6 gün",
+      "duration": "7 gün",
       "entry_price": 156.97,
       "stop_price": 142.6467,
       "size_usd": 97.99,
       "unrealized_pnl": 7.26,
-      "r": 0.39,
+      "r": 0.88,
       "current_price": 169.53
     }
   ],
@@ -550,38 +570,20 @@
     {
       "account": "C07 · ABD25",
       "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "BRK-B",
-      "signal_date": "22.10.2026",
+      "asset": "XOM",
+      "signal_date": "23.10.2026",
       "order": "Alış (yarın açılışta)",
-      "stop": 527.8967,
-      "stop_distance": 19.0733
+      "stop": 171.5547,
+      "stop_distance": 11.6553
     },
     {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "KO",
-      "signal_date": "22.10.2026",
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "DBA",
+      "signal_date": "23.10.2026",
       "order": "Alış (yarın açılışta)",
-      "stop": 90.8834,
-      "stop_distance": 4.4566
-    },
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "PG",
-      "signal_date": "22.10.2026",
-      "order": "Alış (yarın açılışta)",
-      "stop": 156.428,
-      "stop_distance": 9.162
-    },
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "UNH",
-      "signal_date": "22.10.2026",
-      "order": "Alış (yarın açılışta)",
-      "stop": 390.1635,
-      "stop_distance": 34.8165
+      "stop": 27.1608,
+      "stop_distance": 0.7092
     }
   ],
   "stats": {
@@ -600,9 +602,9 @@
     "avg_holding_time_hours": 224.8,
     "kelly_criterion": -0.184,
     "best_day_gain": 0.7,
-    "green_days_pct": 47.2,
-    "sharpe_annual": 2.36,
-    "sortino": 3.22,
+    "green_days_pct": 45.9,
+    "sharpe_annual": 1.65,
+    "sortino": 2.15,
     "long_trades": 19,
     "short_trades": 0,
     "long_pnl": -22.12,
@@ -619,30 +621,30 @@
   },
   "calendar": {
     "month": "Ekim 2026",
-    "month_summary": "Ekim Ayı Net: 76 $ | 9 yeşil gün | Toplam 7 kapanan işlem",
+    "month_summary": "Ekim Ayı Net: 62 $ | 9 yeşil gün | Toplam 7 kapanan işlem",
     "selected_day": {
-      "date": "22 Ekim 2026",
-      "pnl": 35.09,
+      "date": "23 Ekim 2026",
+      "pnl": -13.19,
       "closed_pnl": 0,
-      "open_pnl_change": 35.09,
+      "open_pnl_change": -13.19,
       "account_breakdown": [
         {
           "account": "C07 · ABD25",
           "closed": 0,
-          "open": 2.96,
-          "total": 2.96
+          "open": -1.9,
+          "total": -1.9
         },
         {
           "account": "R01 · ABD25",
           "closed": 0,
-          "open": 30.56,
-          "total": 30.56
+          "open": -15.35,
+          "total": -15.35
         },
         {
           "account": "A6-010 · EMTIA",
           "closed": 0,
-          "open": 1.57,
-          "total": 1.57
+          "open": 4.06,
+          "total": 4.06
         }
       ]
     },
@@ -756,6 +758,11 @@
         "day": 22,
         "pnl": 35.09,
         "closed": 0
+      },
+      {
+        "day": 23,
+        "pnl": -13.19,
+        "closed": 0
       }
     ]
   },
@@ -788,9 +795,15 @@
   "risk": {
     "concentrations": [],
     "leverage_drawdown_montecarlo": [],
-    "correlation_note": "10 açık pozisyon, brüt maruziyet özkaynağın %42'i."
+    "correlation_note": "11 açık pozisyon, brüt maruziyet özkaynağın %40'i."
   },
   "periodic_returns": [
+    {
+      "day": "23.10.2026",
+      "swing": -0.26,
+      "trend": null,
+      "daytrade": null
+    },
     {
       "day": "22.10.2026",
       "swing": 0.7,
@@ -964,12 +977,6 @@
       "swing": -0.04,
       "trend": null,
       "daytrade": null
-    },
-    {
-      "day": "11.09.2026",
-      "swing": -0.02,
-      "trend": null,
-      "daytrade": null
     }
   ],
   "strategies_27": [
@@ -991,26 +998,26 @@
       "subtitle": "Codex Algo 21: wd_adx_breakout_risk",
       "live_status_tag": "pozisyonda",
       "is_active_trade": true,
-      "active_trade_symbol": "ABBV, CVX, MA, MSFT, V",
-      "active_trade_detail": "5 açık pozisyon",
-      "balance_usd": 1672.62,
-      "total_return_pct": 0.36,
-      "last_day_pct": 0.18,
+      "active_trade_symbol": "ABBV, BRK-B, CVX, MA, MSFT, V",
+      "active_trade_detail": "6 açık pozisyon",
+      "balance_usd": 1670.72,
+      "total_return_pct": 0.24,
+      "last_day_pct": -0.11,
       "max_drawdown_pct": 0.92,
       "win_rate_pct": 0.0,
       "profit_factor": 0.0,
       "closed_trades": 2,
-      "open_trades": 5,
+      "open_trades": 6,
       "avg_holding_time": "15.5 gün",
-      "last_run": "22.10.2026",
+      "last_run": "23.10.2026",
       "sparkline": [
-        1654.96,
         1664.12,
         1664.14,
         1663.91,
         1669.8,
         1669.66,
-        1672.62
+        1672.62,
+        1670.72
       ],
       "initial_capital": 1666.66,
       "alpha_conf": "hesaplanmadı",
@@ -1037,24 +1044,24 @@
       "is_active_trade": true,
       "active_trade_symbol": "BRK-B, COST, MA, PG",
       "active_trade_detail": "4 açık pozisyon",
-      "balance_usd": 1716.31,
-      "total_return_pct": 2.98,
-      "last_day_pct": 1.81,
-      "max_drawdown_pct": 0.77,
+      "balance_usd": 1700.96,
+      "total_return_pct": 2.06,
+      "last_day_pct": -0.89,
+      "max_drawdown_pct": 0.89,
       "win_rate_pct": 33.3,
       "profit_factor": 1.01,
       "closed_trades": 3,
       "open_trades": 4,
       "avg_holding_time": "11.3 gün",
-      "last_run": "22.10.2026",
+      "last_run": "23.10.2026",
       "sparkline": [
-        1682.55,
         1681.29,
         1686.14,
         1685.84,
         1688.48,
         1685.75,
-        1716.31
+        1716.31,
+        1700.96
       ],
       "initial_capital": 1666.66,
       "alpha_conf": "hesaplanmadı",
@@ -1081,24 +1088,24 @@
       "is_active_trade": true,
       "active_trade_symbol": "USO",
       "active_trade_detail": "1 açık pozisyon",
-      "balance_usd": 1659.72,
-      "total_return_pct": -0.42,
-      "last_day_pct": 0.09,
+      "balance_usd": 1663.78,
+      "total_return_pct": -0.17,
+      "last_day_pct": 0.24,
       "max_drawdown_pct": 1.55,
       "win_rate_pct": 21.4,
       "profit_factor": 0.6,
       "closed_trades": 14,
       "open_trades": 1,
       "avg_holding_time": "8.1 gün",
-      "last_run": "22.10.2026",
+      "last_run": "23.10.2026",
       "sparkline": [
-        1655.42,
         1654.65,
         1658.36,
         1657.52,
         1658.63,
         1658.16,
-        1659.72
+        1659.72,
+        1663.78
       ],
       "initial_capital": 1666.67,
       "alpha_conf": "hesaplanmadı",
