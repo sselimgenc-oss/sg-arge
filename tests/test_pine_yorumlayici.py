@@ -285,3 +285,15 @@ def test_heikin_ashi_security_matches_the_formula_and_v4_alias() -> None:
     x4 = _seri("//@version=4\nstudy('t')\nx = security(heikinashi(syminfo.tickerid), timeframe.period, open)\n", df)
     _ayni(x4, ha["open"].to_numpy())
     assert ha["high"].ge(ha[["open", "close"]].max(axis=1)).all() and ha["open"].iloc[1] == pytest.approx((ha["open"].iloc[0] + ha["close"].iloc[0]) / 2)
+
+
+def test_volume_variables_nvi_pvt_accdist() -> None:
+    df = _veri(150)
+    c, v, h, l = df["close"].to_numpy(), df["volume"].to_numpy(), df["high"].to_numpy(), df["low"].to_numpy()
+    nvi = [1.0]
+    for i in range(1, len(c)):
+        nvi.append(nvi[-1] * (1 + (c[i] - c[i - 1]) / c[i - 1]) if v[i] < v[i - 1] else nvi[-1])
+    _ayni(_seri("x = ta.nvi\n", df), np.array(nvi))
+    pvt = np.r_[0.0, np.cumsum((c[1:] - c[:-1]) / c[:-1] * v[1:])]
+    _ayni(_seri("x = ta.pvt\n", df), pvt)
+    _ayni(_seri("x = ta.accdist\n", df), np.cumsum((2 * c - l - h) / (h - l) * v))

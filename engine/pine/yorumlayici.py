@@ -787,13 +787,16 @@ class Yorumlayici:
                 return NA
             return max(h - l, abs(h - self.c[self.i - 1]), abs(l - self.c[self.i - 1]))
         if nesne is None:
-            nesne = self.durum[anahtar] = {"ta.obv": T.Obv, "ta.vwap": T.Vwap}.get(ad, lambda: None)()
+            nesne = self.durum[anahtar] = {"ta.obv": T.Obv, "ta.vwap": T.Vwap}.get(ad, lambda: T.HacimDegiskeni(ad))()
             if nesne is None:
                 raise Desteklenmiyor(ad)
         son = self.durum.get(anahtar + ("bar",))
         if son is not None and son[0] == self.i:
             return son[1]
-        x = nesne(c, v) if ad == "ta.obv" else nesne((h + l + c) / 3, v, int(self.gun_kodu[self.i]))
+        if isinstance(nesne, T.HacimDegiskeni):
+            x = nesne(self.o[self.i], h, l, c, v)
+        else:
+            x = nesne(c, v) if ad == "ta.obv" else nesne((h + l + c) / 3, v, int(self.gun_kodu[self.i]))
         self.durum[anahtar + ("bar",)] = (self.i, x)
         return x
 
