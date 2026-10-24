@@ -1,0 +1,29 @@
+id: TV-qDPWh3KO
+ad: TrendGuard Flag Finder - Strategy [presentTrading]
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/qDPWh3KO/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar PresentTrading; yayin sembolu BITFINEX:BTCUSD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITFINEX:BTCUSD)
+kol: KRIPTO-4H
+yayin_sembolu: BITFINEX:BTCUSD
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
+giris: null
+cikis: null
+kural_ozeti: {giris: 'Boga bayragi (3-7 bar, derinlik <= %5, direk >= %3 ve 7-13 bar) yukari kirilir ve Supertrend(10, 4) yukselis', cikis: 'Ayi bayragi asagi kirilir ve Supertrend dusus: ters yonde strategy.entry long''u kapatir'}
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H, supertrend_period: 10, supertrend_factor: 4.0, max_depth: 5.0, max_flag: 7, min_flag: 3, pole_min: 3.0, pole_max_len: 13, pole_min_len: 7, max_rally: 5.0, max_flag_bear: 7, min_flag_bear: 3, pole_min_bear: 3.0, pole_max_len_bear: 13, pole_min_len_bear: 7}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Bayrak tespiti 25 ''var'' degiskenli bir durum makinesidir (baseHigh/baseLow/flagLength mandallari, direk taramasi, kirilim/dusus sifirlamalari); modul Pine satir sirasini ve `[1]` gecmis referanslarini (onceki barin nihai degerleri) birebir uygular (tv_qdpwh3ko.flag_events). Ayi bayragi hesabi long icin dogrudan sinyal vermez ama long''u kapatan bearishEntry''yi uretir; kod ayi `bearFlag` kosulunda poleMaxLen (boga girdisi) kullanir, aynen korundu.', 'Giris emriyle ayni barda strategy.exit(''Sell'',''Buy'', stop=supertrend) verilir: stop sinyal barinin Supertrend cizgisine sabitlenir (motorda dolum barindan etkin, Pine''da da giris emriyle birlikte). Supertrend ta.supertrend(4.0, 10); kartta dir +1 = yukselis. tradingDirection=''Both'' varsayilani: short sinyalleri long bacakta islem acmaz.', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_qdpwh3ko.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

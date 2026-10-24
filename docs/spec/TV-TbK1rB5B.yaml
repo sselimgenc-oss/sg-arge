@@ -1,0 +1,29 @@
+id: TV-TbK1rB5B
+ad: TrendShift | Supertrend + ADX Regime-Adaptive Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/TbK1rB5B/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu BITSTAMP:BTCUSD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITSTAMP:BTCUSD)
+kol: KRIPTO-1D
+yayin_sembolu: BITSTAMP:BTCUSD
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
+giris: null
+cikis: null
+kural_ozeti: {giris: 'Supertrend yukselise doner (bullFlip) ve rejim choppy degil (ADX >= 20 ya da disableChop kapali); carpan ADX>25 icin 1.75, ADX<20 icin 4.5, arada onceki deger', cikis: 'Supertrend dususe doner (bearFlip) ve rejim choppy degil: ters yonde strategy.entry long''u kapatir'}
+stop: null
+hedef: null
+stop_eklendi: true
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D, adx_len: 14, adx_trend: 25.0, adx_chop: 20.0, atr_len: 10, tight_mult: 1.75, wide_mult: 4.5, disable_chop: true}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: useTrailing=false, flattenOnChop=false, maxBarsInTrade=0, tarih filtresi kapali; yani yazarin stop/hedefi yok (strategy.exit yalniz useTrailing ile). effectiveMult ADX rejimine gore degisir ve NEUTRAL (20-25) bolgede onceki deger korunur (Pine var). Supertrend seri carpanli: tv_ortak.supertrend, motor supertrend dongusunun bar-basina carpanli hali.', 'dmi(14, 14): ADX = Wilder yumusatmasi 14. Choppy rejimde yeni giris yok (long da short da); bu nedenle choppy iken gelen dusus donusu long''u kapatmaz (short girisi olusmaz).', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_tbk1rb5b.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

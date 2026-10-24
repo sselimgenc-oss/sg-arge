@@ -1,0 +1,30 @@
+id: TV-W67tJltC
+ad: Z-Edge | Confluence Z-score Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/W67tJltC/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu COINBASE:ETHUSD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (COINBASE:ETHUSD)
+kol: KRIPTO-1D
+yayin_sembolu: COINBASE:ETHUSD
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
+giris: null
+cikis: null
+kural_ozeti: {giris: smoothComposite sifiri yukari keser (Zero Cross), cikis: smoothComposite sifiri asagi keser (long cikis seviyesi 0 ve short girisi ayni kosul)}
+stop: {tip: seviye, ifade: sinyal_close - 2.0 * sinyal_atr14}
+hedef: null
+dolum: kapanis
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D, zscore_period: 100, momentum_length: 14, rsi_length: 14, vol_length: 20, w_price: 0.4, w_rsi: 0.3, w_vol: 0.3, adaptive_on: true, atr_length: 14, atr_rank_length: 100, min_smoothing: 2, max_smoothing: 15, smoothing_base: 5, entry_mode: Zero Cross, long_threshold: -1.5, short_threshold: 1.5, exit_level_long: 0.0, atr_mult_stop: 2.0}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Bilesik z-skor: ROC(14) z-skoru * 0.4 + RSI(14) z-skoru * 0.3 + (hacim/SMA(hacim,20)) z-skoru * 0.3 (100 barlik z-skor, sd > 0 degilse 0). Yumusatma ozyinelemeli: smoothComposite = onceki + alpha*(composite - onceki), alpha = 2/(round(15 - 13*ATRpercentrank/100)+1), ilk degerde composite. ta.percentrank(ATR(14), 100): onceki 100 degerin guncele esit/kucuk olanlarinin yuzdesi varsayildi (Pine kaynagi dogrulanamadi). Pine math.round(.5) yukari yuvarlar.', 'process_orders_on_close=true: emirler sinyal barinin kapanisinda dolar (kartta dolum: kapanis; maliyet 2x baz, ertesi acilis (b) varyanti da raporlanir). Stop = sinyal kapanisi - 2 x ATR(14) (use_stop_loss=true, strategy.exit giris emriyle ayni barda); motorda dolum kapanista oldugundan stop sonraki bardan etkindir.', 'Pozisyon boyutu hesabi (account_equity, risk_percent, max_pct_equity) kullanilmaz. Short girisi long''u kapatir (cikis ifadesi).', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_w67tjltc.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

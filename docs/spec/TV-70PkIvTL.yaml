@@ -1,0 +1,26 @@
+id: TV-70PkIvTL
+ad: Vix FIX / StochRSI Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/70PkIvTL/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar timj; yayin sembolu NASDAQ:PEP; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:PEP)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:PEP
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding=9 ile ayni yonde kademeli ekleme: iki ayri giris sinyali (filtreli/agresif Vix Fix) acik pozisyonda yeni islemler ekler. Motor ''pozisyondayken ayni sembolde yeni giris yok'' (piramit yok) kuralini uygular; piramit cevrilemez. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
+spec_durumu: eksik
+belirsiz: ['Beklemede (bekliyor:motor): pyramiding=9 ile ayni yonde kademeli ekleme: iki ayri giris sinyali (filtreli/agresif Vix Fix) acik pozisyonda yeni islemler ekler. Motor ''pozisyondayken ayni sembolde yeni giris yok'' (piramit yok) kuralini uygular; piramit cevrilemez. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -1,0 +1,26 @@
+id: TV-rjAoFt4N
+ad: TSI HMA CCI
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/rjAoFt4N/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar SeaSide420; yayin sembolu FX:NZDUSD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: FX (FX:NZDUSD)
+kol: FX-4H
+yayin_sembolu: FX:NZDUSD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [DIGER]
+parametreler: {kol: FX-4H}
+dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu FX:NZDUSD FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu FX:NZDUSD FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

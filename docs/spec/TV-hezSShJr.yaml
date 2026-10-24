@@ -1,0 +1,26 @@
+id: TV-hezSShJr
+ad: Hybrid Breakout | VCP-Inspired Trend
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/hezSShJr/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu NASDAQ:GOOGL; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:GOOGL)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:GOOGL
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: '(1) Kademeli kar alma: strategy.exit qty_percent=25/50/100 ile %10/%20/%30 hedefleri (motor kismi_kar''i bu bicimde desteklemez, kismi cikis tek hedefe donusturulemez). (2) ta.percentrank(aralik%, 150) ifade dilinde yok. (3) Giris stop emri (recentHigh[1]) ve process_orders_on_close=true. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: kademeli cikis (qty_percent)); motor PR''i birlesince yeniden cevrilecek.'}
+spec_durumu: eksik
+belirsiz: ['Beklemede (bekliyor:motor): (1) Kademeli kar alma: strategy.exit qty_percent=25/50/100 ile %10/%20/%30 hedefleri (motor kismi_kar''i bu bicimde desteklemez, kismi cikis tek hedefe donusturulemez). (2) ta.percentrank(aralik%, 150) ifade dilinde yok. (3) Giris stop emri (recentHigh[1]) ve process_orders_on_close=true. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: kademeli cikis (qty_percent)); motor PR''i birlesince yeniden cevrilecek.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

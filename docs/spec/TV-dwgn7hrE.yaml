@@ -1,0 +1,27 @@
+id: TV-dwgn7hrE
+ad: Coil Breaker | RSI Range Compression
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/dwgn7hrE/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu NASDAQ:AMD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:AMD)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:AMD
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
+giris: null
+cikis: null
+kural_ozeti: {giris: 'RSI(14) son 20 barlik RSI zirvesinin bir onceki degerini yukari keser, son 5 barda RSI araligi 100 barlik yuzdelikte <= %20 sikismis, EMA(50) 5 bar once yukarida, ADX(14) >= 15', cikis: 'yalniz stop/hedef (strategy.exit, giris emriyle ayni barda verilir)'}
+stop: {tip: seviye, ifade: sinyal_close - 2.0 * sinyal_atr14}
+hedef: {tip: seviye, ifade: sinyal_close + 2.0 * (sinyal_close - 2.0 * sinyal_atr14)}
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D, rsi_len: 14, coil_len: 20, pct_len: 100, coil_pct: 20.0, coil_memory: 5, ema_len: 50, slope_len: 5, use_adx: true, adx_len: 14, adx_min: 15.0, atr_len: 14, atr_mult: 2.0, r_multiple: 2.0}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'ta.percentrank(RSI araligi, 100): onceki 100 degerin (guncel bar haric) guncele esit ya da kucuk olanlarinin yuzdesi varsayildi; Pine kaynak koduna erisilemedi.', 'Yazar hatasi birebir korundu: targetPrice = close + stopPrice * rMultiple, stopPrice bir fiyat (close - 2 x ATR) oldugundan hedef ~3 x fiyatta kalir ve pratikte hic vurulmaz; kart hedef seviyesini aynen boyle yazar (duzeltilmedi). Stop = sinyal kapanisi - 2 x ATR(14); strategy.exit giris emriyle ayni barda verilir.', Short girisi yalniz pozisyon yokken (ters cevirme yok); long bacakta kullanilmaz., 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_dwgn7hre.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

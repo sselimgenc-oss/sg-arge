@@ -1,0 +1,26 @@
+id: TV-b4HV7iJR
+ad: Optimal F by Ralph Vince. Position Sizing and Risk Analysis
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/b4HV7iJR/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar Smollet; yayin sembolu BINANCE:BTCUSDT; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BINANCE:BTCUSDT)
+kol: KRIPTO-1D
+yayin_sembolu: BINANCE:BTCUSDT
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Giris kapisi yazarin pozisyon boyutuna baglidir: `positionSize > 0` kosulu Optimal F ile kapanmis islem listesinden (strategy.closedtrades.profit/size, trades_pl/arr_r dizileri) hesaplanir; yani giris, gecmis islemlerin sonucuna bagli. Pozisyon/islem gecmisine bagli kural Dogrulanamaz kategorisidir.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Giris kapisi yazarin pozisyon boyutuna baglidir: `positionSize > 0` kosulu Optimal F ile kapanmis islem listesinden (strategy.closedtrades.profit/size, trades_pl/arr_r dizileri) hesaplanir; yani giris, gecmis islemlerin sonucuna bagli. Pozisyon/islem gecmisine bagli kural Dogrulanamaz kategorisidir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

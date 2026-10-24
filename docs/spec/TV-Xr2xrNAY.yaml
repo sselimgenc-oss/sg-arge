@@ -1,0 +1,29 @@
+id: TV-Xr2xrNAY
+ad: Volatility Capture RSI-Bollinger - Strategy [presentTrading]
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/Xr2xrNAY/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar PresentTrading; yayin sembolu BITFINEX:BTCUSD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITFINEX:BTCUSD)
+kol: KRIPTO-4H
+yayin_sembolu: BITFINEX:BTCUSD
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
+giris: null
+cikis: null
+kural_ozeti: {giris: 'hlc3, present bandi yukari keser (bir onceki barin nihai bandi) ve SMA(RSI(hlc3,10),5) > 55; giriste band alt banda (SMA(low,50) - 2.7183*stdev(low,50)) sabitlenir', cikis: close present bandi asagi keser (nihai bar bandi) ya da short sinyali (hlc3 bandi asagi keser ve SMA(RSI) < 50) long'u ters cevirir}
+stop: null
+hedef: null
+stop_eklendi: true
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H, length: 50, multiplier: 2.7183, use_rsi: true, rsi_period: 10, sma_period: 5, bought_range: 55.0, sold_range: 50.0}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'presentBollingBand: var degisken, her barda close > band ise max(band, alt), close < band ise min(band, ust), esitse 0.0; long sinyalinde alt banda, short sinyalinde ust banda atanir (short sinyali long bacakta islem acmaz ama bandi ayni sekilde sifirlar, kod bunu dahil eder). Alt/ust bant SMA/stdev(high ve low, 50) +- 2.7183 x stdev.', 'ta.crossover(priceSource, presentBollingBand) cagrisi sinyal aninda bandin bir onceki barin nihai degerini kullanir (var, bar basinda tasinir): a > B[t-1] ve a[t-1] <= B[t-1]. Cikis kosulu ise guncel (guncellenmis) bandla ta.crossunder(close, band) kullanir; modul ikisini de bu sirayla uygular.', 'Hlc3 kaynagi ve RSI(10) uzerinde SMA(5) filtresi varsayilan (useRSI=true). Giris/cikis pozisyondan bagimsiz hesaplanir, pozisyon kapisi motordadir.', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_xr2xrnay.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

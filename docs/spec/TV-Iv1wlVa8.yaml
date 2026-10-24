@@ -1,0 +1,26 @@
+id: TV-Iv1wlVa8
+ad: Monthly Returns with Benchmark
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/Iv1wlVa8/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar QuantNomad; yayin sembolu BINANCE:XRPUSDT; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BINANCE:XRPUSDT)
+kol: KRIPTO-4H
+yayin_sembolu: BINANCE:XRPUSDT
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Long pozisyonun cikisi, ters yondeki (short) bekleyen stop emrinin dolmasidir (stop=lprice - mintick; seviye her yeni pivot dipte degisir ve syminfo.mintick kullanir). Motorda dinamik, pozisyon sonrasi guncellenen ters stop emriyle cikis ve enstruman fiyat adimi yok; yaklasik (ertesi acilista sinyal cikisi) donusum yapilmadi. Giris tarafi (pivot + stop emri) cevrilebilirdi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Long pozisyonun cikisi, ters yondeki (short) bekleyen stop emrinin dolmasidir (stop=lprice - mintick; seviye her yeni pivot dipte degisir ve syminfo.mintick kullanir). Motorda dinamik, pozisyon sonrasi guncellenen ters stop emriyle cikis ve enstruman fiyat adimi yok; yaklasik (ertesi acilista sinyal cikisi) donusum yapilmadi. Giris tarafi (pivot + stop emri) cevrilebilirdi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -1,0 +1,30 @@
+id: TV-VcRiudNf
+ad: MHIDa Strategy Honesty Dashboard
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/VcRiudNf/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar MHIDa; yayin sembolu BINANCE:BTCUSDT; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BINANCE:BTCUSDT)
+kol: KRIPTO-1D
+yayin_sembolu: BINANCE:BTCUSDT
+gostergeler:
+  ema20: {f: ema, src: close, n: 20}
+ozel_kod: false
+giris: close[1] < ema20[1] * (1 - 0.8 / 100) and close > close[1]
+cikis: high >= ema20
+stop: {tip: yuzde, deger: 4.0}
+hedef: null
+zaman_stop: {bar: 48}
+dolum: kapanis
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilan: emaLen=20, dipPct=0.8, exitMode=''MA'' (high >= EMA ise strategy.close), stopPct=4%, maxBars=48; process_orders_on_close=true: giris/cikis sinyal barinin KAPANISINDA dolar (dolum: kapanis; maliyet 2x baz, ertesi acilis (b) varyanti da raporlanir). Yazar stopu %4 (dolum fiyatindan); `strategy.exit` dolum barindan sonraki barin kapanisinda verilir (sonraki bardan etkin), motorda stop dolum barindan etkindir.', 'Zaman stopu: barsHeld = bar_index - entry_bar_index >= 48, sinyal barindan sayilir; motor zaman_stop semantigi (dolum bari sonrasi bars_held >= 48, kapanista cikis) ayni. Karttaki dashboard/istatistik kodu (diziler, closedtrades dongusu) islem kuralina girmez.', 'Pine''da strategy.exit koruma emirleri pozisyon acildiktan sonra, dolum barinin kapanisinda verilir ve sonraki bardan etkindir; motorda stop/hedef dolum barindan itibaren etkindir (D8): dolum barinda stop/hedef vurulursa motor cikar, Pine cikmaz. Stop/hedef mesafesi sinyal barinin ATR''sine sabitlenir, dolum fiyatindan olculur (Pine: strategy.position_avg_price).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

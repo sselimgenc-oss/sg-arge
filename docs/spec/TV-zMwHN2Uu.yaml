@@ -1,0 +1,29 @@
+id: TV-zMwHN2Uu
+ad: BTCUSDT 4H Breakout Retest Strategy - S/R + RSI/MACD/SMA Filter
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/zMwHN2Uu/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar Crypto_Andy_; yayin sembolu WHITEBIT:BTCUSDT; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (WHITEBIT:BTCUSDT)
+kol: KRIPTO-4H
+yayin_sembolu: WHITEBIT:BTCUSDT
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
+giris: null
+cikis: null
+kural_ozeti: {giris: 'Pivot(5,5) ile otomatik direnc/destek; direnc yukari kesilince "flip" seviyesi sabitlenir. Retest: kapanis flip uzerinde, yesil bar, dip penceresi (6 bar) flip-%2,7 tabaninin uzerinde, onceki 8 barin en yuksek kapanisi flip uzerinde, RSI 42-72 ve MACD hist yukari; ya da kirilim: kapanis direnci yukari keser, RSI 55-80, hist > 0, kapanis > SMA(50). Hepsi SMA(50)''den en fazla %6 uzakta, kapanis seviyenin en fazla %1 uzaginda, pozisyon yok ve son islemden (giris ya da kapanis) 6 bar gecmis', cikis: 'yalniz stop (-%1,5) ve hedef (+%3); sinyal barinin kapanisindan sabitlenir'}
+stop: {tip: seviye, ifade: sinyal_close * (1 - 0.015)}
+hedef: {tip: seviye, ifade: sinyal_close * (1 + 0.03)}
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H, pvt_len: 5, auto_zone_perc: 1.0, auto_floor_perc: 0.027, sl_perc: 0.015, tp_perc: 0.03, cooldown_bars: 6, rsi_len: 14, macd_fast: 12, macd_slow: 26, macd_sig: 9, sma_fast_len: 50, rsi_pull_min: 42.0, rsi_pull_max: 72.0, rsi_break_min: 55.0, rsi_break_max: 80.0, rsi_short_min: 20.0, rsi_short_max: 45.0, max_ext_perc: 0.06, max_chase_perc: 0.01, sweep_lookback: 6, prior_window: 8, levels_from: '2026-09-21'}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilan input''lar: enableLongs/enableShorts = true, autoBefore = true, useAuto = false, useTrendFilter = false. Elle girilmis seviyeler (BTC 82600-87400 mutlak fiyatlari) 2026-09-21 tarihinden itibaren kullanilir; bu tarih kilitli donemin (2025-10-01+) otesindedir ve fiyat esikleri BTC''ye ozgudur, kartta cevrilmedi. 2026-09-21 oncesinin tamami Pine''in otomatik (pivot) seviyeleriyle calisir ve birebir cevrildi; tarihten sonra sinyal uretilmez.', 'Bekleme (cooldown): Pine lastTradeBar hem giriste hem pozisyonun kapandigi barda guncellenir; bar_index - lastTradeBar >= 6. Pozisyon kapisi (strategy.position_size == 0) ve short bacak (breakdown, long''dan sonra oncelik) Pine ile ayni sirada benzetilir; short bacak ticarete verilmez ama pozisyon kapisini ve beklemeyi etkiler (ters cevirme yok: pozisyon varken yeni giris olmaz).', 'Stop/hedef: Pine strategy.exit giris emriyle ayni barda verilir; seviyeler sinyal barinin kapanisindan (-%1,5 / +%3) sabitlenir, dolum barindan itibaren etkin (motorla ayni). Dolum fiyati sinyal kapanisindan farkli olabilir; Pine de ayni mutlak seviyeleri kullanir.', 'pivothigh/pivotlow: sert esitsizlik varsayildi (esitlik kurali dogrulanamadi); pivot, `sag` 5 bar sonra bilinir. priorHighClose = highest(close, 8)[6]. SMA(200) yalniz gorsel (useTrendFilter = false), kullanilmaz.', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_zmwhn2uu.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

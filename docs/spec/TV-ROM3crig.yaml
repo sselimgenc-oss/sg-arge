@@ -1,0 +1,26 @@
+id: TV-ROM3crig
+ad: BEST Engulfing + Breakout Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/ROM3crig/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar Daveatt; yayin sembolu BINANCE:BTCUSDT; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BINANCE:BTCUSDT)
+kol: KRIPTO-1D
+yayin_sembolu: BINANCE:BTCUSDT
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding=2: sinyal surerken ayni kimlikli giris tekrarlanir (ikinci/ucuncu giris); pip birimli sabit TP/SL ve testPeriod() penceresi. Motor piramit uygulamaz. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
+spec_durumu: eksik
+belirsiz: ['Beklemede (bekliyor:motor): pyramiding=2: sinyal surerken ayni kimlikli giris tekrarlanir (ikinci/ucuncu giris); pip birimli sabit TP/SL ve testPeriod() penceresi. Motor piramit uygulamaz. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

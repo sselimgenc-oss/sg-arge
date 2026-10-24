@@ -1,0 +1,26 @@
+id: TV-kbYTJ8V2
+ad: Aurora KAMA | KAMA Adaptive Trend Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/kbYTJ8V2/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar blitz_locked; yayin sembolu COINBASE:ETHUSD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (COINBASE:ETHUSD)
+kol: KRIPTO-1D
+yayin_sembolu: COINBASE:ETHUSD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: '(1) ''Minimum Bars Between Entries'' (barsBetween=5) son GIRIS barindan (long ya da short) sayilir; motorun cooldown_bar''i CIKIS barindan sayar, esdeger degil ve yaklasik donusum yapilmaz. (2) Gecikmeli yuzde izleyen stop (6%, 5 bar sonra devreye girer; strategy.exit trail_points/trail_offset) motorda yok (iz_suren yalniz ATR tabanli). KAMA(10,2,30) ve ta.rising kismi cevrilebilirdi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): (1) ''Minimum Bars Between Entries'' (barsBetween=5) son GIRIS barindan (long ya da short) sayilir; motorun cooldown_bar''i CIKIS barindan sayar, esdeger degil ve yaklasik donusum yapilmaz. (2) Gecikmeli yuzde izleyen stop (6%, 5 bar sonra devreye girer; strategy.exit trail_points/trail_offset) motorda yok (iz_suren yalniz ATR tabanli). KAMA(10,2,30) ve ta.rising kismi cevrilebilirdi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
