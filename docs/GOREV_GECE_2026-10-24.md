@@ -47,3 +47,4 @@ Koşu 20:30–22:27 sürdü, 4 iş düştü:
 2. **U1 5m sonuçları kaybolmadı.** "Resume U1 5m funnel" adımı başarılı, artifact yüklendi (14 gün saklanır). Artifact'ı indirip `#200` dalına commit'le; yeniden koşma.
 3. **asama2a:** `data/daily/USDTRY_X.parquet yok`. "veri" işi `fetch_asset(USDTRY=X)` çağırıyor ama dosya artifact'a girmiyor ya da başka adla yazılıyor. Dosya yolunu ve artifact `path`'ini kontrol et. **faz1_u7**'nin "Run U7 Faz 1 stages" adımı da 5 dakikada düştü; büyük olasılıkla aynı sebep. O adımın logunu kontrol et ve iş içinde USDTRY'yi de indir.
 4. **Kuyruk 3 (TV-2 kalan kripto, 204 id)** henüz iş akışında yok. Eklenecek; `claude/magical-ride-c7apbp` dalından çalışmalı (yorumlayıcı oradadır).
+5. **Güncelleme:** Kuyruk 3'ü (204 kripto) lider kendi ortamında koşuyor (23:40 UTC başladı), Actions dakikası harcanmasın. Codex bu adımı atlasın.
