@@ -949,7 +949,9 @@ class Yorumlayici:
     def _yerlesik(self, ad: str, e: A.Call, on_arg=None) -> Any:
         if ad == "request.security":
             return self._security(e)
-        if ad in ("request.security_lower_tf", "request.financial", "request.quandl", "request.earnings",
+        if ad == "request.security_lower_tf":
+            return self._alt_dilim(e, dizi=True)
+        if ad in ("request.financial", "request.quandl", "request.earnings",
                   "request.dividends", "request.splits", "request.economic", "request.seed", "request.currency_rate"):
             raise Desteklenmiyor(ad)
         konum, adli = self._argumanlar(e, on_arg)
@@ -1468,7 +1470,7 @@ class Yorumlayici:
         if dk < self.tf_dk:
             if self.guvenlik_modu:      # başka bir dilimin ön koşusu: bu çağrının değeri orada gerekmez
                 return NA
-            raise Desteklenmiyor("request.security düşük zaman dilimi")
+            return self._alt_dilim(e, dizi=False)
         anahtar = tf_metin(dk)
         g = self.guvenlik.get(anahtar)
         if g is None:
@@ -1521,6 +1523,47 @@ class Yorumlayici:
         if gaps and k == onceki:
             return NA
         return v
+
+    def _alt_dilim(self, e: A.Call, dizi: bool) -> Any:
+        """Düşük dilim: betik kendi sembolünün `dk` dakikalık barlarında koşulur. security_lower_tf grafik barının içindeki
+        tüm alt bar değerlerini (dizi), security ise sonuncusunu verir (geçmiş barlarda TradingView davranışı)."""
+        adlar = ["symbol", "timeframe", "expression"]
+        dugumler = {(a.name or adlar[k]): a.value for k, a in enumerate(e.args)}
+        sembol = str(self._deger(dugumler["symbol"]) or self.sembol)
+        dk = tf_dakika(self._deger(dugumler["timeframe"]))
+        if self.guvenlik_modu:          # alt dilimin kendi koşusu: ifade değeri kaydedilir
+            if dk != self.tf_dk:
+                return [] if dizi else NA
+            v = self._deger(dugumler["expression"])
+            self.guvenlik_kayit.setdefault(id(e), {})[self.i] = v
+            return [v] if dizi else v
+        if dk >= self.tf_dk:
+            if dizi:                    # alt dilim grafik diliminden büyük değilse: tek elemanlı dizi
+                return [self._deger(dugumler["expression"])]
+            raise Desteklenmiyor("request.security düşük zaman dilimi (ayrıştırma)")
+        anahtar = ("alt", sembol, dk)
+        g = self.guvenlik.get(anahtar)
+        if g is None:
+            df2 = self.veri_saglayici(sembol, dk) if self.veri_saglayici is not None else None
+            if df2 is None or df2.empty:
+                raise Desteklenmiyor(f"düşük zaman dilimi verisi yok ({sembol} {dk}dk)")
+            df2 = df2[df2.index >= self.df.index[0]]
+            y = Yorumlayici(self.p, df2, tf_dk=dk, sembol=sembol, tz=self.tz, mintick=self.mintick, girdiler=self.girdiler,
+                            guvenlik_modu=True)
+            y.surum = self.surum
+            for k in range(len(df2)):
+                y.adim(None, k)
+            bas = df2.index.asi8
+            grafik = self.df.index.asi8
+            bitis = np.r_[grafik[1:], grafik[-1] + self.tf_dk * 60_000_000_000]
+            g = self.guvenlik[anahtar] = {"yorum": y, "ilk": np.searchsorted(bas, grafik, side="left"),
+                                          "son": np.searchsorted(bas, bitis, side="left")}
+        kayit = g["yorum"].guvenlik_kayit.get(id(e), {})
+        ilk, son = int(g["ilk"][self.i]), int(g["son"][self.i])
+        degerler = [kayit.get(k, NA) for k in range(ilk, son)]
+        if dizi:
+            return degerler
+        return degerler[-1] if degerler else NA
 
     def _birlestir(self, dk: int) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
         """Grafik barlarını `dk` dakikalık kovalara birleştirir: (yüksek dilim barları, grafik→kova haritası, kova bitişleri)."""

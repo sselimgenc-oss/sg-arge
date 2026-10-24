@@ -339,3 +339,17 @@ def test_matrix_rows_and_reductions() -> None:
     assert _seri(kod, df, ad="y")[-1] == 3
     son = df.iloc[-3:]
     assert _seri(kod, df, ad="z")[-1] == pytest.approx(max(son["close"].max(), son["open"].max()))
+
+
+def test_lower_timeframe_security_returns_intrabar_values() -> None:
+    alt = _veri(24 * 8, freq="1h")
+    grafik = alt.resample("4h").agg({"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"})
+    kod = ("//@version=5\nstrategy('t')\nd = request.security_lower_tf(syminfo.tickerid, '60', close)\n"
+           "x = array.size(d)\ny = array.get(d, 0)\nz = request.security(syminfo.tickerid, '60', ta.sma(close, 2))\n"
+           "if x == 4\n    strategy.entry('L', strategy.long, 1)\n")
+    ps = PineStrateji(kod, sembol="BINANCE:TEST", tf="240")
+    ps.veri_saglayici = lambda s, dk: alt
+    calistir(ps, grafik)
+    y = ps.y
+    assert y._bul("x").deger == 4 and y._bul("y").deger == pytest.approx(alt["close"].iloc[-4])
+    assert y._bul("z").deger == pytest.approx(alt["close"].iloc[-2:].mean())
