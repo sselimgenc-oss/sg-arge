@@ -1558,14 +1558,14 @@ class Yorumlayici:
             if self.guvenlik_modu:      # başka sembolün ön koşusundaki ikinci dış sembol: değeri orada gerekmez
                 return NA
             return self._dis_sembol(e, str(sembol), max(dk, self.tf_dk) if dk else self.tf_dk, lookahead, gaps)
-        if dk == self.tf_dk or dk == 0:
+        if dk == self.tf_dk or dk == 0 or self.guvenlik_modu:
+            # alt koşuda dilim argümanı (ör. timeframe.period'a bağlı autoHtf()) farklı çıkabilir; TradingView onu grafik
+            # bağlamında bir kez hesaplar. Alt koşu bu çağrı için kurulduğundan ifade kendi barlarında kaydedilir.
             v = self._deger(ifade)
             if self.guvenlik_modu:
                 self.guvenlik_kayit.setdefault(id(e), {})[self.i] = v
             return v
         if dk < self.tf_dk:
-            if self.guvenlik_modu:      # başka bir dilimin ön koşusu: bu çağrının değeri orada gerekmez
-                return NA
             return self._alt_dilim(e, dizi=False)
         anahtar = tf_metin(dk)
         g = self.guvenlik.get(anahtar)
