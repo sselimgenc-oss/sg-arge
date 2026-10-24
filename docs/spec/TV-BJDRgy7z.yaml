@@ -16,9 +16,9 @@ gostergeler:
   atr14: {f: atr, n: 14}
   m: {f: macd, fast: 12, slow: 26, signal: 9}
   raw: {f: seri, ifade: 'cross_over(efast, eslow) and rsi14 > 30 and rsi14 < 70 and m.macd > m.signal'}
-  sig: {f: seri, ifade: 'raw[1]'}
+  sig: {f: seri, ifade: 'eger(raw[1], 1, 0) > 0'}
   sraw: {f: seri, ifade: 'cross_under(efast, eslow) and rsi14 < 70 and rsi14 > 30 and m.macd < m.signal'}
-  ssig: {f: seri, ifade: 'sraw[1]'}
+  ssig: {f: seri, ifade: 'eger(sraw[1], 1, 0) > 0'}
 ozel_kod: false
 giris: sig
 cikis: ssig
