@@ -64,3 +64,10 @@ U4'te kripto 4H trend kartı U4-H1 IS ve OOS'ta kârlıydı ama kapılarda elend
 - `pytest -q` tamamı geçer. Yeni testler: 1H yarım bar, kitaplar arası ayrılık (bir kitabın işlemi diğerinin özkaynağını değiştirmez), ana defter biçimi ve paritesi değişmez, `baslangic` öncesi dolum yok, gün içi kapanan işlem özkaynağa yansır.
 - Yerel prova: üç kitap 2026-09-01'den kurulur; PR açıklamasında kitap başına işlem sayısı ve son özkaynak (yalnız prova kanıtı, karar için değil).
 - PR `[F2] gölge kitap: 3 strateji, 2026-09-01'den`.
+
+## Ek 3 (kullanıcı onayı, 2026-10-24): test yapısı v2
+- Gölge kitaplar `docs/TEST_YAPISI.md` Adım 4-5'e göre yönetilir; kapasite 20 kitap.
+- **Durdurma:** kitap başlangıç sanal sermayesinin %10'unu kaybederse durur. MDD ≥ %15 uyarısı bilgi olarak kalır.
+- **İlerleme:** Ek 2'deki "6 ay, PF ≥ 1,1, ≥ 20 işlem" kuralının yerine Adım 5 (aylık kontrol, canlı haftalık getiriler, kalibre edilmiş eşik). Mevcut 3 kitapta yine yalnız canlı dönem (2026-10-24 →) sayılır.
+- **Deneme kaydı:** `results/canli/denemeler.csv`; mevcut 3 kitap ilk satırlardır.
+- **Sanal havuz:** ayrı iş, ayrı görev (lider tanımlar).

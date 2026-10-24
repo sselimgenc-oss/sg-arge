@@ -10,8 +10,8 @@
 - **Boyut ve maliyet:** yazarın `strategy()` ayarları (`initial_capital`, `default_qty_type/value`, `commission`, `slippage`). Rapora ek bir sütun: aynı işlemler **gerçekçi maliyetle** (kripto %0,1/taraf, diğerleri %0,05/taraf + 1 tick kayma); yazar maliyet girmediyse bu sütun asıl bakılacak olandır.
 - **Dolum:** TradingView strateji test aracı semantiği (`process_orders_on_close=false`: sinyal bar kapanışı, dolum sonraki açılış; stop/limit bar içi; aynı barda stop/hedef belirsizliğinde kötümser sıra).
 
-## 2. Eleme yok, rapor var
-Her strateji için tek satır: işlem sayısı, net kâr %, PF, kazanma oranı, en büyük düşüş, Sharpe, ortalama işlem, al-tut getirisi (aynı sembol, aynı dönem). Bilgi amaçlı ek sütunlar (eleme değil): son 2 yılın ayrı sonucu, maliyet 2x sonucu. Tablo net kâra ve PF'ye göre sıralanır; **seçimi kullanıcı yapar.**
+## 2. Değerlendirme
+`docs/TEST_YAPISI.md` (Adım 0-5): nedensellik denetimi, yazar ve uygulanabilir sonuç, sürüm tarihi sonrası sınama, tek kapı, sıralama, sanal havuz + 20 gölge kitap. Her strateji için tek satır; bilgi sütunları o dosyada. Kapıdan kalan da nedeniyle listelenir.
 
 ## 3. Veri
 - Kripto: Binance, her zaman dilimi, 2017→.
@@ -27,3 +27,5 @@ Yalnız gerçekten çalıştırılamayan kod: harici veri servisi, Pine içinde 
 - **Lider:** TradingView strateji test aracını taklit eden yürütücü (`engine/tv_emulator.py`: long/short, pyramiding, stop/limit/izleyen, qty_percent, yazar boyutu ve komisyonu) + birim testleri; her partiden 5 kartın kaynak karşılaştırması.
 - **Çevirmenler (Sonnet, Codex):** her script için `strategies/tv2/<id>.py`: Pine mantığını bar bar emirlere çeviren modül. 50'şerlik partiler, PR `[TV-2] parti n`. Öncelik: 1H-12H + 1W/3D (~265) → tf_belirsiz (60) → 30m-45m → 15m ve altı.
 - **Koşu:** Codex, partiler birleştikçe; çıktı `results/tv2/sonuclar.csv` + `results/TV2_RAPOR.md`.
+- **Sürüm tarihleri:** her script için pine-facade sürüm listesinden test edilen sürümün tarihi `arastirma/tv2_surumler.csv`'ye (çevirmen, parti PR'ında).
+- Öncelik `TEST_YAPISI.md` "Çeviri sırası"na göre; yazarın iddia ettiği getiri kullanılmaz.
