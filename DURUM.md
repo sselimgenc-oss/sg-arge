@@ -13,7 +13,7 @@ Son güncelleme: 2026-10-24, lider (Opus).
 |---|---|
 | Lider | U4 kapandı (`results/U4_SONUC.md`): 16/16 Reddedildi, ama kripto 4H trendinde (H1, H2) gerçek kâr izi var. Sonraki yön için kullanıcı kararı bekleniyor. |
 | Codex | Beklemede. U4 gerçek koşu (PR #171) kabul edildi; lider tekrar koşusuyla birebir. |
-| Sonnet | Beklemede. Sıradaki iş U5 (TradingView açık kaynak toplama), kullanıcının HTML sayfaları gelince. |
+| Sonnet | Beklemede. U5 tamam (PR #173): 1.298 TradingView açık kaynak strateji tarandı, süzgeçten 205 geçti (`arastirma/U5_tv.csv`, `U5_ozet.md`); örneklem denetimi 3/3. Test için en çok 10 aday seçimi kullanıcı kararıyla. |
 | Argon | Beklemede. |
 
 ## Sırada (kullanıcı kararı bekleyen)
@@ -23,6 +23,7 @@ Son güncelleme: 2026-10-24, lider (Opus).
 
 ## Kapanan fazların özeti
 - **Faz 1** (`docs/FAZ1_SONUC_RAPORU.md`): 422 strateji, 137 test. Geçti 2 (C07, R01), Koşullu 3 (A6-010, T8-07, V2B emtia 1H), Reddedildi 132, Doğrulanamaz 273. Önerilen portföy OOS %7,5, MDD %2,9.
+- **U5** (`arastirma/U5_ozet.md`): TradingView açık kaynak, 4H/1D, repaint izsiz 205 aday; test edilmedi.
 - **U4** (`results/U4_SONUC.md`): seyrek işlem, 4 kart × 4 kol. 16/16 Reddedildi. Kripto 4H trend IS ve OOS'ta kârlı (3x maliyette de) ama MDD95 %28, DSR düşük, kâr büyük coinlerde.
 - **U1** (`results/U1_SONUC.md`): kripto gün içi, 14 varyantın 14'ü Reddedildi. 15m/5m'de brüt kenar yok; 1H'de küçük ama maliyete yetmiyor.
 - **U3** (`docs/GOREV_U3.md`, `arastirma/U3_mtf.csv`): 53 MTF strateji kaydı, test edilmedi.
