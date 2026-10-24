@@ -59,6 +59,7 @@ class _Emir:
     trail_points: float | None = None          # tick
     trail_offset: float | None = None          # tick
     yorum: str = ""
+    oca: str | None = None                     # oca_type=cancel grubu: biri dolunca diğerleri iptal
     verildi: int = 0
     # izleyen stop durumu
     bagli: bool = False                        # çıkış emri bir kez açık işleme bağlandı mı
@@ -154,8 +155,13 @@ class Baglam:
 
     # ---- emirler (Pine strategy.*) ----
     def entry(self, kimlik: str, yon: int, qty: float | None = None, limit: float | None = None,
-              stop: float | None = None, comment: str = "") -> None:
-        self._ver(_Emir(kimlik, "giris", yon=yon, adet=qty, stop=_na(stop), limit=_na(limit), yorum=comment))
+              stop: float | None = None, comment: str = "", oca: str | None = None) -> None:
+        self._ver(_Emir(kimlik, "giris", yon=yon, adet=qty, stop=_na(stop), limit=_na(limit), yorum=comment, oca=oca))
+
+    def order(self, kimlik: str, yon: int, qty: float | None = None, limit: float | None = None,
+              stop: float | None = None, comment: str = "", oca: str | None = None) -> None:
+        """Pine strategy.order: ham emir; karşı pozisyonu adedi kadar azaltır, kalan yeni yönde açılır, pyramiding yok."""
+        self._ver(_Emir(kimlik, "emir", yon=yon, adet=qty, stop=_na(stop), limit=_na(limit), yorum=comment, oca=oca))
 
     def exit(self, kimlik: str, from_entry: str | None = None, qty: float | None = None, qty_percent: float | None = None,
              profit: float | None = None, limit: float | None = None, loss: float | None = None, stop: float | None = None,
@@ -171,14 +177,19 @@ class Baglam:
             emir.bagli, emir.iz_aktif, emir.iz_uc = eski.bagli, eski.iz_aktif, eski.iz_uc
         self._ver(emir, anahtar="X:" + kimlik)
 
-    def close(self, kimlik: str, comment: str = "", qty: float | None = None, qty_percent: float | None = None) -> None:
+    def close(self, kimlik: str, comment: str = "", qty: float | None = None, qty_percent: float | None = None,
+              immediately: bool = False) -> None:
         if any(t.entry_id == kimlik for t in self.acik):
             self._ver(_Emir(kimlik, "kapat", from_entry=kimlik, adet=qty, qty_percent=qty_percent, yorum=comment),
                       anahtar="C:" + kimlik)
+            if immediately:                            # Pine: aynı bar kapanış fiyatından
+                self._isle_piyasa(self.c[self.i], self.i, sadece="C:" + kimlik)
 
-    def close_all(self, comment: str = "") -> None:
+    def close_all(self, comment: str = "", immediately: bool = False) -> None:
         if self.acik:
             self._ver(_Emir("__hepsi__", "kapat", yorum=comment), anahtar="C:__hepsi__")
+            if immediately:
+                self._isle_piyasa(self.c[self.i], self.i, sadece="C:__hepsi__")
 
     def cancel(self, kimlik: str) -> None:
         for anahtar in (kimlik, "X:" + kimlik):
@@ -189,14 +200,15 @@ class Baglam:
 
     def _ver(self, emir: _Emir, anahtar: str | None = None) -> None:
         emir.verildi = self.i
-        if emir.tur == "giris" and emir.adet is None:
+        if emir.tur in ("giris", "emir") and emir.adet is None:
             ref = emir.stop if emir.stop is not None else emir.limit if emir.limit is not None else self.c[self.i]
             emir.adet = self._varsayilan_adet(ref)
         self.bekleyen[anahtar or emir.kimlik] = emir
         self.emir_kaydi.append((self.i, anahtar or emir.kimlik, emir.tur, emir.yon, _yuvarla(emir.adet), _yuvarla(emir.stop),
                                 _yuvarla(emir.limit), emir.from_entry, emir.qty_percent, emir.profit, emir.loss,
                                 emir.trail_points, emir.trail_offset, _yuvarla(emir.trail_price)))
-        if self.a.process_orders_on_close and emir.piyasa and emir.tur != "cikis":
+        if self.a.process_orders_on_close and emir.piyasa and emir.tur != "cikis" and \
+                (anahtar or emir.kimlik) in self.bekleyen:
             self._isle_piyasa(self.c[self.i], self.i, sadece=anahtar or emir.kimlik)
 
     def _varsayilan_adet(self, fiyat: float) -> float:
@@ -236,6 +248,23 @@ class Baglam:
             return
         self.acik.append(_Islem(emir.kimlik, yon, adet, adet, dolum, bar, self._komisyon(dolum, adet)))
 
+    def _ham(self, emir: _Emir, fiyat: float, bar: int, kaymali: bool) -> None:
+        yon, kalan = emir.yon, float(emir.adet or 0.0)
+        dolum = self._kayma(fiyat, yon) if kaymali else fiyat
+        if self.acik and self.acik[0].yon == -yon:
+            mevcut = sum(t.adet for t in self.acik)
+            kapanan = min(mevcut, kalan)
+            self._kapat(list(self.acik), kapanan, dolum, bar, emir.kimlik)
+            kalan -= kapanan
+        if kalan > 1e-12:
+            self.acik.append(_Islem(emir.kimlik, yon, kalan, kalan, dolum, bar, self._komisyon(dolum, kalan)))
+
+    def _oca_iptal(self, emir: _Emir) -> None:
+        if emir.oca:
+            for anahtar, diger in list(self.bekleyen.items()):
+                if diger.oca == emir.oca:
+                    del self.bekleyen[anahtar]
+
     def _kapat(self, hedef: list[_Islem], adet: float | None, fiyat: float, bar: int, exit_id: str) -> None:
         kalan = sum(t.adet for t in hedef) if adet is None else adet
         for t in hedef:                                # FIFO
@@ -273,7 +302,7 @@ class Baglam:
 
     def _seviyeler(self, emir: _Emir) -> list[tuple[str, int, float]]:
         """Bir emrin (ad, işlem yönü +1 alış/-1 satış, seviye) tetik listesi; tür ad: stop/limit."""
-        if emir.tur == "giris":
+        if emir.tur in ("giris", "emir"):
             out = []
             if emir.stop is not None:
                 out.append(("stop", emir.yon, emir.stop))
@@ -314,8 +343,9 @@ class Baglam:
     def _doldur(self, anahtar: str, emir: _Emir, tur: str, fiyat: float, bar: int) -> None:
         del self.bekleyen[anahtar]
         kaymali = tur != "limit"
-        if emir.tur == "giris":
-            self._ac(emir, fiyat, bar, kaymali)
+        if emir.tur in ("giris", "emir"):
+            (self._ac if emir.tur == "giris" else self._ham)(emir, fiyat, bar, kaymali)
+            self._oca_iptal(emir)
             return
         hedef = self._cikis_hedefi(emir)
         if not hedef:
@@ -345,9 +375,10 @@ class Baglam:
                 if hedef:
                     adet = None if emir.adet is None and emir.qty_percent is None else self._cikis_adedi(emir, hedef)
                     self._kapat(hedef, adet, self._kayma(fiyat, -hedef[0].yon), bar, emir.kimlik if emir.kimlik != "__hepsi__" else "close_all")
-            elif emir.tur == "giris" and emir.piyasa:
+            elif emir.tur in ("giris", "emir") and emir.piyasa:
                 del self.bekleyen[anahtar]
-                self._ac(emir, fiyat, bar, kaymali=True)
+                (self._ac if emir.tur == "giris" else self._ham)(emir, fiyat, bar, kaymali=True)
+                self._oca_iptal(emir)
 
     def _bar_isle(self, j: int) -> None:
         o, h, l, c = self.o[j], self.h[j], self.l[j], self.c[j]
@@ -449,12 +480,16 @@ def gercekci(ayarlar: Ayarlar, kripto: bool) -> dict[str, Any]:
             "slippage": max(ayarlar.slippage, 0 if kripto else 1)}
 
 
-def nedensellik(modul: Any, df: pd.DataFrame, kesimler: tuple[float, ...] = (.4, .6, .8)) -> list[str]:
-    """Adım 0: veriyi kesince kesimden önceki emirler değişiyorsa modül geleceği görüyordur. Boş liste = temiz."""
+def nedensellik(modul: Any, df: pd.DataFrame, kesimler: tuple[float, ...] = (.3, .42, .54, .66, .78, .9)) -> list[str]:
+    """Adım 0: veriyi kesince kesimden önceki emirler değişiyorsa modül geleceği görüyordur. Boş liste = temiz.
+
+    Kesimler yüksek zaman dilimi barlarının (gün, hafta) ortasına düşsün diye küçük asal kaydırmalarla seçilir:
+    sınırda kesilen veri, bir sonraki barı gören koda (lookahead) sızıntıyı göstermez.
+    """
     tam = calistir(modul, df).emir_kaydi
     hatalar = []
-    for oran in kesimler:
-        k = int(len(df) * oran)
+    for sira, oran in enumerate(kesimler):
+        k = min(int(len(df) * oran) + (7, 13, 19, 23, 29, 31)[sira % 6], len(df) - 1)
         kisa = calistir(modul, df.iloc[:k]).emir_kaydi
         once = [e for e in tam if e[0] < k]
         kisa_once = [e for e in kisa if e[0] < k]
