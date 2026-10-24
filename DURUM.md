@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-24, lider (Opus).
+Son güncelleme: 2026-10-24 19:00 UTC, lider (Opus).
 
 ## Şu an
 **Faz 2: paper trade çalışıyor.** C07 + R01 (ABD günlük) + A6-010 (emtia günlük), eşit ağırlık, 5.000 USD sanal (`paper/portfoy.yaml`). Gerçek para yok.
@@ -13,11 +13,13 @@ Son güncelleme: 2026-10-24, lider (Opus).
 | Ajan | Görev |
 |---|---|
 | Lider | Lider + **denetçi** (6 saatte bir, `docs/denetim/`). U7 denetimi, `results/U7_SONUC.md`. |
-| Codex | **U7** koşusu (`docs/GOREV_U7.md`, Ek 1-4), taslak #200: U4 ve U1 koşuldu; U6 + Faz 1 + Reddit + motor kartları kaldı. |
+| Codex | **U7** (#200, taslak): U4 bitti; U1 5m ve U6 ayrı arka plan süreçlerinde (kayıt noktalı). Sonra Reddit, Faz 1, ardından `[TV-2] veri eşleme`. `u7_ozet.py` eksik sütun hatası bildirildi (denetim 2026-10-24 18:46, B1). |
 | Sonnet | **Limit bitti, 2026-10-27 Salı 18:00'e kadar görev yok.** Son iş: GOREV_U7 Ek 4 (#206, birleşti): 17 kart çevrildi, 21 Doğrulanamaz (çoğu durum makinesi/açık kâr/izleyen stop: TV-2 yürütücüsüyle yeniden ele alınır). |
-| Argon | `arastirma/argon/GOREV_ARGON_1.md`: erişilemeyen kaynaklardan 40 stratejinin kodunu birebir aktarma. |
+| Argon | **İptal** (kullanıcı, 2026-10-24). `arastirma/argon/GOREV_ARGON_1.md` uygulanmayacak; erişilemeyen kaynaklar (K2) Codex/lider işine döner. |
 
-**Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
+**TV-2** (`docs/GOREV_TV2.md`, `docs/TEST_YAPISI.md`): Pine kodu çeviri yapılmadan yürütülür (`engine/pine`, `engine/tv_emulator.py`, `backtests/tv2.py`). Açık kaynak 969; sürüm sonrası ≥ 1 yıl verisi olan (temiz sınama) 181, kalanı yetersiz kanıt (canlı izleme). İlk tur: 181'in 93 kripto stratejisi koşuyor (`results/tv2/satirlar/`); kripto dışı 88 Codex'in veri eşlemesini bekliyor; dakikalıklar ertelendi.
+
+**Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`, ek: `docs/denetim/2026-10-24-1846.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
 
 ## Sırada (kullanıcı kararı bekleyen)
 - **Kararlar 2026-10-24 (denetim):** düşüş kapısı → getiri/düşüş ≥ 0,5; DSR aile bazlı, eleyici değil (Koşullu(DSR) → gölge kitapta canlı teyit); 942 TV stratejisinin hepsi test edilecek (`docs/GOREV_TV2.md`); short fazı U7'den sonra. Bekleyen: Dukascopy gün içi veri (K8), Pine içi ML (K5).
