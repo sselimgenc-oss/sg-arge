@@ -1,0 +1,30 @@
+id: TV-9URAiZJE
+ad: HIGH CAGR 25%+ 50 / 200 EMA Cross - SPY, Daily Timeframe
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/9URAiZJE/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar finnick1111; yayin sembolu AMEX:SPY; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (AMEX:SPY)
+kol: ABD-1D
+yayin_sembolu: AMEX:SPY
+gostergeler:
+  f1: {f: ema, src: close, n: 50}
+  fast: {f: ema, src: f1, n: 1}
+  s1: {f: ema, src: close, n: 200}
+  slow: {f: ema, src: s1, n: 1}
+  bs: {f: seri, ifade: 'barssince(cross_over(fast, slow))'}
+ozel_kod: false
+giris: bs >= 0 and bs <= 70 and fast > slow and abs(fast - slow) / slow * 100 > 0.35 and (slow - slow[5]) / slow * 100 >= 0.0
+cikis: cross_under(fast, slow)
+stop: {tip: yuzde, deger: 10.0}
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: EMA(EMA(close, 50), 1) / EMA(EMA(close, 200), 1) (ekstra yumusatma 1 = etkisiz), golden cross sonrasi en fazla 70 bar icinde giris, ayirma > %0,35, yavas EMA 5 bar egimi >= 0, sert stop %10 (position_avg_price x 0,9), baslangic yili 1900 (etkisiz). 5x kaldirac ve sermayeye bagli miktar kullanilmaz.', 'Pine''da strategy.exit koruma emirleri pozisyon acildiktan sonra, dolum barinin kapanisinda verilir ve sonraki bardan etkindir; motorda stop/hedef dolum barindan itibaren etkindir (D8): dolum barinda stop/hedef vurulursa motor cikar, Pine cikmaz. Stop/hedef mesafesi sinyal barinin ATR''sine sabitlenir, dolum fiyatindan olculur (Pine: strategy.position_avg_price).', 'Pine''da strategy.exit koruma emirleri pozisyon acildiktan sonra, dolum barinin kapanisinda verilir ve sonraki bardan etkindir; motorda stop/hedef dolum barindan itibaren etkindir (D8): dolum barinda stop/hedef vurulursa motor cikar, Pine cikmaz. Stop/hedef mesafesi sinyal barinin ATR''sine sabitlenir, dolum fiyatindan olculur (Pine: strategy.position_avg_price).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

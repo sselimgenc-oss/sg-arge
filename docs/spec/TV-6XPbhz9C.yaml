@@ -1,0 +1,26 @@
+id: TV-6XPbhz9C
+ad: Mean Reversion Setup LliterH
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/6XPbhz9C/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar LliterH; yayin sembolu SP:SPX; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (SP:SPX)
+kol: ABD-4H
+yayin_sembolu: SP:SPX
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-4H}
+dogrulanamaz: {neden: veri, ayrinti: 'ABD icin 4H uzun veri yok (yayin sembolu SP:SPX). Kural cevrilmedi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (veri): ABD icin 4H uzun veri yok (yayin sembolu SP:SPX). Kural cevrilmedi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

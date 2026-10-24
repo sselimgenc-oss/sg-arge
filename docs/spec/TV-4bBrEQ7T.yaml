@@ -1,0 +1,26 @@
+id: TV-4bBrEQ7T
+ad: 'Feynman Renormalization: Armed Confluence & Risk Framework [Aht]'
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/4bBrEQ7T/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar AHTISHAM_EE; yayin sembolu POLONIEX:BTCUSDT; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (POLONIEX:BTCUSDT)
+kol: KRIPTO-1D
+yayin_sembolu: POLONIEX:BTCUSDT
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Giris her barda yeniden fiyatlanan bekleyen STOP emridir (buyStopPrice = high + 1,5 x ATR, strategy.entry stop=) ve pozisyon yalniz ters yondeki stop emrinin dolmasiyla kapanir (stop/hedef/sinyal cikisi yok). Dinamik, ters yonde bekleyen stop emriyle cikis motorda yok. Yaklasik ceviri yapilmadi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Giris her barda yeniden fiyatlanan bekleyen STOP emridir (buyStopPrice = high + 1,5 x ATR, strategy.entry stop=) ve pozisyon yalniz ters yondeki stop emrinin dolmasiyla kapanir (stop/hedef/sinyal cikisi yok). Dinamik, ters yonde bekleyen stop emriyle cikis motorda yok. Yaklasik ceviri yapilmadi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

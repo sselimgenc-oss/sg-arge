@@ -1,0 +1,26 @@
+id: TV-Ibi0s0z5
+ad: Desire To Trade Mechanical Volatility Breakout
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/Ibi0s0z5/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar EtienneCrete1; yayin sembolu NASDAQ:AMZN; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:AMZN)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:AMZN
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Dis veri: SPY piyasa rejimi filtresi (request.security ile AMEX:SPY kapanisi ve EMA(200), varsayilan olarak acik) giris kosuludur; ayrica qty_percent = %50 kismi cikis ve calisan pozisyon icin kademeli (EMA 20) izleyen stop kullanilir. Dis veri Dogrulanamaz kategorisidir.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Dis veri: SPY piyasa rejimi filtresi (request.security ile AMEX:SPY kapanisi ve EMA(200), varsayilan olarak acik) giris kosuludur; ayrica qty_percent = %50 kismi cikis ve calisan pozisyon icin kademeli (EMA 20) izleyen stop kullanilir. Dis veri Dogrulanamaz kategorisidir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
