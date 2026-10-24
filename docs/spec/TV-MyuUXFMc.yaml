@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (long ATR x 4 stop guncel ATR ile her bar; short bacakta ayrica qty_percent kismi hedefler). Anti-whipsaw EMA girisi ayri cevrilebilirdi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Giris, her iki yondeki ISLEMLERIN bar sayacina (lastTradeBar: ayrica short girisleri de sayar, minBarsBetweenTrades = 8) ve tarih penceresine baglidir; short bacak yoksayildiginda sayac degisir (yoksayilan short girisleri yeni long girisini engeller). Pozisyon gecmisine bagli durum Dogrulanamaz kategorisidir.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (long ATR x 4 stop guncel ATR ile her bar; short bacakta ayrica qty_percent kismi hedefler). Anti-whipsaw EMA girisi ayri cevrilebilirdi.']
+belirsiz: ['Dogrulanamaz (ceviri): Giris, her iki yondeki ISLEMLERIN bar sayacina (lastTradeBar: ayrica short girisleri de sayar, minBarsBetweenTrades = 8) ve tarih penceresine baglidir; short bacak yoksayildiginda sayac degisir (yoksayilan short girisleri yeni long girisini engeller). Pozisyon gecmisine bagli durum Dogrulanamaz kategorisidir.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
