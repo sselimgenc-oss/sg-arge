@@ -1,0 +1,26 @@
+id: TV-bA9UFcgj
+ad: SPY Bear Regime Short System
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/bA9UFcgj/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar thetrading; yayin sembolu AMEX:SPY; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (AMEX:SPY)
+kol: ABD-1D
+yayin_sembolu: AMEX:SPY
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Short-only strateji: tek giris strategy.entry(''Short'', strategy.short) (250 gunluk SMA altinda, RSI(3) 70''i yukari keser, SMA(5) ustunde); long bacak yoktur. Kural short fazina (U2a) aittir.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Short-only strateji: tek giris strategy.entry(''Short'', strategy.short) (250 gunluk SMA altinda, RSI(3) 70''i yukari keser, SMA(5) ustunde); long bacak yoktur. Kural short fazina (U2a) aittir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

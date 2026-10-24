@@ -1,0 +1,26 @@
+id: TV-yMnDhKLs
+ad: WJ BUY Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/yMnDhKLs/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar YUNUYUN; yayin sembolu NASDAQ:GOOG; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:GOOG)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:GOOG
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Cikis kurali yok: tum kademeli alimlar (pyramiding = 50, A/B/C modlari, varip bar ici durum degiskenleri) yalniz son tarihsel barda strategy.close_all ile kapatilir; biriktirme (DCA) stratejisidir, alim-satim cifti tanimlamaz. Cikis kurali olmayan kural Dogrulanamaz kategorisidir.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Cikis kurali yok: tum kademeli alimlar (pyramiding = 50, A/B/C modlari, varip bar ici durum degiskenleri) yalniz son tarihsel barda strategy.close_all ile kapatilir; biriktirme (DCA) stratejisidir, alim-satim cifti tanimlamaz. Cikis kurali olmayan kural Dogrulanamaz kategorisidir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -1,0 +1,31 @@
+id: TV-d1K2qpL3
+ad: BTC 4H Momentum - Long Only [Ensar]
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/d1K2qpL3/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar ensararikan; yayin sembolu BITSTAMP:BTCUSD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITSTAMP:BTCUSD)
+kol: KRIPTO-4H
+yayin_sembolu: BITSTAMP:BTCUSD
+gostergeler:
+  ema200: {f: ema, src: close, n: 200}
+  roc: {f: seri, ifade: '(close - close[20]) / close[20] * 100'}
+  lo7: {f: lowest, src: low, n: 7}
+  dm: {f: dmi, n: 14}
+ozel_kod: false
+giris: close > ema200 and ema200 > ema200[10] and roc > 1.0 and dm.adx > 20
+cikis: null
+stop: {tip: seviye, ifade: sinyal_lo7}
+hedef: {tip: seviye, ifade: sinyal_close + (sinyal_close - sinyal_lo7) * 3.0}
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: ROC(20) > %1, EMA(200) 10 bar once kinden yuksek, ADX(14) > 20, swing dip penceresi 7 (guncel bar dahil), R:R 3. Stop = son 7 barin en dusuk low''u, hedef = giris + 3 x (giris - stop); seviyeler sinyal barinin kapanisindan sabitlenir (strategy.exit giris emriyle ayni barda verilir).', 'Pine''da strategy.exit emri giris emriyle ayni barda (sinyal barinin kapanisinda) verilir; seviyeler sinyal barinin kapanisi ve ATR''sinden sabitlenir (kartta tip: seviye, sinyal_close/sinyal_atr). Giris sonraki acilista dolunca emir dolum barindan itibaren etkindir (motorla ayni).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

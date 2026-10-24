@@ -1,0 +1,26 @@
+id: TV-uvZ46BZ2
+ad: Momentum Strategy_Public
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/uvZ46BZ2/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar chinmayp5394; yayin sembolu NSE:MCX; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: DIGER (NSE:MCX)
+kol: DIGER-1D
+yayin_sembolu: NSE:MCX
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [DIGER]
+parametreler: {kol: DIGER-1D}
+dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu NSE:MCX FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu NSE:MCX FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

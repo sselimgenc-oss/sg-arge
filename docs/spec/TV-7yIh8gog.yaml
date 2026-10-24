@@ -1,0 +1,26 @@
+id: TV-7yIh8gog
+ad: GLD Machine Learning Strategy (Lasso Feature Selection)
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/7yIh8gog/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar hiron2; yayin sembolu AMEX:GLD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: EMTIA (AMEX:GLD)
+kol: EMTIA-1D
+yayin_sembolu: AMEX:GLD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [EMTIA]
+parametreler: {kol: EMTIA-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Pine icinde hazir egitilmis dogrusal model: bes ozellik icin sabit Lasso katsayilari ve standartlastirma sabitleri (score_lin = 0,5223 + ...) kodun icine gomulu; esik 0,379. Pine ici makine ogrenmesi (onceden egitilmis model) Dogrulanamaz kategorisidir.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Pine icinde hazir egitilmis dogrusal model: bes ozellik icin sabit Lasso katsayilari ve standartlastirma sabitleri (score_lin = 0,5223 + ...) kodun icine gomulu; esik 0,379. Pine ici makine ogrenmesi (onceden egitilmis model) Dogrulanamaz kategorisidir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

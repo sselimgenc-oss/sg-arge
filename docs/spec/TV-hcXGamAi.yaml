@@ -1,0 +1,26 @@
+id: TV-hcXGamAi
+ad: Vortex Nexus Alpha [JOAT]
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/hcXGamAi/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar officialjackofalltrades; yayin sembolu INDEX:BTCUSD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (INDEX:BTCUSD)
+kol: KRIPTO-4H
+yayin_sembolu: INDEX:BTCUSD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (stop/hedef = guncel kapanis -/+ volatilite x carpan, ayrica her barda yeniden kurulan izleyen stop).'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (stop/hedef = guncel kapanis -/+ volatilite x carpan, ayrica her barda yeniden kurulan izleyen stop).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

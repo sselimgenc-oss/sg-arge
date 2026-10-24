@@ -1,0 +1,26 @@
+id: TV-RehzSQ8g
+ad: SPXL - Buy The Panic VIX
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/RehzSQ8g/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar Kramer37; yayin sembolu AMEX:SPXL; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (AMEX:SPXL)
+kol: ABD-1D
+yayin_sembolu: AMEX:SPXL
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Dis veri: giris ve cikis VIX serisine (request.security("VIX")) baglidir; ayrica strategy.order ile kademeli alim/satim (pyramiding yok, strategy.order) ve kismi %50 satis. Dis veri Dogrulanamaz kategorisidir.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Dis veri: giris ve cikis VIX serisine (request.security("VIX")) baglidir; ayrica strategy.order ile kademeli alim/satim (pyramiding yok, strategy.order) ve kismi %50 satis. Dis veri Dogrulanamaz kategorisidir.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

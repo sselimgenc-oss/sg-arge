@@ -1,0 +1,26 @@
+id: TV-wigMmPHd
+ad: Trend + RSI Strategy (Refined)
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/wigMmPHd/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar glencole_aitd; yayin sembolu NASDAQ:AAPL; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:AAPL)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:AAPL
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (stop = guncel kapanis - 1,5 x ATR, hedef 3 x ATR; short bacak ters cevirir).'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (stop = guncel kapanis - 1,5 x ATR, hedef 3 x ATR; short bacak ters cevirir).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

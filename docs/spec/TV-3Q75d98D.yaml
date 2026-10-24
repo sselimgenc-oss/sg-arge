@@ -1,0 +1,26 @@
+id: TV-3Q75d98D
+ad: Simple ZigZag Double
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/3Q75d98D/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar hamster-bot; yayin sembolu BYBIT:BTCUSDT.P; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BYBIT:BTCUSDT.P)
+kol: KRIPTO-1D
+yayin_sembolu: BYBIT:BTCUSDT.P
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: Giris ve cikis zigzag seviyelerinde bekleyen STOP emirleridir (strategy.entry stop = LEVEL_LONG / LEVEL_SHORT2) ve long pozisyonu ters yondeki (short) stop emrinin dolmasiyla kapanir; seviyeler her yeni pivotta degisir. Ters yonde bekleyen stop emriyle cikis motorda yok. Yaklasik ceviri yapilmadi.}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Giris ve cikis zigzag seviyelerinde bekleyen STOP emirleridir (strategy.entry stop = LEVEL_LONG / LEVEL_SHORT2) ve long pozisyonu ters yondeki (short) stop emrinin dolmasiyla kapanir; seviyeler her yeni pivotta degisir. Ters yonde bekleyen stop emriyle cikis motorda yok. Yaklasik ceviri yapilmadi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

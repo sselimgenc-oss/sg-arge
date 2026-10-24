@@ -1,0 +1,26 @@
+id: TV-TlwmnFdI
+ad: System 2 - Structure Continuation
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/TlwmnFdI/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar JamolCooper; yayin sembolu OANDA:EURUSD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: FX (OANDA:EURUSD)
+kol: FX-1D
+yayin_sembolu: OANDA:EURUSD
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [DIGER]
+parametreler: {kol: FX-1D}
+dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu OANDA:EURUSD FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu OANDA:EURUSD FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
