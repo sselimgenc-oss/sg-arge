@@ -203,6 +203,8 @@ class Yorumlayici:
         self.risk_gun_zarar: tuple | None = None       # (değer, tür) strategy.risk.max_intraday_loss
         self.risk_gun_emir: int | None = None          # strategy.risk.max_intraday_filled_orders
         self.risk_gun: int | None = None
+        self.risk_ardisik: int | None = None           # strategy.risk.max_cons_loss_days
+        self.zararli_gun = 0
         self.gun_durdu: int | None = None              # gün içi sınır aşıldıysa o günün kodu
         self.son_ozkaynak = self.son_dolum = 0.0
         self.zirve = -math.inf
@@ -276,6 +278,12 @@ class Yorumlayici:
         c = self.ctx
         gun = int(self.gun_kodu[self.i])
         if gun != self.risk_gun:                       # gün başı: önceki barın kapanışındaki durum taban
+            if self.risk_gun is not None:              # biten gün zararlıysa seri uzar, değilse sıfırlanır
+                self.zararli_gun = self.zararli_gun + 1 if self.son_ozkaynak < self.gun_ozkaynak else 0
+                if self.risk_ardisik is not None and self.zararli_gun >= self.risk_ardisik and not self.durdu:
+                    self.durdu = True                  # kalıcı: emirler iptal, pozisyon kapanır
+                    c.cancel_all()
+                    c.close_all()
             self.risk_gun, self.gun_ozkaynak, self.gun_dolum = gun, self.son_ozkaynak or c.equity, self.son_dolum
         self.son_ozkaynak, self.son_dolum = c.equity, c.dolum_sayisi
         if self.gun_durdu == gun:
@@ -1132,6 +1140,9 @@ class Yorumlayici:
         if ad == "max_intraday_loss":
             self.risk_gun_zarar = (float(konum[0] if konum else adli["value"]),
                                    konum[1] if len(konum) > 1 else adli.get("type", "percent_of_equity"))
+            return None
+        if ad == "max_cons_loss_days":
+            self.risk_ardisik = int(konum[0] if konum else adli["count"])
             return None
         if ad == "max_intraday_filled_orders":
             self.risk_gun_emir = int(konum[0] if konum else adli["count"])

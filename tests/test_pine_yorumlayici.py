@@ -272,8 +272,15 @@ def test_intraday_risk_limits_halt_trading_until_the_next_day() -> None:
     # gün içi zarar: gün başından beri herhangi bir zararda dur; aynı gün sonraki barda giriş yok
     zarar = calistir(_strateji("strategy.risk.max_intraday_loss(1e-9, strategy.cash)\n" + govde), df)
     assert 0 < len(zarar.islemler) < len(serbest)
+    # ardışık 1 zararlı gün: ilk zararlı günden sonra kalıcı durur
+    ardisik = calistir(_strateji("strategy.risk.max_cons_loss_days(1)\n" + govde), df)
+    gun_kz = ardisik.ozkaynak.resample("D").last().diff()
+    ilk_zarar = gun_kz[gun_kz < 0].index[0] if (gun_kz < 0).any() else None
+    if ilk_zarar is not None:
+        sinir = ilk_zarar + pd.Timedelta(days=1)
+        assert (pd.to_datetime(ardisik.islemler["giris_zaman"]) < sinir).all()
     with pytest.raises(Desteklenmiyor):
-        calistir(_strateji("strategy.risk.max_cons_loss_days(3)\n"), df)
+        calistir(_strateji("strategy.risk.max_position_size_yok(3)\n"), df)
 
 
 def test_heikin_ashi_security_matches_the_formula_and_v4_alias() -> None:
