@@ -102,6 +102,11 @@ def _daily_returns(result) -> pd.Series:
     return asama2b._validation_returns(result, daily_equity=True)  # noqa: SLF001 - the Faz 1 definition of validation returns
 
 
+def _checkpoint_path(results_dir: Path, variant: str) -> Path:
+    safe = variant.replace("[", "_").replace("]", "").replace("=", "-").replace(":", "_")
+    return results_dir / "parca" / f"{safe}.csv"
+
+
 def _write_daily_returns(returns: pd.Series, variant: str, results_dir: Path) -> None:
     """Persist the applicable OOS return series used by U7 ranking."""
     safe = variant.replace("[", "_").replace("]", "").replace("=", "-").replace(":", "_")
@@ -234,6 +239,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--isci", type=int, default=0, help="null worker processes (0 = CPU count, capped by free memory)")
     parser.add_argument("--veri-kok", type=Path, default=ROOT / "data")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results" / "u1")
+    parser.add_argument("--resume", action="store_true", help="reuse completed per-variant checkpoint rows")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
@@ -252,6 +258,13 @@ def main(argv: list[str] | None = None) -> int:
     rows: list[dict[str, Any]] = []
     loaded_tf, data = None, {}
     for variant, card in items:
+        checkpoint = _checkpoint_path(args.results_dir, variant)
+        if args.resume and checkpoint.exists():
+            saved = pd.read_csv(checkpoint)
+            if len(saved) == 1 and saved.loc[0, "varyant"] == variant:
+                rows.append(saved.iloc[0].to_dict())
+                LOG.info("%s: checkpoint", variant)
+                continue
         if card["tf"] != loaded_tf:
             data, loaded_tf = {}, card["tf"]
             gc.collect()
@@ -263,6 +276,8 @@ def main(argv: list[str] | None = None) -> int:
                                boot_reps=args.bootstrap_tekrar, results_dir=args.results_dir)
         LOG.info("%s: %s (%s)", variant, row["karar"], row["neden"])
         rows.append(row)
+        checkpoint.parent.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame([row], columns=COLUMNS).to_csv(checkpoint, index=False)
     if rows:
         write_outputs(pd.DataFrame(rows, columns=COLUMNS), args.results_dir)
     return 0
