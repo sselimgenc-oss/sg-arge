@@ -280,9 +280,10 @@ class Yorumlayici:
     def _kutuphane(self, d: A.Import) -> None:
         """`import kullanıcı/ad/sürüm as takma`: dışa açık fonksiyon ve tipler `takma.ad` olarak, iç yardımcılar (çakışmazsa)
         çıplak adla kaydedilir. Kaynak bulunamazsa takma ad 'eksik' işaretlenir; çağrıldığında Desteklenmiyor."""
-        yol = f"{d.namespace}/{d.name}/{d.version}"
+        kullanici = d.namespace.replace(TIRE, "-")
+        yol = f"{kullanici}/{d.name}/{d.version}"
         takma = d.alias or d.name
-        kaynak = KUTUPHANE_SAGLAYICI(d.namespace, d.name, int(d.version)) if KUTUPHANE_SAGLAYICI else None
+        kaynak = KUTUPHANE_SAGLAYICI(kullanici, d.name, int(d.version)) if KUTUPHANE_SAGLAYICI else None
         if not kaynak:
             self.eksik_kutuphane[takma] = yol
             return
@@ -1488,6 +1489,8 @@ class Yorumlayici:
         tf = konum[0] if konum else adli.get("timeframe", "")
         oturum = konum[1] if len(konum) > 1 else adli.get("session")
         tz = konum[2] if len(konum) > 2 else adli.get("timezone", self.tz)
+        if isinstance(oturum, str) and oturum and not re.match(r"\s*\d{4}-\d{4}", oturum):
+            oturum, tz = None, oturum                  # time("D", "America/New_York"): ikinci argüman saat dilimi
         dk = tf_dakika(tf) if tf else self.tf_dk
         t = int(self.zaman_ms[self.i])
         if dk != self.tf_dk:
@@ -2202,9 +2205,15 @@ def _metin(ad: str, konum, adli) -> Any:
 GENERIK = re.compile(r"\b((?:array|matrix|map)\.new)\s*<\s*[\w.]+(?:\s*,\s*[\w.]+)?\s*>\s*\(")
 
 
+TIRE = "__tire__"
+IMPORT_TIRE = re.compile(r"^(\s*import\s+)([\w-]+)/", re.M)
+
+
 def on_isle(kaynak: str) -> str:
     """pynescript `array.new<float>(...)` ifadesini karşılaştırma (`array.new < float > (...)`) diye ayrıştırıyor:
-    tür parametresi anlamı değiştirmediği için ayrıştırmadan önce `array.new(...)` yapılır."""
+    tür parametresi anlamı değiştirmediği için ayrıştırmadan önce `array.new(...)` yapılır. `import` satırındaki
+    tireli kullanıcı adı (trade-wzrd) ayrıştırılamıyor: geçici olarak TIRE ile değiştirilir."""
+    kaynak = IMPORT_TIRE.sub(lambda m: m.group(1) + m.group(2).replace("-", TIRE) + "/", kaynak)
     return GENERIK.sub(r"\1(", kaynak)
 
 
