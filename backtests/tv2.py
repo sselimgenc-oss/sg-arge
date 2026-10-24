@@ -122,7 +122,38 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
         df.columns = [c[0].lower() if isinstance(c, tuple) else str(c).lower() for c in df.columns]
         df.index = pd.to_datetime(df.index, utc=True)
         return _kapanmis(df[["open", "high", "low", "close", "volume"]].dropna(), dk), f"yfinance {kod}"
+    if dk < 1440 and (kok in YFINANCE or (borsa in HISSE_BORSALARI and re.fullmatch(r"[A-Z]{1,5}", kok))):
+        return _yfinance_gun_ici(YFINANCE.get(kok, kok), dk)
     return None, "veri_yok: gün içi/yerel piyasa (Dukascopy bekliyor)" if dk < 1440 else f"veri_yok: eşleme yok ({sembol})"
+
+
+YF_ARALIK = {1: ("1m", "7d"), 2: ("2m", "60d"), 5: ("5m", "60d"), 15: ("15m", "60d"), 30: ("30m", "60d"),
+             60: ("60m", "730d"), 90: ("90m", "60d")}
+
+
+def _yfinance_gun_ici(kod: str, dk: int) -> tuple[pd.DataFrame | None, str]:
+    """yfinance gün içi: geçmiş sınırlı (1m 7 gün, 2-30m 60 gün, 60m 730 gün). Tam bölünen en büyük aralıktan
+    birleştirilir; birleştirme UTC hizalı (TradingView seans hizası değil) — `veri` notunda yazılır."""
+    import yfinance as yf
+    taban = max((k for k in YF_ARALIK if dk % k == 0), default=None)
+    if taban is None:
+        return None, f"veri_yok: yfinance {dk}dk aralık yok"
+    aralik, donem = YF_ARALIK[taban]
+    yol = CACHE / f"yf_{re.sub(r'[^A-Za-z0-9]', '_', kod)}_{aralik}.parquet"
+    if yol.exists() and time.time() - yol.stat().st_mtime < 6 * 3600:
+        df = pd.read_parquet(yol)
+    else:
+        df = yf.download(kod, period=donem, interval=aralik, auto_adjust=False, progress=False)
+        if df.empty:
+            return None, f"veri_yok: yfinance {kod} {aralik}"
+        df.columns = [c[0].lower() if isinstance(c, tuple) else str(c).lower() for c in df.columns]
+        df.index = pd.to_datetime(df.index, utc=True)
+        df = df[["open", "high", "low", "close", "volume"]].dropna()
+        CACHE.mkdir(parents=True, exist_ok=True)
+        df.to_parquet(yol)
+    if taban != dk:
+        df = _yeniden_ornekle(df, dk)
+    return _kapanmis(df, dk), f"yfinance {kod} {aralik} (son {donem})" + ("" if taban == dk else f" → {dk}dk, UTC hizalı")
 
 
 def _yeniden_ornekle(df: pd.DataFrame, dk: int) -> pd.DataFrame:
