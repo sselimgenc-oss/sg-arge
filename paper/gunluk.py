@@ -188,14 +188,17 @@ def indir(portfoy: Portfoy, directory: Path = DATA_DIR) -> list[str]:
     return failed
 
 
-def indir_golge(directory: Path = ROOT / "data" / "hourly") -> list[str]:
-    """Refresh only the six live shadow symbols; its archive is not the paper ledger."""
+def indir_golge(directory: Path = ROOT / "data" / "hourly", *, simdi: pd.Timestamp | None = None) -> list[str]:
+    """Refresh six shadow symbols, with only the 4H warm-up window on a fresh CI archive."""
     from data.fetch import fetch_asset  # noqa: PLC0415
 
+    now = pd.Timestamp(simdi or pd.Timestamp.now(tz="UTC"))
+    now = now.tz_localize("UTC") if now.tzinfo is None else now.tz_convert("UTC")
+    start_override = now - pd.Timedelta(days=120)  # U4-H1 needs 100 × 4H bars plus a small buffer
     failed = []
     for symbol in ("BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "TRXUSDT"):
         try:
-            fetch_asset(Asset(symbol, "KRIPTO25", "binance"), "1h", append=True, directory=directory)
+            fetch_asset(Asset(symbol, "KRIPTO25", "binance"), "1h", append=True, start_override=start_override, directory=directory)
         except Exception as exc:  # noqa: BLE001
             failed.append(f"{symbol} ({type(exc).__name__})")
     return failed
@@ -530,6 +533,9 @@ def main() -> int:
         if failed:
             print("UYARI indirilemeyen semboller (eski arsiv kullanilir):", ", ".join(failed), file=sys.stderr)
     veri = kapanmamis_gunluk_bari_at(yukle_veri(portfoy, args.veri_dir))
+    # The shadow book is independent of the daily book: a missing daily bar
+    # must never prevent a closed 4H bar from being booked.
+    calistir_golge(golge_portfoy(path=args.portfoy), yukle_golge_veri(ROOT / "data" / "hourly"))
     bekleyen = ilk_bar_bekleniyor(portfoy, veri)
     if bekleyen:  # nothing to book yet: leave the ledger untouched instead of failing the hourly run
         mesaj = f"paper baslangicindan ({_day(portfoy.baslangic)}) sonra kapanmis gunluk bar yok: {', '.join(bekleyen)}. Defter degismedi."
@@ -540,7 +546,6 @@ def main() -> int:
         return 0
     ozet = calistir(portfoy, veri, args.defter)
     rapor_yaz(portfoy, ozet, args.defter, args.rapor)
-    calistir_golge(golge_portfoy(path=args.portfoy), yukle_golge_veri(ROOT / "data" / "hourly"))
     print(json.dumps({"bitis": str(ozet["bitis"].date()), "ozkaynak": round(ozet["ozkaynak"], 2), "mdd": round(ozet["mdd"], 4),
                       "durdur": str(ozet["durdur"]), "eklenen": ozet["eklenen"]}, ensure_ascii=False))
     return 0
