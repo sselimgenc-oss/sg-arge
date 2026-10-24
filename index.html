@@ -58,9 +58,12 @@
           <div class="text-base font-bold text-slate-200" id="kpiClosed">—</div><div class="text-[10px] text-slate-400">kapanmış işlemler</div></div>
       </div>
 
-      <button onclick="loadData(true)" class="flex items-center justify-center gap-1.5 px-3 py-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-[#243555]">
-        <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-[#f5cb5c]"></i><span>Yenile</span>
-      </button>
+      <div class="flex flex-col items-stretch xl:items-end gap-1">
+        <button onclick="loadData(true)" class="flex items-center justify-center gap-1.5 px-3 py-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-[#243555]">
+          <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-[#f5cb5c]"></i><span>Yenile</span>
+        </button>
+        <div class="text-[10px] text-slate-400 text-center xl:text-right" id="dataAge">—</div>
+      </div>
     </div>
   </header>
 
@@ -278,6 +281,7 @@
     setText('kpiOpenSub', (D.pending_orders || []).length + ' bekleyen emir');
     setText('kpiClosed', isNum(k.closed_trades_count) ? `${k.closed_trades_count} • %${fmt(k.win_rate_pct, 1)}` : '—');
     setText('sbUpdate', m.updated_at || m.last_update || '—');
+    $('dataAge').textContent = veriYasi(m.updated_at);
     setText('sbPriceTime', m.fiyat_zamani ? m.fiyat_zamani + (m.fiyat_kaynagi === 'son_kapanis' ? ' (son kapanış)' : '') : 'son kapanış');
     setText('sbPeriod', m.test_period || '');
     setText('sbNote', m.anlik_not || '');
@@ -492,6 +496,16 @@
     const active = document.querySelector('.nav-btn.active');
     if (active && (active.dataset.nav === 'grafik' || active.dataset.nav === 'acik')) drawCharts();
     if (window.lucide) lucide.createIcons();
+  }
+
+  // "Yenile" yalnız data.json'u yeniden okur; veri, sg-arge paper iş akışı çalışınca değişir. Ne kadar eski olduğu görünsün.
+  function veriYasi(iso) {
+    const t = iso ? new Date(iso) : null;
+    if (!t || isNaN(t)) return 'veri saati bilinmiyor';
+    const dk = Math.max(0, Math.round((Date.now() - t.getTime()) / 60000));
+    const ne = dk < 60 ? `${dk} dk önce` : dk < 2880 ? `${Math.round(dk / 60)} sa önce` : `${Math.round(dk / 1440)} gün önce`;
+    const saat = t.toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return `veri: ${saat} (${ne})`;
   }
 
   async function loadData(manual) {
