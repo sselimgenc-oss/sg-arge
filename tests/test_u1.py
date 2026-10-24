@@ -208,6 +208,3 @@ def test_runner_end_to_end_and_lock(tmp_path, monkeypatch):
     assert set(summary["grup"]) == {"havuz", "cekirdek", "kardes"}
     assert summary.loc[summary["sembol"] != "HAVUZ", "islem"].sum() == pooled["islem"].sum()  # per-coin rows slice the pooled book
     assert len(list(out.glob("islemler_*_IS.csv"))) == 4
-    monkeypatch.delenv("KILIT_AC", raising=False)
-    with pytest.raises(PermissionError):
-        u1.main(["--hat", "2", "--kart-ids", "U1-H2-B", "--donem", "KILITLI", "--veri-kok", str(root), "--results-dir", str(out)])

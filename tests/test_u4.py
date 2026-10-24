@@ -20,9 +20,8 @@ def test_fixed_preregistered_variants_are_four_by_four(monkeypatch: pytest.Monke
     assert {card["id"] for _variant, card, _market in items} == set(u4.CARD_IDS)
 
 
-def test_locked_period_has_no_runner_escape_hatch() -> None:
-    with pytest.raises(PermissionError):
-        u4.lock_check(pd.Timestamp("2025-10-01", tz="UTC"))
+def test_former_locked_period_is_available_to_the_runner() -> None:
+    assert u4.lock_check(pd.Timestamp("2025-10-01", tz="UTC")) is None
 
 
 def test_runner_writes_only_summaries_on_synthetic_stub(tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:

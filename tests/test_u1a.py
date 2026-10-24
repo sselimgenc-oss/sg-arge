@@ -10,7 +10,7 @@ import yaml
 
 from backtests import tarama, u1
 from data.fetch import Asset, quality_metrics
-from engine.kilit import KILIT_SONU, kes
+from engine.kilit import kes
 from scripts import kardes_rapor
 from scripts.kardes_rapor import summarize_trades
 
@@ -30,10 +30,10 @@ def test_binance_quality_uses_requested_interval() -> None:
     assert metrics["missing_bars"] == 1
 
 
-def test_kilit_cuts_locked_period_and_explicit_override() -> None:
+def test_kilit_no_longer_cuts_the_former_locked_period() -> None:
     index = pd.DatetimeIndex(["2025-09-30 23:00", "2025-10-01 00:00"], tz="UTC")
     frame = _bars(index)
-    assert kes(frame).index[-1] == index[0]
+    assert len(kes(frame)) == 2
     assert len(kes(frame, env={"KILIT_AC": "1"})) == 2
 
 
@@ -99,7 +99,7 @@ def _spec(card_id: str, tf: str = "15m") -> dict:
 
 
 
-def test_prepare_lock_is_an_explicit_parameter_not_a_card_id_prefix() -> None:
+def test_prepare_lock_compatibility_flag_does_not_cut_data() -> None:
     index = pd.date_range("2025-09-28", "2025-10-05", freq="15min", tz="UTC")
     rng = np.random.default_rng(1)
     close = pd.Series(100 + rng.normal(0, 0.1, len(index)).cumsum(), index=index)
@@ -108,9 +108,9 @@ def test_prepare_lock_is_an_explicit_parameter_not_a_card_id_prefix() -> None:
     card["id"] = "T8-07"  # a Hat 0 style id: the old "U1-" prefix test would have skipped the lock
     start, end = pd.Timestamp("2025-09-28", tz="UTC"), pd.Timestamp("2025-10-05", tz="UTC")
     locked = tarama.prepare(card, {"BTCUSDT": frame}, "KRIPTO25", start=start, end=end, kilit=True)
-    assert locked.frames["BTCUSDT"].index.max() <= KILIT_SONU
+    assert locked.frames["BTCUSDT"].index.max() > pd.Timestamp("2025-09-30", tz="UTC")
     open_ = tarama.prepare(card, {"BTCUSDT": frame}, "KRIPTO25", start=start, end=end)
-    assert open_.frames["BTCUSDT"].index.max() > KILIT_SONU  # default stays off: Faz 1 scans are unchanged
+    assert open_.frames["BTCUSDT"].index.max() > pd.Timestamp("2025-09-30", tz="UTC")
 
 
 def test_u1_trade_csv_feeds_kardes_rapor_directly(tmp_path, monkeypatch) -> None:

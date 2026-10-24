@@ -11,9 +11,8 @@ No new statistics are written here; the stages reuse the Faz 1 code:
 * **Sibling report:** ``scripts/kardes_rapor.py`` on the OOS pooled trade list.
 * **Decision:** Gecti / Kosullu / Reddedildi, gates exactly as GOREV_U1 section 4 and ``asama2b.decide``.
 
-The lock is always on (``tarama.prepare(kilit=True)``). Memory: one variant at a time, the archive of one timeframe is
-held while its variants run and dropped before the next (``--tf`` selects timeframes); null workers are capped by free
-memory (``tarama.bellek_isci``).
+Memory: one variant at a time, the archive of one timeframe is held while its variants run and dropped before the next
+(``--tf`` selects timeframes); null workers are capped by free memory (``tarama.bellek_isci``).
 
     python backtests/u1_huni.py --tf 1H,15m --tekrar 200 --isci 4 --veri-kok data
 """
@@ -106,7 +105,6 @@ def _daily_returns(result) -> pd.Series:
 def stage_2a(variant: str, card: dict[str, Any], data: dict[str, pd.DataFrame], reps: int, reps_high: int, workers: int) -> dict[str, Any]:
     """IS pooled null test; returns the 2a columns."""
     start, end = u1.PERIODS["IS"]
-    u1.lock_check(end)
     prepared = tarama.prepare(card, data, u1.MARKET, start=start, end=end, kilit=True)
     real = prepared.run(1.0, trusted_inputs=True)
     pf, ortr, count = asama2a.trade_stats(real.trades)
@@ -132,7 +130,6 @@ def stage_2a(variant: str, card: dict[str, Any], data: dict[str, pd.DataFrame], 
 def stage_2b(variant: str, card: dict[str, Any], data: dict[str, pd.DataFrame], boot_reps: int, results_dir: Path) -> dict[str, Any]:
     """OOS: cost stress, +1 bar delay, bootstrap MDD95, DSR and the sibling report of the 1x trade list."""
     start, end = u1.PERIODS["OOS"]
-    u1.lock_check(end)
     prepared = tarama.prepare(card, data, u1.MARKET, start=start, end=end, kilit=True)
     annual = tarama.annualization_for(card["tf"], u1.MARKET)
     runs = {mult: prepared.run(mult, trusted_inputs=True) for mult in u1.COSTS}

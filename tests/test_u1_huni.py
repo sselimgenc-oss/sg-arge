@@ -81,17 +81,8 @@ def test_funnel_end_to_end_on_synthetic_data(tmp_path, monkeypatch):
     assert {"symbol", "net_pnl", "exit_date"} <= set(pd.read_csv(first).columns)
 
 
-def test_locked_period_cannot_be_opened_by_the_funnel(tmp_path, monkeypatch):
-    root = tmp_path / "data"
-    make_archive(root, (("15m", 15),), days=60)
-    monkeypatch.setitem(u1.PERIODS, "OOS", (pd.Timestamp("2025-10-01", tz="UTC"), pd.Timestamp("2100-01-01", tz="UTC")))
-    monkeypatch.delenv("KILIT_AC", raising=False)
-    with pytest.raises(PermissionError):
-        u1_huni.stage_2b("x", u1.load_card("U1-H2-A"), {}, 10, tmp_path)
-
-
-def test_funnel_data_is_cut_at_the_lock(tmp_path, monkeypatch):
-    """Data that runs past 2025-09-30 never reaches the engine, whatever the card id."""
+def test_funnel_data_reaches_the_former_locked_period(tmp_path, monkeypatch):
+    """U7 removed the cutoff: the funnel may use every bar in its selected OOS window."""
     index = pd.date_range("2025-09-20", "2025-10-10", freq="15min", tz="UTC")
     rng = np.random.default_rng(2)
     close = pd.Series(100 + rng.normal(0, 0.1, len(index)).cumsum(), index=index)
@@ -106,7 +97,6 @@ def test_funnel_data_is_cut_at_the_lock(tmp_path, monkeypatch):
         return prepared
 
     monkeypatch.setattr(u1_huni.tarama, "prepare", spy)
-    monkeypatch.setitem(u1.PERIODS, "OOS", (pd.Timestamp("2025-09-22", tz="UTC"), pd.Timestamp("2025-09-30", tz="UTC")))
-    monkeypatch.delenv("KILIT_AC", raising=False)
+    monkeypatch.setitem(u1.PERIODS, "OOS", (pd.Timestamp("2025-09-22", tz="UTC"), pd.Timestamp("2025-10-10", tz="UTC")))
     u1_huni.stage_2b("x[tf=15m]", u1.load_card("U1-H2-A"), {"BTCUSDT": frame}, 10, tmp_path)
-    assert seen["kilit"] is True and seen["last"] <= pd.Timestamp("2025-09-30 23:59:59", tz="UTC")
+    assert seen["kilit"] is True and seen["last"] == pd.Timestamp("2025-10-10", tz="UTC")

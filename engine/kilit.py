@@ -1,42 +1,24 @@
-"""U1 hidden-period guard.
-
-U1 development data must not include the locked period after 2025-09-30.
-The guard is deliberately opt-in only for opening the period, so an ordinary
-run cannot accidentally use the final examination data.
-"""
+"""Compatibility helpers after the U7 locked-period policy was removed."""
 
 from __future__ import annotations
 
-import logging
-import os
 from collections.abc import Mapping
 
 import pandas as pd
 
-KILIT_SONU = pd.Timestamp("2025-09-30 23:59:59.999999999", tz="UTC")
-_LOGGER = logging.getLogger(__name__)
-
-
 def acik(env: Mapping[str, str] | None = None) -> bool:
-    """Return whether an explicit ``KILIT_AC=1`` override was supplied."""
-
-    values = os.environ if env is None else env
-    return values.get("KILIT_AC") == "1"
+    """Retained for callers during the transition; data is always available."""
+    del env
+    return True
 
 
 def kes(frame: pd.DataFrame, *, env: Mapping[str, str] | None = None) -> pd.DataFrame:
-    """Return data through the locked cutoff, unless the override is explicit.
-
-    The input is never modified.  A timezone-aware index is required because
-    all repository market data is normalized to UTC.
-    """
+    """Return data unchanged; U7 removed the locked-period guard."""
 
     if not isinstance(frame.index, pd.DatetimeIndex) or frame.index.tz is None:
         raise ValueError("kilit requires a timezone-aware DatetimeIndex")
-    if acik(env):
-        _LOGGER.warning("KILIT_AC=1: locked period opened through %s", KILIT_SONU.date())
-        return frame
-    return frame.loc[frame.index <= KILIT_SONU]
+    del env
+    return frame
 
 
 def uygula(data: Mapping[str, pd.DataFrame], *, env: Mapping[str, str] | None = None) -> dict[str, pd.DataFrame]:

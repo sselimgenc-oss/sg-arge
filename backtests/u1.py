@@ -6,8 +6,7 @@
 * Hat 2 expands every ``izgara:`` of ``U1-H2-*`` (entry timeframe x parameter) into variants (14 trials in total with Hat 0).
 * Every variant is one pooled portfolio over the 14 coins (Faz 1 sizing: 0.5 % risk per trade, 2 % open risk). Per-coin
   rows are sliced from that pooled trade list. Costs 0.15 / 0.30 / 0.45 % (1x/2x/3x).
-* Periods: IS 2018-01-01 -> 2023-09-30, OOS 2023-10-01 -> 2025-09-30. Data is cut at the OOS end; the locked period
-  (2025-10-01 -> ) opens only with ``KILIT_AC=1`` (engine/kilit.py).
+* Periods: IS 2018-01-01 -> 2023-09-30, OOS 2023-10-01 -> 2025-09-30. U7 removed the locked-period guard.
 
     python backtests/u1.py --hat 0,2 --donem IS,OOS --veri-kok data --results-dir results/u1
 """
@@ -17,7 +16,6 @@ from __future__ import annotations
 import argparse
 import copy
 import logging
-import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -32,7 +30,6 @@ if str(ROOT) not in sys.path:
 
 from backtests import tarama  # noqa: E402
 from data.fetch import normalize_ohlcv  # noqa: E402
-from engine import kilit  # noqa: E402
 from engine.portfolio import calculate_metrics  # noqa: E402
 from engine.spec import normalize_timeframe  # noqa: E402
 
@@ -43,7 +40,6 @@ PERIODS = {
     "OOS": (pd.Timestamp("2023-10-01", tz="UTC"), pd.Timestamp("2025-09-30", tz="UTC")),
     "KILITLI": (pd.Timestamp("2025-10-01", tz="UTC"), pd.Timestamp("2100-01-01", tz="UTC")),
 }
-LOCK_END = PERIODS["OOS"][1]
 CORE = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "TRXUSDT"]
 SIBLINGS = ["ADAUSDT", "DOGEUSDT", "LTCUSDT", "LINKUSDT", "DOTUSDT", "AVAXUSDT", "BCHUSDT", "NEARUSDT"]
 HAT0 = ("T8-07", "V2B")
@@ -92,12 +88,6 @@ def all_variants(hats: tuple[int, ...] = (0, 2), directory: Path = SPEC) -> list
 
 
 # --------------------------------------------------------------------------------------------- data and periods
-def lock_check(end: pd.Timestamp) -> None:
-    """The locked period opens only with KILIT_AC=1 (engine/kilit.py; the log warning comes from there)."""
-    if end > LOCK_END and not kilit.acik():
-        raise PermissionError("kilitli donem (2025-10-01 ->) yalniz KILIT_AC=1 ile ve lider kararıyla acilir")
-
-
 def load_data(root: Path, tf: str, symbols: list[str]) -> dict[str, pd.DataFrame]:
     directory = root / tarama.TF_DIR[tf]
     frames = {}
@@ -119,9 +109,8 @@ def profit_factor(pnl: pd.Series) -> float:
 def run_variant(variant: str, card: dict[str, Any], data: dict[str, pd.DataFrame], period: str) -> tuple[list[dict[str, Any]], pd.DataFrame]:
     """Summary rows (per coin + pooled, 1x/2x/3x) and the 1x pooled trade list of one variant in one period."""
     start, end = PERIODS[period]
-    lock_check(end)
     data = {symbol: frame[frame.index <= end] for symbol, frame in data.items()}
-    prepared = tarama.prepare(card, data, MARKET, start=start, end=end, kilit=True)  # explicit lock for every U1 run, Hat 0 included
+    prepared = tarama.prepare(card, data, MARKET, start=start, end=end, kilit=True)
     annual = tarama.annualization_for(card["tf"], MARKET)
     results = {mult: prepared.run(mult, trusted_inputs=True) for mult in COSTS}
     trades = results[1.0].trades.copy()
@@ -154,7 +143,7 @@ def deneme_sayisi(items: list[tuple[str, dict[str, Any]]]) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--hat", default="0,2", help="comma separated: 0 (Faz 1 winners on crypto 1H), 2 (U1-H2 cards)")
-    parser.add_argument("--donem", default="IS,OOS", help="IS, OOS (KILITLI needs KILIT_AC=1)")
+    parser.add_argument("--donem", default="IS,OOS", help="IS, OOS, or a named configured period")
     parser.add_argument("--kart-ids", default="", help="comma separated card ids to keep (default: all of the chosen hats)")
     parser.add_argument("--veri-kok", type=Path, default=ROOT / "data")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results" / "u1")
