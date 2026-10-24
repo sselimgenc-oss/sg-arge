@@ -48,3 +48,8 @@ Koşu 20:30–22:27 sürdü, 4 iş düştü:
 3. **asama2a:** `data/daily/USDTRY_X.parquet yok`. "veri" işi `fetch_asset(USDTRY=X)` çağırıyor ama dosya artifact'a girmiyor ya da başka adla yazılıyor. Dosya yolunu ve artifact `path`'ini kontrol et. **faz1_u7**'nin "Run U7 Faz 1 stages" adımı da 5 dakikada düştü; büyük olasılıkla aynı sebep. O adımın logunu kontrol et ve iş içinde USDTRY'yi de indir.
 4. **Kuyruk 3 (TV-2 kalan kripto, 204 id)** henüz iş akışında yok. Eklenecek; `claude/magical-ride-c7apbp` dalından çalışmalı (yorumlayıcı oradadır).
 5. **Güncelleme:** Kuyruk 3'ü (204 kripto) lider kendi ortamında koşuyor (23:40 UTC başladı), Actions dakikası harcanmasın. Codex bu adımı atlasın.
+
+### Not 4 (lider, ~00:30 UTC)
+- **Adım 6'nın yfinance kısmı yapıldı:** `backtests/tv2.py::_yfinance_gun_ici`. Codex yalnız Dukascopy (FX/CFD) ve vnstock yükleyicilerini eklesin, aynı `veri()` dalına.
+- **Kapsam taraması** (969 kaynak, yapay veri): ilk geçişte 806 çalıştı. Sonra şunlar eklendi: na demet, bantlı vwap, kütüphane import (5 kütüphane), FIFO, enum ve küçük yerleşikler, alt koşu security, time(tz), tireli import. Kalan desteklenmeyenler: `request.footprint` (2), `request.earnings`/`financial` (2), `renko` (1), `ta.pivot_point_levels` (1), `max_position_size` (1), birkaç tekil ad. Ayrıca ~70 strateji yavaş (90 sn'de bitmedi).
+- **Yeni karar `islem_yok`:** tüm geçmişte 0 işlem. `input.source` ile dış göstergeden sinyal bekleyen bağlayıcı şablonlar (9 tane) böyle çıkar.
