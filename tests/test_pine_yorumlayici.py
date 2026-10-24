@@ -190,3 +190,29 @@ def test_interpreter_reproduces_the_hand_translation_trade_for_trade() -> None:
     a, b = calistir(ps, df).islemler, calistir(ospkem6i, df).islemler
     assert len(a) == len(b) > 50
     pd.testing.assert_frame_equal(a, b)
+
+
+def test_generic_constructor_is_preprocessed_not_parsed_as_comparison() -> None:
+    from engine.pine.yorumlayici import on_isle
+    assert on_isle("var a = array.new<float>(0)\nb = array.new< Nokta >(2, na)") == "var a = array.new(0)\nb = array.new(2, na)"
+    df = _veri(5)
+    ps = _strateji("var a = array.new<float>(0)\na.push(close)\nif a.size() == 3\n    strategy.entry('L', strategy.long)\n")
+    assert len(calistir(ps, df).emir_kaydi) == 1
+
+
+def test_strategy_order_oca_cancel_and_close_immediately() -> None:
+    df = _veri(40)
+    # strategy.order: karşı yönde 3 adet, 1 adet long'u kapatır ve 2 adet short açar (pyramiding yok)
+    s = calistir(_strateji("if bar_index == 1\n    strategy.order('A', strategy.long, 1)\nif bar_index == 3\n    strategy.order('B', strategy.short, 3)\n"), df)
+    assert list(s.islemler["entry_id"]) == ["A"] and s.islemler.iloc[0]["exit_id"] == "B"
+    # OCA cancel: iki yönlü bekleyen stop girişinden biri dolunca diğeri iptal; dar bant ikisini de tetikleyecek kadar yakın
+    kod = ("if bar_index == 5\n    strategy.entry('U', strategy.long, 1, stop=close * 1.0001, oca_name='g', oca_type=strategy.oca.cancel)\n"
+           "    strategy.entry('D', strategy.short, 1, stop=close * 0.9999, oca_name='g', oca_type=strategy.oca.cancel)\n"
+           "if bar_index == 30\n    strategy.close_all()\n")
+    assert len(calistir(_strateji(kod), df).islemler) == 1
+    ocasiz = kod.replace(", oca_name='g', oca_type=strategy.oca.cancel", "")
+    assert len(calistir(_strateji(ocasiz), df).islemler) == 2       # OCA yoksa ikisi de dolar (ters çevirme)
+    # immediately: kapanış aynı barın kapanış fiyatından
+    s = calistir(_strateji("if bar_index == 2\n    strategy.entry('L', strategy.long, 1)\nif bar_index == 6\n    strategy.close('L', immediately=true)\n"), df)
+    t = s.islemler.iloc[0]
+    assert t["cikis_bar"] == 6 and t["cikis_fiyat"] == pytest.approx(df["close"].iloc[6])

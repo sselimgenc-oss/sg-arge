@@ -22,6 +22,7 @@ Belgelenmiş varsayımlar:
 from __future__ import annotations
 
 import math
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -62,6 +63,13 @@ SABIT_NS = {"color", "shape", "location", "size", "plot", "position", "text", "x
             "hline", "display", "format", "alert", "currency", "scale", "font", "box", "table", "linefill", "chart",
             "barmerge", "session", "order", "adjustment", "backadjustment", "settlement_as_close", "dividends",
             "earnings", "splits", "input", "dayofweek", "strategy.oca", "strategy.direction", "math", "xloc"}
+V3_SABIT = {  # v2/v3 namespace'siz renk ve çizim sabitleri (yalnız görsel)
+    "aqua", "black", "blue", "fuchsia", "gray", "green", "lime", "maroon", "navy", "olive", "orange", "purple", "red",
+    "silver", "teal", "white", "yellow", "line", "stepline", "histogram", "cross", "area", "columns", "circles", "linebr",
+    "areabr", "solid", "dotted", "dashed", "dayofweek", "integer", "float", "bool", "string", "source", "resolution",
+    "session", "symbol", "time", "price", "color"}
+DISPLAY = {"display.none": 0, "display.pane": 1, "display.data_window": 2, "display.price_scale": 4,
+           "display.status_line": 8, "display.pine_screener": 16, "display.all": 31}
 V4_ADLAR = {  # namespace'siz eski adlar -> v5 adı
     **{k: "ta." + k for k in ("sma", "ema", "rma", "wma", "vwma", "hma", "alma", "atr", "rsi", "crossover", "crossunder",
                                "cross", "highest", "lowest", "highestbars", "lowestbars", "change", "stdev", "dmi",
@@ -366,6 +374,8 @@ class Yorumlayici:
         if t is A.BinOp:
             return self._ikili(e.op, self._deger(e.left), self._deger(e.right))
         if t is A.Compare:
+            if isinstance(e.left, A.Attribute) and e.left.attr == "new" and len(e.ops) == 2:
+                raise Desteklenmiyor("ayrıştırıcı: tür parametreli .new<...> (ön işlemden kaçtı)")
             sol = self._deger(e.left)
             for op, sag_d in zip(e.ops, e.comparators):
                 sag = self._deger(sag_d)
@@ -561,7 +571,20 @@ class Yorumlayici:
             return self._takvim(ad, k)
         if ad in self.fonksiyonlar:
             raise Desteklenmiyor(f"fonksiyon değer olarak: {ad}")
+        if ad in V3_SABIT:
+            return ad
+        if ad in ("vwap", "tr", "obv", "accdist"):                  # v3/v4 namespace'siz yerleşik seriler
+            return self._ta_degisken("ta." + ad) if n == 0 else self._ta_gecmis("ta." + ad, n)
+        if ad in ("isintraday", "isdaily", "isweekly", "ismonthly", "isdwm", "isminutes", "isseconds", "period", "multiplier"):
+            return self._yerlesik_degisken("timeframe." + ad)
+        if ad == "interval":                                          # v2/v3: timeframe.multiplier
+            return self._yerlesik_degisken("timeframe.multiplier")
+        if ad in ("isconfirmed", "islast", "isfirst", "ishistory", "isrealtime", "isnew"):
+            return self._yerlesik_degisken("barstate." + ad)
         raise Desteklenmiyor(f"ad: {ad}")
+
+    def _ta_gecmis(self, ad: str, n: int) -> Any:
+        raise Desteklenmiyor(f"{ad}[{n}]")
 
     def _takvim(self, ad: str, k: int) -> Any:
         if not 0 <= k <= self.i:
@@ -664,6 +687,10 @@ class Yorumlayici:
         }
         if ad in s:
             return s[ad]
+        if ad in DISPLAY:
+            return DISPLAY[ad]
+        if ad in ("label.all", "line.all", "box.all", "table.all", "linefill.all", "polyline.all"):
+            return []
         if ad.startswith("strategy.") and not ad.startswith(("strategy.risk", "strategy.opentrades.", "strategy.closedtrades.")):
             return self._strateji_degisken(ad[9:])
         if ad in ("ta.tr", "ta.obv", "ta.vwap", "ta.accdist", "ta.iii", "ta.nvi", "ta.pvi", "ta.wad", "ta.wvad", "ta.pvt"):
@@ -708,6 +735,14 @@ class Yorumlayici:
             self.zirve = max(self.zirve, c.equity)
             self.maks_dd = max(self.maks_dd, self.zirve - c.equity)
             return self.maks_dd
+        if ad == "max_drawdown_percent":
+            self.zirve = max(self.zirve, c.equity)
+            self.maks_dd_yuzde = max(getattr(self, "maks_dd_yuzde", 0.0), (self.zirve - c.equity) / self.zirve * 100)
+            return self.maks_dd_yuzde
+        if ad == "netprofit_percent":
+            return c.netprofit / c.a.initial_capital * 100
+        if ad == "openprofit_percent":
+            return c.openprofit / c.a.initial_capital * 100
         if ad == "position_entry_name":
             return c.acik[-1].entry_id if c.acik else ""
         if ad == "cash":
@@ -762,7 +797,7 @@ class Yorumlayici:
             return self._kullanici(e, self.yontemler[ad], nesne)
         if isinstance(nesne, list):
             return self._yerlesik("array." + ad, e, on_arg=nesne)
-        if nesne is None:   # çizim nesnesi (label/line/box) yöntemi
+        if nesne is None or (isinstance(nesne, float) and na(nesne)):   # çizim nesnesi (label/line/box) ya da na
             if ad.startswith("get_"):
                 raise Desteklenmiyor(f"çizim nesnesinden okuma: {ad}")
             return None
@@ -939,10 +974,22 @@ class Yorumlayici:
             if self.risk_yon is not None and yon != self.risk_yon:
                 c.close_all()                                     # Pine: izin verilmeyen yöndeki giriş çıkış olur
                 return None
-            if b.get("oca_name") not in (None, "") and not na(b.get("oca_name")):
-                raise Desteklenmiyor("strategy.entry oca_name")
-            c.entry(str(b["id"]), yon, qty=_sayi(b.get("qty")), limit=_sayi(b.get("limit")), stop=_sayi(b.get("stop")))
+            c.entry(str(b["id"]), yon, qty=_sayi(b.get("qty")), limit=_sayi(b.get("limit")), stop=_sayi(b.get("stop")),
+                    oca=self._oca(b))
             return None
+        if ad == "strategy.order":
+            b = _bagla(["id", "direction", "qty", "limit", "stop", "oca_name", "oca_type", "comment"], konum, adli)
+            yon = b["direction"]
+            if "long" in adli:
+                yon = adli["long"]
+            if isinstance(yon, bool):
+                yon = LONG if yon else SHORT
+            c.order(str(b["id"]), yon, qty=_sayi(b.get("qty")), limit=_sayi(b.get("limit")), stop=_sayi(b.get("stop")),
+                    oca=self._oca(b))
+            return None
+        if ad == "strategy.default_entry_qty":
+            fiyat = konum[0] if konum else adli["fill_price"]
+            return c._varsayilan_adet(float(fiyat))
         if ad == "strategy.exit":
             b = _bagla(["id", "from_entry", "qty", "qty_percent", "profit", "limit", "loss", "stop", "trail_price",
                         "trail_points", "trail_offset", "oca_name", "comment"], konum, adli)
@@ -959,16 +1006,13 @@ class Yorumlayici:
                     return None
             else:
                 b = _bagla(["id", "comment", "qty", "qty_percent", "alert_message", "immediately"], konum, adli)
-            if _dogru(b.get("immediately", False)):
-                raise Desteklenmiyor("strategy.close immediately")
-            c.close(str(b["id"]), qty=_sayi(b.get("qty")), qty_percent=_sayi(b.get("qty_percent")))
+            c.close(str(b["id"]), qty=_sayi(b.get("qty")), qty_percent=_sayi(b.get("qty_percent")),
+                    immediately=_dogru(b.get("immediately", False)))
             return None
         if ad == "strategy.close_all":
             if self.surum < 5 and konum and not _dogru(konum[0]):
                 return None
-            if _dogru(adli.get("immediately", False)):
-                raise Desteklenmiyor("strategy.close_all immediately")
-            c.close_all()
+            c.close_all(immediately=_dogru(adli.get("immediately", False)))
             return None
         if ad == "strategy.cancel":
             if self.surum < 5 and len(konum) > 1 and not _dogru(konum[1]):
@@ -981,6 +1025,15 @@ class Yorumlayici:
             c.cancel_all()
             return None
         raise Desteklenmiyor(ad)
+
+    def _oca(self, b: dict) -> str | None:
+        ad = b.get("oca_name")
+        if ad in (None, "") or na(ad):
+            return None
+        tip = b.get("oca_type") or "none"
+        if tip == "reduce":
+            raise Desteklenmiyor("oca_type reduce")
+        return str(ad) if tip == "cancel" else None
 
     def _risk(self, ad: str, konum, adli):
         if ad == "allow_entry_in":
@@ -1012,7 +1065,8 @@ class Yorumlayici:
         bilgi = {"entry_price": t["giris_fiyat"], "exit_price": t["cikis_fiyat"], "profit": t["net"],
                  "entry_bar_index": t["giris_bar"], "exit_bar_index": t["cikis_bar"], "size": t["yon"] * t["adet"],
                  "entry_id": t["entry_id"], "exit_id": t["exit_id"], "commission": t["komisyon"],
-                 "entry_time": int(self.zaman_ms[t["giris_bar"]]), "exit_time": int(self.zaman_ms[t["cikis_bar"]])}
+                 "entry_time": int(self.zaman_ms[t["giris_bar"]]), "exit_time": int(self.zaman_ms[t["cikis_bar"]]),
+                 "profit_percent": t["net"] / (t["giris_fiyat"] * t["adet"]) * 100 if t["giris_fiyat"] * t["adet"] else NA}
         return bilgi[alan] if alan in bilgi else _yok(ad)
 
     # ---- ta.*
@@ -1173,6 +1227,22 @@ class Yorumlayici:
             u = st["u"](max(m, 0.0) if not na(m) else NA, x["length"])
             d = st["d"](max(-m, 0.0) if not na(m) else NA, x["length"])
             return 100 * (u - d) / (u + d) if (u + d) else NA
+        if k in ("percentile_nearest_rank", "percentile_linear_interpolation"):
+            x = b("source", "length", "percentage")
+            w = self._durum(e, T.Pencere)
+            w.ekle(x["source"])
+            s_ = w.son(x["length"])
+            if s_ is None or any(na(q) for q in s_):
+                return NA
+            s_ = sorted(s_)
+            yuzde = float(x["percentage"])
+            if k == "percentile_nearest_rank":
+                sira = max(int(math.ceil(yuzde / 100 * len(s_))), 1)
+                return s_[min(sira, len(s_)) - 1]
+            konum_ = yuzde / 100 * (len(s_) - 1)
+            alt = int(math.floor(konum_))
+            ust = min(alt + 1, len(s_) - 1)
+            return s_[alt] + (s_[ust] - s_[alt]) * (konum_ - alt)
         if k == "tsi":
             x = b("source", "short_length", "long_length")
             st = self._durum(e, lambda: {"g": T.Gecmis(), "a1": T.Ema(), "a2": T.Ema(), "b1": T.Ema(), "b2": T.Ema()})
@@ -1205,7 +1275,9 @@ class Yorumlayici:
             return self._takvim(ad, self.i)
         if na(t):
             return NA
-        d = pd.Timestamp(int(t), unit="ms", tz="UTC").tz_convert(tz or self.tz)
+        from zoneinfo import ZoneInfo
+        bolge = _tz(tz) if tz else self.tz
+        d = datetime.fromtimestamp(int(t) / 1000, tz=ZoneInfo(bolge) if isinstance(bolge, str) else bolge)
         if ad == "dayofweek":
             return (d.weekday() + 1) % 7 + 1
         if ad == "weekofyear":
@@ -1215,7 +1287,7 @@ class Yorumlayici:
 
     def _zaman_damgasi(self, konum, adli) -> Any:
         if konum and isinstance(konum[0], str) and len(konum) == 1:
-            ts = pd.Timestamp(konum[0])
+            ts = pd.Timestamp(konum[0].replace("+0000", "").strip())
             if ts.tzinfo is None:
                 ts = ts.tz_localize(self.tz)
             return int(ts.tz_convert("UTC").value // 1_000_000)
@@ -1227,9 +1299,13 @@ class Yorumlayici:
         y, m, g, s, d, sn = [(0 if p is None else p) for p in (parca + [0] * 6)[:6]]
         if any(na(p) for p in (y, m, g)):
             return NA
-        ts = pd.Timestamp(year=int(y), month=1, day=1, tz=_tz(tz)) + pd.DateOffset(months=int(m) - 1, days=int(g) - 1,
-                                                                                  hours=int(s), minutes=int(d), seconds=int(sn))
-        return int(ts.tz_convert("UTC").value // 1_000_000)
+        from zoneinfo import ZoneInfo
+        yil, ay = int(y) + (int(m) - 1) // 12, (int(m) - 1) % 12 + 1
+        yil = min(max(yil, 1), 9998)
+        bolge = _tz(tz)
+        ts = datetime(yil, ay, 1, tzinfo=ZoneInfo(bolge) if isinstance(bolge, str) else bolge) + timedelta(days=int(g) - 1, hours=int(s), minutes=int(d),
+                                                                      seconds=int(sn))
+        return int(ts.timestamp() * 1000)
 
     # ---- request.security
     def _security(self, e: A.Call) -> Any:
@@ -1396,12 +1472,15 @@ def _carpan(dk: int) -> int:
     return dk
 
 
-def _tz(tz: str) -> str:
+def _tz(tz):
+    """Pine saat dilimi: IANA adı ya da 'GMT+5:30' / 'UTC-3' biçimi (sabit fark)."""
     tz = str(tz)
-    if tz.upper().startswith(("GMT", "UTC")) and len(tz) > 3:
+    if tz.upper().startswith(("GMT", "UTC")) and len(tz) > 3 and tz[3] in "+-":
         isaret = 1 if tz[3] == "+" else -1
-        saat = int(tz[4:].split(":")[0])
-        return f"Etc/GMT{'-' if isaret > 0 else '+'}{saat}"
+        saat, _, dk = tz[4:].partition(":")
+        if not dk and len(saat) > 2:                  # 'GMT+530' / 'GMT+0530'
+            saat, dk = saat[:-2], saat[-2:]
+        return timezone(isaret * timedelta(hours=int(saat), minutes=int(dk or 0)))
     return tz
 
 
@@ -1475,6 +1554,8 @@ def _dizi(ad: str, konum, adli) -> Any:
     a = konum[0]
     if not isinstance(a, list):
         raise PineHatasi(f"array.{ad} dizi olmayan")
+    if ad in ("get", "set", "insert", "remove") and (len(konum) < 2 or na(konum[1])):
+        raise PineHatasi(f"array.{ad}: indeks na")
     sayilar = [v for v in a if not na(v)]
     if ad == "size":
         return len(a)
@@ -1622,12 +1703,21 @@ def _metin(ad: str, konum, adli) -> Any:
 
 
 # ---------------------------------------------------------------------- strateji sarmalayıcı
+GENERIK = re.compile(r"\b((?:array|matrix|map)\.new)\s*<\s*[\w.]+(?:\s*,\s*[\w.]+)?\s*>\s*\(")
+
+
+def on_isle(kaynak: str) -> str:
+    """pynescript `array.new<float>(...)` ifadesini karşılaştırma (`array.new < float > (...)`) diye ayrıştırıyor:
+    tür parametresi anlamı değiştirmediği için ayrıştırmadan önce `array.new(...)` yapılır."""
+    return GENERIK.sub(r"\1(", kaynak)
+
+
 class PineStrateji:
     """Pine kaynağını `engine.tv_emulator.calistir` modül arayüzüne bağlar (AYARLAR / hazirla / bar)."""
 
     def __init__(self, kaynak: str | A.Script, *, sembol: str, tf: str, tz: str = "UTC", mintick: float = 0.01,
                  kimlik: str = "", surum: int | None = None) -> None:
-        self.program = parse(kaynak) if isinstance(kaynak, str) else kaynak
+        self.program = parse(on_isle(kaynak)) if isinstance(kaynak, str) else kaynak
         self.kaynak_metni = kaynak if isinstance(kaynak, str) else None
         self.sembol, self.tf_dk, self.tz, self.mintick, self.kimlik = sembol, tf_dakika(tf), tz, mintick, kimlik
         self._surum = surum or (surum_metinden(self.kaynak_metni) if self.kaynak_metni else (_surum(self.program) or 5))

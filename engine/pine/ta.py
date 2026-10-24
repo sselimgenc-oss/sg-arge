@@ -69,7 +69,9 @@ class Pencere:
     def ekle(self, x) -> None:
         self.d.append(f(x))
 
-    def son(self, n: int) -> list[float] | None:
+    def son(self, n) -> list[float] | None:
+        if n is None or na(n):
+            return None
         n = int(n)
         if n <= 0 or len(self.d) < n:
             return None
