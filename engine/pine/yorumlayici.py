@@ -195,6 +195,7 @@ class Yorumlayici:
         self.maks_dd = 0.0
         self.guvenlik: dict[str, dict] = {}       # tf metni -> {'yorum': Yorumlayici, 'kayit': {dugum_id: [degerler]}, ...}
         self.guvenlik_kayit: dict[int, list] = {}  # güvenlik modunda: dugum id -> HTF bar değerleri
+        self.veri_saglayici = None                  # (sembol, dakika) -> OHLC DataFrame | None (dış sembol)
         self.df = None
         if df is not None:
             self._veri(df)
@@ -1318,10 +1319,12 @@ class Yorumlayici:
         lookahead = _dogru(self._deger(dugumler["lookahead"])) if "lookahead" in dugumler else False
         gaps = _dogru(self._deger(dugumler["gaps"])) if "gaps" in dugumler else False
         kendi = {self.sembol, self.sembol.split(":")[-1], "", None}
-        if sembol not in kendi:
-            raise Desteklenmiyor(f"request.security başka sembol ({sembol})")
         dk = tf_dakika(tf) if tf else self.tf_dk
         ifade = dugumler["expression"]
+        if sembol not in kendi:
+            if self.guvenlik_modu:      # başka sembolün ön koşusundaki ikinci dış sembol: değeri orada gerekmez
+                return NA
+            return self._dis_sembol(e, str(sembol), max(dk, self.tf_dk) if dk else self.tf_dk, lookahead, gaps)
         if dk == self.tf_dk or dk == 0:
             v = self._deger(ifade)
             if self.guvenlik_modu:
@@ -1347,6 +1350,37 @@ class Yorumlayici:
             v = kayit.get(k_kapali, NA) if k_kapali >= 0 else NA
             yeni = self.i == 0 or int(g["kapali"][self.i - 1]) != k_kapali
         if gaps and not yeni:
+            return NA
+        return v
+
+    def _dis_sembol(self, e: A.Call, sembol: str, dk: int, lookahead: bool, gaps: bool) -> Any:
+        """request.security(başka sembol): o sembolün kendi barlarında betik koşulur, ifade değeri kaydedilir; grafik
+        barına, kapanışı grafik barı kapanışından sonra olmayan son dış bar verilir (lookahead_off)."""
+        anahtar = ("dis", sembol, dk)
+        g = self.guvenlik.get(anahtar)
+        if g is None:
+            df2 = self.veri_saglayici(sembol, dk) if self.veri_saglayici is not None else None
+            if df2 is None or df2.empty:
+                raise Desteklenmiyor(f"request.security başka sembol, veri yok ({sembol})")
+            y = Yorumlayici(self.p, df2, tf_dk=dk, sembol=sembol, tz=self.tz, mintick=self.mintick, girdiler=self.girdiler,
+                            guvenlik_modu=True)
+            y.surum = self.surum
+            for k in range(len(df2)):
+                y.adim(None, k)
+            bas = df2.index.asi8
+            bitis = bas + dk * 60_000_000_000
+            grafik_bas = self.df.index.asi8
+            grafik_kapanis = grafik_bas + self.tf_dk * 60_000_000_000
+            g = self.guvenlik[anahtar] = {
+                "yorum": y,
+                "kapali": np.searchsorted(bitis, grafik_kapanis, side="right") - 1,
+                "harita": np.searchsorted(bas, grafik_bas, side="right") - 1,
+            }
+        kayit = g["yorum"].guvenlik_kayit.get(id(e), {})
+        k = int((g["harita"] if lookahead else g["kapali"])[self.i])
+        onceki = int((g["harita"] if lookahead else g["kapali"])[self.i - 1]) if self.i > 0 else -2
+        v = kayit.get(k, NA) if k >= 0 else NA
+        if gaps and k == onceki:
             return NA
         return v
 
@@ -1733,10 +1767,12 @@ class PineStrateji:
         self._surum = surum or (surum_metinden(self.kaynak_metni) if self.kaynak_metni else (_surum(self.program) or 5))
         self.AYARLAR, self.uyarilar = self._ayarlar()
         self.y: Yorumlayici | None = None
+        self.veri_saglayici = None
 
     def _yorumlayici(self, df) -> Yorumlayici:
         y = Yorumlayici(self.program, df, tf_dk=self.tf_dk, sembol=self.sembol, tz=self.tz, mintick=self.mintick)
         y.surum = self._surum
+        y.veri_saglayici = self.veri_saglayici
         return y
 
     def _ayarlar(self) -> tuple[Ayarlar, list[str]]:

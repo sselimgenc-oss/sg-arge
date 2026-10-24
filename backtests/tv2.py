@@ -43,8 +43,12 @@ BINANCE_ARALIK = {"1m": 1, "3m": 3, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "2h
 YFINANCE = {"SPX": "^GSPC", "SPX500": "^GSPC", "US500": "^GSPC", "SPY": "SPY", "NDX": "^NDX", "NAS100": "^NDX", "US100": "^NDX",
             "QQQ": "QQQ", "DJI": "^DJI", "US30": "^DJI", "XAUUSD": "GC=F", "GOLD": "GC=F", "XAGUSD": "SI=F", "USOIL": "CL=F",
             "WTI": "CL=F", "EURUSD": "EURUSD=X", "GBPUSD": "GBPUSD=X", "USDJPY": "JPY=X", "AUDUSD": "AUDUSD=X", "DAX": "^GDAXI",
-            "DE40": "^GDAXI", "GER40": "^GDAXI"}
+            "DE40": "^GDAXI", "GER40": "^GDAXI", "VIX": "^VIX", "VIX9D": "^VIX9D", "VXN": "^VXN", "TNX": "^TNX",
+            "DXY": "DX-Y.NYB", "US10Y": "^TNX", "ES1!": "ES=F", "NQ1!": "NQ=F", "GC1!": "GC=F", "CL1!": "CL=F", "BTC1!": "BTC=F"}
+HISSE_BORSALARI = {"NASDAQ", "NYSE", "AMEX", "ARCA", "BATS", "NYSEARCA", "CBOE", "TVC", "CME", "CME_MINI", "COMEX", "NYMEX", ""}
 KAPI_HAFTA = 10
+NEDENSELLIK_BAR = 15_000
+DAKIKALIK_ALT = 15            # bu dakikanın altı ilk turda ertelenir
 
 
 def dakika(tf: str) -> int:
@@ -81,6 +85,8 @@ def binance_tick(bsym: str) -> float:
 def veri(sembol: str, tf: str) -> tuple[pd.DataFrame | None, str]:
     """(OHLC, kaynak notu). Veri yoksa (None, neden). Kapanmamış son bar atılır."""
     borsa, _, ad = sembol.upper().partition(":")
+    if not ad:                                  # önek yok: 'SPY', 'VIX', 'BTCUSDT'
+        borsa, ad = "", borsa
     dk = dakika(tf)
     if borsa in KRIPTO_BORSALARI or ad.endswith(("USDT", "USDT.P", "USDC")):
         bsym = _binance_sembol(sembol.upper())
@@ -103,9 +109,10 @@ def veri(sembol: str, tf: str) -> tuple[pd.DataFrame | None, str]:
         if taban != dk:
             df = _yeniden_ornekle(df, dk)
         return _kapanmis(df, dk), f"Binance {bsym} {aralik}" + ("" if taban == dk else f" → {tf}")
-    if ad.split(".")[0] in YFINANCE and dk >= 1440:
+    kok = ad.split(".")[0]
+    if dk >= 1440 and (kok in YFINANCE or (borsa in HISSE_BORSALARI and re.fullmatch(r"[A-Z]{1,5}", kok))):
         import yfinance as yf
-        kod = YFINANCE[ad.split(".")[0]]
+        kod = YFINANCE.get(kok, kok)
         df = yf.download(kod, period="max", interval="1d" if dk < 10080 else "1wk", auto_adjust=False, progress=False)
         if df.empty:
             return None, f"veri_yok: yfinance {kod}"
@@ -155,6 +162,14 @@ def _metrik(sonuc: Sonuc, bas: pd.Timestamp | None, on: str) -> dict[str, float]
     }
 
 
+def _dis_veri(sembol: str, dk: int) -> pd.DataFrame | None:
+    """request.security başka sembol: aynı veri kuralları (Binance / yfinance günlük+); bulunamazsa None."""
+    try:
+        return veri(sembol, str(dk))[0]
+    except Exception:                                   # dış veri hatası: yorumlayıcı 'veri yok' diye işaretler
+        return None
+
+
 def pine_kaynak(kimlik: str, pub: str) -> str | None:
     """Pine kaynağı (pine-facade, son sürüm), `data/tv2/kaynak/<id>.json` önbelleğinde."""
     yol = CACHE / "kaynak" / f"{kimlik}.json"
@@ -185,6 +200,8 @@ def kos(kimlik: str) -> dict:
     modul, kaynak = strateji(kimlik)
     satir: dict = {"id": kimlik, "sembol": kaynak["sembol"], "tf": kaynak["tf"], "url": kaynak["url"],
                    "tur": "pine" if kaynak.get("pine") else "modul"}
+    if dakika(str(kaynak["tf"])) < DAKIKALIK_ALT:
+        return satir | {"karar": "ertelendi", "neden": f"dakikalık ({kaynak['tf']}): ayrı, pencereli koşu (veri milyonlarca bar)"}
     df, notu = veri(str(kaynak["sembol"]), str(kaynak["tf"]))
     satir["veri"] = notu
     if df is None:
@@ -199,10 +216,13 @@ def kos(kimlik: str) -> dict:
             tick = binance_tick(notu.split()[1]) if kripto else 0.01
             modul = PineStrateji(src, sembol=str(kaynak["sembol"]), tf=str(kaynak["tf"]), tz="UTC" if kripto else "America/New_York",
                                  mintick=tick, kimlik=kimlik)
+            modul.veri_saglayici = _dis_veri
             satir["uyari"] = "; ".join(modul.uyarilar + ([f"mintick veri kaynağından ({tick})"] if re.search(
                 r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []))
         yazar = calistir(modul, df)
-        hatalar = nedensellik(modul, df, tam=yazar)
+        # nedensellik: geleceği gören kod kısa pencerede de aynı biçimde yakalanır; uzun geçmişte (1H ~80 bin bar) 6 kesim pahalı
+        pencere = df.iloc[-NEDENSELLIK_BAR:]
+        hatalar = nedensellik(modul, pencere, tam=yazar if len(pencere) == len(df) else None)
         uyg = calistir(modul, df, **gercekci(modul.AYARLAR, kripto=kripto))
     except Desteklenmiyor as e:
         return satir | {"karar": "desteklenmiyor", "neden": str(e)}
