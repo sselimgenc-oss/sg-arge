@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [EMTIA]
 parametreler: {kol: EMTIA-4H}
-dogrulanamaz: {neden: veri, ayrinti: 'EMTIA icin 4H uzun veri yok (yayin sembolu FX_IDC:USDWTI). Kural cevrilmedi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Izgara genisligi (2,0), kar (500) ve zarar (100) mutlak fiyat/tik birimindedir (USDWTI''ye ozgu: 1 tik = 0,01); EMTIA kolundaki ETF''lerde (GLD, SLV, USO ...) fiyat olcegi farkli oldugu icin ayni kural anlamsizdir. Mutlak birimli kural baska olcege tasinamaz; yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (veri): EMTIA icin 4H uzun veri yok (yayin sembolu FX_IDC:USDWTI). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Izgara genisligi (2,0), kar (500) ve zarar (100) mutlak fiyat/tik birimindedir (USDWTI''ye ozgu: 1 tik = 0,01); EMTIA kolundaki ETF''lerde (GLD, SLV, USO ...) fiyat olcegi farkli oldugu icin ayni kural anlamsizdir. Mutlak birimli kural baska olcege tasinamaz; yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol EMTIA-4H → EMTIA-4H eslendi (kural ve parametreler degismedi; yayin sembolu FX_IDC:USDWTI).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

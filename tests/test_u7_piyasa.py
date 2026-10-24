@@ -15,15 +15,37 @@ from strategies.ozel import build_plan as ozel_plan
 from strategies.ozel import tv_ortak as T
 
 SPEC = Path(__file__).resolve().parents[1] / "docs" / "spec"
-# tam (DSL) kartlar ve Dogrulanamaz kartlar; her grup itisinde guncellenir
-TAM_IDS = ['4NV68grw', '5EGVP61U', '7S2pDMA5', '8YopUUSO']
-OZEL_IDS: list[str] = []
-DOGRULANAMAZ_IDS = ['0igXqoj5', '6XPbhz9C', '7cisWbRB', '7rQKeCN2', '8zGpvRaM', '9SEB7IHb']
-ESLEME = {  # id -> (piyasa_kisiti, kol)
-    '0igXqoj5': ('ABD', 'ABD25-1D'), '4NV68grw': ('FX', 'FX8-4H'), '5EGVP61U': ('ABD', 'ABD25-1D'), '6XPbhz9C': ('ABD', 'ABD25-4H'),
-    '7S2pDMA5': ('FX', 'FX8-4H'), '7cisWbRB': ('ABD', 'ABD25-1D'), '7rQKeCN2': ('ABD', 'ABD25-4H'), '8YopUUSO': ('ABD', 'ABD25-4H'),
-    '9SEB7IHb': ('FX', 'FX8-4H'),
-}
+EMTIA_SEMBOL = {"TVC:GOLD", "OANDA:XAUUSD", "PEPPERSTONE:XAUUSD", "FX_IDC:USDWTI", "MCX:NATGASMINI1!"}
+
+
+def _kartlar() -> dict[str, dict]:
+    out = {}
+    for path in sorted(SPEC.glob("TV-*.yaml")):
+        card = yaml.safe_load(path.read_text(encoding="utf-8"))
+        if any(str(b).startswith("U7 Ek 1") for b in card["belirsiz"]):
+            out[card["id"][3:]] = card
+    return out
+
+
+KARTLAR = _kartlar()
+TAM_IDS = [i for i, c in KARTLAR.items() if c["spec_durumu"] == "tam" and not c["ozel_kod"]]
+OZEL_IDS = [i for i, c in KARTLAR.items() if c["spec_durumu"] == "tam" and c["ozel_kod"]]
+DOGRULANAMAZ_IDS = [i for i, c in KARTLAR.items() if c["spec_durumu"] == "eksik"]
+
+
+def beklenen_kol(card: dict) -> tuple[str, str] | None:
+    """(piyasa_kisiti, kol etiketi) Ek 1 kurallarindan: yayin sembolu yoksa None."""
+    sym = card["yayin_sembolu"]
+    if not sym:
+        return None
+    if sym in EMTIA_SEMBOL:
+        return "EMTIA", "EMTIA"
+    exchange = sym.split(":")[0]
+    if exchange == "BIST":
+        return "BIST", "BIST30"
+    if exchange in ("FX", "OANDA", "FX_IDC", "PEPPERSTONE", "VANTAGE") and sym != "FX:SPX500":
+        return "FX", "FX8"
+    return "ABD", "ABD25"
 
 
 def load(script_id: str) -> dict:
@@ -53,10 +75,15 @@ def freq_of(card: dict) -> str:
     return "4h" if card["tf"] == "4H" else "1D"
 
 
-@pytest.mark.parametrize("script_id", ESLEME)
+@pytest.mark.parametrize("script_id", list(KARTLAR))
 def test_kol_eslemesi_ve_not(script_id):
-    card = load(script_id)
-    token, kol = ESLEME[script_id]
+    card = KARTLAR[script_id]
+    expected = beklenen_kol(card)
+    if expected is None:
+        assert card["spec_durumu"] == "eksik" and card["dogrulanamaz"]["neden"] == "piyasa"
+        return
+    token, label = expected
+    kol = f"{label}-{card['tf']}"
     assert card["piyasa_kisiti"] == [token] and card["kol"] == kol and card["parametreler"]["kol"] == kol
     assert any(str(b).startswith("U7 Ek 1: kol ") and kol in str(b) for b in card["belirsiz"])
     assert card["deneme_sayisi_kaynakta"] == 205 and card["rapor"]["pf"] is None
