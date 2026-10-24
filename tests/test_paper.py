@@ -181,6 +181,23 @@ def test_incomplete_us_daily_bar_is_excluded_until_close_plus_30_minutes() -> No
     assert after.frames["ABD25"]["AAA"].index[-1] == pd.Timestamp("2026-10-26", tz="UTC")
 
 
+def test_shadow_4h_bucket_waits_until_close_plus_five_minutes() -> None:
+    index = pd.date_range("2026-10-24 00:00", periods=8, freq="1h", tz="UTC")
+    frame = pd.DataFrame({"open": range(8), "high": range(1, 9), "low": range(8), "close": range(8), "volume": 1.0}, index=index)
+    before = gunluk.kapanmamis_4h_bari_at({"BTCUSDT": frame}, pd.Timestamp("2026-10-24 05:00", tz="UTC"))
+    after = gunluk.kapanmamis_4h_bari_at({"BTCUSDT": frame}, pd.Timestamp("2026-10-24 08:05", tz="UTC"))
+    assert before["BTCUSDT"].index.max() == pd.Timestamp("2026-10-24 03:00", tz="UTC")
+    assert after["BTCUSDT"].index.max() == pd.Timestamp("2026-10-24 07:00", tz="UTC")
+
+
+def test_shadow_portfolio_is_separate_from_the_main_book() -> None:
+    shadow = gunluk.golge_portfoy()
+    main = gunluk.yukle_portfoy()
+    assert shadow.sermaye == 5000 and shadow.satirlar[0].etiket == "U4-H1:KRIPTO25"
+    assert shadow.baslangic == pd.Timestamp("2026-10-24", tz="UTC")
+    assert shadow.satirlar != main.satirlar and gunluk.GOLGE_LEDGER_DIR != gunluk.LEDGER_DIR
+
+
 def test_no_bar_after_the_paper_start_waits_instead_of_failing() -> None:
     # Yahoo sometimes serves the latest day without prices; the cleaned archive then ends before the paper start
     index = pd.DatetimeIndex(["2026-10-21", "2026-10-22"], tz="UTC")

@@ -335,7 +335,7 @@ def uret(
                        "durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
         "data_version": DATA_VERSION, "veri_notu": veri_notu,
     }
-    return {
+    payload = {
         "meta": meta,
         "kpis": {
             "total_value": _clean(total_value, 2), "total_return_pct": _clean((total_value / initial - 1) * 100, 2), "last_day_pct": _clean(last_day_pct, 2),
@@ -354,6 +354,15 @@ def uret(
         "risk": {"concentrations": [], "leverage_drawdown_montecarlo": [], "correlation_note": held_text},
         "periodic_returns": periodic, "strategies_27": strategies,
     }
+    golge_dir = defter / "golge"
+    if golge_dir.exists():
+        shadow = uret(golge_dir, gunluk.golge_portfoy(portfoy), sonuc_csv, usdtry=usdtry, simdi=simdi) if hasattr(gunluk, "golge_portfoy") else None
+        if shadow is not None:
+            payload["golge"] = {"ozkaynak": shadow["kpis"]["total_value"], "mdd": shadow["accounts"][0]["max_drawdown_pct"] if shadow["accounts"] else None,
+                               "baslangic": str(gunluk.golge_portfoy(portfoy).baslangic.date()), "acik_pozisyonlar": shadow["open_positions"],
+                               "kapanmis_islemler": shadow["closed_trades_list"],
+                               "not": "gölge kitap: ana portföyden ayrı, kilitli dönem kullanılmadı"}
+    return payload
 
 
 def _fmt(value: Any, fmt: str) -> str:
