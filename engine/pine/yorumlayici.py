@@ -1392,6 +1392,16 @@ def surum_metinden(kaynak: str) -> int:
 
 
 def _nokta(e) -> str:
+    try:
+        return e.__dict__["_nokta"]
+    except KeyError:
+        pass
+    ad = _nokta_hesapla(e)
+    e.__dict__["_nokta"] = ad
+    return ad
+
+
+def _nokta_hesapla(e) -> str:
     parca = []
     while isinstance(e, A.Attribute):
         parca.append(e.attr)

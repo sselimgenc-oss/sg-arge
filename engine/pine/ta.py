@@ -15,7 +15,7 @@ NA = float("nan")
 
 
 def na(x) -> bool:
-    return x is None or (isinstance(x, float) and x != x)
+    return x is None or x != x          # yalnız NaN kendine eşit değildir (sayı dışı tipler için False)
 
 
 def f(x) -> float:
@@ -60,22 +60,31 @@ class Rma(Tohumlu):
         return super().__call__(x, n, 1.0 / int(n))
 
 
+def nanli(w: list[float]) -> bool:
+    """Pencerede na var mı (C düzeyinde toplam; NaN toplamı NaN yapar)."""
+    t = sum(w)
+    return t != t
+
+
 class Pencere:
-    """Son n değeri tutan yardımcı (n çağrılar arasında değişebilir; en büyük n kadar saklanır)."""
+    """Son n değeri tutan yardımcı (n çağrılar arasında değişebilir; en çok `maks` değer saklanır)."""
 
     def __init__(self, maks: int = 5000) -> None:
-        self.d: deque = deque(maxlen=maks)
+        self.d: list[float] = []
+        self.maks = maks
 
     def ekle(self, x) -> None:
         self.d.append(f(x))
+        if len(self.d) > 2 * self.maks:
+            del self.d[:-self.maks]
 
     def son(self, n) -> list[float] | None:
-        if n is None or na(n):
+        if n is None or n != n:
             return None
         n = int(n)
         if n <= 0 or len(self.d) < n:
             return None
-        return list(self.d)[-n:]
+        return self.d[-n:]
 
 
 class Sma:
@@ -85,7 +94,7 @@ class Sma:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         return sum(w) / len(w)
 
@@ -97,7 +106,7 @@ class Wma:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         n = len(w)
         return sum(v * (k + 1) for k, v in enumerate(w)) / (n * (n + 1) / 2)
@@ -128,7 +137,7 @@ class Alma:
     def __call__(self, x, n, offset=0.85, sigma=6.0, floor=False):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         n = len(w)
         m = math.floor(offset * (n - 1)) if floor else offset * (n - 1)
@@ -144,7 +153,7 @@ class Stdev:
     def __call__(self, x, n, biased=True):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         m = sum(w) / len(w)
         d = len(w) if biased else len(w) - 1
@@ -164,7 +173,7 @@ class Dev:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         m = sum(w) / len(w)
         return sum(abs(v - m) for v in w) / len(w)
@@ -177,7 +186,7 @@ class Toplam:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         return sum(w)
 
@@ -191,7 +200,7 @@ class EnYuksek:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         return max(w) if self.yon > 0 else min(w)
 
@@ -205,7 +214,7 @@ class EnYuksekBar:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         hedef = max(w) if self.yon > 0 else min(w)
         k = max(i for i, v in enumerate(w) if v == hedef)   # en yakın (Pine: son eşit değer)
@@ -223,7 +232,7 @@ class Gecmis:
         n = int(n)
         if len(self.p.d) <= n:
             return NA, f(x)
-        return list(self.p.d)[-1 - n], f(x)
+        return self.p.d[-1 - n], f(x)
 
 
 class Change(Gecmis):
@@ -379,7 +388,7 @@ class Pivot:
         if na(v):
             return NA
         diger = w[:sol] + w[sol + 1:]
-        if any(na(d) for d in diger):
+        if nanli(diger):
             return NA
         return v if (all(v > d for d in diger) if self.yon > 0 else all(v < d for d in diger)) else NA
 
@@ -414,7 +423,7 @@ class Linreg:
     def __call__(self, x, n, offset=0):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         n = len(w)
         xs = range(n)
@@ -442,7 +451,7 @@ class Percentrank:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(int(n) + 1)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         simdi = w[-1]
         return 100.0 * sum(1 for v in w[:-1] if v <= simdi) / int(n)
@@ -492,7 +501,7 @@ class Monoton:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(int(n) + 1)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return False
         simdi = w[-1]
         return all(simdi > v for v in w[:-1]) if self.yon > 0 else all(simdi < v for v in w[:-1])
@@ -573,7 +582,7 @@ class Median:
     def __call__(self, x, n):
         self.p.ekle(x)
         w = self.p.son(n)
-        if w is None or any(na(v) for v in w):
+        if w is None or nanli(w):
             return NA
         s = sorted(w)
         k = len(s)
@@ -588,7 +597,7 @@ class Korelasyon:
         self.a.ekle(x)
         self.b.ekle(y)
         wa, wb = self.a.son(n), self.b.son(n)
-        if wa is None or wb is None or any(na(v) for v in wa + wb):
+        if wa is None or wb is None or nanli(wa) or nanli(wb):
             return NA
         ma, mb = sum(wa) / len(wa), sum(wb) / len(wb)
         sa = math.sqrt(sum((v - ma) ** 2 for v in wa))

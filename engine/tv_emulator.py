@@ -480,13 +480,14 @@ def gercekci(ayarlar: Ayarlar, kripto: bool) -> dict[str, Any]:
             "slippage": max(ayarlar.slippage, 0 if kripto else 1)}
 
 
-def nedensellik(modul: Any, df: pd.DataFrame, kesimler: tuple[float, ...] = (.3, .42, .54, .66, .78, .9)) -> list[str]:
+def nedensellik(modul: Any, df: pd.DataFrame, kesimler: tuple[float, ...] = (.3, .42, .54, .66, .78, .9),
+                tam: "Sonuc | None" = None) -> list[str]:
     """Adım 0: veriyi kesince kesimden önceki emirler değişiyorsa modül geleceği görüyordur. Boş liste = temiz.
 
     Kesimler yüksek zaman dilimi barlarının (gün, hafta) ortasına düşsün diye küçük asal kaydırmalarla seçilir:
     sınırda kesilen veri, bir sonraki barı gören koda (lookahead) sızıntıyı göstermez.
     """
-    tam = calistir(modul, df).emir_kaydi
+    tam = (tam or calistir(modul, df)).emir_kaydi   # tam koşu (yazar ayarları) verildiyse yeniden koşulmaz
     hatalar = []
     for sira, oran in enumerate(kesimler):
         k = min(int(len(df) * oran) + (7, 13, 19, 23, 29, 31)[sira % 6], len(df) - 1)

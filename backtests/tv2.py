@@ -201,8 +201,8 @@ def kos(kimlik: str) -> dict:
                                  mintick=tick, kimlik=kimlik)
             satir["uyari"] = "; ".join(modul.uyarilar + ([f"mintick veri kaynağından ({tick})"] if re.search(
                 r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []))
-        hatalar = nedensellik(modul, df)
         yazar = calistir(modul, df)
+        hatalar = nedensellik(modul, df, tam=yazar)
         uyg = calistir(modul, df, **gercekci(modul.AYARLAR, kripto=kripto))
     except Desteklenmiyor as e:
         return satir | {"karar": "desteklenmiyor", "neden": str(e)}
