@@ -1,0 +1,56 @@
+id: RD-03
+ad: 'Faber GTAA (taktik varlik dagilimi): 5 ETF, 10 aylik SMA, aylik'
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/reddit/ozet.md, url: null, sayfa: 'bolum A, RD-03', not: 'Reddit; r/algotrading, ReporterCalm6238 ("Faber''s GTAA, plain and simple"); kural Faber (2007) yayinli kuralidir. docs/GOREV_U7.md Ek 3.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD ETF (SPY, EFA, IEF, DBC, VNQ)
+kol: ABD-1D
+gostergeler:
+  spy_close: {f: close, varlik: SPY}
+  spy_m9: {f: sma, src: close, n: 9, tf: 1M, varlik: SPY}
+  efa_close: {f: close, varlik: EFA}
+  efa_m9: {f: sma, src: close, n: 9, tf: 1M, varlik: EFA}
+  ief_close: {f: close, varlik: IEF}
+  ief_m9: {f: sma, src: close, n: 9, tf: 1M, varlik: IEF}
+  dbc_close: {f: close, varlik: DBC}
+  dbc_m9: {f: sma, src: close, n: 9, tf: 1M, varlik: DBC}
+  vnq_close: {f: close, varlik: VNQ}
+  vnq_m9: {f: sma, src: close, n: 9, tf: 1M, varlik: VNQ}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+dolum: kapanis
+piyasa_kisiti: [ABD]
+parametreler:
+  sma_ay: 10
+  varliklar: [SPY, EFA, IEF, DBC, VNQ]
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+rotasyon:
+  kip: gecis
+  dengeleme: {tip: ay}
+  agac:
+    esit:
+    - eger: valuewhen(ay_islem_gunu_sondan(1), spy_close > spy_m9)
+      ise: {tut: SPY}
+      degilse: {tut: nakit}
+    - eger: valuewhen(ay_islem_gunu_sondan(1), efa_close > efa_m9)
+      ise: {tut: EFA}
+      degilse: {tut: nakit}
+    - eger: valuewhen(ay_islem_gunu_sondan(1), ief_close > ief_m9)
+      ise: {tut: IEF}
+      degilse: {tut: nakit}
+    - eger: valuewhen(ay_islem_gunu_sondan(1), dbc_close > dbc_m9)
+      ise: {tut: DBC}
+      degilse: {tut: nakit}
+    - eger: valuewhen(ay_islem_gunu_sondan(1), vnq_close > vnq_m9)
+      ise: {tut: VNQ}
+      degilse: {tut: nakit}
+spec_durumu: tam
+belirsiz: ['Yazarin kendi kurali yok; Faber (2007) yayinli kurali alindi: 5 ETF (SPY, EFA, IEF, DBC/GSG, VNQ) esit agirlik; her ay sonu kapanis 10 aylik SMA''nin ustundeyse varlik tutulur, degilse o pay nakitte. Aylik yeniden dengeleme.', 'DBC/GSG: ozette iki ad var; kullanici talimatiyla DBC alindi (GSG degil).', '10 aylik SMA, ay sonu kapanislari uzerinden hesaplanir ve cari ay sonu kapanisini icerir. Kartta ''close > SMA10(cari ay dahil)'', onceki 9 tamamlanmis ay sonu kapanisinin ortalamasina karsi ''close > SMA9(1M)'' ile ayni sonucu verir (close > (9 x m + close) / 10 <=> close > m); 1M gostergesi son TAMAMLANMIS ayi kullanir, ay sonu karar gununde cari ay dahil degildir.', 'Faber kurali ay sonu kapanisinda sinyal ve islem der: dolum kapanista (dolum: kapanis; gecis kartlari gibi, D4 MOC maliyeti 2x baz). Sonraki acilis varyanti ayrica raporlanir. Nakit payi getirisiz sayilir (faiz yok).', 'Rotasyon agaci her bari degerlendirir (gecis kipi); ay ici karar degisikligini onlemek icin karar degiskenleri ay sonu degerini tutar (valuewhen(ay son islem gunu, kosul)).', 'Maliyet motorun ABD baz maliyeti; ETF evreni (SPY, EFA, IEF, DBC, VNQ) sabit isimli enstrumanlardir (data/rotasyon_semboller.csv''ye eklenmesi gerekir: EFA, IEF, DBC, VNQ).']

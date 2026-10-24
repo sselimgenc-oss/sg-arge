@@ -21,6 +21,6 @@ piyasa_kisiti: [DIGER]
 parametreler: {kol: DIGER-1D}
 dogrulanamaz: {neden: piyasa, ayrinti: sembol bulunamadi (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): sembol bulunamadi (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (piyasa): sembol bulunamadi (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.', 'U7 Ek 1: yayin sembolu yok ve icerikte piyasa ipucu yok; kol DIGER-1D olarak birakildi (Dogrulanamaz piyasa).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -7,7 +7,7 @@ tf: 1D
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: FX (FX:EURUSD)
-kol: FX-1D
+kol: FX8-1D
 yayin_sembolu: FX:EURUSD
 gostergeler: {}
 ozel_kod: false
@@ -17,10 +17,10 @@ stop: null
 hedef: null
 stop_eklendi: false
 yalniz_long_bacak: true
-piyasa_kisiti: [DIGER]
-parametreler: {kol: FX-1D}
-dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu FX:EURUSD FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+piyasa_kisiti: [FX]
+parametreler: {kol: FX8-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Stop (0,5) ve hedef (0,005) mutlak fiyat birimindedir (SL = 0,5 / mintick tik, TP = 0,005 / mintick tik); FX8 evreninde fiyat olcegi cift cift farklidir (EURUSD ~1, USDJPY ~100), ayni mutlak birim anlamsizdir. Ayrica kapanista Aroon kesisimi, ATR kanali ve PSAR/RSI/MACD onaylari birlikte kullanilir. Mutlak birimli kural baska olcege tasinamaz; yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu FX:EURUSD FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Stop (0,5) ve hedef (0,005) mutlak fiyat birimindedir (SL = 0,5 / mintick tik, TP = 0,005 / mintick tik); FX8 evreninde fiyat olcegi cift cift farklidir (EURUSD ~1, USDJPY ~100), ayni mutlak birim anlamsizdir. Ayrica kapanista Aroon kesisimi, ATR kanali ve PSAR/RSI/MACD onaylari birlikte kullanilir. Mutlak birimli kural baska olcege tasinamaz; yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol FX-1D → FX8-1D eslendi (kural ve parametreler degismedi; yayin sembolu FX:EURUSD).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

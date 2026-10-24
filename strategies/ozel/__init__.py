@@ -10,6 +10,8 @@ from engine.kart_sinyal import KartPlan
 
 MODULES = {
     "A1-027": "strategies.ozel.a1_027",
+    "RD-01": "strategies.ozel.rd_01",
+    "RD-02": "strategies.ozel.rd_02",
 }
 
 

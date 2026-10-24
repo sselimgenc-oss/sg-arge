@@ -51,3 +51,13 @@ Kullanıcı kararı ("hepsini test et") gereği U6'nın "kol sınıfı değişti
 
 ## Ek 2 (lider, 2026-10-24): OOS bitişi
 `u1.py`, `u4.py`, `u6.py` ve Faz 1 koşucularındaki OOS bitiş tarihleri (2025-09-30 vb.) U7 koşusunda **son kapanmış bara** uzatılır. Bu, U7 koşu PR'ının parçasıdır.
+
+## Ek 3 (kullanıcı kararı, 2026-10-24): Reddit adayları
+`arastirma/reddit/ozet.md` bölüm A'daki 4 strateji (RD-01 SPY/QQQ dip alımı, RD-02 ay sonu SPY/TLT, RD-03 Faber GTAA, RD-04 4H Williams %R dönüşü) kart olarak yazılır (Sonnet, `[U8] Reddit kartları`) ve U7 koşusuna aynı huniyle eklenir; DSR toplam N'ye sayılır. Kurallar yazarın verdiği gibidir, parametre eklenmez/değiştirilmez.
+
+## Ek 4 (lider, 2026-10-24, kullanıcı: "motorun desteklemediği bizim ayıbımız, düzelt"): motor eki
+Sonuç görülmeden: motor iki yapıyı destekler hale geldi (`engine/portfolio.py`, kart alanları):
+- `dinamik_cikis: {stop | stop_giristen | hedef | hedef_giristen: <ifade>, mandal: bool}`: stop/hedef her bar kapanışında yeniden hesaplanır, ertesi bardan geçerli (Pine'da her barda yeniden verilen `strategy.exit`). `*_giristen` giriş fiyatından uzaklıktır (`strategy.position_avg_price - k*ATR` gibi). `mandal: true` stopu yalnız yukarı taşır.
+- `kademeli_cikis[i].bar_ici: true`: seviye girişte sabitlenen limit emir, bar içinde dolar (stop önce kontrol edilir, boşlukta açılış fiyatı); `stop_girise: true` dolumdan sonra stopu giriş fiyatına çeker.
+- Düzeltme: birden çok kısmi çıkışta işlem satırının net K/Z'si son kısmi çıkışı üzerine yazıyordu; artık hepsi toplanır (özkaynak zaten doğruydu).
+Bu yapılar yüzünden "Doğrulanamaz (çeviri)" kalan kartlar (TradingView ~35) yeniden çevrilir (Sonnet) ve U7'ye eklenir. Yaklaşık çeviri yasağı sürer: Pine davranışı bu semantiğe birebir uymayan kart yine Doğrulanamaz kalır.

@@ -7,20 +7,24 @@ tf: 4H
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD (NASDAQ:QQQ)
-kol: ABD-4H
+kol: ABD25-4H
 yayin_sembolu: NASDAQ:QQQ
-gostergeler: {}
+gostergeler:
+  ema200: {f: ema, src: close, n: 200}
+  rsi14: {f: rsi, src: close, n: 14}
+  atr14: {f: atr, n: 14}
+  sh5: {f: highest, src: high, n: 5, kaydir: 1}
+  sl5: {f: lowest, src: low, n: 5, kaydir: 1}
 ozel_kod: false
-giris: null
-cikis: null
-stop: null
-hedef: null
+giris: close > ema200 and low < sl5 and close > sl5 and rsi14 > 40
+cikis: close < ema200 and high > sh5 and close < sh5 and rsi14 < 60
+stop: {tip: seviye, ifade: sinyal_close - 1.5 * sinyal_atr14}
+hedef: {tip: seviye, ifade: sinyal_close + 3.0 * sinyal_atr14}
 stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
-parametreler: {kol: ABD-4H}
-dogrulanamaz: {neden: veri, ayrinti: 'ABD icin 4H uzun veri yok (yayin sembolu NASDAQ:QQQ). Kural cevrilmedi.'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (veri): ABD icin 4H uzun veri yok (yayin sembolu NASDAQ:QQQ). Kural cevrilmedi.']
+parametreler: {kol: ABD25-4H}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol U7 Ek 1 ile yayin sembolunun sinifina eslendi. Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: EMA(200), swing 5, RSI(14), stop 1,5 x ATR, hedef 3 x ATR. Likidite supurmesi: low < onceki 5 barin dibi (kaydirilmis pencere, [1]) ve close bu dibin ustunde. Short sinyali (supurme ustte) acik long''u ters yonde kapatir; long bacakta cikis olarak kalir. strategy.exit yalniz giris barinda verilir: seviyeler sinyal kapanisi ve ATR''sinden sabitlenir.', 'Not: ABD/FX/EMTIA 4H kolunda veri yfinance 1H''den 4H''ye yeniden orneklenir (U7 Ek 1).', 'Pine''da strategy.exit emri giris emriyle ayni barda (sinyal barinin kapanisinda) verilir; seviyeler sinyal barinin kapanisi ve ATR''sinden sabitlenir (kartta tip: seviye, sinyal_close/sinyal_atr). Giris sonraki acilista dolunca emir dolum barindan itibaren etkindir (motorla ayni).', 'U7 Ek 1: kol ABD-4H → ABD25-4H eslendi (kural ve parametreler degismedi; yayin sembolu NASDAQ:QQQ).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -7,7 +7,7 @@ tf: 1D
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: DIGER (NSE:SBIN)
-kol: DIGER-1D
+kol: ABD25-1D
 yayin_sembolu: NSE:SBIN
 gostergeler: {}
 ozel_kod: false
@@ -17,10 +17,10 @@ stop: null
 hedef: null
 stop_eklendi: false
 yalniz_long_bacak: true
-piyasa_kisiti: [DIGER]
-parametreler: {kol: DIGER-1D}
-dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu NSE:SBIN FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD25-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Pivot dizileri (array) ve durum nesnesi ile RSI iki dip uyumsuzlugu kurulumu, kurulum penceresi (azami bekleme), ikinci dipten stop ve iki dip arasi swing tepe hedefi: kosul kurulum durumuna ve pozisyon gecmisine bagli bir durum makinesidir. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu NSE:SBIN FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Pivot dizileri (array) ve durum nesnesi ile RSI iki dip uyumsuzlugu kurulumu, kurulum penceresi (azami bekleme), ikinci dipten stop ve iki dip arasi swing tepe hedefi: kosul kurulum durumuna ve pozisyon gecmisine bagli bir durum makinesidir. Yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu NSE:SBIN).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

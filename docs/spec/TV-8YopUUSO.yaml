@@ -7,20 +7,20 @@ tf: 4H
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD (NASDAQ:AAPL)
-kol: ABD-4H
+kol: ABD25-4H
 yayin_sembolu: NASDAQ:AAPL
-gostergeler: {}
+gostergeler:
+  rsi14: {f: rsi, src: close, n: 14}
 ozel_kod: false
-giris: null
-cikis: null
+giris: cross_over(rsi14, 35)
+cikis: cross_under(rsi14, 70)
 stop: null
 hedef: null
-stop_eklendi: false
+stop_eklendi: true
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
-parametreler: {kol: ABD-4H}
-dogrulanamaz: {neden: veri, ayrinti: 'ABD icin 4H uzun veri yok (yayin sembolu NASDAQ:AAPL). Kural cevrilmedi.'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (veri): ABD icin 4H uzun veri yok (yayin sembolu NASDAQ:AAPL). Kural cevrilmedi.']
+parametreler: {kol: ABD25-4H}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol U7 Ek 1 ile yayin sembolunun sinifina eslendi. Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Script bir aylik performans tablosu gostergesidir; strateji kismi ''demo'' girisi/cikisidir: RSI(14) 35''i yukari keserse long, 70''i asagi keserse kapat. Kurallar bu demo kosullaridir; tablo koduna ve yazarin %0,05 komisyon / 2 tick kaymasina bakilmaz.', 'Not: ABD/FX/EMTIA 4H kolunda veri yfinance 1H''den 4H''ye yeniden orneklenir (U7 Ek 1).', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).', 'U7 Ek 1: kol ABD-4H → ABD25-4H eslendi (kural ve parametreler degismedi; yayin sembolu NASDAQ:AAPL).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

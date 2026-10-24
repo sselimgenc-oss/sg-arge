@@ -1,0 +1,26 @@
+id: RD-01
+ad: SPY/QQQ dip alimi (RSI(2) / 3 dusen kapanis / IBS, SMA(200) filtresi)
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/reddit/ozet.md, url: null, sayfa: 'bolum A, RD-01', not: 'Reddit; r/algotrading, tanweer919 ("100+ strateji test ettim" yazisi, hayatta kalan 3''ten biri). docs/GOREV_U7.md Ek 3.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD endeks ETF (SPY, QQQ)
+kol: ABD-1D
+semboller: [SPY, QQQ]
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: durum_makinesi
+giris: null
+cikis: null
+kural_ozeti: {giris: 'Kapanis > SMA(200) iken ve (RSI(2) < 10 ya da art arda 3 dusen kapanis ya da IBS < 0,2) ise ertesi acilista al.', cikis: 'Ilk kapanis > SMA(5) olunca ertesi acilista sat; en cok 10 gun. Stop: kapanis girisin %8 altindaysa ertesi acilista cik. Stoptan sonra yeniden giris icin once kapanis > SMA(5) beklenir.'}
+stop: {tip: yuzde, deger: 8.0}
+hedef: null
+stop_eklendi: false
+piyasa_kisiti: [ABD]
+parametreler: {trend_sma: 200, exit_sma: 5, rsi_length: 2, rsi_below: 10, falling_closes: 3, ibs_below: 0.2, stop_pct: 8.0, max_days: 10}
+deneme_sayisi_kaynakta: 100
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz: ['Kural arastirma/reddit/ozet.md bolum A''daki yazar sozlerinden birebir cevrildi; parametre eklenmedi/degistirilmedi. Yazarin boyut/kaldirac bilgisi yoktur: boyut EVRENSEL_KURALLAR A6.', 'ozel_kod: true (durum makinesi: stoptan sonra yeniden giris kilidi pozisyon gecmisine baglidir): strategies/ozel/rd_01.py. Modul pozisyonu kendi icinde izler; motor giris sinyalini tek tek dolduruyorsa ayni yolu izler (sermaye/risk limitiyle atlanan giris olursa kilit durumu sapabilir).', 'Evren tek ETF evrenidir: SPY ve QQQ (ABD-1D kolu, her biri kendi sinyaliyle, havuz portfoyu).', 'Giris ''ertesi acilista al'': sinyal kapanista, dolum sonraki acilista. Cikis ''ilk kapanis > SMA(5)'': dolum barinin kapanisindan itibaren kontrol edilir; ''en cok 10 gun'': dolum gununu 1. gun sayarak 10. gunun kapanisinda cikis sinyali (ertesi acilista dolar) - gun sayimi yazarin sozlerinde net degil.', 'Stop: yazar ''kapanis girisin %8 altinda ise ertesi acilis'' der (kapanis tabanli). Motor stopu bar ici (dolum fiyatinin %8 alti) uygular; bar ici dokunup kapanista toparlanan barlarda ve cikis fiyatinda (stop seviyesi/acilis) Pine/yazar sonucundan farkli olabilir. Stop yazarindir (stop_eklendi: false).', '''Art arda 3 dusen kapanis'': close < close[1] < close[2] < close[3]. IBS = (kapanis - dusuk) / (yuksek - dusuk), aralik 0 ise tanimsiz (sinyal yok). RSI(2) Wilder (RMA).', 'Stoptan sonra yeniden giris: stop barindan sonraki ilk kapanis > SMA(5) olana dek giris yok (stop barinin kendisi sayilmaz).', 'Yazarin kendi rastgele giris karsilastirmasi 100 denemenin 78''ini gecmis (p ~ 0,22); bizim null kapisinda zorlanmasi beklenir (ozet.md). deneme_sayisi_kaynakta: yazar ~100+ strateji denemis (yaklasik, ''veri kazima'' payi).']

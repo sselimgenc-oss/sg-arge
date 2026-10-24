@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [EMTIA]
 parametreler: {kol: EMTIA-4H}
-dogrulanamaz: {neden: veri, ayrinti: 'EMTIA icin 4H uzun veri yok (yayin sembolu TVC:GOLD). Kural cevrilmedi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Londra/New York/kapanis seans pencereleri, request.security ile 4 saat/gun/hafta duzeyleri, likidite taramasi (sweep) durum degiskenleri, Fibonacci OTE bolgesi, skor kapisi, TP1/TP2 (kademeli), basabas ve izleyen stop birlikte kullanilir. Cok durumlu ve seansa bagli kural motor ifade diline birebir sigmaz; yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (veri): EMTIA icin 4H uzun veri yok (yayin sembolu TVC:GOLD). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Londra/New York/kapanis seans pencereleri, request.security ile 4 saat/gun/hafta duzeyleri, likidite taramasi (sweep) durum degiskenleri, Fibonacci OTE bolgesi, skor kapisi, TP1/TP2 (kademeli), basabas ve izleyen stop birlikte kullanilir. Cok durumlu ve seansa bagli kural motor ifade diline birebir sigmaz; yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol EMTIA-4H → EMTIA-4H eslendi (kural ve parametreler degismedi; yayin sembolu TVC:GOLD).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
