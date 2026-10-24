@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'pyramiding=3 ve kismi cikislar (pozisyonun 1/2''si RSI 70 alti kesisimde, 3/4''u RSI 90''da), stop seviyesinin RSI''a gore break-even''e kaydirilmasi. Motor piramit ve kismi kapatma uygulamaz.'}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding=3 ve kismi cikislar (pozisyonun 1/2''si RSI 70 alti kesisimde, 3/4''u RSI 90''da), stop seviyesinin RSI''a gore break-even''e kaydirilmasi. Motor piramit ve kismi kapatma uygulamaz. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit + kismi cikis + basa bas); motor PR''i birlesince yeniden cevrilecek.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): pyramiding=3 ve kismi cikislar (pozisyonun 1/2''si RSI 70 alti kesisimde, 3/4''u RSI 90''da), stop seviyesinin RSI''a gore break-even''e kaydirilmasi. Motor piramit ve kismi kapatma uygulamaz.']
+belirsiz: ['Beklemede (bekliyor:motor): pyramiding=3 ve kismi cikislar (pozisyonun 1/2''si RSI 70 alti kesisimde, 3/4''u RSI 90''da), stop seviyesinin RSI''a gore break-even''e kaydirilmasi. Motor piramit ve kismi kapatma uygulamaz. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit + kismi cikis + basa bas); motor PR''i birlesince yeniden cevrilecek.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

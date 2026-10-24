@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'pyramiding=9 ile ayni yonde kademeli ekleme: iki ayri giris sinyali (filtreli/agresif Vix Fix) acik pozisyonda yeni islemler ekler. Motor ''pozisyondayken ayni sembolde yeni giris yok'' (piramit yok) kuralini uygular; piramit cevrilemez.'}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding=9 ile ayni yonde kademeli ekleme: iki ayri giris sinyali (filtreli/agresif Vix Fix) acik pozisyonda yeni islemler ekler. Motor ''pozisyondayken ayni sembolde yeni giris yok'' (piramit yok) kuralini uygular; piramit cevrilemez. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): pyramiding=9 ile ayni yonde kademeli ekleme: iki ayri giris sinyali (filtreli/agresif Vix Fix) acik pozisyonda yeni islemler ekler. Motor ''pozisyondayken ayni sembolde yeni giris yok'' (piramit yok) kuralini uygular; piramit cevrilemez.']
+belirsiz: ['Beklemede (bekliyor:motor): pyramiding=9 ile ayni yonde kademeli ekleme: iki ayri giris sinyali (filtreli/agresif Vix Fix) acik pozisyonda yeni islemler ekler. Motor ''pozisyondayken ayni sembolde yeni giris yok'' (piramit yok) kuralini uygular; piramit cevrilemez. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

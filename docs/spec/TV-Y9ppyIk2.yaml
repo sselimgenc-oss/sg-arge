@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Kademeli kar alma: strategy.exit(''L TP1'', qty_percent=tp1Qty, ...) ile pozisyonun bir kismi TP1''de, kalani TP2''de kapanir (TP1 sonrasi stop kaydirma ve strategy.closedtrades durumu); ayrica 54 ''var'' degiskenli talep bolgesi/trend cizgisi durum makinesi. Kismi kar alma Dogrulanamaz kategorisidir.'}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'Kademeli kar alma: strategy.exit(''L TP1'', qty_percent=tp1Qty, ...) ile pozisyonun bir kismi TP1''de, kalani TP2''de kapanir (TP1 sonrasi stop kaydirma ve strategy.closedtrades durumu); ayrica 54 ''var'' degiskenli talep bolgesi/trend cizgisi durum makinesi. Kismi kar alma Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: kademeli cikis (qty_percent) + basa bas); motor PR''i birlesince yeniden cevrilecek.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Kademeli kar alma: strategy.exit(''L TP1'', qty_percent=tp1Qty, ...) ile pozisyonun bir kismi TP1''de, kalani TP2''de kapanir (TP1 sonrasi stop kaydirma ve strategy.closedtrades durumu); ayrica 54 ''var'' degiskenli talep bolgesi/trend cizgisi durum makinesi. Kismi kar alma Dogrulanamaz kategorisidir.']
+belirsiz: ['Beklemede (bekliyor:motor): Kademeli kar alma: strategy.exit(''L TP1'', qty_percent=tp1Qty, ...) ile pozisyonun bir kismi TP1''de, kalani TP2''de kapanir (TP1 sonrasi stop kaydirma ve strategy.closedtrades durumu); ayrica 54 ''var'' degiskenli talep bolgesi/trend cizgisi durum makinesi. Kismi kar alma Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: kademeli cikis (qty_percent) + basa bas); motor PR''i birlesince yeniden cevrilecek.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'DCA ile kademeli birikim: pyramiding=500, dusus merdiveni (dip ladder) ve kriz sonrasi tekrarli alimlar. Piramit/DCA Dogrulanamaz kategorisidir.'}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'DCA ile kademeli birikim: pyramiding=500, dusus merdiveni (dip ladder) ve kriz sonrasi tekrarli alimlar. Piramit/DCA Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): DCA ile kademeli birikim: pyramiding=500, dusus merdiveni (dip ladder) ve kriz sonrasi tekrarli alimlar. Piramit/DCA Dogrulanamaz kategorisidir.']
+belirsiz: ['Beklemede (bekliyor:motor): DCA ile kademeli birikim: pyramiding=500, dusus merdiveni (dip ladder) ve kriz sonrasi tekrarli alimlar. Piramit/DCA Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

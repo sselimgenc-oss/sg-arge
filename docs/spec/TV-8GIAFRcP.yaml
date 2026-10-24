@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Uc asamali giris (Stage 1/2/3, pyramiding=3), qty_percent=50 ''Trend Flattening Trim'' kismi azaltma ve sermayeye bagli miktar. Piramit ve kismi cikis Dogrulanamaz kategorisidir.'}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'Uc asamali giris (Stage 1/2/3, pyramiding=3), qty_percent=50 ''Trend Flattening Trim'' kismi azaltma ve sermayeye bagli miktar. Piramit ve kismi cikis Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit + kismi cikis); motor PR''i birlesince yeniden cevrilecek.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Uc asamali giris (Stage 1/2/3, pyramiding=3), qty_percent=50 ''Trend Flattening Trim'' kismi azaltma ve sermayeye bagli miktar. Piramit ve kismi cikis Dogrulanamaz kategorisidir.']
+belirsiz: ['Beklemede (bekliyor:motor): Uc asamali giris (Stage 1/2/3, pyramiding=3), qty_percent=50 ''Trend Flattening Trim'' kismi azaltma ve sermayeye bagli miktar. Piramit ve kismi cikis Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit + kismi cikis); motor PR''i birlesince yeniden cevrilecek.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

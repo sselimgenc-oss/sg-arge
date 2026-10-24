@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'pyramiding=2: Supertrend donusunden sonra 40 bar kirilimiyla ''Breakout Add'' (pozisyonun %30''u kadar ek alim). Ek alim (piramit) Dogrulanamaz kategorisidir.'}
+dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding=2: Supertrend donusunden sonra 40 bar kirilimiyla ''Breakout Add'' (pozisyonun %30''u kadar ek alim). Ek alim (piramit) Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): pyramiding=2: Supertrend donusunden sonra 40 bar kirilimiyla ''Breakout Add'' (pozisyonun %30''u kadar ek alim). Ek alim (piramit) Dogrulanamaz kategorisidir.']
+belirsiz: ['Beklemede (bekliyor:motor): pyramiding=2: Supertrend donusunden sonra 40 bar kirilimiyla ''Breakout Add'' (pozisyonun %30''u kadar ek alim). Ek alim (piramit) Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

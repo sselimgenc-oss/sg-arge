@@ -18,7 +18,7 @@ PARTI_IDS = ['uC1oajDr', 'DUCODGjC', 'ouvmvItR', 'rvBgD3aP', '1OnkbAiE', 'kbYTJ8
 TAM_IDS = ['uC1oajDr', 'DUCODGjC', 'rvBgD3aP', 'NgSIfKQx', 'buSJAz8o', 'X0F9OE4L', 'dwgn7hrE', 'TbK1rB5B', 'W67tJltC', 'zoY9DmsF', 'WWuTjyDx', '7C1kIEOn', 'jc2hs2qK', 'roaahmoi', 'qDPWh3KO', 'Xr2xrNAY', 'TIpnJpU8', 'yvDyq0pv', 'VO6DY8s1', 'HPbRZvsV', 'QTYaYuX7', 'YsWWsOGs', '6knHPR6c']
 OZEL_IDS = ['rvBgD3aP', 'buSJAz8o', 'dwgn7hrE', 'TbK1rB5B', 'W67tJltC', '7C1kIEOn', 'qDPWh3KO', 'Xr2xrNAY', 'TIpnJpU8', 'yvDyq0pv', 'QTYaYuX7']
 SINIFLAR = ("KRIPTO", "ABD", "EMTIA")
-NEDENLER = ("piyasa", "veri", "ceviri")
+NEDENLER = ("piyasa", "veri", "ceviri", "bekliyor:motor")
 
 
 def load(script_id: str) -> dict:
