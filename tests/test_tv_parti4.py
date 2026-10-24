@@ -170,3 +170,35 @@ def test_dpkq3n4o_piramit_alani():
     assert card["piramit"] == {"en_cok": 2}
     plan = ozel_plan(card, {"X": walk(600, 4, "1D")})
     assert plan.engine_kwargs["pyramid_max"] == 2
+
+
+# ------------------------------------------------------------------ [1] kaymasi (Pine highest/lowest(...)[1]) taramasi
+KAYDIR_BEKLENEN = {
+    "n3eosaZK": ["hi126"], "3BXWqwnF": ["hh20", "ll10"], "ANmKXWWJ": ["hh20", "ll20"], "XRZCjbFr": ["hh50", "ll50"],
+    "tuC7aGNI": ["hh30", "ll30"], "jc2hs2qK": ["hh60", "vh60"], "uC1oajDr": ["lowrec", "highrec"],
+}
+
+
+@pytest.mark.parametrize("script_id,names", sorted(KAYDIR_BEKLENEN.items()))
+def test_pine_onceki_pencere_kartta_kaydir_1(script_id, names):
+    """Pine'da highest/lowest(...)[1] (ya da highest(high[1], n)) 'onceki n bar' demektir: kartta kaydir: 1 olmali."""
+    gost = load(script_id)["gostergeler"]
+    for name in names:
+        assert gost[name]["kaydir"] == 1, (script_id, name)
+
+
+def test_n3eosaz_k_onceki_126_bar_elle_ornek():
+    from engine import gosterge
+
+    # high = 100; bar 100 high = 110 (126 bar once), bar 226 high = 105. Pine high126[1] bar 226'da bar 100..225'in en yuksegi = 110:
+    # 105 >= 110 degil -> giris kosulu yanlis. Kaydirmasiz pencere (bar 101..226) 105 verir ve yanlislikla dogru olurdu.
+    n = 240
+    high = np.full(n, 100.0)
+    high[100] = 110.0
+    high[226] = 105.0
+    frame = frame_from(np.full(n, 100.0), high=high)
+    env = gosterge.build_env(frame, load("n3eosaZK")["gostergeler"])
+    assert env["hi126"].iloc[226] == 110.0
+    assert not (frame["high"].iloc[226] >= env["hi126"].iloc[226])
+    # bar 227: pencere 101..226 -> en yuksek 105
+    assert env["hi126"].iloc[227] == 105.0
