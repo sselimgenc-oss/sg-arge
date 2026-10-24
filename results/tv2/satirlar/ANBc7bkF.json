@@ -1,1 +1,1 @@
-{"id": "ANBc7bkF", "sembol": "BITFINEX:BTCUSD", "tf": "5", "url": "https://www.tradingview.com/script/ANBc7bkF/", "tur": "pine", "karar": "ertelendi", "neden": "dakikalık (5): ayrı, pencereli koşu (--dakikalik)"}
+{"id": "ANBc7bkF", "sembol": "BITFINEX:BTCUSD", "tf": "5", "url": "https://www.tradingview.com/script/ANBc7bkF/", "tur": "pine", "pencere_bas": "2017-08-14", "veri": "Binance BTCUSDT 5m", "bas": "2017-08-17", "son": "2026-10-24", "bar": 964719, "karar": "desteklenmiyor", "neden": "calc_on_order_fills"}
