@@ -1,0 +1,27 @@
+id: RD-04
+ad: '4H washout donusu: Williams %R(30) < -90 giris, > -50 cikis, %3 stop'
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/reddit/ozet.md, url: null, sayfa: 'bolum A, RD-04', not: 'Reddit; r/algotrading, Specialist-Bank-832 (yorum); yazar US500 4H. docs/GOREV_U7.md Ek 3.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD endeks (US500 -> SPY)
+kol: ABD-4H
+semboller: [SPY]
+gostergeler:
+  hh30: {f: highest, src: high, n: 30}
+  ll30: {f: lowest, src: low, n: 30}
+  wr: {f: seri, ifade: -100 * (hh30 - close) / (hh30 - ll30)}
+ozel_kod: false
+giris: wr < -90
+cikis: wr > -50
+stop: {tip: yuzde, deger: 3.0}
+hedef: null
+stop_eklendi: false
+piyasa_kisiti: [ABD]
+parametreler: {wr_uzunluk: 30, giris_esik: -90, cikis_esik: -50, stop_pct: 3.0}
+deneme_sayisi_kaynakta: null
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz: ['Kural arastirma/reddit/ozet.md bolum A''daki yazar sozlerinden birebir cevrildi; parametre eklenmedi/degistirilmedi. Yazarin boyut/kaldirac bilgisi yoktur: boyut EVRENSEL_KURALLAR A6.', 'US500 (yazar) -> SPY (kullanici talimati). 4H: ABD icin yfinance 1H''den 4H (09:30 New York seans kovalari), Faz 1 1H donem kurali (son ~2 yil; ilk 2/3 IS, kalan OOS).', 'Williams %R(30) = -100 x (en yuksek(high, 30) - kapanis) / (en yuksek(high, 30) - en dusuk(low, 30)). ''Gir'' ve ''cik'' esik durumu olarak okundu (kesisim degil): pozisyon yokken %R < -90 ise her barda giris sinyali; %R > -50 olunca cikis.', '''%3 felaket stopu'': dolum fiyatinin %3 alti, bar ici (motor stopu). Stoptan sonra %R hala < -90 ise bir sonraki barda yeniden giris olur (yazar yeniden giris kilidi belirtmemis).', 'Yazarin ''%2 stop kenari yarilaya indirdi'' ve ''27 komsu ayarin hepsi pozitif'' ifadeleri kural degil kanittir; kullanilmadi, esikler yazarin degerleridir (komsu ayar taramasi yapilmadi).', 'Kural kaynagi bir yorumdur: tam gecikme/dolum bilgisi yok; sinyal kapanmis 4H barinda, dolum sonraki barin acilisinda.']
