@@ -11,13 +11,13 @@ Son güncelleme: 2026-10-24, lider (Opus).
 
 | Ajan | Görev |
 |---|---|
-| Lider | Paper/pano izleme. Sıradaki iş için kullanıcı kararı bekleniyor (bkz. "Sırada"). |
-| Codex | Beklemede. Son iş F2-PANO A (PR #162) kabul edildi. |
-| Sonnet | Beklemede. U3 53 kayıtla kapandı (`arastirma/U3_mtf.csv`). |
+| Lider | **U4 ön kaydı** (`docs/GOREV_U4.md`): seyrek işlem, 4 kart × 4 kol = 16 deneme. Kart ve koşucu PR'larını denetler. |
+| Codex | **U4 B**: `backtests/u4.py` + `u4_huni.py`, sonra gerçek koşu → PR `[U4] koşucu + huni`. |
+| Sonnet | **U4 A**: kartlar `docs/spec/U4-H1..H4.yaml` + ileriye bakma testleri → PR `[U4] kartlar`. |
 | Argon | Beklemede. |
 
 ## Sırada (kullanıcı kararı bekleyen)
-1. Yeni strateji arayışı, yön: seyrek işlem (4H/günlük kurulum, büyük hedef). U1'de kâr izi gösteren tek yön 1H'deki küçük brüt kenar.
+1. ~~Yeni strateji arayışı~~ → **U4 başladı** (kullanıcı kararı 2026-10-24: kripto 4H/1D + ABD/emtia 1D, kendi hipotezlerimiz, yalnız long).
 2. Faz 2 pano modülleri (`docs/FAZ2_NOTLAR.md`): koç bulguları, öğrenen koç (gölge mod), strateji radarı.
 3. Küçük iyileştirmeler: hesap kartları saatlik değerlenmiyor (yalnız toplam); fiyat zamanı saatlik barın başlangıcını gösteriyor.
 
