@@ -8,16 +8,17 @@ Son güncelleme: 2026-10-24, lider (Opus).
 - `paper.yml` her saat :17'de çalışır. Defter yalnız kapanmış günlük barla (yarım bar koruması); açık pozisyonlar saatlik fiyatla yalnız panoda değerlenir.
 - Pano: `sg-pano` reposu, GitHub Pages (https://sselimgenc-oss.github.io/sg-pano/). Veri `PANEL_TOKEN` ile gönderilir.
 - Alarmlar: portföy MDD %10 uyarı, %15 yeni giriş durur; bir satır 30 kapanmış işlemden sonra PF < 1 ise inceleme.
+- **Gölge kitap** (ana portföyden ayrı, `docs/GOREV_F2_GOLGE.md` Ek 2): U4-H1 (kripto 4H), T8-07 ve V2B (emtia 1H); her biri 5.000 USD, risk %0,25; 2026-09-01'den geriye dönük, canlı 2026-10-24'ten. Karar yalnız canlı döneme bakılarak, 6 ay sonra.
 
 | Ajan | Görev |
 |---|---|
-| Lider | U6 ön kaydı (`docs/GOREV_U6.md`, 205 TradingView stratejisi, N=205, en çok 5 aday kilitli dönemde bir kez). Parti denetimleri. |
-| Codex | **U6-MOTOR** (`docs/GOREV_U6_MOTOR.md`): piramit + çok seviyeli kısmi çıkış + başa baş stopu, parite zorunlu. F2 gölge kitap ve U6 koşucusu tamam. |
-| Sonnet | **U6 A** (`docs/GOREV_U6.md`): 205 Pine → kart çevirisi, 4 parti × ~50, her parti ayrı PR. |
+| Lider | U6 denetimleri; resmî koşu sonrası en çok 5 aday listesi, kilitli dönem koşusu (kullanıcı onayıyla), `results/U6_SONUC.md`. Pano gölge sekmesi. |
+| Codex | **F2-GÖLGE Ek 2**: gölge kitap 3 strateji, 2026-09-01'den, gün içi özkaynak. Sonra U6 resmî koşusu (N=205). U6 motoru, koşucusu ve kilitli dönem altyapısı tamam. |
+| Sonnet | U6 çevirisi bitti (205/205 işlendi, motor kartları dahil; #187). Haftalık limit nedeniyle salıya kadar görev yok. |
 | Argon | Beklemede. |
 
 ## Sırada (kullanıcı kararı bekleyen)
-1. Kripto 4H trend → gölge kitap (kullanıcı kararı 2026-10-24, U4 seçenek b). TradingView 205 → U6 (kullanıcı kararı 2026-10-24).
+1. U6 resmî koşusu → en çok 5 aday → kilitli dönem testi (**kilidi açmak kullanıcı onayı ister**).
 0. ~~Yeni strateji arayışı~~ → **U4 bitti** (kullanıcı kararı 2026-10-24: kripto 4H/1D + ABD/emtia 1D, kendi hipotezlerimiz, yalnız long).
 2. Faz 2 pano modülleri (`docs/FAZ2_NOTLAR.md`): koç bulguları, öğrenen koç (gölge mod), strateji radarı.
 3. Küçük iyileştirmeler: hesap kartları saatlik değerlenmiyor (yalnız toplam); fiyat zamanı saatlik barın başlangıcını gösteriyor.
