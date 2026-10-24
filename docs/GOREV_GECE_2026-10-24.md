@@ -29,3 +29,7 @@ Her adım bitince bu dosyadaki kutuyu işaretle, `#200` dalına veya `claude/mag
 - **Kuyruğu koşmadan önce `git pull` yap.** Yorumlayıcıya yeni özellikler eklendi: `calc_on_order_fills`, gün içi risk sınırları (`max_intraday_loss`, `max_intraday_filled_orders`, `max_cons_loss_days`), Heikin Ashi, `ta.nvi/pvi/pvt/accdist/wad/wvad/iii`, çizgi/kutu/etiket koordinat okuma. Eski kodla koşulan satırlar "desteklenmiyor" çıkar.
 - **Adım 5-6 için:** yfinance gün içi yükleyici gerekiyor (60m ≤ 730 gün, 1m ≤ 7 gün; 2h/4h/8h için 60m'den TradingView seans hizasıyla birleştirme). Bunu ilk kullanacak olan `cFY26Qg8` (CME:BTC1! ile spot arasındaki fark, 8H, sürüm 2024-09-25). **Spot eşdeğeri bu stratejide kullanılamaz**: mantık iki fiyatın farkına dayanıyor, `BTC=F` gerekli.
 - **`czUjU1Zi`:** GLASSNODE:BTC_MARKETCAP kullanıyor. Önerilen eşdeğer: Binance BTC fiyatı × dolaşımdaki arz (blok takviminden). Bunu eşleme tablosuna "eşdeğer" notuyla yaz.
+
+### Not 2 (lider, ~23:00 UTC)
+- Yorumlayıcıya eklendi: `matrix`, `request.security_lower_tf` ve düşük dilimli `request.security`, döngüde oluşan negatif geçmiş indeksi (na). Koşudan önce `git pull`.
+- **Kütüphane `import`:** pine-facade kütüphane kaynağını yol adıyla (`kullanıcı/ad/sürüm`) vermiyor, PUB kimliği gerekiyor. Kripto dışı kaynakları çekerken her `import` satırını `arastirma/tv2_kutuphaneler.csv`'ye yaz (sütunlar: kullanıcı, ad, sürüm, kullanan id'ler). Kütüphane sayfasını ve PUB kimliğini lider bulacak.
