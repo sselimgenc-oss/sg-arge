@@ -386,6 +386,10 @@ class Yorumlayici:
             if kalici and all(y.basladi for y in yuvalar):
                 return NA
             v = self._deger(d.value) if d.value is not None else tuple(NA for _ in yuvalar)
+            if isinstance(v, list) and len(v) == len(yuvalar):
+                v = tuple(v)
+            elif not isinstance(v, tuple) and na(v):   # ör. üst dilimin ilk kapanmış barından önce security: hepsi na
+                v = tuple(NA for _ in yuvalar)
             if not isinstance(v, tuple):
                 raise PineHatasi("demet ataması demet olmayan değer aldı")
             for y, x in zip(yuvalar, v):
@@ -1345,8 +1349,10 @@ class Yorumlayici:
             x = b("start", "inc", "max")
             return self._durum(e, T.Sar)(x["start"], x["inc"], x["max"], h, l, c)
         if k == "vwap":
-            x = b("source", source=(h + l + c) / 3)
-            return self._durum(e, T.Vwap)(x["source"], v, int(self.gun_kodu[self.i]))
+            x = b("source", "anchor", "stdev_mult", source=(h + l + c) / 3)
+            carpan = x.get("stdev_mult")
+            return self._durum(e, T.Vwap)(x["source"], v, int(self.gun_kodu[self.i]), x.get("anchor"),
+                                          None if carpan is None or na(carpan) else float(carpan))
         if k == "correlation":
             x = b("source1", "source2", "length")
             return self._durum(e, T.Korelasyon)(x["source1"], x["source2"], x["length"])
@@ -1536,7 +1542,9 @@ class Yorumlayici:
                 return [] if dizi else NA
             v = self._deger(dugumler["expression"])
             self.guvenlik_kayit.setdefault(id(e), {})[self.i] = v
-            return [v] if dizi else v
+            if not dizi:
+                return v
+            return tuple([x] for x in v) if isinstance(v, tuple) else [v]
         if dk >= self.tf_dk:
             if dizi:                    # alt dilim grafik diliminden büyük değilse: tek elemanlı dizi
                 return [self._deger(dugumler["expression"])]
@@ -1562,6 +1570,10 @@ class Yorumlayici:
         ilk, son = int(g["ilk"][self.i]), int(g["son"][self.i])
         degerler = [kayit.get(k, NA) for k in range(ilk, son)]
         if dizi:
+            ifade = dugumler["expression"]
+            n = len(ifade.elts) if isinstance(ifade, A.Tuple) else next((len(x) for x in degerler if isinstance(x, tuple)), 0)
+            if n:                       # demet ifade: dizilerden oluşan demet (TradingView)
+                return tuple([x[j] if isinstance(x, tuple) else NA for x in degerler] for j in range(n))
             return degerler
         return degerler[-1] if degerler else NA
 

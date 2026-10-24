@@ -353,3 +353,23 @@ def test_lower_timeframe_security_returns_intrabar_values() -> None:
     y = ps.y
     assert y._bul("x").deger == 4 and y._bul("y").deger == pytest.approx(alt["close"].iloc[-4])
     assert y._bul("z").deger == pytest.approx(alt["close"].iloc[-2:].mean())
+
+
+def test_vwap_anchor_bands_and_lower_tf_tuple() -> None:
+    df = _veri(60, freq="1h")
+    tp = ((df["high"] + df["low"] + df["close"]) / 3).to_numpy()
+    v = df["volume"].to_numpy()
+    kod = "[m, u, d] = ta.vwap(hlc3, bar_index % 10 == 0, 2)\nx = m\ny = u - m\n"
+    m = _seri(kod, df, tf="60")
+    k = 25                                          # çapa: 20. bar, 25. barda 6 bar birikmiş
+    w, p = v[20:k + 1], tp[20:k + 1]
+    ort = (w * p).sum() / w.sum()
+    assert m[k] == pytest.approx(ort)
+    assert _seri(kod, df, ad="y", tf="60")[k] == pytest.approx(2 * np.sqrt((w * p * p).sum() / w.sum() - ort ** 2))
+    alt = _veri(24 * 4, freq="1h")
+    grafik = alt.resample("4h").agg({"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"})
+    ps = PineStrateji("//@version=5\nstrategy('t')\n[c, o] = request.security_lower_tf(syminfo.tickerid, '60', [close, open])\n"
+                      "x = array.size(c)\ny = array.get(o, 0)\n", sembol="BINANCE:TEST", tf="240")
+    ps.veri_saglayici = lambda s, dk: alt
+    calistir(ps, grafik)
+    assert ps.y._bul("x").deger == 4 and ps.y._bul("y").deger == pytest.approx(alt["open"].iloc[-4])
