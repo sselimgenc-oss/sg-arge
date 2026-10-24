@@ -38,6 +38,7 @@ from data.fetch import Asset, normalize_ohlcv  # noqa: E402
 PAPER_DIR = Path(__file__).resolve().parent
 PORTFOLIO_PATH = PAPER_DIR / "portfoy.yaml"
 LEDGER_DIR = PAPER_DIR / "defter"
+GOLGE_LEDGER_DIR = LEDGER_DIR / "golge"
 REPORT_PATH = PAPER_DIR / "RAPOR.md"
 DATA_DIR = ROOT / "data" / "daily"
 RESULTS_DIR = ROOT / "results"
@@ -92,6 +93,14 @@ def yukle_portfoy(path: Path = PORTFOLIO_PATH) -> Portfoy:
     return Portfoy(float(raw["sanal_sermaye"]), start, rows, {k: float(v) for k, v in (raw.get("alarmlar") or {}).items()}, live)
 
 
+def golge_portfoy(ana: Portfoy | None = None, path: Path = PORTFOLIO_PATH) -> Portfoy:
+    del ana
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    config = raw["golge"]
+    start = pd.Timestamp(str(config["baslangic"]), tz="UTC")
+    return Portfoy(float(config["sermaye"]), start, [Satir(str(config["id"]), str(config["piyasa"]), "kart", 1.0)], {"mdd_uyari": .15, "mdd_durdur": 1.0}, start)
+
+
 # ----------------------------------------------------------------------------------------------- data
 @dataclass
 class Veri:
@@ -138,6 +147,16 @@ def kapanmamis_gunluk_bari_at(veri: Veri, simdi: pd.Timestamp | None = None) -> 
     return Veri(frames, benchmarks, veri.data_hash)
 
 
+def kapanmamis_4h_bari_at(frames: dict[str, pd.DataFrame], simdi: pd.Timestamp | None = None) -> dict[str, pd.DataFrame]:
+    """Withhold the current UTC 4H bucket until its close plus five minutes."""
+    now = pd.Timestamp(simdi or pd.Timestamp.now(tz="UTC"))
+    now = now.tz_localize("UTC") if now.tzinfo is None else now.tz_convert("UTC")
+    bucket = now.floor("4h")
+    if now >= bucket + pd.Timedelta(hours=4, minutes=5):
+        return {symbol: frame.copy() for symbol, frame in frames.items()}
+    return {symbol: frame[frame.index < bucket].copy() for symbol, frame in frames.items()}
+
+
 def ilk_bar_bekleniyor(portfoy: Portfoy, veri: Veri) -> list[str]:
     """Rows whose market has no closed daily bar on/after the paper start yet (e.g. Yahoo still serves the day without prices)."""
     bekleyen = []
@@ -169,6 +188,22 @@ def indir(portfoy: Portfoy, directory: Path = DATA_DIR) -> list[str]:
     return failed
 
 
+def indir_golge(directory: Path = ROOT / "data" / "hourly", *, simdi: pd.Timestamp | None = None) -> list[str]:
+    """Refresh six shadow symbols, with only the 4H warm-up window on a fresh CI archive."""
+    from data.fetch import fetch_asset  # noqa: PLC0415
+
+    now = pd.Timestamp(simdi or pd.Timestamp.now(tz="UTC"))
+    now = now.tz_localize("UTC") if now.tzinfo is None else now.tz_convert("UTC")
+    start_override = now - pd.Timedelta(days=120)  # U4-H1 needs 100 × 4H bars plus a small buffer
+    failed = []
+    for symbol in ("BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "TRXUSDT"):
+        try:
+            fetch_asset(Asset(symbol, "KRIPTO25", "binance"), "1h", append=True, start_override=start_override, directory=directory)
+        except Exception as exc:  # noqa: BLE001
+            failed.append(f"{symbol} ({type(exc).__name__})")
+    return failed
+
+
 def yukle_veri(portfoy: Portfoy, directory: Path = DATA_DIR) -> Veri:
     frames, digests = {}, []
     for market in sorted({r.piyasa for r in portfoy.satirlar}):
@@ -186,12 +221,19 @@ def yukle_veri(portfoy: Portfoy, directory: Path = DATA_DIR) -> Veri:
     return Veri(frames, benchmarks, hashlib.sha256("".join(digests).encode()).hexdigest())
 
 
+def yukle_golge_veri(path: Path = ROOT / "data" / "hourly") -> Veri:
+    symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "TRXUSDT"]
+    frames = {symbol: normalize_ohlcv(pd.read_parquet(path / f"{symbol}.parquet")) for symbol in symbols if (path / f"{symbol}.parquet").exists()}
+    return Veri({"KRIPTO25": frames}, {}, "golge")
+
+
 # ----------------------------------------------------------------------------------------------- one book through the engine
 def _card(card_id: str) -> dict[str, Any]:
     return yaml.safe_load((ROOT / "docs" / "spec" / f"{card_id}.yaml").read_text(encoding="utf-8"))
 
 
-def kitap(satir: Satir, veri: Veri, baslangic: pd.Timestamp, sermaye: float, *, maske_tarihi: pd.Timestamp | None = None):
+def kitap(satir: Satir, veri: Veri, baslangic: pd.Timestamp, sermaye: float, *, maske_tarihi: pd.Timestamp | None = None,
+          risk_per_trade: float = .005, max_total_risk: float = .02):
     """Run one portfolio row from ``baslangic`` to its last closed bar; entry signals on/after ``maske_tarihi`` are switched off (stop)."""
     frames = veri.frames[satir.piyasa]
     bitis = max(f.index[-1] for f in frames.values())
@@ -202,7 +244,8 @@ def kitap(satir: Satir, veri: Veri, baslangic: pd.Timestamp, sermaye: float, *, 
     signals = prepared.plan.signals
     if maske_tarihi is not None:
         signals = {s: f.assign(entry=f["entry"].astype(bool) & ~(f.index >= maske_tarihi)) for s, f in signals.items()}
-    result = prepared.run(1.0, signals=signals, record_state=True, initial_capital=sermaye)
+    result = prepared.run(1.0, signals=signals, record_state=True, initial_capital=sermaye,
+                          risk_per_trade=risk_per_trade, max_total_risk=max_total_risk)
     return result, bitis
 
 
@@ -284,7 +327,7 @@ def _kayma(order_rows: pd.DataFrame, satir: str, fill: dict[str, Any], signal_da
 # ----------------------------------------------------------------------------------------------- the daily run
 def calistir(
     portfoy: Portfoy, veri: Veri, defter: Path = LEDGER_DIR, *, git_sha: str | None = None,
-    bugun: pd.Timestamp | None = None,
+    bugun: pd.Timestamp | None = None, risk_per_trade: float = .005, max_total_risk: float = .02,
 ) -> dict[str, Any]:
     """Re-run every row, append what is new to the ledger, evaluate the alarms. ``veri`` must already end at the day being run."""
     stamp = {"git_sha": git_sha or _git_sha(), "data_hash": veri.data_hash}
@@ -294,7 +337,8 @@ def calistir(
     stop_date = pd.Timestamp(stop_rows.iloc[0]["tarih"], tz="UTC") if len(stop_rows) else None
 
     def run_all(mask: pd.Timestamp | None):
-        return {r.etiket: kitap(r, veri, portfoy.baslangic, sermaye[r.etiket], maske_tarihi=mask)[0] for r in portfoy.satirlar}
+        return {r.etiket: kitap(r, veri, portfoy.baslangic, sermaye[r.etiket], maske_tarihi=mask,
+                                risk_per_trade=risk_per_trade, max_total_risk=max_total_risk)[0] for r in portfoy.satirlar}
 
     results = run_all(stop_date)
     series = {e: ozkaynak_serisi(res, sermaye[e]) for e, res in results.items()}
@@ -377,6 +421,13 @@ def calistir(
         "bitis": last_day, "ozkaynak": float(total.iloc[-1]), "mdd": drawdown, "durdur": stop_date, "eklenen": added,
         "sonuclar": results, "seriler": series, "toplam": total, "satir_ozet": summary_rows, "yeni_alarmlar": new_alarms,
     }
+
+
+def calistir_golge(portfoy: Portfoy, veri: Veri, defter: Path = GOLGE_LEDGER_DIR, *, simdi: pd.Timestamp | None = None) -> dict[str, Any] | None:
+    frames = kapanmamis_4h_bari_at(veri.frames.get("KRIPTO25", {}), simdi)
+    if not frames or max(frame.index[-1] for frame in frames.values()) < portfoy.baslangic:
+        return None
+    return calistir(portfoy, Veri({"KRIPTO25": frames}, {}, veri.data_hash), defter, risk_per_trade=.0025, max_total_risk=.01)
 
 
 # ----------------------------------------------------------------------------------------------- report
@@ -478,9 +529,13 @@ def main() -> int:
     portfoy = yukle_portfoy(args.portfoy)
     if args.indirme:
         failed = indir(portfoy, args.veri_dir)
+        failed += indir_golge()
         if failed:
             print("UYARI indirilemeyen semboller (eski arsiv kullanilir):", ", ".join(failed), file=sys.stderr)
     veri = kapanmamis_gunluk_bari_at(yukle_veri(portfoy, args.veri_dir))
+    # The shadow book is independent of the daily book: a missing daily bar
+    # must never prevent a closed 4H bar from being booked.
+    calistir_golge(golge_portfoy(path=args.portfoy), yukle_golge_veri(ROOT / "data" / "hourly"))
     bekleyen = ilk_bar_bekleniyor(portfoy, veri)
     if bekleyen:  # nothing to book yet: leave the ledger untouched instead of failing the hourly run
         mesaj = f"paper baslangicindan ({_day(portfoy.baslangic)}) sonra kapanmis gunluk bar yok: {', '.join(bekleyen)}. Defter degismedi."

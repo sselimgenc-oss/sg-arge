@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sys
 
 import numpy as np
 import pandas as pd
@@ -179,6 +180,49 @@ def test_incomplete_us_daily_bar_is_excluded_until_close_plus_30_minutes() -> No
     assert before.frames["ABD25"]["AAA"].index[-1] == pd.Timestamp("2026-10-23", tz="UTC")
     assert before.frames["EMTIA"]["BBB"].index[-1] == pd.Timestamp("2026-10-23", tz="UTC")
     assert after.frames["ABD25"]["AAA"].index[-1] == pd.Timestamp("2026-10-26", tz="UTC")
+
+
+def test_shadow_4h_bucket_waits_until_close_plus_five_minutes() -> None:
+    index = pd.date_range("2026-10-24 00:00", periods=8, freq="1h", tz="UTC")
+    frame = pd.DataFrame({"open": range(8), "high": range(1, 9), "low": range(8), "close": range(8), "volume": 1.0}, index=index)
+    before = gunluk.kapanmamis_4h_bari_at({"BTCUSDT": frame}, pd.Timestamp("2026-10-24 05:00", tz="UTC"))
+    after = gunluk.kapanmamis_4h_bari_at({"BTCUSDT": frame}, pd.Timestamp("2026-10-24 08:05", tz="UTC"))
+    assert before["BTCUSDT"].index.max() == pd.Timestamp("2026-10-24 03:00", tz="UTC")
+    assert after["BTCUSDT"].index.max() == pd.Timestamp("2026-10-24 07:00", tz="UTC")
+
+
+def test_shadow_portfolio_is_separate_from_the_main_book() -> None:
+    shadow = gunluk.golge_portfoy()
+    main = gunluk.yukle_portfoy()
+    assert shadow.sermaye == 5000 and shadow.satirlar[0].etiket == "U4-H1:KRIPTO25"
+    assert shadow.baslangic == pd.Timestamp("2026-10-24", tz="UTC")
+    assert shadow.satirlar != main.satirlar and gunluk.GOLGE_LEDGER_DIR != gunluk.LEDGER_DIR
+
+
+def test_shadow_download_limits_a_fresh_archive_to_120_days(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    calls = []
+
+    def fake_fetch(asset, interval, *, append, start_override, directory):
+        calls.append((asset.symbol, interval, append, start_override, directory))
+
+    monkeypatch.setattr(fetch, "fetch_asset", fake_fetch)
+    now = pd.Timestamp("2026-10-24 12:00", tz="UTC")
+    assert gunluk.indir_golge(tmp_path, simdi=now) == []
+    assert len(calls) == 6
+    assert all(call[1:] == ("1h", True, now - pd.Timedelta(days=120), tmp_path) for call in calls)
+
+
+def test_daily_wait_does_not_skip_the_independent_shadow_book(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    data = gunluk.Veri({}, {}, "daily-waits")
+    called = []
+    monkeypatch.setattr(gunluk, "yukle_veri", lambda *_args: data)
+    monkeypatch.setattr(gunluk, "kapanmamis_gunluk_bari_at", lambda value: value)
+    monkeypatch.setattr(gunluk, "ilk_bar_bekleniyor", lambda *_args: ["main:wait"])
+    monkeypatch.setattr(gunluk, "yukle_golge_veri", lambda *_args: object())
+    monkeypatch.setattr(gunluk, "calistir_golge", lambda *args: called.append(args))
+    monkeypatch.setattr(sys, "argv", ["gunluk.py", "--defter", str(tmp_path / "defter"), "--rapor", str(tmp_path / "RAPOR.md")])
+    assert gunluk.main() == 0
+    assert called
 
 
 def test_no_bar_after_the_paper_start_waits_instead_of_failing() -> None:
