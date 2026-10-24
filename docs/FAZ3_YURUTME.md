@@ -17,6 +17,11 @@
 
 **Not:** Testlerdeki piyasa ile gerçek enstrüman aynı olmayabilir. Örnek: test CME vadeli verisiyle yapılır ama işlem Gedik CFD'si ya da Binance TradFi vadelisiyle açılır. Bu durumda Adım 0'daki "uygulanabilir sonuç" o enstrümanın gerçek maliyetiyle yeniden hesaplanmalı: spread, komisyon, swap/fonlama, seans saatleri.
 
+### Kullanıcı yanıtları (2026-10-24)
+- **Gedik forex:** MetaTrader 5 var. Otomatik işleme (Expert Advisor / API) izin verilip verilmediği bilinmiyor; Gedik'e sorulacak.
+- **Vakıf:** algoritmik işlem altyapısı yok. Vakıf hesabı yalnız manuel kullanılabilir (yol D).
+- **Binance TradFi:** vadelide olduğu düşünülüyor. USDT-M vadeli listesindeyse aynı vadeli API'si geçerlidir. Bu ortamdan `fapi.binance.com` 451 (bölge engeli) döndüğü için sembol listesi buradan doğrulanamadı.
+
 ## 2. Emir yolu seçenekleri
 
 | Yol | Kapsam | Otomasyon | Artı | Eksi / risk |
