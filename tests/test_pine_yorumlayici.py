@@ -259,3 +259,29 @@ x = m.get("son") - map.get(m, "ilk") + (m.contains("yok") ? 1000 : 0) + m.size()
 """
     x = _seri(src, df)
     _ayni(x, (df["close"] - df["close"].iloc[0]).to_numpy(float))
+
+
+def test_intraday_risk_limits_halt_trading_until_the_next_day() -> None:
+    df = _veri(24 * 10, freq="1h")
+    govde = "if strategy.position_size == 0\n    strategy.entry('L', strategy.long, 1)\nelse\n    strategy.close('L')\n"
+    serbest = calistir(_strateji(govde), df).islemler
+    # 2 dolum (giriş + çıkış) sınırı: günde en çok bir işlem
+    sinirli = calistir(_strateji("strategy.risk.max_intraday_filled_orders(2)\n" + govde), df).islemler
+    gunler = pd.to_datetime(sinirli["giris_zaman"]).dt.normalize()
+    assert len(serbest) > 3 * len(sinirli) and gunler.value_counts().max() == 1 and gunler.nunique() >= 9
+    # gün içi zarar: gün başından beri herhangi bir zararda dur; aynı gün sonraki barda giriş yok
+    zarar = calistir(_strateji("strategy.risk.max_intraday_loss(1e-9, strategy.cash)\n" + govde), df)
+    assert 0 < len(zarar.islemler) < len(serbest)
+    with pytest.raises(Desteklenmiyor):
+        calistir(_strateji("strategy.risk.max_cons_loss_days(3)\n"), df)
+
+
+def test_heikin_ashi_security_matches_the_formula_and_v4_alias() -> None:
+    from engine.pine.yorumlayici import heikin_ashi
+    df = _veri(200)
+    ha = heikin_ashi(df)
+    x = _seri("//@version=5\nindicator('t')\nx = request.security(ticker.heikinashi(syminfo.tickerid), timeframe.period, close)\n", df)
+    _ayni(x, ha["close"].to_numpy())
+    x4 = _seri("//@version=4\nstudy('t')\nx = security(heikinashi(syminfo.tickerid), timeframe.period, open)\n", df)
+    _ayni(x4, ha["open"].to_numpy())
+    assert ha["high"].ge(ha[["open", "close"]].max(axis=1)).all() and ha["open"].iloc[1] == pytest.approx((ha["open"].iloc[0] + ha["close"].iloc[0]) / 2)

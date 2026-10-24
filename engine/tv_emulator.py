@@ -119,6 +119,7 @@ class Baglam:
         self.bekleyen: dict[str, _Emir] = {}
         self.gerceklesen = 0.0
         self.emir_kaydi: list[tuple] = []
+        self.dolum_sayisi = 0                          # gerçekleşen emir sayısı (strategy.risk.max_intraday_filled_orders)
 
     # ---- durum (Pine strategy.*) ----
     @property
@@ -237,15 +238,19 @@ class Baglam:
 
     def _ac(self, emir: _Emir, fiyat: float, bar: int, kaymali: bool) -> None:
         yon = emir.yon
-        if self.acik and self.acik[0].yon == -yon:   # ters çevirme: önce karşı pozisyon kapanır
+        cevrildi = bool(self.acik and self.acik[0].yon == -yon)
+        if cevrildi:                                   # ters çevirme: önce karşı pozisyon kapanır (tek emir sayılır)
             dolum = self._kayma(fiyat, yon) if kaymali else fiyat
-            self._kapat(list(self.acik), None, dolum, bar, emir.kimlik)
+            self._kapat(list(self.acik), None, dolum, bar, emir.kimlik, say=False)
+            self.dolum_sayisi += 1
         if sum(1 for t in self.acik if t.yon == yon) >= max(1, self.a.pyramiding):
             return
         dolum = self._kayma(fiyat, yon) if kaymali else fiyat
         adet = float(emir.adet or 0.0)
         if adet <= 0:
             return
+        if not cevrildi:
+            self.dolum_sayisi += 1
         self.acik.append(_Islem(emir.kimlik, yon, adet, adet, dolum, bar, self._komisyon(dolum, adet)))
 
     def _ham(self, emir: _Emir, fiyat: float, bar: int, kaymali: bool) -> None:
@@ -254,8 +259,9 @@ class Baglam:
         if self.acik and self.acik[0].yon == -yon:
             mevcut = sum(t.adet for t in self.acik)
             kapanan = min(mevcut, kalan)
-            self._kapat(list(self.acik), kapanan, dolum, bar, emir.kimlik)
+            self._kapat(list(self.acik), kapanan, dolum, bar, emir.kimlik, say=False)
             kalan -= kapanan
+        self.dolum_sayisi += 1
         if kalan > 1e-12:
             self.acik.append(_Islem(emir.kimlik, yon, kalan, kalan, dolum, bar, self._komisyon(dolum, kalan)))
 
@@ -265,8 +271,10 @@ class Baglam:
                 if diger.oca == emir.oca:
                     del self.bekleyen[anahtar]
 
-    def _kapat(self, hedef: list[_Islem], adet: float | None, fiyat: float, bar: int, exit_id: str) -> None:
+    def _kapat(self, hedef: list[_Islem], adet: float | None, fiyat: float, bar: int, exit_id: str, say: bool = True) -> None:
         kalan = sum(t.adet for t in hedef) if adet is None else adet
+        if say and kalan > 1e-12:
+            self.dolum_sayisi += 1
         for t in hedef:                                # FIFO
             if kalan <= 1e-12:
                 break

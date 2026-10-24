@@ -191,6 +191,11 @@ class Yorumlayici:
         self.risk_yon: int | None = None
         self.risk_maks_dd: tuple | None = None
         self.durdu = False
+        self.risk_gun_zarar: tuple | None = None       # (değer, tür) strategy.risk.max_intraday_loss
+        self.risk_gun_emir: int | None = None          # strategy.risk.max_intraday_filled_orders
+        self.risk_gun: int | None = None
+        self.gun_durdu: int | None = None              # gün içi sınır aşıldıysa o günün kodu
+        self.son_ozkaynak = self.son_dolum = 0.0
         self.zirve = -math.inf
         self.maks_dd = 0.0
         self.guvenlik: dict[str, dict] = {}       # tf metni -> {'yorum': Yorumlayici, 'kayit': {dugum_id: [degerler]}, ...}
@@ -243,6 +248,7 @@ class Yorumlayici:
                 y.atandi = False
 
     def _risk_kontrol(self) -> None:
+        self._gun_ici_risk()
         if self.risk_maks_dd is None or self.durdu:
             return
         eq = self.ctx.equity
@@ -254,6 +260,28 @@ class Yorumlayici:
             self.durdu = True
             self.ctx.cancel_all()
             self.ctx.close_all()
+
+    def _gun_ici_risk(self) -> None:
+        """Gün içi sınırlar bar kapanışında denetlenir (geçmiş barlarda TradingView de dolumdan sonra denetler;
+        bar içi sıra yaklaşık). Aşılınca açık emirler iptal, pozisyon kapanır, gün sonuna kadar giriş yok."""
+        c = self.ctx
+        gun = int(self.gun_kodu[self.i])
+        if gun != self.risk_gun:                       # gün başı: önceki barın kapanışındaki durum taban
+            self.risk_gun, self.gun_ozkaynak, self.gun_dolum = gun, self.son_ozkaynak or c.equity, self.son_dolum
+        self.son_ozkaynak, self.son_dolum = c.equity, c.dolum_sayisi
+        if self.gun_durdu == gun:
+            return
+        asildi = False
+        if self.risk_gun_zarar is not None:
+            deger, tip = self.risk_gun_zarar
+            sinir = deger / 100 * self.gun_ozkaynak if tip == "percent_of_equity" else deger
+            asildi = self.gun_ozkaynak - c.equity >= sinir
+        if self.risk_gun_emir is not None and c.dolum_sayisi - self.gun_dolum >= self.risk_gun_emir:
+            asildi = True
+        if asildi:
+            self.gun_durdu = gun
+            c.cancel_all()
+            c.close_all()
 
     # ------------------------------------------------------------------ deyimler
     def _govde(self, govde: list, yeni_kapsam: bool = True) -> Any:
@@ -935,6 +963,9 @@ class Yorumlayici:
             return bool(b[0] != b[1])
         if ad == "runtime.error":
             raise PineHatasi(f"runtime.error: {konum[0] if konum else ''}")
+        if ad in ("ticker.heikinashi", "heikinashi"):
+            sem = str(konum[0] if konum else adli.get("symbol", self.sembol))
+            return sem if sem.startswith(HA_ONEK) else HA_ONEK + sem      # HA alt koşusunda tickerid zaten HA
         if ad == "ticker.new" or ad.startswith("ticker."):
             if ad == "ticker.standard" or ad == "ticker.modify":
                 return konum[0] if konum else self.sembol
@@ -967,7 +998,7 @@ class Yorumlayici:
             return self._risk(ad[14:], konum, adli)
         if ad.startswith("strategy.opentrades.") or ad.startswith("strategy.closedtrades."):
             return self._islem_bilgi(ad, konum, adli)
-        if self.durdu and ad in ("strategy.entry", "strategy.order"):
+        if (self.durdu or self.gun_durdu == self.risk_gun) and ad in ("strategy.entry", "strategy.order"):
             return None
         if ad == "strategy.entry":
             b = _bagla(["id", "direction", "qty", "limit", "stop", "oca_name", "oca_type", "comment"], konum, adli)
@@ -1048,6 +1079,13 @@ class Yorumlayici:
         if ad == "max_drawdown":
             self.risk_maks_dd = (float(konum[0] if konum else adli["value"]),
                                  konum[1] if len(konum) > 1 else adli.get("type", "percent_of_equity"))
+            return None
+        if ad == "max_intraday_loss":
+            self.risk_gun_zarar = (float(konum[0] if konum else adli["value"]),
+                                   konum[1] if len(konum) > 1 else adli.get("type", "percent_of_equity"))
+            return None
+        if ad == "max_intraday_filled_orders":
+            self.risk_gun_emir = int(konum[0] if konum else adli["count"])
             return None
         raise Desteklenmiyor(f"strategy.risk.{ad}")
 
@@ -1325,6 +1363,10 @@ class Yorumlayici:
         kendi = {self.sembol, self.sembol.split(":")[-1], "", None}
         dk = tf_dakika(tf) if tf else self.tf_dk
         ifade = dugumler["expression"]
+        if sembol not in kendi and isinstance(sembol, str) and sembol.startswith(HA_ONEK) and sembol[len(HA_ONEK):] in kendi:
+            if self.guvenlik_modu:
+                return NA
+            return self._dis_sembol(e, str(sembol), max(dk, self.tf_dk) if dk else self.tf_dk, lookahead, gaps)
         if sembol not in kendi:
             if self.guvenlik_modu:      # başka sembolün ön koşusundaki ikinci dış sembol: değeri orada gerekmez
                 return NA
@@ -1363,7 +1405,10 @@ class Yorumlayici:
         anahtar = ("dis", sembol, dk)
         g = self.guvenlik.get(anahtar)
         if g is None:
-            df2 = self.veri_saglayici(sembol, dk) if self.veri_saglayici is not None else None
+            if sembol.startswith(HA_ONEK):              # Heikin Ashi: kendi barlarından (yüksek dilimde önce birleştirilir)
+                df2 = heikin_ashi(self.df if dk == self.tf_dk else self._birlestir(dk)[0])
+            else:
+                df2 = self.veri_saglayici(sembol, dk) if self.veri_saglayici is not None else None
             if df2 is None or df2.empty:
                 raise Desteklenmiyor(f"request.security başka sembol, veri yok ({sembol})")
             y = Yorumlayici(self.p, df2, tf_dk=dk, sembol=sembol, tz=self.tz, mintick=self.mintick, girdiler=self.girdiler,
@@ -1388,14 +1433,18 @@ class Yorumlayici:
             return NA
         return v
 
-    def _guvenlik_kur(self, dk: int) -> dict:
+    def _birlestir(self, dk: int) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
+        """Grafik barlarını `dk` dakikalık kovalara birleştirir: (yüksek dilim barları, grafik→kova haritası, kova bitişleri)."""
         bas, bit = _kova(self.df.index, dk, self.tz)
         kovalar, ilk, harita = np.unique(bas, return_index=True, return_inverse=True)
         htf = self.df.assign(_k=harita).groupby("_k").agg(
             open=("open", "first"), high=("high", "max"), low=("low", "min"), close=("close", "last"),
             volume=("volume", "sum") if "volume" in self.df else ("close", "size"))
         htf.index = pd.to_datetime(kovalar, utc=True)
-        bitis = np.asarray(bit)[ilk]
+        return htf, harita, np.asarray(bit)[ilk]
+
+    def _guvenlik_kur(self, dk: int) -> dict:
+        htf, harita, bitis = self._birlestir(dk)
         kapanis_grafik = self.df.index.asi8 + self.tf_dk * 60_000_000_000
         # bar i'de kapanmış son yüksek dilim kovası: bitişi <= grafik barı kapanışı olan en büyük k
         kapali = np.searchsorted(bitis, kapanis_grafik, side="right") - 1
@@ -1408,6 +1457,24 @@ class Yorumlayici:
 
 
 # ---------------------------------------------------------------------- yardımcılar
+HA_ONEK = "HEIKINASHI|"
+
+
+def heikin_ashi(df: pd.DataFrame) -> pd.DataFrame:
+    """TradingView Heikin Ashi barları: kapanış OHLC ortalaması, açılış önceki HA açılış/kapanış ortalaması
+    (ilk bar (açılış+kapanış)/2), tepe/dip gerçek uçlarla HA açılış/kapanışın en büyüğü/küçüğü."""
+    o, h, l, c = (df[k].to_numpy(float) for k in ("open", "high", "low", "close"))
+    hc = (o + h + l + c) / 4
+    ho = np.empty_like(hc)
+    ho[0] = (o[0] + c[0]) / 2
+    for i in range(1, len(hc)):
+        ho[i] = (ho[i - 1] + hc[i - 1]) / 2
+    out = df.copy()
+    out["open"], out["close"] = ho, hc
+    out["high"], out["low"] = np.maximum.reduce([h, ho, hc]), np.minimum.reduce([l, ho, hc])
+    return out
+
+
 KOTASYONLAR = ("USDT", "USDC", "BUSD", "USD", "BTC", "ETH", "EUR", "TRY")
 
 
