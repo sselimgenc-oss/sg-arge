@@ -12,7 +12,7 @@ Son güncelleme: 2026-10-24, lider (Opus).
 | Ajan | Görev |
 |---|---|
 | Lider | U6 ön kaydı (`docs/GOREV_U6.md`, 205 TradingView stratejisi, N=205, en çok 5 aday kilitli dönemde bir kez). Parti denetimleri. |
-| Codex | **F2-GÖLGE** (`docs/GOREV_F2_GOLGE.md`): kripto 4H trend (U4-H1, çekirdek 6 coin, %0,25 risk) canlı gölge kitap, geriye dönük doldurma yok. Sonra **U6 B** (koşucu). |
+| Codex | **U6-MOTOR** (`docs/GOREV_U6_MOTOR.md`): piramit + çok seviyeli kısmi çıkış + başa baş stopu, parite zorunlu. F2 gölge kitap ve U6 koşucusu tamam. |
 | Sonnet | **U6 A** (`docs/GOREV_U6.md`): 205 Pine → kart çevirisi, 4 parti × ~50, her parti ayrı PR. |
 | Argon | Beklemede. |
 

@@ -22,6 +22,7 @@
 - **Stop:** yazarın stopu varsa o; yoksa ATR(14) × 3 koruma stopu (EVRENSEL_KURALLAR A7). Kayıtta `stop_eklendi: true`.
 - **Dönemler:** U4 ile aynı. IS 2018-01-01 → 2022-12-31, OOS 2023-01-01 → 2025-09-30; ABD/emtia ön dönem 2015-2017.
 - **Çevrilemeyen:** motorun desteklemediği yapılar (kademeli kâr alma, piramit, sermayeye bağlı koşul, dış veri, Pine içi ML) → "Doğrulanamaz (çeviri)", nedeniyle. Yaklaşık değiştirme yapılmaz.
+  - *Ek (lider, 2026-10-24, sonuç görülmeden):* piramit, çok seviyeli kısmi çıkış ve başa baş stopu motora eklenince (`docs/GOREV_U6_MOTOR.md`) çevrilebilir sayılır; bu yapılar yüzünden Doğrulanamaz olan kartlar yeniden çevrilir.
 
 ## 3. Kapılar (U4 huni, `backtests/u4_huni.decide` ile aynı; N = 205)
 Aşama 1: IS PF > 1, ≥ 30 işlem. 2a: rastgele giriş testi p < 0,05. 2b: OOS ortalama R > 0, 2x PF ≥ 1,2, 3x net > 0, +1 bar net > 0, MDD95 ≤ %15, DSR (N=205) > 0,95. Kripto kardeş ölçütü. Koşullu sebepleri U4 ile aynı.
