@@ -42,6 +42,13 @@ def test_funnel_uses_fixed_205_trials_in_its_heading(tmp_path) -> None:
     assert u6_huni.TRIALS == 205
 
 
+def test_funnel_writes_the_same_unverifiable_card_report(tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(u6, "variants_and_skips", lambda: ([], [("TV-SKIP", "piyasa bulunamayan")]))
+    assert u6_huni.main(["--results-dir", str(tmp_path)]) == 0
+    report = pd.read_csv(tmp_path / "dogrulanamaz.csv").to_dict("records")
+    assert report == [{"id": "TV-SKIP", "neden": "piyasa bulunamayan"}]
+
+
 def test_locked_period_remains_closed() -> None:
     with pytest.raises(PermissionError):
         u4.lock_check(pd.Timestamp("2025-10-01", tz="UTC"))
