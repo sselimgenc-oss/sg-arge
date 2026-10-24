@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Her barda yeniden kurulan iki yonlu stop emri (long: open + atrs, short: open - atrs; atrs = hma(tr, 9) * 0.75). Long pozisyonun cikisi, ters yondeki (short) stop emrinin ayni mekanizmayla dolmasidir; bu dinamik, her bar yenilenen stop emri motorun sinyal-bazli cikis/sabit stop yapisiyla ifade edilemez. Hull MA de kutuphanede yok.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Long pozisyonun cikisi, her barda yeniden kurulan ters yondeki (short) stop emridir (open - atrs, atrs = hma(tr, 9)*0.75): seviye pozisyon icinde her bar degisir ve intrabar dolar. Motorda bar-bazli yenilenen ters stop emriyle cikis yok; yaklasik donusum yapilmadi. Hull MA ve stop emriyle giris tarafi cevrilebilirdi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Her barda yeniden kurulan iki yonlu stop emri (long: open + atrs, short: open - atrs; atrs = hma(tr, 9) * 0.75). Long pozisyonun cikisi, ters yondeki (short) stop emrinin ayni mekanizmayla dolmasidir; bu dinamik, her bar yenilenen stop emri motorun sinyal-bazli cikis/sabit stop yapisiyla ifade edilemez. Hull MA de kutuphanede yok.']
+belirsiz: ['Dogrulanamaz (ceviri): Long pozisyonun cikisi, her barda yeniden kurulan ters yondeki (short) stop emridir (open - atrs, atrs = hma(tr, 9)*0.75): seviye pozisyon icinde her bar degisir ve intrabar dolar. Motorda bar-bazli yenilenen ters stop emriyle cikis yok; yaklasik donusum yapilmadi. Hull MA ve stop emriyle giris tarafi cevrilebilirdi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

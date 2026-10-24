@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Hacim profili (satir bazli hacim dagitimi, value area, HVN tepe/zone tespiti, naked POC listesi) dizilerle ve donguylerle hesaplanir; ayrica kod grafik zaman dilimi profil periyodundan kucuk olmazsa runtime.error verir (1D grafikte profil D ise calismaz). Motorda karsiligi yok.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Script 1D grafikte calismaz: `barstate.islast and timeframe.in_seconds() >= timeframe.in_seconds(profileTF)` kosulu runtime.error uretir (profileTF varsayilani ''D'', grafik 1D); yayin araligi 1D oldugundan yazarin kodu bu aralikta strateji raporu vermez. Ayrica hacim profili (satir bazli hacim dagitimi, value area, HVN/naked POC dizileri) 350 satirlik dizi/dongu kodudur.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Hacim profili (satir bazli hacim dagitimi, value area, HVN tepe/zone tespiti, naked POC listesi) dizilerle ve donguylerle hesaplanir; ayrica kod grafik zaman dilimi profil periyodundan kucuk olmazsa runtime.error verir (1D grafikte profil D ise calismaz). Motorda karsiligi yok.']
+belirsiz: ['Dogrulanamaz (ceviri): Script 1D grafikte calismaz: `barstate.islast and timeframe.in_seconds() >= timeframe.in_seconds(profileTF)` kosulu runtime.error uretir (profileTF varsayilani ''D'', grafik 1D); yayin araligi 1D oldugundan yazarin kodu bu aralikta strateji raporu vermez. Ayrica hacim profili (satir bazli hacim dagitimi, value area, HVN/naked POC dizileri) 350 satirlik dizi/dongu kodudur.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

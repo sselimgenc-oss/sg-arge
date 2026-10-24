@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'ta.pivothigh/ta.pivotlow(2, 1) kutuphanede yok ve esit-deger kurallari dogrulanmadi; stop emriyle giris seviyesi (le/se mandali, seviye asilirsa iptal) ve ters yone cevirme ile calisan ''Pivot Reversal'' ornegi. Ayrica script aylik getiri tablosu icin yazilmis bir sablondur.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Long pozisyonun cikisi, ters yondeki (short) bekleyen stop emrinin dolmasidir (stop=lprice - mintick; seviye her yeni pivot dipte degisir ve syminfo.mintick kullanir). Motorda dinamik, pozisyon sonrasi guncellenen ters stop emriyle cikis ve enstruman fiyat adimi yok; yaklasik (ertesi acilista sinyal cikisi) donusum yapilmadi. Giris tarafi (pivot + stop emri) cevrilebilirdi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): ta.pivothigh/ta.pivotlow(2, 1) kutuphanede yok ve esit-deger kurallari dogrulanmadi; stop emriyle giris seviyesi (le/se mandali, seviye asilirsa iptal) ve ters yone cevirme ile calisan ''Pivot Reversal'' ornegi. Ayrica script aylik getiri tablosu icin yazilmis bir sablondur.']
+belirsiz: ['Dogrulanamaz (ceviri): Long pozisyonun cikisi, ters yondeki (short) bekleyen stop emrinin dolmasidir (stop=lprice - mintick; seviye her yeni pivot dipte degisir ve syminfo.mintick kullanir). Motorda dinamik, pozisyon sonrasi guncellenen ters stop emriyle cikis ve enstruman fiyat adimi yok; yaklasik (ertesi acilista sinyal cikisi) donusum yapilmadi. Giris tarafi (pivot + stop emri) cevrilebilirdi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

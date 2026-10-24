@@ -6,8 +6,8 @@ tarz: swing
 tf: 4H
 mtf: null
 tf_varsayim: false
-yazar_piyasasi: FX (FX:SPX500)
-kol: FX-4H
+yazar_piyasasi: ABD (FX:SPX500)
+kol: ABD-4H
 yayin_sembolu: FX:SPX500
 gostergeler: {}
 ozel_kod: false
@@ -17,10 +17,10 @@ stop: null
 hedef: null
 stop_eklendi: false
 yalniz_long_bacak: true
-piyasa_kisiti: [DIGER]
-parametreler: {kol: FX-4H}
-dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu FX:SPX500 FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-4H}
+dogrulanamaz: {neden: veri, ayrinti: 'ABD icin 4H uzun veri yok (yayin sembolu FX:SPX500). Kural cevrilmedi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu FX:SPX500 FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (veri): ABD icin 4H uzun veri yok (yayin sembolu FX:SPX500). Kural cevrilmedi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

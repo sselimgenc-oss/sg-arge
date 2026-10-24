@@ -10,17 +10,19 @@ yazar_piyasasi: ABD (NASDAQ:AMZN)
 kol: ABD-1D
 yayin_sembolu: NASDAQ:AMZN
 gostergeler: {}
-ozel_kod: false
+ozel_kod: true
+ozel_kod_nedeni: desen
 giris: null
 cikis: null
+kural_ozeti: {giris: 'ZigZag (pivot 5/1) 5 dalga itkisi tamamlandi ve ters pivot olustu (Reversal) ya da dalga-4 geri cekilmesi 0.236-0.618 icinde (Wave 5): itki boyu >= 1.5 x ATR, odul/risk >= 1, pozisyon yok, bar_index > 50', cikis: 'Stop = son pivot -/+ 0.2 x ATR, hedef = Reversal icin itkinin %50 geri cekilmesi, Wave 5 icin dalga-1 boyu; 100 bar zaman stopu'}
 stop: null
 hedef: null
+zaman_stop: {bar: 101}
 stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
-parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Elliott dalga sayimi: pivothigh/pivotlow''dan ZigZag zx/zy dizileri (var array) ile 5 dalga dogrulamasi (isImpulse), fib retracement kontrolu ve bar-icinde degisen dizi durumu. Motorda dizi/durum makinesi yok; yaklasik donusum yapilmadi.'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Elliott dalga sayimi: pivothigh/pivotlow''dan ZigZag zx/zy dizileri (var array) ile 5 dalga dogrulamasi (isImpulse), fib retracement kontrolu ve bar-icinde degisen dizi durumu. Motorda dizi/durum makinesi yok; yaklasik donusum yapilmadi.']
+parametreler: {kol: ABD-1D, zz_len: 5, entry_mode: Both, tgt_fib: 0.5, w5_ext: 1.0, min_ret4: 0.236, max_ret4: 0.618, min_imp: 1.5, stop_buf: 0.2, min_rr: 1.0, atr_len: 14}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'ZigZag: ta.pivothigh(high, 5, 1) / ta.pivotlow(low, 5, 1) ile (esit-deger kurali dogrulanamadi, sert esitsizlik varsayildi) zx/zy dizilerine (en yeni basta, en fazla 8) eklenir; ayni yonde daha uc bir pivot sonuncuyu gunceller. Pivot dizisi pozisyondan bagimsizdir; pozisyon kapisi (position_size == 0) motordadir. Yalniz long sinyalleri (sigDir == 1) verilir; short sinyalleri islem acmaz (ters cevirme yok).', 'Stop/hedef seviyeleri sinyal barinda sabitlenir (strategy.exit giris emriyle ayni barda verilir, dolum barindan etkin; motorla ayni). Zaman stopu: Pine entryBar = dolum bari, bar_index - entryBar >= 100 kosulu dolum + 100. barin kapanisinda saglanir ve cikis bir sonraki acilistadir; motor zaman_stop semantigiyle (bars_held >= N, dolum bari 1) bu N = 101''dir.', 'Pine odul/risk ve miktar hesaplari (calcQty, riskPct, maxNotional) yazarin boyut kodudur ve kullanilmaz; minRR = 1 kosulu (sinyal kapanisina gore) kuralin parcasi olarak korunur.', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_rvbgd3ap.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
