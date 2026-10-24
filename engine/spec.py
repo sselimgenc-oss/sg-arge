@@ -48,7 +48,8 @@ def normalize_timeframe(value: object) -> object:
         return value.strip()[:-1] + "H"
     return value
 EXPR_FIELDS = ("giris", "cikis")
-EXIT_FIELDS = ("stop", "hedef", "iz_suren", "zaman_stop")  # structured exits: a card may rely on them alone
+EXIT_FIELDS = ("stop", "hedef", "iz_suren", "zaman_stop", "dinamik_cikis")  # structured exits: a card may rely on them alone
+DYNAMIC_KEYS = ("stop", "stop_giristen", "hedef", "hedef_giristen")
 OZEL_NEDENLERI = (
     "bekleyen_emir",       # simple long stop/limit entry is supported; complex variants may still need code
     "seans_saat",          # exchange/server clock windows, session open/close, spread or margin filters
@@ -223,6 +224,23 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
                     issues.append(Issue("kademeli_cikis", f"kademeli_cikis[{number}] tetik ve 0<oran<=1 icermeli"))
                     continue
                 _check_expression(level.get("tetik"), f"kademeli_cikis[{number}].tetik", defined, gost, issues, runtime=True)
+                for flag in ("bar_ici", "stop_girise"):
+                    if flag in level and not isinstance(level[flag], bool):
+                        issues.append(Issue("kademeli_cikis", f"kademeli_cikis[{number}].{flag} true/false olmali"))
+    dynamic = card.get("dinamik_cikis")
+    if dynamic is not None:
+        if not isinstance(dynamic, dict) or not any(isinstance(dynamic.get(key), str) for key in DYNAMIC_KEYS):
+            issues.append(Issue("dinamik_cikis", f"dinamik_cikis en az bir ifade icermeli: {', '.join(DYNAMIC_KEYS)}"))
+        else:
+            unknown = set(dynamic) - set(DYNAMIC_KEYS) - {"mandal"}
+            if unknown:
+                issues.append(Issue("dinamik_cikis", f"dinamik_cikis bilinmeyen alan: {sorted(unknown)}"))
+            if "mandal" in dynamic and not isinstance(dynamic["mandal"], bool):
+                issues.append(Issue("dinamik_cikis", "dinamik_cikis.mandal true/false olmali"))
+            for key in DYNAMIC_KEYS:
+                if isinstance(dynamic.get(key), str):
+                    # bar series only: position values enter through the *_giristen distances
+                    _check_expression(dynamic[key], f"dinamik_cikis.{key}", defined, gost, issues, runtime=False)
 
     rotation = card.get("rotasyon")
     if rotation is not None:
