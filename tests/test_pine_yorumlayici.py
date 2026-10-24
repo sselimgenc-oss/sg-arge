@@ -328,3 +328,14 @@ def test_calc_on_order_fills_reexecutes_intrabar_with_rollback_except_varip() ->
     assert len(t) > len(duz.islemler) and (t["giris_bar"] == t["cikis_bar"]).any()
     assert ps.y._bul("barlar").deger == len(df)              # var: bar başına bir kez (geri sarılır)
     assert ps.y._bul("yurutme").deger > len(df)              # varip: her yürütmede artar
+
+
+def test_matrix_rows_and_reductions() -> None:
+    df = _veri(20)
+    kod = ("var matrix<float> m = matrix.new<float>(0, 2, 0)\nm.add_row(m.rows(), array.from(close, open))\n"
+           "if m.rows() > 3\n    m.remove_row(0)\nx = matrix.get(m, m.rows() - 1, 0) - close\n"
+           "y = m.rows()\nz = m.max()\n")
+    _ayni(_seri(kod, df), np.zeros(len(df)))
+    assert _seri(kod, df, ad="y")[-1] == 3
+    son = df.iloc[-3:]
+    assert _seri(kod, df, ad="z")[-1] == pytest.approx(max(son["close"].max(), son["open"].max()))

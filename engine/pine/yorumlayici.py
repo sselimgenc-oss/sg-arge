@@ -105,6 +105,13 @@ class _Cizim:
         self.tur, self.alan = tur, alan
 
 
+class _Matris:
+    """Pine matrix: satır listeleri."""
+
+    def __init__(self, satirlar: list[list]) -> None:
+        self.s = satirlar
+
+
 class _Nesne:
     """Kullanıcı tipi (type) örneği."""
 
@@ -866,6 +873,8 @@ class Yorumlayici:
             return self._yerlesik("array." + ad, e, on_arg=nesne)
         if isinstance(nesne, dict):
             return self._yerlesik("map." + ad, e, on_arg=nesne)
+        if isinstance(nesne, _Matris):
+            return self._yerlesik("matrix." + ad, e, on_arg=nesne)
         if isinstance(nesne, _Cizim):
             return self._yerlesik(f"{nesne.tur}.{ad}", e, on_arg=nesne)
         if nesne is None or (isinstance(nesne, float) and na(nesne)):   # çizim nesnesi (label/line/box) ya da na
@@ -965,6 +974,8 @@ class Yorumlayici:
             return _dizi(ad[6:], konum, adli)
         if ad.startswith("map."):
             return _harita(ad[4:], konum, adli)
+        if ad.startswith("matrix."):
+            return _matris(ad[7:], konum, adli)
         if ad.startswith("str."):
             return _metin(ad[4:], konum, adli)
         if ad == "na":
@@ -1868,6 +1879,70 @@ def _dizi(ad: str, konum, adli) -> Any:
         v = a[k]
         return 100.0 * sum(1 for x in a if x <= v) / len(a) if a else NA
     raise Desteklenmiyor("array." + ad)
+
+
+def _matris(ad: str, konum, adli) -> Any:
+    """Pine matrix: yaygın işlemler; desteklenmeyenler (det, inv, eigen ...) açık hata."""
+    b = lambda k, ad_, v=None: konum[k] if len(konum) > k else adli.get(ad_, v)   # noqa: E731
+    if ad == "new":
+        r, c, ilk = b(0, "rows", 0), b(1, "columns", 0), b(2, "initial_value", NA)
+        return _Matris([[ilk] * int(c) for _ in range(int(r))])
+    m = konum[0]
+    if not isinstance(m, _Matris):
+        raise PineHatasi(f"matrix.{ad} matris olmayan")
+    s = m.s
+    if ad == "rows":
+        return len(s)
+    if ad == "columns":
+        return len(s[0]) if s else 0
+    if ad == "elements_count":
+        return sum(len(r) for r in s)
+    if ad in ("get", "set"):
+        r, c = b(1, "row"), b(2, "column")
+        if na(r) or na(c) or not (0 <= int(r) < len(s)) or not (0 <= int(c) < len(s[int(r)])):
+            raise PineHatasi(f"matrix.{ad}: indeks dışı")
+        if ad == "get":
+            return s[int(r)][int(c)]
+        s[int(r)][int(c)] = b(3, "value")
+        return None
+    if ad == "row":
+        return list(s[int(b(1, "row"))])
+    if ad == "col":
+        return [r[int(b(1, "column"))] for r in s]
+    if ad == "add_row":
+        k, dizi = b(1, "row", len(s)), b(2, "array_id")
+        k = len(s) if na(k) else int(k)
+        n = len(s[0]) if s else (len(dizi) if isinstance(dizi, list) else 0)
+        s.insert(k, list(dizi) if isinstance(dizi, list) else [NA] * n)
+        return None
+    if ad == "add_col":
+        k, dizi = b(1, "column"), b(2, "array_id")
+        k = (len(s[0]) if s else 0) if na(k) or k is None else int(k)
+        for j, r in enumerate(s):
+            r.insert(k, dizi[j] if isinstance(dizi, list) else NA)
+        return None
+    if ad == "remove_row":
+        k = b(1, "row")
+        return s.pop(len(s) - 1 if k is None or na(k) else int(k))
+    if ad == "remove_col":
+        k = b(1, "column")
+        k = (len(s[0]) - 1) if k is None or na(k) else int(k)
+        return [r.pop(k) for r in s]
+    if ad == "fill":
+        v = b(1, "value")
+        r0, r1 = b(2, "from_row", 0), b(3, "to_row", len(s))
+        c0, c1 = b(4, "from_column", 0), b(5, "to_column", len(s[0]) if s else 0)
+        for i in range(int(r0), int(r1)):
+            for j in range(int(c0), int(c1)):
+                s[i][j] = v
+        return None
+    if ad == "copy":
+        return _Matris([list(r) for r in s])
+    if ad == "transpose":
+        return _Matris([list(r) for r in zip(*s)])
+    if ad in ("avg", "sum", "max", "min", "median", "mode"):
+        return _dizi(ad, [[x for r in s for x in r]], {})
+    raise Desteklenmiyor(f"matrix.{ad}")
 
 
 def _harita(ad: str, konum, adli) -> Any:
