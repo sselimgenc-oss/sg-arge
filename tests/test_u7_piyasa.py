@@ -165,3 +165,22 @@ def test_8yopuuso_rsi_kesisimi_elle():
     down = ((rsi < 70) & (rsi.shift(1) >= 70)).to_numpy()
     assert up.sum() == 1 and down.sum() == 1
     assert np.array_equal(sig["entry"].to_numpy(), up) and np.array_equal(sig["exit"].to_numpy(), down)
+
+
+def test_spnx5z74_yuzde_supertrend_elle():
+    """hl2 = 100 duz seri: bantlar 120/80. Bar 5'te kapanis 70 (< alt bant 80) -> trend -1, cikis. Bar 6'da kapanis 130
+    (> bar 5'in ust bandi min(70 x 1,2 = 84, 120) = 84) -> trend +1, giris."""
+    close = np.array([100.0] * 5 + [70.0, 130.0, 130.0])
+    frame = pd.DataFrame({"open": close, "high": close, "low": close, "close": close, "volume": 1.0},
+                         index=pd.date_range("2020-01-01", periods=len(close), freq="1D", tz="UTC"))
+    sig = signals("sPNx5Z74", frame)
+    assert sig["exit"].tolist() == [False] * 5 + [True, False, False]
+    assert sig["entry"].tolist() == [False] * 6 + [True, False]
+
+
+def test_akf0t6mz_stop_hedef_formulu_kartta():
+    """Stop = giris - min(giris - sinyal_dip, %1 x giris); hedef RR'si sinyal mumu araligi > %1 ise 1, degilse 2."""
+    card = load("aKf0t6Mz")
+    assert card["stop"]["ifade"] == "giris - min(giris - sinyal_low, giris * 0.01)"
+    assert "eger((sinyal_high - sinyal_low) / sinyal_low * 100 > 1, 1, 2)" in card["hedef"]["ifade"]
+    assert card["dolum"] == "kapanis"
