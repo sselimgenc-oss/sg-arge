@@ -192,11 +192,22 @@ def test_shadow_4h_bucket_waits_until_close_plus_five_minutes() -> None:
     assert after["BTCUSDT"].index.max() == pd.Timestamp("2026-10-24 07:00", tz="UTC")
 
 
+def test_shadow_1h_bucket_waits_until_close_plus_five_minutes() -> None:
+    index = pd.date_range("2026-10-24 00:00", periods=4, freq="1h", tz="UTC")
+    frame = pd.DataFrame({"open": range(4), "high": range(1, 5), "low": range(4), "close": range(4), "volume": 1.0}, index=index)
+    before = gunluk.kapanmamis_1h_bari_at({"GLD": frame}, pd.Timestamp("2026-10-24 01:00", tz="UTC"))
+    after = gunluk.kapanmamis_1h_bari_at({"GLD": frame}, pd.Timestamp("2026-10-24 02:05", tz="UTC"))
+    assert before["GLD"].index.max() == pd.Timestamp("2026-10-24 00:00", tz="UTC")
+    assert after["GLD"].index.max() == pd.Timestamp("2026-10-24 01:00", tz="UTC")
+
+
 def test_shadow_portfolio_is_separate_from_the_main_book() -> None:
-    shadow = gunluk.golge_portfoy()
+    kitaplar = gunluk.golge_kitaplari()
+    shadow = kitaplar[0].portfoy
     main = gunluk.yukle_portfoy()
     assert shadow.sermaye == 5000 and shadow.satirlar[0].etiket == "U4-H1:KRIPTO25"
-    assert shadow.baslangic == pd.Timestamp("2026-10-24", tz="UTC")
+    assert [(book.id, book.tf, book.portfoy.sermaye) for book in kitaplar] == [("U4-H1", "4H", 5000), ("T8-07", "1H", 5000), ("V2B", "1H", 5000)]
+    assert all(book.portfoy.baslangic == pd.Timestamp("2026-09-01", tz="UTC") and book.portfoy.canli_baslangic == pd.Timestamp("2026-10-24", tz="UTC") for book in kitaplar)
     assert shadow.satirlar != main.satirlar and gunluk.GOLGE_LEDGER_DIR != gunluk.LEDGER_DIR
 
 
@@ -216,17 +227,58 @@ def test_shadow_equity_records_a_same_day_4h_close(monkeypatch: pytest.MonkeyPat
     hourly = pd.date_range("2026-10-24 00:00", periods=12, freq="1h", tz="UTC")
     frame = pd.DataFrame({"open": 100.0, "high": 200.0, "low": 90.0, "close": 100.0, "volume": 1.0}, index=hourly)
     shadow_dir = tmp_path / "defter" / "golge"
-    shadow = gunluk.golge_portfoy()
-    gunluk.calistir_golge(shadow, gunluk.Veri({"KRIPTO25": {"BTCUSDT": frame}}, {}, "shadow"), shadow_dir,
-                          simdi=pd.Timestamp("2026-10-24 12:05", tz="UTC"))
+    shadow = gunluk.golge_kitaplari()[0]
+    gunluk.calistir_golge_kitap(shadow, gunluk.Veri({"KRIPTO25": {"BTCUSDT": frame}}, {}, "shadow"), shadow_dir,
+                                simdi=pd.Timestamp("2026-10-24 12:05", tz="UTC"))
 
-    equity = csv(shadow_dir, "ozkaynak")
+    equity = csv(shadow_dir / shadow.id, "ozkaynak")
     closed_at = times[-1].strftime("%Y-%m-%d %H:%M:%S")
     row = equity[(equity["satir"] == gunluk.PORTFOLIO_ROW) & (equity["tarih"] == closed_at)]
     assert len(row) == 1 and row.iloc[0]["ozkaynak"] == pytest.approx(5100.0)
     assert equity[equity["satir"] == gunluk.PORTFOLIO_ROW]["tarih"].nunique() == 3
     payload = panel.uret(tmp_path / "defter", gunluk.yukle_portfoy(), ROOT / "results" / "SONUC.csv")
-    assert payload["golge"]["ozkaynak"] == pytest.approx(5100.0)
+    assert payload["golge"]["kitaplar"][0]["ozkaynak"] == pytest.approx(5100.0)
+
+
+def test_shadow_books_keep_their_equity_separate(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    kitaplar = gunluk.golge_kitaplari()
+    stamp = pd.Timestamp("2026-09-01 12:00", tz="UTC")
+
+    def fake_kitap(satir, *_args, **_kwargs):
+        value = 5100.0 if satir.id == "U4-H1" else 5000.0
+        result = SimpleNamespace(equity=pd.Series([value], index=[stamp]), marked_equity=value, fills=[], open_positions=[], next_orders=[],
+                                 trades=pd.DataFrame(columns=["exit_reason", "net_pnl"]))
+        return result, stamp
+
+    monkeypatch.setattr(gunluk, "kitap", fake_kitap)
+    frame = pd.DataFrame({"open": [1.0], "high": [1.0], "low": [1.0], "close": [1.0], "volume": [1.0]}, index=[stamp])
+    data = gunluk.Veri({"KRIPTO25": {"BTCUSDT": frame}, "EMTIA": {"GLD": frame}}, {}, "separate")
+    gunluk.calistir_golge_kitap(kitaplar[0], data, tmp_path / "golge", simdi=pd.Timestamp("2026-10-24", tz="UTC"))
+    gunluk.calistir_golge_kitap(kitaplar[1], data, tmp_path / "golge", simdi=pd.Timestamp("2026-10-24", tz="UTC"))
+    assert csv(tmp_path / "golge" / "U4-H1", "ozkaynak").iloc[-1]["ozkaynak"] == pytest.approx(5100.0)
+    assert csv(tmp_path / "golge" / "T8-07", "ozkaynak").iloc[-1]["ozkaynak"] == pytest.approx(5000.0)
+
+
+def test_shadow_drops_pre_start_fills_and_migrates_only_flat_legacy_csvs(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    kitap = gunluk.golge_kitaplari()[0]
+    before, start = pd.Timestamp("2026-08-31 20:00", tz="UTC"), kitap.portfoy.baslangic
+    result = SimpleNamespace(
+        equity=pd.Series([4900.0, 5000.0], index=[before, start]), marked_equity=5000.0,
+        fills=[{"tarih": before, "sembol": "BTCUSDT", "tip": "giris", "fiyat": 100.0, "adet": 1.0, "maliyet": 0.0, "stop": 90.0}],
+        open_positions=[], next_orders=[], trades=pd.DataFrame(columns=["exit_reason", "net_pnl"]),
+    )
+    monkeypatch.setattr(gunluk, "kitap", lambda *_args, **_kwargs: (result, start))
+    frame = pd.DataFrame({"open": [1.0], "high": [1.0], "low": [1.0], "close": [1.0], "volume": [1.0]}, index=[start])
+    root = tmp_path / "golge"
+    root.mkdir()
+    (root / "dolumlar.csv").write_text("old ledger", encoding="utf-8")
+    (root / "U4-H1").mkdir()
+    assert gunluk.eski_golge_defterini_tasi(root) is True
+    assert not (root / "dolumlar.csv").exists() and (root / "U4-H1").exists()
+    gunluk.calistir_golge_kitap(kitap, gunluk.Veri({"KRIPTO25": {"BTCUSDT": frame}}, {}, "start"), root,
+                                simdi=pd.Timestamp("2026-10-24", tz="UTC"))
+    assert csv(root / kitap.id, "dolumlar").empty
+    assert csv(root / kitap.id, "ozkaynak")["tarih"].min().startswith("2026-09-01")
 
 
 def test_shadow_download_limits_a_fresh_archive_to_120_days(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -238,8 +290,12 @@ def test_shadow_download_limits_a_fresh_archive_to_120_days(monkeypatch: pytest.
     monkeypatch.setattr(fetch, "fetch_asset", fake_fetch)
     now = pd.Timestamp("2026-10-24 12:00", tz="UTC")
     assert gunluk.indir_golge(tmp_path, simdi=now) == []
-    assert len(calls) == 6
-    assert all(call[1:] == ("1h", True, now - pd.Timedelta(days=120), tmp_path) for call in calls)
+    assert len(calls) == 12
+    crypto = [call for call in calls if call[0].endswith("USDT")]
+    emtia = [call for call in calls if not call[0].endswith("USDT")]
+    assert len(crypto) == len(emtia) == 6
+    assert all(call[1:] == ("1h", True, now - pd.Timedelta(days=120), tmp_path) for call in crypto)
+    assert all(call[1:] == ("1h", True, None, tmp_path) for call in emtia)
 
 
 def test_daily_wait_does_not_skip_the_independent_shadow_book(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -248,11 +304,11 @@ def test_daily_wait_does_not_skip_the_independent_shadow_book(monkeypatch: pytes
     monkeypatch.setattr(gunluk, "yukle_veri", lambda *_args: data)
     monkeypatch.setattr(gunluk, "kapanmamis_gunluk_bari_at", lambda value: value)
     monkeypatch.setattr(gunluk, "ilk_bar_bekleniyor", lambda *_args: ["main:wait"])
-    monkeypatch.setattr(gunluk, "yukle_golge_veri", lambda *_args: object())
-    monkeypatch.setattr(gunluk, "calistir_golge", lambda *args: called.append(args))
+    monkeypatch.setattr(gunluk, "yukle_golge_veri", lambda *_args, **_kwargs: object())
+    monkeypatch.setattr(gunluk, "calistir_golge_kitap", lambda *args: called.append(args))
     monkeypatch.setattr(sys, "argv", ["gunluk.py", "--defter", str(tmp_path / "defter"), "--rapor", str(tmp_path / "RAPOR.md")])
     assert gunluk.main() == 0
-    assert called
+    assert len(called) == 3
 
 
 def test_no_bar_after_the_paper_start_waits_instead_of_failing() -> None:

@@ -17,10 +17,7 @@ alarmlar:
   pf_inceleme_islem: 30        # bir satir bu kadar kapanmis islemden sonra PF < 1 ise inceleme
   veri_eski_gun: 5             # son bar bundan eski ise veri alarmi
 golge:
-  id: U4-H1
-  piyasa: KRIPTO25
-  tf: 4H
-  semboller: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
-  risk: 0.0025
-  sermaye: 5000
-  baslangic: 2026-10-24
+  kitaplar:
+    - {id: U4-H1, piyasa: KRIPTO25, tf: 4H, semboller: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT], risk: 0.0025, sermaye: 5000, baslangic: 2026-09-01, canli_baslangic: 2026-10-24}
+    - {id: T8-07, piyasa: EMTIA, tf: 1H, evren: asama2b_emtia, risk: 0.0025, sermaye: 5000, baslangic: 2026-09-01, canli_baslangic: 2026-10-24}
+    - {id: V2B, piyasa: EMTIA, tf: 1H, evren: asama2b_emtia, risk: 0.0025, sermaye: 5000, baslangic: 2026-09-01, canli_baslangic: 2026-10-24}
