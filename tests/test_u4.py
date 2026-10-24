@@ -57,3 +57,19 @@ def test_funnel_output_has_one_row_per_fixed_variant(tmp_path) -> None:
     u4_huni.write_outputs(table, tmp_path)
     assert len(pd.read_csv(tmp_path / "huni_ozet.csv")) == 4
     assert (tmp_path / "huni_ozet.md").read_text(encoding="utf-8").startswith("# U4 huni ozeti")
+
+
+def test_crypto_4h_arm_reaches_the_engine_with_real_card_and_hourly_archive(tmp_path) -> None:
+    # PR #171: load_data resampled 1H to 4H and tarama.prepare resampled again -> "donemde veri yok". End-to-end guard.
+    index = pd.date_range("2017-06-01", "2018-06-30 23:00", freq="h", tz="UTC")
+    steps = pd.Series(range(len(index)), index=index, dtype=float)
+    close = 100 + (steps % 500) * 0.05 + steps * 0.001
+    frame = pd.DataFrame({"open": close, "high": close + 0.5, "low": close - 0.5, "close": close, "volume": 1.0}, index=index)
+    (tmp_path / "hourly").mkdir()
+    frame.to_parquet(tmp_path / "hourly" / "BTCUSDT.parquet")
+    data = u4.load_data(tmp_path, "KRIPTO25", "4H")
+    assert data["BTCUSDT"].index.equals(frame.index)  # raw 1H; the card's 4H is built once, inside tarama.prepare
+    card = dict(u4.load_card("U4-H1"), tf="4H")
+    prepared = u4.tarama.prepare(card, data, "KRIPTO25", start=u4.PERIODS["IS"][0], end=u4.PERIODS["IS"][1], kilit=True)
+    bars = next(iter(prepared.plan.signals.values()))
+    assert len(bars) > 0 and (bars.index.hour % 4 == 0).all()

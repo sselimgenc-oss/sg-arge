@@ -26,7 +26,6 @@ from backtests.run_codex21 import _load_market
 from data.evren_pit import load_pit_universe
 from data.fetch import normalize_ohlcv
 from engine.portfolio import calculate_metrics
-from engine.resample import resample_hourly
 from engine.spec import normalize_timeframe
 
 LOG = logging.getLogger("u4")
@@ -80,7 +79,9 @@ def load_data(root: Path, market: str, tf: str) -> dict[str, pd.DataFrame]:
     if market == "KRIPTO25" and tf == "4H":
         frames = {s: normalize_ohlcv(pd.read_parquet(root / "hourly" / f"{s}.parquet")) for s in CORE + SIBLINGS
                   if (root / "hourly" / f"{s}.parquet").exists()}
-        return {s: resample_hourly(frame, market="KRIPTO25", timeframe="4H") for s, frame in frames.items() if not frame.empty}
+        # raw 1H bars: tarama.prepare resamples a tf=4H card itself (UTC 00/04/.. buckets); resampling here too made
+        # every 4H bar look incomplete and dropped the whole series (PR #171 run report)
+        return {s: frame for s, frame in frames.items() if not frame.empty}
     if market == "KRIPTO25":
         frames = {s: normalize_ohlcv(pd.read_parquet(root / "daily" / f"{s}.parquet")) for s in CORE + SIBLINGS
                   if (root / "daily" / f"{s}.parquet").exists()}
