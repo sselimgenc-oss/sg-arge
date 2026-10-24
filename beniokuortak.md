@@ -2,9 +2,9 @@
 
 Bu proje, finansal piyasalar için kantitatif borsa stratejileri geliştirmek, optimize etmek ve backtest (geriye dönük test) süreçlerini otomatikleştirmek amacıyla **Claude Code**, **ChatGPT Codex** ve **Google Gemini** modellerini tek bir ekipte buluşturur.
 
-> **Güncel durum her zaman `DURUM.md`'dedir** (kimin hangi işte olduğu, son kararlar). Çalışma kuralları: `docs/PROTOKOL.md`. `state.json` 2026-10-22'den beri güncellenmiyor, yalnız geçmiş kaydıdır.
+> **Güncel durum her zaman `DURUM.md`'dedir** (kimin hangi işte olduğu, son kararlar). Çalışma kuralları: `docs/PROTOKOL.md`.
 >
-> **Kapsam (kullanıcı kararı, 2026-10-23): yalnız kripto, gün içi** (1 saat kurulum, 15 dk / 5 dk işlem). Hedef yılda %20-30 net, MDD ≤ %15. Faz 1 (BIST/ABD/emtia/kripto, 422 strateji) kapandı: `docs/FAZ1_SONUC_RAPORU.md`.
+> **Şu an (2026-10-24):** Faz 2 paper trade çalışıyor (C07 + R01 + A6-010); pano `sg-pano` (GitHub Pages). Faz 1 sonuçları: `docs/FAZ1_SONUC_RAPORU.md`.
 
 ---
 
@@ -15,7 +15,7 @@ Bu proje, finansal piyasalar için kantitatif borsa stratejileri geliştirmek, o
 | **Claude Opus 5.5** (sselimgenc hesabı) | **Takım lideri** | Karar ve öncelik sahibi. Görev yazar (`docs/GOREV_*.md`), ön kaydı belirler, PR'ları denetler, sonuç raporlarını yazar. `DURUM.md`'yi yalnız lider günceller. |
 | **Codex** | Uygulayıcı (kod, veri, gerçek koşular) | 2026-10-23'te projeden çıkarıldı, aynı gün geri döndü (kullanıcı kararı). Görevini Issue #1'deki `[CODEX GÖREVİ]` yorumundan ya da kullanıcının yapıştırdığı mesajdan alır. Teslim PR ile. |
 | **Claude Sonnet 5.5** (sg507 hesabı) | Uygulayıcı (kod, araştırma) | Lider talimatıyla çalışır, karar vermez. Görevini Issue #1'deki `[SONNET GÖREVİ]` yorumundan ya da kullanıcının yapıştırdığı mesajdan alır. Teslim PR ile. |
-| **Argon** (Google Gemini 3.8, repo erişimi yok) | Araştırmacı + denetçi | Kullanıcı aracılığıyla çalışır: lider `argon/PAKET_*.md` paketini hazırlar, kullanıcı Gemini'ye yapıştırır, cevabı geri getirir. Bulgularını kaynaklı yazar; ekibin yöntemini eleştirebilir (kullanıcı kararı, 2026-10-23). Çıktısını lider denetler. |
+| **Argon** (Google Gemini, repo erişimi yok) | Araştırmacı + denetçi | Kullanıcı aracılığıyla çalışır; görevi lider hazırlar, kullanıcı iletir. Çıktısını lider denetler. |
 | ~~Sol 6.1~~ | — | Kanalı yok, pasif. |
 
 **Kural:** her ajanda aynı anda tek iş. İş bitip lider incelemeden yenisi açılmaz.
@@ -44,11 +44,8 @@ Commit etiketleri: `[Opus-Lead]`, `[Claude-Mod]` (Sonnet), `[Codex]`, `[Argon]`.
 ├── backtests/              # Huni aşamaları (tarama, asama2a, asama2b), U1 koşucuları, raporlar
 ├── data/                   # İndiriciler ve MANIFEST.csv (büyük Parquet dosyaları git dışında)
 ├── results/                # Sonuçlar (SONUC.md/csv, U1 çıktıları)
-├── paper/                  # Paper trade altyapısı (zamanlaması kapalı)
+├── paper/                  # Paper trade: günlük defter, saatlik pano değerlemesi (paper.yml)
 ├── strategies/             # Codex Algo 21 Python stratejileri
-├── tartisma/               # Tartışmalar ve lider kararları
-├── argon/                  # Argon paketleri ve cevapları
 ├── arastirma/              # Strateji toplama kayıtları (T35, U3)
-├── tests/                  # pytest
-└── state.json              # Eski kuyruk kaydı (2026-10-22'den beri güncellenmiyor)
+└── tests/                  # pytest
 ```

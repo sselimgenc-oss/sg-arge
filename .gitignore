@@ -18,3 +18,9 @@ data/1m/
 data/5m/
 data/15m/
 data/30m/
+
+# Islem dokumleri buyuk ve yeniden uretilebilir (huni/CI her kosuda yazar); repoya girmez (lider, 2026-10-24).
+results/tarama_islemler/
+results/trades/
+results/u1/**/islemler_*.csv
+results/u1/islemler_*.csv
