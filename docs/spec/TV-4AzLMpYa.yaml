@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [EMTIA]
 parametreler: {kol: EMTIA-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Uc kademeli kismi cikis (TP1/TP2 qty_percent = 33, bar ici limit emirleri) ve TP1''den sonra stopun giris fiyatina cekilmesi (sl := strategy.position_avg_price) ile izleyen stop; pozisyon durumuna bagli, bar basina degisen cikis. Ayrica Smart Money Concepts yapisi (order block / BOS) kutu ve dizilerle tutulur. Yaklasik ceviri yapilmadi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Giris LuxAlgo yapi kirilimi (ic/swing pivot dizileri, PD bolgesi, FVG, ayrisma, hacim momentumu, uyarlanir carpanlar) ve TP1/TP2 (33% + 33%) seviyeleri SINYAL barinin kapanisi ve yapisal swing tepesinden sabitlenir; motor kademeli_cikis tetigi dolum fiyatindan hesaplanir. Cok durumlu yapi tespiti ve sinyal barina sabit TP seviyeleri birebir ifade edilemez; yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Uc kademeli kismi cikis (TP1/TP2 qty_percent = 33, bar ici limit emirleri) ve TP1''den sonra stopun giris fiyatina cekilmesi (sl := strategy.position_avg_price) ile izleyen stop; pozisyon durumuna bagli, bar basina degisen cikis. Ayrica Smart Money Concepts yapisi (order block / BOS) kutu ve dizilerle tutulur. Yaklasik ceviri yapilmadi.']
+belirsiz: ['Dogrulanamaz (ceviri): Giris LuxAlgo yapi kirilimi (ic/swing pivot dizileri, PD bolgesi, FVG, ayrisma, hacim momentumu, uyarlanir carpanlar) ve TP1/TP2 (33% + 33%) seviyeleri SINYAL barinin kapanisi ve yapisal swing tepesinden sabitlenir; motor kademeli_cikis tetigi dolum fiyatindan hesaplanir. Cok durumlu yapi tespiti ve sinyal barina sabit TP seviyeleri birebir ifade edilemez; yaklasik ceviri yapilmadi.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

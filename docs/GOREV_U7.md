@@ -61,3 +61,13 @@ Sonuç görülmeden: motor iki yapıyı destekler hale geldi (`engine/portfolio.
 - `kademeli_cikis[i].bar_ici: true`: seviye girişte sabitlenen limit emir, bar içinde dolar (stop önce kontrol edilir, boşlukta açılış fiyatı); `stop_girise: true` dolumdan sonra stopu giriş fiyatına çeker.
 - Düzeltme: birden çok kısmi çıkışta işlem satırının net K/Z'si son kısmi çıkışı üzerine yazıyordu; artık hepsi toplanır (özkaynak zaten doğruydu).
 Bu yapılar yüzünden "Doğrulanamaz (çeviri)" kalan kartlar (TradingView ~35) yeniden çevrilir (Sonnet) ve U7'ye eklenir. Yaklaşık çeviri yasağı sürer: Pine davranışı bu semantiğe birebir uymayan kart yine Doğrulanamaz kalır.
+
+## Ek 5 (kullanıcı kararı, 2026-10-24, denetim Y1/Y2; U7 sonuçları görülmeden)
+1. **Düşüş kapısı boyuttan bağımsız:** `bootstrap MDD95 ≤ %15` kapısı kaldırılır. Yerine **getiri/düşüş oranı**: OOS yıllık getiri (1x maliyet) / bootstrap MDD95 **≥ 0,5** (eşik lider, sonuç görülmeden). Geçen strateji paper'da, bootstrap MDD95'i %15'te tutacak işlem başı riskle çalıştırılır (en çok %0,5).
+2. **DSR aile bazlı ve eleyici değil:** her aile kendi deneme sayısıyla: Faz 1 (Argon'la kurtarılanlar dahil), U1, U4, TV (U6 + Ek 1 + Ek 4), Reddit, TV-2 (aşağıda). DSR > 0,95 değilse karar "Geçti" değil **"Koşullu (DSR)"** olur; Koşullu(DSR) adaylar DSR'ye göre sıralanır ve **gölge kitapta canlı teyide** gider (ana portföy kararı kullanıcınındır).
+3. Diğer kapılar değişmez (Aşama 1, null, OOS ortR, 2x PF ≥ 1,2, 3x net, +1 bar, kardeş).
+4. **TV-2:** U5'te yalnız zaman dilimi yüzünden ayrılan 942 TradingView stratejisinin **hepsi** çevrilip test edilir (`docs/GOREV_TV2.md`). Kendi ailesi.
+5. **Short fazı (U2a):** U7 bittikten sonra takvime alınır.
+
+## Ek 6 (kullanıcı onayı, 2026-10-24): test yapısı v2
+U7 koşusu Ek 5'teki huniyle değil `docs/TEST_YAPISI.md` ile değerlendirilir. Koşu aynen yapılır (bütün metrikler `huni_ozet.csv`'de kalır), ama karar sütunu: Adım 2 kapısı (Adım 0 geçti + OOS uygulanabilir net > 0), izle listesi (OOS işlem haftası < 10), koruma listesi. Eski huni kararı ayrı sütunda bilgi olarak durur. Aile etiketi `tarih_belirsiz`. Sıralama ve kopya ayıklama Adım 3'e göre (lider, `U7_SONUC.md`).

@@ -9,18 +9,22 @@ tf_varsayim: false
 yazar_piyasasi: ABD (NASDAQ:AAPL)
 kol: ABD-1D
 yayin_sembolu: NASDAQ:AAPL
-gostergeler: {}
+gostergeler:
+  fastema: {f: ema, src: close, n: 9}
+  slowema: {f: ema, src: close, n: 21}
+  rsi14: {f: rsi, src: close, n: 14}
+  atr14: {f: atr, n: 14}
 ozel_kod: false
-giris: null
+giris: fastema > slowema and rsi14 > 50
 cikis: null
-stop: null
-hedef: null
+stop: {tip: seviye, ifade: sinyal_close - 1.5 * sinyal_atr14}
+hedef: {tip: seviye, ifade: sinyal_close + 3.0 * sinyal_atr14}
+dinamik_cikis: {stop: close - 1.5 * atr14, hedef: close + 3.0 * atr14}
 stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (stop = guncel kapanis - 1,5 x ATR, hedef 3 x ATR; short bacak ters cevirir).'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (stop = guncel kapanis - 1,5 x ATR, hedef 3 x ATR; short bacak ters cevirir).']
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: EMA 9/21, RSI(14) > 50, ATR(14), carpan 1,5 (hedef 2 x carpan = 3 x ATR). Short girisi yalniz pozisyon yokken acilir: yoksayilir. strategy.exit(stop = close - 1,5 x ATR, limit = close + 3 x ATR) her barda GUNCEL kapanis ve ATR ile yeniden verilir; ilk seviye sinyal barindan sabitlenir.', 'U7 Ek 4: Pine strategy.exit her barda yeniden verilir (sinyal barinda da); ilk seviye sinyal barinin degerleriyle kartta stop/hedef ''seviye'' olarak sabitlenir ve dolumdan itibaren gecerlidir, sonra motor dinamik_cikis seviyesini her bar KAPANISINDA hesaplayip ertesi bardan gecerli sayar (Pine ile ayni sira).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

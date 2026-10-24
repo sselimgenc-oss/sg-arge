@@ -17,6 +17,11 @@ SPEC = Path(__file__).resolve().parents[1] / "docs" / "spec"
 PARTI_IDS = ['16yhUQN3', '70PkIvTL', '8GIAFRcP', 'IFSv46kK', 'NXbsqL9n', 'Q9OQye4C', 'ROM3crig', 'Y9ppyIk2', 'cz5KaioF', 'et8U6rd3', 'f80Cfpfp', 'hezSShJr', 'jjhUHcje', 'o9qty0BL', 'odnW4iA5', 'vMuEblZr']
 TAM_IDS = ['70PkIvTL', 'Q9OQye4C', 'cz5KaioF', 'o9qty0BL', 'vMuEblZr']
 OZEL_IDS = ['cz5KaioF', 'o9qty0BL', 'vMuEblZr']
+# U7 Ek 4: yeniden cevrilen kartlar tests/test_u7_motor_kartlari.py'de sinanir
+_U7_EK4 = {i for i in PARTI_IDS if any(str(b).startswith("U7 Ek 4") for b in yaml.safe_load((SPEC / f"TV-{i}.yaml").read_text(encoding="utf-8"))["belirsiz"])}
+PARTI_IDS = [i for i in PARTI_IDS if i not in _U7_EK4]
+TAM_IDS = [i for i in TAM_IDS if i not in _U7_EK4]
+OZEL_IDS = [i for i in OZEL_IDS if i not in _U7_EK4]
 SINIFLAR = ("KRIPTO", "ABD", "EMTIA")
 NEDENLER = ("piyasa", "veri", "ceviri", "bekliyor:motor")
 

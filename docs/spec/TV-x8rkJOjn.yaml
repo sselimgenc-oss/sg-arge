@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Stop her barda 2 ile carpilir (stopLoss := stopLoss * (1 + m), m = 1,0) ve strategy.exit her bar bu degerle yeniden kurulur; bar basina degisen stop motorda yok. Yaklasik ceviri yapilmadi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'stopLoss := stopLoss x (1 + m) her barda bir onceki stopla CARPILIR (m = 1,0: stop her bar iki katina cikar, ilk deger giris sinyali barinin SMA((open + low)/2, 5) degeri): seviye giris anindaki degere ve gecen bar sayisina bagli ozyinelemeli pozisyon durumudur, yalniz bar serisi degildir. dinamik_cikis ifadesi bunu tasiyamaz; yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Stop her barda 2 ile carpilir (stopLoss := stopLoss * (1 + m), m = 1,0) ve strategy.exit her bar bu degerle yeniden kurulur; bar basina degisen stop motorda yok. Yaklasik ceviri yapilmadi.']
+belirsiz: ['Dogrulanamaz (ceviri): stopLoss := stopLoss x (1 + m) her barda bir onceki stopla CARPILIR (m = 1,0: stop her bar iki katina cikar, ilk deger giris sinyali barinin SMA((open + low)/2, 5) degeri): seviye giris anindaki degere ve gecen bar sayisina bagli ozyinelemeli pozisyon durumudur, yalniz bar serisi degildir. dinamik_cikis ifadesi bunu tasiyamaz; yaklasik ceviri yapilmadi.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
