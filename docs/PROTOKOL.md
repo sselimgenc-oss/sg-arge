@@ -10,6 +10,7 @@
 1. Lider görevi `docs/GOREV_*.md`'ye yazar, PR açar; kullanıcı birleştirir.
 2. Lider Issue #1'e `[CODEX GÖREVİ]` / `[SONNET GÖREVİ]` başlıklı kısa yorum yazar ve kullanıcıya yapıştırmaya hazır mesaj verir.
 3. Ajan main'i çeker, görevi yapar, PR ile teslim eder. Lider denetler: kabul ya da ret.
+   **Birleştirme (kullanıcı onayı, 2026-10-24):** lider, denetlediği ve testleri geçen, mevcut plandaki PR'ları kendisi birleştirir. Şunlar kullanıcıya kalır: kilitli dönemi açmak, yeni deneme/strateji eklemek (ön kayıt dışı), paper/para ayarları, repo silme.
 4. Ajanlar kendiliğinden tetiklenmez; görevi kullanıcı iletir.
 
 ## Kurallar
