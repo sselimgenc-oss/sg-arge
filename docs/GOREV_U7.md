@@ -51,3 +51,6 @@ Kullanıcı kararı ("hepsini test et") gereği U6'nın "kol sınıfı değişti
 
 ## Ek 2 (lider, 2026-10-24): OOS bitişi
 `u1.py`, `u4.py`, `u6.py` ve Faz 1 koşucularındaki OOS bitiş tarihleri (2025-09-30 vb.) U7 koşusunda **son kapanmış bara** uzatılır. Bu, U7 koşu PR'ının parçasıdır.
+
+## Ek 3 (kullanıcı kararı, 2026-10-24): Reddit adayları
+`arastirma/reddit/ozet.md` bölüm A'daki 4 strateji (RD-01 SPY/QQQ dip alımı, RD-02 ay sonu SPY/TLT, RD-03 Faber GTAA, RD-04 4H Williams %R dönüşü) kart olarak yazılır (Sonnet, `[U8] Reddit kartları`) ve U7 koşusuna aynı huniyle eklenir; DSR toplam N'ye sayılır. Kurallar yazarın verdiği gibidir, parametre eklenmez/değiştirilmez.
