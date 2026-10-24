@@ -65,13 +65,15 @@ Bütün kartlarda koruma stopu girişte **ATR(14) × 3**'tür. H2'nin kendi stop
    - 3x maliyette net > 0;
    - +1 bar gecikmeyle net > 0;
    - block bootstrap MDD95 ≤ %15;
-   - DSR (N=16) > 0,95;
-   - en iyi ay çıkarılınca PF > 1.
-4. **Kripto kardeş ölçütü (U1 ile aynı):**
-   - kardeşlerin ≥ %60'ında PF > 1,1;
-   - tek coin kârın ≤ %35'i.
-5. **ABD/emtia ön dönem:** 2015-2017 net getiri işareti raporlanır. Negatifse aday Koşullu olur.
-6. **Karar:** Geçti / Koşullu / Reddedildi. Neden yazılır.
+   - DSR (N=16) > 0,95.
+4. **Kripto kardeş ölçütü (U1 ile aynı):** kardeşlerin ≥ %60'ında PF > 1,1.
+5. **Koşullu sebepleri (U1 ile aynı; eleme değil, şerh):**
+   - en iyi ay çıkarılınca PF ≤ 1;
+   - kriptoda tek coin kârın > %35'i.
+
+   *Netleştirme (lider, 2026-10-24, sonuç görülmeden):* ilk metinde "en iyi ay" maddesi 2b kapılarının arasında, "tek coin" maddesi de kardeş ölçütünde yazılıydı. Başlıktaki "U1 ile aynı huni" ifadesine ve `u1_huni.decide`'ye uyacak şekilde ikisi de Koşullu sebebi olarak netleştirildi.
+6. **ABD/emtia ön dönem:** 2015-2017 net getiri işareti raporlanır. Negatifse aday Koşullu olur.
+7. **Karar:** Geçti / Koşullu / Reddedildi. Neden yazılır.
 
 ## 6. İş bölümü
 ### A. Sonnet: kartlar (`docs/spec/U4-H1..H4.yaml`)
