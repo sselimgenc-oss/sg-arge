@@ -5,17 +5,19 @@ Son güncelleme: 2026-10-24, lider (Opus).
 ## Şu an
 **Faz 2: paper trade çalışıyor.** C07 + R01 (ABD günlük) + A6-010 (emtia günlük), eşit ağırlık, 5.000 USD sanal (`paper/portfoy.yaml`). Gerçek para yok.
 - Defter 2026-09-01'den geriye dönük (aynı kurallar, gerçek veri); **canlı paper 2026-10-24'ten itibaren.** Karar canlı döneme bakılarak verilir.
-- `paper.yml` her saat :17'de çalışır. Defter yalnız kapanmış günlük barla (yarım bar koruması); açık pozisyonlar saatlik fiyatla yalnız panoda değerlenir.
+- `paper.yml` saat :17'ye zamanlı ama GitHub cron'u atlıyor: pratikte ~5 saatte bir (denetim A1). Defter yalnız kapanmış günlük barla (yarım bar koruması); açık pozisyonlar saatlik fiyatla yalnız panoda değerlenir.
 - Pano: `sg-pano` reposu, GitHub Pages (https://sselimgenc-oss.github.io/sg-pano/). Veri `PANEL_TOKEN` ile gönderilir.
 - Alarmlar: portföy MDD %10 uyarı, %15 yeni giriş durur; bir satır 30 kapanmış işlemden sonra PF < 1 ise inceleme.
 - **Gölge kitap** (ana portföyden ayrı, `docs/GOREV_F2_GOLGE.md` Ek 2): U4-H1 (kripto 4H), T8-07 ve V2B (emtia 1H); her biri 5.000 USD, risk %0,25; 2026-09-01'den geriye dönük, canlı 2026-10-24'ten. Karar yalnız canlı döneme bakılarak, 6 ay sonra.
 
 | Ajan | Görev |
 |---|---|
-| Lider | U7 denetimi ve `results/U7_SONUC.md`. Pano gölge sekmesi. |
-| Codex | **F2-GÖLGE Ek 2**: gölge kitap 3 strateji, 2026-09-01'den, gün içi özkaynak. Sonra **U7** (`docs/GOREV_U7.md`). U6 motoru, koşucusu ve kilitli dönem altyapısı tamam. |
-| Sonnet | U6 çevirisi bitti (205/205 işlendi, motor kartları dahil; #187). Haftalık limit nedeniyle salıya kadar görev yok. |
-| Argon | Beklemede. |
+| Lider | Lider + **denetçi** (6 saatte bir, `docs/denetim/`). U7 denetimi, `results/U7_SONUC.md`. |
+| Codex | **U7** koşusu (`docs/GOREV_U7.md`, Ek 1-4), taslak #200: U4 ve U1 koşuldu; U6 + Faz 1 + Reddit + motor kartları kaldı. |
+| Sonnet | GOREV_U7 Ek 4: motor eki sonrası ~40 TV kartının yeniden çevirisi. |
+| Argon | `arastirma/argon/GOREV_ARGON_1.md`: erişilemeyen kaynaklardan 40 stratejinin kodunu birebir aktarma. |
+
+**Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
 
 ## Sırada (kullanıcı kararı bekleyen)
 1. **U7** (`docs/GOREV_U7.md`, kullanıcı kararı 2026-10-24): kilit kaldırıldı; test edilebilir bütün kartlar (Faz 1 126, U1, U4, U6 74) bugüne kadar aynı huniden, DSR N = toplam varyant. Geçenler paper'a önerilir.
@@ -25,7 +27,7 @@ Son güncelleme: 2026-10-24, lider (Opus).
 
 ## Kapanan fazların özeti
 - **Faz 1** (`docs/FAZ1_SONUC_RAPORU.md`): 422 strateji, 137 test. Geçti 2 (C07, R01), Koşullu 3 (A6-010, T8-07, V2B emtia 1H), Reddedildi 132, Doğrulanamaz 273. Önerilen portföy OOS %7,5, MDD %2,9.
-- **U5** (`arastirma/U5_ozet.md`): TradingView açık kaynak, 4H/1D, repaint izsiz 205 aday; test edilmedi.
+- **U5** (`arastirma/U5_ozet.md`): TradingView 1.298 script; 4H/1D süzgecinden 205 aday → U6/U7'de test. **942'si yalnız zaman dilimi yüzünden ayrıldı (denetim K1).**
 - **U4** (`results/U4_SONUC.md`): seyrek işlem, 4 kart × 4 kol. 16/16 Reddedildi. Kripto 4H trend IS ve OOS'ta kârlı (3x maliyette de) ama MDD95 %28, DSR düşük, kâr büyük coinlerde.
 - **U1** (`results/U1_SONUC.md`): kripto gün içi, 14 varyantın 14'ü Reddedildi. 15m/5m'de brüt kenar yok; 1H'de küçük ama maliyete yetmiyor.
 - **U3** (`docs/GOREV_U3.md`, `arastirma/U3_mtf.csv`): 53 MTF strateji kaydı, test edilmedi.
