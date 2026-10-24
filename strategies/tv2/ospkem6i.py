@@ -18,7 +18,7 @@ from engine.tv_emulator import LONG, SHORT, Ayarlar
 from strategies.ozel import tv_ortak as ta
 
 KAYNAK = {"url": "https://www.tradingview.com/script/Ospkem6i/", "pub": "PUB;20aeb517962b4d318d6fe0e7393fb303",
-          "sembol": "BINANCE:BTCUSDT.P", "tf": "4H"}
+          "sembol": "BINANCE:BTCUSDT.P", "tf": "240", "surum": "1.0", "surum_tarihi": "2026-04-23"}
 AYARLAR = Ayarlar(default_qty_type="percent_of_equity", default_qty_value=10,
                   commission_type="percent", commission_value=0.04)
 

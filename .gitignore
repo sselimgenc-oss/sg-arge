@@ -26,3 +26,6 @@ results/u1/**/islemler_*.csv
 results/u1/islemler_*.csv
 results/u4/**/islemler_*.csv
 results/u4/islemler_*.csv
+
+# TV-2 veri önbelleği (Binance her zaman yeniden verir).
+data/tv2/
