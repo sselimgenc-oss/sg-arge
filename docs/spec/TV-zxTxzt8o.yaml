@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [EMTIA]
 parametreler: {kol: EMTIA-4H}
-dogrulanamaz: {neden: veri, ayrinti: 'EMTIA icin 4H uzun veri yok (yayin sembolu OANDA:XAUUSD). Kural cevrilmedi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Giris Londra+NY oturumu (07:00-16:00 GMT), gunluk zarar duraklatmasi (%3 / %5), ardisik zarar sayaci ve toplam dusus kill-switch''i gibi hesap durumuna bagli kapilarla kisitlidir; ayrica seans sonu zorla kapatma saati. Hesap/seans durumuna bagli kural motor ifade diline birebir sigmaz; yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (veri): EMTIA icin 4H uzun veri yok (yayin sembolu OANDA:XAUUSD). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Giris Londra+NY oturumu (07:00-16:00 GMT), gunluk zarar duraklatmasi (%3 / %5), ardisik zarar sayaci ve toplam dusus kill-switch''i gibi hesap durumuna bagli kapilarla kisitlidir; ayrica seans sonu zorla kapatma saati. Hesap/seans durumuna bagli kural motor ifade diline birebir sigmaz; yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol EMTIA-4H → EMTIA-4H eslendi (kural ve parametreler degismedi; yayin sembolu OANDA:XAUUSD).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

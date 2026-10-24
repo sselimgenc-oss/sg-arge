@@ -7,7 +7,7 @@ tf: 1D
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: DIGER (ASX:SXE)
-kol: DIGER-1D
+kol: ABD25-1D
 yayin_sembolu: ASX:SXE
 gostergeler: {}
 ozel_kod: false
@@ -17,10 +17,10 @@ stop: null
 hedef: null
 stop_eklendi: false
 yalniz_long_bacak: true
-piyasa_kisiti: [DIGER]
-parametreler: {kol: DIGER-1D}
-dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu ASX:SXE FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD25-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Dis veri ve ust zaman dilimi: haftalik kapanis/SMA/RSI (request.security ''W'') ve ASX:XJO endeksine gore goreli guc (rsRatio) giris puani ve filtresidir; ayrica izleyen stop her barda guncel ATR ile yeniden verilir ve AUD cinsinden gunluk islem hacmi tabani vardir. Dis endeks verisi ve bar basina degisen izleyen stop Dogrulanamaz kategorisidir.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu ASX:SXE FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Dis veri ve ust zaman dilimi: haftalik kapanis/SMA/RSI (request.security ''W'') ve ASX:XJO endeksine gore goreli guc (rsRatio) giris puani ve filtresidir; ayrica izleyen stop her barda guncel ATR ile yeniden verilir ve AUD cinsinden gunluk islem hacmi tabani vardir. Dis endeks verisi ve bar basina degisen izleyen stop Dogrulanamaz kategorisidir.', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu ASX:SXE).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
