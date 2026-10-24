@@ -79,6 +79,7 @@ class Portfoy:
     baslangic: pd.Timestamp
     satirlar: list[Satir]
     alarm: dict[str, float]
+    canli_baslangic: pd.Timestamp | None = None  # bars before this date are a retrospective run, not live paper
 
 
 def yukle_portfoy(path: Path = PORTFOLIO_PATH) -> Portfoy:
@@ -87,7 +88,8 @@ def yukle_portfoy(path: Path = PORTFOLIO_PATH) -> Portfoy:
     if abs(sum(r.agirlik for r in rows) - 1.0) > 1e-4:
         raise ValueError("portfoy.yaml: agirliklar 1'e toplanmali")
     start = pd.Timestamp(str(raw["baslangic"]), tz="UTC")
-    return Portfoy(float(raw["sanal_sermaye"]), start, rows, {k: float(v) for k, v in (raw.get("alarmlar") or {}).items()})
+    live = pd.Timestamp(str(raw["canli_baslangic"]), tz="UTC") if raw.get("canli_baslangic") else None
+    return Portfoy(float(raw["sanal_sermaye"]), start, rows, {k: float(v) for k, v in (raw.get("alarmlar") or {}).items()}, live)
 
 
 # ----------------------------------------------------------------------------------------------- data
@@ -125,7 +127,7 @@ def kapanmamis_gunluk_bari_at(veri: Veri, simdi: pd.Timestamp | None = None) -> 
         if not dates:
             continue
         last_date = max(dates)
-        close = pd.Timestamp(last_date, tz="America/New_York") + pd.Timedelta("16h30min")
+        close = pd.Timestamp(last_date, tz="America/New_York") + pd.Timedelta(hours=16, minutes=30)
         if last_date != new_york_today or now > close.tz_convert("UTC"):
             continue
         for symbol, frame in market_frames.items():
@@ -134,6 +136,16 @@ def kapanmamis_gunluk_bari_at(veri: Veri, simdi: pd.Timestamp | None = None) -> 
         if benchmark is not None:
             benchmarks[market] = benchmark[benchmark.index.tz_convert("UTC").date != last_date]
     return Veri(frames, benchmarks, veri.data_hash)
+
+
+def ilk_bar_bekleniyor(portfoy: Portfoy, veri: Veri) -> list[str]:
+    """Rows whose market has no closed daily bar on/after the paper start yet (e.g. Yahoo still serves the day without prices)."""
+    bekleyen = []
+    for satir in portfoy.satirlar:
+        frames = [f for f in veri.frames.get(satir.piyasa, {}).values() if len(f)]
+        if not frames or max(f.index[-1] for f in frames) < portfoy.baslangic:
+            bekleyen.append(satir.etiket)
+    return bekleyen
 
 
 def indir(portfoy: Portfoy, directory: Path = DATA_DIR) -> list[str]:
@@ -469,6 +481,14 @@ def main() -> int:
         if failed:
             print("UYARI indirilemeyen semboller (eski arsiv kullanilir):", ", ".join(failed), file=sys.stderr)
     veri = kapanmamis_gunluk_bari_at(yukle_veri(portfoy, args.veri_dir))
+    bekleyen = ilk_bar_bekleniyor(portfoy, veri)
+    if bekleyen:  # nothing to book yet: leave the ledger untouched instead of failing the hourly run
+        mesaj = f"paper baslangicindan ({_day(portfoy.baslangic)}) sonra kapanmis gunluk bar yok: {', '.join(bekleyen)}. Defter degismedi."
+        args.defter.mkdir(parents=True, exist_ok=True)
+        if not args.rapor.exists():
+            args.rapor.write_text(f"# Paper raporu\n\nBekleniyor: {mesaj}\n", encoding="utf-8")
+        print("BEKLENIYOR:", mesaj)
+        return 0
     ozet = calistir(portfoy, veri, args.defter)
     rapor_yaz(portfoy, ozet, args.defter, args.rapor)
     print(json.dumps({"bitis": str(ozet["bitis"].date()), "ozkaynak": round(ozet["ozkaynak"], 2), "mdd": round(ozet["mdd"], 4),

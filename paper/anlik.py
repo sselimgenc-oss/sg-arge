@@ -72,6 +72,7 @@ def guncelle(
     initial = float(kpis["initial_total_capital"])
     kpis["total_value"] = round(total, 2)
     kpis["total_return_pct"] = round((total / initial - 1) * 100, 2)
+    kpis["net_pnl"] = round(total - initial, 2)
     now = simdi or pd.Timestamp.now(tz="UTC")
     now = pd.Timestamp(now)
     now = now.tz_localize("UTC") if now.tzinfo is None else now.tz_convert("UTC")
