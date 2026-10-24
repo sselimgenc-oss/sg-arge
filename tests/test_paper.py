@@ -181,6 +181,18 @@ def test_incomplete_us_daily_bar_is_excluded_until_close_plus_30_minutes() -> No
     assert after.frames["ABD25"]["AAA"].index[-1] == pd.Timestamp("2026-10-26", tz="UTC")
 
 
+def test_no_bar_after_the_paper_start_waits_instead_of_failing() -> None:
+    # Yahoo sometimes serves the latest day without prices; the cleaned archive then ends before the paper start
+    index = pd.DatetimeIndex(["2026-10-21", "2026-10-22"], tz="UTC")
+    frame = pd.DataFrame({"open": [1.0, 2.0], "high": [2.0, 3.0], "low": [0.0, 1.0], "close": [1.5, 2.5], "volume": [1, 1]}, index=index)
+    p = portfoy()
+    early = gunluk.Portfoy(**{**p.__dict__, "baslangic": pd.Timestamp("2026-10-23", tz="UTC")})
+    data = gunluk.Veri({m: {"AAA": frame} for m in {r.piyasa for r in p.satirlar}}, {}, "bos")
+    assert gunluk.ilk_bar_bekleniyor(early, data) == [r.etiket for r in p.satirlar]
+    later = gunluk.Portfoy(**{**p.__dict__, "baslangic": pd.Timestamp("2026-10-22", tz="UTC")})
+    assert gunluk.ilk_bar_bekleniyor(later, data) == []
+
+
 def test_indir_forwards_the_requested_data_directory(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     calls = []
 
