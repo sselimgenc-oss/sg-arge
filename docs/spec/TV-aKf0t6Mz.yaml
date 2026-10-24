@@ -7,20 +7,24 @@ tf: 1D
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: DIGER (NSE:TARIL)
-kol: DIGER-1D
+kol: ABD25-1D
 yayin_sembolu: NSE:TARIL
-gostergeler: {}
+gostergeler:
+  ema5: {f: ema, src: close, n: 5}
+  ema13: {f: ema, src: close, n: 13}
+  ema26: {f: ema, src: close, n: 26}
+  avgvol: {f: sma, src: volume, n: 20}
 ozel_kod: false
-giris: null
-cikis: null
-stop: null
-hedef: null
+giris: ema5[1] < ema13[1] and ema5[1] < ema26[1] and ema5 > ema13 and ema5 > ema26 and volume > avgvol
+cikis: ema5[1] > ema13[1] and ema5[1] > ema26[1] and ema5 < ema13 and ema5 < ema26 and volume > avgvol
+stop: {tip: seviye, ifade: 'giris - min(giris - sinyal_low, giris * 0.01)'}
+hedef: {tip: seviye, ifade: 'giris + eger((sinyal_high - sinyal_low) / sinyal_low * 100 > 1, 1, 2) * min(giris - sinyal_low, giris * 0.01)'}
+dolum: kapanis
 stop_eklendi: false
 yalniz_long_bacak: true
-piyasa_kisiti: [DIGER]
-parametreler: {kol: DIGER-1D}
-dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu NSE:TARIL FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu NSE:TARIL FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD25-1D}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol U7 Ek 1 ile yayin sembolunun sinifina eslendi. Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: EMA 5/13/26, hacim > SMA(hacim, 20), azami risk %1. Stop = giris - min(giris - sinyal_dip, %1 x giris); hedef = giris + RR x risk, RR = 1 (sinyal mumu araligi > %1) ya da 2. Seviyeler sinyal barinda (strategy.exit stop/limit sabit degiskenlerden) belirlenir; process_orders_on_close = true: giris sinyal kapanisinda dolar (dolum: kapanis). Ters sinyal (EMA 5 asagi kesisim) acik long''u kapatir (cikis olarak kalir). Gun ici cikis (saat 23:10) gunluk barlarda hic tetiklenmez.', 'Not: ABD25 hisse evreni; hacim filtresi hisse hacmiyle hesaplanir.', 'Pine''da strategy.exit koruma emirleri pozisyon acildiktan sonra, dolum barinin kapanisinda verilir ve sonraki bardan etkindir; motorda stop/hedef dolum barindan itibaren etkindir (D8): dolum barinda stop/hedef vurulursa motor cikar, Pine cikmaz. Stop/hedef mesafesi sinyal barinin ATR''sine sabitlenir, dolum fiyatindan olculur (Pine: strategy.position_avg_price).', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu NSE:TARIL).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

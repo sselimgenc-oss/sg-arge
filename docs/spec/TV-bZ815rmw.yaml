@@ -7,20 +7,23 @@ tf: 1D
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: DIGER (BCBA:GGAL)
-kol: DIGER-1D
+kol: ABD25-1D
 yayin_sembolu: BCBA:GGAL
-gostergeler: {}
+gostergeler:
+  ma15: {f: ema, src: close, n: 15}
+  ma30: {f: ema, src: close, n: 30}
+  ma60: {f: ema, src: close, n: 60}
+  dm: {f: dmi, n: 14}
 ozel_kod: false
-giris: null
-cikis: null
+giris: cross_over(ma15, ma30)
+cikis: cross_under(ma15, ma60) and dm.adx > 20
 stop: null
 hedef: null
-stop_eklendi: false
+stop_eklendi: true
 yalniz_long_bacak: true
-piyasa_kisiti: [DIGER]
-parametreler: {kol: DIGER-1D}
-dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu BCBA:GGAL FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu BCBA:GGAL FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD25-1D}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol U7 Ek 1 ile yayin sembolunun sinifina eslendi. Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: EMA 15/30/60, ADX(14) > 20 esigi yalniz satis icin. Pine backtest tarih penceresi (2015-01-01 / 2025-12-31 giris izni ve pencere sonu kapatma) test donemi girdisi olarak kuralin parcasi sayilmadi: U7 kendi donemini kullanir (motor ifade dilinde tarih fonksiyonu yok).', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu BCBA:GGAL).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

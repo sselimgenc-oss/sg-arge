@@ -9,18 +9,18 @@ tf_varsayim: false
 yazar_piyasasi: EMTIA (MCX:NATGASMINI1!)
 kol: EMTIA-4H
 yayin_sembolu: MCX:NATGASMINI1!
-gostergeler: {}
+gostergeler:
+  rsi3: {f: rsi, src: close, n: 3}
 ozel_kod: false
-giris: null
-cikis: null
+giris: cross_over(rsi3, 40)
+cikis: cross_under(rsi3, 70)
 stop: null
 hedef: null
-stop_eklendi: false
+stop_eklendi: true
 yalniz_long_bacak: true
 piyasa_kisiti: [EMTIA]
 parametreler: {kol: EMTIA-4H}
-dogrulanamaz: {neden: veri, ayrinti: 'EMTIA icin 4H uzun veri yok (yayin sembolu MCX:NATGASMINI1!). Kural cevrilmedi.'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (veri): EMTIA icin 4H uzun veri yok (yayin sembolu MCX:NATGASMINI1!). Kural cevrilmedi.']
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol U7 Ek 1 ile yayin sembolunun sinifina eslendi. Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: RSI(3), asiri satim 40, asiri alim 70, yon ''Both''. RSI 40''i yukari keserse long; 70''i asagi keserse short acilir ve acik long''u kapatir (long bacakta cikis olarak kalir).', 'Not: ABD/FX/EMTIA 4H kolunda veri yfinance 1H''den 4H''ye yeniden orneklenir (U7 Ek 1).', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).', 'U7 Ek 1: kol EMTIA-4H → EMTIA-4H eslendi (kural ve parametreler degismedi; yayin sembolu MCX:NATGASMINI1!).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

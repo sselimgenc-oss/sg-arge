@@ -17,6 +17,11 @@ SPEC = Path(__file__).resolve().parents[1] / "docs" / "spec"
 PARTI_IDS = ['uC1oajDr', 'DUCODGjC', 'ouvmvItR', 'rvBgD3aP', '1OnkbAiE', 'kbYTJ8V2', 'NgSIfKQx', 'buSJAz8o', 'M6uONKNI', 'X0F9OE4L', 'dwgn7hrE', 'TbK1rB5B', 'hezSShJr', 'W67tJltC', 'EcEYc8ap', 'zoY9DmsF', 'WWuTjyDx', 'V3NuuiPx', '7C1kIEOn', 'jc2hs2qK', 'roaahmoi', 'qDPWh3KO', 'Xr2xrNAY', 'TIpnJpU8', 'R9nsvSZR', 'OePmdMFg', 'N0nYQBlh', '70PkIvTL', 'Iv1wlVa8', 'yvDyq0pv', 'HjySseyp', 'kzp8e4X3', 'VO6DY8s1', '5zYcH3Gx', 'dpZLkrdx', 'gf21APTn', 'rjAoFt4N', 'HPbRZvsV', 'QTYaYuX7', 'jjhUHcje', 'zBaDqbla', 'tWS24Z2K', 'f80Cfpfp', 'Q9OQye4C', '16yhUQN3', 'NXbsqL9n', 'qSLcZSyw', 'ROM3crig', 'YsWWsOGs', '6knHPR6c', 'XnvfXLPF', '67fpKimh']
 TAM_IDS = ['uC1oajDr', 'DUCODGjC', 'rvBgD3aP', 'NgSIfKQx', 'buSJAz8o', 'X0F9OE4L', 'dwgn7hrE', 'TbK1rB5B', 'W67tJltC', 'zoY9DmsF', 'WWuTjyDx', '7C1kIEOn', 'jc2hs2qK', 'roaahmoi', 'qDPWh3KO', 'Xr2xrNAY', 'TIpnJpU8', '70PkIvTL', 'yvDyq0pv', 'VO6DY8s1', 'HPbRZvsV', 'QTYaYuX7', 'Q9OQye4C', 'YsWWsOGs', '6knHPR6c']
 OZEL_IDS = ['rvBgD3aP', 'buSJAz8o', 'dwgn7hrE', 'TbK1rB5B', 'W67tJltC', '7C1kIEOn', 'qDPWh3KO', 'Xr2xrNAY', 'TIpnJpU8', 'yvDyq0pv', 'QTYaYuX7']
+# U7 Ek 1: kolu eslenen kartlar (docs/GOREV_U7.md) tests/test_u7_piyasa.py'de sinanir
+_U7_EK1 = {i for i in PARTI_IDS if any(str(b).startswith("U7 Ek 1") for b in yaml.safe_load((SPEC / f"TV-{i}.yaml").read_text(encoding="utf-8"))["belirsiz"])}
+PARTI_IDS = [i for i in PARTI_IDS if i not in _U7_EK1]
+TAM_IDS = [i for i in TAM_IDS if i not in _U7_EK1]
+OZEL_IDS = [i for i in OZEL_IDS if i not in _U7_EK1]
 SINIFLAR = ("KRIPTO", "ABD", "EMTIA")
 NEDENLER = ("piyasa", "veri", "ceviri", "bekliyor:motor")
 
