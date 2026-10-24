@@ -49,6 +49,9 @@ class Position:
     exit_cost_acc: float = 0.0
     entry_cost_sold: float = 0.0
     sig_loc: int = -1
+    pyramid_entries: int = 1
+    scaled_done: set[int] = field(default_factory=set)
+    break_even_done: bool = False
 
 
 @dataclass
@@ -149,6 +152,9 @@ def run_portfolio(
     profit_lock: dict | None = None,
     exit_builder: Callable[..., pd.Series | None] | None = None,
     partial_profit: dict | None = None,
+    pyramid_max: int = 0,
+    scaled_exits: list[dict] | None = None,
+    break_even_r: float | None = None,
     roi_table: dict[float, float] | None = None,
     entry_order_type: str | None = None,
     entry_order_validity: int = 1,
@@ -183,6 +189,13 @@ def run_portfolio(
       ``stop_fn(entry_price)`` (stop for the remainder). Taken once; the fraction fills at
       the next open (or the same close with ``fill_at_close``). The trade stays one row,
       its ``exit_reason`` ends with ``+partial``.
+    * ``pyramid_max``: additional same-symbol entries permitted while a position
+      is open. Each addition is sized with the normal per-trade risk rule; the
+      shared ``max_total_risk`` budget includes the already-open position.
+    * ``scaled_exits``: ordered ``trigger_fn``/``oran`` levels. ``oran`` is a
+      fraction of the original quantity and a triggered level fills next bar.
+    * ``break_even_r``: after an intrabar high reaches this many initial-R, the
+      stop is raised to entry price for the following bar.
     * ``level_fns``: signal-bar referenced levels (docs/EVRENSEL_KURALLAR.md D10), each called as
       ``fn(symbol, signal_loc, fill_price, ...)`` returning an absolute price. ``"stop"`` sets the initial
       stop; ``"target"`` ``(…, stop_level)`` the target; ``"lock_trigger"`` / ``"lock_stop"``
@@ -357,7 +370,7 @@ def run_portfolio(
     def size_entry(symbol: str, price: float, signal_atr: float, stop_dist: float, target_dist: float,
                    stop_pct: float, target_pct: float, sig_loc: int):
         """Quantity and levels of an entry at ``price`` with the book as it is now (no side effects), or ``None``."""
-        if symbol in positions or not np.isfinite(signal_atr) or signal_atr <= 0:
+        if (symbol in positions and positions[symbol].pyramid_entries >= pyramid_max + 1) or not np.isfinite(signal_atr) or signal_atr <= 0:
             return None
         if np.isfinite(stop_pct):
             stop_dist = price * stop_pct
@@ -388,6 +401,19 @@ def run_portfolio(
             risk_per_trade * portfolio_equity,
             max(max_total_risk * portfolio_equity - existing_risk, 0.0),
         )
+        if symbol in positions:
+            # A pyramid is represented by one aggregate position and therefore
+            # uses its *new* (lowest) common stop for sizing.  Replacing the
+            # old marked-risk estimate for this symbol is essential: a lower
+            # stop widens the risk of every existing unit too.
+            position = positions[symbol]
+            combined_stop = min(position.stop, initial_stop)
+            marked_symbol_risk = max(mark(symbol, field_name) - position.stop, 0.0) * position.quantity
+            combined_existing_risk = position.quantity * max(position.entry_price - combined_stop, 0.0)
+            other_risk = existing_risk - marked_symbol_risk
+            combined_room = max(max_total_risk * portfolio_equity - other_risk - combined_existing_risk, 0.0)
+            risk_budget = min(risk_per_trade * portfolio_equity, combined_room)
+            risk_per_unit = price - combined_stop
         gross_budget = max(max_gross * portfolio_equity - gross, 0.0)
         cash_budget = max(cash / (1 + cost_rate), 0.0)
         quantity = min(risk_budget / risk_per_unit, gross_budget / price, cash_budget / price)
@@ -414,6 +440,23 @@ def run_portfolio(
                 runtime_exit = (  # lazy rules (kart_sinyal.LazyExit) already match the symbol's bars
                     built if hasattr(built, "entry_loc") else built.reindex(index_of[symbol]).fillna(False).to_numpy().astype(bool)
                 )
+        if symbol in positions:
+            # The ledger remains one aggregate long position.  Its risk is the
+            # sum of all entry units, so adding can never evade the 2% cap.
+            position = positions[symbol]
+            old_quantity = position.quantity
+            position.entry_price = (position.entry_price * old_quantity + price * quantity) / (old_quantity + quantity)
+            position.quantity += quantity
+            position.orig_quantity += quantity
+            position.entry_cost += entry_cost
+            position.initial_stop = min(position.initial_stop, initial_stop)
+            position.stop = min(position.stop, initial_stop)
+            position.initial_risk = position.quantity * (position.entry_price - position.initial_stop)
+            position.pyramid_entries += 1
+            if record_state:
+                fill_log.append({"tarih": date, "sembol": symbol, "tip": "giris", "fiyat": price, "adet": quantity,
+                                 "maliyet": entry_cost, "stop": initial_stop, "hedef": target})
+            return
         positions[symbol] = Position(
             symbol=symbol, entry_date=date, entry_price=price, quantity=quantity,
             stop=initial_stop, initial_stop=initial_stop, initial_risk=initial_risk,
@@ -428,12 +471,17 @@ def run_portfolio(
             fill_log.append({"tarih": date, "sembol": symbol, "tip": "giris", "fiyat": price, "adet": quantity,
                              "maliyet": entry_cost, "stop": initial_stop, "hedef": target})
 
-    def take_partial(symbol: str, price: float) -> None:
+    def take_partial(symbol: str, price: float, fraction: float | None = None) -> None:
         nonlocal cash
         position = positions[symbol]
-        sold = position.quantity * float(partial_profit["oran"])
+        legacy_single_partial = fraction is None and position.pyramid_entries == 1
+        fraction = float(partial_profit["oran"]) if fraction is None else fraction
+        # Exact legacy arithmetic is part of paper-ledger parity.  The
+        # proportional form is needed only when a scaled exit or pyramid made
+        # "original quantity" different from the current quantity.
+        sold = position.quantity * fraction if legacy_single_partial else min(position.orig_quantity * fraction, position.quantity)
         part_cost = sold * price * cost_rate
-        entry_share = position.entry_cost * float(partial_profit["oran"])
+        entry_share = position.entry_cost * fraction if legacy_single_partial else position.entry_cost * (sold / position.quantity)
         cash += sold * price - part_cost
         position.realized = (price - position.entry_price) * sold - entry_share - part_cost
         position.exit_cost_acc = part_cost
@@ -441,7 +489,8 @@ def run_portfolio(
         position.entry_cost -= entry_share
         position.quantity -= sold
         position.partial_done = True
-        position.stop = max(position.stop, float(partial_profit["stop_fn"](position.entry_price)))
+        if partial_profit is not None and fraction == float(partial_profit["oran"]):
+            position.stop = max(position.stop, float(partial_profit["stop_fn"](position.entry_price)))
         if record_state:
             fill_log.append({"tarih": dates[di], "sembol": symbol, "tip": "kismi", "fiyat": price, "adet": sold,
                              "maliyet": part_cost, "stop": position.stop})
@@ -455,6 +504,15 @@ def run_portfolio(
         else:
             trigger = float(partial_profit["trigger_fn"](position.entry_price, position.entry_price - position.initial_stop))
         return float(price_arr[symbol]["close"][loc]) - position.entry_price >= trigger
+
+    def scaled_due(symbol: str, loc: int) -> int | None:
+        if not scaled_exits:
+            return None
+        position = positions[symbol]
+        for number, level in enumerate(scaled_exits):
+            if number not in position.scaled_done and float(price_arr[symbol]["close"][loc]) >= float(level["trigger_fn"](position.entry_price, position.entry_price - position.initial_stop)):
+                return number
+        return None
 
     def cooled_down(symbol: str) -> bool:
         if max_entries_per_day is not None and entries_per_day.get((symbol, dates[di].floor("D")), 0) >= max_entries_per_day:
@@ -497,10 +555,17 @@ def run_portfolio(
             if loc < 0:
                 continue
             open_price = float(price_arr[order.symbol]["open"][loc])
-            if order.kind == "partial":
+            if order.kind.startswith("partial"):
                 pending.pop(order.symbol, None)
-                if order.symbol in positions and not positions[order.symbol].partial_done:
-                    take_partial(order.symbol, open_price)
+                if order.symbol in positions:
+                    if order.kind == "partial":
+                        if not positions[order.symbol].partial_done:
+                            take_partial(order.symbol, open_price)
+                    else:
+                        number = int(order.kind.removeprefix("partial:"))
+                        if number not in positions[order.symbol].scaled_done:
+                            take_partial(order.symbol, open_price, float(scaled_exits[number]["oran"]))
+                            positions[order.symbol].scaled_done.add(number)
                 continue
             if order.kind == "exit":
                 pending.pop(order.symbol, None)
@@ -601,6 +666,11 @@ def run_portfolio(
                         else float(profit_lock["stop_fn"](position.entry_price))
                     )
                     position.stop = max(position.stop, locked_stop)
+            if break_even_r is not None and not position.break_even_done:
+                trigger = position.entry_price + float(break_even_r) * (position.entry_price - position.initial_stop)
+                if float(price_arr[symbol]["high"][loc]) >= trigger:
+                    position.break_even_done = True
+                    position.stop = max(position.stop, position.entry_price)
             if trail_mode is None:
                 continue
             current_atr = float(sig_trail[symbol][loc])
@@ -631,6 +701,11 @@ def run_portfolio(
                 elif position is not None:
                     if partial_due(symbol, loc):
                         take_partial(symbol, float(price_arr[symbol]["close"][loc]))
+                    else:
+                        number = scaled_due(symbol, loc)
+                        if number is not None:
+                            take_partial(symbol, float(price_arr[symbol]["close"][loc]), float(scaled_exits[number]["oran"]))
+                            positions[symbol].scaled_done.add(number)
                 elif position is None and entry_signal and cooled_down(symbol):
                     close_fills.append((symbol, *sizing_at(symbol, loc)))
                 continue
@@ -645,7 +720,13 @@ def run_portfolio(
                 elif record_state and target_loc >= len(index_of[symbol]):
                     order_log.append({"sinyal_tarihi": date, "sembol": symbol, "tip": "kismi",
                                       "referans_fiyat": float(price_arr[symbol]["close"][loc])})
-            elif symbol in positions and exit_signal and (symbol not in pending or pending[symbol] == "partial"):
+            elif symbol in positions and not exit_signal and symbol not in pending and (number := scaled_due(symbol, loc)) is not None:
+                target_loc = loc + 1 + extra_delay_bars
+                if target_loc < len(index_of[symbol]) and index_of[symbol][target_loc] <= end:
+                    execute_date = index_of[symbol][target_loc]
+                    scheduled.setdefault(execute_date, []).append(Order(symbol, f"partial:{number}", execute_date, date, float(sig_atr[symbol][loc])))
+                    pending[symbol] = f"partial:{number}"
+            elif symbol in positions and exit_signal and (symbol not in pending or pending[symbol].startswith("partial")):
                 target_loc = loc + 1 + extra_delay_bars
                 if target_loc < len(index_of[symbol]) and index_of[symbol][target_loc] <= end:
                     execute_date = index_of[symbol][target_loc]
@@ -656,7 +737,7 @@ def run_portfolio(
                     order_log.append({"sinyal_tarihi": date, "sembol": symbol, "tip": "cikis",
                                       "referans_fiyat": float(price_arr[symbol]["close"][loc]), "adet": positions[symbol].quantity,
                                       "stop": positions[symbol].stop})
-            elif symbol not in positions and entry_signal and (symbol not in pending or pending[symbol] == "pending_entry") and cooled_down(symbol):
+            elif entry_signal and (symbol not in pending or pending[symbol] == "pending_entry") and cooled_down(symbol) and (symbol not in positions or positions[symbol].pyramid_entries < pyramid_max + 1):
                 if entry_order_type is not None:
                     level = float(sig_entry_level[symbol][loc])
                     if np.isfinite(level) and level > 0:

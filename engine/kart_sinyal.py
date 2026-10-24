@@ -530,6 +530,10 @@ def build_plan(
         kwargs["cooldown_bars"] = int(card["cooldown_bar"])
     if card.get("gunde_en_fazla"):
         kwargs["max_entries_per_day"] = int(card["gunde_en_fazla"])
+    if card.get("piramit"):
+        kwargs["pyramid_max"] = int(card["piramit"]["en_cok"])
+    if card.get("basa_bas"):
+        kwargs["break_even_r"] = float(card["basa_bas"]["tetik_r"])
     levels: dict[str, Callable[..., float]] = {}
     stop_card, target_card = card.get("stop"), card.get("hedef")
     if stop_card and stop_card.get("tip") == "seviye":
@@ -567,6 +571,15 @@ def build_plan(
                 e.evaluate({"giris": price, "giris_fiyati": price, "stop_mesafesi": distance}, index=None)
             )
         kwargs["partial_profit"] = config
+    levels = card.get("kademeli_cikis")
+    if levels:
+        configs = []
+        for level in levels:
+            trigger = _expr.parse(str(level["tetik"]))
+            configs.append({"oran": float(level["oran"]), "trigger_fn": lambda price, distance, e=trigger: float(
+                e.evaluate({"giris": price, "giris_fiyati": price, "stop_mesafesi": distance}, index=None)
+            )})
+        kwargs["scaled_exits"] = configs
     if any(builders.values()):
         kwargs["exit_builder"] = lambda symbol, *args: builders[symbol](symbol, *args) if builders.get(symbol) else None
     return KartPlan(
