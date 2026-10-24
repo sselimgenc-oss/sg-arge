@@ -6,7 +6,7 @@
 * Hat 2 expands every ``izgara:`` of ``U1-H2-*`` (entry timeframe x parameter) into variants (14 trials in total with Hat 0).
 * Every variant is one pooled portfolio over the 14 coins (Faz 1 sizing: 0.5 % risk per trade, 2 % open risk). Per-coin
   rows are sliced from that pooled trade list. Costs 0.15 / 0.30 / 0.45 % (1x/2x/3x).
-* Periods: IS 2018-01-01 -> 2023-09-30, OOS 2023-10-01 -> 2025-09-30. U7 removed the locked-period guard.
+* Periods: IS 2018-01-01 -> 2022-12-31, OOS 2023-01-01 -> the last closed archive bar (U7).
 
     python backtests/u1.py --hat 0,2 --donem IS,OOS --veri-kok data --results-dir results/u1
 """
@@ -36,8 +36,8 @@ from engine.spec import normalize_timeframe  # noqa: E402
 LOG = logging.getLogger("u1")
 MARKET = "KRIPTO25"
 PERIODS = {
-    "IS": (pd.Timestamp("2018-01-01", tz="UTC"), pd.Timestamp("2023-09-30", tz="UTC")),
-    "OOS": (pd.Timestamp("2023-10-01", tz="UTC"), pd.Timestamp("2025-09-30", tz="UTC")),
+    "IS": (pd.Timestamp("2018-01-01", tz="UTC"), pd.Timestamp("2022-12-31", tz="UTC")),
+    "OOS": (pd.Timestamp("2023-01-01", tz="UTC"), pd.Timestamp("2100-01-01", tz="UTC")),
     "KILITLI": (pd.Timestamp("2025-10-01", tz="UTC"), pd.Timestamp("2100-01-01", tz="UTC")),
 }
 CORE = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT", "TRXUSDT"]
