@@ -1,35 +1,23 @@
-# Kağıt Hesaplar Pro: 7/24 Otonom Paper Trading & Bulut Panosu
+# SG Pano
 
-Bu depo, sıfır sunucu maliyetiyle çalışan, canlı piyasa verileriyle işlem yapan ve 13 modüllü profesyonel kantitatif analiz panosunu barındıran tam otonom bir paper trading altyapısıdır.
+`sg-arge` paper trade defterinin panosu. **Sanal para; gerçek emir ve aracı kurum bağlantısı yok.**
 
----
+- Yayın: GitHub Pages (`main` / kök).
+- Veri: `data.json`. Bu dosyayı yalnız `sg-arge` deposundaki `paper.yml` iş akışı yazar (`paper/panel.py` + `paper/anlik.py`). Elle düzenlenmez.
+- Güncelleme: işlemler ve defter günde bir, ABD kapanışından sonra; açık pozisyonların değerlemesi saatlik. Sayfa açıkken her 5 dakikada `data.json`'u yeniden okur.
+- Sahte veri yok: `data.json` okunamazsa sayfa hata gösterir; verisi olmayan bölümler "henüz veri yok" der.
 
-## 🚀 3 Adımda 7/24 Canlı Kurulum
+## Dosyalar
+| Dosya | Görev |
+|---|---|
+| `index.html` | Pano (tek sayfa). |
+| `data.json` | Pano verisi (şema: `sg-arge/paper/panel.py`). |
+| `vendor/` | Sabit sürümlü kütüphaneler: Chart.js 4.4.1 (MIT), Lucide 0.460.0 (ISC), Tailwind 3.4.17 ile derlenmiş CSS (MIT). Dış CDN kullanılmaz. |
 
-### Adım 1: Depo Oluşturun ve Dosyaları Yükleyin
-1. [GitHub.com](https://github.com) üzerinde yeni bir depo açın (örneğin: `kagit-hesaplar`).
-2. Deponun içine şu dosyaları yükleyin:
-   - `index.html` (veya `paper_trading_dashboard.html`)
-   - `bot_engine.py` (Kantitatif işlem ve fiyat motoru)
-   - `data.json` (Merkezi veri tabanı)
-   - `.github/workflows/paper_trader.yml` (Otomasyon betiği)
-
-### Adım 2: GitHub Actions İzinlerini Açın
-1. Deponuzda **Settings (Ayarlar) -> Actions -> General** sekmesine gidin.
-2. Sayfanın en altındaki **Workflow permissions** bölümünde:
-   - **"Read and write permissions"** seçeneğini işaretleyin ve **Save** butonuna basın.
-   *(Bu ayar, botun saat başı `data.json` dosyasını güncelleyebilmesini sağlar).*
-
-### Adım 3: GitHub Pages'i Etkinleştirin (Ücretsiz Web Sitesi)
-1. Deponuzda **Settings -> Pages** sekmesine gidin.
-2. **Build and deployment -> Source** kısmından **Deploy from a branch** seçin.
-3. Branch olarak `main` ve `/ (root)` seçip **Save** butonuna basın.
-4. Birkaç dakika sonra size özel canlı pano linkiniz hazır olacaktır (örneğin: `https://kullaniciadi.github.io/kagit-hesaplar/`).
-
----
-
-## ⚙️ Nasıl Çalışır?
-- **Zamanlama:** Her saat başını 11 geçe (`:11`) GitHub Actions arka planda ücretsiz sanal makineyi başlatır.
-- **Veri Kaynağı:** Binance Public API ve Yahoo Finance üzerinden hiçbir API anahtarı gerektirmeden canlı fiyatları çeker.
-- **Risk & İcra:** Stop loss, kâr al ve R-katı hesaplanır, açık/kapanan işlemler güncellenir.
-- **Pano:** Web tarayıcınız veya telefonunuz panoyu açtığında her zaman en güncel durumu gösterir.
+## Tailwind CSS'i yeniden derleme (index.html'de yeni sınıf kullanılırsa)
+```bash
+npm i tailwindcss@3.4.17
+printf '@tailwind base;\n@tailwind components;\n@tailwind utilities;\n' > in.css
+echo "module.exports = { darkMode: 'class', content: ['index.html'], theme: { extend: {} } };" > tailwind.config.js
+npx tailwindcss -c tailwind.config.js -i in.css -o vendor/tailwind.3.4.17.css --minify
+```
