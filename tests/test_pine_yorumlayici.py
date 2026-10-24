@@ -216,3 +216,46 @@ def test_strategy_order_oca_cancel_and_close_immediately() -> None:
     s = calistir(_strateji("if bar_index == 2\n    strategy.entry('L', strategy.long, 1)\nif bar_index == 6\n    strategy.close('L', immediately=true)\n"), df)
     t = s.islemler.iloc[0]
     assert t["cikis_bar"] == 6 and t["cikis_fiyat"] == pytest.approx(df["close"].iloc[6])
+
+
+def test_security_other_symbol_uses_its_own_bars_and_never_the_unclosed_one() -> None:
+    grafik = _veri(24 * 8, freq="1h")
+    gunluk = _veri(10, seed=5, freq="D")                   # dış sembol (ör. VIX) günlük
+    ps = _strateji("v = request.security('CBOE:VIX', 'D', close)\n"
+                   "if close > 0 and v > 100\n    strategy.entry('L', strategy.long)\n")
+    istekler = []
+    ps.veri_saglayici = lambda sembol, dk: (istekler.append((sembol, dk)), gunluk)[1]
+    ps.hazirla(grafik)
+    degerler = []
+    from engine.tv_emulator import Baglam
+    ctx = Baglam(grafik, ps.AYARLAR)
+    for i in range(len(grafik)):
+        ctx.i = i
+        ps.bar(ctx, i, {})
+        degerler.append(ps.y._bul("v").deger)
+    assert istekler == [("CBOE:VIX", 1440)]
+    # gün d'nin değeri yalnız d günü kapandıktan sonra (o günün son saatlik barında) görünür
+    assert np.isnan(degerler[0]) and degerler[23] == gunluk["close"].iloc[0] and degerler[24] == gunluk["close"].iloc[0]
+    assert degerler[47] == gunluk["close"].iloc[1]
+    assert nedensellik(ps, grafik) == []
+
+
+def test_security_other_symbol_without_data_is_unsupported() -> None:
+    ps = _strateji("v = request.security('CBOE:VIX', 'D', close)\n")
+    ps.veri_saglayici = lambda sembol, dk: None
+    with pytest.raises(Desteklenmiyor):
+        calistir(ps, _veri(30, freq="1h"))
+
+
+def test_map_put_get_keys_and_methods() -> None:
+    df = _veri(6)
+    src = """//@version=5
+indicator('t')
+var m = map.new<string, float>()
+m.put("son", close)
+if bar_index == 0
+    map.put(m, "ilk", close)
+x = m.get("son") - map.get(m, "ilk") + (m.contains("yok") ? 1000 : 0) + m.size() * 0
+"""
+    x = _seri(src, df)
+    _ayni(x, (df["close"] - df["close"].iloc[0]).to_numpy(float))

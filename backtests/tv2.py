@@ -1,24 +1,34 @@
 """TV-2 koşucusu: `strategies/tv2/<id>.py` modüllerini yazarın sembolü ve zaman diliminde koşar (docs/TEST_YAPISI.md Adım 0-2).
 
-Her modül için iki sonuç: yazar (strategy() ayarları) ve uygulanabilir (gerçekçi maliyet). Sınama dönemi, test edilen kod
+İki strateji türü: el çevirisi modül (`strategies/tv2/<id>.py`) ya da Pine kaynağının kendisi (`engine/pine`,
+`arastirma/tv2_surumler.csv` satırı; kaynak pine-facade'den çekilip `data/tv2/kaynak/` önbelleğine yazılır).
+Her strateji için iki sonuç: yazar (strategy() ayarları) ve uygulanabilir (gerçekçi maliyet). Sınama dönemi, test edilen kod
 sürümünün tarihinden (`arastirma/tv2_surumler.csv`) sonrasıdır. Çıktı: `results/tv2/sonuclar.csv` (id başına bir satır,
 yeniden koşuda güncellenir) ve `results/tv2/getiriler/<id>.csv` (uygulanabilir sonucun günlük net getirisi).
 
-    python -m backtests.tv2 [id ...]      # id verilmezse bütün modüller
+    python -m backtests.tv2 [id ...]              # id verilmezse bütün modüller
+    python -m backtests.tv2 --ayri <id>           # tek strateji, results/tv2/satirlar/<id>.json (toplu koşu: xargs + timeout)
+    python -m backtests.tv2 --birlestir           # satirlar/ -> sonuclar.csv
 """
 
 from __future__ import annotations
 
 import argparse
 import importlib
+import json
 import pkgutil
 import re
+import time
+import urllib.parse
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
+import requests
+
 from data.fetch import Asset, fetch_binance
+from engine.pine.yorumlayici import Desteklenmiyor, PineHatasi, PineStrateji
 from engine.tv_emulator import Sonuc, calistir, gercekci, nedensellik
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,8 +43,13 @@ BINANCE_ARALIK = {"1m": 1, "3m": 3, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "2h
 YFINANCE = {"SPX": "^GSPC", "SPX500": "^GSPC", "US500": "^GSPC", "SPY": "SPY", "NDX": "^NDX", "NAS100": "^NDX", "US100": "^NDX",
             "QQQ": "QQQ", "DJI": "^DJI", "US30": "^DJI", "XAUUSD": "GC=F", "GOLD": "GC=F", "XAGUSD": "SI=F", "USOIL": "CL=F",
             "WTI": "CL=F", "EURUSD": "EURUSD=X", "GBPUSD": "GBPUSD=X", "USDJPY": "JPY=X", "AUDUSD": "AUDUSD=X", "DAX": "^GDAXI",
-            "DE40": "^GDAXI", "GER40": "^GDAXI"}
+            "DE40": "^GDAXI", "GER40": "^GDAXI", "VIX": "^VIX", "VIX9D": "^VIX9D", "VXN": "^VXN", "TNX": "^TNX",
+            "DXY": "DX-Y.NYB", "US10Y": "^TNX", "ES1!": "ES=F", "NQ1!": "NQ=F", "GC1!": "GC=F", "CL1!": "CL=F", "BTC1!": "BTC=F"}
+HISSE_BORSALARI = {"NASDAQ", "NYSE", "AMEX", "ARCA", "BATS", "NYSEARCA", "CBOE", "TVC", "CME", "CME_MINI", "COMEX", "NYMEX", ""}
 KAPI_HAFTA = 10
+NEDENSELLIK_BAR = 15_000
+DAKIKALIK_ALT = 15            # bu dakikanın altı yalnız --dakikalik ile ve pencereli koşulur
+DAKIKALIK_KOS = False
 
 
 def dakika(tf: str) -> int:
@@ -49,12 +64,30 @@ def dakika(tf: str) -> int:
 
 def _binance_sembol(sembol: str) -> str:
     s = sembol.split(":")[-1].replace(".P", "").replace("PERP", "")
+    if s.startswith("XBT"):
+        s = "BTC" + s[3:]
     return s[:-3] + "USDT" if s.endswith("USD") and not s.endswith("USDT") else s
 
 
-def veri(sembol: str, tf: str) -> tuple[pd.DataFrame | None, str]:
-    """(OHLC, kaynak notu). Veri yoksa (None, neden). Kapanmamış son bar atılır."""
+def binance_tick(bsym: str) -> float:
+    """Binance PRICE_FILTER tickSize (önbellekli). Yazarın sembolünün tick'i bilinmediğinde kullanılır."""
+    yol = CACHE / "ticksize.json"
+    tablo = json.loads(yol.read_text()) if yol.exists() else {}
+    if bsym not in tablo:
+        r = requests.get("https://data-api.binance.vision/api/v3/exchangeInfo", params={"symbol": bsym}, timeout=30)
+        r.raise_for_status()
+        filtre = next(f for f in r.json()["symbols"][0]["filters"] if f["filterType"] == "PRICE_FILTER")
+        tablo[bsym] = float(filtre["tickSize"])
+        CACHE.mkdir(parents=True, exist_ok=True)
+        yol.write_text(json.dumps(tablo))
+    return tablo[bsym]
+
+
+def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.DataFrame | None, str]:
+    """(OHLC, kaynak notu). Veri yoksa (None, neden). Kapanmamış son bar atılır. `bas`: pencere başlangıcı (dakikalık)."""
     borsa, _, ad = sembol.upper().partition(":")
+    if not ad:                                  # önek yok: 'SPY', 'VIX', 'BTCUSDT'
+        borsa, ad = "", borsa
     dk = dakika(tf)
     if borsa in KRIPTO_BORSALARI or ad.endswith(("USDT", "USDT.P", "USDC")):
         bsym = _binance_sembol(sembol.upper())
@@ -62,11 +95,15 @@ def veri(sembol: str, tf: str) -> tuple[pd.DataFrame | None, str]:
         if taban is None:
             return None, f"veri_yok: aralık {tf}"
         aralik = next(k for k, v in BINANCE_ARALIK.items() if v == taban)
-        yol = CACHE / f"{bsym}_{aralik}.parquet"
-        if yol.exists():
+        ek = f"_{bas:%Y%m%d}" if bas is not None else ""
+        yol = CACHE / f"{bsym}_{aralik}{ek}.parquet"
+        if yol.exists() and time.time() - yol.stat().st_mtime < 6 * 3600:
             df = pd.read_parquet(yol)
         else:
-            df = fetch_binance(Asset(bsym, "KRIPTO", "binance"), aralik)
+            try:
+                df = fetch_binance(Asset(bsym, "KRIPTO", "binance"), aralik, start=bas)
+            except requests.HTTPError:
+                return None, f"veri_yok: Binance {bsym} yok"
             if df.empty:
                 return None, f"veri_yok: Binance {bsym}"
             CACHE.mkdir(parents=True, exist_ok=True)
@@ -74,9 +111,10 @@ def veri(sembol: str, tf: str) -> tuple[pd.DataFrame | None, str]:
         if taban != dk:
             df = _yeniden_ornekle(df, dk)
         return _kapanmis(df, dk), f"Binance {bsym} {aralik}" + ("" if taban == dk else f" → {tf}")
-    if ad.split(".")[0] in YFINANCE and dk >= 1440:
+    kok = ad.split(".")[0]
+    if dk >= 1440 and (kok in YFINANCE or (borsa in HISSE_BORSALARI and re.fullmatch(r"[A-Z]{1,5}", kok))):
         import yfinance as yf
-        kod = YFINANCE[ad.split(".")[0]]
+        kod = YFINANCE.get(kok, kok)
         df = yf.download(kod, period="max", interval="1d" if dk < 10080 else "1wk", auto_adjust=False, progress=False)
         if df.empty:
             return None, f"veri_yok: yfinance {kod}"
@@ -126,19 +164,78 @@ def _metrik(sonuc: Sonuc, bas: pd.Timestamp | None, on: str) -> dict[str, float]
     }
 
 
+def _dis_veri(sembol: str, dk: int) -> pd.DataFrame | None:
+    """request.security başka sembol: aynı veri kuralları (Binance / yfinance günlük+); bulunamazsa None."""
+    try:
+        return veri(sembol, str(dk))[0]
+    except Exception:                                   # dış veri hatası: yorumlayıcı 'veri yok' diye işaretler
+        return None
+
+
+def pine_kaynak(kimlik: str, pub: str) -> str | None:
+    """Pine kaynağı (pine-facade, son sürüm), `data/tv2/kaynak/<id>.json` önbelleğinde."""
+    yol = CACHE / "kaynak" / f"{kimlik}.json"
+    if not yol.exists():
+        q = urllib.parse.quote(pub)
+        r = requests.get(f"https://pine-facade.tradingview.com/pine-facade/get/{q}/last?no_4xx=true", timeout=30)
+        yol.parent.mkdir(parents=True, exist_ok=True)
+        yol.write_text(r.text)
+    return json.loads(yol.read_text()).get("source")
+
+
+def strateji(kimlik: str):
+    """(modül, KAYNAK sözlüğü): el çevirisi varsa o, yoksa tv2_surumler.csv satırından Pine yorumlayıcısı."""
+    if (ROOT / "strategies" / "tv2" / f"{kimlik}.py").exists():
+        modul = importlib.import_module(f"strategies.tv2.{kimlik}")
+        return modul, modul.KAYNAK
+    tablo = pd.read_csv(SURUMLER, dtype=str)
+    eslesen = tablo[tablo["id"] == kimlik]
+    if eslesen.empty:
+        raise KeyError(f"{kimlik}: ne strategies/tv2 modülü ne arastirma/tv2_surumler.csv satırı var")
+    satir = eslesen.iloc[0]
+    kaynak = {"url": f"https://www.tradingview.com/script/{kimlik}/", "pub": satir["pub"], "sembol": satir["yayin_sembolu"],
+              "tf": satir["tf"], "surum_tarihi": satir["son_surum_tarihi"], "pine": True}
+    return None, kaynak
+
+
 def kos(kimlik: str) -> dict:
-    modul = importlib.import_module(f"strategies.tv2.{kimlik}")
-    kaynak = modul.KAYNAK
-    satir: dict = {"id": kimlik, "sembol": kaynak["sembol"], "tf": kaynak["tf"], "url": kaynak["url"]}
-    df, notu = veri(kaynak["sembol"], kaynak["tf"])
+    modul, kaynak = strateji(kimlik)
+    satir: dict = {"id": kimlik, "sembol": kaynak["sembol"], "tf": kaynak["tf"], "url": kaynak["url"],
+                   "tur": "pine" if kaynak.get("pine") else "modul"}
+    pencere_bas = None
+    if dakika(str(kaynak["tf"])) < DAKIKALIK_ALT:
+        if not DAKIKALIK_KOS:
+            return satir | {"karar": "ertelendi", "neden": f"dakikalık ({kaynak['tf']}): ayrı, pencereli koşu (--dakikalik)"}
+        surum, _ = surum_tarihi(kimlik, kaynak)
+        if surum is not None:   # kullanıcı kararı 2026-10-24: sürüm tarihinden 1 yıl önce başlayan pencere
+            pencere_bas = surum - pd.Timedelta(days=365)
+            satir["pencere_bas"] = pencere_bas.date()
+    df, notu = veri(str(kaynak["sembol"]), str(kaynak["tf"]), bas=pencere_bas)
     satir["veri"] = notu
     if df is None:
         return satir | {"karar": "veri_yok", "neden": notu}
     satir |= {"bas": df.index[0].date(), "son": df.index[-1].date(), "bar": len(df)}
-    hatalar = nedensellik(modul, df)
     kripto = notu.startswith("Binance")
-    yazar = calistir(modul, df)
-    uyg = calistir(modul, df, **gercekci(modul.AYARLAR, kripto=kripto))
+    try:
+        if modul is None:
+            src = pine_kaynak(kimlik, kaynak["pub"])
+            if not src:
+                return satir | {"karar": "kaynak_yok", "neden": "pine-facade kaynak vermedi"}
+            tick = binance_tick(notu.split()[1]) if kripto else 0.01
+            modul = PineStrateji(src, sembol=str(kaynak["sembol"]), tf=str(kaynak["tf"]), tz="UTC" if kripto else "America/New_York",
+                                 mintick=tick, kimlik=kimlik)
+            modul.veri_saglayici = _dis_veri
+            satir["uyari"] = "; ".join(modul.uyarilar + ([f"mintick veri kaynağından ({tick})"] if re.search(
+                r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []))
+        yazar = calistir(modul, df)
+        # nedensellik: geleceği gören kod kısa pencerede de aynı biçimde yakalanır; uzun geçmişte (1H ~80 bin bar) 6 kesim pahalı
+        pencere = df.iloc[-NEDENSELLIK_BAR:]
+        hatalar = nedensellik(modul, pencere, tam=yazar if len(pencere) == len(df) else None)
+        uyg = calistir(modul, df, **gercekci(modul.AYARLAR, kripto=kripto))
+    except Desteklenmiyor as e:
+        return satir | {"karar": "desteklenmiyor", "neden": str(e)}
+    except PineHatasi as e:
+        return satir | {"karar": "pine_hatasi", "neden": str(e)}
     bas, etiket = surum_tarihi(kimlik, kaynak)
     if bas is not None and (df.index[-1] - bas).days < 365:
         etiket = "yetersiz_kanit"
@@ -170,11 +267,7 @@ def tum_moduller() -> list[str]:
     return sorted(m.name for m in pkgutil.iter_modules(paket.__path__) if not m.name.startswith("_"))
 
 
-def main(argv: list[str] | None = None) -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("idler", nargs="*")
-    args = ap.parse_args(argv)
-    satirlar = [kos(k) for k in (args.idler or tum_moduller())]
+def _yaz(satirlar: list[dict]) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     yol = OUT / "sonuclar.csv"
     yeni = pd.DataFrame(satirlar)
@@ -182,6 +275,34 @@ def main(argv: list[str] | None = None) -> None:
         eski = pd.read_csv(yol)
         yeni = pd.concat([eski[~eski["id"].isin(yeni["id"])], yeni], ignore_index=True)
     yeni.sort_values("id").to_csv(yol, index=False)
+
+
+def main(argv: list[str] | None = None) -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("idler", nargs="*")
+    ap.add_argument("--ayri", action="store_true", help="her id için results/tv2/satirlar/<id>.json yaz")
+    ap.add_argument("--birlestir", action="store_true", help="satirlar/ klasörünü sonuclar.csv'ye ekle")
+    ap.add_argument("--dakikalik", action="store_true", help="15 dakikanın altını sürüm tarihi - 1 yıl penceresiyle koş")
+    args = ap.parse_args(argv)
+    global DAKIKALIK_KOS
+    DAKIKALIK_KOS = args.dakikalik
+    klasor = OUT / "satirlar"
+    if args.birlestir:
+        _yaz([json.loads(p.read_text()) for p in sorted(klasor.glob("*.json"))])
+        return
+    if args.ayri:
+        klasor.mkdir(parents=True, exist_ok=True)
+        for k in args.idler:
+            yol = klasor / f"{k}.json"
+            yol.write_text(json.dumps({"id": k, "karar": "zaman_asimi", "neden": "koşu süre sınırında kesildi"}))
+            try:
+                satir = kos(k)
+            except Exception as e:                               # beklenmeyen hata: nedeniyle kayda geçer
+                satir = {"id": k, "karar": "hata", "neden": f"{type(e).__name__}: {e}"[:300]}
+            yol.write_text(json.dumps(satir, default=str, ensure_ascii=False))
+        return
+    satirlar = [kos(k) for k in (args.idler or tum_moduller())]
+    _yaz(satirlar)
     print(pd.DataFrame(satirlar)[["id", "veri", "etiket", "karar", "neden"]].to_string(index=False))
 
 

@@ -29,3 +29,7 @@ Yalnız gerçekten çalıştırılamayan kod: harici veri servisi, Pine içinde 
 - **Koşu:** Codex, partiler birleştikçe; çıktı `results/tv2/sonuclar.csv` + `results/TV2_RAPOR.md`.
 - **Sürüm tarihleri:** her script için pine-facade sürüm listesinden test edilen sürümün tarihi `arastirma/tv2_surumler.csv`'ye (çevirmen, parti PR'ında).
 - Öncelik `TEST_YAPISI.md` "Çeviri sırası"na göre; yazarın iddia ettiği getiri kullanılmaz.
+
+## Ek 1 (kullanıcı kararları, 2026-10-24, denetim 18:46 B2/B3)
+1. **Dakikalık (15 dakikanın altı):** sürüm tarihinden 1 yıl önce başlayan pencereyle koşulur (`backtests/tv2.py --dakikalik`). Tüm dönem sütunu bu pencereyi kapsar; `pencere_bas` sütununda yazılır.
+2. **Eşdeğer veri kabul:** BITFINEX/BITSTAMP/COINBASE/BYBIT `…USD` ve vadeli `.P` semboller Binance spot `…USDT` verisiyle koşulur; `veri` sütununda açık. mintick Binance'ten (TradingView sembol servisi erişilemiyor); tick cinsinden parametre kullananlarda `uyari`.
