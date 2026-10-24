@@ -2,7 +2,7 @@
   "meta": {
     "title": "Kağıt Hesaplar",
     "subtitle": "sg-arge Paper Portföyü: C07, R01, A6-010 / 5,000 $ sanal sermaye (1/N)",
-    "last_update": "24/10 15:24",
+    "last_update": "24/10 17:02",
     "test_period": "gün 53 · 01.09.2026–23.10.2026 geriye dönük (aynı kurallar, gerçek veri) · 24.10.2026'dan itibaren canlı paper",
     "exchange_rate": null,
     "currency": "USD",
@@ -10,7 +10,7 @@
     "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
     "data_version": "sgarge_paper_v1",
     "veri_notu": null,
-    "updated_at": "2026-10-24T12:24:45.891500+00:00",
+    "updated_at": "2026-10-24T14:02:21.595727+00:00",
     "fiyat_zamani": "2026-10-23T19:30:00+00:00",
     "fiyat_kaynagi": "anlik",
     "anlik_not": "Açık pozisyonlar saatlik fiyatla değerlenir; işlemler ve defter yalnız günlük kapanışta güncellenir."
@@ -1114,26 +1114,4585 @@
     }
   ],
   "golge": {
-    "ozkaynak": 5000.0,
-    "mdd": 0.0,
-    "baslangic": "2026-10-24",
-    "acik_pozisyonlar": [],
-    "kapanmis_islemler": [
+    "not": "gölge kitaplar: ana portföyden ayrı; 2026-10-24 öncesi geriye dönük, yalnız canlı dönem değerlendirilir",
+    "kitaplar": [
       {
-        "id": 1,
-        "account": "U4-H1 · KRIPTO25",
-        "strategy": "U4-H1:KRIPTO25",
-        "asset": "BNBUSDT",
-        "type": "Alış",
-        "entry_date": "24.10.2026",
-        "exit_date": "24.10.2026",
-        "entry_price": 739.7,
-        "exit_price": 738.58,
-        "r": -0.28,
-        "pnl": -3.45,
-        "reason": "signal"
+        "id": "U4-H1",
+        "piyasa": "KRIPTO25",
+        "tf": "4H",
+        "baslangic": "2026-09-01",
+        "canli_baslangic": "2026-10-24",
+        "ozkaynak": 4965.16,
+        "mdd": 2.25,
+        "mdd_uyari": 0.15,
+        "acik_pozisyonlar": [],
+        "kapanmis_islemler": [
+          {
+            "id": 24,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "TRXUSDT",
+            "type": "Alış",
+            "entry_date": "16.10.2026",
+            "exit_date": "18.10.2026",
+            "entry_price": 0.3346,
+            "exit_price": 0.3334,
+            "r": -0.42,
+            "pnl": -5.27,
+            "reason": "signal"
+          },
+          {
+            "id": 23,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "SOLUSDT",
+            "type": "Alış",
+            "entry_date": "29.09.2026",
+            "exit_date": "07.10.2026",
+            "entry_price": 118.22,
+            "exit_price": 118.25,
+            "r": -0.04,
+            "pnl": -0.44,
+            "reason": "signal"
+          },
+          {
+            "id": 22,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BTCUSDT",
+            "type": "Alış",
+            "entry_date": "29.09.2026",
+            "exit_date": "07.10.2026",
+            "entry_price": 83068.0,
+            "exit_price": 84150.39,
+            "r": 0.31,
+            "pnl": 3.87,
+            "reason": "signal"
+          },
+          {
+            "id": 21,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "ETHUSDT",
+            "type": "Alış",
+            "entry_date": "07.10.2026",
+            "exit_date": "07.10.2026",
+            "entry_price": 2697.49,
+            "exit_price": 2625.1583,
+            "r": -1.11,
+            "pnl": -0.51,
+            "reason": "stop"
+          },
+          {
+            "id": 20,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BNBUSDT",
+            "type": "Alış",
+            "entry_date": "06.10.2026",
+            "exit_date": "07.10.2026",
+            "entry_price": 779.53,
+            "exit_price": 758.7006,
+            "r": -1.11,
+            "pnl": -13.87,
+            "reason": "stop"
+          },
+          {
+            "id": 19,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "ETHUSDT",
+            "type": "Alış",
+            "entry_date": "18.09.2026",
+            "exit_date": "06.10.2026",
+            "entry_price": 2479.44,
+            "exit_price": 2691.91,
+            "r": 1.75,
+            "pnl": 18.17,
+            "reason": "signal"
+          },
+          {
+            "id": 18,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BNBUSDT",
+            "type": "Alış",
+            "entry_date": "17.09.2026",
+            "exit_date": "29.09.2026",
+            "entry_price": 725.92,
+            "exit_price": 753.6,
+            "r": 0.93,
+            "pnl": 11.48,
+            "reason": "signal"
+          },
+          {
+            "id": 17,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "TRXUSDT",
+            "type": "Alış",
+            "entry_date": "17.09.2026",
+            "exit_date": "24.09.2026",
+            "entry_price": 0.3352,
+            "exit_price": 0.3391,
+            "r": 0.64,
+            "pnl": 7.88,
+            "reason": "signal"
+          },
+          {
+            "id": 16,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "TRXUSDT",
+            "type": "Alış",
+            "entry_date": "17.09.2026",
+            "exit_date": "17.09.2026",
+            "entry_price": 0.3362,
+            "exit_price": 0.3345,
+            "r": -0.55,
+            "pnl": -6.78,
+            "reason": "signal"
+          },
+          {
+            "id": 15,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "XRPUSDT",
+            "type": "Alış",
+            "entry_date": "14.09.2026",
+            "exit_date": "15.09.2026",
+            "entry_price": 1.3987,
+            "exit_price": 1.3278,
+            "r": -1.06,
+            "pnl": -13.19,
+            "reason": "stop"
+          },
+          {
+            "id": 14,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "TRXUSDT",
+            "type": "Alış",
+            "entry_date": "12.09.2026",
+            "exit_date": "15.09.2026",
+            "entry_price": 0.3385,
+            "exit_price": 0.3332,
+            "r": -1.19,
+            "pnl": -14.86,
+            "reason": "stop"
+          },
+          {
+            "id": 13,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "ETHUSDT",
+            "type": "Alış",
+            "entry_date": "11.09.2026",
+            "exit_date": "15.09.2026",
+            "entry_price": 2559.43,
+            "exit_price": 2474.29,
+            "r": -0.67,
+            "pnl": -8.35,
+            "reason": "signal"
+          },
+          {
+            "id": 12,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BNBUSDT",
+            "type": "Alış",
+            "entry_date": "14.09.2026",
+            "exit_date": "15.09.2026",
+            "entry_price": 722.52,
+            "exit_price": 715.09,
+            "r": -0.38,
+            "pnl": -4.76,
+            "reason": "signal"
+          },
+          {
+            "id": 11,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BTCUSDT",
+            "type": "Alış",
+            "entry_date": "14.09.2026",
+            "exit_date": "15.09.2026",
+            "entry_price": 78578.02,
+            "exit_price": 78189.2,
+            "r": -0.29,
+            "pnl": -0.07,
+            "reason": "signal"
+          },
+          {
+            "id": 10,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BNBUSDT",
+            "type": "Alış",
+            "entry_date": "13.09.2026",
+            "exit_date": "14.09.2026",
+            "entry_price": 718.89,
+            "exit_price": 716.41,
+            "r": -0.18,
+            "pnl": -2.27,
+            "reason": "signal"
+          },
+          {
+            "id": 9,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BNBUSDT",
+            "type": "Alış",
+            "entry_date": "11.09.2026",
+            "exit_date": "13.09.2026",
+            "entry_price": 728.58,
+            "exit_price": 716.31,
+            "r": -0.42,
+            "pnl": -5.31,
+            "reason": "signal"
+          },
+          {
+            "id": 8,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BNBUSDT",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "10.09.2026",
+            "entry_price": 693.46,
+            "exit_price": 707.95,
+            "r": 0.61,
+            "pnl": 7.62,
+            "reason": "signal"
+          },
+          {
+            "id": 7,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "SOLUSDT",
+            "type": "Alış",
+            "entry_date": "02.09.2026",
+            "exit_date": "09.09.2026",
+            "entry_price": 98.11,
+            "exit_price": 102.34,
+            "r": 0.65,
+            "pnl": 8.1,
+            "reason": "signal"
+          },
+          {
+            "id": 6,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "ETHUSDT",
+            "type": "Alış",
+            "entry_date": "02.09.2026",
+            "exit_date": "09.09.2026",
+            "entry_price": 2381.87,
+            "exit_price": 2465.49,
+            "r": 0.7,
+            "pnl": 8.68,
+            "reason": "signal"
+          },
+          {
+            "id": 5,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "BTCUSDT",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "08.09.2026",
+            "entry_price": 78679.01,
+            "exit_price": 78482.0,
+            "r": -0.18,
+            "pnl": -2.19,
+            "reason": "signal"
+          },
+          {
+            "id": 4,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "XRPUSDT",
+            "type": "Alış",
+            "entry_date": "02.09.2026",
+            "exit_date": "06.09.2026",
+            "entry_price": 1.3369,
+            "exit_price": 1.4112,
+            "r": 0.84,
+            "pnl": 5.79,
+            "reason": "signal"
+          },
+          {
+            "id": 3,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "XRPUSDT",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "02.09.2026",
+            "entry_price": 1.38,
+            "exit_price": 1.3252,
+            "r": -0.7,
+            "pnl": -2.1,
+            "reason": "signal"
+          },
+          {
+            "id": 2,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "SOLUSDT",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "02.09.2026",
+            "entry_price": 103.66,
+            "exit_price": 97.4744,
+            "r": -1.05,
+            "pnl": -13.1,
+            "reason": "stop"
+          },
+          {
+            "id": 1,
+            "account": "U4-H1 · KRIPTO25",
+            "strategy": "U4-H1:KRIPTO25",
+            "asset": "ETHUSDT",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "02.09.2026",
+            "entry_price": 2472.21,
+            "exit_price": 2368.9851,
+            "r": -1.07,
+            "pnl": -13.38,
+            "reason": "stop"
+          }
+        ],
+        "ozkaynak_serisi": [
+          {
+            "tarih": "2026-09-01 00:00:00",
+            "ozkaynak": 5000.0
+          },
+          {
+            "tarih": "2026-09-01 04:00:00",
+            "ozkaynak": 4994.96
+          },
+          {
+            "tarih": "2026-09-01 08:00:00",
+            "ozkaynak": 4986.97
+          },
+          {
+            "tarih": "2026-09-01 12:00:00",
+            "ozkaynak": 4983.91
+          },
+          {
+            "tarih": "2026-09-01 16:00:00",
+            "ozkaynak": 4968.12
+          },
+          {
+            "tarih": "2026-09-01 20:00:00",
+            "ozkaynak": 4970.33
+          },
+          {
+            "tarih": "2026-09-02 00:00:00",
+            "ozkaynak": 4973.88
+          },
+          {
+            "tarih": "2026-09-02 04:00:00",
+            "ozkaynak": 4972.79
+          },
+          {
+            "tarih": "2026-09-02 08:00:00",
+            "ozkaynak": 4954.99
+          },
+          {
+            "tarih": "2026-09-02 12:00:00",
+            "ozkaynak": 4962.4
+          },
+          {
+            "tarih": "2026-09-02 16:00:00",
+            "ozkaynak": 4962.92
+          },
+          {
+            "tarih": "2026-09-02 20:00:00",
+            "ozkaynak": 4966.8
+          },
+          {
+            "tarih": "2026-09-03 00:00:00",
+            "ozkaynak": 4973.73
+          },
+          {
+            "tarih": "2026-09-03 04:00:00",
+            "ozkaynak": 4975.98
+          },
+          {
+            "tarih": "2026-09-03 08:00:00",
+            "ozkaynak": 4988.12
+          },
+          {
+            "tarih": "2026-09-03 12:00:00",
+            "ozkaynak": 5044.2
+          },
+          {
+            "tarih": "2026-09-03 16:00:00",
+            "ozkaynak": 5045.41
+          },
+          {
+            "tarih": "2026-09-03 20:00:00",
+            "ozkaynak": 5037.7
+          },
+          {
+            "tarih": "2026-09-04 00:00:00",
+            "ozkaynak": 5033.44
+          },
+          {
+            "tarih": "2026-09-04 04:00:00",
+            "ozkaynak": 5026.34
+          },
+          {
+            "tarih": "2026-09-04 08:00:00",
+            "ozkaynak": 5038.99
+          },
+          {
+            "tarih": "2026-09-04 12:00:00",
+            "ozkaynak": 5007.36
+          },
+          {
+            "tarih": "2026-09-04 16:00:00",
+            "ozkaynak": 5012.26
+          },
+          {
+            "tarih": "2026-09-04 20:00:00",
+            "ozkaynak": 5012.82
+          },
+          {
+            "tarih": "2026-09-05 00:00:00",
+            "ozkaynak": 5013.19
+          },
+          {
+            "tarih": "2026-09-05 04:00:00",
+            "ozkaynak": 5024.77
+          },
+          {
+            "tarih": "2026-09-05 08:00:00",
+            "ozkaynak": 5029.93
+          },
+          {
+            "tarih": "2026-09-05 12:00:00",
+            "ozkaynak": 5047.17
+          },
+          {
+            "tarih": "2026-09-05 16:00:00",
+            "ozkaynak": 5052.27
+          },
+          {
+            "tarih": "2026-09-05 20:00:00",
+            "ozkaynak": 5047.96
+          },
+          {
+            "tarih": "2026-09-06 00:00:00",
+            "ozkaynak": 5057.96
+          },
+          {
+            "tarih": "2026-09-06 04:00:00",
+            "ozkaynak": 5048.18
+          },
+          {
+            "tarih": "2026-09-06 08:00:00",
+            "ozkaynak": 5053.23
+          },
+          {
+            "tarih": "2026-09-06 12:00:00",
+            "ozkaynak": 5039.9
+          },
+          {
+            "tarih": "2026-09-06 16:00:00",
+            "ozkaynak": 5042.9
+          },
+          {
+            "tarih": "2026-09-06 20:00:00",
+            "ozkaynak": 5052.78
+          },
+          {
+            "tarih": "2026-09-07 00:00:00",
+            "ozkaynak": 5039.65
+          },
+          {
+            "tarih": "2026-09-07 04:00:00",
+            "ozkaynak": 5035.26
+          },
+          {
+            "tarih": "2026-09-07 08:00:00",
+            "ozkaynak": 5036.92
+          },
+          {
+            "tarih": "2026-09-07 12:00:00",
+            "ozkaynak": 5021.98
+          },
+          {
+            "tarih": "2026-09-07 16:00:00",
+            "ozkaynak": 5034.37
+          },
+          {
+            "tarih": "2026-09-07 20:00:00",
+            "ozkaynak": 5030.11
+          },
+          {
+            "tarih": "2026-09-08 00:00:00",
+            "ozkaynak": 5029.5
+          },
+          {
+            "tarih": "2026-09-08 04:00:00",
+            "ozkaynak": 5033.0
+          },
+          {
+            "tarih": "2026-09-08 08:00:00",
+            "ozkaynak": 5030.22
+          },
+          {
+            "tarih": "2026-09-08 12:00:00",
+            "ozkaynak": 5038.41
+          },
+          {
+            "tarih": "2026-09-08 16:00:00",
+            "ozkaynak": 5029.75
+          },
+          {
+            "tarih": "2026-09-08 20:00:00",
+            "ozkaynak": 5032.26
+          },
+          {
+            "tarih": "2026-09-09 00:00:00",
+            "ozkaynak": 5031.04
+          },
+          {
+            "tarih": "2026-09-09 04:00:00",
+            "ozkaynak": 5039.16
+          },
+          {
+            "tarih": "2026-09-09 08:00:00",
+            "ozkaynak": 5034.8
+          },
+          {
+            "tarih": "2026-09-09 12:00:00",
+            "ozkaynak": 5024.32
+          },
+          {
+            "tarih": "2026-09-09 16:00:00",
+            "ozkaynak": 5018.85
+          },
+          {
+            "tarih": "2026-09-09 20:00:00",
+            "ozkaynak": 5009.11
+          },
+          {
+            "tarih": "2026-09-10 00:00:00",
+            "ozkaynak": 5009.74
+          },
+          {
+            "tarih": "2026-09-10 04:00:00",
+            "ozkaynak": 5006.93
+          },
+          {
+            "tarih": "2026-09-10 08:00:00",
+            "ozkaynak": 5005.32
+          },
+          {
+            "tarih": "2026-09-10 12:00:00",
+            "ozkaynak": 5000.08
+          },
+          {
+            "tarih": "2026-09-10 16:00:00",
+            "ozkaynak": 4999.43
+          },
+          {
+            "tarih": "2026-09-10 20:00:00",
+            "ozkaynak": 4999.43
+          },
+          {
+            "tarih": "2026-09-11 00:00:00",
+            "ozkaynak": 4999.43
+          },
+          {
+            "tarih": "2026-09-11 04:00:00",
+            "ozkaynak": 4999.43
+          },
+          {
+            "tarih": "2026-09-11 08:00:00",
+            "ozkaynak": 4999.43
+          },
+          {
+            "tarih": "2026-09-11 12:00:00",
+            "ozkaynak": 4999.43
+          },
+          {
+            "tarih": "2026-09-11 16:00:00",
+            "ozkaynak": 4995.6
+          },
+          {
+            "tarih": "2026-09-11 20:00:00",
+            "ozkaynak": 4994.14
+          },
+          {
+            "tarih": "2026-09-12 00:00:00",
+            "ozkaynak": 4997.73
+          },
+          {
+            "tarih": "2026-09-12 04:00:00",
+            "ozkaynak": 4998.28
+          },
+          {
+            "tarih": "2026-09-12 08:00:00",
+            "ozkaynak": 5004.04
+          },
+          {
+            "tarih": "2026-09-12 12:00:00",
+            "ozkaynak": 5001.26
+          },
+          {
+            "tarih": "2026-09-12 16:00:00",
+            "ozkaynak": 4995.85
+          },
+          {
+            "tarih": "2026-09-12 20:00:00",
+            "ozkaynak": 4997.41
+          },
+          {
+            "tarih": "2026-09-13 00:00:00",
+            "ozkaynak": 4995.79
+          },
+          {
+            "tarih": "2026-09-13 04:00:00",
+            "ozkaynak": 4994.72
+          },
+          {
+            "tarih": "2026-09-13 08:00:00",
+            "ozkaynak": 4991.34
+          },
+          {
+            "tarih": "2026-09-13 12:00:00",
+            "ozkaynak": 4993.27
+          },
+          {
+            "tarih": "2026-09-13 16:00:00",
+            "ozkaynak": 4994.92
+          },
+          {
+            "tarih": "2026-09-13 20:00:00",
+            "ozkaynak": 4983.19
+          },
+          {
+            "tarih": "2026-09-14 00:00:00",
+            "ozkaynak": 4987.07
+          },
+          {
+            "tarih": "2026-09-14 04:00:00",
+            "ozkaynak": 4989.63
+          },
+          {
+            "tarih": "2026-09-14 08:00:00",
+            "ozkaynak": 4988.85
+          },
+          {
+            "tarih": "2026-09-14 12:00:00",
+            "ozkaynak": 4989.12
+          },
+          {
+            "tarih": "2026-09-14 16:00:00",
+            "ozkaynak": 5005.06
+          },
+          {
+            "tarih": "2026-09-14 20:00:00",
+            "ozkaynak": 4987.72
+          },
+          {
+            "tarih": "2026-09-15 00:00:00",
+            "ozkaynak": 4984.66
+          },
+          {
+            "tarih": "2026-09-15 04:00:00",
+            "ozkaynak": 4975.5
+          },
+          {
+            "tarih": "2026-09-15 08:00:00",
+            "ozkaynak": 4978.02
+          },
+          {
+            "tarih": "2026-09-15 12:00:00",
+            "ozkaynak": 4969.61
+          },
+          {
+            "tarih": "2026-09-15 16:00:00",
+            "ozkaynak": 4950.63
+          },
+          {
+            "tarih": "2026-09-15 20:00:00",
+            "ozkaynak": 4950.63
+          },
+          {
+            "tarih": "2026-09-16 00:00:00",
+            "ozkaynak": 4950.63
+          },
+          {
+            "tarih": "2026-09-16 04:00:00",
+            "ozkaynak": 4950.63
+          },
+          {
+            "tarih": "2026-09-16 08:00:00",
+            "ozkaynak": 4950.63
+          },
+          {
+            "tarih": "2026-09-16 12:00:00",
+            "ozkaynak": 4950.63
+          },
+          {
+            "tarih": "2026-09-16 16:00:00",
+            "ozkaynak": 4950.63
+          },
+          {
+            "tarih": "2026-09-16 20:00:00",
+            "ozkaynak": 4950.63
+          },
+          {
+            "tarih": "2026-09-17 00:00:00",
+            "ozkaynak": 4949.96
+          },
+          {
+            "tarih": "2026-09-17 04:00:00",
+            "ozkaynak": 4946.17
+          },
+          {
+            "tarih": "2026-09-17 08:00:00",
+            "ozkaynak": 4944.25
+          },
+          {
+            "tarih": "2026-09-17 12:00:00",
+            "ozkaynak": 4944.24
+          },
+          {
+            "tarih": "2026-09-17 16:00:00",
+            "ozkaynak": 4946.36
+          },
+          {
+            "tarih": "2026-09-17 20:00:00",
+            "ozkaynak": 4947.05
+          },
+          {
+            "tarih": "2026-09-18 00:00:00",
+            "ozkaynak": 4956.43
+          },
+          {
+            "tarih": "2026-09-18 04:00:00",
+            "ozkaynak": 4958.67
+          },
+          {
+            "tarih": "2026-09-18 08:00:00",
+            "ozkaynak": 4961.55
+          },
+          {
+            "tarih": "2026-09-18 12:00:00",
+            "ozkaynak": 4976.98
+          },
+          {
+            "tarih": "2026-09-18 16:00:00",
+            "ozkaynak": 4983.71
+          },
+          {
+            "tarih": "2026-09-18 20:00:00",
+            "ozkaynak": 4977.84
+          },
+          {
+            "tarih": "2026-09-19 00:00:00",
+            "ozkaynak": 4979.13
+          },
+          {
+            "tarih": "2026-09-19 04:00:00",
+            "ozkaynak": 4977.61
+          },
+          {
+            "tarih": "2026-09-19 08:00:00",
+            "ozkaynak": 4982.52
+          },
+          {
+            "tarih": "2026-09-19 12:00:00",
+            "ozkaynak": 4982.45
+          },
+          {
+            "tarih": "2026-09-19 16:00:00",
+            "ozkaynak": 4983.93
+          },
+          {
+            "tarih": "2026-09-19 20:00:00",
+            "ozkaynak": 4984.35
+          },
+          {
+            "tarih": "2026-09-20 00:00:00",
+            "ozkaynak": 4975.18
+          },
+          {
+            "tarih": "2026-09-20 04:00:00",
+            "ozkaynak": 4978.25
+          },
+          {
+            "tarih": "2026-09-20 08:00:00",
+            "ozkaynak": 4982.7
+          },
+          {
+            "tarih": "2026-09-20 12:00:00",
+            "ozkaynak": 4993.36
+          },
+          {
+            "tarih": "2026-09-20 16:00:00",
+            "ozkaynak": 4996.8
+          },
+          {
+            "tarih": "2026-09-20 20:00:00",
+            "ozkaynak": 4997.85
+          },
+          {
+            "tarih": "2026-09-21 00:00:00",
+            "ozkaynak": 5002.73
+          },
+          {
+            "tarih": "2026-09-21 04:00:00",
+            "ozkaynak": 4998.94
+          },
+          {
+            "tarih": "2026-09-21 08:00:00",
+            "ozkaynak": 5017.74
+          },
+          {
+            "tarih": "2026-09-21 12:00:00",
+            "ozkaynak": 5028.19
+          },
+          {
+            "tarih": "2026-09-21 16:00:00",
+            "ozkaynak": 5025.16
+          },
+          {
+            "tarih": "2026-09-21 20:00:00",
+            "ozkaynak": 5027.03
+          },
+          {
+            "tarih": "2026-09-22 00:00:00",
+            "ozkaynak": 5028.44
+          },
+          {
+            "tarih": "2026-09-22 04:00:00",
+            "ozkaynak": 5026.19
+          },
+          {
+            "tarih": "2026-09-22 08:00:00",
+            "ozkaynak": 5021.69
+          },
+          {
+            "tarih": "2026-09-22 12:00:00",
+            "ozkaynak": 5009.99
+          },
+          {
+            "tarih": "2026-09-22 16:00:00",
+            "ozkaynak": 5010.51
+          },
+          {
+            "tarih": "2026-09-22 20:00:00",
+            "ozkaynak": 5012.97
+          },
+          {
+            "tarih": "2026-09-23 00:00:00",
+            "ozkaynak": 5024.19
+          },
+          {
+            "tarih": "2026-09-23 04:00:00",
+            "ozkaynak": 5016.99
+          },
+          {
+            "tarih": "2026-09-23 08:00:00",
+            "ozkaynak": 5010.41
+          },
+          {
+            "tarih": "2026-09-23 12:00:00",
+            "ozkaynak": 4985.24
+          },
+          {
+            "tarih": "2026-09-23 16:00:00",
+            "ozkaynak": 4992.82
+          },
+          {
+            "tarih": "2026-09-23 20:00:00",
+            "ozkaynak": 4997.66
+          },
+          {
+            "tarih": "2026-09-24 00:00:00",
+            "ozkaynak": 5001.27
+          },
+          {
+            "tarih": "2026-09-24 04:00:00",
+            "ozkaynak": 5005.23
+          },
+          {
+            "tarih": "2026-09-24 08:00:00",
+            "ozkaynak": 4988.18
+          },
+          {
+            "tarih": "2026-09-24 12:00:00",
+            "ozkaynak": 4995.04
+          },
+          {
+            "tarih": "2026-09-24 16:00:00",
+            "ozkaynak": 4994.47
+          },
+          {
+            "tarih": "2026-09-24 20:00:00",
+            "ozkaynak": 4992.31
+          },
+          {
+            "tarih": "2026-09-25 00:00:00",
+            "ozkaynak": 4989.88
+          },
+          {
+            "tarih": "2026-09-25 04:00:00",
+            "ozkaynak": 4989.4
+          },
+          {
+            "tarih": "2026-09-25 08:00:00",
+            "ozkaynak": 4996.09
+          },
+          {
+            "tarih": "2026-09-25 12:00:00",
+            "ozkaynak": 4991.2
+          },
+          {
+            "tarih": "2026-09-25 16:00:00",
+            "ozkaynak": 4992.08
+          },
+          {
+            "tarih": "2026-09-25 20:00:00",
+            "ozkaynak": 4992.82
+          },
+          {
+            "tarih": "2026-09-26 00:00:00",
+            "ozkaynak": 4991.21
+          },
+          {
+            "tarih": "2026-09-26 04:00:00",
+            "ozkaynak": 4991.25
+          },
+          {
+            "tarih": "2026-09-26 08:00:00",
+            "ozkaynak": 4991.85
+          },
+          {
+            "tarih": "2026-09-26 12:00:00",
+            "ozkaynak": 4991.71
+          },
+          {
+            "tarih": "2026-09-26 16:00:00",
+            "ozkaynak": 4989.38
+          },
+          {
+            "tarih": "2026-09-26 20:00:00",
+            "ozkaynak": 4991.65
+          },
+          {
+            "tarih": "2026-09-27 00:00:00",
+            "ozkaynak": 4990.87
+          },
+          {
+            "tarih": "2026-09-27 04:00:00",
+            "ozkaynak": 4995.83
+          },
+          {
+            "tarih": "2026-09-27 08:00:00",
+            "ozkaynak": 4995.73
+          },
+          {
+            "tarih": "2026-09-27 12:00:00",
+            "ozkaynak": 4991.53
+          },
+          {
+            "tarih": "2026-09-27 16:00:00",
+            "ozkaynak": 4993.43
+          },
+          {
+            "tarih": "2026-09-27 20:00:00",
+            "ozkaynak": 4993.36
+          },
+          {
+            "tarih": "2026-09-28 00:00:00",
+            "ozkaynak": 4986.41
+          },
+          {
+            "tarih": "2026-09-28 04:00:00",
+            "ozkaynak": 4981.09
+          },
+          {
+            "tarih": "2026-09-28 08:00:00",
+            "ozkaynak": 4984.83
+          },
+          {
+            "tarih": "2026-09-28 12:00:00",
+            "ozkaynak": 4985.14
+          },
+          {
+            "tarih": "2026-09-28 16:00:00",
+            "ozkaynak": 4984.67
+          },
+          {
+            "tarih": "2026-09-28 20:00:00",
+            "ozkaynak": 4986.63
+          },
+          {
+            "tarih": "2026-09-29 00:00:00",
+            "ozkaynak": 4982.21
+          },
+          {
+            "tarih": "2026-09-29 04:00:00",
+            "ozkaynak": 4989.51
+          },
+          {
+            "tarih": "2026-09-29 08:00:00",
+            "ozkaynak": 4991.79
+          },
+          {
+            "tarih": "2026-09-29 12:00:00",
+            "ozkaynak": 4980.66
+          },
+          {
+            "tarih": "2026-09-29 16:00:00",
+            "ozkaynak": 4983.97
+          },
+          {
+            "tarih": "2026-09-29 20:00:00",
+            "ozkaynak": 4983.7
+          },
+          {
+            "tarih": "2026-09-30 00:00:00",
+            "ozkaynak": 4981.43
+          },
+          {
+            "tarih": "2026-09-30 04:00:00",
+            "ozkaynak": 4980.85
+          },
+          {
+            "tarih": "2026-09-30 08:00:00",
+            "ozkaynak": 4987.1
+          },
+          {
+            "tarih": "2026-09-30 12:00:00",
+            "ozkaynak": 4986.63
+          },
+          {
+            "tarih": "2026-09-30 16:00:00",
+            "ozkaynak": 4980.11
+          },
+          {
+            "tarih": "2026-09-30 20:00:00",
+            "ozkaynak": 4982.84
+          },
+          {
+            "tarih": "2026-10-01 00:00:00",
+            "ozkaynak": 4985.12
+          },
+          {
+            "tarih": "2026-10-01 04:00:00",
+            "ozkaynak": 4980.34
+          },
+          {
+            "tarih": "2026-10-01 08:00:00",
+            "ozkaynak": 4985.77
+          },
+          {
+            "tarih": "2026-10-01 12:00:00",
+            "ozkaynak": 4984.06
+          },
+          {
+            "tarih": "2026-10-01 16:00:00",
+            "ozkaynak": 4989.3
+          },
+          {
+            "tarih": "2026-10-01 20:00:00",
+            "ozkaynak": 4990.89
+          },
+          {
+            "tarih": "2026-10-02 00:00:00",
+            "ozkaynak": 4998.81
+          },
+          {
+            "tarih": "2026-10-02 04:00:00",
+            "ozkaynak": 5003.7
+          },
+          {
+            "tarih": "2026-10-02 08:00:00",
+            "ozkaynak": 5006.22
+          },
+          {
+            "tarih": "2026-10-02 12:00:00",
+            "ozkaynak": 4994.27
+          },
+          {
+            "tarih": "2026-10-02 16:00:00",
+            "ozkaynak": 4984.31
+          },
+          {
+            "tarih": "2026-10-02 20:00:00",
+            "ozkaynak": 4986.17
+          },
+          {
+            "tarih": "2026-10-03 00:00:00",
+            "ozkaynak": 4989.22
+          },
+          {
+            "tarih": "2026-10-03 04:00:00",
+            "ozkaynak": 4988.44
+          },
+          {
+            "tarih": "2026-10-03 08:00:00",
+            "ozkaynak": 4989.19
+          },
+          {
+            "tarih": "2026-10-03 12:00:00",
+            "ozkaynak": 4990.38
+          },
+          {
+            "tarih": "2026-10-03 16:00:00",
+            "ozkaynak": 4990.69
+          },
+          {
+            "tarih": "2026-10-03 20:00:00",
+            "ozkaynak": 4990.22
+          },
+          {
+            "tarih": "2026-10-04 00:00:00",
+            "ozkaynak": 4992.81
+          },
+          {
+            "tarih": "2026-10-04 04:00:00",
+            "ozkaynak": 4995.53
+          },
+          {
+            "tarih": "2026-10-04 08:00:00",
+            "ozkaynak": 4996.1
+          },
+          {
+            "tarih": "2026-10-04 12:00:00",
+            "ozkaynak": 4996.21
+          },
+          {
+            "tarih": "2026-10-04 16:00:00",
+            "ozkaynak": 4996.63
+          },
+          {
+            "tarih": "2026-10-04 20:00:00",
+            "ozkaynak": 5004.67
+          },
+          {
+            "tarih": "2026-10-05 00:00:00",
+            "ozkaynak": 5000.09
+          },
+          {
+            "tarih": "2026-10-05 04:00:00",
+            "ozkaynak": 5003.46
+          },
+          {
+            "tarih": "2026-10-05 08:00:00",
+            "ozkaynak": 5001.4
+          },
+          {
+            "tarih": "2026-10-05 12:00:00",
+            "ozkaynak": 4993.14
+          },
+          {
+            "tarih": "2026-10-05 16:00:00",
+            "ozkaynak": 4997.58
+          },
+          {
+            "tarih": "2026-10-05 20:00:00",
+            "ozkaynak": 4998.51
+          },
+          {
+            "tarih": "2026-10-06 00:00:00",
+            "ozkaynak": 4995.39
+          },
+          {
+            "tarih": "2026-10-06 04:00:00",
+            "ozkaynak": 4996.56
+          },
+          {
+            "tarih": "2026-10-06 08:00:00",
+            "ozkaynak": 5000.49
+          },
+          {
+            "tarih": "2026-10-06 12:00:00",
+            "ozkaynak": 4997.23
+          },
+          {
+            "tarih": "2026-10-06 16:00:00",
+            "ozkaynak": 4996.22
+          },
+          {
+            "tarih": "2026-10-06 20:00:00",
+            "ozkaynak": 4994.73
+          },
+          {
+            "tarih": "2026-10-07 00:00:00",
+            "ozkaynak": 4971.27
+          },
+          {
+            "tarih": "2026-10-07 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-07 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-07 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-07 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-07 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-08 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-08 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-08 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-08 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-08 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-08 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-09 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-09 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-09 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-09 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-09 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-09 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-10 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-10 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-10 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-10 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-10 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-10 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-11 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-11 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-11 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-11 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-11 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-11 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-12 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-12 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-12 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-12 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-12 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-12 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-13 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-13 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-13 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-13 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-13 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-13 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-14 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-14 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-14 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-14 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-14 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-14 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-15 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-15 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-15 08:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-15 12:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-15 16:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-15 20:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-16 00:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-16 04:00:00",
+            "ozkaynak": 4970.43
+          },
+          {
+            "tarih": "2026-10-16 08:00:00",
+            "ozkaynak": 4971.86
+          },
+          {
+            "tarih": "2026-10-16 12:00:00",
+            "ozkaynak": 4969.46
+          },
+          {
+            "tarih": "2026-10-16 16:00:00",
+            "ozkaynak": 4970.9
+          },
+          {
+            "tarih": "2026-10-16 20:00:00",
+            "ozkaynak": 4971.38
+          },
+          {
+            "tarih": "2026-10-17 00:00:00",
+            "ozkaynak": 4970.42
+          },
+          {
+            "tarih": "2026-10-17 04:00:00",
+            "ozkaynak": 4972.34
+          },
+          {
+            "tarih": "2026-10-17 08:00:00",
+            "ozkaynak": 4974.73
+          },
+          {
+            "tarih": "2026-10-17 12:00:00",
+            "ozkaynak": 4971.14
+          },
+          {
+            "tarih": "2026-10-17 16:00:00",
+            "ozkaynak": 4968.51
+          },
+          {
+            "tarih": "2026-10-17 20:00:00",
+            "ozkaynak": 4967.07
+          },
+          {
+            "tarih": "2026-10-18 00:00:00",
+            "ozkaynak": 4966.59
+          },
+          {
+            "tarih": "2026-10-18 04:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-18 08:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-18 12:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-18 16:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-18 20:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-19 00:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-19 04:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-19 08:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-19 12:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-19 16:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-19 20:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-20 00:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-20 04:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-20 08:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-20 12:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-20 16:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-20 20:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-21 00:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-21 04:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-21 08:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-21 12:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-21 16:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-21 20:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-22 00:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-22 04:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-22 08:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-22 12:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-22 16:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-22 20:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-23 00:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-23 04:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-23 08:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-23 12:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-23 16:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-23 20:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-24 00:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-24 04:00:00",
+            "ozkaynak": 4965.16
+          },
+          {
+            "tarih": "2026-10-24 08:00:00",
+            "ozkaynak": 4965.16
+          }
+        ]
+      },
+      {
+        "id": "T8-07",
+        "piyasa": "EMTIA",
+        "tf": "1H",
+        "baslangic": "2026-09-01",
+        "canli_baslangic": "2026-10-24",
+        "ozkaynak": 4966.57,
+        "mdd": 1.5,
+        "mdd_uyari": 0.15,
+        "acik_pozisyonlar": [
+          {
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "21.10.2026",
+            "duration": "2 gün",
+            "entry_price": 159.56,
+            "stop_price": 165.9395,
+            "size_usd": 492.75,
+            "unrealized_pnl": 28.98,
+            "r": 2.35
+          }
+        ],
+        "kapanmis_islemler": [
+          {
+            "id": 8,
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "20.10.2026",
+            "exit_date": "21.10.2026",
+            "entry_price": 160.04,
+            "exit_price": 158.5986,
+            "r": -0.35,
+            "pnl": -4.38,
+            "reason": "signal"
+          },
+          {
+            "id": 7,
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "15.10.2026",
+            "exit_date": "15.10.2026",
+            "entry_price": 11.1401,
+            "exit_price": 11.0001,
+            "r": -0.35,
+            "pnl": -4.31,
+            "reason": "signal"
+          },
+          {
+            "id": 6,
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "13.10.2026",
+            "exit_date": "14.10.2026",
+            "entry_price": 11.215,
+            "exit_price": 11.1249,
+            "r": -0.29,
+            "pnl": -3.56,
+            "reason": "stop"
+          },
+          {
+            "id": 5,
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "09.10.2026",
+            "exit_date": "12.10.2026",
+            "entry_price": 11.1,
+            "exit_price": 10.81,
+            "r": -0.89,
+            "pnl": -11.08,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 4,
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "25.09.2026",
+            "exit_date": "28.09.2026",
+            "entry_price": 40.59,
+            "exit_price": 39.72,
+            "r": -1.86,
+            "pnl": -23.22,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 3,
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "18.09.2026",
+            "exit_date": "18.09.2026",
+            "entry_price": 156.32,
+            "exit_price": 154.141,
+            "r": -0.56,
+            "pnl": -7.02,
+            "reason": "signal"
+          },
+          {
+            "id": 2,
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "04.09.2026",
+            "exit_date": "08.09.2026",
+            "entry_price": 10.68,
+            "exit_price": 10.4074,
+            "r": -0.88,
+            "pnl": -11.06,
+            "reason": "stop"
+          },
+          {
+            "id": 1,
+            "account": "T8-07 · EMTIA",
+            "strategy": "StackLight MTF momentum stack + Stochastic",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "03.09.2026",
+            "entry_price": 10.445,
+            "exit_price": 10.5102,
+            "r": 0.2,
+            "pnl": 2.45,
+            "reason": "stop"
+          }
+        ],
+        "ozkaynak_serisi": [
+          {
+            "tarih": "2026-09-01 13:30:00",
+            "ozkaynak": 5000.0
+          },
+          {
+            "tarih": "2026-09-01 14:30:00",
+            "ozkaynak": 5000.0
+          },
+          {
+            "tarih": "2026-09-01 15:30:00",
+            "ozkaynak": 5000.0
+          },
+          {
+            "tarih": "2026-09-01 16:30:00",
+            "ozkaynak": 5000.0
+          },
+          {
+            "tarih": "2026-09-01 17:30:00",
+            "ozkaynak": 4999.54
+          },
+          {
+            "tarih": "2026-09-01 18:30:00",
+            "ozkaynak": 5006.42
+          },
+          {
+            "tarih": "2026-09-01 19:30:00",
+            "ozkaynak": 5006.27
+          },
+          {
+            "tarih": "2026-09-02 13:30:00",
+            "ozkaynak": 5006.72
+          },
+          {
+            "tarih": "2026-09-02 14:30:00",
+            "ozkaynak": 5009.86
+          },
+          {
+            "tarih": "2026-09-02 15:30:00",
+            "ozkaynak": 5010.59
+          },
+          {
+            "tarih": "2026-09-02 16:30:00",
+            "ozkaynak": 5004.93
+          },
+          {
+            "tarih": "2026-09-02 17:30:00",
+            "ozkaynak": 5008.07
+          },
+          {
+            "tarih": "2026-09-02 18:30:00",
+            "ozkaynak": 5013.0
+          },
+          {
+            "tarih": "2026-09-02 19:30:00",
+            "ozkaynak": 5013.0
+          },
+          {
+            "tarih": "2026-09-03 13:30:00",
+            "ozkaynak": 5012.55
+          },
+          {
+            "tarih": "2026-09-03 14:30:00",
+            "ozkaynak": 5002.45
+          },
+          {
+            "tarih": "2026-09-03 15:30:00",
+            "ozkaynak": 5002.45
+          },
+          {
+            "tarih": "2026-09-03 16:30:00",
+            "ozkaynak": 5002.45
+          },
+          {
+            "tarih": "2026-09-03 17:30:00",
+            "ozkaynak": 5002.45
+          },
+          {
+            "tarih": "2026-09-03 18:30:00",
+            "ozkaynak": 5002.45
+          },
+          {
+            "tarih": "2026-09-03 19:30:00",
+            "ozkaynak": 5002.45
+          },
+          {
+            "tarih": "2026-09-04 13:30:00",
+            "ozkaynak": 5002.45
+          },
+          {
+            "tarih": "2026-09-04 14:30:00",
+            "ozkaynak": 5002.45
+          },
+          {
+            "tarih": "2026-09-04 15:30:00",
+            "ozkaynak": 4998.93
+          },
+          {
+            "tarih": "2026-09-04 16:30:00",
+            "ozkaynak": 4999.91
+          },
+          {
+            "tarih": "2026-09-04 17:30:00",
+            "ozkaynak": 5002.83
+          },
+          {
+            "tarih": "2026-09-04 18:30:00",
+            "ozkaynak": 4998.53
+          },
+          {
+            "tarih": "2026-09-04 19:30:00",
+            "ozkaynak": 4997.64
+          },
+          {
+            "tarih": "2026-09-08 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-08 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-08 15:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-08 16:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-08 17:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-08 18:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-08 19:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-09 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-09 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-09 15:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-09 16:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-09 17:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-09 18:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-09 19:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-10 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-10 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-10 15:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-10 16:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-10 17:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-10 18:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-10 19:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-11 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-11 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-11 15:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-11 16:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-11 17:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-11 18:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-11 19:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-14 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-14 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-14 15:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-14 16:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-14 17:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-14 18:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-14 19:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-15 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-15 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-15 15:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-15 16:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-15 17:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-15 18:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-15 19:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-16 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-16 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-16 15:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-16 16:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-16 17:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-16 18:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-16 19:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-17 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-17 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-17 15:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-17 16:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-17 17:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-17 18:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-17 19:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-18 13:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-18 14:30:00",
+            "ozkaynak": 4991.39
+          },
+          {
+            "tarih": "2026-09-18 15:30:00",
+            "ozkaynak": 4986.62
+          },
+          {
+            "tarih": "2026-09-18 16:30:00",
+            "ozkaynak": 4984.69
+          },
+          {
+            "tarih": "2026-09-18 17:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-18 18:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-18 19:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-21 13:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-21 14:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-21 15:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-21 16:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-21 17:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-21 18:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-21 19:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-22 13:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-22 14:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-22 15:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-22 16:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-22 17:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-22 18:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-22 19:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-23 13:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-23 14:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-23 15:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-23 16:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-23 17:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-23 18:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-23 19:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-24 13:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-24 14:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-24 15:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-24 16:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-24 17:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-24 18:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-24 19:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-25 13:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-25 14:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-25 15:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-25 16:30:00",
+            "ozkaynak": 4984.37
+          },
+          {
+            "tarih": "2026-09-25 17:30:00",
+            "ozkaynak": 4985.0
+          },
+          {
+            "tarih": "2026-09-25 18:30:00",
+            "ozkaynak": 4985.26
+          },
+          {
+            "tarih": "2026-09-25 19:30:00",
+            "ozkaynak": 4985.13
+          },
+          {
+            "tarih": "2026-09-28 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-28 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-28 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-28 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-28 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-28 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-28 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-29 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-29 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-29 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-29 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-29 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-29 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-29 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-30 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-30 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-30 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-30 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-30 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-30 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-09-30 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-01 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-01 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-01 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-01 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-01 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-01 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-01 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-02 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-02 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-02 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-02 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-02 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-02 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-02 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-05 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-05 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-05 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-05 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-05 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-05 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-05 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-06 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-06 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-06 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-06 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-06 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-06 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-06 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-07 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-07 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-07 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-07 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-07 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-07 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-07 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-08 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-08 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-08 15:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-08 16:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-08 17:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-08 18:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-08 19:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-09 13:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-09 14:30:00",
+            "ozkaynak": 4961.16
+          },
+          {
+            "tarih": "2026-10-09 15:30:00",
+            "ozkaynak": 4960.93
+          },
+          {
+            "tarih": "2026-10-09 16:30:00",
+            "ozkaynak": 4960.4
+          },
+          {
+            "tarih": "2026-10-09 17:30:00",
+            "ozkaynak": 4960.22
+          },
+          {
+            "tarih": "2026-10-09 18:30:00",
+            "ozkaynak": 4957.63
+          },
+          {
+            "tarih": "2026-10-09 19:30:00",
+            "ozkaynak": 4957.64
+          },
+          {
+            "tarih": "2026-10-12 13:30:00",
+            "ozkaynak": 4950.08
+          },
+          {
+            "tarih": "2026-10-12 14:30:00",
+            "ozkaynak": 4950.08
+          },
+          {
+            "tarih": "2026-10-12 15:30:00",
+            "ozkaynak": 4950.08
+          },
+          {
+            "tarih": "2026-10-12 16:30:00",
+            "ozkaynak": 4950.08
+          },
+          {
+            "tarih": "2026-10-12 17:30:00",
+            "ozkaynak": 4950.08
+          },
+          {
+            "tarih": "2026-10-12 18:30:00",
+            "ozkaynak": 4950.08
+          },
+          {
+            "tarih": "2026-10-12 19:30:00",
+            "ozkaynak": 4950.08
+          },
+          {
+            "tarih": "2026-10-13 13:30:00",
+            "ozkaynak": 4950.08
+          },
+          {
+            "tarih": "2026-10-13 14:30:00",
+            "ozkaynak": 4947.94
+          },
+          {
+            "tarih": "2026-10-13 15:30:00",
+            "ozkaynak": 4948.82
+          },
+          {
+            "tarih": "2026-10-13 16:30:00",
+            "ozkaynak": 4951.11
+          },
+          {
+            "tarih": "2026-10-13 17:30:00",
+            "ozkaynak": 4952.53
+          },
+          {
+            "tarih": "2026-10-13 18:30:00",
+            "ozkaynak": 4956.91
+          },
+          {
+            "tarih": "2026-10-13 19:30:00",
+            "ozkaynak": 4957.44
+          },
+          {
+            "tarih": "2026-10-14 13:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-14 14:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-14 15:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-14 16:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-14 17:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-14 18:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-14 19:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-15 13:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-15 14:30:00",
+            "ozkaynak": 4946.51
+          },
+          {
+            "tarih": "2026-10-15 15:30:00",
+            "ozkaynak": 4942.35
+          },
+          {
+            "tarih": "2026-10-15 16:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-15 17:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-15 18:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-15 19:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-16 13:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-16 14:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-16 15:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-16 16:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-16 17:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-16 18:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-16 19:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-19 13:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-19 14:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-19 15:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-19 16:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-19 17:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-19 18:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-19 19:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-20 13:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-20 14:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-20 15:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-20 16:30:00",
+            "ozkaynak": 4942.2
+          },
+          {
+            "tarih": "2026-10-20 17:30:00",
+            "ozkaynak": 4941.41
+          },
+          {
+            "tarih": "2026-10-20 18:30:00",
+            "ozkaynak": 4943.57
+          },
+          {
+            "tarih": "2026-10-20 19:30:00",
+            "ozkaynak": 4943.62
+          },
+          {
+            "tarih": "2026-10-21 13:30:00",
+            "ozkaynak": 4941.0
+          },
+          {
+            "tarih": "2026-10-21 14:30:00",
+            "ozkaynak": 4937.74
+          },
+          {
+            "tarih": "2026-10-21 15:30:00",
+            "ozkaynak": 4939.49
+          },
+          {
+            "tarih": "2026-10-21 16:30:00",
+            "ozkaynak": 4937.93
+          },
+          {
+            "tarih": "2026-10-21 17:30:00",
+            "ozkaynak": 4937.82
+          },
+          {
+            "tarih": "2026-10-21 18:30:00",
+            "ozkaynak": 4937.82
+          },
+          {
+            "tarih": "2026-10-21 19:30:00",
+            "ozkaynak": 4938.17
+          },
+          {
+            "tarih": "2026-10-22 13:30:00",
+            "ozkaynak": 4942.84
+          },
+          {
+            "tarih": "2026-10-22 14:30:00",
+            "ozkaynak": 4940.17
+          },
+          {
+            "tarih": "2026-10-22 15:30:00",
+            "ozkaynak": 4942.8
+          },
+          {
+            "tarih": "2026-10-22 16:30:00",
+            "ozkaynak": 4945.81
+          },
+          {
+            "tarih": "2026-10-22 17:30:00",
+            "ozkaynak": 4946.52
+          },
+          {
+            "tarih": "2026-10-22 18:30:00",
+            "ozkaynak": 4945.99
+          },
+          {
+            "tarih": "2026-10-22 19:30:00",
+            "ozkaynak": 4946.16
+          },
+          {
+            "tarih": "2026-10-23 13:30:00",
+            "ozkaynak": 4959.76
+          },
+          {
+            "tarih": "2026-10-23 14:30:00",
+            "ozkaynak": 4959.47
+          },
+          {
+            "tarih": "2026-10-23 15:30:00",
+            "ozkaynak": 4963.89
+          },
+          {
+            "tarih": "2026-10-23 16:30:00",
+            "ozkaynak": 4963.5
+          },
+          {
+            "tarih": "2026-10-23 17:30:00",
+            "ozkaynak": 4964.3
+          },
+          {
+            "tarih": "2026-10-23 18:30:00",
+            "ozkaynak": 4965.52
+          },
+          {
+            "tarih": "2026-10-23 19:30:00",
+            "ozkaynak": 4966.57
+          }
+        ]
+      },
+      {
+        "id": "V2B",
+        "piyasa": "EMTIA",
+        "tf": "1H",
+        "baslangic": "2026-09-01",
+        "canli_baslangic": "2026-10-24",
+        "ozkaynak": 4864.21,
+        "mdd": 3.9,
+        "mdd_uyari": 0.15,
+        "acik_pozisyonlar": [
+          {
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "22.10.2026",
+            "duration": "1 gün",
+            "entry_price": 161.2822,
+            "stop_price": 164.5816,
+            "size_usd": 379.77,
+            "unrealized_pnl": 18.48,
+            "r": 1.53
+          }
+        ],
+        "kapanmis_islemler": [
+          {
+            "id": 46,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "20.10.2026",
+            "exit_date": "22.10.2026",
+            "entry_price": 160.675,
+            "exit_price": 161.29,
+            "r": 0.09,
+            "pnl": 1.05,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 45,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "20.10.2026",
+            "exit_date": "21.10.2026",
+            "entry_price": 39.75,
+            "exit_price": 39.3466,
+            "r": -0.87,
+            "pnl": -10.5,
+            "reason": "stop"
+          },
+          {
+            "id": 44,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "09.10.2026",
+            "exit_date": "20.10.2026",
+            "entry_price": 148.88,
+            "exit_price": 157.7899,
+            "r": 1.64,
+            "pnl": 19.99,
+            "reason": "stop"
+          },
+          {
+            "id": 43,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "GLD",
+            "type": "Alış",
+            "entry_date": "16.10.2026",
+            "exit_date": "19.10.2026",
+            "entry_price": 384.71,
+            "exit_price": 379.1896,
+            "r": -1.07,
+            "pnl": -13.0,
+            "reason": "stop"
+          },
+          {
+            "id": 42,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "15.10.2026",
+            "exit_date": "16.10.2026",
+            "entry_price": 11.145,
+            "exit_price": 10.6,
+            "r": -1.05,
+            "pnl": -12.82,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 41,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "09.10.2026",
+            "exit_date": "14.10.2026",
+            "entry_price": 11.111,
+            "exit_price": 11.1666,
+            "r": 0.1,
+            "pnl": 1.26,
+            "reason": "stop"
+          },
+          {
+            "id": 40,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "12.10.2026",
+            "exit_date": "14.10.2026",
+            "entry_price": 40.58,
+            "exit_price": 40.21,
+            "r": -0.88,
+            "pnl": -10.75,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 39,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "GLD",
+            "type": "Alış",
+            "entry_date": "12.10.2026",
+            "exit_date": "13.10.2026",
+            "entry_price": 382.43,
+            "exit_price": 381.96,
+            "r": -0.18,
+            "pnl": -2.24,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 38,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "12.10.2026",
+            "exit_date": "13.10.2026",
+            "entry_price": 28.42,
+            "exit_price": 28.5621,
+            "r": 0.4,
+            "pnl": 4.87,
+            "reason": "stop"
+          },
+          {
+            "id": 37,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "09.10.2026",
+            "exit_date": "09.10.2026",
+            "entry_price": 40.22,
+            "exit_price": 40.31,
+            "r": 0.09,
+            "pnl": 1.13,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 36,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "09.10.2026",
+            "exit_date": "09.10.2026",
+            "entry_price": 28.43,
+            "exit_price": 28.1955,
+            "r": -1.12,
+            "pnl": -13.67,
+            "reason": "stop"
+          },
+          {
+            "id": 35,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "05.10.2026",
+            "exit_date": "08.10.2026",
+            "entry_price": 10.55,
+            "exit_price": 10.7867,
+            "r": 0.66,
+            "pnl": 8.06,
+            "reason": "stop"
+          },
+          {
+            "id": 34,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "07.10.2026",
+            "exit_date": "08.10.2026",
+            "entry_price": 40.01,
+            "exit_price": 39.5737,
+            "r": -1.09,
+            "pnl": -13.37,
+            "reason": "stop"
+          },
+          {
+            "id": 33,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "06.10.2026",
+            "exit_date": "07.10.2026",
+            "entry_price": 28.785,
+            "exit_price": 28.616,
+            "r": -0.75,
+            "pnl": -9.17,
+            "reason": "stop"
+          },
+          {
+            "id": 32,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "05.10.2026",
+            "exit_date": "06.10.2026",
+            "entry_price": 39.895,
+            "exit_price": 39.995,
+            "r": 0.12,
+            "pnl": 1.5,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 31,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "06.10.2026",
+            "exit_date": "06.10.2026",
+            "entry_price": 28.645,
+            "exit_price": 28.745,
+            "r": 0.28,
+            "pnl": 3.4,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 30,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "05.10.2026",
+            "exit_date": "06.10.2026",
+            "entry_price": 28.47,
+            "exit_price": 28.585,
+            "r": 0.29,
+            "pnl": 3.54,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 29,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "01.10.2026",
+            "exit_date": "02.10.2026",
+            "entry_price": 149.9,
+            "exit_price": 143.56,
+            "r": -1.14,
+            "pnl": -13.91,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 28,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "28.09.2026",
+            "exit_date": "29.09.2026",
+            "entry_price": 10.79,
+            "exit_price": 10.445,
+            "r": -0.69,
+            "pnl": -8.56,
+            "reason": "signal"
+          },
+          {
+            "id": 27,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "24.09.2026",
+            "exit_date": "29.09.2026",
+            "entry_price": 153.26,
+            "exit_price": 145.43,
+            "r": -1.14,
+            "pnl": -14.18,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 26,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "25.09.2026",
+            "exit_date": "28.09.2026",
+            "entry_price": 28.535,
+            "exit_price": 28.317,
+            "r": -1.05,
+            "pnl": -12.96,
+            "reason": "stop"
+          },
+          {
+            "id": 25,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "23.09.2026",
+            "exit_date": "28.09.2026",
+            "entry_price": 40.79,
+            "exit_price": 39.72,
+            "r": -1.89,
+            "pnl": -23.54,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 24,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "17.09.2026",
+            "exit_date": "25.09.2026",
+            "entry_price": 10.471,
+            "exit_price": 11.05,
+            "r": 1.97,
+            "pnl": 24.6,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 23,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "22.09.2026",
+            "exit_date": "25.09.2026",
+            "entry_price": 28.66,
+            "exit_price": 28.27,
+            "r": -1.69,
+            "pnl": -21.07,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 22,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "SLV",
+            "type": "Alış",
+            "entry_date": "22.09.2026",
+            "exit_date": "23.09.2026",
+            "entry_price": 60.635,
+            "exit_price": 59.0,
+            "r": -1.15,
+            "pnl": -14.32,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 21,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "GLD",
+            "type": "Alış",
+            "entry_date": "22.09.2026",
+            "exit_date": "23.09.2026",
+            "entry_price": 399.77,
+            "exit_price": 394.5105,
+            "r": -0.98,
+            "pnl": -12.28,
+            "reason": "stop"
+          },
+          {
+            "id": 20,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "22.09.2026",
+            "exit_date": "22.09.2026",
+            "entry_price": 41.185,
+            "exit_price": 41.385,
+            "r": 0.27,
+            "pnl": 3.42,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 19,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "SLV",
+            "type": "Alış",
+            "entry_date": "18.09.2026",
+            "exit_date": "22.09.2026",
+            "entry_price": 59.94,
+            "exit_price": 60.2397,
+            "r": 0.13,
+            "pnl": 0.29,
+            "reason": "stop"
+          },
+          {
+            "id": 18,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "21.09.2026",
+            "exit_date": "22.09.2026",
+            "entry_price": 40.83,
+            "exit_price": 41.0342,
+            "r": 0.29,
+            "pnl": 3.66,
+            "reason": "stop"
+          },
+          {
+            "id": 17,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "18.09.2026",
+            "exit_date": "21.09.2026",
+            "entry_price": 157.3159,
+            "exit_price": 148.88,
+            "r": -1.69,
+            "pnl": -21.11,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 16,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "GLD",
+            "type": "Alış",
+            "entry_date": "18.09.2026",
+            "exit_date": "18.09.2026",
+            "entry_price": 399.395,
+            "exit_price": 401.392,
+            "r": 0.21,
+            "pnl": 2.66,
+            "reason": "stop"
+          },
+          {
+            "id": 15,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "18.09.2026",
+            "exit_date": "18.09.2026",
+            "entry_price": 39.975,
+            "exit_price": 40.155,
+            "r": 0.2,
+            "pnl": 2.55,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 14,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "15.09.2026",
+            "exit_date": "16.09.2026",
+            "entry_price": 10.4927,
+            "exit_price": 10.48,
+            "r": -0.07,
+            "pnl": -0.89,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 13,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "15.09.2026",
+            "exit_date": "16.09.2026",
+            "entry_price": 159.56,
+            "exit_price": 159.31,
+            "r": -0.06,
+            "pnl": -0.78,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 12,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "14.09.2026",
+            "exit_date": "15.09.2026",
+            "entry_price": 10.425,
+            "exit_price": 10.475,
+            "r": 0.13,
+            "pnl": 1.64,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 11,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "11.09.2026",
+            "exit_date": "14.09.2026",
+            "entry_price": 154.18,
+            "exit_price": 154.9509,
+            "r": 0.1,
+            "pnl": 1.29,
+            "reason": "stop"
+          },
+          {
+            "id": 10,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "04.09.2026",
+            "exit_date": "11.09.2026",
+            "entry_price": 141.47,
+            "exit_price": 152.5,
+            "r": 2.6,
+            "pnl": 32.43,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 9,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "10.09.2026",
+            "exit_date": "11.09.2026",
+            "entry_price": 29.26,
+            "exit_price": 29.0639,
+            "r": -0.75,
+            "pnl": -9.43,
+            "reason": "stop"
+          },
+          {
+            "id": 8,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "CPER",
+            "type": "Alış",
+            "entry_date": "03.09.2026",
+            "exit_date": "10.09.2026",
+            "entry_price": 39.9,
+            "exit_price": 39.4,
+            "r": -0.99,
+            "pnl": -12.36,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 7,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "SLV",
+            "type": "Alış",
+            "entry_date": "09.09.2026",
+            "exit_date": "09.09.2026",
+            "entry_price": 60.93,
+            "exit_price": 61.2347,
+            "r": 0.12,
+            "pnl": 1.53,
+            "reason": "stop"
+          },
+          {
+            "id": 6,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "SLV",
+            "type": "Alış",
+            "entry_date": "08.09.2026",
+            "exit_date": "09.09.2026",
+            "entry_price": 60.02,
+            "exit_price": 60.3201,
+            "r": 0.17,
+            "pnl": 2.07,
+            "reason": "stop"
+          },
+          {
+            "id": 5,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "08.09.2026",
+            "exit_date": "09.09.2026",
+            "entry_price": 29.105,
+            "exit_price": 29.01,
+            "r": -0.42,
+            "pnl": -5.32,
+            "reason": "gap_stop"
+          },
+          {
+            "id": 4,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "04.09.2026",
+            "exit_date": "08.09.2026",
+            "entry_price": 10.7,
+            "exit_price": 10.3226,
+            "r": -0.96,
+            "pnl": -11.97,
+            "reason": "stop"
+          },
+          {
+            "id": 3,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "USO",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "04.09.2026",
+            "entry_price": 136.86,
+            "exit_price": 139.0703,
+            "r": 0.52,
+            "pnl": 6.51,
+            "reason": "stop"
+          },
+          {
+            "id": 2,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "UNG",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "03.09.2026",
+            "entry_price": 10.445,
+            "exit_price": 10.4972,
+            "r": 0.12,
+            "pnl": 1.52,
+            "reason": "stop"
+          },
+          {
+            "id": 1,
+            "account": "V2B · EMTIA",
+            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
+            "asset": "DBA",
+            "type": "Alış",
+            "entry_date": "01.09.2026",
+            "exit_date": "02.09.2026",
+            "entry_price": 29.45,
+            "exit_price": 29.12,
+            "r": -1.19,
+            "pnl": -14.83,
+            "reason": "gap_stop"
+          }
+        ],
+        "ozkaynak_serisi": [
+          {
+            "tarih": "2026-09-01 13:30:00",
+            "ozkaynak": 5000.0
+          },
+          {
+            "tarih": "2026-09-01 14:30:00",
+            "ozkaynak": 5000.42
+          },
+          {
+            "tarih": "2026-09-01 15:30:00",
+            "ozkaynak": 5009.19
+          },
+          {
+            "tarih": "2026-09-01 16:30:00",
+            "ozkaynak": 5008.77
+          },
+          {
+            "tarih": "2026-09-01 17:30:00",
+            "ozkaynak": 5011.76
+          },
+          {
+            "tarih": "2026-09-01 18:30:00",
+            "ozkaynak": 5018.31
+          },
+          {
+            "tarih": "2026-09-01 19:30:00",
+            "ozkaynak": 5018.31
+          },
+          {
+            "tarih": "2026-09-02 13:30:00",
+            "ozkaynak": 4999.84
+          },
+          {
+            "tarih": "2026-09-02 14:30:00",
+            "ozkaynak": 5005.48
+          },
+          {
+            "tarih": "2026-09-02 15:30:00",
+            "ozkaynak": 5007.58
+          },
+          {
+            "tarih": "2026-09-02 16:30:00",
+            "ozkaynak": 5003.63
+          },
+          {
+            "tarih": "2026-09-02 17:30:00",
+            "ozkaynak": 5005.78
+          },
+          {
+            "tarih": "2026-09-02 18:30:00",
+            "ozkaynak": 5009.66
+          },
+          {
+            "tarih": "2026-09-02 19:30:00",
+            "ozkaynak": 5009.07
+          },
+          {
+            "tarih": "2026-09-03 13:30:00",
+            "ozkaynak": 5014.1
+          },
+          {
+            "tarih": "2026-09-03 14:30:00",
+            "ozkaynak": 5004.47
+          },
+          {
+            "tarih": "2026-09-03 15:30:00",
+            "ozkaynak": 5002.96
+          },
+          {
+            "tarih": "2026-09-03 16:30:00",
+            "ozkaynak": 5003.59
+          },
+          {
+            "tarih": "2026-09-03 17:30:00",
+            "ozkaynak": 5002.03
+          },
+          {
+            "tarih": "2026-09-03 18:30:00",
+            "ozkaynak": 5001.82
+          },
+          {
+            "tarih": "2026-09-03 19:30:00",
+            "ozkaynak": 5002.52
+          },
+          {
+            "tarih": "2026-09-04 13:30:00",
+            "ozkaynak": 4994.12
+          },
+          {
+            "tarih": "2026-09-04 14:30:00",
+            "ozkaynak": 4994.64
+          },
+          {
+            "tarih": "2026-09-04 15:30:00",
+            "ozkaynak": 4991.29
+          },
+          {
+            "tarih": "2026-09-04 16:30:00",
+            "ozkaynak": 4990.23
+          },
+          {
+            "tarih": "2026-09-04 17:30:00",
+            "ozkaynak": 4993.47
+          },
+          {
+            "tarih": "2026-09-04 18:30:00",
+            "ozkaynak": 4990.68
+          },
+          {
+            "tarih": "2026-09-04 19:30:00",
+            "ozkaynak": 4991.31
+          },
+          {
+            "tarih": "2026-09-08 13:30:00",
+            "ozkaynak": 5020.81
+          },
+          {
+            "tarih": "2026-09-08 14:30:00",
+            "ozkaynak": 5015.6
+          },
+          {
+            "tarih": "2026-09-08 15:30:00",
+            "ozkaynak": 5008.17
+          },
+          {
+            "tarih": "2026-09-08 16:30:00",
+            "ozkaynak": 5009.46
+          },
+          {
+            "tarih": "2026-09-08 17:30:00",
+            "ozkaynak": 5011.93
+          },
+          {
+            "tarih": "2026-09-08 18:30:00",
+            "ozkaynak": 5005.52
+          },
+          {
+            "tarih": "2026-09-08 19:30:00",
+            "ozkaynak": 5004.08
+          },
+          {
+            "tarih": "2026-09-09 13:30:00",
+            "ozkaynak": 5035.99
+          },
+          {
+            "tarih": "2026-09-09 14:30:00",
+            "ozkaynak": 5021.25
+          },
+          {
+            "tarih": "2026-09-09 15:30:00",
+            "ozkaynak": 5026.89
+          },
+          {
+            "tarih": "2026-09-09 16:30:00",
+            "ozkaynak": 5031.16
+          },
+          {
+            "tarih": "2026-09-09 17:30:00",
+            "ozkaynak": 5033.12
+          },
+          {
+            "tarih": "2026-09-09 18:30:00",
+            "ozkaynak": 5030.21
+          },
+          {
+            "tarih": "2026-09-09 19:30:00",
+            "ozkaynak": 5030.54
+          },
+          {
+            "tarih": "2026-09-10 13:30:00",
+            "ozkaynak": 5001.84
+          },
+          {
+            "tarih": "2026-09-10 14:30:00",
+            "ozkaynak": 5006.96
+          },
+          {
+            "tarih": "2026-09-10 15:30:00",
+            "ozkaynak": 5010.1
+          },
+          {
+            "tarih": "2026-09-10 16:30:00",
+            "ozkaynak": 5010.9
+          },
+          {
+            "tarih": "2026-09-10 17:30:00",
+            "ozkaynak": 5017.11
+          },
+          {
+            "tarih": "2026-09-10 18:30:00",
+            "ozkaynak": 5018.1
+          },
+          {
+            "tarih": "2026-09-10 19:30:00",
+            "ozkaynak": 5019.17
+          },
+          {
+            "tarih": "2026-09-11 13:30:00",
+            "ozkaynak": 4990.16
+          },
+          {
+            "tarih": "2026-09-11 14:30:00",
+            "ozkaynak": 4990.16
+          },
+          {
+            "tarih": "2026-09-11 15:30:00",
+            "ozkaynak": 4990.16
+          },
+          {
+            "tarih": "2026-09-11 16:30:00",
+            "ozkaynak": 4990.16
+          },
+          {
+            "tarih": "2026-09-11 17:30:00",
+            "ozkaynak": 4990.16
+          },
+          {
+            "tarih": "2026-09-11 18:30:00",
+            "ozkaynak": 4991.23
+          },
+          {
+            "tarih": "2026-09-11 19:30:00",
+            "ozkaynak": 4991.46
+          },
+          {
+            "tarih": "2026-09-14 13:30:00",
+            "ozkaynak": 5001.59
+          },
+          {
+            "tarih": "2026-09-14 14:30:00",
+            "ozkaynak": 5000.46
+          },
+          {
+            "tarih": "2026-09-14 15:30:00",
+            "ozkaynak": 4998.75
+          },
+          {
+            "tarih": "2026-09-14 16:30:00",
+            "ozkaynak": 4994.13
+          },
+          {
+            "tarih": "2026-09-14 17:30:00",
+            "ozkaynak": 4992.79
+          },
+          {
+            "tarih": "2026-09-14 18:30:00",
+            "ozkaynak": 4988.17
+          },
+          {
+            "tarih": "2026-09-14 19:30:00",
+            "ozkaynak": 4986.88
+          },
+          {
+            "tarih": "2026-09-15 13:30:00",
+            "ozkaynak": 4993.3
+          },
+          {
+            "tarih": "2026-09-15 14:30:00",
+            "ozkaynak": 4994.71
+          },
+          {
+            "tarih": "2026-09-15 15:30:00",
+            "ozkaynak": 4995.15
+          },
+          {
+            "tarih": "2026-09-15 16:30:00",
+            "ozkaynak": 4997.52
+          },
+          {
+            "tarih": "2026-09-15 17:30:00",
+            "ozkaynak": 4996.66
+          },
+          {
+            "tarih": "2026-09-15 18:30:00",
+            "ozkaynak": 4997.15
+          },
+          {
+            "tarih": "2026-09-15 19:30:00",
+            "ozkaynak": 4999.02
+          },
+          {
+            "tarih": "2026-09-16 13:30:00",
+            "ozkaynak": 4991.61
+          },
+          {
+            "tarih": "2026-09-16 14:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-16 15:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-16 16:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-16 17:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-16 18:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-16 19:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-17 13:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-17 14:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-17 15:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-17 16:30:00",
+            "ozkaynak": 4991.4
+          },
+          {
+            "tarih": "2026-09-17 17:30:00",
+            "ozkaynak": 4989.83
+          },
+          {
+            "tarih": "2026-09-17 18:30:00",
+            "ozkaynak": 4985.29
+          },
+          {
+            "tarih": "2026-09-17 19:30:00",
+            "ozkaynak": 4984.64
+          },
+          {
+            "tarih": "2026-09-18 13:30:00",
+            "ozkaynak": 4990.27
+          },
+          {
+            "tarih": "2026-09-18 14:30:00",
+            "ozkaynak": 4988.31
+          },
+          {
+            "tarih": "2026-09-18 15:30:00",
+            "ozkaynak": 4987.1
+          },
+          {
+            "tarih": "2026-09-18 16:30:00",
+            "ozkaynak": 4988.45
+          },
+          {
+            "tarih": "2026-09-18 17:30:00",
+            "ozkaynak": 4991.48
+          },
+          {
+            "tarih": "2026-09-18 18:30:00",
+            "ozkaynak": 4985.13
+          },
+          {
+            "tarih": "2026-09-18 19:30:00",
+            "ozkaynak": 4985.17
+          },
+          {
+            "tarih": "2026-09-21 13:30:00",
+            "ozkaynak": 4964.96
+          },
+          {
+            "tarih": "2026-09-21 14:30:00",
+            "ozkaynak": 4961.75
+          },
+          {
+            "tarih": "2026-09-21 15:30:00",
+            "ozkaynak": 4964.03
+          },
+          {
+            "tarih": "2026-09-21 16:30:00",
+            "ozkaynak": 4960.82
+          },
+          {
+            "tarih": "2026-09-21 17:30:00",
+            "ozkaynak": 4960.96
+          },
+          {
+            "tarih": "2026-09-21 18:30:00",
+            "ozkaynak": 4960.4
+          },
+          {
+            "tarih": "2026-09-21 19:30:00",
+            "ozkaynak": 4962.13
+          },
+          {
+            "tarih": "2026-09-22 13:30:00",
+            "ozkaynak": 4984.32
+          },
+          {
+            "tarih": "2026-09-22 14:30:00",
+            "ozkaynak": 4980.39
+          },
+          {
+            "tarih": "2026-09-22 15:30:00",
+            "ozkaynak": 4982.07
+          },
+          {
+            "tarih": "2026-09-22 16:30:00",
+            "ozkaynak": 4985.9
+          },
+          {
+            "tarih": "2026-09-22 17:30:00",
+            "ozkaynak": 4984.02
+          },
+          {
+            "tarih": "2026-09-22 18:30:00",
+            "ozkaynak": 4992.26
+          },
+          {
+            "tarih": "2026-09-22 19:30:00",
+            "ozkaynak": 4994.09
+          },
+          {
+            "tarih": "2026-09-23 13:30:00",
+            "ozkaynak": 4949.72
+          },
+          {
+            "tarih": "2026-09-23 14:30:00",
+            "ozkaynak": 4962.32
+          },
+          {
+            "tarih": "2026-09-23 15:30:00",
+            "ozkaynak": 4957.31
+          },
+          {
+            "tarih": "2026-09-23 16:30:00",
+            "ozkaynak": 4957.11
+          },
+          {
+            "tarih": "2026-09-23 17:30:00",
+            "ozkaynak": 4959.31
+          },
+          {
+            "tarih": "2026-09-23 18:30:00",
+            "ozkaynak": 4960.48
+          },
+          {
+            "tarih": "2026-09-23 19:30:00",
+            "ozkaynak": 4962.62
+          },
+          {
+            "tarih": "2026-09-24 13:30:00",
+            "ozkaynak": 4963.59
+          },
+          {
+            "tarih": "2026-09-24 14:30:00",
+            "ozkaynak": 4984.68
+          },
+          {
+            "tarih": "2026-09-24 15:30:00",
+            "ozkaynak": 4986.31
+          },
+          {
+            "tarih": "2026-09-24 16:30:00",
+            "ozkaynak": 4991.99
+          },
+          {
+            "tarih": "2026-09-24 17:30:00",
+            "ozkaynak": 4992.7
+          },
+          {
+            "tarih": "2026-09-24 18:30:00",
+            "ozkaynak": 4995.11
+          },
+          {
+            "tarih": "2026-09-24 19:30:00",
+            "ozkaynak": 4992.6
+          },
+          {
+            "tarih": "2026-09-25 13:30:00",
+            "ozkaynak": 4946.97
+          },
+          {
+            "tarih": "2026-09-25 14:30:00",
+            "ozkaynak": 4950.11
+          },
+          {
+            "tarih": "2026-09-25 15:30:00",
+            "ozkaynak": 4944.65
+          },
+          {
+            "tarih": "2026-09-25 16:30:00",
+            "ozkaynak": 4945.79
+          },
+          {
+            "tarih": "2026-09-25 17:30:00",
+            "ozkaynak": 4947.32
+          },
+          {
+            "tarih": "2026-09-25 18:30:00",
+            "ozkaynak": 4948.67
+          },
+          {
+            "tarih": "2026-09-25 19:30:00",
+            "ozkaynak": 4946.83
+          },
+          {
+            "tarih": "2026-09-28 13:30:00",
+            "ozkaynak": 4920.35
+          },
+          {
+            "tarih": "2026-09-28 14:30:00",
+            "ozkaynak": 4921.85
+          },
+          {
+            "tarih": "2026-09-28 15:30:00",
+            "ozkaynak": 4911.87
+          },
+          {
+            "tarih": "2026-09-28 16:30:00",
+            "ozkaynak": 4914.33
+          },
+          {
+            "tarih": "2026-09-28 17:30:00",
+            "ozkaynak": 4912.89
+          },
+          {
+            "tarih": "2026-09-28 18:30:00",
+            "ozkaynak": 4917.82
+          },
+          {
+            "tarih": "2026-09-28 19:30:00",
+            "ozkaynak": 4917.26
+          },
+          {
+            "tarih": "2026-09-29 13:30:00",
+            "ozkaynak": 4901.42
+          },
+          {
+            "tarih": "2026-09-29 14:30:00",
+            "ozkaynak": 4900.81
+          },
+          {
+            "tarih": "2026-09-29 15:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-29 16:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-29 17:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-29 18:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-29 19:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-30 13:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-30 14:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-30 15:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-30 16:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-30 17:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-30 18:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-09-30 19:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-10-01 13:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-10-01 14:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-10-01 15:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-10-01 16:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-10-01 17:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-10-01 18:30:00",
+            "ozkaynak": 4900.56
+          },
+          {
+            "tarih": "2026-10-01 19:30:00",
+            "ozkaynak": 4900.66
+          },
+          {
+            "tarih": "2026-10-02 13:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-02 14:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-02 15:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-02 16:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-02 17:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-02 18:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-02 19:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-05 13:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-05 14:30:00",
+            "ozkaynak": 4886.65
+          },
+          {
+            "tarih": "2026-10-05 15:30:00",
+            "ozkaynak": 4884.64
+          },
+          {
+            "tarih": "2026-10-05 16:30:00",
+            "ozkaynak": 4885.04
+          },
+          {
+            "tarih": "2026-10-05 17:30:00",
+            "ozkaynak": 4885.25
+          },
+          {
+            "tarih": "2026-10-05 18:30:00",
+            "ozkaynak": 4884.87
+          },
+          {
+            "tarih": "2026-10-05 19:30:00",
+            "ozkaynak": 4883.8
+          },
+          {
+            "tarih": "2026-10-06 13:30:00",
+            "ozkaynak": 4892.77
+          },
+          {
+            "tarih": "2026-10-06 14:30:00",
+            "ozkaynak": 4892.68
+          },
+          {
+            "tarih": "2026-10-06 15:30:00",
+            "ozkaynak": 4898.59
+          },
+          {
+            "tarih": "2026-10-06 16:30:00",
+            "ozkaynak": 4898.7
+          },
+          {
+            "tarih": "2026-10-06 17:30:00",
+            "ozkaynak": 4902.66
+          },
+          {
+            "tarih": "2026-10-06 18:30:00",
+            "ozkaynak": 4905.24
+          },
+          {
+            "tarih": "2026-10-06 19:30:00",
+            "ozkaynak": 4903.67
+          },
+          {
+            "tarih": "2026-10-07 13:30:00",
+            "ozkaynak": 4901.25
+          },
+          {
+            "tarih": "2026-10-07 14:30:00",
+            "ozkaynak": 4906.96
+          },
+          {
+            "tarih": "2026-10-07 15:30:00",
+            "ozkaynak": 4903.56
+          },
+          {
+            "tarih": "2026-10-07 16:30:00",
+            "ozkaynak": 4901.17
+          },
+          {
+            "tarih": "2026-10-07 17:30:00",
+            "ozkaynak": 4899.97
+          },
+          {
+            "tarih": "2026-10-07 18:30:00",
+            "ozkaynak": 4897.76
+          },
+          {
+            "tarih": "2026-10-07 19:30:00",
+            "ozkaynak": 4896.57
+          },
+          {
+            "tarih": "2026-10-08 13:30:00",
+            "ozkaynak": 4898.38
+          },
+          {
+            "tarih": "2026-10-08 14:30:00",
+            "ozkaynak": 4883.59
+          },
+          {
+            "tarih": "2026-10-08 15:30:00",
+            "ozkaynak": 4880.61
+          },
+          {
+            "tarih": "2026-10-08 16:30:00",
+            "ozkaynak": 4880.61
+          },
+          {
+            "tarih": "2026-10-08 17:30:00",
+            "ozkaynak": 4880.61
+          },
+          {
+            "tarih": "2026-10-08 18:30:00",
+            "ozkaynak": 4880.61
+          },
+          {
+            "tarih": "2026-10-08 19:30:00",
+            "ozkaynak": 4880.61
+          },
+          {
+            "tarih": "2026-10-09 13:30:00",
+            "ozkaynak": 4880.61
+          },
+          {
+            "tarih": "2026-10-09 14:30:00",
+            "ozkaynak": 4880.4
+          },
+          {
+            "tarih": "2026-10-09 15:30:00",
+            "ozkaynak": 4864.2
+          },
+          {
+            "tarih": "2026-10-09 16:30:00",
+            "ozkaynak": 4864.84
+          },
+          {
+            "tarih": "2026-10-09 17:30:00",
+            "ozkaynak": 4867.27
+          },
+          {
+            "tarih": "2026-10-09 18:30:00",
+            "ozkaynak": 4862.88
+          },
+          {
+            "tarih": "2026-10-09 19:30:00",
+            "ozkaynak": 4863.43
+          },
+          {
+            "tarih": "2026-10-12 13:30:00",
+            "ozkaynak": 4866.06
+          },
+          {
+            "tarih": "2026-10-12 14:30:00",
+            "ozkaynak": 4871.43
+          },
+          {
+            "tarih": "2026-10-12 15:30:00",
+            "ozkaynak": 4867.45
+          },
+          {
+            "tarih": "2026-10-12 16:30:00",
+            "ozkaynak": 4864.82
+          },
+          {
+            "tarih": "2026-10-12 17:30:00",
+            "ozkaynak": 4869.51
+          },
+          {
+            "tarih": "2026-10-12 18:30:00",
+            "ozkaynak": 4866.31
+          },
+          {
+            "tarih": "2026-10-12 19:30:00",
+            "ozkaynak": 4867.12
+          },
+          {
+            "tarih": "2026-10-13 13:30:00",
+            "ozkaynak": 4876.18
+          },
+          {
+            "tarih": "2026-10-13 14:30:00",
+            "ozkaynak": 4875.38
+          },
+          {
+            "tarih": "2026-10-13 15:30:00",
+            "ozkaynak": 4874.43
+          },
+          {
+            "tarih": "2026-10-13 16:30:00",
+            "ozkaynak": 4876.96
+          },
+          {
+            "tarih": "2026-10-13 17:30:00",
+            "ozkaynak": 4878.71
+          },
+          {
+            "tarih": "2026-10-13 18:30:00",
+            "ozkaynak": 4883.3
+          },
+          {
+            "tarih": "2026-10-13 19:30:00",
+            "ozkaynak": 4884.58
+          },
+          {
+            "tarih": "2026-10-14 13:30:00",
+            "ozkaynak": 4872.08
+          },
+          {
+            "tarih": "2026-10-14 14:30:00",
+            "ozkaynak": 4871.53
+          },
+          {
+            "tarih": "2026-10-14 15:30:00",
+            "ozkaynak": 4872.35
+          },
+          {
+            "tarih": "2026-10-14 16:30:00",
+            "ozkaynak": 4873.13
+          },
+          {
+            "tarih": "2026-10-14 17:30:00",
+            "ozkaynak": 4871.55
+          },
+          {
+            "tarih": "2026-10-14 18:30:00",
+            "ozkaynak": 4871.72
+          },
+          {
+            "tarih": "2026-10-14 19:30:00",
+            "ozkaynak": 4871.8
+          },
+          {
+            "tarih": "2026-10-15 13:30:00",
+            "ozkaynak": 4875.98
+          },
+          {
+            "tarih": "2026-10-15 14:30:00",
+            "ozkaynak": 4879.53
+          },
+          {
+            "tarih": "2026-10-15 15:30:00",
+            "ozkaynak": 4878.35
+          },
+          {
+            "tarih": "2026-10-15 16:30:00",
+            "ozkaynak": 4878.84
+          },
+          {
+            "tarih": "2026-10-15 17:30:00",
+            "ozkaynak": 4879.37
+          },
+          {
+            "tarih": "2026-10-15 18:30:00",
+            "ozkaynak": 4878.94
+          },
+          {
+            "tarih": "2026-10-15 19:30:00",
+            "ozkaynak": 4879.22
+          },
+          {
+            "tarih": "2026-10-16 13:30:00",
+            "ozkaynak": 4864.46
+          },
+          {
+            "tarih": "2026-10-16 14:30:00",
+            "ozkaynak": 4860.52
+          },
+          {
+            "tarih": "2026-10-16 15:30:00",
+            "ozkaynak": 4866.56
+          },
+          {
+            "tarih": "2026-10-16 16:30:00",
+            "ozkaynak": 4868.88
+          },
+          {
+            "tarih": "2026-10-16 17:30:00",
+            "ozkaynak": 4869.77
+          },
+          {
+            "tarih": "2026-10-16 18:30:00",
+            "ozkaynak": 4871.27
+          },
+          {
+            "tarih": "2026-10-16 19:30:00",
+            "ozkaynak": 4871.42
+          },
+          {
+            "tarih": "2026-10-19 13:30:00",
+            "ozkaynak": 4862.11
+          },
+          {
+            "tarih": "2026-10-19 14:30:00",
+            "ozkaynak": 4862.41
+          },
+          {
+            "tarih": "2026-10-19 15:30:00",
+            "ozkaynak": 4865.26
+          },
+          {
+            "tarih": "2026-10-19 16:30:00",
+            "ozkaynak": 4865.36
+          },
+          {
+            "tarih": "2026-10-19 17:30:00",
+            "ozkaynak": 4862.3
+          },
+          {
+            "tarih": "2026-10-19 18:30:00",
+            "ozkaynak": 4862.44
+          },
+          {
+            "tarih": "2026-10-19 19:30:00",
+            "ozkaynak": 4862.62
+          },
+          {
+            "tarih": "2026-10-20 13:30:00",
+            "ozkaynak": 4855.36
+          },
+          {
+            "tarih": "2026-10-20 14:30:00",
+            "ozkaynak": 4855.36
+          },
+          {
+            "tarih": "2026-10-20 15:30:00",
+            "ozkaynak": 4855.36
+          },
+          {
+            "tarih": "2026-10-20 16:30:00",
+            "ozkaynak": 4855.49
+          },
+          {
+            "tarih": "2026-10-20 17:30:00",
+            "ozkaynak": 4856.2
+          },
+          {
+            "tarih": "2026-10-20 18:30:00",
+            "ozkaynak": 4855.37
+          },
+          {
+            "tarih": "2026-10-20 19:30:00",
+            "ozkaynak": 4855.1
+          },
+          {
+            "tarih": "2026-10-21 13:30:00",
+            "ozkaynak": 4842.38
+          },
+          {
+            "tarih": "2026-10-21 14:30:00",
+            "ozkaynak": 4839.63
+          },
+          {
+            "tarih": "2026-10-21 15:30:00",
+            "ozkaynak": 4841.11
+          },
+          {
+            "tarih": "2026-10-21 16:30:00",
+            "ozkaynak": 4839.79
+          },
+          {
+            "tarih": "2026-10-21 17:30:00",
+            "ozkaynak": 4840.55
+          },
+          {
+            "tarih": "2026-10-21 18:30:00",
+            "ozkaynak": 4842.08
+          },
+          {
+            "tarih": "2026-10-21 19:30:00",
+            "ozkaynak": 4842.56
+          },
+          {
+            "tarih": "2026-10-22 13:30:00",
+            "ozkaynak": 4846.28
+          },
+          {
+            "tarih": "2026-10-22 14:30:00",
+            "ozkaynak": 4845.91
+          },
+          {
+            "tarih": "2026-10-22 15:30:00",
+            "ozkaynak": 4845.91
+          },
+          {
+            "tarih": "2026-10-22 16:30:00",
+            "ozkaynak": 4848.21
+          },
+          {
+            "tarih": "2026-10-22 17:30:00",
+            "ozkaynak": 4848.76
+          },
+          {
+            "tarih": "2026-10-22 18:30:00",
+            "ozkaynak": 4848.35
+          },
+          {
+            "tarih": "2026-10-22 19:30:00",
+            "ozkaynak": 4848.48
+          },
+          {
+            "tarih": "2026-10-23 13:30:00",
+            "ozkaynak": 4858.97
+          },
+          {
+            "tarih": "2026-10-23 14:30:00",
+            "ozkaynak": 4858.74
+          },
+          {
+            "tarih": "2026-10-23 15:30:00",
+            "ozkaynak": 4862.15
+          },
+          {
+            "tarih": "2026-10-23 16:30:00",
+            "ozkaynak": 4861.85
+          },
+          {
+            "tarih": "2026-10-23 17:30:00",
+            "ozkaynak": 4862.46
+          },
+          {
+            "tarih": "2026-10-23 18:30:00",
+            "ozkaynak": 4863.4
+          },
+          {
+            "tarih": "2026-10-23 19:30:00",
+            "ozkaynak": 4864.21
+          }
+        ]
       }
-    ],
-    "not": "gölge kitap: ana portföyden ayrı, kilitli dönem kullanılmadı"
+    ]
   }
 }
