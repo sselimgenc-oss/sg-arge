@@ -47,3 +47,10 @@ def test_decision_labels(monkeypatch) -> None:
     assert satir["etiket"] == "temiz" and satir["karar"] in {"gecti", "kaldi", "izle"}
     assert satir["karar"] == ("izle" if satir["uyg_sinama_hafta"] < tv2.KAPI_HAFTA
                               else "gecti" if satir["uyg_sinama_net_yuzde"] > 0 else "kaldi")
+
+
+def test_zero_trades_is_its_own_decision_not_watch(monkeypatch) -> None:
+    from strategies.tv2 import ospkem6i
+    monkeypatch.setattr(ospkem6i, "bar", lambda ctx, i, v: None)
+    satir = _sahte(monkeypatch, "2023-01-01", 0.002)
+    assert satir["karar"] == "islem_yok" and "0 işlem" in satir["neden"]

@@ -184,6 +184,7 @@ def pine_kaynak(kimlik: str, pub: str) -> str | None:
     return json.loads(yol.read_text()).get("source")
 
 
+BAGLAYICI = re.compile(r"input\.source\(|type\s*=\s*input\.source")
 KUTUPHANELER = ROOT / "arastirma" / "tv2_kutuphaneler.csv"
 
 
@@ -241,6 +242,7 @@ def kos(kimlik: str) -> dict:
         return satir | {"karar": "veri_yok", "neden": notu}
     satir |= {"bas": df.index[0].date(), "son": df.index[-1].date(), "bar": len(df)}
     kripto = notu.startswith("Binance")
+    src = None
     try:
         if modul is None:
             src = pine_kaynak(kimlik, kaynak["pub"])
@@ -274,6 +276,10 @@ def kos(kimlik: str) -> dict:
     uyg.ozkaynak.resample("1D").last().dropna().pct_change().dropna().rename("getiri").to_csv(OUT / "getiriler" / f"{kimlik}.csv")
     if hatalar:
         satir |= {"karar": "uygulanamaz", "neden": "nedensellik: " + hatalar[0]}
+    elif satir["yazar_tum_islem"] == 0:
+        baglayici = bool(src) and bool(BAGLAYICI.search(src))
+        satir |= {"karar": "islem_yok", "neden": "tüm geçmişte 0 işlem" + (
+            " (harici gösterge bağlayıcısı: sinyal input.source ile başka göstergeden bekleniyor)" if baglayici else "")}
     elif bas is None:
         satir |= {"karar": "izle", "neden": "sürüm tarihi yok: sınama dönemi belirlenemedi"}
     elif etiket == "yetersiz_kanit":
