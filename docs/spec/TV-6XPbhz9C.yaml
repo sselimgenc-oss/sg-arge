@@ -7,7 +7,7 @@ tf: 4H
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: ABD (SP:SPX)
-kol: ABD-4H
+kol: ABD25-4H
 yayin_sembolu: SP:SPX
 gostergeler: {}
 ozel_kod: false
@@ -18,9 +18,9 @@ hedef: null
 stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
-parametreler: {kol: ABD-4H}
-dogrulanamaz: {neden: veri, ayrinti: 'ABD icin 4H uzun veri yok (yayin sembolu SP:SPX). Kural cevrilmedi.'}
+parametreler: {kol: ABD25-4H}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Cikis iki bacaklidir: bacak 1 (kapanis > high[1]) pozisyonun %50''sini kapatir (strategy.close qty_percent = 50), bacak 2 kalan icin izleyen stop = zirve kapanis - 1,5 x GUNCEL barin ATR''si olup her barda yeniden hesaplanir. Kapanista degerlendirilen kosullu kismi cikis ve bar basina ATR ile yenilenen izleyen stop motorun kademeli_cikis / izleyen stop semantigine birebir uymaz. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (veri): ABD icin 4H uzun veri yok (yayin sembolu SP:SPX). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Cikis iki bacaklidir: bacak 1 (kapanis > high[1]) pozisyonun %50''sini kapatir (strategy.close qty_percent = 50), bacak 2 kalan icin izleyen stop = zirve kapanis - 1,5 x GUNCEL barin ATR''si olup her barda yeniden hesaplanir. Kapanista degerlendirilen kosullu kismi cikis ve bar basina ATR ile yenilenen izleyen stop motorun kademeli_cikis / izleyen stop semantigine birebir uymaz. Yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol ABD-4H → ABD25-4H eslendi (kural ve parametreler degismedi; yayin sembolu SP:SPX).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

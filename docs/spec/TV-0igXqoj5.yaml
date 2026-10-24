@@ -7,7 +7,7 @@ tf: 1D
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: DIGER (NSE:NTPC)
-kol: DIGER-1D
+kol: ABD25-1D
 yayin_sembolu: NSE:NTPC
 gostergeler: {}
 ozel_kod: false
@@ -17,10 +17,10 @@ stop: null
 hedef: null
 stop_eklendi: false
 yalniz_long_bacak: true
-piyasa_kisiti: [DIGER]
-parametreler: {kol: DIGER-1D}
-dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu NSE:NTPC FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD25-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Onceki islemin kar/zarar durumu (strategy.closedtrades.profit) giris filtresidir (S1 whipsaw), 4 birimlik fiyat adimli piramit, bar basina yeniden verilen kanal-dip cikis stopu (strategy.exit stop = ta.lowest(low, 10 ya da 20)) ve EMA cikisi birlikte kullanilir. Pozisyon gecmisine bagli giris ve bar basina degisen stop Dogrulanamaz kategorisidir.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu NSE:NTPC FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Onceki islemin kar/zarar durumu (strategy.closedtrades.profit) giris filtresidir (S1 whipsaw), 4 birimlik fiyat adimli piramit, bar basina yeniden verilen kanal-dip cikis stopu (strategy.exit stop = ta.lowest(low, 10 ya da 20)) ve EMA cikisi birlikte kullanilir. Pozisyon gecmisine bagli giris ve bar basina degisen stop Dogrulanamaz kategorisidir.', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu NSE:NTPC).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

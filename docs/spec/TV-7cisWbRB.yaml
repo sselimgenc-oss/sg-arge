@@ -7,7 +7,7 @@ tf: 1D
 mtf: null
 tf_varsayim: false
 yazar_piyasasi: DIGER (ASX:DRO)
-kol: DIGER-1D
+kol: ABD25-1D
 yayin_sembolu: ASX:DRO
 gostergeler: {}
 ozel_kod: false
@@ -17,10 +17,10 @@ stop: null
 hedef: null
 stop_eklendi: false
 yalniz_long_bacak: true
-piyasa_kisiti: [DIGER]
-parametreler: {kol: DIGER-1D}
-dogrulanamaz: {neden: piyasa, ayrinti: 'yayin sembolu ASX:DRO FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.'}
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD25-1D}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Izleyen stop = max(sert stop, zirve kapanis - 3 x GUNCEL barin ATR''si) ve strategy.exit her barda yeniden verilir (kazanc %15''e ulasinca izleyen stop etkinlesir); bar basina ATR ile degisen stop motorda yok. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (piyasa): yayin sembolu ASX:DRO FX/BIST/diger sinifinda; evrenimizde yok (docs/GOREV_U6.md bolum 2). Kural cevrilmedi.']
+belirsiz: ['Dogrulanamaz (ceviri): Izleyen stop = max(sert stop, zirve kapanis - 3 x GUNCEL barin ATR''si) ve strategy.exit her barda yeniden verilir (kazanc %15''e ulasinca izleyen stop etkinlesir); bar basina ATR ile degisen stop motorda yok. Yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu ASX:DRO).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
