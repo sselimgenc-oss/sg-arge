@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Stop her barda yeniden hesaplanan swing-low seviyesidir ve yukari yonde mandallanir (activeSL = max(onceki, ta.lowest(low, 10) x 0,999)); bar basina degisen stop motorda yok. BBWP, array.binary_search_rightmost / insert ile elle siralanan dizide hesaplanir (rank tanimi dokumandan dogrulanamadi). Yaklasik ceviri yapilmadi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'BBWP (Bollinger bant genisligi yuzdeligi) Pine dizileriyle hesaplanir: `array.binary_search_rightmost` ve `array.insert` ile sirali pencere tutulur; yeni deger tum degerlerin altindaysa indeks -1 olur ve `array.insert(a_sorted, -1, ...)` davranisi (negatif indeks) kaynaktan dogrulanamaz, sirali dizi bozulabilir. Yuzdelik tanimi bu davranisa baglidir (ayrica ratchet baslangici sinyal barindaki swing dibine baglidir). Tanim belirsiz oldugu icin yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Stop her barda yeniden hesaplanan swing-low seviyesidir ve yukari yonde mandallanir (activeSL = max(onceki, ta.lowest(low, 10) x 0,999)); bar basina degisen stop motorda yok. BBWP, array.binary_search_rightmost / insert ile elle siralanan dizide hesaplanir (rank tanimi dokumandan dogrulanamadi). Yaklasik ceviri yapilmadi.']
+belirsiz: ['Dogrulanamaz (ceviri): BBWP (Bollinger bant genisligi yuzdeligi) Pine dizileriyle hesaplanir: `array.binary_search_rightmost` ve `array.insert` ile sirali pencere tutulur; yeni deger tum degerlerin altindaysa indeks -1 olur ve `array.insert(a_sorted, -1, ...)` davranisi (negatif indeks) kaynaktan dogrulanamaz, sirali dizi bozulabilir. Yuzdelik tanimi bu davranisa baglidir (ayrica ratchet baslangici sinyal barindaki swing dibine baglidir). Tanim belirsiz oldugu icin yaklasik ceviri yapilmadi.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

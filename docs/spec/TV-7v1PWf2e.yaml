@@ -10,17 +10,20 @@ yazar_piyasasi: KRIPTO (INDEX:BTCUSD)
 kol: KRIPTO-4H
 yayin_sembolu: INDEX:BTCUSD
 gostergeler: {}
-ozel_kod: false
+ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
 giris: null
 cikis: null
+kural_ozeti: {giris: 'Kompozit MA = (ALMA + ZLMA) / 2 son 3 barda yukselirken, kapanis > kompozit MA, hacim RSI(8) / 50 > 1,0 ve RSI(14) > 50 ise long.', cikis: 'Kapanis < kompozit MA - 1,5 x ATR ya da kompozit MA egimi asagi ise kapat. Ek olarak her barda stop = giris ortalamasi - 2,5 x ATR(14), hedef = giris + 4 x ATR(14) (guncel bar ATR''si; dyn_stop_rel / dyn_target_rel).'}
 stop: null
 hedef: null
-stop_eklendi: false
+stop_eklendi: true
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
-parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (stop = position_avg_price - 2,5 x guncel ATR, hedef 4 x ATR; ayrica EMA/ALMA bilesik ortalama kosullu kapanis; short bacak ters cevirir).'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (stop = position_avg_price - 2,5 x guncel ATR, hedef 4 x ATR; ayrica EMA/ALMA bilesik ortalama kosullu kapanis; short bacak ters cevirir).']
+parametreler: {kol: KRIPTO-4H, ma_len: 34, alma_offset: 0.85, alma_sigma: 6.0, slope_confirm: 3, vol_rsi_len: 8, vol_thresh: 1.0, rsi_len: 14, rsi_bull_min: 50, atr_len: 14, stop_mult: 2.5, tp_mult: 4.0, trail_mult: 1.5}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: MA 34, ALMA (0,85; 6), egim teyidi 3 bar, hacim RSI(8)/50 > 1,0, RSI(14) > 50, ATR(14), stop 2,5 x ATR, hedef 4 x ATR, iz 1,5 x ATR. Short bacak yoksayilir.', 'ALMA motor ifade dilinde yok: kompozit MA = (ALMA(close, 34, 0,85, 6) + EMA(2 EMA(close) - EMA(EMA(close)), 34)) / 2 ozel kodda hesaplanir.', 'U7 Ek 4: Pine strategy.exit her barda yeniden verilir; motor dinamik_cikis seviyesini her bar KAPANISINDA hesaplar ve ertesi bardan gecerli sayar (ayni sira). Dolum barinda Pine''da (pozisyon sonrasi verilen) seviye yoktur; motorda ilk dinamik seviyeye kadar baslangic koruma stopu (ATR14 x 3, stop_eklendi: true; boyutlandirma da buna dayanir) gecerlidir.', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_7v1pwf2e.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Iki kademeli kismi cikis (TP1 %50 / TP2 %50, ayri strategy.exit limit emirleri) bar ICINDE limit fiyatindan dolar; motorun kademeli_cikis tetigi bar KAPANISINDA degerlendirilir ve sonraki acilista dolar. TP1''in bu semantik farki yaklasik cevirmeyi gerektirir; yaklasik ceviri yapilmadi. Kalan kural (EMA 21/55/200 hizasi, RSI 45-75, Supertrend yukari donusu, hacim filtresi, stop = min(giris - 2 ATR, swing dip x 0,997)) tek anlamli olup yeniden okunabilir.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Bar ici kismi limitler (TP1 %50 @ 1,5R, TP2 %50 @ 2,5R) ve stop SINYAL barinin kapanisindan sabitlenen mutlak seviyelerdir (risk = sinyal kapanisi - stop, long_entry = close); motor kademeli_cikis tetigi DOLUM fiyatindan hesaplanir (giris + k x stop_mesafesi), sinyal-dolum bosluk farki yuzunden seviyeler birebir ayni degildir. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Iki kademeli kismi cikis (TP1 %50 / TP2 %50, ayri strategy.exit limit emirleri) bar ICINDE limit fiyatindan dolar; motorun kademeli_cikis tetigi bar KAPANISINDA degerlendirilir ve sonraki acilista dolar. TP1''in bu semantik farki yaklasik cevirmeyi gerektirir; yaklasik ceviri yapilmadi. Kalan kural (EMA 21/55/200 hizasi, RSI 45-75, Supertrend yukari donusu, hacim filtresi, stop = min(giris - 2 ATR, swing dip x 0,997)) tek anlamli olup yeniden okunabilir.']
+belirsiz: ['Dogrulanamaz (ceviri): Bar ici kismi limitler (TP1 %50 @ 1,5R, TP2 %50 @ 2,5R) ve stop SINYAL barinin kapanisindan sabitlenen mutlak seviyelerdir (risk = sinyal kapanisi - stop, long_entry = close); motor kademeli_cikis tetigi DOLUM fiyatindan hesaplanir (giris + k x stop_mesafesi), sinyal-dolum bosluk farki yuzunden seviyeler birebir ayni degildir. Yaklasik ceviri yapilmadi.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

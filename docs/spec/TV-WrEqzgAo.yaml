@@ -10,17 +10,18 @@ yazar_piyasasi: ABD (AMEX:SPY)
 kol: ABD-1D
 yayin_sembolu: AMEX:SPY
 gostergeler: {}
-ozel_kod: false
+ozel_kod: true
+ozel_kod_nedeni: desen
 giris: null
 cikis: null
-stop: null
-hedef: null
+kural_ozeti: {giris: Fiyat pivot dibi (5/5) bir onceki pivot dibinden dusuk ve PPO pivot dibi bir onceki PPO pivot dibinden yuksek ise (pozitif uyumsuzluk) long., cikis: 'Negatif uyumsuzluk (short girisi) acik long''u ters yonde kapatir. Stop %2, hedef %4 sinyal kapanisindan; yeni long sinyali (yoksayilan giris dahil) emri yeniler (dyn_stop / dyn_target).'}
+stop: {tip: yuzde, deger: 2.0}
+hedef: {tip: yuzde, deger: 4.0}
 stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
-parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Her yeni PPO uyumsuzlugunda strategy.exit(''Long Exit'', stop, limit) cagrisi, pozisyon zaten aciksa (yoksayilan ayni yonlu giris) acik pozisyonun stop ve hedef emrini yeni sinyal barinin seviyeleriyle degistirir; cikis seviyeleri pozisyon omru boyunca sonraki sinyallerle yeniden kurulur, motor seviyeyi dolumda sabitler. Ayrica short uyumsuzlugu long''u ters cevirir. Yaklasik ceviri yapilmadi.'}
-spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Her yeni PPO uyumsuzlugunda strategy.exit(''Long Exit'', stop, limit) cagrisi, pozisyon zaten aciksa (yoksayilan ayni yonlu giris) acik pozisyonun stop ve hedef emrini yeni sinyal barinin seviyeleriyle degistirir; cikis seviyeleri pozisyon omru boyunca sonraki sinyallerle yeniden kurulur, motor seviyeyi dolumda sabitler. Ayrica short uyumsuzlugu long''u ters cevirir. Yaklasik ceviri yapilmadi.']
+parametreler: {kol: ABD-1D, fast_len: 12, slow_len: 26, signal_len: 9, pivot_len: 5, sl_pct: 2.0, tp_pct: 4.0}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilanlar: PPO = (EMA12 - EMA26) / EMA26 x 100, pivot gucu 5, stop %2, hedef %4. ta.pivotlow/pivothigh sol ve sag 5 bardan SERT kucuk/buyuk (esitlik pivot sayilmaz: varsayim); pivot 5 bar sonra bilinir. PPO pivotu fiyat pivotuyla ayni barda bulunmazsa PPO degeri na olur ve sinyal olusmaz (Pine davranisi).', 'U7 Ek 4: Pine strategy.exit her barda yeniden verilir (sinyal barinda da); ilk seviye sinyal barinin degerleriyle kartta stop/hedef ''seviye'' olarak sabitlenir ve dolumdan itibaren gecerlidir, sonra motor dinamik_cikis seviyesini her bar KAPANISINDA hesaplayip ertesi bardan gecerli sayar (Pine ile ayni sira).', 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_wreqzgao.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

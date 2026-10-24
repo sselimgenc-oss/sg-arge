@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'UT Bot ATR izleyen stopu (xATRTrailingStop) ozyinelemeli; kod ayrica qty_percent=%50 kismi kar alma, risk/odul 0.75''te break-even, 3R hedef, ac-ac yon sartli ''acik kar>0 iken ters sinyalle kapat'' ve seans/tarih filtreleri kullanir. Kismi kar alma ve BE kaydirma motorda bu bicimde yok.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Cikis acik kar durumuna baglidir (karsit UT Bot sinyalinde yalniz strategy.openprofit > 0 ise kapat) ve %50 kismi limit + BE (sl := position_avg_price) ile ozel seans filtresi, tarih araligi ve risk/odul durumlari kullanilir. Acik kar durumu ve seans Dogrulanamaz kategorisidir.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): UT Bot ATR izleyen stopu (xATRTrailingStop) ozyinelemeli; kod ayrica qty_percent=%50 kismi kar alma, risk/odul 0.75''te break-even, 3R hedef, ac-ac yon sartli ''acik kar>0 iken ters sinyalle kapat'' ve seans/tarih filtreleri kullanir. Kismi kar alma ve BE kaydirma motorda bu bicimde yok.']
+belirsiz: ['Dogrulanamaz (ceviri): Cikis acik kar durumuna baglidir (karsit UT Bot sinyalinde yalniz strategy.openprofit > 0 ise kapat) ve %50 kismi limit + BE (sl := position_avg_price) ile ozel seans filtresi, tarih araligi ve risk/odul durumlari kullanilir. Acik kar durumu ve seans Dogrulanamaz kategorisidir.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

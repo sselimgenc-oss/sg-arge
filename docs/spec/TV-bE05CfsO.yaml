@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Cikis stopu her barda max(sert stop, izleyen stop) olarak yeniden kurulur: izleyen stop guncel ATR''den mandallanir (kapanis - 2,8 x ATR ve en yuksek - 20,8 x ATR kar kilidi); ayrica Cuma 16:00 New York kapanisi (seans saati). Pozisyon durumuna bagli, bar basina degisen cikis Dogrulanamaz kategorisidir.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Giris 130 satirlik puanlama (verimlilik, kalicilik, egim, kirilim, ATR rejimi) ve New York saatine gore Cuma kapanis kisitina (seans), cooldown ve kaldiraca baglidir. Seans filtresi ve cok katmanli puan Dogrulanamaz kategorisidir.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Cikis stopu her barda max(sert stop, izleyen stop) olarak yeniden kurulur: izleyen stop guncel ATR''den mandallanir (kapanis - 2,8 x ATR ve en yuksek - 20,8 x ATR kar kilidi); ayrica Cuma 16:00 New York kapanisi (seans saati). Pozisyon durumuna bagli, bar basina degisen cikis Dogrulanamaz kategorisidir.']
+belirsiz: ['Dogrulanamaz (ceviri): Giris 130 satirlik puanlama (verimlilik, kalicilik, egim, kirilim, ATR rejimi) ve New York saatine gore Cuma kapanis kisitina (seans), cooldown ve kaldiraca baglidir. Seans filtresi ve cok katmanli puan Dogrulanamaz kategorisidir.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
