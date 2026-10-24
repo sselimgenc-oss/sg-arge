@@ -94,6 +94,15 @@ class _Yuva:
     atandi: bool = False
 
 
+class _Cizim:
+    """line / box / label: görsel, ama betikler koordinatlarını geri okuyabilir (get_*); yalnız konum alanları tutulur."""
+
+    ALANLAR = {"line": ("x1", "y1", "x2", "y2"), "box": ("left", "top", "right", "bottom"), "label": ("x", "y", "text")}
+
+    def __init__(self, tur: str, alan: dict) -> None:
+        self.tur, self.alan = tur, alan
+
+
 class _Nesne:
     """Kullanıcı tipi (type) örneği."""
 
@@ -831,6 +840,8 @@ class Yorumlayici:
             return self._yerlesik("array." + ad, e, on_arg=nesne)
         if isinstance(nesne, dict):
             return self._yerlesik("map." + ad, e, on_arg=nesne)
+        if isinstance(nesne, _Cizim):
+            return self._yerlesik(f"{nesne.tur}.{ad}", e, on_arg=nesne)
         if nesne is None or (isinstance(nesne, float) and na(nesne)):   # çizim nesnesi (label/line/box) ya da na
             if ad.startswith("get_"):
                 raise Desteklenmiyor(f"çizim nesnesinden okuma: {ad}")
@@ -907,6 +918,8 @@ class Yorumlayici:
                   "request.dividends", "request.splits", "request.economic", "request.seed", "request.currency_rate"):
             raise Desteklenmiyor(ad)
         konum, adli = self._argumanlar(e, on_arg)
+        if ad.split(".")[0] in _Cizim.ALANLAR and ad.count(".") == 1:
+            return self._cizim(ad, konum, adli)
         if ad in GORSEL_AD or ad.split(".")[0] in GORSEL_NS or ad.startswith("color.") or ad in ("color",):
             if ad.split(".")[-1].startswith("get_") and ad.split(".")[0] in GORSEL_NS:
                 raise Desteklenmiyor(f"çizimden okuma: {ad}")
@@ -976,6 +989,39 @@ class Yorumlayici:
         if ad == "max":
             return _matematik("max", konum, adli, self)
         raise Desteklenmiyor(ad)
+
+    def _cizim(self, ad: str, konum, adli) -> Any:
+        tur, is_ = ad.split(".")
+        alanlar = _Cizim.ALANLAR[tur]
+        if is_ == "new":
+            if konum and isinstance(konum[0], _Nesne):  # chart.point imzası
+                raise Desteklenmiyor(f"{ad}(chart.point)")
+            b = _bagla(list(alanlar), konum, adli)
+            return _Cizim(tur, {k: b.get(k, NA) for k in alanlar})
+        nesne = konum[0] if konum else adli.get("id")
+        if not isinstance(nesne, _Cizim):               # na kimlik: set no-op, get na
+            return NA if is_.startswith("get_") else None
+        a = nesne.alan
+        if is_ == "copy":
+            return _Cizim(tur, dict(a))
+        if is_ == "get_price":
+            x = konum[1] if len(konum) > 1 else adli["x"]
+            if a["x2"] == a["x1"]:
+                return a["y1"]
+            return a["y1"] + (a["y2"] - a["y1"]) * (x - a["x1"]) / (a["x2"] - a["x1"])
+        if is_.startswith("get_") and is_[4:] in alanlar:
+            return a[is_[4:]]
+        cift = {"set_xy1": ("x1", "y1"), "set_xy2": ("x2", "y2"), "set_lefttop": ("left", "top"),
+                "set_rightbottom": ("right", "bottom"), "set_xy": ("x", "y")}
+        if is_ in cift:
+            a[cift[is_][0]], a[cift[is_][1]] = konum[1], konum[2]
+            return None
+        if is_.startswith("set_") and is_[4:] in alanlar:
+            a[is_[4:]] = konum[1] if len(konum) > 1 else next(iter(v for k, v in adli.items() if k != "id"))
+            return None
+        if is_.startswith("get_"):
+            raise Desteklenmiyor(f"çizimden okuma: {ad}")
+        return None                                     # renk, stil, delete ...: görsel
 
     def _girdi(self, ad: str, konum, adli, e) -> Any:
         anahtar = adli.get("title") or (konum[1] if len(konum) > 1 and isinstance(konum[1], str) else None)

@@ -297,3 +297,14 @@ def test_volume_variables_nvi_pvt_accdist() -> None:
     pvt = np.r_[0.0, np.cumsum((c[1:] - c[:-1]) / c[:-1] * v[1:])]
     _ayni(_seri("x = ta.pvt\n", df), pvt)
     _ayni(_seri("x = ta.accdist\n", df), np.cumsum((2 * c - l - h) / (h - l) * v))
+
+
+def test_drawing_coordinates_can_be_read_back() -> None:
+    df = _veri(30)
+    kod = ("var line ln = na\nvar box bx = na\nif bar_index == 2\n    ln := line.new(bar_index, low, bar_index + 10, low + 10)\n"
+           "    bx := box.new(bar_index, high, bar_index + 5, low)\n"
+           "if bar_index == 6\n    ln.set_y2(ln.get_y1() + 20)\n    box.set_top(bx, 999)\n"
+           "x = na(ln) ? na : ln.get_price(bar_index) - line.get_y1(ln)\ny = na(bx) ? na : bx.get_top()\n")
+    x, y = _seri(kod, df), _seri(kod, df, ad="y")
+    assert np.isnan(x[1]) and x[4] == pytest.approx(2.0) and x[7] == pytest.approx(10.0)
+    assert y[3] == pytest.approx(df["high"].iloc[2]) and y[7] == 999
