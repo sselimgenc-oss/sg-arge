@@ -15,8 +15,8 @@ from strategies.ozel import build_plan as ozel_plan, has_strategy
 
 SPEC = Path(__file__).resolve().parents[1] / "docs" / "spec"
 PARTI_IDS = ['MI47rsio', 'yI5AU2ny', 'wu1VhNpf', 'qgTc4zie', 'x9pPfwmI', 'eDyfoKkr', 'mfw4fJST', 'qo43NaGV', 'RcF7t6Am', 'KW2v4SNI', 'u5R6y8cl', 'KO7Qe4Xb', 'efVFRo0C', 'bmIiC79T', 'MyuUXFMc', 'sPNx5Z74', 'PDUqNlVa', 'GDcSJIo9', 'LBcj22se', 'vJc6IOTz', 'cz5KaioF', 'Z4kcoUGT', 'mzv5SGie', 'BXDmlQdj', 'rP7izVek', '1s588fgS', '3BXWqwnF', 'BjjAOuub', 'CeFIpdwB', 'bZ815rmw', 'tuC7aGNI', 'A8gB4ha7', '6MgStabF', 'AR7LCcVC', 'PftCy6TI', 'odnW4iA5', 'bSGjA2Ie', 'fp0zbifH', 'AORNVoek', 'MoL1SwLE', 'Ospkem6i', 'zxTxzt8o', 'XTAGdX8Z', 'DGHCEcnB', 'FQVb4qo4', '7rQKeCN2', 'ALiYX5Gu', 'k13xEYxZ', 'QA8AC0vs', 'JH9IMLVt', 'WrEqzgAo', 'ZDhizQgu']
-TAM_IDS = ['qgTc4zie', 'eDyfoKkr', 'qo43NaGV', 'KW2v4SNI', 'LBcj22se', 'vJc6IOTz', '1s588fgS', '3BXWqwnF', 'BjjAOuub', 'tuC7aGNI', 'AR7LCcVC', 'AORNVoek', 'ALiYX5Gu', 'k13xEYxZ', 'QA8AC0vs', 'ZDhizQgu']
-OZEL_IDS = ['qgTc4zie', '1s588fgS', 'QA8AC0vs', 'ZDhizQgu']
+TAM_IDS = ['qgTc4zie', 'eDyfoKkr', 'qo43NaGV', 'KW2v4SNI', 'LBcj22se', 'vJc6IOTz', 'cz5KaioF', '1s588fgS', '3BXWqwnF', 'BjjAOuub', 'tuC7aGNI', 'AR7LCcVC', 'AORNVoek', 'ALiYX5Gu', 'k13xEYxZ', 'QA8AC0vs', 'ZDhizQgu']
+OZEL_IDS = ['qgTc4zie', 'cz5KaioF', '1s588fgS', 'QA8AC0vs', 'ZDhizQgu']
 SINIFLAR = ("KRIPTO", "ABD", "EMTIA")
 NEDENLER = ("piyasa", "veri", "ceviri", "bekliyor:motor")
 

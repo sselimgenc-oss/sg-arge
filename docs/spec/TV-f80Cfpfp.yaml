@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding=2: ayni pozisyona ''Add'' girisi (pozisyon acikken RSI 10''u yukari kesince ikinci alim). Motor piramit uygulamaz; ana giris/cikis kurali ek alim olmadan birebir ayni olmaz. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Cikis kosullari pozisyon ORTALAMA fiyatina baglidir (kapanis > position_avg_price ile RSI(5) 75 yukari kesisimi; kapanis < ortalama x 0,92 ile zarar kes) ve ek alim (Add) ortalamayi degistirir; kapanis tabanli kosul motorun bar ici stopu degildir. Pozisyon ortalama fiyatina bagli cikis motor piramit semantigine uymaz. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Beklemede (bekliyor:motor): pyramiding=2: ayni pozisyona ''Add'' girisi (pozisyon acikken RSI 10''u yukari kesince ikinci alim). Motor piramit uygulamaz; ana giris/cikis kurali ek alim olmadan birebir ayni olmaz. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
+belirsiz: ['Dogrulanamaz (ceviri): Cikis kosullari pozisyon ORTALAMA fiyatina baglidir (kapanis > position_avg_price ile RSI(5) 75 yukari kesisimi; kapanis < ortalama x 0,92 ile zarar kes) ve ek alim (Add) ortalamayi degistirir; kapanis tabanli kosul motorun bar ici stopu degildir. Pozisyon ortalama fiyatina bagli cikis motor piramit semantigine uymaz. Yaklasik ceviri yapilmadi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

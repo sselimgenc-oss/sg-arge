@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [EMTIA]
 parametreler: {kol: EMTIA-1D}
-dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding=5: geri alim (reclaim) sinyalinden sonra yuzde olcekli ek alimlar (scale-in). Piramit Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Kar hedefi ORTALAMA giris fiyatindan (strategy.position_avg_price x 1,004) ve ek alim seviyeleri ILK giris fiyatindan (baseEntry x (1 - %0,3 x asama)) hesaplanir; ek alimlar bar ici dusuk fiyata baglidir ve pooc ile kapanista dolar, toplam kapanis hedef high''a dayanir. Pozisyon ortalama fiyatina ve birime bagli cikis motor piramit semantigine uymaz. Ayrica short bacak ters yone girer. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Beklemede (bekliyor:motor): pyramiding=5: geri alim (reclaim) sinyalinden sonra yuzde olcekli ek alimlar (scale-in). Piramit Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
+belirsiz: ['Dogrulanamaz (ceviri): Kar hedefi ORTALAMA giris fiyatindan (strategy.position_avg_price x 1,004) ve ek alim seviyeleri ILK giris fiyatindan (baseEntry x (1 - %0,3 x asama)) hesaplanir; ek alimlar bar ici dusuk fiyata baglidir ve pooc ile kapanista dolar, toplam kapanis hedef high''a dayanir. Pozisyon ortalama fiyatina ve birime bagli cikis motor piramit semantigine uymaz. Ayrica short bacak ters yone girer. Yaklasik ceviri yapilmadi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

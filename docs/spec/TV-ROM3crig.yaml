@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-1D}
-dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding=2: sinyal surerken ayni kimlikli giris tekrarlanir (ikinci/ucuncu giris); pip birimli sabit TP/SL ve testPeriod() penceresi. Motor piramit uygulamaz. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Stop ve hedef mutlak dolar mesafesidir (200 $ SL, 2000 $ TP, giris fiyati +/-) ve test penceresi 2017-2020 ile sinirlidir; mutlak fiyat mesafesi 14 coinlik havuza tasinamaz. Ayrica short bacak ve pyramiding = 2. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Beklemede (bekliyor:motor): pyramiding=2: sinyal surerken ayni kimlikli giris tekrarlanir (ikinci/ucuncu giris); pip birimli sabit TP/SL ve testPeriod() penceresi. Motor piramit uygulamaz. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
+belirsiz: ['Dogrulanamaz (ceviri): Stop ve hedef mutlak dolar mesafesidir (200 $ SL, 2000 $ TP, giris fiyati +/-) ve test penceresi 2017-2020 ile sinirlidir; mutlak fiyat mesafesi 14 coinlik havuza tasinamaz. Ayrica short bacak ve pyramiding = 2. Yaklasik ceviri yapilmadi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
