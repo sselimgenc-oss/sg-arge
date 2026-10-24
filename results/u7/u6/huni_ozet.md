@@ -98,3 +98,6 @@ Kilitli donem acilmadi. DSR deneme sayisi: 205.
 | TV-xYflA6O7 | 0.66/76.00 | False | 1.37 | 0.04 | Reddedildi | IS PF<=1, null, DSR<=0.95 |
 | TV-yvDyq0pv | 1.34/248.00 | False | 1.25 | 0.05 | Reddedildi | null, bootstrap MDD95>%15, DSR<=0.95, kardes PF>1,1 orani<%60 |
 | TV-zMwHN2Uu | 0.81/914.00 | True | 0.65 | 0.00 | Reddedildi | IS PF<=1, OOS ortR<=0, 2x PF<1.2, 3x net<=0, +1 bar net<=0, bootstrap MDD95>%15, DSR<=0.95, kardes PF>1,1 orani<%60 |
+| TV-zb7PgKWs | 0.99/3682.00 | True | 0.78 | 0.00 | Reddedildi | IS PF<=1, 2x PF<1.2, 3x net<=0, +1 bar net<=0, bootstrap MDD95>%15, DSR<=0.95, kardes PF>1,1 orani<%60 |
+| TV-zoY9DmsF | 1.62/172.00 | False | 2.30 | 0.72 | Reddedildi | null, DSR<=0.95 |
+| TV-zrDoqm9F | 1.27/76.00 | False | 1.18 | 0.04 | Reddedildi | null, 2x PF<1.2, DSR<=0.95 |
