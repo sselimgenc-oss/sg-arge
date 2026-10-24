@@ -31,7 +31,7 @@ def _sahte(monkeypatch, surum: str | None, trend: float) -> dict:
     close = 100 * np.exp(np.cumsum(np.full(n, trend) + np.random.default_rng(1).normal(0, 0.01, n)))
     df = pd.DataFrame({"open": np.r_[close[0], close[:-1]], "close": close}, index=index)
     df["high"], df["low"] = df[["open", "close"]].max(axis=1) * 1.002, df[["open", "close"]].min(axis=1) * 0.998
-    monkeypatch.setattr(tv2, "veri", lambda s, tf: (df, "Binance TEST 1d"))
+    monkeypatch.setattr(tv2, "veri", lambda s, tf, bas=None: (df, "Binance TEST 1d"))
     monkeypatch.setattr(tv2, "SURUMLER", tv2.ROOT / "yok.csv")
     monkeypatch.setattr(tv2, "OUT", tv2.ROOT / ".pytest_cache" / "tv2")
     from strategies.tv2 import ospkem6i
