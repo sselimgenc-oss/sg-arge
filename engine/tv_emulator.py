@@ -41,6 +41,7 @@ class Ayarlar:
     pyramiding: int = 1
     process_orders_on_close: bool = False
     mintick: float = 0.01
+    calc_on_order_fills: bool = False          # dolum sonrası bar içi ek yürütme (modül `ara(ctx, i)` sağlar)
 
 
 @dataclass
@@ -119,6 +120,7 @@ class Baglam:
         self.bekleyen: dict[str, _Emir] = {}
         self.gerceklesen = 0.0
         self.emir_kaydi: list[tuple] = []
+        self.ara = False                               # bar içi ek yürütmede verilen emir aynı barda dolabilir
         self.dolum_sayisi = 0                          # gerçekleşen emir sayısı (strategy.risk.max_intraday_filled_orders)
 
     # ---- durum (Pine strategy.*) ----
@@ -200,7 +202,7 @@ class Baglam:
         self.bekleyen.clear()
 
     def _ver(self, emir: _Emir, anahtar: str | None = None) -> None:
-        emir.verildi = self.i
+        emir.verildi = self.i - 1 if self.ara else self.i
         if emir.tur in ("giris", "emir") and emir.adet is None:
             ref = emir.stop if emir.stop is not None else emir.limit if emir.limit is not None else self.c[self.i]
             emir.adet = self._varsayilan_adet(ref)
@@ -388,14 +390,24 @@ class Baglam:
                 (self._ac if emir.tur == "giris" else self._ham)(emir, fiyat, bar, kaymali=True)
                 self._oca_iptal(emir)
 
-    def _bar_isle(self, j: int) -> None:
+    def _bar_isle(self, j: int, ek: Callable[[], None] | None = None) -> None:
+        """`ek` (calc_on_order_fills): dolum olan her fiyat noktasından (O, ara uçlar, C) sonra betik bar içinde yeniden
+        yürür; o yürütmenin piyasa emirleri bir sonraki noktada, fiyat emirleri sonraki parçalarda dolabilir."""
         o, h, l, c = self.o[j], self.h[j], self.l[j], self.c[j]
-        self._isle_piyasa(o, j)
-        self._temizle()
         yol = [o, h, l, c] if abs(h - o) < abs(o - l) else [o, l, h, c]
-        self._yol(o, o, j)                             # açılışta zaten geçilmiş seviyeler (boşluk)
-        for a, b in zip(yol[:-1], yol[1:]):
-            self._yol(a, b, j)
+        for t, b in enumerate(yol):
+            once = self.dolum_sayisi
+            if t == 0:
+                self._isle_piyasa(o, j)
+                self._temizle()
+                self._yol(o, o, j)                     # açılışta zaten geçilmiş seviyeler (boşluk)
+            else:
+                if ek is not None:
+                    self._isle_piyasa(b, j)
+                    self._temizle()
+                self._yol(yol[t - 1], b, j)
+            if ek is not None and self.dolum_sayisi != once and t < len(yol) - 1:
+                ek()
 
     def _yol(self, a: float, b: float, j: int) -> None:
         cur = a
@@ -472,7 +484,7 @@ def calistir(modul: Any, df: pd.DataFrame, ayarlar: Ayarlar | None = None, **deg
     for i in range(len(df)):
         if i > 0:
             ctx._temizle()
-            ctx._bar_isle(i)
+            ctx._bar_isle(i, (lambda i=i: _ara_yurut(modul, ctx, i)) if a.calc_on_order_fills else None)
             ctx._temizle()
         ctx.i = i
         modul.bar(ctx, i, v)
@@ -480,6 +492,15 @@ def calistir(modul: Any, df: pd.DataFrame, ayarlar: Ayarlar | None = None, **deg
     islemler = pd.DataFrame(ctx.kapali, columns=["entry_id", "exit_id", "yon", "adet", "giris_bar", "giris_zaman", "giris_fiyat",
                                                   "cikis_bar", "cikis_zaman", "cikis_fiyat", "brut", "komisyon", "net"])
     return Sonuc(islemler, pd.Series(eq, index=df.index, name="ozkaynak"), ctx.emir_kaydi, a)
+
+
+def _ara_yurut(modul: Any, ctx: Baglam, i: int) -> None:
+    ctx.i, ctx.ara = i, True
+    try:
+        modul.ara(ctx, i)
+    finally:
+        ctx.ara = False
+        ctx.i = i - 1
 
 
 def gercekci(ayarlar: Ayarlar, kripto: bool) -> dict[str, Any]:

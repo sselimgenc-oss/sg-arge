@@ -21,6 +21,7 @@ Belgelenmiş varsayımlar:
 
 from __future__ import annotations
 
+import copy
 import math
 import re
 from dataclasses import dataclass, field
@@ -90,6 +91,7 @@ class _Yuva:
     deger: Any = NA
     gecmis: list = field(default_factory=list)
     kalici: bool = False      # var/varip
+    ip: bool = False          # varip: bar içi ek yürütmeler arasında geri sarılmaz
     basladi: bool = False
     atandi: bool = False
 
@@ -243,7 +245,20 @@ class Yorumlayici:
                 raise Desteklenmiyor("enum")
 
     # ------------------------------------------------------------------ bar
-    def adim(self, ctx, i: int) -> None:
+    def anlik(self) -> tuple:
+        """Bar başı (önceki bar kapanışında kesinleşmiş) durum: bar içi ek yürütmeler bundan başlar."""
+        degerler = copy.deepcopy(([(y.deger, y.basladi, y.atandi) for y in self.yuva_listesi], self.durum))
+        return degerler, len(self.yuva_listesi), dict(self.yuvalar), dict(self.kapsam[0])
+
+    def geri_sar(self, a: tuple) -> None:
+        (degerler, durum), n, yuvalar, kapsam0 = copy.deepcopy(a[0]), a[1], a[2], a[3]
+        del self.yuva_listesi[n:]
+        self.yuvalar, self.kapsam, self.durum = dict(yuvalar), [dict(kapsam0)], durum
+        for y, (d, b, at) in zip(self.yuva_listesi, degerler):
+            if not y.ip:
+                y.deger, y.basladi, y.atandi = d, b, at
+
+    def adim(self, ctx, i: int, kesinlestir: bool = True) -> None:
         self.ctx, self.i = ctx, i
         if ctx is not None:
             self._risk_kontrol()
@@ -253,6 +268,8 @@ class Yorumlayici:
             if isinstance(d, (A.FunctionDef, A.TypeDef, A.Comment)):
                 continue
             self._calistir(d)
+        if not kesinlestir:
+            return
         for y in self.yuva_listesi:
             y.gecmis.append(y.deger if (y.kalici or y.atandi) else NA)
             if not y.kalici:
@@ -342,11 +359,11 @@ class Yorumlayici:
             raise Desteklenmiyor("import (kütüphane)")
         return self._deger(d)
 
-    def _yuva(self, ad: str, d, kalici: bool) -> _Yuva:
+    def _yuva(self, ad: str, d, kalici: bool, ip: bool = False) -> _Yuva:
         anahtar = (self.yol, id(d), ad)
         y = self.yuvalar.get(anahtar)
         if y is None:
-            y = _Yuva(kalici=kalici)
+            y = _Yuva(kalici=kalici, ip=ip)
             self.yuvalar[anahtar] = y
             self.yuva_listesi.append(y)
             y.gecmis = [NA] * max(self.i, 0)
@@ -355,9 +372,10 @@ class Yorumlayici:
 
     def _ata(self, d: A.Assign) -> Any:
         kalici = isinstance(d.mode, (A.Var, A.VarIp))
+        ip = isinstance(d.mode, A.VarIp)
         hedef = d.target
         if isinstance(hedef, A.Tuple):
-            yuvalar = [self._yuva(e.id, d, kalici) for e in hedef.elts]
+            yuvalar = [self._yuva(e.id, d, kalici, ip) for e in hedef.elts]
             if kalici and all(y.basladi for y in yuvalar):
                 return NA
             v = self._deger(d.value) if d.value is not None else tuple(NA for _ in yuvalar)
@@ -366,7 +384,7 @@ class Yorumlayici:
             for y, x in zip(yuvalar, v):
                 y.deger, y.basladi, y.atandi = x, True, True
             return v
-        y = self._yuva(hedef.id, d, kalici)
+        y = self._yuva(hedef.id, d, kalici, ip)
         if kalici and y.basladi:
             return y.deger
         v = self._deger(d.value) if d.value is not None else NA
@@ -1975,7 +1993,7 @@ class PineStrateji:
                 b[ad] = None
         uyari = []
         if _dogru(b.get("calc_on_order_fills")):
-            raise Desteklenmiyor("calc_on_order_fills")
+            uyari.append("calc_on_order_fills: geçmiş barlarda ek yürütmeler barın son değerlerini görür (TradingView ile aynı, canlıda farklı)")
         if b.get("close_entries_rule") not in (None, "FIFO"):
             raise Desteklenmiyor("close_entries_rule ANY")
         if b.get("backtest_fill_limits_assumption") not in (None, 0):
@@ -1993,6 +2011,7 @@ class PineStrateji:
             pyramiding=int(b.get("pyramiding") or 0),
             process_orders_on_close=_dogru(b.get("process_orders_on_close")),
             mintick=self.mintick,
+            calc_on_order_fills=_dogru(b.get("calc_on_order_fills")),
         )
         return a, uyari
 
@@ -2000,5 +2019,16 @@ class PineStrateji:
         self.y = self._yorumlayici(df)
         return {}
 
+    def ara(self, ctx, i: int) -> None:
+        """calc_on_order_fills: dolum sonrası bar içi yürütme; her biri bar başı durumdan başlar, kesinleşmez."""
+        if getattr(self, "_anlik_i", None) != i:
+            self._anlik, self._anlik_i = self.y.anlik(), i
+        else:
+            self.y.geri_sar(self._anlik)
+        self.y.adim(ctx, i, kesinlestir=False)
+
     def bar(self, ctx, i: int, v: dict) -> None:
+        if getattr(self, "_anlik_i", None) == i:
+            self.y.geri_sar(self._anlik)
+            self._anlik = self._anlik_i = None
         self.y.adim(ctx, i)

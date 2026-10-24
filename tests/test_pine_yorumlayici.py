@@ -158,9 +158,6 @@ def test_unsupported_feature_raises_instead_of_running() -> None:
         calistir(_strateji("x = request.security('BINANCE:ETHUSDT', 'D', close)\n"), df)
     with pytest.raises(Desteklenmiyor):
         calistir(_strateji("x = ta.kagi_yok(close)\n"), df)
-    with pytest.raises(Desteklenmiyor):
-        _strateji("x = 1\n").__class__(  # calc_on_order_fills betik davranışını değiştirir
-            "//@version=5\nstrategy('t', calc_on_order_fills=true)\n", sembol="BINANCE:TEST", tf="60")
 
 
 OSPKEM6I = """//@version=5
@@ -315,3 +312,19 @@ def test_drawing_coordinates_can_be_read_back() -> None:
     x, y = _seri(kod, df), _seri(kod, df, ad="y")
     assert np.isnan(x[1]) and x[4] == pytest.approx(2.0) and x[7] == pytest.approx(10.0)
     assert y[3] == pytest.approx(df["high"].iloc[2]) and y[7] == 999
+
+
+def test_calc_on_order_fills_reexecutes_intrabar_with_rollback_except_varip() -> None:
+    df = _veri(60)
+    govde = ("var int barlar = 0\nvarip int yurutme = 0\nbarlar += 1\nyurutme += 1\n"
+             "if strategy.position_size == 0\n    strategy.entry('L', strategy.long, 1)\nelse\n    strategy.close('L')\n")
+    duz = calistir(_strateji(govde), df)
+    kod = "//@version=5\nstrategy('t', overlay=true, calc_on_order_fills=true)\n" + govde
+    ps = PineStrateji(kod, sembol="BINANCE:TEST", tf="60")
+    assert ps.AYARLAR.calc_on_order_fills and ps.uyarilar
+    ek = calistir(ps, df)
+    t = ek.islemler
+    # dolumdan sonraki yürütme kapanışı aynı barın sonraki noktasında doldurur: bar içi giriş-çıkış döngüsü
+    assert len(t) > len(duz.islemler) and (t["giris_bar"] == t["cikis_bar"]).any()
+    assert ps.y._bul("barlar").deger == len(df)              # var: bar başına bir kez (geri sarılır)
+    assert ps.y._bul("yurutme").deger > len(df)              # varip: her yürütmede artar
