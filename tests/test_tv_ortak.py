@@ -81,3 +81,17 @@ def test_simulate_two_sided_flat_only_ve_kapanistan_bekleme():
     entry, _ = T.simulate_two_sided(frame, long_ok, np.zeros(n, dtype=bool), np.full(n, 90.0), np.full(n, 110.0), nan, nan,
                                     cooldown=6, exits_from_fill_bar=True, flat_only=True, cooldown_from_exit=True)
     assert list(np.flatnonzero(entry)) == [1, 12]  # 4 ve 5 bekleme icinde, 12 bekleme disinda
+
+
+def test_simulate_two_sided_fill_pct_dolum_fiyatindan_olcer():
+    n = 12
+    idx = pd.date_range("2022-01-01", periods=n, freq="1D", tz="UTC")
+    price = np.full(n, 100.0)
+    frame = pd.DataFrame({"open": price, "high": price + 1, "low": price - 1, "close": price, "volume": 1.0}, index=idx)
+    frame.loc[idx[3], "low"] = 98.0   # dolum (bar 2) acilisi 100: stop %1,5 = 98.5 -> bar 3'te vurulur
+    long_ok = np.zeros(n, dtype=bool)
+    long_ok[[1, 4, 6]] = True
+    nan = np.full(n, np.nan)
+    entry, _ = T.simulate_two_sided(frame, long_ok, np.zeros(n, dtype=bool), nan, nan, nan, nan, flat_only=True, fill_pct=(0.015, 0.03))
+    # bar 1 giris (bar 2 dolum), bar 3'te stop -> bar 4 sinyali yeni giris olur; bar 5'te pozisyon (bar 5 dolum) acik, bar 6 sinyali yok sayilir
+    assert list(np.flatnonzero(entry)) == [1, 4]

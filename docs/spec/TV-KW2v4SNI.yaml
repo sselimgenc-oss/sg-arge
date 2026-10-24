@@ -1,0 +1,28 @@
+id: TV-KW2v4SNI
+ad: SMA(4)/SMA(30)
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/KW2v4SNI/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar madereel; yayin sembolu AMEX:USD; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (AMEX:USD)
+kol: ABD-1D
+yayin_sembolu: AMEX:USD
+gostergeler:
+  fast: {f: sma, src: close, n: 4}
+  slow: {f: sma, src: close, n: 30}
+ozel_kod: false
+giris: cross_over(fast, slow)
+cikis: cross_under(fast, slow)
+stop: null
+hedef: null
+dolum: kapanis
+stop_eklendi: true
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'process_orders_on_close = true: giris ve cikis sinyal barinin KAPANISINDA dolar (dolum: kapanis; maliyet 2x baz, ertesi acilis (b) varyanti da raporlanir). Long giris `position_size <= 0` ile verilir; short bacak yok, yalniz crossunder long''u kapatir.', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

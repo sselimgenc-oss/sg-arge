@@ -1,0 +1,36 @@
+id: TV-vJc6IOTz
+ad: Trend Pulse Channel Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/vJc6IOTz/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar ADXAE; yayin sembolu NASDAQ:AAPL; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (NASDAQ:AAPL)
+kol: ABD-1D
+yayin_sembolu: NASDAQ:AAPL
+gostergeler:
+  hlc3: {f: seri, ifade: (high + low + close) / 3}
+  trr: {f: tr}
+  f1: {f: ema, src: hlc3, n: 21}
+  f2: {f: ema, src: f1, n: 21}
+  f3: {f: ema, src: f2, n: 21}
+  f4: {f: ema, src: f3, n: 21}
+  t1: {f: ema, src: trr, n: 21}
+  t2: {f: ema, src: t1, n: 21}
+  t3: {f: ema, src: t2, n: 21}
+  t4: {f: ema, src: t3, n: 21}
+  upper: {f: seri, ifade: f4 + t4 * 1.414}
+ozel_kod: false
+giris: cross_over(close, upper)
+cikis: cross_under(close, upper)
+stop: null
+hedef: null
+stop_eklendi: true
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Trend Pulse Channel: 4 kutuplu kaskad EMA, alpha = 0,09542 (beta = (1 - cos(2 pi / 144)) / (1,414^(2/4) - 1)), EMA uzunlugu max(1, int(round(2 / alpha))) = 21 (bu kodda math.round). Varsayilan Reduced Lag ve Fast Response kapali; kaynak hlc3, bant = filtre + 1,414 x filtrelenmis TR. Baslangic 2018-01-01 (test donemi ile ayni, kartta ayri tarih kosulu yok).', 'Giris kapanisin ust bandi yukari kesmesi, cikis ayni bandi asagi kesmesidir (strategy.close). Stop/hedef yok; ATR x 3 stop eklendi.', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
