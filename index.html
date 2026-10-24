@@ -190,6 +190,28 @@
         <div class="card p-4 space-y-2"><h3 class="text-xs font-semibold text-slate-300">Şu anki durum</h3><div class="text-xs text-slate-200" id="riskNote"></div><div id="riskConc"></div></div>
       </section>
 
+      <!-- GÖLGE KİTAP -->
+      <section data-tab="golge" class="tab hidden space-y-5">
+        <div class="card p-4 space-y-1">
+          <h2 class="text-sm font-bold text-white">Gölge kitap: kripto 4H trend (U4-H1)</h2>
+          <div class="text-xs text-slate-400">BTC, ETH, SOL, BNB, XRP, TRX · 4 saatlik barlar · işlem başı risk %0,25 · ayrı 5.000 $ sanal sermaye. Ana portföyden ayrıdır; özeti ve alarmları etkilemez. Geriye dönük doldurulmadı (kilitli dönem korunur), yalnız başlangıçtan sonrası canlıdır.</div>
+          <div class="text-xs text-slate-500" id="glNote"></div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="glKpis"></div>
+        <div class="card p-4">
+          <h3 class="text-xs font-semibold text-slate-300 mb-2">Açık pozisyonlar</h3>
+          <div class="overflow-x-auto"><table class="tbl w-full text-left text-xs">
+            <thead><tr><th>Varlık</th><th>Giriş</th><th>Süre</th><th class="text-right">Giriş fiyatı</th><th class="text-right">Stop</th><th class="text-right">Tutar</th><th class="text-right">K/Z ($)</th><th class="text-right">R</th></tr></thead>
+            <tbody id="glOpen"></tbody></table></div>
+        </div>
+        <div class="card p-4">
+          <h3 class="text-xs font-semibold text-slate-300 mb-2">Kapanmış işlemler</h3>
+          <div class="overflow-x-auto"><table class="tbl w-full text-left text-xs">
+            <thead><tr><th>Varlık</th><th>Giriş</th><th>Çıkış</th><th class="text-right">Giriş fiyatı</th><th class="text-right">Çıkış fiyatı</th><th class="text-right">R</th><th class="text-right">K/Z ($)</th><th>Neden</th></tr></thead>
+            <tbody id="glClosed"></tbody></table></div>
+        </div>
+      </section>
+
       <!-- YOL HARİTASI -->
       <section data-tab="yol" class="tab hidden space-y-4">
         <div class="card p-4 space-y-3">
@@ -210,8 +232,9 @@
     ['ozet', 'Özet', 'layout-dashboard'], ['acik', 'Açık pozisyonlar', 'pie-chart'], ['gecmis', 'İşlem geçmişi', 'history'],
     ['istatistik', 'İstatistik', 'bar-chart-2'], ['grafik', 'Grafikler', 'line-chart'], ['takvim', 'Takvim', 'calendar'],
     ['donemsel', 'Dönemsel getiri', 'trending-up'], ['strateji', 'Stratejiler', 'layers'], ['risk', 'Risk', 'shield-check'],
-    ['yol', 'Yakında', 'compass'],
+    ['golge', 'Gölge kitap', 'moon'], ['yol', 'Yakında', 'compass'],
   ];
+  const GOLGE_SERMAYE = 5000;
   let D = null;
   const charts = {};
 
@@ -441,9 +464,31 @@
     $('shadowState').innerHTML = isNum(sh.closed_count) ? `<span class="text-slate-300">${sh.closed_count} işlem gölgede</span>` : '<span class="badge bg-slate-800 text-slate-400">henüz veri yok</span>';
   }
 
+  function renderGolge() {
+    const g = D.golge;
+    if (!g) {
+      $('glNote').textContent = 'Henüz gölge kitap verisi gelmedi: kitap 24.10.2026\'da başladı, ilk 4 saatlik bar kapanıp saatlik iş çalışınca dolar.';
+      $('glKpis').innerHTML = ''; $('glOpen').innerHTML = empty(8, 'Veri yok.'); $('glClosed').innerHTML = empty(8, 'Veri yok.');
+      return;
+    }
+    const ret = isNum(g.ozkaynak) ? (g.ozkaynak / GOLGE_SERMAYE - 1) * 100 : null;
+    const closed = g.kapanmis_islemler || [], open = g.acik_pozisyonlar || [];
+    const wins = closed.filter((t) => t.pnl > 0).length;
+    $('glNote').textContent = `Başlangıç: ${g.baslangic || '—'}. ${g.not || ''}`;
+    const kpi = [['Özkaynak', usd(g.ozkaynak), ''], ['Getiri', pct(ret), cls(ret)], ['Maks. düşüş', isNum(g.mdd) ? '%' + fmt(g.mdd) : '—', ''],
+      ['Kapanan / kazanan', closed.length ? `${closed.length} / ${wins}` : '0', '']];
+    $('glKpis').innerHTML = kpi.map(([l, v, c]) => `<div class="card p-3"><div class="text-[10px] text-slate-400 uppercase font-semibold">${l}</div><div class="text-base font-bold ${c || 'text-white'}">${v}</div></div>`).join('');
+    $('glOpen').innerHTML = open.length ? open.map((p) => `<tr><td class="font-semibold text-white">${esc(p.asset)}</td><td>${esc(p.entry_date)}</td><td>${esc(p.duration)}</td>
+      <td class="text-right">${fmt(p.entry_price)}</td><td class="text-right">${fmt(p.stop_price)}</td><td class="text-right">${usd(p.size_usd)}</td>
+      <td class="text-right ${cls(p.unrealized_pnl)}">${sgn(p.unrealized_pnl)}</td><td class="text-right ${cls(p.r)}">${sgn(p.r)}</td></tr>`).join('') : empty(8, 'Açık pozisyon yok.');
+    $('glClosed').innerHTML = closed.length ? closed.map((t) => `<tr><td class="font-semibold text-white">${esc(t.asset)}</td><td>${esc(t.entry_date)}</td><td>${esc(t.exit_date)}</td>
+      <td class="text-right">${fmt(t.entry_price)}</td><td class="text-right">${fmt(t.exit_price)}</td><td class="text-right ${cls(t.r)}">${sgn(t.r)}</td>
+      <td class="text-right ${cls(t.pnl)}">${sgn(t.pnl)}</td><td>${esc(t.reason)}</td></tr>`).join('') : empty(8, 'Henüz kapanmış işlem yok.');
+  }
+
   function renderAll() {
     renderHeader(); renderOzet(); renderAcik(); renderGecmis(); renderIstatistik();
-    renderTakvim(); renderDonemsel(); renderStrateji(); renderRisk();
+    renderTakvim(); renderDonemsel(); renderStrateji(); renderRisk(); renderGolge();
     const active = document.querySelector('.nav-btn.active');
     if (active && (active.dataset.nav === 'grafik' || active.dataset.nav === 'acik')) drawCharts();
     if (window.lucide) lucide.createIcons();
