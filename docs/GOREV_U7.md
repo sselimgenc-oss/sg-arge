@@ -41,3 +41,13 @@ Mevcut huni aynen: Aşama 1, rastgele giriş testi (2a), OOS + maliyet stresi + 
 
 ## 7. Lider
 Her gruptan 1 varyantı bağımsız tekrar koşar. `U7_SONUC.md`'yi yazar.
+
+## Ek 1 (lider, 2026-10-24): U6'da piyasa/veri yüzünden atlanan 49 TradingView kartı
+Kullanıcı kararı ("hepsini test et") gereği U6'nın "kol sınıfı değiştirilmez" kuralı U7'de gevşetilir. Kural ve parametreler yine değişmez; yalnız kol eşlenir:
+- FX yayın sembolü → `FX8` (Faz 1 FX arşivi); BIST → `BIST30`;
+- diğer borsalardaki hisse/endeks (NSE, ASX, TSE, XETR, MYX, BCBA, EUREX) → `ABD25` (PIT);
+- ABD/emtia/FX 4H → yfinance 1H'den 4H, Faz 1 yfinance 1H dönem kuralı (ilk 2/3 IS, kalan OOS).
+Çeviri Sonnet'te (`[U7] piyasa/veri kartları`), koşu Codex'te. Verisi bulunamayan kol `Doğrulanamaz (veri)` olarak kalır.
+
+## Ek 2 (lider, 2026-10-24): OOS bitişi
+`u1.py`, `u4.py`, `u6.py` ve Faz 1 koşucularındaki OOS bitiş tarihleri (2025-09-30 vb.) U7 koşusunda **son kapanmış bara** uzatılır. Bu, U7 koşu PR'ının parçasıdır.
