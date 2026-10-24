@@ -1626,8 +1626,8 @@ class Yorumlayici:
     def _alt_dilim(self, e: A.Call, dizi: bool) -> Any:
         """Düşük dilim: betik kendi sembolünün `dk` dakikalık barlarında koşulur. security_lower_tf grafik barının içindeki
         tüm alt bar değerlerini (dizi), security ise sonuncusunu verir (geçmiş barlarda TradingView davranışı)."""
-        adlar = ["symbol", "timeframe", "expression"]
-        dugumler = {(a.name or adlar[k]): a.value for k, a in enumerate(e.args)}
+        adlar = ["symbol", "timeframe", "expression", "gaps", "lookahead", "ignore_invalid_symbol", "currency"]
+        dugumler = {(a.name or (adlar[k] if k < len(adlar) else f"_{k}")): a.value for k, a in enumerate(e.args)}
         sembol = str(self._deger(dugumler["symbol"]) or self.sembol)
         dk = tf_dakika(self._deger(dugumler["timeframe"]))
         if self.guvenlik_modu:          # alt dilimin kendi koşusu: ifade değeri kaydedilir
