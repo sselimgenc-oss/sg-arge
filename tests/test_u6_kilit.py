@@ -30,11 +30,19 @@ def test_locked_command_requires_explicit_override(monkeypatch: pytest.MonkeyPat
         u6_kilit.main(["--results-dir", str(tmp_path)])
 
 
+def test_locked_command_rejects_a_selected_card_that_is_no_longer_runnable(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
+    pd.DataFrame([_row("TV-MISSING", "Gecti", 1.0)]).to_csv(tmp_path / "huni_ozet.csv", index=False)
+    monkeypatch.setenv("KILIT_AC", "1")
+    monkeypatch.setattr(u6_kilit.u6, "all_variants", lambda: [])
+    with pytest.raises(ValueError, match="TV-MISSING"):
+        u6_kilit.main(["--results-dir", str(tmp_path)])
+
+
 @pytest.mark.parametrize(("metrics", "expected"), [
-    ({"net_2x": .001, "PF_2x": 1.1, "mdd": .15}, True),
-    ({"net_2x": 0, "PF_2x": 1.2, "mdd": .1}, False),
-    ({"net_2x": .1, "PF_2x": 1.09, "mdd": .1}, False),
-    ({"net_2x": .1, "PF_2x": 1.2, "mdd": .151}, False),
+    ({"net_2x": .001, "PF_2x": 1.1, "mdd": -.15}, True),
+    ({"net_2x": .1, "PF_2x": 1.2, "mdd": -.16}, False),  # calculate_metrics sign: a 16% drawdown is -0.16
+    ({"net_2x": 0, "PF_2x": 1.2, "mdd": -.1}, False),
+    ({"net_2x": .1, "PF_2x": 1.09, "mdd": -.1}, False),
 ])
 def test_locked_pass_rule(metrics, expected) -> None:
     assert u6_kilit.passes_locked(metrics) is expected

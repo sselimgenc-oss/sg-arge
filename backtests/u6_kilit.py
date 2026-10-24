@@ -46,14 +46,16 @@ def select_candidates(table: pd.DataFrame, maximum: int = MAX_CANDIDATES) -> pd.
     if len(chosen) < maximum:
         known = set(chosen["varyant"])
         fallback = ranked[~ranked["varyant"].isin(known)].copy()
-        fallback = fallback[fallback.apply(_passes_without_dsr, axis=1)]
-        fallback = fallback.sort_values(["_dsr", "varyant"], ascending=[False, True], kind="stable")
-        chosen = pd.concat([chosen, fallback.head(maximum - len(chosen))], ignore_index=True)
+        if not fallback.empty:
+            fallback = fallback[fallback.apply(_passes_without_dsr, axis=1)]
+            fallback = fallback.sort_values(["_dsr", "varyant"], ascending=[False, True], kind="stable")
+            chosen = pd.concat([chosen, fallback.head(maximum - len(chosen))], ignore_index=True)
     return chosen.drop(columns=[column for column in ("_oos_sharpe", "_dsr", "_priority") if column in chosen], errors="ignore")
 
 
 def passes_locked(metrics: dict[str, float | int]) -> bool:
-    return bool(metrics["net_2x"] > 0 and metrics["PF_2x"] >= 1.1 and metrics["mdd"] <= .15)
+    # calculate_metrics reports drawdown as a negative return (e.g. -0.17).
+    return bool(metrics["net_2x"] > 0 and metrics["PF_2x"] >= 1.1 and abs(metrics["mdd"]) <= .15)
 
 
 def last_closed_bar(data: dict[str, pd.DataFrame], tf: str, now: pd.Timestamp | None = None) -> pd.Timestamp:
@@ -96,7 +98,7 @@ def main(argv: list[str] | None = None) -> int:
     rows, cache = [], {}
     for variant in selected["varyant"]:
         if variant not in by_id:
-            continue
+            raise ValueError(f"secili U6 adayi artik calisabilir kartlarda yok: {variant}")
         card, market = by_id[variant]
         key = market, card["tf"]
         data = cache.setdefault(key, u4.load_data(args.veri_kok, *key))
