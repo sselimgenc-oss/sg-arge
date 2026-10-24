@@ -245,3 +245,17 @@ def test_security_other_symbol_without_data_is_unsupported() -> None:
     ps.veri_saglayici = lambda sembol, dk: None
     with pytest.raises(Desteklenmiyor):
         calistir(ps, _veri(30, freq="1h"))
+
+
+def test_map_put_get_keys_and_methods() -> None:
+    df = _veri(6)
+    src = """//@version=5
+indicator('t')
+var m = map.new<string, float>()
+m.put("son", close)
+if bar_index == 0
+    map.put(m, "ilk", close)
+x = m.get("son") - map.get(m, "ilk") + (m.contains("yok") ? 1000 : 0) + m.size() * 0
+"""
+    x = _seri(src, df)
+    _ayni(x, (df["close"] - df["close"].iloc[0]).to_numpy(float))

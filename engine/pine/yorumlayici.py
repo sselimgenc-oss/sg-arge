@@ -798,6 +798,8 @@ class Yorumlayici:
             return self._kullanici(e, self.yontemler[ad], nesne)
         if isinstance(nesne, list):
             return self._yerlesik("array." + ad, e, on_arg=nesne)
+        if isinstance(nesne, dict):
+            return self._yerlesik("map." + ad, e, on_arg=nesne)
         if nesne is None or (isinstance(nesne, float) and na(nesne)):   # çizim nesnesi (label/line/box) ya da na
             if ad.startswith("get_"):
                 raise Desteklenmiyor(f"çizim nesnesinden okuma: {ad}")
@@ -891,6 +893,8 @@ class Yorumlayici:
             return _matematik(ad[5:], konum, adli, self)
         if ad.startswith("array."):
             return _dizi(ad[6:], konum, adli)
+        if ad.startswith("map."):
+            return _harita(ad[4:], konum, adli)
         if ad.startswith("str."):
             return _metin(ad[4:], konum, adli)
         if ad == "na":
@@ -1705,6 +1709,40 @@ def _dizi(ad: str, konum, adli) -> Any:
         v = a[k]
         return 100.0 * sum(1 for x in a if x <= v) / len(a) if a else NA
     raise Desteklenmiyor("array." + ad)
+
+
+def _harita(ad: str, konum, adli) -> Any:
+    """Pine map: anahtar ekleme sırası korunur (Python dict)."""
+    if ad == "new":
+        return {}
+    m = konum[0]
+    if not isinstance(m, dict):
+        raise PineHatasi(f"map.{ad} harita olmayan")
+    if ad == "put":
+        eski = m.get(konum[1], NA)
+        m[konum[1]] = konum[2]
+        return eski
+    if ad == "get":
+        return m.get(konum[1], NA)
+    if ad == "contains":
+        return konum[1] in m
+    if ad == "remove":
+        return m.pop(konum[1], NA)
+    if ad == "size":
+        return len(m)
+    if ad == "keys":
+        return list(m.keys())
+    if ad == "values":
+        return list(m.values())
+    if ad == "clear":
+        m.clear()
+        return None
+    if ad == "copy":
+        return dict(m)
+    if ad == "put_all":
+        m.update(konum[1])
+        return None
+    raise Desteklenmiyor("map." + ad)
 
 
 def _metin(ad: str, konum, adli) -> Any:
