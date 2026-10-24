@@ -15,8 +15,8 @@ from strategies.ozel import build_plan as ozel_plan, has_strategy
 
 SPEC = Path(__file__).resolve().parents[1] / "docs" / "spec"
 PARTI_IDS = ['PDt7xwn2', 'HfxNiEab', 'ZvpONhex', 'zb7PgKWs', 'TQVitTEQ', 'ApE4pUTA', 'abjeWQD5', 'Dln4aFaM', '6ZReHYKn', '8zGpvRaM', '7S2pDMA5', 'KYB6AmC1', 'C1hyNDWO', 'Q1O23zJP', 'yMCa3XZD', 'qQ0MJCVL', 'Y9ppyIk2', '522xf0n5', 'xYflA6O7', 'vMuEblZr', '2TrSqi61', 'o9qty0BL', 'PUEDA3c6', 'zMwHN2Uu', 'ANmKXWWJ', 'adstHm9N', 'Qg1Jra51', '69ZFfJ5L', 'mpjNqADq', 'IMKs0OPw', '04erUlJM', 'Z9O5w3SG', '8YopUUSO', 'vrrutnMb', 'xDJH00mL', 'XRZCjbFr', '2wyXTTMc', '97gxVA5b', 'woRXiMlC', 'et8U6rd3', '71yKm18B', 'egTb7TgJ', '8iAYXXsS', '8GIAFRcP', '0BcdTWoV', 'VFzCk3HX', 'zrDoqm9F', 'OKxIjdsz', 'NeEiwmDq', 'VcRiudNf', 'b4HV7iJR', 'IFSv46kK']
-TAM_IDS = ['PDt7xwn2', 'HfxNiEab', 'zb7PgKWs', '6ZReHYKn', 'qQ0MJCVL', 'xYflA6O7', 'PUEDA3c6', 'zMwHN2Uu', 'ANmKXWWJ', 'IMKs0OPw', 'Z9O5w3SG', 'XRZCjbFr', '97gxVA5b', 'zrDoqm9F', 'OKxIjdsz', 'VcRiudNf']
-OZEL_IDS = ['xYflA6O7', 'PUEDA3c6', 'zMwHN2Uu', 'IMKs0OPw', 'Z9O5w3SG', '97gxVA5b']
+TAM_IDS = ['PDt7xwn2', 'HfxNiEab', 'zb7PgKWs', '6ZReHYKn', 'qQ0MJCVL', 'xYflA6O7', 'vMuEblZr', 'o9qty0BL', 'PUEDA3c6', 'zMwHN2Uu', 'ANmKXWWJ', 'IMKs0OPw', 'Z9O5w3SG', 'XRZCjbFr', '97gxVA5b', 'zrDoqm9F', 'OKxIjdsz', 'VcRiudNf']
+OZEL_IDS = ['xYflA6O7', 'vMuEblZr', 'o9qty0BL', 'PUEDA3c6', 'zMwHN2Uu', 'IMKs0OPw', 'Z9O5w3SG', '97gxVA5b']
 SINIFLAR = ("KRIPTO", "ABD", "EMTIA")
 NEDENLER = ("piyasa", "veri", "ceviri", "bekliyor:motor")
 
@@ -130,7 +130,10 @@ def test_ornek_seri_sinyal_uretir_ya_da_nadir(script_id):
     card = load(script_id)
     total = 0
     for seed in (7, 8, 9):
-        sig = signals(script_id, walk(4000, seed, freq_of(card)))
+        frame = walk(4000, seed, freq_of(card))
+        if script_id == "o9qty0BL":   # kart 2021-09-25 oncesi islem uretmez (test penceresi)
+            frame.index = frame.index + (pd.Timestamp("2021-10-01", tz="UTC") - pd.Timestamp("2018-01-01", tz="UTC"))
+        sig = signals(script_id, frame)
         total += int(sig["entry"].sum()) + int(sig["exit"].sum())
     assert total > 0
 

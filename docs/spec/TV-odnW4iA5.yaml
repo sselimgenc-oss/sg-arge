@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'pyramiding = 3: Turtle sisteminde ek birimler son giris + ATR x mesafe seviyesindeki giris stop emirleriyle acilir (strategy.entry stop=). Piramit motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md); not: cikis stopu da birimlere gore her barda guncellenir (currentStopL), motor PR''i birlesince yeniden okunacak.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Turtle: ek birimler son giris + ATR x mesafe seviyesindeki giris STOP emirleriyle acilir (strategy.entry stop=) ve cikis stopu birimlere gore her barda guncellenir (currentStopL = max(atr stopu, bant stopu)); pyramiding = 3. Bar basina degisen, birim bazli stop motor piramit semantigine uymaz. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (bekliyor:motor): pyramiding = 3: Turtle sisteminde ek birimler son giris + ATR x mesafe seviyesindeki giris stop emirleriyle acilir (strategy.entry stop=). Piramit motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md); not: cikis stopu da birimlere gore her barda guncellenir (currentStopL), motor PR''i birlesince yeniden okunacak.']
+belirsiz: ['Dogrulanamaz (ceviri): Turtle: ek birimler son giris + ATR x mesafe seviyesindeki giris STOP emirleriyle acilir (strategy.entry stop=) ve cikis stopu birimlere gore her barda guncellenir (currentStopL = max(atr stopu, bant stopu)); pyramiding = 3. Bar basina degisen, birim bazli stop motor piramit semantigine uymaz. Yaklasik ceviri yapilmadi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

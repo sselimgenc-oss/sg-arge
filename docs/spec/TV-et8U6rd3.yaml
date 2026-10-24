@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD-1D}
-dogrulanamaz: {neden: 'bekliyor:motor', ayrinti: 'DCA ile kademeli birikim: pyramiding=500, dusus merdiveni (dip ladder) ve kriz sonrasi tekrarli alimlar. Piramit/DCA Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Kural boyutlandirmanin kendisidir: her yeni ayda sabit dolar (300 $) alim (DCA, pyramiding = 500), cikis degeri x %95 oraninda yeniden giris, dip merdiveni cikis degerine gore boyutlanir; sinyal degil nakit akisi yonetimi. Motor risk boyutlu piramit semantigiyle ayni degildir. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Beklemede (bekliyor:motor): DCA ile kademeli birikim: pyramiding=500, dusus merdiveni (dip ladder) ve kriz sonrasi tekrarli alimlar. Piramit/DCA Dogrulanamaz kategorisidir. Motor destegi bekleniyor (docs/GOREV_U6_MOTOR.md: piramit); motor PR''i birlesince yeniden cevrilecek.']
+belirsiz: ['Dogrulanamaz (ceviri): Kural boyutlandirmanin kendisidir: her yeni ayda sabit dolar (300 $) alim (DCA, pyramiding = 500), cikis degeri x %95 oraninda yeniden giris, dip merdiveni cikis degerine gore boyutlanir; sinyal degil nakit akisi yonetimi. Motor risk boyutlu piramit semantigiyle ayni degildir. Yaklasik ceviri yapilmadi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
