@@ -5,7 +5,7 @@ Son güncelleme: 2026-10-24 19:00 UTC, lider (Opus).
 ## Şu an
 **Faz 2: paper trade çalışıyor.** C07 + R01 (ABD günlük) + A6-010 (emtia günlük), eşit ağırlık, 5.000 USD sanal (`paper/portfoy.yaml`). Gerçek para yok.
 - Defter 2026-09-01'den geriye dönük (aynı kurallar, gerçek veri); **canlı paper 2026-10-24'ten itibaren.** Karar canlı döneme bakılarak verilir.
-- `paper.yml` saat :17'ye zamanlı ama GitHub cron'u atlıyor: pratikte ~5 saatte bir (denetim A1). Defter yalnız kapanmış günlük barla (yarım bar koruması); açık pozisyonlar saatlik fiyatla yalnız panoda değerlenir.
+- `paper.yml` saat :17'ye zamanlı ama GitHub cron'u atlıyor: pratikte ~3,5-5 saatte bir. **Kullanıcı kararı 2026-10-24: kabul** (denetim A1 kapandı; defter günlük kapanışla çalıştığı için işlemler etkilenmez, yalnız pano gecikir). Defter yalnız kapanmış günlük barla (yarım bar koruması); açık pozisyonlar saatlik fiyatla yalnız panoda değerlenir.
 - Pano: `sg-pano` reposu, GitHub Pages (https://sselimgenc-oss.github.io/sg-pano/). Veri `PANEL_TOKEN` ile gönderilir.
 - Alarmlar: portföy MDD %10 uyarı, %15 yeni giriş durur; bir satır 30 kapanmış işlemden sonra PF < 1 ise inceleme.
 - **Gölge kitap** (ana portföyden ayrı, `docs/GOREV_F2_GOLGE.md` Ek 2): U4-H1 (kripto 4H), T8-07 ve V2B (emtia 1H); her biri 5.000 USD, risk %0,25; 2026-09-01'den geriye dönük, canlı 2026-10-24'ten. Karar yalnız canlı döneme bakılarak, 6 ay sonra.
