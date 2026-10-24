@@ -1,54 +1,19 @@
-# Calisma protokolu (beniokuortak.md'nin uygulamasi)
+# Çalışma protokolü (güncel: 2026-10-24)
 
-- Gorev kuyrugu: `state.json.queue` + GitHub Issue (etiketler: `owner:codex`, `owner:claude`, `needs-audit`).
-- Sira: `state.json.turn` alanı. Sahip degilsen yazma; 15 dk'da bir kontrol et, `@codex` / `@claude` (gercek tetikleyiciler; "-worker" gibi adlar GitHub hesabi olmadigi icin tetiklemez) ile durt.
-- Commit etiketleri: `[Claude-Mod]`, `[Codex-Sol]`, `[Opus-Audit]`.
-- Faz: 1 dogrulama (A seviyesi) -> 2 B seviyesi stratejilerin kodlanip dogrulanmasi -> 3 short/kaldirac varyantlari -> 4 Opus denetimi -> 5 paper listesi.
-- Hicbir sonuc "dogrulandi" sayilmaz: results/ altinda yeniden uretilmediyse.
+## Roller
+- **Lider (Claude Opus, sselimgenc hesabı):** karar ve öncelik, görev yazımı (`docs/GOREV_*.md`), ön kayıt, PR denetimi, sonuç raporları. `DURUM.md`'yi yalnız lider günceller.
+- **Codex:** uygulayıcı (kod, veri, gerçek koşular).
+- **Sonnet (sg507 hesabı):** uygulayıcı (kod, araştırma). Karar vermez.
+- **Argon (Gemini, repo erişimi yok):** araştırmacı ve denetçi; kullanıcı aracılığıyla çalışır. Çıktısını lider denetler.
 
-## Etiketler
-- `@claude` moderator (Sonnet 5.5), `@auditor` denetci (Opus 5.5), `@codex` worker.
-- Ayni anda yalniz `state.json.turn` sahibi dosya yazar; digerleri yalniz yorum yazar.
+## Akış
+1. Lider görevi `docs/GOREV_*.md`'ye yazar, PR açar; kullanıcı birleştirir.
+2. Lider Issue #1'e `[CODEX GÖREVİ]` / `[SONNET GÖREVİ]` başlıklı kısa yorum yazar ve kullanıcıya yapıştırmaya hazır mesaj verir.
+3. Ajan main'i çeker, görevi yapar, PR ile teslim eder. Lider denetler: kabul ya da ret.
+4. Ajanlar kendiliğinden tetiklenmez; görevi kullanıcı iletir.
 
-## Liderlik devri (2026-10-21)
-- Takım lideri ve danışman: `@auditor` (sselimgenc hesabı, Opus 5.5). Önceliği, kriter onayını ve görev atamasını o yapar.
-- sg507 hesabındaki Opus 5.5 rolü **pasif**; `@claude` (Sonnet 5.5) yalnız lider talimatıyla uygulama/koordinasyon yapar.
-- Devir notu: `docs/DEVIR.md`.
-
-## Lider kurallari (v0.3, 2026-10-21)
-- Paralel calisma serbest: her gorev sahibi yalniz kendi gorev dosyalarina (GOREV_Tx.md'deki kapsam) ve `state.json`'da kendi kaydinin `status` alanina yazar. `turn`, kuyruk ekleme/cikarma, kriter degisikligi yalniz lider.
-- Her teslim PR ile gelir; lider (`@auditor`) inceler ve kabul/ret yazar. Lider onayi olmadan sonraki asama (or. T1b) baslamaz.
-- Itirazlar `tartisma/NNN_*.md` dosyalari uzerinden; kriter dosyasi dogrudan degistirilmez.
-
-## Argon (Gemini) - GitHub'a bagli degil
-- Lider `argon/PAKET_<gorev>.md` paketini hazirlar (kendi icinde tam: talimat + sema + liste). Kullanici Argon'a yapistirir.
-- Kullanici Argon'un ciktisini `argon/<gorev>.yaml` olarak web arayuzunden yukler, commit `[Argon] ...`.
-- Lider inceler; kabul edilen kartlari `docs/spec/<id>.yaml`'a boler. Argon dogrudan `docs/` ya da `state.json`'a yazmaz.
-
-## Tetikleme durumu (2026-10-21)
-- `@codex`: Codex Cloud environment kurulu, Issue yorumuyla otomatik tetiklenir.
-- `@claude` (Sonnet): secret yok, **kullanici manuel tetikler**. Lider gorevi `docs/GOREV_*.md` + Issue yorumuna yazar; kullanici Sonnet oturumuna iletir. Issue'da `@claude` etiketi kullanilmaz (Actions bos yere hata verir).
-- Argon: kullanici araciligiyla (`argon/PAKET_*.md`).
-
-## B plani (2026-10-21): web okuma tamamen Argon'da
-- Sonnet'in bulut ortami (Full ag izni verilmesine ragmen) kaynak sitelerine proxy 403 aliyor. Tum web kaynakli kart cikarma isi Argon'a gecti: xlsx partileri 4, 6, 7, 8, 9 ve `docs/spec/YENIDEN.csv`.
-- Sonnet: kod ve denetim (T5a yorumlayici cekirdegi, kart tutarlilik denetimi). Kaynak okuma gerektiren is verilmez.
-- Codex: `@codex` otomatik tetikleme calismiyor; kullanici "gorev geldi" der, Codex Issue #1'deki son `@codex` yorumunu okur.
-
-## Rol notu (kullanici karari, 2026-10-22)
-- **Argon = isci.** Kaynak okuma, kopyalama, liste/veri toplama gibi ciktisi denetlenebilir isler. Strateji degerlendirmesi, kriter yorumu ve denetim yapmaz. Ciktisi her zaman Sonnet (standart) ya da lider (inceleme) tarafindan denetlenir.
-
-## Codex projeden çıkarıldı (kullanıcı kararı, 2026-10-23)
-Codex bulut ortamı tekrar tekrar açılmadığı için işler aksadı. Codex'in bütün işleri **Sonnet**'e geçti. Ekip artık şöyle: lider (Opus), Sonnet ve Argon (sohbet, repo erişimi yok).
-
-## "Görev geldi" tetiklemesi (lider kararı, 2026-10-23)
-Kullanıcı Sonnet'e yalnız **"görev geldi"** der. Görev her zaman GitHub Issue #1'de durur:
-- **Sonnet:** Issue #1'deki son **`[SONNET GÖREVİ]`** başlıklı yorumu okur. `@claude` etiketi kullanılmaz; Actions'ı boşuna tetikler.
-
-Yorum kısa özet + `docs/GOREV_*.md` bağlantısı içerir. Görev ayrıca `DURUM.md` "Şu an" tablosunda da yazılır (Sonnet'in yeni oturumu Issue'yu görmezse oradan okur). Ajan main'i çeker, görevi yapar, PR ile teslim eder.
-
-## Codex geri döndü (kullanıcı kararı, 2026-10-23)
-Codex yeniden ekipte; ilk işi U1c (`docs/GOREV_U1c_CODEX.md`). Tetikleme: kullanıcı Codex'e "görev geldi" der, Codex Issue #1'deki son **`[CODEX GÖREVİ]`** başlıklı yorumu okur. Teslim PR ile; lider denetler.
-
-## Argon denetçi rolü (kullanıcı kararı, 2026-10-23)
-Argon (Gemini 3.8) artık araştırmacı + denetçi. Bulguları kaynaklı yazar; ekibin yöntemini eleştirebilir. Çıktısını yine lider denetler. İlk iş: U-A1 (`argon/PAKET_UA1_uc_enstruman.md`). Bu iş kripto kapsamını değiştirmez.
+## Kurallar
+- Her ajanda aynı anda tek iş.
+- Uydurma yok: her sayı koddan ya da kaynaktan gelir; bulunamayan "bulunamadı" yazılır.
+- Test kuralları: `docs/EVRENSEL_KURALLAR.md`, eleme: `docs/ELEME_KRITERLERI.md`. Ön kayıt sonucu görmeden yapılır; kilitli dönem yalnız lider kararıyla açılır.
+- Commit etiketleri: `[Opus-Lead]`, `[Codex]`, `[Claude-Mod]` (Sonnet), `[Argon]`.
