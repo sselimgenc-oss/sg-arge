@@ -11,13 +11,14 @@ Son güncelleme: 2026-10-24, lider (Opus).
 
 | Ajan | Görev |
 |---|---|
-| Lider | U4 kapandı (`results/U4_SONUC.md`): 16/16 Reddedildi, ama kripto 4H trendinde (H1, H2) gerçek kâr izi var. Sonraki yön için kullanıcı kararı bekleniyor. |
-| Codex | Beklemede. U4 gerçek koşu (PR #171) kabul edildi; lider tekrar koşusuyla birebir. |
-| Sonnet | Beklemede. U5 tamam (PR #173): 1.298 TradingView açık kaynak strateji tarandı, süzgeçten 205 geçti (`arastirma/U5_tv.csv`, `U5_ozet.md`); örneklem denetimi 3/3. Test için en çok 10 aday seçimi kullanıcı kararıyla. |
+| Lider | U6 ön kaydı (`docs/GOREV_U6.md`, 205 TradingView stratejisi, N=205, en çok 5 aday kilitli dönemde bir kez). Parti denetimleri. |
+| Codex | **F2-GÖLGE** (`docs/GOREV_F2_GOLGE.md`): kripto 4H trend (U4-H1, çekirdek 6 coin, %0,25 risk) canlı gölge kitap, geriye dönük doldurma yok. Sonra **U6 B** (koşucu). |
+| Sonnet | **U6 A** (`docs/GOREV_U6.md`): 205 Pine → kart çevirisi, 4 parti × ~50, her parti ayrı PR. |
 | Argon | Beklemede. |
 
 ## Sırada (kullanıcı kararı bekleyen)
-1. ~~Yeni strateji arayışı~~ → **U4 başladı** (kullanıcı kararı 2026-10-24: kripto 4H/1D + ABD/emtia 1D, kendi hipotezlerimiz, yalnız long).
+1. Kripto 4H trend → gölge kitap (kullanıcı kararı 2026-10-24, U4 seçenek b). TradingView 205 → U6 (kullanıcı kararı 2026-10-24).
+0. ~~Yeni strateji arayışı~~ → **U4 bitti** (kullanıcı kararı 2026-10-24: kripto 4H/1D + ABD/emtia 1D, kendi hipotezlerimiz, yalnız long).
 2. Faz 2 pano modülleri (`docs/FAZ2_NOTLAR.md`): koç bulguları, öğrenen koç (gölge mod), strateji radarı.
 3. Küçük iyileştirmeler: hesap kartları saatlik değerlenmiyor (yalnız toplam); fiyat zamanı saatlik barın başlangıcını gösteriyor.
 
