@@ -1,0 +1,1 @@
+{"id": "2lGyzYkC", "sembol": "BINANCE:BTCUSDT", "tf": "60", "url": "https://www.tradingview.com/script/2lGyzYkC/", "tur": "pine", "veri": "Binance BTCUSDT 1h", "bas": "2017-08-17", "son": "2026-10-24", "bar": 80407, "uyari": "mintick veri kaynağından (0.01)", "karar": "desteklenmiyor", "neden": "strategy.risk.max_intraday_loss"}

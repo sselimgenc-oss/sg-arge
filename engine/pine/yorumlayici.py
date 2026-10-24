@@ -671,7 +671,7 @@ class Yorumlayici:
             "syminfo.mintick": self.mintick, "syminfo.tickerid": self.sembol, "syminfo.ticker": self.sembol.split(":")[-1],
             "syminfo.prefix": self.sembol.split(":")[0], "syminfo.timezone": self.tz, "syminfo.pointvalue": 1.0,
             "syminfo.type": "crypto" if self.tz == "UTC" else "stock", "syminfo.root": self.sembol.split(":")[-1],
-            "syminfo.currency": "USD", "syminfo.session": "regular",
+            "syminfo.currency": _kotasyon(self.sembol), "syminfo.basecurrency": _taban(self.sembol), "syminfo.session": "regular",
             "timeframe.period": tf_metin(self.tf_dk), "timeframe.multiplier": _carpan(self.tf_dk),
             "timeframe.isintraday": self.tf_dk < 1440, "timeframe.isdaily": self.tf_dk % 1440 == 0 and self.tf_dk < 10080,
             "timeframe.isweekly": self.tf_dk % 10080 == 0 and self.tf_dk < 43200, "timeframe.ismonthly": self.tf_dk >= 43200,
@@ -1408,6 +1408,20 @@ class Yorumlayici:
 
 
 # ---------------------------------------------------------------------- yardımcılar
+KOTASYONLAR = ("USDT", "USDC", "BUSD", "USD", "BTC", "ETH", "EUR", "TRY")
+
+
+def _kotasyon(sembol: str) -> str:
+    ad = sembol.split(":")[-1].replace(".P", "")
+    return next((k for k in KOTASYONLAR if ad.endswith(k) and len(ad) > len(k)), "USD")
+
+
+def _taban(sembol: str) -> str:
+    ad = sembol.split(":")[-1].replace(".P", "")
+    k = _kotasyon(sembol)
+    return ad[: -len(k)] if ad.endswith(k) else ad
+
+
 def _surum(p: A.Script) -> int:
     for a in getattr(p, "annotations", []) or []:
         s = str(getattr(a, "value", a))
