@@ -48,7 +48,8 @@ YFINANCE = {"SPX": "^GSPC", "SPX500": "^GSPC", "US500": "^GSPC", "SPY": "SPY", "
 HISSE_BORSALARI = {"NASDAQ", "NYSE", "AMEX", "ARCA", "BATS", "NYSEARCA", "CBOE", "TVC", "CME", "CME_MINI", "COMEX", "NYMEX", ""}
 KAPI_HAFTA = 10
 NEDENSELLIK_BAR = 15_000
-DAKIKALIK_ALT = 15            # bu dakikanın altı ilk turda ertelenir
+DAKIKALIK_ALT = 15            # bu dakikanın altı yalnız --dakikalik ile ve pencereli koşulur
+DAKIKALIK_KOS = False
 
 
 def dakika(tf: str) -> int:
@@ -82,8 +83,8 @@ def binance_tick(bsym: str) -> float:
     return tablo[bsym]
 
 
-def veri(sembol: str, tf: str) -> tuple[pd.DataFrame | None, str]:
-    """(OHLC, kaynak notu). Veri yoksa (None, neden). Kapanmamış son bar atılır."""
+def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.DataFrame | None, str]:
+    """(OHLC, kaynak notu). Veri yoksa (None, neden). Kapanmamış son bar atılır. `bas`: pencere başlangıcı (dakikalık)."""
     borsa, _, ad = sembol.upper().partition(":")
     if not ad:                                  # önek yok: 'SPY', 'VIX', 'BTCUSDT'
         borsa, ad = "", borsa
@@ -94,12 +95,13 @@ def veri(sembol: str, tf: str) -> tuple[pd.DataFrame | None, str]:
         if taban is None:
             return None, f"veri_yok: aralık {tf}"
         aralik = next(k for k, v in BINANCE_ARALIK.items() if v == taban)
-        yol = CACHE / f"{bsym}_{aralik}.parquet"
+        ek = f"_{bas:%Y%m%d}" if bas is not None else ""
+        yol = CACHE / f"{bsym}_{aralik}{ek}.parquet"
         if yol.exists() and time.time() - yol.stat().st_mtime < 6 * 3600:
             df = pd.read_parquet(yol)
         else:
             try:
-                df = fetch_binance(Asset(bsym, "KRIPTO", "binance"), aralik)
+                df = fetch_binance(Asset(bsym, "KRIPTO", "binance"), aralik, start=bas)
             except requests.HTTPError:
                 return None, f"veri_yok: Binance {bsym} yok"
             if df.empty:
@@ -200,9 +202,15 @@ def kos(kimlik: str) -> dict:
     modul, kaynak = strateji(kimlik)
     satir: dict = {"id": kimlik, "sembol": kaynak["sembol"], "tf": kaynak["tf"], "url": kaynak["url"],
                    "tur": "pine" if kaynak.get("pine") else "modul"}
+    pencere_bas = None
     if dakika(str(kaynak["tf"])) < DAKIKALIK_ALT:
-        return satir | {"karar": "ertelendi", "neden": f"dakikalık ({kaynak['tf']}): ayrı, pencereli koşu (veri milyonlarca bar)"}
-    df, notu = veri(str(kaynak["sembol"]), str(kaynak["tf"]))
+        if not DAKIKALIK_KOS:
+            return satir | {"karar": "ertelendi", "neden": f"dakikalık ({kaynak['tf']}): ayrı, pencereli koşu (--dakikalik)"}
+        surum, _ = surum_tarihi(kimlik, kaynak)
+        if surum is not None:   # kullanıcı kararı 2026-10-24: sürüm tarihinden 1 yıl önce başlayan pencere
+            pencere_bas = surum - pd.Timedelta(days=365)
+            satir["pencere_bas"] = pencere_bas.date()
+    df, notu = veri(str(kaynak["sembol"]), str(kaynak["tf"]), bas=pencere_bas)
     satir["veri"] = notu
     if df is None:
         return satir | {"karar": "veri_yok", "neden": notu}
@@ -274,7 +282,10 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("idler", nargs="*")
     ap.add_argument("--ayri", action="store_true", help="her id için results/tv2/satirlar/<id>.json yaz")
     ap.add_argument("--birlestir", action="store_true", help="satirlar/ klasörünü sonuclar.csv'ye ekle")
+    ap.add_argument("--dakikalik", action="store_true", help="15 dakikanın altını sürüm tarihi - 1 yıl penceresiyle koş")
     args = ap.parse_args(argv)
+    global DAKIKALIK_KOS
+    DAKIKALIK_KOS = args.dakikalik
     klasor = OUT / "satirlar"
     if args.birlestir:
         _yaz([json.loads(p.read_text()) for p in sorted(klasor.glob("*.json"))])
