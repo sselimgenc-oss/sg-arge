@@ -10,7 +10,7 @@ from typing import Any, Mapping
 import numpy as np
 import pandas as pd
 
-from engine.kart_sinyal import KartPlan
+from engine.kart_sinyal import EndeksYok, KartPlan
 from strategies.ozel import tv_ortak as T
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -22,7 +22,7 @@ def benchmark_frame(data: Mapping[str, pd.DataFrame], name: str) -> pd.DataFrame
         return data[name]
     path = ROOT / "data" / "daily" / f"{name}.parquet"
     if not path.exists():
-        raise FileNotFoundError(f"olcut verisi yok: {name}")
+        raise EndeksYok(f"olcut verisi yok: {name}")  # tarama bunu adli atlama sayar (veri yok), coktu saymaz
     from data.fetch import normalize_ohlcv  # noqa: PLC0415
 
     return normalize_ohlcv(pd.read_parquet(path))
