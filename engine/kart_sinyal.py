@@ -28,6 +28,8 @@ STOP_TYPES = ("atr", "yuzde", "puan", "pips", "max", "seviye")
 TARGET_TYPES = ("atr", "yuzde", "puan", "pips", "seviye")
 TRAIL_TYPES = {"atr_zirve": "high", "atr_kapanis_zirve": "close"}
 STANDARD_STOP_ATR = 3.0  # EVRENSEL_KURALLAR A7: ATR14 x 3 when the card has no stop of its own
+# dinamik_cikis keys -> engine signal columns (levels re-set at every close, Pine strategy.exit per bar)
+DYNAMIC_FIELDS = (("stop", "dyn_stop"), ("stop_giristen", "dyn_stop_rel"), ("hedef", "dyn_target"), ("hedef_giristen", "dyn_target_rel"))
 SIZING_ATR = 14
 
 
@@ -424,6 +426,11 @@ def card_frame_signals(
             out["target_dist"] = float(hedef["deger"])
     if trail:
         out["trail_atr"] = _ind.atr(frame, int(trail.get("n", SIZING_ATR)))
+    dynamic = card.get("dinamik_cikis")
+    if dynamic:
+        for key, column in DYNAMIC_FIELDS:
+            if dynamic.get(key):
+                out[column] = _eval_series(str(dynamic[key]), env, index, mtf)
     if _uses_signal_levels(card):
         out.attrs["sinyal_baglam"] = signal_context(card, frame, env)
     return out, builder
@@ -534,6 +541,8 @@ def build_plan(
         kwargs["pyramid_max"] = int(card["piramit"]["en_cok"])
     if card.get("basa_bas"):
         kwargs["break_even_r"] = float(card["basa_bas"]["tetik_r"])
+    if card.get("dinamik_cikis"):
+        kwargs["dynamic_ratchet"] = bool(card["dinamik_cikis"].get("mandal", False))
     levels: dict[str, Callable[..., float]] = {}
     stop_card, target_card = card.get("stop"), card.get("hedef")
     if stop_card and stop_card.get("tip") == "seviye":
@@ -578,7 +587,7 @@ def build_plan(
             trigger = _expr.parse(str(level["tetik"]))
             configs.append({"oran": float(level["oran"]), "trigger_fn": lambda price, distance, e=trigger: float(
                 e.evaluate({"giris": price, "giris_fiyati": price, "stop_mesafesi": distance}, index=None)
-            )})
+            ), "intrabar": bool(level.get("bar_ici", False)), "stop_entry": bool(level.get("stop_girise", False))})
         kwargs["scaled_exits"] = configs
     if any(builders.values()):
         kwargs["exit_builder"] = lambda symbol, *args: builders[symbol](symbol, *args) if builders.get(symbol) else None

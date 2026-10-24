@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 
 SignalFunction = Callable[[pd.DataFrame, str], pd.DataFrame]
+DYNAMIC_COLUMNS = ("dyn_stop", "dyn_stop_rel", "dyn_target", "dyn_target_rel")
 
 
 @dataclass
@@ -52,6 +53,7 @@ class Position:
     pyramid_entries: int = 1
     scaled_done: set[int] = field(default_factory=set)
     break_even_done: bool = False
+    scaled_prices: dict[int, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -155,6 +157,7 @@ def run_portfolio(
     pyramid_max: int = 0,
     scaled_exits: list[dict] | None = None,
     break_even_r: float | None = None,
+    dynamic_ratchet: bool = False,
     roi_table: dict[float, float] | None = None,
     entry_order_type: str | None = None,
     entry_order_validity: int = 1,
@@ -194,6 +197,15 @@ def run_portfolio(
       shared ``max_total_risk`` budget includes the already-open position.
     * ``scaled_exits``: ordered ``trigger_fn``/``oran`` levels. ``oran`` is a
       fraction of the original quantity and a triggered level fills next bar.
+      A level with ``intrabar`` is a resting limit order instead: its price is
+      fixed at the fill (``trigger_fn(entry, stop_distance)``) and it fills
+      inside the bar after the stop is checked (at the open on a gap);
+      ``stop_entry`` then raises the stop to the entry price.
+    * signal columns ``dyn_stop`` / ``dyn_target`` (absolute levels) and
+      ``dyn_stop_rel`` / ``dyn_target_rel`` (distances from the entry price),
+      computed at a bar's close, replace the open position's stop/target from
+      the next bar (Pine ``strategy.exit`` re-issued every bar); a NaN keeps the
+      previous level. ``dynamic_ratchet`` only ever raises the stop.
     * ``break_even_r``: after an intrabar high reaches this many initial-R, the
       stop is raised to entry price for the following bar.
     * ``level_fns``: signal-bar referenced levels (docs/EVRENSEL_KURALLAR.md D10), each called as
@@ -274,12 +286,16 @@ def run_portfolio(
         sig_target_pct = {symbol: column(symbol, "target_pct") for symbol in symbols}
         sig_entry_level = {symbol: column(symbol, "entry_level") for symbol in symbols}
         has_stop_dist = {symbol: "stop_dist" in signals[symbol].columns for symbol in symbols}
+        sig_dyn = {
+            symbol: {name: column(symbol, name) for name in DYNAMIC_COLUMNS if name in signals[symbol].columns}
+            for symbol in symbols
+        }
         cached = {
             "symbols": symbols, "window": window, "dates": dates, "index_of": index_of, "locs": locs,
             "price_arr": price_arr, "prev_loc": prev_loc, "sig_exit": sig_exit, "sig_atr": sig_atr,
             "sig_trail": sig_trail, "sig_stop_dist": sig_stop_dist, "sig_target_dist": sig_target_dist,
             "sig_stop_pct": sig_stop_pct, "sig_target_pct": sig_target_pct,
-            "sig_entry_level": sig_entry_level, "has_stop_dist": has_stop_dist,
+            "sig_entry_level": sig_entry_level, "has_stop_dist": has_stop_dist, "sig_dyn": sig_dyn,
         }
         if runtime_cache is not None:
             runtime_cache["static"] = cached
@@ -292,6 +308,8 @@ def run_portfolio(
         sig_stop_dist, sig_target_dist = cached["sig_stop_dist"], cached["sig_target_dist"]
         sig_stop_pct, sig_target_pct = cached["sig_stop_pct"], cached["sig_target_pct"]
         sig_entry_level, has_stop_dist = cached["sig_entry_level"], cached["has_stop_dist"]
+        sig_dyn = cached["sig_dyn"]
+    intrabar_levels = [number for number, level in enumerate(scaled_exits or []) if level.get("intrabar")]
 
     sig_entry = {symbol: signals[symbol]["entry"].to_numpy().astype(bool) for symbol in symbols}
 
@@ -462,6 +480,9 @@ def run_portfolio(
             stop=initial_stop, initial_stop=initial_stop, initial_risk=initial_risk,
             entry_cost=entry_cost, target=target, signal_atr=signal_atr,
             runtime_exit=runtime_exit, orig_quantity=quantity, sig_loc=sig_loc,
+            scaled_prices={
+                number: float(scaled_exits[number]["trigger_fn"](price, price - initial_stop)) for number in intrabar_levels
+            },
         )
         max_open_positions = max(max_open_positions, len(positions))
         if max_entries_per_day is not None:
@@ -483,9 +504,10 @@ def run_portfolio(
         part_cost = sold * price * cost_rate
         entry_share = position.entry_cost * fraction if legacy_single_partial else position.entry_cost * (sold / position.quantity)
         cash += sold * price - part_cost
-        position.realized = (price - position.entry_price) * sold - entry_share - part_cost
-        position.exit_cost_acc = part_cost
-        position.entry_cost_sold = entry_share
+        # Accumulated: a trade with several scaled exits keeps every partial in its row.
+        position.realized += (price - position.entry_price) * sold - entry_share - part_cost
+        position.exit_cost_acc += part_cost
+        position.entry_cost_sold += entry_share
         position.entry_cost -= entry_share
         position.quantity -= sold
         position.partial_done = True
@@ -510,7 +532,7 @@ def run_portfolio(
             return None
         position = positions[symbol]
         for number, level in enumerate(scaled_exits):
-            if number not in position.scaled_done and float(price_arr[symbol]["close"][loc]) >= float(level["trigger_fn"](position.entry_price, position.entry_price - position.initial_stop)):
+            if not level.get("intrabar") and number not in position.scaled_done and float(price_arr[symbol]["close"][loc]) >= float(level["trigger_fn"](position.entry_price, position.entry_price - position.initial_stop)):
                 return number
         return None
 
@@ -644,6 +666,22 @@ def run_portfolio(
                         close_position(symbol, date, open_price, "roi")
                     elif float(price_arr[symbol]["high"][loc]) >= roi_price:
                         close_position(symbol, date, roi_price, "roi")
+            if intrabar_levels and symbol in positions:
+                high_price = float(price_arr[symbol]["high"][loc])
+                for number in intrabar_levels:
+                    if number in position.scaled_done:
+                        continue
+                    level_price = position.scaled_prices.get(number, float("nan"))
+                    if not np.isfinite(level_price) or high_price < level_price:
+                        continue
+                    fill = open_price if open_price >= level_price else level_price
+                    take_partial(symbol, fill, float(scaled_exits[number]["oran"]))
+                    position.scaled_done.add(number)
+                    if scaled_exits[number].get("stop_entry"):
+                        position.stop = max(position.stop, position.entry_price)
+                    if position.quantity <= position.orig_quantity * 1e-9:
+                        close_position(symbol, date, fill, "target")
+                        break
 
         # A trailing stop calculated from today's close becomes active tomorrow.
         for symbol, position in positions.items():
@@ -651,6 +689,20 @@ def run_portfolio(
             if loc < 0:
                 continue
             position.bars_held += 1
+            dynamic = sig_dyn[symbol]
+            if dynamic:
+                levels = [float(dynamic["dyn_stop"][loc])] if "dyn_stop" in dynamic else []
+                if "dyn_stop_rel" in dynamic:
+                    levels.append(position.entry_price - float(dynamic["dyn_stop_rel"][loc]))
+                levels = [level for level in levels if np.isfinite(level)]
+                if levels:
+                    position.stop = max(position.stop, max(levels)) if dynamic_ratchet else max(levels)
+                targets = [float(dynamic["dyn_target"][loc])] if "dyn_target" in dynamic else []
+                if "dyn_target_rel" in dynamic:
+                    targets.append(position.entry_price + float(dynamic["dyn_target_rel"][loc]))
+                targets = [level for level in targets if np.isfinite(level)]
+                if targets:
+                    position.target = min(targets)
             if profit_lock is not None and not position.locked:
                 if "trigger_level_fn" in profit_lock:
                     trigger_price = float(profit_lock["trigger_level_fn"](
