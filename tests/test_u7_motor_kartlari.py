@@ -154,3 +154,27 @@ def test_bjdrgy7z_dinamik_seviye_yalniz_yeni_sinyalde_degisir():
     assert np.allclose(sig["dyn_stop"].dropna(), expected.loc[sig["dyn_stop"].dropna().index])
     changes = sig["dyn_stop"].diff().abs() > 1e-12
     assert set(sig.index[changes.fillna(False)]) <= set(sig.index[events])
+
+
+def test_pivot_dongusu_bagimsiz_referansla_ayni_iv1wlva8():
+    """le / se durumlari (pivot sonrasi ilk kirilima kadar dogru) Pine'in ozyinelemeli tanimiyla ayni: bagimsiz dongu."""
+    frame = walk(1500, 21, "4h")
+    card = load("Iv1wlVa8")
+    env = gosterge.build_env(frame, card["gostergeler"])
+    high, low = frame["high"].to_numpy(), frame["low"].to_numpy()
+    n = len(frame)
+    le_ref, se_ref = np.zeros(n, dtype=bool), np.zeros(n, dtype=bool)
+    hprice = lprice = np.nan
+    le = se = False
+    for t in range(n):
+        if t >= 3 and high[t - 1] > high[t] and high[t - 1] > high[t - 2] and high[t - 1] > high[t - 3]:
+            hprice, le = high[t - 1], True
+        elif le and high[t] > hprice:
+            le = False
+        if t >= 3 and low[t - 1] < low[t] and low[t - 1] < low[t - 2] and low[t - 1] < low[t - 3]:
+            lprice, se = low[t - 1], True
+        elif se and low[t] < lprice:
+            se = False
+        le_ref[t], se_ref[t] = le, se
+    assert np.array_equal(env["le"].astype(bool).to_numpy(), le_ref) and np.array_equal(env["se"].astype(bool).to_numpy(), se_ref)
+    assert le_ref.sum() > 50 and se_ref.sum() > 50

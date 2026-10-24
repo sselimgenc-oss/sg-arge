@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD25-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Cikis: strategy.exit(stop = max(ilk stop, guncel kapanis - 2 x GUNCEL ATR), limit = 3R) her barda yeniden kurulur, kapanis EMA20 altindaysa stop kapanisa cekilir ve 2R''de %50 kismi limit cikis vardir. Bar basina degisen stop ve bar ici kismi limit cikis motor semantigine birebir uymaz; yaklasik ceviri yapilmadi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Stop = max(ilk stop, kapanis - 2 x GUNCEL ATR) HER barda sifirdan hesaplanir (onceki izleyen seviyeyi hatirlamaz: dusebilir), ilk stop ise DOLUM barinin ATR''siyle sabitlenir; dinamik_cikis mandal=true onceki izlemeyi tutar, mandal=false ilk stopu tasimaz. Bu iki davranis birlikte ifade edilemez; ayrica EMA kirilinca stop kapanisa cekilir. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Cikis: strategy.exit(stop = max(ilk stop, guncel kapanis - 2 x GUNCEL ATR), limit = 3R) her barda yeniden kurulur, kapanis EMA20 altindaysa stop kapanisa cekilir ve 2R''de %50 kismi limit cikis vardir. Bar basina degisen stop ve bar ici kismi limit cikis motor semantigine birebir uymaz; yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu MYX:IAB).']
+belirsiz: ['Dogrulanamaz (ceviri): Stop = max(ilk stop, kapanis - 2 x GUNCEL ATR) HER barda sifirdan hesaplanir (onceki izleyen seviyeyi hatirlamaz: dusebilir), ilk stop ise DOLUM barinin ATR''siyle sabitlenir; dinamik_cikis mandal=true onceki izlemeyi tutar, mandal=false ilk stopu tasimaz. Bu iki davranis birlikte ifade edilemez; ayrica EMA kirilinca stop kapanisa cekilir. Yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu MYX:IAB).', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
