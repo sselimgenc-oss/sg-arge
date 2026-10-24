@@ -1,0 +1,28 @@
+id: RD-02
+ad: 'Ay sonu SPY/TLT: ay bitimine 4 islem gunu kala goreli getiriye gore kosullu SPY'
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/reddit/ozet.md, url: null, sayfa: 'bolum A, RD-02', not: 'Reddit; r/algotrading, tanweer919 (ayni yazar). docs/GOREV_U7.md Ek 3.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD endeks ETF (SPY; TLT yalniz olcut)
+kol: ABD-1D
+semboller: [SPY]
+olcut_sembolleri: [TLT]
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: cok_enstruman
+giris: null
+cikis: null
+kural_ozeti: {giris: 'Ay bitimine 4 islem gunu kala (ayin sondan 5. islem gunu) SPY ve TLT''nin ay basindan beri getirisini karsilastir. SPY, TLT''nin %2+ gerisindeyse o kapanista SPY al; SPY %2+ ondeyse ayin son kapanisinda SPY al; fark yoksa islem yok.', cikis: Gerideyse ayin son kapanisinda sat; ondeyse gelecek ayin 3. islem gunu kapanisinda sat. TLT alinmaz.}
+stop: null
+hedef: null
+stop_eklendi: true
+dolum: kapanis
+piyasa_kisiti: [ABD]
+parametreler: {measure: TLT, days_left: 4, gap_pct: 2.0, next_month_sell_day: 3}
+deneme_sayisi_kaynakta: 100
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
+spec_durumu: tam
+belirsiz: ['Kural arastirma/reddit/ozet.md bolum A''daki yazar sozlerinden birebir cevrildi; parametre eklenmedi/degistirilmedi. Yazarin boyut/kaldirac bilgisi yoktur: boyut EVRENSEL_KURALLAR A6.', 'ozel_kod: true (TLT getirisi baska enstruman verisi gerektirir, motor ifade dilinde yok): strategies/ozel/rd_02.py. TLT alinmaz; modul olcut serisini kosucunun verdigi veriden (data[''TLT'']) ya da arsivden (data/daily/TLT.parquet) okur; kosucu TLT''yi verilere eklemelidir (islem evreni yalniz SPY).', 'Takvim: O3-007''deki gibi islem gunu sayaci. ''Ay bitimine 4 islem gunu kala'' = ayin sondan 5. islem gunu (ay_islem_gunu_sondan(5); 4 islem gunu geriye kalir) - ''4. gun'' okumasi da mumkun, belirsiz. ''Ayin 3. islem gunu'' = ay_islem_gunu_bastan(3).', '''Ay basindan beri getiri'': onceki ayin son kapanisina gore kapanis getirisi (aylik YTD tanimi); yazar baz gunu yazmamis. Fark esigi %2 = 2 yuzde puan; esitlikte (tam %2) sinyal sayilir.', 'Dolum kapanista (dolum: kapanis; D4 MOC maliyeti 2x baz). Kaynak sozleri ''o kapanista al / ayin son kapanisinda sat'': sonraki acilis varyanti ayrica raporlanir.', 'Yazarin stopu yok: ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true); strateji gunler-haftalar tutuldugundan bu stop sonucu etkileyebilir.', Ayin son islem gununden onceki barlarda cikis ay sonuna yakin kapanis ile ayni gunde giris ve cikis cakisabilir (fark yoksa islem yok).]
