@@ -2180,6 +2180,7 @@ class PineStrateji:
             process_orders_on_close=_dogru(b.get("process_orders_on_close")),
             mintick=self.mintick,
             calc_on_order_fills=_dogru(b.get("calc_on_order_fills")),
+            close_entries_rule="ANY" if str(b.get("close_entries_rule") or "FIFO").upper() == "ANY" else "FIFO",
         )
         return a, uyari
 
