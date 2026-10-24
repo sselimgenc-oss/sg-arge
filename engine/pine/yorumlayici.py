@@ -2162,8 +2162,8 @@ class PineStrateji:
         uyari = []
         if _dogru(b.get("calc_on_order_fills")):
             uyari.append("calc_on_order_fills: geçmiş barlarda ek yürütmeler barın son değerlerini görür (TradingView ile aynı, canlıda farklı)")
-        if b.get("close_entries_rule") not in (None, "FIFO"):
-            raise Desteklenmiyor("close_entries_rule ANY")
+        # close_entries_rule="ANY": çıkışlar from_entry kimliğiyle eşleşen işlemi kapatır; emülatör çıkış hedefini zaten
+        # kimliğe göre seçiyor (FIFO yalnız aynı kimliğin işlemleri arasında). Fark yalnız FIFO'da görülür.
         if b.get("backtest_fill_limits_assumption") not in (None, 0):
             uyari.append("backtest_fill_limits_assumption yok sayıldı")
         if _dogru(b.get("calc_on_every_tick")):
