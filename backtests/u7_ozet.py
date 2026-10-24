@@ -18,25 +18,32 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def _group_table(group: str, path: Path) -> pd.DataFrame:
     table = pd.read_csv(path)
+    required = ("oos_net_1x", "oos_islem_hafta")
+    missing = [column for column in required if column not in table or table[column].isna().all()]
+    if missing:
+        raise ValueError(f"{group}: zorunlu U7 v2 sutunu eksik/bos: {', '.join(missing)}")
     table.insert(0, "grup", group)
     table["aile_etiketi"] = "tarih_belirsiz"
     table["eski_huni_karari"] = table.get("karar", "")
     table["eski_huni_nedeni"] = table.get("neden", "")
-    net = pd.to_numeric(table.get("oos_net_1x"), errors="coerce")
-    if net.isna().all() and "net_1x" in table:
-        net = pd.to_numeric(table["net_1x"], errors="coerce")
+    net = pd.to_numeric(table["oos_net_1x"], errors="coerce")
     table["oos_net_uygulanabilir"] = net
-    weeks = pd.to_numeric(table.get("oos_islem_hafta"), errors="coerce")
+    weeks = pd.to_numeric(table["oos_islem_hafta"], errors="coerce")
     table["oos_islem_hafta"] = weeks
     runnable = ~table["eski_huni_karari"].astype(str).eq("Hata")
-    table["adim0"] = runnable.map({True: "Gecti", False: "Uygulanamaz"})
-    table["karar_adim2"] = "Reddedildi"
-    table.loc[runnable & (net > 0), "karar_adim2"] = "Gecti"
-    table["izle_listesi"] = (weeks < 10) & runnable
-    table["koruma_listesi"] = (runnable & ~(net > 0)).map({True: "degerlendirilecek", False: ""})
+    # Existing families have translation tests, but no retrospective causality
+    # audit.  Do not present that as a passed causality gate.
+    table["adim0"] = "ceviri_testleri"
+    table["karar_adim2"] = "Kaldı"
+    table.loc[runnable & (net > 0), "karar_adim2"] = "Geçti"
+    table.loc[runnable & (weeks < 10), "karar_adim2"] = "İzle"
+    table.loc[~runnable, "karar_adim2"] = "Uygulanamaz"
+    table["izle_listesi"] = runnable & (weeks < 10)
+    table["koruma_listesi"] = (runnable & ~(weeks < 10) & ~(net > 0)).map({True: "degerlendirilecek", False: ""})
     table["adim2_neden"] = "OOS uygulanabilir net<=0"
-    table.loc[~runnable, "adim2_neden"] = "Adim 0 uygulanamadi"
     table.loc[runnable & (net > 0), "adim2_neden"] = "OOS uygulanabilir net>0"
+    table.loc[runnable & (weeks < 10), "adim2_neden"] = "OOS işlem haftası<10"
+    table.loc[~runnable, "adim2_neden"] = "Uygulanamaz: koşu hatası"
     return table
 
 
