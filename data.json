@@ -2,7 +2,7 @@
   "meta": {
     "title": "Kağıt Hesaplar",
     "subtitle": "sg-arge Paper Portföyü: C07, R01, A6-010 / 5,000 $ sanal sermaye (1/N)",
-    "last_update": "24/10 03:12",
+    "last_update": "24/10 03:26",
     "test_period": "gün 52 · 01.09.2026–23.10.2026 geriye dönük (aynı kurallar, gerçek veri) · 24.10.2026'dan itibaren canlı paper",
     "exchange_rate": null,
     "currency": "USD",
@@ -10,7 +10,7 @@
     "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
     "data_version": "sgarge_paper_v1",
     "veri_notu": null,
-    "updated_at": "2026-10-24T00:13:02.776306+00:00",
+    "updated_at": "2026-10-24T00:26:18.395848+00:00",
     "fiyat_zamani": "2026-10-23T19:30:00+00:00",
     "fiyat_kaynagi": "anlik",
     "anlik_not": "Açık pozisyonlar saatlik fiyatla değerlenir; işlemler ve defter yalnız günlük kapanışta güncellenir."
