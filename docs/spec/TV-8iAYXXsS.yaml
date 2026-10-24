@@ -1,0 +1,26 @@
+id: TV-8iAYXXsS
+ad: Hyperliquid-Ready Webhook Strategy Template
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/8iAYXXsS/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar PopsPineDev; yayin sembolu HYPERLIQUID:BTCUSDC; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (HYPERLIQUID:BTCUSDC)
+kol: KRIPTO-4H
+yayin_sembolu: HYPERLIQUID:BTCUSDC
+gostergeler: {}
+ozel_kod: false
+giris: null
+cikis: null
+stop: null
+hedef: null
+stop_eklendi: false
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Kademeli (ratchet) stop: stop yalniz en az belirli bir iyilesme olursa yukari tasinir ve bu durum bar bar tutulur; pozisyon durumuna bagli cok asamali cikis. Yaklasik ceviri yapilmadi.'}
+spec_durumu: eksik
+belirsiz: ['Dogrulanamaz (ceviri): Kademeli (ratchet) stop: stop yalniz en az belirli bir iyilesme olursa yukari tasinir ve bu durum bar bar tutulur; pozisyon durumuna bagli cok asamali cikis. Yaklasik ceviri yapilmadi.']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

@@ -1,0 +1,32 @@
+id: TV-qQ0MJCVL
+ad: HullMA Strategy
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/qQ0MJCVL/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar sirolf2009; yayin sembolu BITFINEX:BTCUSD; yayin araligi 4H. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 4H
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: KRIPTO (BITFINEX:BTCUSD)
+kol: KRIPTO-4H
+yayin_sembolu: BITFINEX:BTCUSD
+gostergeler:
+  w8: {f: wma, src: close, n: 8}
+  w16: {f: wma, src: close, n: 16}
+  hdiff: {f: seri, ifade: 2 * w8 - w16}
+  n1: {f: wma, src: hdiff, n: 4}
+  n2: {f: seri, ifade: 'n1[1]'}
+ozel_kod: false
+giris: n1 > n2
+cikis: not (n1 > n2)
+stop: null
+hedef: null
+stop_eklendi: true
+yalniz_long_bacak: true
+piyasa_kisiti: [KRIPTO]
+parametreler: {kol: KRIPTO-4H}
+cekirdek: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT]
+kardesler: [ADAUSDT, DOGEUSDT, LTCUSDT, LINKUSDT, DOTUSDT, AVAXUSDT, BCHUSDT, NEARUSDT]
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Hull periyodu 16: n1 = wma(2*wma(close, 8) - wma(close, 16), round(sqrt(16))=4); n2 = Hull(close[1]) = n1[1] (wma gecikme degismezdir). longCondition = n1 > n2; shortCondition = longCondition != true (esitlik ve NaN dahil) strategy.entry(''Short'') ile long''u ters cevirir; cikis = not (n1 > n2).', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

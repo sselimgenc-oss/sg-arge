@@ -1,0 +1,28 @@
+id: TV-PUEDA3c6
+ad: Confluence x4 Signal Test Bench
+kart_yazari: sonnet
+kaynak: {dosya: arastirma/U5_tv.csv, url: 'https://www.tradingview.com/script/PUEDA3c6/', sayfa: null, not: 'TradingView acik kaynak Pine; yazar dead_signals_lab; yayin sembolu AMEX:SPY; yayin araligi 1D. docs/GOREV_U6.md bolum 2.'}
+tarz: swing
+tf: 1D
+mtf: null
+tf_varsayim: false
+yazar_piyasasi: ABD (AMEX:SPY)
+kol: ABD-1D
+yayin_sembolu: AMEX:SPY
+gostergeler: {}
+ozel_kod: true
+ozel_kod_nedeni: ozel_gosterge
+giris: null
+cikis: null
+kural_ozeti: {giris: 'MT-Stochastic skoru (5 bilesen: 4 stokastik K>=D ve RSI-hacim "sve" ve K/D oraninin percentrank(100) >= 50) +3 ve uzeri olunca (onceki bar degil), tarih >= 2018-01-01', cikis: skor -3 ve altina inince (short tetikleyici; acik long ters cevrilir) ya da 10 bar sabit cikis}
+stop: null
+hedef: null
+zaman_stop: {bar: 11}
+stop_eklendi: true
+yalniz_long_bacak: true
+piyasa_kisiti: [ABD]
+parametreler: {kol: ABD-1D, mt_thresh: 3, start: '2018-01-01'}
+spec_durumu: tam
+belirsiz: ['Yayin sembolu ve sinifi script sayfasindaki symbol alanindan okundu; kol sinifa gore sabit (sinif degistirilmez). Parametreler Pine input varsayilanlaridir, optimizasyon yok.', 'Yalniz long bacak: short girisleri yok sayilir; short sinyali acik long pozisyonu kapatiyorsa (ters yonde strategy.entry) cikis olarak kalir. Yazarin boyut kodu (qty, equity yuzdesi, kaldirac) kullanilmaz; boyut EVRENSEL_KURALLAR A6.', 'Sinyal kapanmis barda uretilir, emir sonraki acilista dolar (Pine varsayilani process_orders_on_close=false ile ayni). Maliyet motorun baz maliyeti; yazarin commission/slippage degerleri kullanilmaz.', 'Varsayilan input''lar: Entry trigger = MT-Stoch, Mode = Both, Exit mode = Fixed bars (N = 10), tum filtreler kapali (useTriF/useMTF/useMCUF/useMAF = false), baslangic 2018-01-01. Trifecta, MCU, MA Cross, Random tetikleyicileri ve diger cikis modlari secili degil, cevrilmedi.', 'Fixed bars: Pine entryBar = pozisyon yonunun degistigi (dolum) bar; bar_index - entryBar >= 10 kosulu dolum + 10. barin kapanisinda saglanir ve strategy.close_all sonraki acilista dolar. Motor zaman_stop semantigi (bars_held >= N, dolum bari 1) ile bu N = 11''dir.', 'Short tetikleyici (mtBear yeni dogdu) Pine''da acik long''u ters yonde strategy.entry ile kapatir; cikis olarak kalir. Pine short pozisyonda iken gelen long tetikleyicisi pozisyonu ters cevirir, motorda pozisyon o sirada yoktur ve long yeni giris olur.', 'ta.percentrank(kdRatio, 100): onceki 100 degerin (guncel bar haric) guncele esit ya da kucuk olanlarinin yuzdesi varsayildi (Pine dokumani ''onceki n deger''). ta.stoch araligi 0 ise NaN; NaN karsilastirmasi 0 puan sayildi (Pine na davranisi).', Yazarin slippage=2 tik ve komisyonu kullanilmaz; motor baz maliyeti gecerli., 'ozel_kod: true. Kural motor ifade diline sigmadigi icin Pine''dan birebir Python''a cevrildi: strategies/ozel/tv_pueda3c6.py (girdiler bu kartin parametreler blogundan okunur). Modulun ileriye bakma testi tests/test_tv_parti*.py''dedir.', 'Yazarin stopu yok (ya da stop mantigi cevrilemiyor): ATR(14) x 3 koruma stopu eklendi (EVRENSEL_KURALLAR A7, stop_eklendi: true).']
+deneme_sayisi_kaynakta: 205
+rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

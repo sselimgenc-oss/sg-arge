@@ -226,6 +226,7 @@ def simulate_two_sided(
     long_ok: np.ndarray, short_ok: np.ndarray,
     long_sl: np.ndarray, long_tp: np.ndarray, short_sl: np.ndarray, short_tp: np.ndarray,
     *, cooldown: int = 0, exits_from_fill_bar: bool = False,
+    flat_only: bool = False, cooldown_from_exit: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Pine `strategy.position_size` kapisi ve `lastTradeBar` bekleme suresi icin iki yonlu tek pozisyon benzetimi.
 
@@ -233,6 +234,9 @@ def simulate_two_sided(
     ters yon girisi acik pozisyonu kapatip cevirir. Stop/hedef seviyeleri sinyal barinda sabitlenir; varsayilan olarak
     `strategy.exit` dolum barinin kapanisinda verilir ve sonraki bardan etkindir (`exits_from_fill_bar=True`: dolum
     barindan, giris emriyle ayni barda verilen exit). Ayni barda stop once sayilir, gap'te acilistan dolar.
+
+    `flat_only`: giris yalniz pozisyon yokken (ters cevirme yok, `strategy.position_size == 0` kapisi); `cooldown_from_exit`:
+    bekleme suresi pozisyonun stop/hedefle kapandigi bardan da sayilir (Pine `lastTradeBar` hem giriste hem kapanista guncellenir).
 
     Doner: (long giris sinyal bari, long'u ters cevirerek kapatan short giris sinyal bari)."""
     o, h, l, c = (frame[k].to_numpy(dtype=float) for k in ("open", "high", "low", "close"))
@@ -250,6 +254,7 @@ def simulate_two_sided(
             pending = None
             pos, sl, tp, fill_bar = side, p_sl, p_tp, i
         if pos != 0 and (fill_bar < i or exits_from_fill_bar):
+            was_open = pos
             if pos == 1:
                 if o[i] <= sl or l[i] <= sl:
                     pos = 0
@@ -260,12 +265,16 @@ def simulate_two_sided(
                     pos = 0
                 elif l[i] <= tp or o[i] <= tp:
                     pos = 0
+            if was_open and pos == 0 and cooldown_from_exit:
+                last_trade = i
         elapsed = last_trade is None or (i - last_trade) >= cooldown
-        if long_ok[i] and elapsed and pos <= 0:
+        can_long = pos == 0 if flat_only else pos <= 0
+        can_short = pos == 0 if flat_only else pos >= 0
+        if long_ok[i] and elapsed and can_long:
             pending = (1, long_sl[i], long_tp[i])
             long_entry[i] = True
             last_trade = i
-        elif short_ok[i] and elapsed and pos >= 0:
+        elif short_ok[i] and elapsed and can_short:
             if pos == 1:
                 long_flip[i] = True
             pending = (-1, short_sl[i], short_tp[i])

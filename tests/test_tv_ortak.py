@@ -66,3 +66,18 @@ def test_ilkeller_ileriye_bakmaz():
         full = fn(base)
         cut = fn(base.iloc[:200])
         pd.testing.assert_series_equal(full.iloc[:200], cut, check_names=False)
+
+
+def test_simulate_two_sided_flat_only_ve_kapanistan_bekleme():
+    n = 30
+    idx = pd.date_range("2022-01-01", periods=n, freq="1D", tz="UTC")
+    price = np.full(n, 100.0)
+    frame = pd.DataFrame({"open": price, "high": price + 1, "low": price - 1, "close": price, "volume": 1.0}, index=idx)
+    frame.loc[idx[3], "low"] = 85.0  # bar 3: dolum sonrasi stop (90) vurulur
+    long_ok = np.zeros(n, dtype=bool)
+    long_ok[[1, 4, 5, 12]] = True
+    nan = np.full(n, np.nan)
+    # bar 1 sinyal -> bar 2 dolum; stop 90 / hedef 110 sinyalde sabit; bar 3'te stop. Bekleme 6: bar 3'ten itibaren bar 9'a kadar yeni giris yok.
+    entry, _ = T.simulate_two_sided(frame, long_ok, np.zeros(n, dtype=bool), np.full(n, 90.0), np.full(n, 110.0), nan, nan,
+                                    cooldown=6, exits_from_fill_bar=True, flat_only=True, cooldown_from_exit=True)
+    assert list(np.flatnonzero(entry)) == [1, 12]  # 4 ve 5 bekleme icinde, 12 bekleme disinda
