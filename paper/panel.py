@@ -355,13 +355,26 @@ def uret(
         "periodic_returns": periodic, "strategies_27": strategies,
     }
     golge_dir = defter / "golge"
-    if golge_dir.exists():
-        shadow = uret(golge_dir, gunluk.golge_portfoy(portfoy), sonuc_csv, usdtry=usdtry, simdi=simdi) if hasattr(gunluk, "golge_portfoy") else None
-        if shadow is not None:
-            payload["golge"] = {"ozkaynak": shadow["kpis"]["total_value"], "mdd": shadow["accounts"][0]["max_drawdown_pct"] if shadow["accounts"] else None,
-                               "baslangic": str(gunluk.golge_portfoy(portfoy).baslangic.date()), "acik_pozisyonlar": shadow["open_positions"],
-                               "kapanmis_islemler": shadow["closed_trades_list"],
-                               "not": "gölge kitap: ana portföyden ayrı, kilitli dönem kullanılmadı"}
+    golge_kitaplar = []
+    for kitap in gunluk.golge_kitaplari(portfoy):
+        book_dir = golge_dir / kitap.id
+        if not book_dir.exists():
+            continue
+        shadow = uret(book_dir, kitap.portfoy, sonuc_csv, usdtry=usdtry, simdi=simdi)
+        equity = _read(book_dir, "ozkaynak")
+        total = equity[equity["satir"] == gunluk.PORTFOLIO_ROW] if not equity.empty else equity
+        golge_kitaplar.append({
+            "id": kitap.id, "piyasa": kitap.portfoy.satirlar[0].piyasa, "tf": kitap.tf,
+            "baslangic": str(kitap.portfoy.baslangic.date()), "canli_baslangic": str(kitap.portfoy.canli_baslangic.date()),
+            "ozkaynak": shadow["kpis"]["total_value"], "mdd": shadow["accounts"][0]["max_drawdown_pct"] if shadow["accounts"] else None,
+            "mdd_uyari": kitap.portfoy.alarm["mdd_uyari"], "acik_pozisyonlar": shadow["open_positions"],
+            "kapanmis_islemler": shadow["closed_trades_list"],
+            "ozkaynak_serisi": [{"tarih": str(row.tarih), "ozkaynak": _clean(row.ozkaynak, 2)} for row in total.itertuples()],
+        })
+    payload["golge"] = {
+        "not": "gölge kitaplar: ana portföyden ayrı; 2026-10-24 öncesi geriye dönük, yalnız canlı dönem değerlendirilir",
+        "kitaplar": golge_kitaplar,
+    }
     return payload
 
 
