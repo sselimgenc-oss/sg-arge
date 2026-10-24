@@ -31,7 +31,7 @@ MIN_PF_2X = 1.2
 ANNUALIZATION = 365
 COLUMNS = [
     "varyant", "kart", "piyasa", "tf", "is_islem", "is_PF", "is_swing60", "null_gecti", "p_pf", "p_ortr",
-    "oos_islem", "oos_ortR", "oos_sharpe", "oos_PF_1x", "oos_PF_2x", "oos_PF_3x", "oos_net_3x", "net_gecikme", "mdd_p95", "dsr",
+    "oos_islem", "oos_islem_hafta", "oos_ortR", "oos_sharpe", "oos_PF_1x", "oos_PF_2x", "oos_PF_3x", "oos_net_1x", "oos_net_3x", "net_gecikme", "mdd_p95", "dsr",
     "kardes_gecen", "kardes_oran", "en_buyuk_kar_payi", "en_iyi_ay_haric_pf", "on_net", "karar", "neden",
 ]
 
@@ -96,6 +96,20 @@ def _trade_summary(trades: pd.DataFrame) -> dict[str, Any]:
     return summary
 
 
+def _write_daily_returns(returns: pd.Series, variant: str, results_dir: Path) -> None:
+    safe = variant.replace(":", "_")
+    target = results_dir / "getiriler" / f"{safe}.csv"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    returns.rename("net_getiri").to_csv(target, index_label="tarih")
+
+
+def _trading_weeks(trades: pd.DataFrame) -> int:
+    if trades.empty or "entry_date" not in trades:
+        return 0
+    dates = pd.to_datetime(trades["entry_date"], utc=True, errors="coerce").dropna()
+    return len(set(zip(dates.dt.isocalendar().year, dates.dt.isocalendar().week)))
+
+
 def stage_2b(variant: str, card: dict[str, Any], market: str, data: dict[str, pd.DataFrame], boot_reps: int, results_dir: Path) -> dict[str, Any]:
     prepared = _prepare(card, market, data, "OOS")
     annual = tarama.annualization_for(card["tf"], market)
@@ -104,7 +118,8 @@ def stage_2b(variant: str, card: dict[str, Any], market: str, data: dict[str, pd
     prepared.runtime_cache.clear()
     metrics = {cost: calculate_metrics(result, annualization=annual) for cost, result in runs.items()}
     returns = asama2b._validation_returns(runs[1], daily_equity=True)  # noqa: SLF001
-    out = {"oos_islem": metrics[1]["islem"], "oos_ortR": metrics[1]["ortalama_r"], "oos_sharpe": metrics[1]["sharpe"], "oos_PF_1x": metrics[1]["pf"],
+    _write_daily_returns(returns, variant, results_dir)
+    out = {"oos_islem": metrics[1]["islem"], "oos_islem_hafta": _trading_weeks(runs[1].trades), "oos_ortR": metrics[1]["ortalama_r"], "oos_sharpe": metrics[1]["sharpe"], "oos_PF_1x": metrics[1]["pf"], "oos_net_1x": metrics[1]["getiri"],
            "oos_PF_2x": metrics[2]["pf"], "oos_PF_3x": metrics[3]["pf"], "oos_net_3x": metrics[3]["getiri"],
            "net_gecikme": calculate_metrics(delayed, annualization=annual)["getiri"]}
     if len(returns) >= 3:
