@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import sys
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -197,6 +198,35 @@ def test_shadow_portfolio_is_separate_from_the_main_book() -> None:
     assert shadow.sermaye == 5000 and shadow.satirlar[0].etiket == "U4-H1:KRIPTO25"
     assert shadow.baslangic == pd.Timestamp("2026-10-24", tz="UTC")
     assert shadow.satirlar != main.satirlar and gunluk.GOLGE_LEDGER_DIR != gunluk.LEDGER_DIR
+
+
+def test_shadow_equity_records_a_same_day_4h_close(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """A closed intraday shadow trade must change the separate book's equity immediately."""
+    times = pd.date_range("2026-10-24 00:00", periods=3, freq="4h", tz="UTC")
+    result = SimpleNamespace(
+        equity=pd.Series([5000.0, 5000.0, 5100.0], index=times), marked_equity=5100.0,
+        fills=[
+            {"tarih": times[0], "sembol": "BTCUSDT", "tip": "giris", "fiyat": 100.0, "adet": 1.0, "maliyet": 0.0, "stop": 90.0},
+            {"tarih": times[2], "sembol": "BTCUSDT", "tip": "cikis", "fiyat": 200.0, "adet": 1.0, "maliyet": 0.0, "neden": "target"},
+        ],
+        open_positions=[], next_orders=[],
+        trades=pd.DataFrame({"exit_reason": ["target"], "net_pnl": [100.0]}),
+    )
+    monkeypatch.setattr(gunluk, "kitap", lambda *_args, **_kwargs: (result, times[-1]))
+    hourly = pd.date_range("2026-10-24 00:00", periods=12, freq="1h", tz="UTC")
+    frame = pd.DataFrame({"open": 100.0, "high": 200.0, "low": 90.0, "close": 100.0, "volume": 1.0}, index=hourly)
+    shadow_dir = tmp_path / "defter" / "golge"
+    shadow = gunluk.golge_portfoy()
+    gunluk.calistir_golge(shadow, gunluk.Veri({"KRIPTO25": {"BTCUSDT": frame}}, {}, "shadow"), shadow_dir,
+                          simdi=pd.Timestamp("2026-10-24 12:05", tz="UTC"))
+
+    equity = csv(shadow_dir, "ozkaynak")
+    closed_at = times[-1].strftime("%Y-%m-%d %H:%M:%S")
+    row = equity[(equity["satir"] == gunluk.PORTFOLIO_ROW) & (equity["tarih"] == closed_at)]
+    assert len(row) == 1 and row.iloc[0]["ozkaynak"] == pytest.approx(5100.0)
+    assert equity[equity["satir"] == gunluk.PORTFOLIO_ROW]["tarih"].nunique() == 3
+    payload = panel.uret(tmp_path / "defter", gunluk.yukle_portfoy(), ROOT / "results" / "SONUC.csv")
+    assert payload["golge"]["ozkaynak"] == pytest.approx(5100.0)
 
 
 def test_shadow_download_limits_a_fresh_archive_to_120_days(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
