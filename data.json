@@ -2,25 +2,29 @@
   "meta": {
     "title": "Kağıt Hesaplar",
     "subtitle": "sg-arge Paper Portföyü: C07, R01, A6-010 / 5,000 $ sanal sermaye (1/N)",
-    "last_update": "24/10 02:46",
-    "test_period": "gün 1 - 23.10.2026 başlangıç",
+    "last_update": "24/10 03:12",
+    "test_period": "gün 52 · 01.09.2026–23.10.2026 geriye dönük (aynı kurallar, gerçek veri) · 24.10.2026'dan itibaren canlı paper",
     "exchange_rate": null,
     "currency": "USD",
     "fiat_currency": "TRY",
     "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
     "data_version": "sgarge_paper_v1",
-    "veri_notu": null
+    "veri_notu": null,
+    "updated_at": "2026-10-24T00:13:02.776306+00:00",
+    "fiyat_zamani": "2026-10-23T19:30:00+00:00",
+    "fiyat_kaynagi": "anlik",
+    "anlik_not": "Açık pozisyonlar saatlik fiyatla değerlenir; işlemler ve defter yalnız günlük kapanışta güncellenir."
   },
   "kpis": {
-    "total_value": 5000.0,
-    "total_return_pct": 0.0,
-    "last_day_pct": null,
-    "open_positions_count": 0,
-    "closed_trades_count": 0,
-    "win_rate_pct": null,
+    "total_value": 5032.95,
+    "total_return_pct": 0.66,
+    "last_day_pct": 0.7,
+    "open_positions_count": 10,
+    "closed_trades_count": 19,
+    "win_rate_pct": 21.1,
     "total_try": null,
     "initial_total_capital": 5000.0,
-    "net_pnl": 0.0
+    "net_pnl": 32.95
   },
   "alerts": [
     {
@@ -30,28 +34,41 @@
     }
   ],
   "last_24h": {
-    "summary": "Son bar 23.10.2026: 0 dolum, 4 emir yarın açılışta bekliyor, 0 açık pozisyon.",
-    "chips": []
+    "summary": "Son bar 22.10.2026: 1 dolum, 4 emir yarın açılışta bekliyor, 10 açık pozisyon.",
+    "chips": [
+      {
+        "label": "BRK-B alış",
+        "type": "open",
+        "action": "giris",
+        "asset": "BRK-B"
+      }
+    ]
   },
   "accounts": [
     {
       "id": "C07",
       "name": "C07 · ABD25",
       "strategies_label": "Codex Algo 21: wd_adx_breakout_risk",
-      "status": "tetikte bekliyor",
-      "current_value": 1666.66,
+      "status": "pozisyonda",
+      "current_value": 1672.62,
       "initial_capital": 1666.66,
-      "total_return_pct": 0.0,
-      "last_day_pct": null,
-      "max_drawdown_pct": 0.0,
-      "win_rate_pct": null,
-      "profit_factor": null,
-      "closed_trades": 0,
-      "open_trades": 0,
-      "avg_holding_time": null,
-      "last_run": "23.10.2026",
+      "total_return_pct": 0.36,
+      "last_day_pct": 0.18,
+      "max_drawdown_pct": 0.92,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "closed_trades": 2,
+      "open_trades": 5,
+      "avg_holding_time": "15.5 gün",
+      "last_run": "22.10.2026",
       "sparkline": [
-        1666.66
+        1654.96,
+        1664.12,
+        1664.14,
+        1663.91,
+        1669.8,
+        1669.66,
+        1672.62
       ],
       "luck_prob": "veri yok",
       "expectation_desc": "Backtest: Gecti · PF (IS, 1x) 2.18 · OOS getiri 13.0% · bootstrap MDD95 10.1% · evren pit",
@@ -62,20 +79,26 @@
       "id": "R01",
       "name": "R01 · ABD25",
       "strategies_label": "Qullamaggie breakout continuation + episodic pivot",
-      "status": "tetikte bekliyor",
-      "current_value": 1666.66,
+      "status": "pozisyonda",
+      "current_value": 1716.31,
       "initial_capital": 1666.66,
-      "total_return_pct": 0.0,
-      "last_day_pct": null,
-      "max_drawdown_pct": 0.0,
-      "win_rate_pct": null,
-      "profit_factor": null,
-      "closed_trades": 0,
-      "open_trades": 0,
-      "avg_holding_time": null,
-      "last_run": "23.10.2026",
+      "total_return_pct": 2.98,
+      "last_day_pct": 1.81,
+      "max_drawdown_pct": 0.77,
+      "win_rate_pct": 33.3,
+      "profit_factor": 1.01,
+      "closed_trades": 3,
+      "open_trades": 4,
+      "avg_holding_time": "11.3 gün",
+      "last_run": "22.10.2026",
       "sparkline": [
-        1666.66
+        1682.55,
+        1681.29,
+        1686.14,
+        1685.84,
+        1688.48,
+        1685.75,
+        1716.31
       ],
       "luck_prob": "veri yok",
       "expectation_desc": "Backtest: Gecti · PF (IS, 1x) 2.02 · OOS getiri 1.6% · bootstrap MDD95 13.8% · evren pit",
@@ -86,20 +109,26 @@
       "id": "A6-010",
       "name": "A6-010 · EMTIA",
       "strategies_label": "The Gap Momentum System",
-      "status": "tetikte bekliyor",
-      "current_value": 1666.67,
+      "status": "pozisyonda",
+      "current_value": 1659.72,
       "initial_capital": 1666.67,
-      "total_return_pct": 0.0,
-      "last_day_pct": null,
-      "max_drawdown_pct": 0.0,
-      "win_rate_pct": null,
-      "profit_factor": null,
-      "closed_trades": 0,
-      "open_trades": 0,
-      "avg_holding_time": null,
-      "last_run": "23.10.2026",
+      "total_return_pct": -0.42,
+      "last_day_pct": 0.09,
+      "max_drawdown_pct": 1.55,
+      "win_rate_pct": 21.4,
+      "profit_factor": 0.6,
+      "closed_trades": 14,
+      "open_trades": 1,
+      "avg_holding_time": "8.1 gün",
+      "last_run": "22.10.2026",
       "sparkline": [
-        1666.67
+        1655.42,
+        1654.65,
+        1658.36,
+        1657.52,
+        1658.63,
+        1658.16,
+        1659.72
       ],
       "luck_prob": "veri yok",
       "expectation_desc": "Backtest: Kosullu · PF (IS, 1x) 1.38 · OOS getiri 7.8% · bootstrap MDD95 10.6% · evren sabit",
@@ -107,68 +136,476 @@
       "score": null
     }
   ],
-  "closed_trades_list": [],
-  "open_positions": [],
-  "pending_orders": [
+  "closed_trades_list": [
+    {
+      "id": 19,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "DBA",
+      "type": "Alış",
+      "entry_date": "13.10.2026",
+      "exit_date": "20.10.2026",
+      "entry_price": 28.54,
+      "exit_price": 28.34,
+      "r": -0.27,
+      "pnl": -2.22,
+      "reason": "signal"
+    },
+    {
+      "id": 18,
+      "account": "R01 · ABD25",
+      "strategy": "Qullamaggie breakout continuation + episodic pivot",
+      "asset": "MSFT",
+      "type": "Alış",
+      "entry_date": "28.09.2026",
+      "exit_date": "19.10.2026",
+      "entry_price": 505.47,
+      "exit_price": 525.868,
+      "r": 1.25,
+      "pnl": 10.4,
+      "reason": "signal+partial"
+    },
+    {
+      "id": 17,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "CPER",
+      "type": "Alış",
+      "entry_date": "13.10.2026",
+      "exit_date": "16.10.2026",
+      "entry_price": 40.58,
+      "exit_price": 39.79,
+      "r": -0.46,
+      "pnl": -3.82,
+      "reason": "signal"
+    },
+    {
+      "id": 16,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "DBA",
+      "type": "Alış",
+      "entry_date": "05.10.2026",
+      "exit_date": "09.10.2026",
+      "entry_price": 28.5,
+      "exit_price": 28.41,
+      "r": -0.14,
+      "pnl": -1.19,
+      "reason": "signal"
+    },
+    {
+      "id": 15,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "UNG",
+      "type": "Alış",
+      "entry_date": "01.10.2026",
+      "exit_date": "06.10.2026",
+      "entry_price": 10.35,
+      "exit_price": 10.74,
+      "r": 0.34,
+      "pnl": 2.84,
+      "reason": "signal"
+    },
+    {
+      "id": 14,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "SLV",
+      "type": "Alış",
+      "entry_date": "02.09.2026",
+      "exit_date": "02.10.2026",
+      "entry_price": 58.73,
+      "exit_price": 55.46,
+      "r": -0.57,
+      "pnl": -4.79,
+      "reason": "signal"
+    },
+    {
+      "id": 13,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "GLD",
+      "type": "Alış",
+      "entry_date": "30.09.2026",
+      "exit_date": "02.10.2026",
+      "entry_price": 384.39,
+      "exit_price": 384.45,
+      "r": -0.01,
+      "pnl": -0.12,
+      "reason": "signal"
+    },
+    {
+      "id": 12,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "UNG",
+      "type": "Alış",
+      "entry_date": "02.09.2026",
+      "exit_date": "30.09.2026",
+      "entry_price": 10.57,
+      "exit_price": 10.32,
+      "r": -0.31,
+      "pnl": -2.61,
+      "reason": "signal"
+    },
+    {
+      "id": 11,
+      "account": "R01 · ABD25",
+      "strategy": "Qullamaggie breakout continuation + episodic pivot",
+      "asset": "META",
+      "type": "Alış",
+      "entry_date": "22.09.2026",
+      "exit_date": "29.09.2026",
+      "entry_price": 731.4,
+      "exit_price": 725.0,
+      "r": -0.2,
+      "pnl": -1.69,
+      "reason": "signal"
+    },
+    {
+      "id": 10,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "CPER",
+      "type": "Alış",
+      "entry_date": "25.09.2026",
+      "exit_date": "28.09.2026",
+      "entry_price": 40.51,
+      "exit_price": 39.71,
+      "r": -0.38,
+      "pnl": -3.2,
+      "reason": "signal"
+    },
+    {
+      "id": 9,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "CPER",
+      "type": "Alış",
+      "entry_date": "22.09.2026",
+      "exit_date": "24.09.2026",
+      "entry_price": 41.03,
+      "exit_price": 40.56,
+      "r": -0.23,
+      "pnl": -1.94,
+      "reason": "signal"
+    },
+    {
+      "id": 8,
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "CVX",
+      "type": "Alış",
+      "entry_date": "02.09.2026",
+      "exit_date": "21.09.2026",
+      "entry_price": 210.49,
+      "exit_price": 204.4892,
+      "r": -0.5,
+      "pnl": -4.2,
+      "reason": "stop"
+    },
+    {
+      "id": 7,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "USO",
+      "type": "Alış",
+      "entry_date": "02.09.2026",
+      "exit_date": "18.09.2026",
+      "entry_price": 139.42,
+      "exit_price": 156.85,
+      "r": 1.3,
+      "pnl": 10.82,
+      "reason": "signal"
+    },
+    {
+      "id": 6,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "GLD",
+      "type": "Alış",
+      "entry_date": "17.09.2026",
+      "exit_date": "18.09.2026",
+      "entry_price": 400.28,
+      "exit_price": 400.48,
+      "r": -0.01,
+      "pnl": -0.01,
+      "reason": "signal"
+    },
+    {
+      "id": 5,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "CPER",
+      "type": "Alış",
+      "entry_date": "11.09.2026",
+      "exit_date": "15.09.2026",
+      "entry_price": 39.22,
+      "exit_price": 38.51,
+      "r": -0.34,
+      "pnl": -1.71,
+      "reason": "signal"
+    },
+    {
+      "id": 4,
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "JNJ",
+      "type": "Alış",
+      "entry_date": "03.09.2026",
+      "exit_date": "15.09.2026",
+      "entry_price": 277.32,
+      "exit_price": 261.482,
+      "r": -0.95,
+      "pnl": -7.93,
+      "reason": "stop"
+    },
+    {
+      "id": 3,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "CPER",
+      "type": "Alış",
+      "entry_date": "08.09.2026",
+      "exit_date": "10.09.2026",
+      "entry_price": 41.0,
+      "exit_price": 39.2898,
+      "r": -1.02,
+      "pnl": -3.36,
+      "reason": "stop"
+    },
+    {
+      "id": 2,
+      "account": "A6-010 · EMTIA",
+      "strategy": "The Gap Momentum System",
+      "asset": "GLD",
+      "type": "Alış",
+      "entry_date": "02.09.2026",
+      "exit_date": "08.09.2026",
+      "entry_price": 399.71,
+      "exit_price": 403.56,
+      "r": 0.14,
+      "pnl": 1.2,
+      "reason": "signal"
+    },
+    {
+      "id": 1,
+      "account": "R01 · ABD25",
+      "strategy": "Qullamaggie breakout continuation + episodic pivot",
+      "asset": "AAPL",
+      "type": "Alış",
+      "entry_date": "02.09.2026",
+      "exit_date": "08.09.2026",
+      "entry_price": 326.87,
+      "exit_price": 316.5866,
+      "r": -1.03,
+      "pnl": -8.59,
+      "reason": "stop"
+    }
+  ],
+  "open_positions": [
+    {
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "ABBV",
+      "type": "Alış",
+      "entry_date": "12.10.2026",
+      "duration": "10 gün",
+      "entry_price": 275.9556,
+      "stop_price": 269.5674,
+      "size_usd": 134.93,
+      "unrealized_pnl": 4.6,
+      "r": 0.53,
+      "current_price": 285.7
+    },
     {
       "account": "C07 · ABD25",
       "strategy": "Codex Algo 21: wd_adx_breakout_risk",
       "asset": "CVX",
-      "signal_date": "23.10.2026",
-      "order": "Alış (yarın açılışta)",
-      "stop": 218.8724,
-      "stop_distance": 14.3376
+      "type": "Alış",
+      "entry_date": "19.10.2026",
+      "duration": "3 gün",
+      "entry_price": 223.88,
+      "stop_price": 213.3325,
+      "size_usd": 108.91,
+      "unrealized_pnl": 4.35,
+      "r": 0.21,
+      "current_price": 233.2
     },
     {
       "account": "C07 · ABD25",
       "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "XOM",
-      "signal_date": "23.10.2026",
-      "order": "Alış (yarın açılışta)",
-      "stop": 171.5547,
-      "stop_distance": 11.6553
+      "asset": "MA",
+      "type": "Alış",
+      "entry_date": "14.10.2026",
+      "duration": "8 gün",
+      "entry_price": 605.5,
+      "stop_price": 603.5938,
+      "size_usd": 170.12,
+      "unrealized_pnl": 4.9,
+      "r": 0.91,
+      "current_price": 623.47
     },
     {
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "DBA",
-      "signal_date": "23.10.2026",
-      "order": "Alış (yarın açılışta)",
-      "stop": 27.1618,
-      "stop_distance": 0.7082
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "MSFT",
+      "type": "Alış",
+      "entry_date": "06.10.2026",
+      "duration": "16 gün",
+      "entry_price": 531.68,
+      "stop_price": 509.1609,
+      "size_usd": 122.44,
+      "unrealized_pnl": -1.67,
+      "r": -0.3,
+      "current_price": 524.525
+    },
+    {
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "V",
+      "type": "Alış",
+      "entry_date": "14.10.2026",
+      "duration": "8 gün",
+      "entry_price": 395.91,
+      "stop_price": 394.2206,
+      "size_usd": 170.08,
+      "unrealized_pnl": 5.02,
+      "r": 0.93,
+      "current_price": 407.94
+    },
+    {
+      "account": "R01 · ABD25",
+      "strategy": "Qullamaggie breakout continuation + episodic pivot",
+      "asset": "BRK-B",
+      "type": "Alış",
+      "entry_date": "21.10.2026",
+      "duration": "1 gün",
+      "entry_price": 539.5,
+      "stop_price": 531.2243,
+      "size_usd": 552.35,
+      "unrealized_pnl": 3.01,
+      "r": 0.9,
+      "current_price": 542.46
+    },
+    {
+      "account": "R01 · ABD25",
+      "strategy": "Qullamaggie breakout continuation + episodic pivot",
+      "asset": "COST",
+      "type": "Alış",
+      "entry_date": "15.10.2026",
+      "duration": "7 gün",
+      "entry_price": 998.11,
+      "stop_price": 977.2185,
+      "size_usd": 405.39,
+      "unrealized_pnl": 2.11,
+      "r": 0.96,
+      "current_price": 1003.32
+    },
+    {
+      "account": "R01 · ABD25",
+      "strategy": "Qullamaggie breakout continuation + episodic pivot",
+      "asset": "MA",
+      "type": "Alış",
+      "entry_date": "14.10.2026",
+      "duration": "8 gün",
+      "entry_price": 605.5,
+      "stop_price": 606.1055,
+      "size_usd": 77.77,
+      "unrealized_pnl": 2.24,
+      "r": 2.03,
+      "current_price": 623.47
+    },
+    {
+      "account": "R01 · ABD25",
+      "strategy": "Qullamaggie breakout continuation + episodic pivot",
+      "asset": "PG",
+      "type": "Alış",
+      "entry_date": "09.10.2026",
+      "duration": "13 gün",
+      "entry_price": 150.57,
+      "stop_price": 150.7206,
+      "size_usd": 240.73,
+      "unrealized_pnl": 15.75,
+      "r": 4.49,
+      "current_price": 161.11
     },
     {
       "account": "A6-010 · EMTIA",
       "strategy": "The Gap Momentum System",
       "asset": "USO",
-      "signal_date": "23.10.2026",
+      "type": "Alış",
+      "entry_date": "16.10.2026",
+      "duration": "6 gün",
+      "entry_price": 156.97,
+      "stop_price": 142.6467,
+      "size_usd": 97.99,
+      "unrealized_pnl": 7.26,
+      "r": 0.39,
+      "current_price": 169.53
+    }
+  ],
+  "pending_orders": [
+    {
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "BRK-B",
+      "signal_date": "22.10.2026",
       "order": "Alış (yarın açılışta)",
-      "stop": 154.3801,
-      "stop_distance": 15.1499
+      "stop": 527.8967,
+      "stop_distance": 19.0733
+    },
+    {
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "KO",
+      "signal_date": "22.10.2026",
+      "order": "Alış (yarın açılışta)",
+      "stop": 90.8834,
+      "stop_distance": 4.4566
+    },
+    {
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "PG",
+      "signal_date": "22.10.2026",
+      "order": "Alış (yarın açılışta)",
+      "stop": 156.428,
+      "stop_distance": 9.162
+    },
+    {
+      "account": "C07 · ABD25",
+      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
+      "asset": "UNH",
+      "signal_date": "22.10.2026",
+      "order": "Alış (yarın açılışta)",
+      "stop": 390.1635,
+      "stop_distance": 34.8165
     }
   ],
   "stats": {
-    "net_pnl": 0,
-    "total_trades": 0,
-    "win_rate": null,
-    "profit_factor": null,
-    "avg_win": null,
-    "avg_loss": null,
-    "win_loss_ratio": null,
-    "expectancy_per_trade": null,
-    "sqn": null,
-    "max_win": null,
-    "max_loss": null,
-    "max_consecutive_losses": null,
-    "avg_holding_time_hours": null,
-    "kelly_criterion": null,
-    "best_day_gain": null,
-    "green_days_pct": null,
-    "sharpe_annual": null,
-    "sortino": null,
-    "long_trades": 0,
+    "net_pnl": -22.12,
+    "total_trades": 19,
+    "win_rate": 21.1,
+    "profit_factor": 0.53,
+    "avg_win": 6.31,
+    "avg_loss": -3.16,
+    "win_loss_ratio": 2.0,
+    "expectancy_per_trade": -1.16,
+    "sqn": -1.24,
+    "max_win": 10.82,
+    "max_loss": -8.59,
+    "max_consecutive_losses": "7 Z",
+    "avg_holding_time_hours": 224.8,
+    "kelly_criterion": -0.184,
+    "best_day_gain": 0.7,
+    "green_days_pct": 47.2,
+    "sharpe_annual": 2.36,
+    "sortino": 3.22,
+    "long_trades": 19,
     "short_trades": 0,
-    "long_pnl": 0,
+    "long_pnl": -22.12,
     "short_pnl": 0.0
   },
   "scorecards": [],
@@ -182,43 +619,43 @@
   },
   "calendar": {
     "month": "Ekim 2026",
-    "month_summary": "Ekim Ayı Net: 0 $ | 0 yeşil gün | Toplam 0 kapanan işlem",
+    "month_summary": "Ekim Ayı Net: 76 $ | 9 yeşil gün | Toplam 7 kapanan işlem",
     "selected_day": {
-      "date": "23 Ekim 2026",
-      "pnl": 0.0,
+      "date": "22 Ekim 2026",
+      "pnl": 35.09,
       "closed_pnl": 0,
-      "open_pnl_change": 0.0,
+      "open_pnl_change": 35.09,
       "account_breakdown": [
         {
           "account": "C07 · ABD25",
           "closed": 0,
-          "open": 0.0,
-          "total": 0.0
+          "open": 2.96,
+          "total": 2.96
         },
         {
           "account": "R01 · ABD25",
           "closed": 0,
-          "open": 0.0,
-          "total": 0.0
+          "open": 30.56,
+          "total": 30.56
         },
         {
           "account": "A6-010 · EMTIA",
           "closed": 0,
-          "open": 0.0,
-          "total": 0.0
+          "open": 1.57,
+          "total": 1.57
         }
       ]
     },
     "days": [
       {
         "day": 1,
-        "pnl": null,
+        "pnl": -0.07,
         "closed": 0
       },
       {
         "day": 2,
-        "pnl": null,
-        "closed": 0
+        "pnl": 5.94,
+        "closed": 2
       },
       {
         "day": 3,
@@ -232,28 +669,28 @@
       },
       {
         "day": 5,
-        "pnl": null,
+        "pnl": 3.25,
         "closed": 0
       },
       {
         "day": 6,
-        "pnl": null,
-        "closed": 0
+        "pnl": 5.98,
+        "closed": 1
       },
       {
         "day": 7,
-        "pnl": null,
+        "pnl": -3.37,
         "closed": 0
       },
       {
         "day": 8,
-        "pnl": null,
+        "pnl": -5.42,
         "closed": 0
       },
       {
         "day": 9,
-        "pnl": null,
-        "closed": 0
+        "pnl": 8.84,
+        "closed": 1
       },
       {
         "day": 10,
@@ -267,28 +704,28 @@
       },
       {
         "day": 12,
-        "pnl": null,
+        "pnl": 9.8,
         "closed": 0
       },
       {
         "day": 13,
-        "pnl": null,
+        "pnl": -4.21,
         "closed": 0
       },
       {
         "day": 14,
-        "pnl": null,
+        "pnl": -0.84,
         "closed": 0
       },
       {
         "day": 15,
-        "pnl": null,
+        "pnl": 7.12,
         "closed": 0
       },
       {
         "day": 16,
-        "pnl": null,
-        "closed": 0
+        "pnl": 8.58,
+        "closed": 1
       },
       {
         "day": 17,
@@ -302,27 +739,22 @@
       },
       {
         "day": 19,
-        "pnl": null,
-        "closed": 0
+        "pnl": -1.35,
+        "closed": 1
       },
       {
         "day": 20,
-        "pnl": null,
-        "closed": 0
+        "pnl": 9.62,
+        "closed": 1
       },
       {
         "day": 21,
-        "pnl": null,
+        "pnl": -3.33,
         "closed": 0
       },
       {
         "day": 22,
-        "pnl": null,
-        "closed": 0
-      },
-      {
-        "day": 23,
-        "pnl": 0.0,
+        "pnl": 35.09,
         "closed": 0
       }
     ]
@@ -333,22 +765,22 @@
       {
         "id": "C07",
         "name": "C07 · ABD25",
-        "pnl": 0,
-        "trades": 0,
+        "pnl": -12.13,
+        "trades": 2,
         "active": true
       },
       {
         "id": "R01",
         "name": "R01 · ABD25",
-        "pnl": 0,
-        "trades": 0,
+        "pnl": 0.12,
+        "trades": 3,
         "active": true
       },
       {
         "id": "A6-010",
         "name": "A6-010 · EMTIA",
-        "pnl": 0,
-        "trades": 0,
+        "pnl": -10.11,
+        "trades": 14,
         "active": true
       }
     ]
@@ -356,9 +788,190 @@
   "risk": {
     "concentrations": [],
     "leverage_drawdown_montecarlo": [],
-    "correlation_note": "Açık pozisyon yok: sanal sermayenin tamamı nakitte."
+    "correlation_note": "10 açık pozisyon, brüt maruziyet özkaynağın %42'i."
   },
-  "periodic_returns": [],
+  "periodic_returns": [
+    {
+      "day": "22.10.2026",
+      "swing": 0.7,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "21.10.2026",
+      "swing": -0.07,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "20.10.2026",
+      "swing": 0.19,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "19.10.2026",
+      "swing": -0.03,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "16.10.2026",
+      "swing": 0.17,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "15.10.2026",
+      "swing": 0.14,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "14.10.2026",
+      "swing": -0.02,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "13.10.2026",
+      "swing": -0.08,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "12.10.2026",
+      "swing": 0.2,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "09.10.2026",
+      "swing": 0.18,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "08.10.2026",
+      "swing": -0.11,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "07.10.2026",
+      "swing": -0.07,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "06.10.2026",
+      "swing": 0.12,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "05.10.2026",
+      "swing": 0.07,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "02.10.2026",
+      "swing": 0.12,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "01.10.2026",
+      "swing": -0.0,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "30.09.2026",
+      "swing": -0.02,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "29.09.2026",
+      "swing": -0.03,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "28.09.2026",
+      "swing": -0.36,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "25.09.2026",
+      "swing": -0.19,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "24.09.2026",
+      "swing": 0.27,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "23.09.2026",
+      "swing": -0.1,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "22.09.2026",
+      "swing": 0.2,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "21.09.2026",
+      "swing": -0.11,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "18.09.2026",
+      "swing": 0.04,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "17.09.2026",
+      "swing": 0.04,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "16.09.2026",
+      "swing": -0.21,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "15.09.2026",
+      "swing": 0.16,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "14.09.2026",
+      "swing": -0.04,
+      "trend": null,
+      "daytrade": null
+    },
+    {
+      "day": "11.09.2026",
+      "swing": -0.02,
+      "trend": null,
+      "daytrade": null
+    }
+  ],
   "strategies_27": [
     {
       "rank": 1,
@@ -376,22 +989,28 @@
       "desc": "asama2b: tum paper kapilari gecti",
       "display_title": "C07 · ABD25",
       "subtitle": "Codex Algo 21: wd_adx_breakout_risk",
-      "live_status_tag": "tetikte bekliyor",
-      "is_active_trade": false,
-      "active_trade_symbol": "Nakit",
-      "active_trade_detail": "Açık pozisyon yok",
-      "balance_usd": 1666.66,
-      "total_return_pct": 0.0,
-      "last_day_pct": null,
-      "max_drawdown_pct": 0.0,
-      "win_rate_pct": null,
-      "profit_factor": null,
-      "closed_trades": 0,
-      "open_trades": 0,
-      "avg_holding_time": null,
-      "last_run": "23.10.2026",
+      "live_status_tag": "pozisyonda",
+      "is_active_trade": true,
+      "active_trade_symbol": "ABBV, CVX, MA, MSFT, V",
+      "active_trade_detail": "5 açık pozisyon",
+      "balance_usd": 1672.62,
+      "total_return_pct": 0.36,
+      "last_day_pct": 0.18,
+      "max_drawdown_pct": 0.92,
+      "win_rate_pct": 0.0,
+      "profit_factor": 0.0,
+      "closed_trades": 2,
+      "open_trades": 5,
+      "avg_holding_time": "15.5 gün",
+      "last_run": "22.10.2026",
       "sparkline": [
-        1666.66
+        1654.96,
+        1664.12,
+        1664.14,
+        1663.91,
+        1669.8,
+        1669.66,
+        1672.62
       ],
       "initial_capital": 1666.66,
       "alpha_conf": "hesaplanmadı",
@@ -414,22 +1033,28 @@
       "desc": "asama2b: tum paper kapilari gecti",
       "display_title": "R01 · ABD25",
       "subtitle": "Qullamaggie breakout continuation + episodic pivot",
-      "live_status_tag": "tetikte bekliyor",
-      "is_active_trade": false,
-      "active_trade_symbol": "Nakit",
-      "active_trade_detail": "Açık pozisyon yok",
-      "balance_usd": 1666.66,
-      "total_return_pct": 0.0,
-      "last_day_pct": null,
-      "max_drawdown_pct": 0.0,
-      "win_rate_pct": null,
-      "profit_factor": null,
-      "closed_trades": 0,
-      "open_trades": 0,
-      "avg_holding_time": null,
-      "last_run": "23.10.2026",
+      "live_status_tag": "pozisyonda",
+      "is_active_trade": true,
+      "active_trade_symbol": "BRK-B, COST, MA, PG",
+      "active_trade_detail": "4 açık pozisyon",
+      "balance_usd": 1716.31,
+      "total_return_pct": 2.98,
+      "last_day_pct": 1.81,
+      "max_drawdown_pct": 0.77,
+      "win_rate_pct": 33.3,
+      "profit_factor": 1.01,
+      "closed_trades": 3,
+      "open_trades": 4,
+      "avg_holding_time": "11.3 gün",
+      "last_run": "22.10.2026",
       "sparkline": [
-        1666.66
+        1682.55,
+        1681.29,
+        1686.14,
+        1685.84,
+        1688.48,
+        1685.75,
+        1716.31
       ],
       "initial_capital": 1666.66,
       "alpha_conf": "hesaplanmadı",
@@ -452,22 +1077,28 @@
       "desc": "asama2b: on donem negatif",
       "display_title": "A6-010 · EMTIA",
       "subtitle": "The Gap Momentum System",
-      "live_status_tag": "tetikte bekliyor",
-      "is_active_trade": false,
-      "active_trade_symbol": "Nakit",
-      "active_trade_detail": "Açık pozisyon yok",
-      "balance_usd": 1666.67,
-      "total_return_pct": 0.0,
-      "last_day_pct": null,
-      "max_drawdown_pct": 0.0,
-      "win_rate_pct": null,
-      "profit_factor": null,
-      "closed_trades": 0,
-      "open_trades": 0,
-      "avg_holding_time": null,
-      "last_run": "23.10.2026",
+      "live_status_tag": "pozisyonda",
+      "is_active_trade": true,
+      "active_trade_symbol": "USO",
+      "active_trade_detail": "1 açık pozisyon",
+      "balance_usd": 1659.72,
+      "total_return_pct": -0.42,
+      "last_day_pct": 0.09,
+      "max_drawdown_pct": 1.55,
+      "win_rate_pct": 21.4,
+      "profit_factor": 0.6,
+      "closed_trades": 14,
+      "open_trades": 1,
+      "avg_holding_time": "8.1 gün",
+      "last_run": "22.10.2026",
       "sparkline": [
-        1666.67
+        1655.42,
+        1654.65,
+        1658.36,
+        1657.52,
+        1658.63,
+        1658.16,
+        1659.72
       ],
       "initial_capital": 1666.67,
       "alpha_conf": "hesaplanmadı",
