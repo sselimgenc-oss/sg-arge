@@ -310,6 +310,12 @@ def _day(value: Any) -> str:
     return pd.Timestamp(value).strftime("%Y-%m-%d")
 
 
+def _defter_tarihi(value: Any, *, zaman_damgali: bool) -> str:
+    """Keep the daily ledger's dates stable; shadow rows need their closed 4H bar."""
+    stamp = pd.Timestamp(value)
+    return stamp.strftime("%Y-%m-%d %H:%M:%S") if zaman_damgali else _day(stamp)
+
+
 def _kayma(order_rows: pd.DataFrame, satir: str, fill: dict[str, Any], signal_day: str | None) -> tuple[float, float]:
     """(reference price, slippage %) of a fill against the order of the signal bar just before it; (nan, nan) for stop/target exits."""
     tip = {"giris": "giris", "kismi": "kismi", "cikis": "cikis"}[fill["tip"]]
@@ -328,6 +334,7 @@ def _kayma(order_rows: pd.DataFrame, satir: str, fill: dict[str, Any], signal_da
 def calistir(
     portfoy: Portfoy, veri: Veri, defter: Path = LEDGER_DIR, *, git_sha: str | None = None,
     bugun: pd.Timestamp | None = None, risk_per_trade: float = .005, max_total_risk: float = .02,
+    zaman_damgali: bool = False,
 ) -> dict[str, Any]:
     """Re-run every row, append what is new to the ledger, evaluate the alarms. ``veri`` must already end at the day being run."""
     stamp = {"git_sha": git_sha or _git_sha(), "data_hash": veri.data_hash}
@@ -366,7 +373,7 @@ def calistir(
         etiket, result = satir.etiket, results[satir.etiket]
         for order in result.next_orders:
             order_rows.append({
-                "sinyal_tarihi": _day(order["sinyal_tarihi"]), "satir": etiket, "sembol": order["sembol"], "tip": order["tip"],
+                "sinyal_tarihi": _defter_tarihi(order["sinyal_tarihi"], zaman_damgali=zaman_damgali), "satir": etiket, "sembol": order["sembol"], "tip": order["tip"],
                 "referans_fiyat": order["referans_fiyat"], "adet_gosterge": order.get("adet"), "stop": order.get("stop"), "hedef": order.get("hedef"),
             })
         for fill in result.fills:
@@ -374,21 +381,22 @@ def calistir(
                 continue  # the engine closes every position at the end of a run; that is not a trade
             bars = veri.frames[satir.piyasa].get(fill["sembol"])
             before = bars.index[bars.index < pd.Timestamp(fill["tarih"])] if bars is not None else []
-            reference, slip = _kayma(existing_orders, etiket, {**fill, "neden": fill.get("neden", "")}, _day(before[-1]) if len(before) else None)
+            reference, slip = _kayma(existing_orders, etiket, {**fill, "neden": fill.get("neden", "")},
+                                     _defter_tarihi(before[-1], zaman_damgali=zaman_damgali) if len(before) else None)
             fill_rows.append({
-                "tarih": _day(fill["tarih"]), "satir": etiket, "sembol": fill["sembol"], "tip": fill["tip"], "fiyat": fill["fiyat"],
+                "tarih": _defter_tarihi(fill["tarih"], zaman_damgali=zaman_damgali), "satir": etiket, "sembol": fill["sembol"], "tip": fill["tip"], "fiyat": fill["fiyat"],
                 "adet": fill["adet"], "maliyet": fill["maliyet"], "neden": fill.get("neden", ""), "referans_fiyat": reference, "kayma_pct": slip, "stop": fill.get("stop"),
             })
         for pos in result.open_positions:
             position_rows.append({
-                "tarih": _day(last_day), "satir": etiket, "sembol": pos["sembol"], "giris_tarihi": _day(pos["giris_tarihi"]),
+                "tarih": _defter_tarihi(last_day, zaman_damgali=zaman_damgali), "satir": etiket, "sembol": pos["sembol"], "giris_tarihi": _defter_tarihi(pos["giris_tarihi"], zaman_damgali=zaman_damgali),
                 "giris_fiyati": pos["giris_fiyati"], "adet": pos["adet"], "stop": pos["stop"], "hedef": pos["hedef"], "son_kapanis": pos["son_kapanis"],
                 "acik_kar": (pos["son_kapanis"] - pos["giris_fiyati"]) * pos["adet"],
             })
         for date, value in series[etiket].items():
-            equity_rows.append({"tarih": _day(date), "satir": etiket, "ozkaynak": value})
+            equity_rows.append({"tarih": _defter_tarihi(date, zaman_damgali=zaman_damgali), "satir": etiket, "ozkaynak": value})
     for date, value in total.items():
-        equity_rows.append({"tarih": _day(date), "satir": PORTFOLIO_ROW, "ozkaynak": value})
+        equity_rows.append({"tarih": _defter_tarihi(date, zaman_damgali=zaman_damgali), "satir": PORTFOLIO_ROW, "ozkaynak": value})
     # profit-factor review: a row with >= N closed trades and PF < 1
     pf_limit = int(portfoy.alarm.get("pf_inceleme_islem", 30))
     summary_rows = {}
@@ -427,7 +435,8 @@ def calistir_golge(portfoy: Portfoy, veri: Veri, defter: Path = GOLGE_LEDGER_DIR
     frames = kapanmamis_4h_bari_at(veri.frames.get("KRIPTO25", {}), simdi)
     if not frames or max(frame.index[-1] for frame in frames.values()) < portfoy.baslangic:
         return None
-    return calistir(portfoy, Veri({"KRIPTO25": frames}, {}, veri.data_hash), defter, risk_per_trade=.0025, max_total_risk=.01)
+    return calistir(portfoy, Veri({"KRIPTO25": frames}, {}, veri.data_hash), defter, risk_per_trade=.0025, max_total_risk=.01,
+                    zaman_damgali=True)
 
 
 # ----------------------------------------------------------------------------------------------- report
