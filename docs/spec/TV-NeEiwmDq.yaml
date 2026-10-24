@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Izleyen stop mesafesi dolum barinin ATR''sine sabitlenir ve pozisyon acildiktan sonra pozisyon durumuna gore ilerler; motorun iz_suren/stop semantigi sinyal barinin ATR''sini kullanir, birebir karsilamaz. Yaklasik ceviri yapilmadi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Izleme mesafesi (trailDist) DOLUM barindaki ATR x 2,5 ile sabitlenir ve stop = max(stop, high - trailDist) ozyinelemelidir; sabit mesafe pozisyon durumudur (dinamik_cikis''te giris anindaki ATR yok). Ayrica Cuma 20:00 UTC haftasonu kapatma (seans). Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Izleyen stop mesafesi dolum barinin ATR''sine sabitlenir ve pozisyon acildiktan sonra pozisyon durumuna gore ilerler; motorun iz_suren/stop semantigi sinyal barinin ATR''sini kullanir, birebir karsilamaz. Yaklasik ceviri yapilmadi.']
+belirsiz: ['Dogrulanamaz (ceviri): Izleme mesafesi (trailDist) DOLUM barindaki ATR x 2,5 ile sabitlenir ve stop = max(stop, high - trailDist) ozyinelemelidir; sabit mesafe pozisyon durumudur (dinamik_cikis''te giris anindaki ATR yok). Ayrica Cuma 20:00 UTC haftasonu kapatma (seans). Yaklasik ceviri yapilmadi.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

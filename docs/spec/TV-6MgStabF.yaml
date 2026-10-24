@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Izleyen stop acik kara bagli etkinlesir (profit_pct >= trail_act) ve sonra her barda guncel ATR ile mandallanir (sl := trail, strategy.exit her bar yeniden kurulur); ayrica short bacak ters yone girer. Pozisyon durumuna bagli, bar basina degisen cikis Dogrulanamaz kategorisidir.'}
+dogrulanamaz: {neden: ceviri, ayrinti: Izleyen stop acik kar yuzdesi esigine (profit_pct >= trail_act) ve trail_on durumuna baglidir; stop kosullu olarak sinyal barindan sabit seviyeye gecer ve kar esigi asildiktan sonra kapanis - 2 x ATR cikisiyla ratchet edilir. Acik kar durumu Dogrulanamaz kategorisidir.}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Izleyen stop acik kara bagli etkinlesir (profit_pct >= trail_act) ve sonra her barda guncel ATR ile mandallanir (sl := trail, strategy.exit her bar yeniden kurulur); ayrica short bacak ters yone girer. Pozisyon durumuna bagli, bar basina degisen cikis Dogrulanamaz kategorisidir.']
+belirsiz: ['Dogrulanamaz (ceviri): Izleyen stop acik kar yuzdesi esigine (profit_pct >= trail_act) ve trail_on durumuna baglidir; stop kosullu olarak sinyal barindan sabit seviyeye gecer ve kar esigi asildiktan sonra kapanis - 2 x ATR cikisiyla ratchet edilir. Acik kar durumu Dogrulanamaz kategorisidir.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

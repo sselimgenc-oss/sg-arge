@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'stopLoss = guncel barin low x (1 - %0,5) her barda yeniden hesaplanir ve strategy.exit stop/limit olarak her bar guncellenir; hedef de her bar guncellenen hacim zirvesi fiyatina baglidir. Bar basina degisen seviyeler karsilanamaz. Yaklasik ceviri yapilmadi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Dinamik stop motorda var, ama hedef = max(en yuksek hacimli barin kapanisi, giris + 2 x risk) HEM giris fiyatina HEM bar degerlerine baglidir; dinamik_cikis''te giris fiyatina bagli mutlak hedef ifadesi yok (hedef_giristen yalniz mesafedir, max(hacim-yuksek - giris, ...) giris fiyatini iki yerde kullanir). Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): stopLoss = guncel barin low x (1 - %0,5) her barda yeniden hesaplanir ve strategy.exit stop/limit olarak her bar guncellenir; hedef de her bar guncellenen hacim zirvesi fiyatina baglidir. Bar basina degisen seviyeler karsilanamaz. Yaklasik ceviri yapilmadi.']
+belirsiz: ['Dogrulanamaz (ceviri): Dinamik stop motorda var, ama hedef = max(en yuksek hacimli barin kapanisi, giris + 2 x risk) HEM giris fiyatina HEM bar degerlerine baglidir; dinamik_cikis''te giris fiyatina bagli mutlak hedef ifadesi yok (hedef_giristen yalniz mesafedir, max(hacim-yuksek - giris, ...) giris fiyatini iki yerde kullanir). Yaklasik ceviri yapilmadi.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

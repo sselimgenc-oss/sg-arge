@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (SL 3 x ATR, TP 6 x ATR, guncel ATR).'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Giris Londra (05:45-09:45 GMT) ve New York AM (12:00-16:00 GMT) oturum pencereleriyle kisitlidir (saat bazli seans filtresi; 4H bar bu pencereleri ayiramaz) ve ALMA kullanir. Seans filtresi Dogrulanamaz kategorisidir.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Pine''da strategy.exit her barda cagrilir ve stop/hedef GUNCEL barin ATR''si (ya da kapanisi) ile yeniden kurulur; seviyeler pozisyon omru boyunca bar bar degisir. Motor stop/hedefi dolumda sabitler (sinyal barinin ATR''si), bar basina yenilenen seviye karsilanamaz. Yaklasik ceviri yapilmadi. (SL 3 x ATR, TP 6 x ATR, guncel ATR).']
+belirsiz: ['Dogrulanamaz (ceviri): Giris Londra (05:45-09:45 GMT) ve New York AM (12:00-16:00 GMT) oturum pencereleriyle kisitlidir (saat bazli seans filtresi; 4H bar bu pencereleri ayiramaz) ve ALMA kullanir. Seans filtresi Dogrulanamaz kategorisidir.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

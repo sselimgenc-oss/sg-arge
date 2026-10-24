@@ -18,7 +18,7 @@ PARTI_IDS = ['PDt7xwn2', 'HfxNiEab', 'ZvpONhex', 'zb7PgKWs', 'TQVitTEQ', 'ApE4pU
 TAM_IDS = ['PDt7xwn2', 'HfxNiEab', 'zb7PgKWs', '6ZReHYKn', 'qQ0MJCVL', 'xYflA6O7', 'vMuEblZr', 'o9qty0BL', 'PUEDA3c6', 'zMwHN2Uu', 'ANmKXWWJ', 'IMKs0OPw', 'Z9O5w3SG', 'XRZCjbFr', '97gxVA5b', 'zrDoqm9F', 'OKxIjdsz', 'VcRiudNf']
 OZEL_IDS = ['xYflA6O7', 'vMuEblZr', 'o9qty0BL', 'PUEDA3c6', 'zMwHN2Uu', 'IMKs0OPw', 'Z9O5w3SG', '97gxVA5b']
 # U7 Ek 1: kolu eslenen kartlar (docs/GOREV_U7.md) tests/test_u7_piyasa.py'de sinanir
-_U7_EK1 = {i for i in PARTI_IDS if any(str(b).startswith("U7 Ek 1") for b in yaml.safe_load((SPEC / f"TV-{i}.yaml").read_text(encoding="utf-8"))["belirsiz"])}
+_U7_EK1 = {i for i in PARTI_IDS if any(str(b).startswith(("U7 Ek 1", "U7 Ek 4")) for b in yaml.safe_load((SPEC / f"TV-{i}.yaml").read_text(encoding="utf-8"))["belirsiz"])}
 PARTI_IDS = [i for i in PARTI_IDS if i not in _U7_EK1]
 TAM_IDS = [i for i in TAM_IDS if i not in _U7_EK1]
 OZEL_IDS = [i for i in OZEL_IDS if i not in _U7_EK1]

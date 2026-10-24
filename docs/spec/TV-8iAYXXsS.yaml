@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Kademeli (ratchet) stop: stop yalniz en az belirli bir iyilesme olursa yukari tasinir ve bu durum bar bar tutulur; pozisyon durumuna bagli cok asamali cikis. Yaklasik ceviri yapilmadi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Izleyen stop esikli mandallidir: trailSL yalnizca aday seviye onceki seviyeden en az 0,25 x ATR iyiyse yukari tasinir (trailSL := candL, onceki trailSL''ye ve sinyal barindaki ilk stopa bagli ozyinelemeli durum). dinamik_cikis `mandal` yalniz yukari tasir, esik/ozyineleme yok. Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Kademeli (ratchet) stop: stop yalniz en az belirli bir iyilesme olursa yukari tasinir ve bu durum bar bar tutulur; pozisyon durumuna bagli cok asamali cikis. Yaklasik ceviri yapilmadi.']
+belirsiz: ['Dogrulanamaz (ceviri): Izleyen stop esikli mandallidir: trailSL yalnizca aday seviye onceki seviyeden en az 0,25 x ATR iyiyse yukari tasinir (trailSL := candL, onceki trailSL''ye ve sinyal barindaki ilk stopa bagli ozyinelemeli durum). dinamik_cikis `mandal` yalniz yukari tasir, esik/ozyineleme yok. Yaklasik ceviri yapilmadi.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
