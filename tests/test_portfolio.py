@@ -111,6 +111,51 @@ def test_maximum_holding_period_exits_at_next_open() -> None:
     assert trade["exit_reason"] == "signal"
 
 
+def test_pyramid_respects_the_entry_limit_and_shared_open_risk_cap() -> None:
+    frame = _frame(opens=[100.0] * 5, lows=[99.0] * 5)
+    signals = _entry_only(frame, "ABD25")
+    signals["entry"] = True
+    signals["stop_dist"] = 10.0
+    result = run_portfolio(
+        {"TEST": frame}, lambda _f, _m: signals, market="ABD25", start=frame.index[0], end=frame.index[-1],
+        cost_rate=0.0, precomputed_signals={"TEST": signals}, trail_mode=None, pyramid_max=10,
+        initial_capital=10_000.0, risk_per_trade=.005, max_total_risk=.02, record_state=True,
+    )
+    entries = [fill for fill in result.fills if fill["tip"] == "giris"]
+    assert len(entries) == 4  # 4 x 0.5% is the complete 2% shared risk budget
+    assert sum(fill["adet"] * 10.0 for fill in entries) == pytest.approx(200.0)
+
+
+def test_scaled_exits_sell_fractions_of_the_original_quantity() -> None:
+    frame = _frame(opens=[100, 100, 106, 112, 112], lows=[99, 99, 105, 111, 111])
+    frame["close"] = [100, 100, 106, 112, 112]
+    signals = _entry_only(frame, "ABD25")
+    signals["stop_dist"] = 20.0
+    result = run_portfolio(
+        {"TEST": frame}, lambda _f, _m: signals, market="ABD25", start=frame.index[0], end=frame.index[-1],
+        cost_rate=0.0, precomputed_signals={"TEST": signals}, trail_mode=None,
+        scaled_exits=[{"trigger_fn": lambda price, _risk: price + 5, "oran": .25},
+                      {"trigger_fn": lambda price, _risk: price + 10, "oran": .50}], record_state=True,
+    )
+    entries = [fill for fill in result.fills if fill["tip"] == "giris"]
+    partials = [fill for fill in result.fills if fill["tip"] == "kismi"]
+    assert len(entries) == 1 and len(partials) == 2
+    assert sum(fill["adet"] for fill in partials) == pytest.approx(entries[0]["adet"] * .75)
+
+
+def test_break_even_stop_is_active_only_on_the_bar_after_its_trigger() -> None:
+    frame = _frame(opens=[100, 100, 101, 101, 101], lows=[99, 96, 99, 99, 99])
+    frame["high"] = [101, 106, 102, 102, 102]  # bar 1 reaches +1R, its low remains above the original stop
+    signals = _entry_only(frame, "ABD25")
+    signals["stop_dist"] = 5.0
+    result = run_portfolio(
+        {"TEST": frame}, lambda _f, _m: signals, market="ABD25", start=frame.index[0], end=frame.index[-1],
+        cost_rate=0.0, precomputed_signals={"TEST": signals}, trail_mode=None, break_even_r=1.0,
+    )
+    trade = result.trades.iloc[0]
+    assert trade["exit_date"] == frame.index[2] and trade["exit_price"] == pytest.approx(100.0)
+
+
 def _pending_signals(frame: pd.DataFrame, *, level: float, stop_dist: float = 20.0, target_dist=None) -> pd.DataFrame:
     signals = pd.DataFrame(False, index=frame.index, columns=["entry", "exit"])
     signals.iloc[0, signals.columns.get_loc("entry")] = True

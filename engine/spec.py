@@ -213,6 +213,16 @@ def validate_card(path: Path, card: Any, all_ids: set[str]) -> CardResult:
             for item in (target if isinstance(target, list) else [target]):
                 if isinstance(item, str):
                     _check_expression(item, f"{block}.{sub}", defined, gost, issues, runtime=True)
+    levels = card.get("kademeli_cikis")
+    if levels is not None:
+        if not isinstance(levels, list):
+            issues.append(Issue("kademeli_cikis", "kademeli_cikis liste olmali"))
+        else:
+            for number, level in enumerate(levels):
+                if not isinstance(level, dict) or not 0 < float(level.get("oran", 0)) <= 1:
+                    issues.append(Issue("kademeli_cikis", f"kademeli_cikis[{number}] tetik ve 0<oran<=1 icermeli"))
+                    continue
+                _check_expression(level.get("tetik"), f"kademeli_cikis[{number}].tetik", defined, gost, issues, runtime=True)
 
     rotation = card.get("rotasyon")
     if rotation is not None:
