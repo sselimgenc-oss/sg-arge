@@ -126,6 +126,27 @@ def test_pyramid_respects_the_entry_limit_and_shared_open_risk_cap() -> None:
     assert sum(fill["adet"] * 10.0 for fill in entries) == pytest.approx(200.0)
 
 
+def test_pyramid_resizes_an_addition_for_the_lower_combined_stop() -> None:
+    # First unit: 5 at 100 with stop 90.  The add fills at 110 with stop 80;
+    # the common stop widens the first unit's risk to 100.  The second unit is
+    # therefore limited to the then-equity's 50.25 / (110 - 80), rather than
+    # its standalone 5 (the first unit is marked +50 at the add open).
+    frame = _frame(opens=[100, 100, 110, 110, 110], lows=[99, 99, 109, 109, 109])
+    signals = _entry_only(frame, "ABD25")
+    signals["entry"] = [True, True, False, False, False]
+    signals["stop_dist"] = [10.0, 30.0, 30.0, 30.0, 30.0]
+    result = run_portfolio(
+        {"TEST": frame}, lambda _f, _m: signals, market="ABD25", start=frame.index[0], end=frame.index[-1],
+        cost_rate=0.0, precomputed_signals={"TEST": signals}, trail_mode=None, pyramid_max=1,
+        initial_capital=10_000.0, risk_per_trade=.005, max_total_risk=.02, record_state=True,
+    )
+    first, added = [fill for fill in result.fills if fill["tip"] == "giris"]
+    assert first["adet"] == pytest.approx(5.0)
+    assert added["adet"] == pytest.approx(50.25 / 30.0)
+    combined_risk = first["adet"] * (first["fiyat"] - 80.0) + added["adet"] * (added["fiyat"] - 80.0)
+    assert combined_risk <= 201.0 + 1e-9  # 2% of the 10,050 marked equity
+
+
 def test_scaled_exits_sell_fractions_of_the_original_quantity() -> None:
     frame = _frame(opens=[100, 100, 106, 112, 112], lows=[99, 99, 105, 111, 111])
     frame["close"] = [100, 100, 106, 112, 112]

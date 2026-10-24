@@ -401,6 +401,19 @@ def run_portfolio(
             risk_per_trade * portfolio_equity,
             max(max_total_risk * portfolio_equity - existing_risk, 0.0),
         )
+        if symbol in positions:
+            # A pyramid is represented by one aggregate position and therefore
+            # uses its *new* (lowest) common stop for sizing.  Replacing the
+            # old marked-risk estimate for this symbol is essential: a lower
+            # stop widens the risk of every existing unit too.
+            position = positions[symbol]
+            combined_stop = min(position.stop, initial_stop)
+            marked_symbol_risk = max(mark(symbol, field_name) - position.stop, 0.0) * position.quantity
+            combined_existing_risk = position.quantity * max(position.entry_price - combined_stop, 0.0)
+            other_risk = existing_risk - marked_symbol_risk
+            combined_room = max(max_total_risk * portfolio_equity - other_risk - combined_existing_risk, 0.0)
+            risk_budget = min(risk_per_trade * portfolio_equity, combined_room)
+            risk_per_unit = price - combined_stop
         gross_budget = max(max_gross * portfolio_equity - gross, 0.0)
         cash_budget = max(cash / (1 + cost_rate), 0.0)
         quantity = min(risk_budget / risk_per_unit, gross_budget / price, cash_budget / price)
@@ -435,10 +448,10 @@ def run_portfolio(
             position.entry_price = (position.entry_price * old_quantity + price * quantity) / (old_quantity + quantity)
             position.quantity += quantity
             position.orig_quantity += quantity
-            position.initial_risk += initial_risk
             position.entry_cost += entry_cost
             position.initial_stop = min(position.initial_stop, initial_stop)
             position.stop = min(position.stop, initial_stop)
+            position.initial_risk = position.quantity * (position.entry_price - position.initial_stop)
             position.pyramid_entries += 1
             if record_state:
                 fill_log.append({"tarih": date, "sembol": symbol, "tip": "giris", "fiyat": price, "adet": quantity,
@@ -461,10 +474,14 @@ def run_portfolio(
     def take_partial(symbol: str, price: float, fraction: float | None = None) -> None:
         nonlocal cash
         position = positions[symbol]
+        legacy_single_partial = fraction is None and position.pyramid_entries == 1
         fraction = float(partial_profit["oran"]) if fraction is None else fraction
-        sold = min(position.orig_quantity * fraction, position.quantity)
+        # Exact legacy arithmetic is part of paper-ledger parity.  The
+        # proportional form is needed only when a scaled exit or pyramid made
+        # "original quantity" different from the current quantity.
+        sold = position.quantity * fraction if legacy_single_partial else min(position.orig_quantity * fraction, position.quantity)
         part_cost = sold * price * cost_rate
-        entry_share = position.entry_cost * (sold / position.quantity)
+        entry_share = position.entry_cost * fraction if legacy_single_partial else position.entry_cost * (sold / position.quantity)
         cash += sold * price - part_cost
         position.realized = (price - position.entry_price) * sold - entry_share - part_cost
         position.exit_cost_acc = part_cost
