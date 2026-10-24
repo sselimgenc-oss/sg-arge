@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [KRIPTO]
 parametreler: {kol: KRIPTO-4H}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Stop her barda mandallanan izleyen stopa (activeEntrySL := trailStop) tasinir ve strategy.exit her bar yeniden kurulur; ayrica gun sonu kapanisi (EOD Close, seans saati) ve short bacak. Pozisyon durumuna bagli, bar basina degisen cikis Dogrulanamaz kategorisidir.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Giris saat bazli seans pencerelerine (Londra/New York kill zone), gunluk islem sayacina, VWAP egim rejimine, CVD ve mum formasyonlarina baglidir (257 satirlik durum makinesi); seans filtresi Dogrulanamaz kategorisidir.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Stop her barda mandallanan izleyen stopa (activeEntrySL := trailStop) tasinir ve strategy.exit her bar yeniden kurulur; ayrica gun sonu kapanisi (EOD Close, seans saati) ve short bacak. Pozisyon durumuna bagli, bar basina degisen cikis Dogrulanamaz kategorisidir.']
+belirsiz: ['Dogrulanamaz (ceviri): Giris saat bazli seans pencerelerine (Londra/New York kill zone), gunluk islem sayacina, VWAP egim rejimine, CVD ve mum formasyonlarina baglidir (257 satirlik durum makinesi); seans filtresi Dogrulanamaz kategorisidir.', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}

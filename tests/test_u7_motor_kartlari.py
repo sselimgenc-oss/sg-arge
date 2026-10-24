@@ -133,3 +133,24 @@ def test_mi47rsio_trend_sayaci_elle():
     for i in range(len(close)):
         run[i] = (run[i - 1] + 1 if i else 1) if bull[i] else 0
     assert np.array_equal(sig["entry"].to_numpy(), bull & (run >= 10)) and sig["entry"].any()
+
+
+def test_gauss_filtresi_sabit_girdide_bire_yakinsar():
+    from strategies.ozel.tv_egtb7tgj import gaussian
+    out = gaussian(np.ones(600), alpha=0.1, poles=4)
+    assert out[-1] == pytest.approx(1.0, abs=1e-9) and out[0] == pytest.approx(0.1 ** 4)
+
+
+def test_bjdrgy7z_dinamik_seviye_yalniz_yeni_sinyalde_degisir():
+    """valuewhen(sig, close - atr): ayni sinyal sayisi icinde seviye sabit kalir, yeni sinyal barinda yenilenir."""
+    frame = walk(1500, 11, "1D")
+    card = load("BJDRgy7z")
+    sig, _ = card_frame_signals(card, frame, week_end="FRI")
+    env = gosterge.build_env(frame, card["gostergeler"])
+    events = env["sig"].astype(bool).to_numpy()
+    assert events.sum() >= 3
+    atr = env["atr14"]
+    expected = (frame["close"] - atr).where(pd.Series(events, index=frame.index)).ffill()
+    assert np.allclose(sig["dyn_stop"].dropna(), expected.loc[sig["dyn_stop"].dropna().index])
+    changes = sig["dyn_stop"].diff().abs() > 1e-12
+    assert set(sig.index[changes.fillna(False)]) <= set(sig.index[events])

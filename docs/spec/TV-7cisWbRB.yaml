@@ -19,8 +19,8 @@ stop_eklendi: false
 yalniz_long_bacak: true
 piyasa_kisiti: [ABD]
 parametreler: {kol: ABD25-1D}
-dogrulanamaz: {neden: ceviri, ayrinti: 'Izleyen stop = max(sert stop, zirve kapanis - 3 x GUNCEL barin ATR''si) ve strategy.exit her barda yeniden verilir (kazanc %15''e ulasinca izleyen stop etkinlesir); bar basina ATR ile degisen stop motorda yok. Yaklasik ceviri yapilmadi.'}
+dogrulanamaz: {neden: ceviri, ayrinti: 'Izleyen stop = zirve kapanis (girisden itibaren en yuksek kapanis) - 3 x guncel ATR ve %15 kazanc sonrasi etkinlesir: girisin kapanisi ve girisden beri zirve pozisyon durumudur (dinamik_cikis ifadeleri yalniz bar serisi ya da giris fiyatina uzakliktir). Yaklasik ceviri yapilmadi.'}
 spec_durumu: eksik
-belirsiz: ['Dogrulanamaz (ceviri): Izleyen stop = max(sert stop, zirve kapanis - 3 x GUNCEL barin ATR''si) ve strategy.exit her barda yeniden verilir (kazanc %15''e ulasinca izleyen stop etkinlesir); bar basina ATR ile degisen stop motorda yok. Yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu ASX:DRO).']
+belirsiz: ['Dogrulanamaz (ceviri): Izleyen stop = zirve kapanis (girisden itibaren en yuksek kapanis) - 3 x guncel ATR ve %15 kazanc sonrasi etkinlesir: girisin kapanisi ve girisden beri zirve pozisyon durumudur (dinamik_cikis ifadeleri yalniz bar serisi ya da giris fiyatina uzakliktir). Yaklasik ceviri yapilmadi.', 'U7 Ek 1: kol DIGER-1D → ABD25-1D eslendi (kural ve parametreler degismedi; yayin sembolu ASX:DRO).', 'U7 Ek 4: dinamik_cikis / bar_ici kademeli_cikis motor yapilari acisindan yeniden incelendi; engel asagidaki gibi kaldi.']
 deneme_sayisi_kaynakta: 205
 rapor: {pf: null, sharpe: null, getiri: null, mdd: null, islem: null, wr: null, maliyet_dahil: belirtilmemis}
