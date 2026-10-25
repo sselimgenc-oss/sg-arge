@@ -44,6 +44,8 @@ Dal: `codex/analiz`
   tarandı: import kullanan altı stratejinin tamamı yalnız `TradingView/ta`
   kullanıyor. Altısı yeniden koşuldu; üçü veri/footprint eksikliğiyle
   `desteklenmiyor`, üçü `izle` sonucunda kaldı. Karar/kapı/eşik değişmedi.
+- **ALDIM: E1** — Ertelenen yavaş betikler için profil çıkarma, davranışı
+  değiştirmeden hızlandırma ve test.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
