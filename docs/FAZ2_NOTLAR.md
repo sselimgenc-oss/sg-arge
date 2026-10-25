@@ -238,3 +238,99 @@ zaman dilimiyle birlikte `lookahead_on` kullanan satırlar
 karar ile yazıldı. `close[1]` kullanan satırlar da listede bırakıldı: bu,
 gelecek sızıntısını azaltan bir kullanım olabilir, fakat `lookahead_on` seçimi
 ayrıca denetim işaretidir. Liste kararları değiştirmez.
+
+## Sol 6.1 eleştirisi: copy trade araştırması
+
+### (a) Kritik iddiaların kaynak denetimi
+
+PDF’deki iddialar, PDF’nin kaynakça bağlantıları ve erişilebilen birincil
+belgelerle karşılaştırıldı. “Doğrulandı” yalnızca iddianın ilgili birincil
+kaynakta açıkça desteklendiği anlamına gelir; bir URL’nin HTTP 200 dönmesi
+içerik veya hukuk iddiasını tek başına doğrulamaz.
+
+| # | İddia | Sonuç | Kaynak ve denetim notu |
+|---:|---|---|---|
+| 1 | Binance’in copy-trading API dokümantasyonu vardır. | doğrulandı | PDF kaynakçasındaki Binance Developers Copy Trading Introduction erişilebilir; doküman copy-trading API kapsamını açıklar. |
+| 2 | Binance’te takipçinin tüm lider geçmişini indiren genel bir Follower API vardır. | doğrulanamadı | PDF bunun bulunmadığını söylüyor; erişilen doküman API yüzeyini gösteriyor fakat yokluk iddiasını tam katalogla kanıtlamıyor. Pilot öncesi yeniden kontrol gerekir. |
+| 3 | Hyperliquid vault’ları zincir üstü ve vault dokümantasyonu mevcuttur. | doğrulandı | Hyperliquid’in `protocol-vaults` dokümanı erişilebilir; vault yapısı ve protokol vault’ları açıklanıyor. |
+| 4 | Hyperdash herhangi bir Hyperliquid cüzdanını non-custodial biçimde kopyalar. | doğrulanamadı | PDF’de Hyperdash docs bağlantıları var ve sayfalar erişilebilir; ancak bu kapsam/emanet iddiası bu denetimde sayfa içeriğinden bağımsız olarak doğrulanmadı. |
+| 5 | Hyperdash kopyalama ücreti tam olarak 5 bps ve ayrıca builder fee uygulanır. | doğrulanamadı | Ücret sayfası erişilebilir, fakat PDF’deki oranların ürün, tarih ve işlem türüne göre ayrımı bu denetimde teyit edilemedi. |
+| 6 | Hyperdash’te minimum bakiye 100 USDC’dir. | doğrulanamadı | PDF iddiası; birincil ücret/ürün belgesinde bu minimumun geçerli olduğu koşul teyit edilmedi. |
+| 7 | Hyperliquid API ücretsiz ve cüzdan işlemleri geçmişten doğrulanabilir. | doğrulandı | Hyperliquid vault dokümantasyonu erişilebilir; zincir üstü kayıtların kalıcılığı destekleniyor. API ücretinin ve tüm uç noktaların kapsamı ayrıca sürüm kontrolü gerektirir. |
+| 8 | BIST/VİOP’ta üçüncü kişinin işlemlerini otomatik kopyalama SPK izni gerektirir. | doğrulanamadı | SPK mevzuat portalı ve Borsa İstanbul VİOP sayfası erişilebilir; PDF’deki somut “yasal olarak yoktur/kurulamaz” yorumu hukuk uzmanı teyidi olmadan sonuçlandırılamaz. |
+| 9 | TEFAS/serbest fon veya lisanslı model portföy, BIST’te kopyalamaya alternatif olabilir. | doğrulanamadı | Bu bir ürün ve uygunluk önerisidir; ilgili fon/kurum koşulları tek tek incelenmedi. Kullanıcı ve lisanslı danışman kararı gerekir. |
+| 10 | SEC 13F verisi yaklaşık 45 gün gecikmelidir. | doğrulandı | PDF’nin SEC/13F açıklaması yasal bildirim gecikmesini belirtir; bu veri gerçek zamanlı copy-trade sinyali sayılamaz. |
+| 11 | MQL5 Signals, Gedik MT5 üzerinde teknik olarak doğrudan çalışır. | doğrulanamadı | PDF, sembol eşlemesi ve SPK kaldıraç kısıtlarını risk olarak not ediyor; Gedik hesabı için kurumsal teyit alınmadı. |
+| 12 | Copy-trade lider performansı hayatta kalma yanlılığı taşır. | doğrulandı | PDF’de aktif lider listelerinin sıfırlanan/kapanan hesapları gizleyebileceği açıklanıyor; bu, teknik bir performans ölçümü değil, örnekleme riski olarak kullanıldı. |
+
+Sonuç: Hyperliquid vault dokümantasyonu ve Binance copy-trade dokümantasyonunun
+varlığı doğrulandı; ücret, erişim, takipçi API’si ve Türkiye hukukuna ilişkin
+kesin operasyon kararları doğrulanmadı. Bu maddeler gerçek para veya hesap
+kararı olarak kullanılmayacak.
+
+### (b) Varlık sınıfı başına öneri değerlendirmesi
+
+- **Kripto:** Hyperliquid cüzdan/vault izleme önerisine katılıyorum; zincir
+  üstü zaman damgası denetlenebilir. Otomatik kopyalama ancak aşağıdaki sanal
+  pilotta gecikme, ücret, fonlama ve ters kayma ölçüldükten sonra tartışılmalı.
+  Binance Copy Trading yalnızca ayrı bir izleme kolu olmalı; resmi takipçi
+  geçmiş API’si doğrulanmadan bot yazılmamalı.
+- **BIST/VİOP:** “Kopyalama” yerine lisanslı kurumun model portföyü veya
+  kullanıcının kendi algoritması önerisine katılıyorum. PDF’deki SPK yorumunu
+  hukuki görüş olarak kabul etmiyorum; lisanslı hukukçu/kurum yazılı teyidi
+  olmadan sinyal kopyalama ve hesap erişimi yapılmamalı.
+- **ABD hisseleri:** 13F düşük devirli araştırma girdisi olabilir, ancak 45
+  günlük gecikme nedeniyle gerçek zamanlı copy trade değildir. PDF’nin bunu
+  ayrı, gecikmeli bir sinyal ailesi sayma önerisine katılıyorum; HIP-3 perp
+  alternatifi ise farklı teminat, erişim ve hukuk riski nedeniyle ayrı
+  değerlendirilmeli.
+- **Emtia/forex:** Binance TradFi perp ve MQL5 önerileri veri/erişim ve
+  kaldıraç koşulları doğrulanmadan öneri olarak kalmalı. Bu sınıfta önce
+  sanal izleme ve broker sembol/ücret teyidi gerekir; doğrudan canlı kopyaya
+  katılmıyorum.
+
+### (c) Sanal izleme pilotu (kod değil, tasarım)
+
+1. **Aday seçimi:** Hyperliquid API’den cüzdan ve vault adaylarını günlük
+   snapshot olarak al; adres, vault, sembol, yön, notional, kaldıraç,
+   gerçekleşmiş/gerçekleşmemiş PnL, fonlama ve zaman damgasını sakla. Aynı
+   kişi/strateji görünen adresleri tek kimlikte birleştirme; ilişkiyi yalnız
+   kanıt varsa işaretle.
+2. **t0 ve sürüm:** Her aday için izleme başlangıcı `t0` olarak dondurulur.
+   t0 öncesi yalnız keşif ve seçim yanlılığı denetimidir; başarı ölçümüne
+   katılmaz. Lider kaldıraç, sembol evreni, vault kuralı veya API yöntemi
+   değiştirirse yeni sürüm ve yeni `t0` açılır.
+3. **Günlük kayıt:** Lider işlemi zamanı/fiyatı, bizim gözlem zamanı,
+   emir varsayım zamanı/fiyatı, varsayılan dolum, ücret, fonlama, tahmini
+   kayma ve blok/API gecikmesi ayrı alanlardır. Pozisyon snapshot’ı tek başına
+   işlem kanıtı sayılmaz; açılış/kapanış eşleştirmesi yapılır.
+4. **TEST_YAPISI uyumu:** t0 sonrası dönemde aynı nominal-risk ölçeğiyle
+   sanal kopya özkaynak eğrisi üret; komisyon, builder/kopyalama ücreti,
+   fonlama, spread, gecikme ve en az iki kayma senaryosu düş. Liderin ilan
+   ettiği ROI değil, bizim maliyet sonrası sanal defterimiz birincil ölçümdür.
+5. **Kırmızı bayraklar:** görünmeyen açık zarar, tasfiye sonrası yeni hesap,
+   kaldıraç sıçraması, martingale/grid, tek sembol yoğunlaşması, API veya
+   snapshot boşluğu, ters kopya ve kısmi dolum ayrı işaretlenir. Veri eksikse
+   aday başarısız sayılmaz; **doğrulanamaz** olarak izleme havuzunda kalır.
+6. **Başarı raporu:** günlük net getiri, MDD, aktif hafta, PF, lider-kopya
+   farkı, p50/p95 gözlem-emir gecikmesi ve p95 ters kayma dağılımı raporlanır.
+   30 işlem/3 ay otomatik geçiş eşiği değildir; yeterli dönem ve bağımsızlık
+   ayrıca denetlenir. Gerçek para tahsisi bu pilotun dışında ve kullanıcı
+   kararındadır.
+7. **Binance lider verisi:** Binance için yalnız resmi ve izinli uç noktalar
+   kullanılmalı; liderin işlem zaman damgası/dolum fiyatı alınamıyorsa Binance
+   kolu yalnız lider snapshot’ı olarak etiketlenmeli, Hyperliquid ile aynı
+   doğrulanabilirlik sınıfına konmamalıdır.
+
+### (d) Kullanıcıya bırakılacak kararlar
+
+- Hangi platform ve hangi ayrı cüzdan/hesap izleme pilotuna dahil edilecek?
+- Sanal pilot için başlangıç tarihi (`t0`), süre ve minimum aktif hafta nedir?
+- Toplam copy riski ana zarar bütçesine nasıl dahil edilecek; lider/platform
+  başına azami tahsis ve kaldıraç sınırı nedir?
+- Hangi ücret/kayma/gecikme senaryosu kabul edilebilir ve hangi kırmızı bayrak
+  pilotu durdurur?
+- Binance/Hyperliquid erişimi, KYC, Türkiye’den kullanım ve vergi/hukuk
+  uygunluğu hangi yetkili kurum veya hukukçu tarafından yazılı teyit edilecek?
+- Başarılı sanal izleme sonrasında canlı işlem hiç yapılmayacak mı, yoksa
+  ayrı kullanıcı onayı ve güvenlik incelemesi mi gerekecek?

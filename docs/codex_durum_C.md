@@ -15,7 +15,10 @@ Dal: `codex/analiz`
   en az 10 haftalık 85 varyant (U4: 14, U6: 71) alındı; TV-2 ile aynı %10
   oynaklık ölçeği, 4 haftalık blok bootstrap p10, kopya ayıklama ve `TOHUM`
   uygulandı. 72 temsilci çıktı: `results/u7/siralama.csv`.
-- Sıradaki madde: **6.6**.
+- **6.6 tamamlandı:** Copy-trade PDF’sindeki 12 kritik iddia denetlendi;
+  varlık sınıfı görüşleri, t0 tabanlı sanal izleme pilotu ve kullanıcı kararları
+  `docs/FAZ2_NOTLAR.md` sonuna eklendi. Hukuki/para kararı verilmedi.
+- Sıradaki madde: **6.4**.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
