@@ -628,9 +628,9 @@ class PivotSeviyeleri:
         self.h = self.l = self.c = NA
         self.seviye = [NA] * 11
 
-    def __call__(self, tur, capa, h, l, c):
+    def __call__(self, tur, capa, h, l, c, o=NA):
         if bool(capa) and not na(self.h):
-            self.seviye = _pivot(str(tur), self.h, self.l, self.c)
+            self.seviye = _pivot(str(tur), self.h, self.l, self.c, o)
             self.h = self.l = NA
         self.h = h if na(self.h) else max(self.h, h)
         self.l = l if na(self.l) else min(self.l, l)
@@ -638,8 +638,13 @@ class PivotSeviyeleri:
         return list(self.seviye)
 
 
-def _pivot(tur, h, l, c):
+def _pivot(tur, h, l, c, o=NA):
+    """Woodie: PP = (önceki H + önceki L + 2 x yeni dönemin açılışı) / 4."""
     p, r = (h + l + c) / 3, h - l
+    if tur == "Woodie":
+        p = (h + l + 2 * o) / 4
+        r3, s3 = h + 2 * (p - l), l - 2 * (h - p)
+        return [p, 2 * p - l, 2 * p - h, p + r, p - r, r3, s3, r3 + r, s3 - r, NA, NA]
     if tur == "Traditional":
         return [p, 2 * p - l, 2 * p - h, p + r, p - r, h + 2 * (p - l), l - 2 * (h - p),
                 p * 3 + (h - 3 * l), p * 3 - (3 * h - l), p * 4 + (h - 4 * l), p * 4 - (4 * h - l)]

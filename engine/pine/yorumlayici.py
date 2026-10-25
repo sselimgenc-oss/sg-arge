@@ -501,6 +501,8 @@ class Yorumlayici:
             v = self._deger(d.value) if d.value is not None else tuple(NA for _ in yuvalar)
             if isinstance(v, list) and len(v) == len(yuvalar):
                 v = tuple(v)
+            elif isinstance(v, list) and not v:        # security_lower_tf, alt bar yok: her eleman boş dizi
+                v = tuple([] for _ in yuvalar)
             elif not isinstance(v, tuple) and na(v):   # ör. üst dilimin ilk kapanmış barından önce security: hepsi na
                 v = tuple(NA for _ in yuvalar)
             if not isinstance(v, tuple):
@@ -845,6 +847,8 @@ class Yorumlayici:
             return getattr(nesne, e.attr)
         if nesne is None or na(nesne):
             return NA
+        if isinstance(kok, A.Name) and kok is e.value and kok.id in SABIT_NS:   # `size` değişkeni varken size.tiny: sabit
+            return self._yerlesik_degisken(_nokta(e))
         raise Desteklenmiyor(f"öznitelik {e.attr} ({type(nesne).__name__})")
 
     def _yerlesik_degisken(self, ad: str) -> Any:
@@ -1527,9 +1531,9 @@ class Yorumlayici:
             return self._durum(e, T.Sar)(x["start"], x["inc"], x["max"], h, l, c)
         if k == "pivot_point_levels":
             x = b("type", "anchor", "developing")
-            if _dogru(x.get("developing")) or str(x["type"]) not in ("Traditional", "Fibonacci", "Classic", "Camarilla"):
+            if _dogru(x.get("developing")) or str(x["type"]) not in ("Traditional", "Fibonacci", "Classic", "Camarilla", "Woodie"):
                 raise Desteklenmiyor(f"ta.pivot_point_levels ({x['type']}, developing={x.get('developing')})")
-            return self._durum(e, T.PivotSeviyeleri)(x["type"], x["anchor"], h, l, c)
+            return self._durum(e, T.PivotSeviyeleri)(x["type"], x["anchor"], h, l, c, self.o[self.i])
         if k == "vwap":
             x = b("source", "anchor", "stdev_mult", source=(h + l + c) / 3)
             carpan = x.get("stdev_mult")
@@ -1731,7 +1735,8 @@ class Yorumlayici:
             return tuple([x] for x in v) if isinstance(v, tuple) else [v]
         if dk >= self.tf_dk:
             if dizi:                    # alt dilim grafik diliminden büyük değilse: tek elemanlı dizi
-                return [self._deger(dugumler["expression"])]
+                v = self._deger(dugumler["expression"])
+                return tuple([x] for x in v) if isinstance(v, tuple) else [v]
             raise Desteklenmiyor("request.security düşük zaman dilimi (ayrıştırma)")
         anahtar = ("alt", sembol, dk)
         g = self.guvenlik.get(anahtar)
