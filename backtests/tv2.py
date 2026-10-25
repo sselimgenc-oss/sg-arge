@@ -53,6 +53,7 @@ KAPI_HAFTA = 10
 NEDENSELLIK_BAR = 15_000
 DAKIKALIK_ALT = 15            # bu dakikanın altı yalnız --dakikalik ile ve pencereli koşulur
 DAKIKALIK_KOS = False
+BINANCE_UM_KLINES_URL = "https://fapi.binance.com/fapi/v1/klines"
 
 
 def dakika(tf: str) -> int:
@@ -100,20 +101,28 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
         aralik = next(k for k, v in BINANCE_ARALIK.items() if v == taban)
         ek = f"_{bas:%Y%m%d}" if bas is not None else ""
         yol = CACHE / f"{bsym}_{aralik}{ek}.parquet"
+        kaynak = "Binance"
         if yol.exists() and time.time() - yol.stat().st_mtime < 6 * 3600:
             df = pd.read_parquet(yol)
         else:
             try:
                 df = fetch_binance(Asset(bsym, "KRIPTO", "binance"), aralik, start=bas)
             except requests.HTTPError:
-                return None, f"veri_yok: Binance {bsym} yok"
+                # TradingView'deki bazı USDT perpetual'lar spotta listeli değildir.
+                # Aynı sözleşmeyi USDⓈ-M klines'tan dene; sonuç satırı kaynağı taşır.
+                try:
+                    df = fetch_binance(Asset(bsym, "KRIPTO", "binance"), aralik, start=bas,
+                                       url=BINANCE_UM_KLINES_URL)
+                    kaynak = "binance_um"
+                except requests.HTTPError:
+                    return None, f"veri_yok: Binance spot/UM {bsym} yok"
             if df.empty:
                 return None, f"veri_yok: Binance {bsym}"
             CACHE.mkdir(parents=True, exist_ok=True)
             df.to_parquet(yol)
         if taban != dk:
             df = _yeniden_ornekle(df, dk)
-        return _kapanmis(df, dk), f"Binance {bsym} {aralik}" + ("" if taban == dk else f" → {tf}")
+        return _kapanmis(df, dk), f"{kaynak} {bsym} {aralik}" + ("" if taban == dk else f" → {tf}")
     dis = _eslenmis_veri(sembol, dk)
     if dis is not None:
         return dis
