@@ -63,3 +63,8 @@ Her biri ayrı commit; testsiz kod yok; tam paket (`pytest tests/`) yeşil olmad
 - **XAUUSDT / NVDAXUSDT `veri_yok`** (ip7Wyl0i, cXpZ682G, jLKPS0lF): bu semboller Binance USDⓈ-M futures'ta (TradFi perp) olabilir. `veri()` spot'ta yoksa `fapi/v1/klines`'ı da denesin, satıra `kaynak=binance_um` yazsın. Testi sahte indirmeyle yazılsın. Sonra bu üçü yeniden koşulsun.
 - **Şüpheli sonuçlar:** w45uet8E −164%, anNnwsQo −139%, zCYYilCg −64% (18 işlem), jTHvkEVo +1136%. Bunları yeniden koşma. Lider pazartesi denetimde inceleyecek. -100%'ün altı spot için imkânsız (kaldıraç/piramit ya da emülatör).
 - **Actions dakikası:** 8 parça × ~5 saat, 1.500 sınırı aşıldı. Yeni koşu başlatmadan önce kullanıcıya sor.
+
+**Lider notu 08:20 UTC (öncelik 1):**
+- **Koşu 40151651235'te 0/5/6/7. parçaların sonuçları dala yazılmadı.** Push adımı `rebase` çakışmasında kaldı: `CONFLICT (add/add) results/tv2/satirlar/0GhXXwWS.json`. İptal edilen koşu 40151685041 aynı dosyaları önceden commit'lemişti.
+- **Sonuçları kurtar:** artifact'lar `tv2-{0,5,6,7}-40151651235` 2026-11-08'e kadar duruyor. İndir, satır kuralıyla (`zaman_asimi` olmayan mevcut satır ezilmez, yoksa yeni satır yazılır) `codex/tv2-kosu`'ya commit'le.
+- **İş akışını düzelt:** commit adımı çakışmada `rebase --abort`, ardından `git fetch` + `git checkout origin/<dal> -- .` + yeni sonuçları satır kuralıyla kopyala + commit/push. Ya da her parçanın ayrı dosyaya yazması. Çakışmada sessizce sonuç kaybolmasın: adım hata vermeli.
