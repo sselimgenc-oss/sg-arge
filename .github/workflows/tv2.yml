@@ -7,6 +7,15 @@ on:
         description: "0-7 kuyruk parcasi (bos: tum matris)"
         required: false
         default: ""
+      kimlik:
+        description: "Tekil uzun kosu strateji kimligi (bos: parca kuyrugu)"
+        required: false
+        default: ""
+      uzun:
+        description: "Tekil kosuda 18000 sn zaman asimi"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -42,6 +51,7 @@ jobs:
           ids = Path('results/tv2/kuyruk_kripto_kalan.txt').read_text().splitlines()
           part = int('${{ matrix.parca }}')
           requested = '${{ inputs.parca }}'
+          single = '${{ inputs.kimlik }}'
           todo = []
           if requested and requested != str(part):
               Path('/tmp/tv2-queue.txt').write_text('')
@@ -50,6 +60,8 @@ jobs:
           for i, ident in enumerate(ids):
               if i % 8 != part:
                   continue
+            if single and ident != single:
+                continue
               row = Path('results/tv2/satirlar') / f'{ident}.json'
               if row.exists():
                   try:
@@ -68,7 +80,9 @@ jobs:
         run: |
           xargs -r -P2 -I{} bash -c '
             ident="$1"
-            if ! timeout 7200 python -m backtests.tv2 --ayri --dakikalik "$ident"; then
+            seconds=7200
+            test "${{ inputs.uzun }}" = "true" && seconds=18000
+            if ! timeout "$seconds" python -m backtests.tv2 --ayri --dakikalik "$ident"; then
               test -f "results/tv2/satirlar/$ident.json" || python -c "import json, pathlib, sys; pathlib.Path(\"results/tv2/satirlar\").mkdir(parents=True, exist_ok=True); pathlib.Path(f\"results/tv2/satirlar/{sys.argv[1]}.json\").write_text(json.dumps({\"id\": sys.argv[1], \"karar\": \"hata\", \"neden\": \"islemci sureci sifir olmayan kodla sonlandi\"}, ensure_ascii=False))" "$ident"
             fi
           ' _ {} < /tmp/tv2-queue.txt
