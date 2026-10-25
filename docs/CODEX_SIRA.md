@@ -71,7 +71,7 @@ Kurallar `docs/GOREV_CODEX_2026-10-25.md` "Genel kurallar" ve "Hâlâ Codex yapm
 ## 5. Yorumlayıcı eksikleri (dal `codex/yorumlayici-ek`, PR)
 Her biri ayrı commit ve `tests/test_pine_yorumlayici.py`'de test. Anlam TradingView belgesine dayanmalı; belge yoksa yapma, listele.
 - [x] **5.1** `strategy.risk.max_position_size` (4QubxEEw). Kalıp: `_gun_ici_risk`. (2026-10-25: entry dolum adedi açık aynı-yön pozisyonla birlikte sınırı aşmayacak biçimde kısıtlandı; birim testi ve tam paket 1328 geçti/4 atlandı, `1f00e8f`.)
-- [ ] **5.2** `ticker.renko` + `request.security` (CmZUAjHp). Kutu boyu: Traditional/ATR. Belgeye göre yalnız kapanış tabanlı tuğlalar.
+- [ ] **5.2** `ticker.renko` + `request.security` (CmZUAjHp). Kutu boyu: Traditional/ATR. Belgeye göre yalnız kapanış tabanlı tuğlalar. **TAKILDI:** resmî belge yalnız ticker kimliğinin `request.security` ile kullanılacağını ve örnek ATR çağrısını veriyor; Traditional/ATR tuğla oluşumu, ters dönüş ve zaman eşleme algoritmasını tanımlamıyor. Bunları varsaymak stratejiyi sadık olmayan biçimde koşturur; ayrıntılı resmî algoritma ya da referans seri gerekli.
 - [ ] **5.3** `request.earnings` / `request.financial` (R0hKtaEP, rDM9AoU1, fnPiNvdV). Kaynak yfinance; olmayan veri `na`.
 - [ ] **5.4** `array.get` na (DcjBbnzh) ve "dizi sınır dışı" (uGP5w2ki): kök nedeni bul, TradingView davranışına uyan düzeltme + test.
 - [ ] **5.5** Yavaş betikler (LA06Kpl1, OvE4qQgh, JeRCEqWU, wQ1dtwbW, nmnHkA02, qetKgBK2, b4EWZCPJ):
