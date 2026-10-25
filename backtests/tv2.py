@@ -255,6 +255,11 @@ def _kapanmis(df: pd.DataFrame, dk: int) -> pd.DataFrame:
     return df[df.index + pd.to_timedelta(int(dk), unit="min") <= simdi]
 
 
+def _veri_kisa(notu: str) -> bool:
+    """yfinance'ın 1-30 dakikalık, en çok 7/60 günlük penceresini yalnız bilgi olarak işaretle."""
+    return notu.startswith("yfinance ") and bool(re.search(r"\(son (?:7d|60d)\)", notu))
+
+
 def surum_tarihi(kimlik: str, kaynak: dict | None = None) -> tuple[pd.Timestamp | None, str]:
     """Test edilen sürümün tarihi: modülün KAYNAK['surum_tarihi'], yoksa arastirma/tv2_surumler.csv."""
     if kaynak and kaynak.get("surum_tarihi"):
@@ -384,6 +389,8 @@ def kos(kimlik: str) -> dict:
             satir["pencere_bas"] = pencere_bas.date()
     df, notu = veri(str(kaynak["sembol"]), str(kaynak["tf"]), bas=pencere_bas)
     satir["veri"] = notu
+    if _veri_kisa(notu):
+        satir["veri_kisa"] = True
     if df is None:
         return satir | {"karar": "veri_yok", "neden": notu}
     satir |= {"bas": df.index[0].date(), "son": df.index[-1].date(), "bar": len(df)}

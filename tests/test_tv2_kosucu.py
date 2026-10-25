@@ -146,3 +146,10 @@ def test_unprefixed_btcusd_uses_binance_equivalent(monkeypatch, tmp_path) -> Non
 
     assert data is not None and note.startswith("Binance BTCUSDT")
     assert seen == ["BTCUSDT"]
+
+
+def test_yfinance_short_intraday_window_is_information_only() -> None:
+    assert tv2._veri_kisa("yfinance SPY 5m (son 60d)")
+    assert tv2._veri_kisa("yfinance SPY 1m (son 7d)")
+    assert not tv2._veri_kisa("yfinance SPY 60m (son 730d)")
+    assert not tv2._veri_kisa("Binance BTCUSDT 5m")
