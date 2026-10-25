@@ -33,6 +33,12 @@ Dal: `codex/analiz`
   açıkça eklendi.
 - **ALDIM: E6** — Test paketini süreleriyle ölçme; 10 saniyeyi aşan testleri
   davranışı değiştirmeden hızlandırma.
+- **E6 tamamlandı:** 30.000×5 bellek örneklemi 14.000×5, tüm günlük kart
+  smoke testi de 4 yerine 2 sembolle çalıştırıldı; ikisi de aynı denetim
+  kapsamıyla sırasıyla 9.51 sn ve 8.96 sn oldu. Tam paket: `1320 passed,
+  4 skipped` ve 162.52 sn (önce 183.35 sn).
+- **ALDIM: E2** — Eksik kütüphane import'larını envantere ekleme ve ilgili
+  stratejileri yeniden çalıştırma.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
