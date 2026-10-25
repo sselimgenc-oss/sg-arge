@@ -23,6 +23,10 @@ Dal: `codex/analiz`
   eklendi.
 - **ALDIM: E4** — `desteklenmiyor` ve `hata` sonuçlarını gruplama; en sık üç
   eksik Pine özelliğini belgeye dayalı test ve kodla ele alma.
+- **E4 atlandı:** Kullanıcı yönlendirmesiyle Oturum A yürütüyor; bu dalda E4
+  için kod veya rapor değişikliği yapılmadı.
+- **ALDIM: E7** — TV-2 nihai değerleriyle `docs/SANAL_HAVUZ.md` taslağını
+  güncelleme (yalnız öneri; karar/kapı/eşik değiştirmeden).
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
