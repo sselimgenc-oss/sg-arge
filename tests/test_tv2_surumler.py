@@ -48,3 +48,29 @@ def test_closed_page_is_reported_with_a_reason(monkeypatch) -> None:
     assert result["id"] == "TV-1"
     assert result["tf"] == "5"
     assert result["kaynak_acik"] == "sayfa kapali (404)"
+
+
+def test_retry_closed_preserves_old_row_when_page_is_still_closed(monkeypatch, tmp_path) -> None:
+    source = tmp_path / "source.csv"
+    target = tmp_path / "versions.csv"
+    source.write_text(
+        "id,url,tf,suzgec_sonucu\nold,https://example.invalid/script/old/,grafik:5,elendi:tf_disi\n",
+        encoding="utf-8",
+    )
+    target.write_text(
+        "id,pub,son_surum,son_surum_tarihi,ilk_yayin_tarihi,surum_sayisi,kaynak_acik,yayin_sembolu,tf\n"
+        "old,PUB;old,,,,0,script bulunamadi veya kapali,FX:EURUSD,5\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(tv2, "collect", lambda _row: {
+        "id": "old", "pub": "", "son_surum": "", "son_surum_tarihi": "",
+        "ilk_yayin_tarihi": "", "surum_sayisi": "0", "kaynak_acik": "sayfa kapali (404)",
+        "yayin_sembolu": "", "tf": "5",
+    })
+    monkeypatch.setattr("sys.argv", ["tv2_surumler", "--source", str(source), "--target", str(target), "--retry-closed"])
+
+    assert tv2.main() == 0
+    line = target.read_text(encoding="utf-8")
+    assert "PUB;old" in line
+    assert "yeniden arandi: sayfa kapali (404)" in line

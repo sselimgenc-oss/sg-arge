@@ -113,14 +113,40 @@ def main() -> int:
     parser.add_argument("--target", type=Path, default=TARGET)
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--limit", type=int, default=0)
+    parser.add_argument("--retry-closed", action="store_true",
+                        help="Mevcut tabloda acik olmayanlari eski alfanumerik script URL'siyle yeniden ara")
     args = parser.parse_args()
     with args.source.open(encoding="utf-8", newline="") as handle:
-        rows = [row for row in csv.DictReader(handle) if row["suzgec_sonucu"] in {"elendi:tf_disi", "elendi:tf_belirsiz"}]
+        source_rows = [row for row in csv.DictReader(handle) if row["suzgec_sonucu"] in {"elendi:tf_disi", "elendi:tf_belirsiz"}]
+    rows = source_rows
+    existing: list[dict[str, str]] = []
+    if args.retry_closed:
+        with args.target.open(encoding="utf-8", newline="") as handle:
+            existing = list(csv.DictReader(handle))
+        source_by_id = {row["id"]: row for row in source_rows}
+        rows = [source_by_id[row["id"]] for row in existing
+                if row.get("kaynak_acik") != "acik" and row["id"] in source_by_id]
     if args.limit:
         rows = rows[:args.limit]
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
         output = list(pool.map(collect, rows))
     fields = ["id", "pub", "son_surum", "son_surum_tarihi", "ilk_yayin_tarihi", "surum_sayisi", "kaynak_acik", "yayin_sembolu", "tf"]
+    if args.retry_closed:
+        refreshed = {row["id"]: row for row in output}
+        merged: list[dict[str, str]] = []
+        for old in existing:
+            new = refreshed.get(old["id"])
+            if new is None:
+                merged.append(old)
+            elif new["kaynak_acik"] == "acik":
+                merged.append(new)
+            else:
+                # Keep the formerly observed publication/symbol, but make the retry
+                # and its concrete failure visible rather than silently discarding it.
+                old = dict(old)
+                old["kaynak_acik"] = f"yeniden arandi: {new['kaynak_acik']}"
+                merged.append(old)
+        output = merged
     with args.target.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
