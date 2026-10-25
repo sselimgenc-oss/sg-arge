@@ -31,3 +31,4 @@ Son doğrulama: `./.venv/bin/python -m pytest -q tests/` → 1328 geçti, 4 atla
 - 01:44 — A4 TAKILDI: 0–6 artifact sonuçları olmadan yalnız 80/636 satırla `--birlestir` ve `tv2_sirala` çalıştırmak kripto dışı sıralamayı eksik örneklemle üretir. Artifact erişimi ya da A3 yeniden koşusu tamamlanınca bu adım yürütülecek.
 - 01:44 — ALDIM: G1 — Sanal havuz için 20 gölge kitap önerisi hazırlanıyor.
 - 01:44 — G1 — `docs/SANAL_HAVUZ.md` mevcut TV-2 snapshot’ından 15 temsilci önerisiyle güncellendi; kripto dışı sonuçlar eksik olduğu için 20’ye doldurulmadı (eksik 5 aday açıkça bırakıldı).
+- 01:50 — ALDIM: E1 — Yavaş yedi TV-2 betiği profil ve davranış değişmeyen hızlandırma için inceleniyor.
