@@ -69,6 +69,20 @@ def test_yfinance_intraday_picks_largest_divisor_and_resamples(monkeypatch, tmp_
 
     monkeypatch.setitem(sys.modules, "yfinance", types.SimpleNamespace(download=indir))
     monkeypatch.setattr(tv2, "CACHE", tmp_path)
-    df, notu = tv2.veri("TVC:DXY", "240")
+    df, notu = tv2._yfinance_gun_ici("DX-Y.NYB", 240)
     assert cagri == {"kod": "DX-Y.NYB", "period": "730d", "interval": "60m"}
     assert len(df) == 12 and "UTC hizalı" in notu
+
+
+def test_mapped_dukascopy_archive_is_used(monkeypatch, tmp_path) -> None:
+    mapping = tmp_path / "map.csv"
+    mapping.write_text("id,yayin_sembolu,tf,kaynak,veri_sembolu,esdeger_sembol\nX,OANDA:EURUSD,5,dukascopy,EURUSD,EURUSD\n", encoding="utf-8")
+    monkeypatch.setattr(tv2, "ESLESME", mapping)
+    frame = pd.DataFrame({"open": [1.], "high": [1.1], "low": [.9], "close": [1.], "volume": [1.]},
+                         index=pd.DatetimeIndex([pd.Timestamp("2024-01-01", tz="UTC")]))
+    monkeypatch.setattr("data.dukascopy.load_archive", lambda *_args: frame)
+
+    data, note = tv2._eslenmis_veri("OANDA:EURUSD", 5)
+
+    assert data is not None
+    assert note == "Dukascopy EURUSD (eşleme)"
