@@ -66,7 +66,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add results/u7/u1/parca results/u7/u1/getiriler results/u7/u1/huni_ozet.csv results/u7/u1/huni_ozet.md
           git commit -m "u7: U1 5m checkpoints ${{ github.run_id }}" || exit 0
-          git push origin HEAD:${{ github.ref_name }}
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((i*5))
+          done
 
   faz1_u7:
     if: ${{ inputs.faz1_u7 }}
@@ -85,6 +88,7 @@ jobs:
         run: |
           python data/fetch.py --interval 1d --allow-partial --evren pit
           python data/fetch.py --interval 1d --rotasyon --allow-partial
+          python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
       - name: Run U7 Faz 1 stages
         run: |
           python backtests/tarama.py --results-dir results/u7/faz1
@@ -103,7 +107,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add results/u7/faz1
           git commit -m "u7: Faz 1 checkpoints ${{ github.run_id }}" || exit 0
-          git push origin HEAD:${{ github.ref_name }}
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((i*5))
+          done
 
   veri:
     runs-on: ubuntu-latest
