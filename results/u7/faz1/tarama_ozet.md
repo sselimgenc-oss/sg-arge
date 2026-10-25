@@ -193,7 +193,7 @@ Kart: 166 | Asama 2 adayi: 119 | Dogrulanamaz: 8 | Reddedildi (asama 1): 39
 - G009 / BIST30: PF_1x=8.25, islem=20
 - G009 / EMTIA: PF_1x=6.91, islem=20
 - O1-001 / BIST30: PF_1x=4.36, islem=94
-- O1-038 / BIST30: PF_1x=6.39, islem=68
+- O1-038 / BIST30: PF_1x=6.63, islem=68
 - P3-007 / BIST30: PF_1x=6.78, islem=57
 - TV-4bBrEQ7T / KRIPTO25: PF_1x=7.98, islem=3
 - TV-9URAiZJE / ABD25: PF_1x=18.82, islem=8
@@ -202,14 +202,14 @@ Kart: 166 | Asama 2 adayi: 119 | Dogrulanamaz: 8 | Reddedildi (asama 1): 39
 - TV-Z9O5w3SG / KRIPTO25: PF_1x=4.29, islem=75
 - TV-bZ815rmw / ABD25: PF_1x=4.52, islem=28
 - TV-sPNx5Z74 / ABD25: PF_1x=4.29, islem=19
-- TV-vMuEblZr / ABD25: PF_1x=25.11, islem=7
+- TV-vMuEblZr / ABD25: PF_1x=42.49, islem=6
 - U4-H3 / KRIPTO25: PF_1x=4.35, islem=83
 
 ## Kapanis dolumu (MOC) kartlari: (a) kapanis 2x maliyet | (b) ertesi acilis
 
 | Kart | Piyasa | (a) PF_1x | (a) net_1x | (b) PF_1x | (b) net_1x | Not |
 |---|---|---:|---:|---:|---:|---|
-| A4-002 | ABD25 | 2.62 | 1697.87% | 2.65 | 1658.68% |  |
+| A4-002 | ABD25 | 2.62 | 1697.86% | 2.65 | 1658.68% |  |
 | A4-003 | ABD25 | 2.56 | 627.22% | 2.09 | 239.89% |  |
 | A4-004 | ABD25 | 2.57 | 610.98% | 2.77 | 696.05% |  |
 | A4-005 | ABD25 | 7.02 | 242.50% | 0.98 | -1.39% | Kosullu (b negatif) |
@@ -226,41 +226,41 @@ Kart: 166 | Asama 2 adayi: 119 | Dogrulanamaz: 8 | Reddedildi (asama 1): 39
 | G009 | KRIPTO25 | 2.24 | 1.14% | 2.43 | 1.25% |  |
 | G009 | EMTIA | 6.91 | 2.74% | 13.66 | 3.62% |  |
 | G010 | ABD25 | 0.99 | -0.15% | 0.94 | -1.48% | Kosullu (b negatif) |
-| M012c | BIST30 | 0.75 | -17.18% | 0.96 | -2.73% | Kosullu (b negatif) |
-| M012c | ABD25 | 1.13 | 9.90% | 1.36 | 26.25% |  |
+| M012c | BIST30 | 0.75 | -17.29% | 0.96 | -2.55% | Kosullu (b negatif) |
+| M012c | ABD25 | 1.14 | 10.37% | 1.36 | 26.43% |  |
 | M012c | KRIPTO25 | 0.88 | -8.15% | 0.95 | -3.26% | Kosullu (b negatif) |
-| M012c | EMTIA | 0.78 | -10.29% | 0.96 | -1.63% | Kosullu (b negatif) |
-| M012d | BIST30 | 1.25 | 21.03% | 1.56 | 49.84% |  |
-| M012d | ABD25 | 1.09 | 6.69% | 1.20 | 15.54% |  |
+| M012c | EMTIA | 0.78 | -10.36% | 0.96 | -1.58% | Kosullu (b negatif) |
+| M012d | BIST30 | 1.28 | 22.92% | 1.59 | 51.49% |  |
+| M012d | ABD25 | 1.09 | 7.05% | 1.20 | 15.44% |  |
 | M012d | KRIPTO25 | 1.00 | 0.35% | 1.12 | 10.35% |  |
-| M012d | EMTIA | 1.07 | 1.61% | 1.31 | 6.56% |  |
+| M012d | EMTIA | 1.09 | 1.98% | 1.29 | 6.11% |  |
 | M017 | ABD25 | 1.57 | 196.47% | 1.54 | 164.16% |  |
-| O2-025 | ABD25 | 2.29 | 295099.75% | 2.15 | 26380.29% |  |
-| O2-027 | ABD25 | 2.62 | 220239.07% | 2.08 | 16869.90% |  |
-| O3-001 | BIST30 | 0.83 | -8.36% | 0.96 | -2.21% | Kosullu (b negatif) |
+| O2-025 | ABD25 | 2.29 | 295100.33% | 2.15 | 26380.31% |  |
+| O2-027 | ABD25 | 2.62 | 220239.91% | 2.08 | 16869.90% |  |
+| O3-001 | BIST30 | 0.83 | -8.15% | 0.96 | -1.83% | Kosullu (b negatif) |
 | O3-001 | ABD25 | 1.22 | 9.21% | 1.31 | 13.04% |  |
 | O3-001 | KRIPTO25 | 0.97 | -1.39% | 1.06 | 2.37% |  |
-| O3-001 | EMTIA | 0.73 | -6.45% | 0.89 | -2.25% | Kosullu (b negatif) |
-| O3-002 | BIST30 | 0.87 | -8.97% | 1.08 | 6.00% |  |
-| O3-002 | ABD25 | 1.12 | 8.51% | 1.31 | 21.48% |  |
+| O3-001 | EMTIA | 0.73 | -6.40% | 0.89 | -2.17% | Kosullu (b negatif) |
+| O3-002 | BIST30 | 0.87 | -9.32% | 1.08 | 5.53% |  |
+| O3-002 | ABD25 | 1.12 | 8.41% | 1.31 | 21.83% |  |
 | O3-002 | KRIPTO25 | 1.00 | 0.21% | 1.09 | 5.02% |  |
-| O3-002 | EMTIA | 0.77 | -11.30% | 1.01 | 0.34% |  |
-| O3-003 | BIST30 | 1.03 | 2.17% | 1.31 | 21.49% |  |
-| O3-003 | ABD25 | 1.37 | 16.24% | 1.47 | 20.75% |  |
+| O3-002 | EMTIA | 0.77 | -11.26% | 1.01 | 0.42% |  |
+| O3-003 | BIST30 | 1.08 | 5.15% | 1.38 | 25.79% |  |
+| O3-003 | ABD25 | 1.36 | 15.94% | 1.46 | 20.48% |  |
 | O3-003 | KRIPTO25 | 1.11 | 3.36% | 1.21 | 6.27% |  |
 | O3-003 | EMTIA | 1.34 | 3.86% | 1.24 | 2.81% |  |
-| O3-004 | BIST30 | 0.79 | -13.43% | 0.97 | -2.04% | Kosullu (b negatif) |
+| O3-004 | BIST30 | 0.80 | -13.12% | 0.97 | -1.63% | Kosullu (b negatif) |
 | O3-004 | ABD25 | 1.21 | 9.54% | 1.45 | 20.08% |  |
 | O3-004 | KRIPTO25 | 0.92 | -2.16% | 1.00 | 0.05% |  |
-| O3-004 | EMTIA | 1.21 | 3.46% | 1.28 | 4.48% |  |
+| O3-004 | EMTIA | 1.22 | 3.68% | 1.30 | 4.76% |  |
 | O3-007 | BIST30 | 1.37 | 10.72% | 1.53 | 14.57% |  |
 | O3-007 | ABD25 | 1.16 | 4.94% | 1.24 | 7.69% |  |
 | O3-007 | KRIPTO25 | 1.51 | 9.50% | 1.62 | 11.17% |  |
 | O3-007 | EMTIA | 0.76 | -7.83% | 0.93 | -2.15% | Kosullu (b negatif) |
-| O3-011 | BIST30 | 0.73 | -18.59% | 0.90 | -6.72% | Kosullu (b negatif) |
-| O3-011 | ABD25 | 1.10 | 6.33% | 1.28 | 17.87% |  |
+| O3-011 | BIST30 | 0.73 | -18.53% | 0.92 | -5.88% | Kosullu (b negatif) |
+| O3-011 | ABD25 | 1.10 | 6.36% | 1.28 | 17.65% |  |
 | O3-011 | KRIPTO25 | 0.89 | -5.44% | 0.98 | -1.22% | Kosullu (b negatif) |
-| O3-011 | EMTIA | 0.74 | -9.01% | 0.94 | -1.71% | Kosullu (b negatif) |
+| O3-011 | EMTIA | 0.73 | -9.13% | 0.94 | -1.77% | Kosullu (b negatif) |
 | O3-013 | BIST30 | 0.51 | -70.32% | 0.58 | -59.94% | Kosullu (b negatif) |
 | O3-013 | ABD25 | 0.85 | -17.56% | 0.87 | -12.62% | Kosullu (b negatif) |
 | O3-013 | KRIPTO25 | 0.59 | -73.17% | 0.70 | -56.50% | Kosullu (b negatif) |
@@ -269,8 +269,8 @@ Kart: 166 | Asama 2 adayi: 119 | Dogrulanamaz: 8 | Reddedildi (asama 1): 39
 | O3-014 | ABD25 | 0.90 | -8.08% | 1.11 | 9.14% |  |
 | O3-014 | KRIPTO25 | 0.77 | -17.90% | 0.91 | -7.02% | Kosullu (b negatif) |
 | O3-014 | EMTIA | 0.70 | -8.63% | 0.76 | -8.73% | Kosullu (b negatif) |
-| O3-015 | BIST30 | 1.10 | 8.03% | 1.30 | 26.87% |  |
-| O3-015 | ABD25 | 1.11 | 11.00% | 1.28 | 27.99% |  |
+| O3-015 | BIST30 | 1.09 | 7.43% | 1.29 | 25.25% |  |
+| O3-015 | ABD25 | 1.11 | 10.84% | 1.29 | 27.97% |  |
 | O3-015 | KRIPTO25 | 1.02 | 2.16% | 1.11 | 11.50% |  |
 | O3-015 | EMTIA | 0.99 | -0.68% | 1.10 | 7.08% |  |
 | RD-02 | ABD25 | 1.34 | 11.58% | 1.45 | 14.36% |  |
@@ -282,8 +282,8 @@ Kart: 166 | Asama 2 adayi: 119 | Dogrulanamaz: 8 | Reddedildi (asama 1): 39
 | TV-VcRiudNf | KRIPTO25 | 0.71 | -90.54% | 0.79 | -77.98% | Kosullu (b negatif) |
 | TV-W67tJltC | KRIPTO25 | 1.94 | 72.86% | 2.04 | 79.07% |  |
 | TV-XRZCjbFr | ABD25 | 1.26 | 9.34% | 1.31 | 10.52% |  |
-| TV-ZDhizQgu | ABD25 | 0.81 | -21.39% | 0.94 | -6.34% | Kosullu (b negatif) |
-| TV-aKf0t6Mz | ABD25 | 0.69 | -14.94% | 0.76 | -8.19% | Kosullu (b negatif) |
+| TV-ZDhizQgu | ABD25 | 0.81 | -21.21% | 0.95 | -6.07% | Kosullu (b negatif) |
+| TV-aKf0t6Mz | ABD25 | 0.69 | -14.94% | 0.74 | -9.05% | Kosullu (b negatif) |
 | TV-zrDoqm9F | EMTIA | 1.26 | 5.95% | 1.49 | 9.97% |  |
 
 ## Atlanan / dogrulanamayan satirlar

@@ -3,7 +3,7 @@
 OOS, on donem, 2x/3x/+1 bar stres, kaynak merkezli parametre platosu, 20 gunluk block bootstrap ve DSR birlikte raporlanir.
 DSR paper trading icin bilgi; canliya geciste kotumser (5N) deger icin 0,95 kapisi uygulanir.
 
-Satir: 42 | Gecti: 2 | Kosullu: 9 | Reddedildi: 31
+Satir: 41 | Gecti: 2 | Kosullu: 10 | Reddedildi: 29
 
 | ID | Piyasa | OOS islem/ortR | 2x PF | 3x net | +1 net | Plato + | Boot MDD95 | DSR 5N | Karar | Gerekce |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|---|
@@ -13,10 +13,10 @@ Satir: 42 | Gecti: 2 | Kosullu: 9 | Reddedildi: 31
 | C04 | BIST30 | 23/-0.143 | 2.57 | 14.3% | 15.6% | 96% | 6.3% | 0.192 | Kosullu | on donem negatif, OOS ornek<30, survivorship yanliligi |
 | C05 | BIST30 | 43/0.261 | 0.61 | -12.4% | -8.1% | 32% | 21.2% | 0.000 | Reddedildi | null, 2x PF<1.2, 3x net<=0, +1 bar net<=0, plato<%60, bootstrap MDD>%15 |
 | C06 | BIST30 | 34/0.030 | 1.05 | -0.9% | 2.9% | 100% | 7.2% | 0.001 | Reddedildi | null, 2x PF<1.2, 3x net<=0 |
-| C07 | ABD25 | 95/0.193 | 2.32 | 36.9% | 37.2% | 100% | 9.3% | 0.257 | Kosullu | survivorship yanliligi |
+| C07 | ABD25 | 95/0.193 | 2.33 | 37.5% | 37.2% | 100% | 9.1% | 0.268 | Kosullu | survivorship yanliligi |
 | C08 | ABD25 | 370/0.024 | 1.40 | 18.5% | 23.6% | 100% | 14.9% | 0.045 | Reddedildi | null |
 | C09 | ABD25 | 185/-0.017 | 1.51 | 19.7% | 23.0% | 100% | 11.6% | 0.082 | Reddedildi | null, OOS ortR<=0 |
-| C10 | ABD25 | 193/0.015 | 1.82 | 34.2% | 37.7% | 100% | 10.1% | 0.260 | Reddedildi | null |
+| C10 | ABD25 | 193/0.016 | 1.81 | 33.9% | 37.5% | 100% | 10.1% | 0.255 | Kosullu | survivorship yanliligi |
 | C11 | ABD25 | 206/0.050 | 1.78 | 35.4% | 32.7% | 100% | 11.8% | 0.216 | Reddedildi | null |
 | C12 | ABD25 | 51/0.073 | 1.52 | 8.1% | 10.0% | 92% | 8.1% | 0.022 | Reddedildi | null |
 | C13 | ABD25 | 96/-0.020 | 0.95 | -3.6% | 5.1% | 76% | 11.5% | 0.000 | Reddedildi | null, OOS ortR<=0, 2x PF<1.2, 3x net<=0 |
@@ -37,12 +37,11 @@ Satir: 42 | Gecti: 2 | Kosullu: 9 | Reddedildi: 31
 | M015 | ABD25 | 130/0.038 | 1.28 | 2.7% | 7.8% | 100% | 5.6% | 0.014 | Kosullu | on donem negatif, survivorship yanliligi |
 | M017 | ABD25 | 446/0.155 | 1.40 | 79.7% | 92.1% | 100% | 29.5% | 0.223 | Reddedildi | bootstrap MDD>%15 |
 | M020a | ABD25 | 43/-0.069 | 2.66 | 231.5% | 210.9% | 92% | 53.6% | 0.085 | Reddedildi | OOS ortR<=0, bootstrap MDD>%15 |
-| M020a | KRIPTO25 | 28/0.151 | 1.30 | 335.0% | 475.1% | 100% | 85.4% | 0.045 | Reddedildi | bootstrap MDD>%15 |
+| M020a | KRIPTO25 | 28/0.158 | 1.30 | 335.0% | 475.1% | 100% | 85.4% | 0.045 | Reddedildi | bootstrap MDD>%15 |
 | M036 | ABD25 | 407/0.043 | 1.29 | 10.0% | 18.1% | 100% | 10.2% | 0.083 | Kosullu | survivorship yanliligi |
-| M038 | ABD25 | 622/0.073 | 1.27 | 13.7% | 31.0% | 100% | 10.8% | 0.245 | Kosullu | survivorship yanliligi |
+| M038 | ABD25 | 624/0.077 | 1.30 | 16.0% | 28.5% | 100% | 10.4% | 0.311 | Kosullu | survivorship yanliligi |
 | O2-025 | ABD25 | 46/0.498 | 2.11 | 20792.7% | 6807.4% | 100% | 85.0% | 0.721 | Reddedildi | bootstrap MDD>%15 |
 | O2-027 | ABD25 | 33/0.362 | 2.03 | 13103.0% | 3087.0% | 100% | 81.9% | 0.634 | Reddedildi | bootstrap MDD>%15 |
-| O3-003 | ABD25 | 281/0.049 | 1.13 | -3.3% | 16.2% | 100% | 6.3% | 0.069 | Reddedildi | 2x PF<1.2, 3x net<=0 |
 | P3-008 | KRIPTO25 | 361/-0.019 | 1.59 | 37.3% | 72.7% | 80% | 10.6% | 0.385 | Reddedildi | OOS ortR<=0 |
 | P3-011 | KRIPTO25 | 169/-0.113 | 1.66 | 50.9% | 61.6% | 100% | 14.6% | 0.271 | Reddedildi | OOS ortR<=0 |
 | R01 | ABD25 | 110/0.150 | 1.89 | 38.9% | 26.9% | 100% | 9.4% | 0.284 | Kosullu | survivorship yanliligi |
