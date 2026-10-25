@@ -83,4 +83,7 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
 
 - **ALDIM: 6.2** — TV-2 ve U7 sonuçlarıyla sanal havuz taslağını yalnız öneri
   düzeyinde birleştirme; `paper/` veya karar/kapı/eşik değişikliği yok.
+- **6.2 tamamlandı:** Taslağa U7 kaynak commit'i ile 85 satır/72 temsilci
+  anlık görüntüsü eklendi. Ortak günlük-getiri snapshot'ı olmadığından 20
+  kitap seçimi yapılmadı; önkoşul ve mevcut 12+4+4 prosedürü açık yazıldı.
 

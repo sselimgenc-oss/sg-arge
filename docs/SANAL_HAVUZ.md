@@ -29,10 +29,37 @@ filtre veya sıralama uygulanmadı.
 | 14 | lncoD9BX | BITFINEX:BTCUSD / 480 | 47 | 4.06% | -0.082% | 1.345 | 3.99% |
 | 17 | VHbRaeUe | BITFINEX:BTCUSD / 360 | 79 | 1.80% | -0.112% | 1.111 | 9.03% |
 
+## U7 sonuç anlık görüntüsü
+
+U7 sıralaması analiz dalında, `origin/codex/u7-tum-stratejiler`
+`aaefebbde7aecdf7b0262b39efd6abb3e3518b32` kaynak verisinden türetildi.
+85 sıralı varyant ve 72 küme temsilcisi vardır. Aşağıdaki ilk 12 temsilci
+yalnız kaynak/sıralama görünürlüğü içindir; TV-2 ile birleştirilmiş kitap
+listesi değildir.
+
+| Sıra | Varyant | Piyasa / zaman dilimi | Sınama işlem | Ölçekli yıllık getiri | Haftalık p10 |
+|---:|---|---|---:|---:|---:|
+| 1 | TV-zoY9DmsF | ABD25 / 1D | 119 | 13.24% | 0.157% |
+| 2 | TV-sPNx5Z74 | ABD25 / 1D | 23 | 11.05% | 0.116% |
+| 3 | TV-DUCODGjC | ABD25 / 1D | 295 | 10.59% | 0.107% |
+| 4 | TV-IMKs0OPw | ABD25 / 1D | 211 | 9.71% | 0.101% |
+| 5 | TV-71yKm18B | KRIPTO25 / 4H | 226 | 13.48% | 0.098% |
+| 6 | TV-dpkq3n4O | ABD25 / 1D | 150 | 9.94% | 0.092% |
+| 7 | TV-70PkIvTL | ABD25 / 1D | 126 | 10.75% | 0.091% |
+| 8 | TV-bZ815rmw | ABD25 / 1D | 26 | 9.52% | 0.081% |
+| 9 | TV-KO7Qe4Xb | EMTIA / 1D | 76 | 8.13% | 0.069% |
+| 10 | TV-3Q75d98D | KRIPTO25 / 1D | 307 | 12.42% | 0.069% |
+| 11 | TV-3BXWqwnF | KRIPTO25 / 1D | 94 | 12.32% | 0.068% |
+| 12 | TV-Q9OQye4C | KRIPTO25 / 1D | 285 | 11.22% | 0.064% |
+
 ## Öneri olarak sonraki adım
 
 - TV-2 ve U7 aynı kaynak anlık görüntüsünde birlikte değerlendirilmeden aday
   havuzu oluşturulmasın.
+- Bu önkoşul sağlandığında mevcut prosedür uygulanır: önce birleşik sıralamada
+  en yüksek 12 küme temsilcisi, sonra onlarla en düşük ortalama korelasyonlu
+  4 çeşitlendirici ve kalan uygun temsilcilerden sabit tohumla 4 kura adayı.
+  Ortak günlük getiri kesişimi ve seçim kaydı olmadan bu 20 aday yazılmaz.
 - Birleştirme yapılırsa, yalnız `docs/TEST_YAPISI.md` içindeki mevcut
   prosedür ve kayıt gereklilikleri kullanılsın; bu taslak yeni sayı ya da
   terfi kararı üretmez.
