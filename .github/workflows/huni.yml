@@ -155,7 +155,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          # huni-data artifact'inin kökü data/ olduğundan, proje köküne
+          # açılırsa daily/ olur; koşucular data/daily/ bekler.
+          path: data
       - run: python backtests/tarama.py --tf "${{ inputs.tf }}" --kart-ids "${{ inputs.kartlar }}" --birlestir
       - uses: actions/upload-artifact@v4
         with:
@@ -177,7 +179,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          path: data
       - uses: actions/download-artifact@v4
         with:
           name: huni-tarama-${{ env.ARTIFACT_SUFFIX }}
@@ -203,7 +205,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          path: data
       - uses: actions/download-artifact@v4
         with:
           name: huni-asama2a-${{ env.ARTIFACT_SUFFIX }}
@@ -233,7 +235,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          path: data
       - uses: actions/download-artifact@v4
         with:
           name: huni-asama2b-sabit-${{ env.ARTIFACT_SUFFIX }}
@@ -267,7 +269,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          path: data
       - uses: actions/download-artifact@v4
         with:
           name: huni-asama2b-pit-${{ env.ARTIFACT_SUFFIX }}
