@@ -180,3 +180,38 @@ def test_ospkem6i_translation_runs_long_and_short_and_is_causal() -> None:
     assert yonler == {LONG, SHORT}
     # her çıkış, girişten önceki bar kapanışının %1,8 / %6 bandında (ya da ters giriş)
     assert nedensellik(ospkem6i, df) == []
+
+
+def test_fifo_close_takes_oldest_trade_first_and_orphaned_bracket_closes_the_rest() -> None:
+    """Pine belgesi örneği: Buy1 5, Buy2 10; close('Buy2') FIFO'da Buy1'i ve Buy2'nin yarısını kapatır,
+    Buy1'e bağlı bracket kalanını sonra kapatır. ANY'de close Buy2'yi, bracket Buy1'i kapatır."""
+    import numpy as np
+    import pandas as pd
+    from engine.tv_emulator import Ayarlar, calistir, LONG
+    n = 12
+    c = np.array([100, 100, 100, 100, 100, 100, 100, 100, 112, 112, 112, 112], float)
+    df = pd.DataFrame({"open": c, "high": c + 0.5, "low": c - 0.5, "close": c},
+                      index=pd.date_range("2024-01-01", periods=n, freq="h", tz="UTC"))
+
+    class M:
+        def __init__(self, kural):
+            self.AYARLAR = Ayarlar(pyramiding=2, mintick=1.0, close_entries_rule=kural)
+
+        def hazirla(self, df):
+            return {}
+
+        def bar(self, ctx, i, v):
+            if i == 1:
+                ctx.entry("Buy1", LONG, 5)
+            if i == 2:
+                ctx.entry("Buy2", LONG, 10)
+            if i >= 2:
+                ctx.exit("bracket", "Buy1", loss=10, profit=10)
+            if i == 4:
+                ctx.close("Buy2")
+
+    fifo = calistir(M("FIFO"), df).islemler
+    assert list(zip(fifo["entry_id"], fifo["exit_id"], fifo["adet"])) == [
+        ("Buy1", "Buy2", 5.0), ("Buy2", "Buy2", 5.0), ("Buy2", "bracket", 5.0)]
+    any_ = calistir(M("ANY"), df).islemler
+    assert list(zip(any_["entry_id"], any_["exit_id"], any_["adet"])) == [("Buy2", "Buy2", 10.0), ("Buy1", "bracket", 5.0)]

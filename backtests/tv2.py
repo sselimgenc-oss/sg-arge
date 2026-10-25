@@ -28,6 +28,7 @@ import pandas as pd
 import requests
 
 from data.fetch import Asset, fetch_binance
+import engine.pine.yorumlayici as yorumlayici
 from engine.pine.yorumlayici import Desteklenmiyor, PineHatasi, PineStrateji
 from engine.tv_emulator import Sonuc, calistir, gercekci, nedensellik
 
@@ -121,7 +122,38 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
         df.columns = [c[0].lower() if isinstance(c, tuple) else str(c).lower() for c in df.columns]
         df.index = pd.to_datetime(df.index, utc=True)
         return _kapanmis(df[["open", "high", "low", "close", "volume"]].dropna(), dk), f"yfinance {kod}"
+    if dk < 1440 and (kok in YFINANCE or (borsa in HISSE_BORSALARI and re.fullmatch(r"[A-Z]{1,5}", kok))):
+        return _yfinance_gun_ici(YFINANCE.get(kok, kok), dk)
     return None, "veri_yok: gün içi/yerel piyasa (Dukascopy bekliyor)" if dk < 1440 else f"veri_yok: eşleme yok ({sembol})"
+
+
+YF_ARALIK = {1: ("1m", "7d"), 2: ("2m", "60d"), 5: ("5m", "60d"), 15: ("15m", "60d"), 30: ("30m", "60d"),
+             60: ("60m", "730d"), 90: ("90m", "60d")}
+
+
+def _yfinance_gun_ici(kod: str, dk: int) -> tuple[pd.DataFrame | None, str]:
+    """yfinance gün içi: geçmiş sınırlı (1m 7 gün, 2-30m 60 gün, 60m 730 gün). Tam bölünen en büyük aralıktan
+    birleştirilir; birleştirme UTC hizalı (TradingView seans hizası değil) — `veri` notunda yazılır."""
+    import yfinance as yf
+    taban = max((k for k in YF_ARALIK if dk % k == 0), default=None)
+    if taban is None:
+        return None, f"veri_yok: yfinance {dk}dk aralık yok"
+    aralik, donem = YF_ARALIK[taban]
+    yol = CACHE / f"yf_{re.sub(r'[^A-Za-z0-9]', '_', kod)}_{aralik}.parquet"
+    if yol.exists() and time.time() - yol.stat().st_mtime < 6 * 3600:
+        df = pd.read_parquet(yol)
+    else:
+        df = yf.download(kod, period=donem, interval=aralik, auto_adjust=False, progress=False)
+        if df.empty:
+            return None, f"veri_yok: yfinance {kod} {aralik}"
+        df.columns = [c[0].lower() if isinstance(c, tuple) else str(c).lower() for c in df.columns]
+        df.index = pd.to_datetime(df.index, utc=True)
+        df = df[["open", "high", "low", "close", "volume"]].dropna()
+        CACHE.mkdir(parents=True, exist_ok=True)
+        df.to_parquet(yol)
+    if taban != dk:
+        df = _yeniden_ornekle(df, dk)
+    return _kapanmis(df, dk), f"yfinance {kod} {aralik} (son {donem})" + ("" if taban == dk else f" → {dk}dk, UTC hizalı")
 
 
 def _yeniden_ornekle(df: pd.DataFrame, dk: int) -> pd.DataFrame:
@@ -183,6 +215,31 @@ def pine_kaynak(kimlik: str, pub: str) -> str | None:
     return json.loads(yol.read_text()).get("source")
 
 
+BAGLAYICI = re.compile(r"input\.source\(|type\s*=\s*input\.source")
+KUTUPHANELER = ROOT / "arastirma" / "tv2_kutuphaneler.csv"
+
+
+def kutuphane_kaynak(kullanici: str, ad: str, surum: int) -> str | None:
+    """Pine kütüphanesi kaynağı: `arastirma/tv2_kutuphaneler.csv` (yol -> PUB) + pine-facade sürüm; önbellek data/tv2/kutuphane."""
+    yol = f"{kullanici}/{ad}"
+    if not KUTUPHANELER.exists():
+        return None
+    tablo = pd.read_csv(KUTUPHANELER, dtype=str)
+    satir = tablo[tablo["yol"] == yol]
+    if satir.empty:
+        return None
+    dosya = CACHE / "kutuphane" / f"{kullanici}_{ad}_{surum}.json"
+    if not dosya.exists():
+        q = urllib.parse.quote(satir.iloc[0]["pub"])
+        r = requests.get(f"https://pine-facade.tradingview.com/pine-facade/get/{q}/{surum}?no_4xx=true", timeout=30)
+        dosya.parent.mkdir(parents=True, exist_ok=True)
+        dosya.write_text(r.text)
+    return json.loads(dosya.read_text()).get("source")
+
+
+yorumlayici.KUTUPHANE_SAGLAYICI = kutuphane_kaynak
+
+
 def strateji(kimlik: str):
     """(modül, KAYNAK sözlüğü): el çevirisi varsa o, yoksa tv2_surumler.csv satırından Pine yorumlayıcısı."""
     if (ROOT / "strategies" / "tv2" / f"{kimlik}.py").exists():
@@ -216,6 +273,7 @@ def kos(kimlik: str) -> dict:
         return satir | {"karar": "veri_yok", "neden": notu}
     satir |= {"bas": df.index[0].date(), "son": df.index[-1].date(), "bar": len(df)}
     kripto = notu.startswith("Binance")
+    src = None
     try:
         if modul is None:
             src = pine_kaynak(kimlik, kaynak["pub"])
@@ -249,6 +307,10 @@ def kos(kimlik: str) -> dict:
     uyg.ozkaynak.resample("1D").last().dropna().pct_change().dropna().rename("getiri").to_csv(OUT / "getiriler" / f"{kimlik}.csv")
     if hatalar:
         satir |= {"karar": "uygulanamaz", "neden": "nedensellik: " + hatalar[0]}
+    elif satir["yazar_tum_islem"] == 0:
+        baglayici = bool(src) and bool(BAGLAYICI.search(src))
+        satir |= {"karar": "islem_yok", "neden": "tüm geçmişte 0 işlem" + (
+            " (harici gösterge bağlayıcısı: sinyal input.source ile başka göstergeden bekleniyor)" if baglayici else "")}
     elif bas is None:
         satir |= {"karar": "izle", "neden": "sürüm tarihi yok: sınama dönemi belirlenemedi"}
     elif etiket == "yetersiz_kanit":

@@ -554,14 +554,24 @@ class Vwap:
 
     def __init__(self) -> None:
         self.gun = None
-        self.pv = self.v = 0.0
+        self.pv = self.v = self.pv2 = 0.0
 
-    def __call__(self, x, hacim, gun):
-        if gun != self.gun:
-            self.gun, self.pv, self.v = gun, 0.0, 0.0
+    def __call__(self, x, hacim, gun, capa=None, carpan=None):
+        """`capa` (anchor) verilirse doğru olduğu barda sıfırlanır, yoksa gün değişiminde. `carpan` verilirse
+        (vwap, üst, alt) demeti: bantlar vwap ± carpan x hacim ağırlıklı standart sapma."""
+        yeni = bool(capa) if capa is not None and not na(capa) else gun != self.gun
+        if yeni or self.gun is None:
+            self.gun, self.pv, self.v, self.pv2 = gun, 0.0, 0.0, 0.0
         self.pv += f(x) * f(hacim)
+        self.pv2 += f(x) * f(x) * f(hacim)
         self.v += f(hacim)
-        return self.pv / self.v if self.v else NA
+        orta = self.pv / self.v if self.v else NA
+        if carpan is None:
+            return orta
+        if na(orta):
+            return NA, NA, NA
+        sd = math.sqrt(max(self.pv2 / self.v - orta * orta, 0.0))
+        return orta, orta + carpan * sd, orta - carpan * sd
 
 
 class Obv:
@@ -573,6 +583,75 @@ class Obv:
             self.t += f(hacim) if c > self.c1 else -f(hacim) if c < self.c1 else 0.0
         self.c1 = c
         return self.t
+
+
+class HacimDegiskeni:
+    """ta.accdist / iii / nvi / pvi / pvt / wad / wvad (TradingView başvuru tanımları)."""
+
+    def __init__(self, ad: str) -> None:
+        self.ad, self.c1, self.v1, self.t = ad, NA, NA, 0.0
+        self.endeks = 1.0
+
+    def __call__(self, o, h, l, c, hacim):
+        ad, c1, v1 = self.ad, self.c1, self.v1
+        self.c1, self.v1 = c, hacim
+        aralik = h - l
+        if ad == "ta.iii":
+            return NA if aralik == 0 or not hacim else (2 * c - h - l) / (aralik * hacim)
+        if ad == "ta.wvad":
+            return NA if aralik == 0 else (c - o) / aralik * f(hacim)
+        if ad == "ta.accdist":
+            self.t += 0.0 if aralik == 0 else (2 * c - l - h) / aralik * f(hacim)
+            return self.t
+        if ad == "ta.pvt":
+            if not na(c1) and c1:
+                self.t += (c - c1) / c1 * f(hacim)
+            return self.t
+        if ad == "ta.wad":
+            if not na(c1):
+                gain = c - min(l, c1) if c > c1 else c - max(h, c1) if c < c1 else 0.0
+                self.t += gain
+            return self.t
+        onceki = self.endeks or 1.0                    # nvi / pvi
+        if not na(c1) and c1 and c:
+            kosul = f(hacim) < f(v1) if ad == "ta.nvi" else f(hacim) > f(v1)
+            if kosul:
+                self.endeks = onceki + (c - c1) / c1 * onceki
+        return self.endeks
+
+
+class PivotSeviyeleri:
+    """ta.pivot_point_levels(type, anchor): çapa (anchor) doğru olduğunda biten dönemin H/L/C'sinden seviyeler,
+    sonraki çapaya kadar sabit. Sıra [P, R1, S1, R2, S2, R3, S3, R4, S4, R5, S5]; türde olmayanlar na."""
+
+    def __init__(self) -> None:
+        self.h = self.l = self.c = NA
+        self.seviye = [NA] * 11
+
+    def __call__(self, tur, capa, h, l, c):
+        if bool(capa) and not na(self.h):
+            self.seviye = _pivot(str(tur), self.h, self.l, self.c)
+            self.h = self.l = NA
+        self.h = h if na(self.h) else max(self.h, h)
+        self.l = l if na(self.l) else min(self.l, l)
+        self.c = c
+        return list(self.seviye)
+
+
+def _pivot(tur, h, l, c):
+    p, r = (h + l + c) / 3, h - l
+    if tur == "Traditional":
+        return [p, 2 * p - l, 2 * p - h, p + r, p - r, h + 2 * (p - l), l - 2 * (h - p),
+                p * 3 + (h - 3 * l), p * 3 - (3 * h - l), p * 4 + (h - 4 * l), p * 4 - (4 * h - l)]
+    if tur == "Fibonacci":
+        return [p, p + .382 * r, p - .382 * r, p + .618 * r, p - .618 * r, p + r, p - r, NA, NA, NA, NA]
+    if tur == "Classic":
+        return [p, 2 * p - l, 2 * p - h, p + r, p - r, p + 2 * r, p - 2 * r, p + 3 * r, p - 3 * r, NA, NA]
+    if tur == "Camarilla":
+        r5 = h / l * c if l else NA
+        return [p, c + 1.1 * r / 12, c - 1.1 * r / 12, c + 1.1 * r / 6, c - 1.1 * r / 6, c + 1.1 * r / 4, c - 1.1 * r / 4,
+                c + 1.1 * r / 2, c - 1.1 * r / 2, r5, NA if na(r5) else c - (r5 - c)]
+    raise ValueError(f"pivot türü: {tur}")
 
 
 class Median:

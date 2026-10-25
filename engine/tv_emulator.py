@@ -41,6 +41,8 @@ class Ayarlar:
     pyramiding: int = 1
     process_orders_on_close: bool = False
     mintick: float = 0.01
+    close_entries_rule: str = "FIFO"           # FIFO: çıkış miktarı hedef girişten, uygulama en eski işlemden (Pine varsayılanı)
+    calc_on_order_fills: bool = False          # dolum sonrası bar içi ek yürütme (modül `ara(ctx, i)` sağlar)
 
 
 @dataclass
@@ -63,6 +65,8 @@ class _Emir:
     verildi: int = 0
     # izleyen stop durumu
     bagli: bool = False                        # çıkış emri bir kez açık işleme bağlandı mı
+    son: tuple | None = None                   # FIFO: hedefin son bilinen (yön, ort. fiyat, adet)
+    hedef_nesneleri: list = field(default_factory=list)
     iz_aktif: bool = False
     iz_uc: float = float("nan")
 
@@ -81,6 +85,7 @@ class _Islem:
     bar: int
     komisyon: float
     dolan_cikislar: set = field(default_factory=set)   # Pine: aynı exit kimliği aynı giriş için bir kez dolar
+    kendi_cikisi: bool = False                 # kendi exit/close emriyle (yabancı FIFO kapanışı değil) azaldı mı
 
 
 @dataclass
@@ -119,6 +124,8 @@ class Baglam:
         self.bekleyen: dict[str, _Emir] = {}
         self.gerceklesen = 0.0
         self.emir_kaydi: list[tuple] = []
+        self.ara = False                               # bar içi ek yürütmede verilen emir aynı barda dolabilir
+        self.dolum_sayisi = 0                          # gerçekleşen emir sayısı (strategy.risk.max_intraday_filled_orders)
 
     # ---- durum (Pine strategy.*) ----
     @property
@@ -175,6 +182,8 @@ class Baglam:
         eski = self.bekleyen.get("X:" + kimlik)
         if eski is not None:                           # yeniden verilen exit: bağ ve izleyen stop durumu korunur
             emir.bagli, emir.iz_aktif, emir.iz_uc = eski.bagli, eski.iz_aktif, eski.iz_uc
+            if eski.from_entry == emir.from_entry:
+                emir.son, emir.hedef_nesneleri = eski.son, eski.hedef_nesneleri
         self._ver(emir, anahtar="X:" + kimlik)
 
     def close(self, kimlik: str, comment: str = "", qty: float | None = None, qty_percent: float | None = None,
@@ -199,7 +208,7 @@ class Baglam:
         self.bekleyen.clear()
 
     def _ver(self, emir: _Emir, anahtar: str | None = None) -> None:
-        emir.verildi = self.i
+        emir.verildi = self.i - 1 if self.ara else self.i
         if emir.tur in ("giris", "emir") and emir.adet is None:
             ref = emir.stop if emir.stop is not None else emir.limit if emir.limit is not None else self.c[self.i]
             emir.adet = self._varsayilan_adet(ref)
@@ -237,15 +246,19 @@ class Baglam:
 
     def _ac(self, emir: _Emir, fiyat: float, bar: int, kaymali: bool) -> None:
         yon = emir.yon
-        if self.acik and self.acik[0].yon == -yon:   # ters çevirme: önce karşı pozisyon kapanır
+        cevrildi = bool(self.acik and self.acik[0].yon == -yon)
+        if cevrildi:                                   # ters çevirme: önce karşı pozisyon kapanır (tek emir sayılır)
             dolum = self._kayma(fiyat, yon) if kaymali else fiyat
-            self._kapat(list(self.acik), None, dolum, bar, emir.kimlik)
+            self._kapat(list(self.acik), None, dolum, bar, emir.kimlik, say=False)
+            self.dolum_sayisi += 1
         if sum(1 for t in self.acik if t.yon == yon) >= max(1, self.a.pyramiding):
             return
         dolum = self._kayma(fiyat, yon) if kaymali else fiyat
         adet = float(emir.adet or 0.0)
         if adet <= 0:
             return
+        if not cevrildi:
+            self.dolum_sayisi += 1
         self.acik.append(_Islem(emir.kimlik, yon, adet, adet, dolum, bar, self._komisyon(dolum, adet)))
 
     def _ham(self, emir: _Emir, fiyat: float, bar: int, kaymali: bool) -> None:
@@ -254,8 +267,9 @@ class Baglam:
         if self.acik and self.acik[0].yon == -yon:
             mevcut = sum(t.adet for t in self.acik)
             kapanan = min(mevcut, kalan)
-            self._kapat(list(self.acik), kapanan, dolum, bar, emir.kimlik)
+            self._kapat(list(self.acik), kapanan, dolum, bar, emir.kimlik, say=False)
             kalan -= kapanan
+        self.dolum_sayisi += 1
         if kalan > 1e-12:
             self.acik.append(_Islem(emir.kimlik, yon, kalan, kalan, dolum, bar, self._komisyon(dolum, kalan)))
 
@@ -265,8 +279,10 @@ class Baglam:
                 if diger.oca == emir.oca:
                     del self.bekleyen[anahtar]
 
-    def _kapat(self, hedef: list[_Islem], adet: float | None, fiyat: float, bar: int, exit_id: str) -> None:
+    def _kapat(self, hedef: list[_Islem], adet: float | None, fiyat: float, bar: int, exit_id: str, say: bool = True) -> None:
         kalan = sum(t.adet for t in hedef) if adet is None else adet
+        if say and kalan > 1e-12:
+            self.dolum_sayisi += 1
         for t in hedef:                                # FIFO
             if kalan <= 1e-12:
                 break
@@ -292,6 +308,32 @@ class Baglam:
             hedef = [t for t in hedef if emir.kimlik not in t.dolan_cikislar]
         return hedef
 
+    def _uygulama(self, hedef: list[_Islem]) -> list[_Islem]:
+        """Kapanışın uygulanacağı işlemler: ANY'de hedefin kendisi, FIFO'da o yöndeki en eski işlemden başlayarak hepsi."""
+        if self.a.close_entries_rule == "ANY":
+            return hedef
+        return [t for t in self.acik if t.yon == hedef[0].yon]
+
+    def _cikis(self, emir: _Emir) -> tuple[int, float, float, list[_Islem], list[_Islem]] | None:
+        """Çıkış emrinin (yön, ort. giriş fiyatı, adet, hedef, uygulama) bilgisi. FIFO'da girişi yabancı bir emirle kapanmış
+        bağlı çıkış, son bilinen adet ve fiyatla kalan pozisyona uygulanır (Pine belgesi: Buy1/Buy2 örneği)."""
+        hedef = self._cikis_hedefi(emir)
+        if hedef:
+            yon = hedef[0].yon
+            ort = sum(t.fiyat * t.adet for t in hedef) / sum(t.adet for t in hedef)
+            adet = self._cikis_adedi(emir, hedef)
+            emir.son, emir.hedef_nesneleri = (yon, ort, adet), list(hedef)
+            return yon, ort, adet, hedef, self._uygulama(hedef)
+        if self.a.close_entries_rule == "ANY" or emir.son is None or not emir.bagli:
+            return None
+        if any(t.adet > 1e-12 or t.kendi_cikisi for t in emir.hedef_nesneleri):
+            return None
+        yon, ort, adet = emir.son
+        kalan = [t for t in self.acik if t.yon == yon]
+        if not kalan:
+            return None
+        return yon, ort, min(adet, sum(t.adet for t in kalan)), [], kalan
+
     def _cikis_adedi(self, emir: _Emir, hedef: list[_Islem]) -> float:
         acik = sum(t.adet for t in hedef)
         if emir.adet is not None:
@@ -309,11 +351,10 @@ class Baglam:
             if emir.limit is not None:
                 out.append(("limit", emir.yon, emir.limit))
             return out
-        hedef = self._cikis_hedefi(emir)
-        if not hedef:
+        bilgi = self._cikis(emir)
+        if bilgi is None:
             return []
-        yon = hedef[0].yon
-        ort = sum(t.fiyat * t.adet for t in hedef) / sum(t.adet for t in hedef)
+        yon, ort = bilgi[0], bilgi[1]
         tick = self.a.mintick
         out = []
         limit = emir.limit if emir.limit is not None else (ort + yon * emir.profit * tick if emir.profit is not None else None)
@@ -329,14 +370,13 @@ class Baglam:
     def _iz_aktivasyon(self, emir: _Emir) -> float | None:
         if emir.tur != "cikis" or emir.trail_offset is None or emir.iz_aktif:
             return None
-        hedef = self._cikis_hedefi(emir)
-        if not hedef:
+        bilgi = self._cikis(emir)
+        if bilgi is None:
             return None
-        yon = hedef[0].yon
+        yon, ort = bilgi[0], bilgi[1]
         if emir.trail_price is not None:
             return emir.trail_price
         if emir.trail_points is not None:
-            ort = sum(t.fiyat * t.adet for t in hedef) / sum(t.adet for t in hedef)
             return ort + yon * emir.trail_points * self.a.mintick
         return None
 
@@ -347,13 +387,15 @@ class Baglam:
             (self._ac if emir.tur == "giris" else self._ham)(emir, fiyat, bar, kaymali)
             self._oca_iptal(emir)
             return
-        hedef = self._cikis_hedefi(emir)
-        if not hedef:
+        bilgi = self._cikis(emir)
+        if bilgi is None:
             return
-        dolum = self._kayma(fiyat, -hedef[0].yon) if kaymali else fiyat
+        yon, _, adet, hedef, uygula = bilgi
+        dolum = self._kayma(fiyat, -yon) if kaymali else fiyat
         for t in hedef:
             t.dolan_cikislar.add(emir.kimlik)
-        self._kapat(hedef, self._cikis_adedi(emir, hedef), dolum, bar, emir.kimlik)
+            t.kendi_cikisi = True
+        self._kapat(uygula, adet, dolum, bar, emir.kimlik)
 
     def _temizle(self) -> None:
         """Bağlandığı işlemler kapanan çıkış emri düşer (Pine: girişi kapanan exit iptal olur)."""
@@ -362,7 +404,8 @@ class Baglam:
                 continue
             if self._cikis_hedefi(emir):
                 emir.bagli = True
-            elif emir.bagli:
+                self._cikis(emir)                      # son bilinen hedef bilgisi
+            elif emir.bagli and self._cikis(emir) is None:
                 del self.bekleyen[anahtar]
 
     def _isle_piyasa(self, fiyat: float, bar: int, sadece: str | None = None) -> None:
@@ -373,21 +416,34 @@ class Baglam:
                 del self.bekleyen[anahtar]
                 hedef = self._cikis_hedefi(emir)
                 if hedef:
-                    adet = None if emir.adet is None and emir.qty_percent is None else self._cikis_adedi(emir, hedef)
-                    self._kapat(hedef, adet, self._kayma(fiyat, -hedef[0].yon), bar, emir.kimlik if emir.kimlik != "__hepsi__" else "close_all")
+                    adet = self._cikis_adedi(emir, hedef)
+                    for t in hedef:
+                        t.kendi_cikisi = True
+                    self._kapat(self._uygulama(hedef), adet, self._kayma(fiyat, -hedef[0].yon), bar,
+                                emir.kimlik if emir.kimlik != "__hepsi__" else "close_all")
             elif emir.tur in ("giris", "emir") and emir.piyasa:
                 del self.bekleyen[anahtar]
                 (self._ac if emir.tur == "giris" else self._ham)(emir, fiyat, bar, kaymali=True)
                 self._oca_iptal(emir)
 
-    def _bar_isle(self, j: int) -> None:
+    def _bar_isle(self, j: int, ek: Callable[[], None] | None = None) -> None:
+        """`ek` (calc_on_order_fills): dolum olan her fiyat noktasından (O, ara uçlar, C) sonra betik bar içinde yeniden
+        yürür; o yürütmenin piyasa emirleri bir sonraki noktada, fiyat emirleri sonraki parçalarda dolabilir."""
         o, h, l, c = self.o[j], self.h[j], self.l[j], self.c[j]
-        self._isle_piyasa(o, j)
-        self._temizle()
         yol = [o, h, l, c] if abs(h - o) < abs(o - l) else [o, l, h, c]
-        self._yol(o, o, j)                             # açılışta zaten geçilmiş seviyeler (boşluk)
-        for a, b in zip(yol[:-1], yol[1:]):
-            self._yol(a, b, j)
+        for t, b in enumerate(yol):
+            once = self.dolum_sayisi
+            if t == 0:
+                self._isle_piyasa(o, j)
+                self._temizle()
+                self._yol(o, o, j)                     # açılışta zaten geçilmiş seviyeler (boşluk)
+            else:
+                if ek is not None:
+                    self._isle_piyasa(b, j)
+                    self._temizle()
+                self._yol(yol[t - 1], b, j)
+            if ek is not None and self.dolum_sayisi != once and t < len(yol) - 1:
+                ek()
 
     def _yol(self, a: float, b: float, j: int) -> None:
         cur = a
@@ -406,7 +462,7 @@ class Baglam:
                         aday = (sira, anahtar, emir, tur, p)
                 aktiv = self._iz_aktivasyon(emir)
                 if aktiv is not None:
-                    yon = self._cikis_hedefi(emir)[0].yon
+                    yon = self._cikis(emir)[0]
                     p = _tetik("limit", -yon, aktiv, cur, b)
                     if p is not None:
                         sira = (abs(p - cur), -1)
@@ -424,9 +480,9 @@ class Baglam:
         # izleyen stop uç noktası segment sonunda güncellenir
         for emir in self.bekleyen.values():
             if emir.tur == "cikis" and emir.iz_aktif:
-                hedef = self._cikis_hedefi(emir)
-                if hedef:
-                    emir.iz_uc = max(emir.iz_uc, b) if hedef[0].yon == LONG else min(emir.iz_uc, b)
+                bilgi = self._cikis(emir)
+                if bilgi is not None:
+                    emir.iz_uc = max(emir.iz_uc, b) if bilgi[0] == LONG else min(emir.iz_uc, b)
 
 
 def _na(x: Any) -> float | None:
@@ -464,7 +520,7 @@ def calistir(modul: Any, df: pd.DataFrame, ayarlar: Ayarlar | None = None, **deg
     for i in range(len(df)):
         if i > 0:
             ctx._temizle()
-            ctx._bar_isle(i)
+            ctx._bar_isle(i, (lambda i=i: _ara_yurut(modul, ctx, i)) if a.calc_on_order_fills else None)
             ctx._temizle()
         ctx.i = i
         modul.bar(ctx, i, v)
@@ -472,6 +528,15 @@ def calistir(modul: Any, df: pd.DataFrame, ayarlar: Ayarlar | None = None, **deg
     islemler = pd.DataFrame(ctx.kapali, columns=["entry_id", "exit_id", "yon", "adet", "giris_bar", "giris_zaman", "giris_fiyat",
                                                   "cikis_bar", "cikis_zaman", "cikis_fiyat", "brut", "komisyon", "net"])
     return Sonuc(islemler, pd.Series(eq, index=df.index, name="ozkaynak"), ctx.emir_kaydi, a)
+
+
+def _ara_yurut(modul: Any, ctx: Baglam, i: int) -> None:
+    ctx.i, ctx.ara = i, True
+    try:
+        modul.ara(ctx, i)
+    finally:
+        ctx.ara = False
+        ctx.i = i - 1
 
 
 def gercekci(ayarlar: Ayarlar, kripto: bool) -> dict[str, Any]:

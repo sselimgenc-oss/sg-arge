@@ -158,9 +158,6 @@ def test_unsupported_feature_raises_instead_of_running() -> None:
         calistir(_strateji("x = request.security('BINANCE:ETHUSDT', 'D', close)\n"), df)
     with pytest.raises(Desteklenmiyor):
         calistir(_strateji("x = ta.kagi_yok(close)\n"), df)
-    with pytest.raises(Desteklenmiyor):
-        _strateji("x = 1\n").__class__(  # calc_on_order_fills betik davranışını değiştirir
-            "//@version=5\nstrategy('t', calc_on_order_fills=true)\n", sembol="BINANCE:TEST", tf="60")
 
 
 OSPKEM6I = """//@version=5
@@ -259,3 +256,176 @@ x = m.get("son") - map.get(m, "ilk") + (m.contains("yok") ? 1000 : 0) + m.size()
 """
     x = _seri(src, df)
     _ayni(x, (df["close"] - df["close"].iloc[0]).to_numpy(float))
+
+
+def test_intraday_risk_limits_halt_trading_until_the_next_day() -> None:
+    df = _veri(24 * 10, freq="1h")
+    govde = "if strategy.position_size == 0\n    strategy.entry('L', strategy.long, 1)\nelse\n    strategy.close('L')\n"
+    serbest = calistir(_strateji(govde), df).islemler
+    # 2 dolum (giriş + çıkış) sınırı: günde en çok bir işlem
+    sinirli = calistir(_strateji("strategy.risk.max_intraday_filled_orders(2)\n" + govde), df).islemler
+    gunler = pd.to_datetime(sinirli["giris_zaman"]).dt.normalize()
+    assert len(serbest) > 3 * len(sinirli) and gunler.value_counts().max() == 1 and gunler.nunique() >= 9
+    # gün içi zarar: gün başından beri herhangi bir zararda dur; aynı gün sonraki barda giriş yok
+    zarar = calistir(_strateji("strategy.risk.max_intraday_loss(1e-9, strategy.cash)\n" + govde), df)
+    assert 0 < len(zarar.islemler) < len(serbest)
+    # ardışık 1 zararlı gün: ilk zararlı günden sonra kalıcı durur
+    ardisik = calistir(_strateji("strategy.risk.max_cons_loss_days(1)\n" + govde), df)
+    gun_kz = ardisik.ozkaynak.resample("D").last().diff()
+    ilk_zarar = gun_kz[gun_kz < 0].index[0] if (gun_kz < 0).any() else None
+    if ilk_zarar is not None:
+        sinir = ilk_zarar + pd.Timedelta(days=1)
+        assert (pd.to_datetime(ardisik.islemler["giris_zaman"]) < sinir).all()
+    with pytest.raises(Desteklenmiyor):
+        calistir(_strateji("strategy.risk.max_position_size_yok(3)\n"), df)
+
+
+def test_heikin_ashi_security_matches_the_formula_and_v4_alias() -> None:
+    from engine.pine.yorumlayici import heikin_ashi
+    df = _veri(200)
+    ha = heikin_ashi(df)
+    x = _seri("//@version=5\nindicator('t')\nx = request.security(ticker.heikinashi(syminfo.tickerid), timeframe.period, close)\n", df)
+    _ayni(x, ha["close"].to_numpy())
+    x4 = _seri("//@version=4\nstudy('t')\nx = security(heikinashi(syminfo.tickerid), timeframe.period, open)\n", df)
+    _ayni(x4, ha["open"].to_numpy())
+    assert ha["high"].ge(ha[["open", "close"]].max(axis=1)).all() and ha["open"].iloc[1] == pytest.approx((ha["open"].iloc[0] + ha["close"].iloc[0]) / 2)
+
+
+def test_volume_variables_nvi_pvt_accdist() -> None:
+    df = _veri(150)
+    c, v, h, l = df["close"].to_numpy(), df["volume"].to_numpy(), df["high"].to_numpy(), df["low"].to_numpy()
+    nvi = [1.0]
+    for i in range(1, len(c)):
+        nvi.append(nvi[-1] * (1 + (c[i] - c[i - 1]) / c[i - 1]) if v[i] < v[i - 1] else nvi[-1])
+    _ayni(_seri("x = ta.nvi\n", df), np.array(nvi))
+    pvt = np.r_[0.0, np.cumsum((c[1:] - c[:-1]) / c[:-1] * v[1:])]
+    _ayni(_seri("x = ta.pvt\n", df), pvt)
+    _ayni(_seri("x = ta.accdist\n", df), np.cumsum((2 * c - l - h) / (h - l) * v))
+
+
+def test_drawing_coordinates_can_be_read_back() -> None:
+    df = _veri(30)
+    kod = ("var line ln = na\nvar box bx = na\nif bar_index == 2\n    ln := line.new(bar_index, low, bar_index + 10, low + 10)\n"
+           "    bx := box.new(bar_index, high, bar_index + 5, low)\n"
+           "if bar_index == 6\n    ln.set_y2(ln.get_y1() + 20)\n    box.set_top(bx, 999)\n"
+           "x = na(ln) ? na : ln.get_price(bar_index) - line.get_y1(ln)\ny = na(bx) ? na : bx.get_top()\n")
+    x, y = _seri(kod, df), _seri(kod, df, ad="y")
+    assert np.isnan(x[1]) and x[4] == pytest.approx(2.0) and x[7] == pytest.approx(10.0)
+    assert y[3] == pytest.approx(df["high"].iloc[2]) and y[7] == 999
+
+
+def test_calc_on_order_fills_reexecutes_intrabar_with_rollback_except_varip() -> None:
+    df = _veri(60)
+    govde = ("var int barlar = 0\nvarip int yurutme = 0\nbarlar += 1\nyurutme += 1\n"
+             "if strategy.position_size == 0\n    strategy.entry('L', strategy.long, 1)\nelse\n    strategy.close('L')\n")
+    duz = calistir(_strateji(govde), df)
+    kod = "//@version=5\nstrategy('t', overlay=true, calc_on_order_fills=true)\n" + govde
+    ps = PineStrateji(kod, sembol="BINANCE:TEST", tf="60")
+    assert ps.AYARLAR.calc_on_order_fills and ps.uyarilar
+    ek = calistir(ps, df)
+    t = ek.islemler
+    # dolumdan sonraki yürütme kapanışı aynı barın sonraki noktasında doldurur: bar içi giriş-çıkış döngüsü
+    assert len(t) > len(duz.islemler) and (t["giris_bar"] == t["cikis_bar"]).any()
+    assert ps.y._bul("barlar").deger == len(df)              # var: bar başına bir kez (geri sarılır)
+    assert ps.y._bul("yurutme").deger > len(df)              # varip: her yürütmede artar
+
+
+def test_matrix_rows_and_reductions() -> None:
+    df = _veri(20)
+    kod = ("var matrix<float> m = matrix.new<float>(0, 2, 0)\nm.add_row(m.rows(), array.from(close, open))\n"
+           "if m.rows() > 3\n    m.remove_row(0)\nx = matrix.get(m, m.rows() - 1, 0) - close\n"
+           "y = m.rows()\nz = m.max()\n")
+    _ayni(_seri(kod, df), np.zeros(len(df)))
+    assert _seri(kod, df, ad="y")[-1] == 3
+    son = df.iloc[-3:]
+    assert _seri(kod, df, ad="z")[-1] == pytest.approx(max(son["close"].max(), son["open"].max()))
+
+
+def test_lower_timeframe_security_returns_intrabar_values() -> None:
+    alt = _veri(24 * 8, freq="1h")
+    grafik = alt.resample("4h").agg({"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"})
+    kod = ("//@version=5\nstrategy('t')\nd = request.security_lower_tf(syminfo.tickerid, '60', close)\n"
+           "x = array.size(d)\ny = array.get(d, 0)\nz = request.security(syminfo.tickerid, '60', ta.sma(close, 2))\n"
+           "if x == 4\n    strategy.entry('L', strategy.long, 1)\n")
+    ps = PineStrateji(kod, sembol="BINANCE:TEST", tf="240")
+    ps.veri_saglayici = lambda s, dk: alt
+    calistir(ps, grafik)
+    y = ps.y
+    assert y._bul("x").deger == 4 and y._bul("y").deger == pytest.approx(alt["close"].iloc[-4])
+    assert y._bul("z").deger == pytest.approx(alt["close"].iloc[-2:].mean())
+
+
+def test_vwap_anchor_bands_and_lower_tf_tuple() -> None:
+    df = _veri(60, freq="1h")
+    tp = ((df["high"] + df["low"] + df["close"]) / 3).to_numpy()
+    v = df["volume"].to_numpy()
+    kod = "[m, u, d] = ta.vwap(hlc3, bar_index % 10 == 0, 2)\nx = m\ny = u - m\n"
+    m = _seri(kod, df, tf="60")
+    k = 25                                          # çapa: 20. bar, 25. barda 6 bar birikmiş
+    w, p = v[20:k + 1], tp[20:k + 1]
+    ort = (w * p).sum() / w.sum()
+    assert m[k] == pytest.approx(ort)
+    assert _seri(kod, df, ad="y", tf="60")[k] == pytest.approx(2 * np.sqrt((w * p * p).sum() / w.sum() - ort ** 2))
+    alt = _veri(24 * 4, freq="1h")
+    grafik = alt.resample("4h").agg({"open": "first", "high": "max", "low": "min", "close": "last", "volume": "sum"})
+    ps = PineStrateji("//@version=5\nstrategy('t')\n[c, o] = request.security_lower_tf(syminfo.tickerid, '60', [close, open])\n"
+                      "x = array.size(c)\ny = array.get(o, 0)\n", sembol="BINANCE:TEST", tf="240")
+    ps.veri_saglayici = lambda s, dk: alt
+    calistir(ps, grafik)
+    assert ps.y._bul("x").deger == 4 and ps.y._bul("y").deger == pytest.approx(alt["open"].iloc[-4])
+
+
+def test_library_import_registers_exported_functions_and_missing_library_fails_on_call(monkeypatch) -> None:
+    import engine.pine.yorumlayici as Y
+    lib = "//@version=5\nlibrary('m')\nyardimci(x) => x * 2\nexport ikiye(float x) => yardimci(x) + 1\n"
+    monkeypatch.setattr(Y, "KUTUPHANE_SAGLAYICI", lambda k, a, s: lib if (k, a, s) == ("ben", "m", 3) else None)
+    df = _veri(10)
+    x = _seri("//@version=5\nimport ben/m/3 as mm\nindicator('t')\nx = mm.ikiye(close)\n", df)
+    _ayni(x, df["close"].to_numpy() * 2 + 1)
+    _seri("//@version=5\nimport yok/n/1 as nn\nindicator('t')\nx = close\n", df)      # kullanılmayan eksik kütüphane sorun değil
+    with pytest.raises(Desteklenmiyor):
+        _seri("//@version=5\nimport yok/n/1 as nn\nindicator('t')\nx = nn.f(close)\n", df)
+
+
+def test_enum_and_small_builtins() -> None:
+    df = _veri(10)
+    kod = ("//@version=6\nenum Yon\n    uzun = 'Uzun'\n    kisa\nindicator('t')\ny = input.enum(Yon.kisa, 'yon')\n"
+           "x = y == Yon.kisa ? 1 : 0\ns = str.tostring(Yon.uzun) + str.repeat('-', 2) + timeframe.from_seconds(14400)\n"
+           "z = array.get(array.sort_indices(array.from(3, 1, 2)), 0)\n"
+           "f = str.format_time(0, 'yyyy-MM-dd HH:mm', 'UTC')\nb = last_bar_time\n")
+    y = Yorumlayici(parse(kod), df, tf_dk=240, sembol="BINANCE:TEST")
+    y.surum = 6
+    for i in range(len(df)):
+        y.adim(None, i)
+    assert y._bul("x").deger == 1 and y._bul("s").deger == "Uzun--240" and y._bul("z").deger == 1
+    assert y._bul("f").deger == "1970-01-01 00:00" and y._bul("b").deger == int(df.index[-1].value // 1_000_000)
+
+
+def test_fast_parser_matches_pynescript_ast(tmp_path, monkeypatch) -> None:
+    import pynescript.ast as A
+    from engine.pine import ayristir as AY
+    monkeypatch.setattr(AY, "ONBELLEK", tmp_path)
+    monkeypatch.setattr(AY, "_bellek", {})
+    kaynak = OSPKEM6I + "var float[] d = array.new(0)\nif close > open\n    array.push(d, close)\nx = d.size() > 0 ? d.get(0) : na\n"
+
+    def temiz(p):
+        for n in A.walk(p):
+            if hasattr(n, "annotations"):
+                n.annotations = []
+        p.body = [d for d in p.body if not isinstance(d, A.Comment)]
+        return A.dump(p)
+
+    assert temiz(AY.ayristir(kaynak)) == temiz(parse(kaynak))
+    assert list(tmp_path.glob("*.pkl"))                              # disk önbelleği
+    AY._bellek.clear()
+    assert temiz(AY.ayristir(kaynak)) == temiz(parse(kaynak))        # önbellekten okunan da aynı
+
+
+def test_pivot_point_levels_traditional_from_previous_anchor_period() -> None:
+    df = _veri(48, freq="1h")
+    kod = "p = ta.pivot_point_levels('Traditional', timeframe.change('D'))\nx = array.get(p, 0)\ny = array.get(p, 1)\n"
+    x, y = _seri(kod, df, tf="60"), _seri(kod, df, ad="y", tf="60")
+    gun1 = df.iloc[:24]
+    pp = (gun1["high"].max() + gun1["low"].min() + gun1["close"].iloc[-1]) / 3
+    assert np.isnan(x[23]) and x[24] == pytest.approx(pp) and x[47] == pytest.approx(pp)
+    assert y[24] == pytest.approx(2 * pp - gun1["low"].min())

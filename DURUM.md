@@ -1,11 +1,11 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-24 19:00 UTC, lider (Opus).
+Son güncelleme: 2026-10-25 01:30 UTC, lider (Opus).
 
 ## Şu an
 **Faz 2: paper trade çalışıyor.** C07 + R01 (ABD günlük) + A6-010 (emtia günlük), eşit ağırlık, 5.000 USD sanal (`paper/portfoy.yaml`). Gerçek para yok.
 - Defter 2026-09-01'den geriye dönük (aynı kurallar, gerçek veri); **canlı paper 2026-10-24'ten itibaren.** Karar canlı döneme bakılarak verilir.
-- `paper.yml` saat :17'ye zamanlı ama GitHub cron'u atlıyor: pratikte ~5 saatte bir (denetim A1). Defter yalnız kapanmış günlük barla (yarım bar koruması); açık pozisyonlar saatlik fiyatla yalnız panoda değerlenir.
+- `paper.yml` saat :17'ye zamanlı ama GitHub cron'u atlıyor: pratikte ~3,5-5 saatte bir. **Kullanıcı kararı 2026-10-24: kabul** (denetim A1 kapandı; defter günlük kapanışla çalıştığı için işlemler etkilenmez, yalnız pano gecikir). Defter yalnız kapanmış günlük barla (yarım bar koruması); açık pozisyonlar saatlik fiyatla yalnız panoda değerlenir.
 - Pano: `sg-pano` reposu, GitHub Pages (https://sselimgenc-oss.github.io/sg-pano/). Veri `PANEL_TOKEN` ile gönderilir.
 - Alarmlar: portföy MDD %10 uyarı, %15 yeni giriş durur; bir satır 30 kapanmış işlemden sonra PF < 1 ise inceleme.
 - **Gölge kitap** (ana portföyden ayrı, `docs/GOREV_F2_GOLGE.md` Ek 2): U4-H1 (kripto 4H), T8-07 ve V2B (emtia 1H); her biri 5.000 USD, risk %0,25; 2026-09-01'den geriye dönük, canlı 2026-10-24'ten. Karar yalnız canlı döneme bakılarak, 6 ay sonra.
@@ -13,11 +13,11 @@ Son güncelleme: 2026-10-24 19:00 UTC, lider (Opus).
 | Ajan | Görev |
 |---|---|
 | Lider | Lider + **denetçi** (6 saatte bir, `docs/denetim/`). U7 denetimi, `results/U7_SONUC.md`. |
-| Codex | **U7** (#200, taslak): U4 bitti; U1 5m ve U6 ayrı arka plan süreçlerinde (kayıt noktalı). Sonra Reddit, Faz 1, ardından `[TV-2] veri eşleme`. `u7_ozet.py` eksik sütun hatası bildirildi (denetim 2026-10-24 18:46, B1). |
+| Codex | **U7** (#200, taslak): U4, U6 (97/97), U1 5m bitti; Reddit 1/2a bitti; Faz 1 GitHub Actions'ta koşuyor (uzun koşular Actions'ta: Codex ortamı arka plan süreçlerini öldürüyor). Sonra `[TV-2] veri eşleme` (Dukascopy, vnstock). Gece görev listesi: `docs/GOREV_GECE_2026-10-24.md`. |
 | Sonnet | **Limit bitti, 2026-10-27 Salı 18:00'e kadar görev yok.** Son iş: GOREV_U7 Ek 4 (#206, birleşti): 17 kart çevrildi, 21 Doğrulanamaz (çoğu durum makinesi/açık kâr/izleyen stop: TV-2 yürütücüsüyle yeniden ele alınır). |
 | Argon | **İptal** (kullanıcı, 2026-10-24). `arastirma/argon/GOREV_ARGON_1.md` uygulanmayacak; erişilemeyen kaynaklar (K2) Codex/lider işine döner. |
 
-**TV-2** (`docs/GOREV_TV2.md`, `docs/TEST_YAPISI.md`): Pine kodu çeviri yapılmadan yürütülür (`engine/pine`, `engine/tv_emulator.py`, `backtests/tv2.py`). Açık kaynak 969; sürüm sonrası ≥ 1 yıl verisi olan (temiz sınama) 181, kalanı yetersiz kanıt (canlı izleme). İlk tur: 181'in 93 kripto stratejisi koşuyor (`results/tv2/satirlar/`); kripto dışı 88 Codex'in veri eşlemesini bekliyor; dakikalıklar ertelendi.
+**TV-2** (`docs/GOREV_TV2.md`, `docs/TEST_YAPISI.md`): Pine kodu çeviri yapılmadan yürütülür (`engine/pine`, `engine/tv_emulator.py`, `backtests/tv2.py`). Açık kaynak 969 (+33 kapalı/bulunamadı); kapsam kuralı Ek 2: her strateji sonuç ya da çözüm görevi. Kripto 296: 92+ koşuldu (19 geçti), kalan 204 lider ortamında kuyrukta. Kripto dışı 636 veri eşlemesi bekliyor (yfinance gün içi hazır; Dukascopy/vnstock Codex). Yorumlayıcı 2026-10-24/25 gecesi: calc_on_order_fills, gün içi risk, Heikin Ashi, matrix, alt dilim, kütüphane import, enum, FIFO kapanış, hızlı ayrıştırıcı (~100x). Yapay veri taraması: 969'un ~%90'ı çalışıyor.
 
 **Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`, ek: `docs/denetim/2026-10-24-1846.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
 
