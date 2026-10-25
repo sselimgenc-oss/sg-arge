@@ -46,3 +46,47 @@ Kullanıcı: "lider limiti yenilenene kadar ne kadar çok iş varsa yapsın". Ke
 **Lider notu 23:45 TR (A için):** Kripto dışı koşu 40226355510 8/8 başarılı bitti ama dala yalnız parça 7 commit'i düştü (a7482e3). Diğer parçalarda commit adımında push reddedildi, kurtarma "nothing to commit" dedi; satırlar commit edilmedi (log: job 121268458337). Yapılacak: (1) artifact kurtarma betiğiyle 0–6 parçalarını dala al, (2) tv2.yml commit adımını düzelt: reddedilen push sonrası `git fetch` + `git reset --soft`/rebase yerine yeni HEAD üstüne satırları yeniden kopyalayıp commit et, (3) `--birlestir` + `tv2_sirala`. Parça başına satır sayısı az görünüyor (parça 1: 2 satır); kuyruğun kaçının koşulduğunu say, atlananları sebebiyle raporla.
 
 **Lider notu 00:15 TR (B için):** U7 huni koşusu 40224968370 bitti; 10 işten yalnız `reddit_u7` başarısız: `git add results/u7/reddit/getiriler` → "pathspec did not match" (Reddit 2b aday çıkmadığı için klasör hiç oluşmamış). Düzeltme: commit adımında klasör yoksa atla (`[ -d ... ] && git add ...` veya `.gitkeep`). Diğer 9 işin sonuçlarını 3.3 için kullan; reddit işi yalnız düzeltmeden sonra tek başına yeniden koşulsun.
+
+---
+
+## GECE PLANI (2026-10-26 01:40 → 13:30 TR) — lider yok, sormadan devam
+
+Lider (Claude) limiti bitiyor; 14:15'teki denetime kadar gözetim yok. Her oturum aşağıdaki **kendi listesini sırayla** yürütür, bitince ortak havuza (E1–E8 ve G1–G6) geçer. Kurallar yukarıdakilerle aynı, ek olarak:
+- **Yasak:** `main`'e birleştirme, PR birleştirme, `paper/` ve para/hesap işleri, kapı/eşik/karar kodu değişikliği, sır/anahtar commit'i (repo **public**), test atlatma/silme.
+- **Her 45 dk'da en az bir commit** + push; durum dosyasına `HH:MM — madde — ne yapıldı / sıradaki` satırı.
+- Takılırsan `TAKILDI: sebep` yaz, **bekleme**, sıradakine geç. Karar gerektiren her şeyi `docs/denetim/kullanici_kararlari.md`'ye (C toplar) bir satır olarak yaz, kendin karar verme.
+- Actions: aynı anda en fazla **2** koşu. Koşuları **B başlatır** (gh yetkisi B'de); A ihtiyacını `docs/codex_durum_A.md`'ye `KOSU_ISTEGI: dal, kuyruk, parca` diye yazar, B her 30 dk'da bu dosyaya bakıp başlatır ve run id'yi yanına yazar.
+- **13:30 TR'de dur:** durum dosyasının sonuna `## Gece özeti` (biten, yarım, takılan, sayılar, açık riskler) yaz, son push.
+
+### A — kripto dışı (dal `codex/kripto-disi`)
+1. Lider notu 23:45'i uygula: 0–6 parçalarını artifact'tan kurtar (run 40226355510), `tv2.yml` commit adımı hatasını düzelt + test/kuru deneme.
+2. Kuyruk kapsamı: 636'nın kaçı koştu, kaçı atlandı (sebep kırılımı) → `docs/denetim/kripto_disi_kapsam.md`.
+3. Koşmayanlar için yeni kuyruk dosyası → `KOSU_ISTEGI`. Bitince yine kurtar/birleştir.
+4. `--birlestir` + `tv2_sirala`; kripto dışı ilk 30'u `docs/denetim/tv2_supheli.md` ölçütleriyle tara (aşırı getiri, az işlem, lookahead).
+5. 9 dış sembollü (`desteklenmiyor`) stratejiyi eşle (Dukascopy/yfinance), yeniden koşulacak listeye ekle.
+6. yfinance gün içi sınırları (60 gün <1s) yüzünden kısa veriyle koşanları `veri_kisa` diye işaretle (yalnız bilgi sütunu, kapıya dokunma).
+7. Bitti → G1, sonra E3/E4/E8.
+
+### B — TV-2/U7 kapanış + Actions (dallar `codex/tv2-kosu`, `codex/u7-tum-stratejiler`)
+1. Lider notu 00:15: huni `reddit_u7` commit adımını düzelt, yalnız reddit işini yeniden koş.
+2. Uzun koşu 40213846730 bitti: sonuçları al, 2.3'ü yeniden üret, `tv2_sirala` güncelle.
+3. 3.3'ü huni 40224968370 sonuçlarıyla bitir; 3.4 → 3.5 (#200 açıklamasını güncel sayılarla yaz, **birleştirme yok**).
+4. A'nın `KOSU_ISTEGI`lerini her 30 dk'da işle (en fazla 2 eşzamanlı koşu).
+5. `zaman_asimi` (13) stratejiler için tekil uzun koşu (`uzun=true`) — sırayla, aynı anda 1.
+6. Bitti → E1, E5, G2.
+
+### C — analiz + denetim hazırlığı (dal `codex/analiz`)
+1. E6 → E2 (yarımsa bitir).
+2. 6.6 copy trade doğrulama tablosu: her iddia için kaynak linki + doğrulandı/doğrulanamadı.
+3. `results/tv2/lookahead_listesi.csv`'yi tüm dallardaki (kripto + kripto dışı + U7) sonuçlarla güncelle.
+4. 6.4 Faz 3 eleştirisini bitir.
+5. **G3 Denetim paketi** `docs/denetim/hazirlik_2026-10-26.md` — 14:15 denetimini ucuzlatmak için en önemli iş: dal başına commit listesi (son 24 s), açık PR'lar + CI durumu, birleştirilmeye hazır olanlar ve gerekçe, şüpheli sonuçlar tablosu, test sayısı/süresi, `kullanici_kararlari.md` özeti. 13:00'te son kez güncelle.
+6. Bitti → E7, G4.
+
+### Ortak ek havuz (E1–E8'e ek; `ALDIM: G<n>` ile al)
+- **G1:** Sanal havuz (`docs/SANAL_HAVUZ.md`) için 20 gölge kitabın her biri için hangi stratejilerin gireceği önerisi (yalnız öneri, karar kullanıcıda).
+- **G2:** Tüm `geçti` stratejiler için blok bootstrap p10 ve `dsr` bilgi sütunlarını tek tabloda topla (`results/tv2/gecenler_ozet.csv`).
+- **G3:** (C'nin 5. maddesi.)
+- **G4:** Yinelenen strateji (dedup) kontrolü: aynı kaynak/parametre farklı kimlik → `docs/denetim/dedup.md`.
+- **G5:** Kırık/eksik testleri tara; kapsamı düşük modüller için test ekle (davranış değişmez).
+- **G6:** `DURUM.md` için önerilen güncel metni `docs/denetim/durum_onerisi.md`'ye yaz (lider denetimde uygular).
