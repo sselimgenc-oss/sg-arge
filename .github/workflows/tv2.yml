@@ -85,10 +85,22 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add results/tv2/satirlar results/tv2/getiriler
-          git commit -m "tv2: kripto parca ${{ matrix.parca }} (${{ github.run_id }})" || exit 0
-          git stash push --include-untracked -m "tv2-runner-artifacts" || true
+          saved="$(mktemp -d)"
+          mkdir -p "$saved/satirlar" "$saved/getiriler"
+          cp -a results/tv2/satirlar/. "$saved/satirlar/"
+          cp -a results/tv2/getiriler/. "$saved/getiriler/"
           for i in 1 2 3 4; do
-            git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:"${{ github.ref_name }}" && break
+            # A previous concurrent part may have changed the same result
+            # path.  Start from remote and reapply this part with the row
+            # rule; never leave a rebase conflict holding unpublished output.
+            git rebase --abort || true
+            git fetch origin "${{ github.ref_name }}"
+            git checkout "origin/${{ github.ref_name }}" -- .
+            python scripts/tv2_artifact_kurtar.py "$saved" --part "${{ matrix.parca }}"
+            git add results/tv2/satirlar results/tv2/getiriler
+            git commit -m "tv2: kripto parca ${{ matrix.parca }} (${{ github.run_id }})" || exit 0
+            git push origin HEAD:"${{ github.ref_name }}" && exit 0
             sleep $((i*5))
           done
+          echo "TV-2 result checkpoints could not be pushed after four attempts" >&2
+          exit 1
