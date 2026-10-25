@@ -34,9 +34,22 @@ REQUEST_DELAY = 0.75
 # Price divisor (1 / point). Index CFD divisors must be confirmed against a reference
 # close before the archive is used (see ``check_scale``).
 POINT_DIVISOR = {
+    "AUDUSD": 100_000,
+    "EURAUD": 100_000,
+    "EURGBP": 100_000,
+    "EURJPY": 1_000,
+    "GBPJPY": 1_000,
+    "GBPUSD": 100_000,
+    "NZDUSD": 100_000,
+    "USDCAD": 100_000,
     "USDJPY": 1_000,
     "USDCHF": 100_000,
+    "USDTRY": 100_000,
     "EURUSD": 100_000,
+    "XAGUSD": 1_000,
+    "XAUUSD": 1_000,
+    "USA30IDXUSD": 1_000,
+    "USA500IDXUSD": 1_000,
     "USATECHIDXUSD": 1_000,
 }
 START = {

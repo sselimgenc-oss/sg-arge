@@ -149,7 +149,7 @@ def _eslenmis_veri(sembol: str, dk: int) -> tuple[pd.DataFrame | None, str] | No
     row = _esleme(sembol)
     if row is None or row.get("kaynak") not in {"dukascopy", "vnstock"}:
         return None
-    code = row.get("esdeger_sembol") or row.get("veri_sembolu") or ""
+    code = row.get("esdeger") or row.get("esdeger_sembol") or row.get("veri_sembolu") or ""
     if row["kaynak"] == "dukascopy":
         from data import dukascopy
 
