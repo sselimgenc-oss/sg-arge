@@ -2294,7 +2294,8 @@ def _metin(ad: str, konum, adli) -> Any:
     if ad == "substring":
         return x[int(konum[1]):int(konum[2])] if len(konum) > 2 else x[int(konum[1]):]
     if ad == "split":
-        return x.split(konum[1])
+        ayrac = konum[1] if len(konum) > 1 else adli.get("separator", "")
+        return list(x) if ayrac == "" else x.split(ayrac)          # Pine: boş ayraç harflere böler
     if ad == "pos":
         k = x.find(konum[1])
         return NA if k < 0 else k
