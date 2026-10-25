@@ -96,4 +96,7 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
   kullanım. Etiket, kapı ve sıralama değişmedi.
 - **ALDIM: G4** — `calc_on_order_fills` kullanan kaynakların nedensellik
   bağlamını denetleme; yalnız raporlama.
+- **G4 tamamlandı:** 299 kaynak tarandı; açıkça `true` olan geçen aday yok.
+  Aktif kullanımın sonuç dağılımı `docs/denetim/order_fill_baglami.md` içinde
+  kaydedildi; kapı ve maliyet değişmedi.
 
