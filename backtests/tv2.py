@@ -41,6 +41,7 @@ ESLESME = ROOT / "arastirma" / "tv2_veri_eslesme.csv"
 
 KRIPTO_BORSALARI = {"BINANCE", "BYBIT", "OKX", "COINBASE", "BITSTAMP", "KUCOIN", "BITGET", "MEXC", "KRAKEN", "BINANCEUS",
                     "BITFINEX", "GATEIO", "PHEMEX", "CRYPTO", "BLACKBULL"}
+KRIPTO_TAKMA_ADLARI = {"BTCUSD", "ETHUSD"}  # request.security() içindeki öneksiz sürekli spot takma adları
 BINANCE_ARALIK = {"1m": 1, "3m": 3, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "2h": 120, "4h": 240, "6h": 360, "8h": 480,
                   "12h": 720, "1d": 1440, "3d": 4320, "1w": 10080}
 YFINANCE = {"SPX": "^GSPC", "SPX500": "^GSPC", "US500": "^GSPC", "SPY": "SPY", "NDX": "^NDX", "NAS100": "^NDX", "US100": "^NDX",
@@ -117,7 +118,7 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
     if not ad:                                  # önek yok: 'SPY', 'VIX', 'BTCUSDT'
         borsa, ad = "", borsa
     dk = dakika(tf)
-    if borsa in KRIPTO_BORSALARI or ad.endswith(("USDT", "USDT.P", "USDC")):
+    if borsa in KRIPTO_BORSALARI or ad.endswith(("USDT", "USDT.P", "USDC")) or ad in KRIPTO_TAKMA_ADLARI:
         bsym = _binance_sembol(sembol.upper())
         taban = max((v for v in BINANCE_ARALIK.values() if dk % v == 0 and v <= dk), default=None)
         if taban is None:
