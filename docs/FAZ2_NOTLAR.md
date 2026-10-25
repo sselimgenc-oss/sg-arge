@@ -66,6 +66,33 @@ Sorular:
     - ücret ve kayma;
     - Türkiye'den erişim ve hukuki durum;
     - Binance hesabımızla ilişkisi: ayrı cüzdan ve USDC gerekir.
+- **Argon derin araştırması (2026-10-25):** `arastirma/copytrade/copy_trading_derin_arastirma_2026.pdf` (23 s.). Kapsam: kripto, BIST/VİOP, ABD hisse, emtia/forex.
+  - **Önerdiği seçenekler (varlık sınıfı başına 2):**
+
+    | Varlık | Öneri 1 | Öneri 2 |
+    |---|---|---|
+    | Kripto | Hyperliquid vault/cüzdan + Hyperdash/Copin. Zincir üstü tam geçmiş, ücretsiz API (`api.hyperliquid.xyz/info`), kendi cüzdan | Binance Copy Trading. Önce sanal izleme; kâr payı ödemek yerine kendi API botumuzla kopyalama |
+    | BIST/VİOP | Türkiye'de üçüncü kişiyi kopyalamak SPK'ya göre yasal değil (izinsiz danışmanlık). Yasal yol: Gedik + Matriks IQ/İdealAlgo ile kendi algoritmamız | Başarılı yöneticilerin TEFAS hisse/serbest fonları + Gedik model portföy |
+    | ABD hisse | SEC EDGAR 13F (ücretsiz resmi API): düşük devirli 5-10 fon, Gedik MT5/IBKR ile. Autopilot/Dub Türkiye'ye kapalı | Hyperliquid HIP-3 hisse perp'leri (USDC teminat) |
+    | Emtia | Binance Futures copy trading TradFi perp (XAU, XAG, CL, BZ) | MQL5 Signals + Gedik MT5 (SPK 1:10 kaldıraç sınırına uygun sinyaller) |
+
+  - **Akademik kanıt:**
+    - Takipçilerin ortalama net getirisi sıfır ya da negatif (Apesteguia ve ark. 2020; Dorfleitner ve ark. 2018).
+    - Lider takipçi kazanınca performansı bozuluyor: ortalamaya dönüş ve eğilim etkisi (Pelster ve Hofmann 2018).
+    - Politikacı işlemlerini kopyalamada bildirim gecikmesi (30-45 gün) avantajı siliyor.
+    - 13F kopyalama yalnız düşük devirli, yoğun portföylü fonlarda işe yarıyor.
+  - **Kırmızı bayraklar:**
+    - %90+ kazanma oranı ama özsermaye sarkıyor (martingale/grid);
+    - açık pozisyonlarını gizleyen lider;
+    - 180 günden genç hesap ya da liderin kendi sermayesi az (ikiz hesap hilesi);
+    - sığ altcoinlerde işlem;
+    - Telegram/WhatsApp "VIP sinyal" grupları.
+  - **Sanal izleme için veri:** Hyperliquid ve Copin (geçmiş silinmez), Darwinex API, MQL5/Myfxbook (silinebilir, günlük kayıt gerekir), SEC EDGAR, Binance/OKX/Bybit (lider kapanınca geçmiş silinir; yalnız bizim kaydettiğimiz ileriye dönük veri güvenilir).
+    - Rapor her platform için maliyet ve kayma modeli de öneriyor (Tablo 5).
+  - **Lider yorumu:** Yön bizim TEST_YAPISI ile uyumlu: önce sanal izleme, liderin izlemeye başladığımız günden sonraki dönemi, gerçekçi maliyet. Dikkat:
+    - Bazı tarih ve kaynaklar doğrulanmalı. Örneğin "UPenn Mayıs 2026" ve "Meng & Fang Haziran 2026": son kaynak listesindeki link başka bir başlığa gidiyor.
+    - Hukuk ve vergi kısımları (SPKn m.107/109, 32 sayılı karar, %10 stopaj) uzmana sorulacak; karar kullanıcının.
+    - En hızlı başlanacak deney: Hyperliquid cüzdan/vault sanal izleme. Ücretsiz API, tam geçmiş, para bağlamadan.
 - **"Başarılı" ölçütü:** TEST_YAPISI'na göre tanımlanır. Liderin bizim izlemeye başladığımız tarihten sonraki dönemi, gerçekçi maliyet, düşüş, kaldıraç ve hesap yaşı esas alınır. Önce sanal havuzda (gölge) izlenir, gerçek para sonra.
 
 ## 5. Pano: HTML'den uygulama altyapısına geçiş (kullanıcı isteği, 2026-10-25)

@@ -97,6 +97,16 @@ Her biri ayrı commit ve `tests/test_pine_yorumlayici.py`'de test. Anlam Trading
   - aşamalı geçiş.
 - [ ] **6.5** Yeni `import` eden kütüphaneler: kapsam taramasında `eksik_kutuphane` çıkanları `arastirma/tv2_kutuphaneler.csv`'ye ekle (PUB = sayfadaki `"script_id_part"`), ilgili stratejileri yeniden koş.
 
+- [ ] **6.6** Copy trade, Sol 6.1 değerlendirmesi (kullanıcı isteği 2026-10-25). Kaynaklar: `arastirma/copytrade/copy_trading_derin_arastirma_2026.pdf` (Argon) ve `docs/FAZ2_NOTLAR.md` bölüm 4 özeti. `docs/FAZ2_NOTLAR.md` sonuna "Sol 6.1 eleştirisi: copy trade araştırması" başlığıyla yaz:
+  - (a) Rapordaki iddialardan en az 10 kritik olanını kaynağından doğrula ve tabloya `doğrulandı / yanlış / doğrulanamadı` yaz. Öncelik: Binance TradFi copy, Hyperdash ücretleri, Hyperliquid API alanları, SPK'ya göre BIST kopyalama yasağı, akademik makaleler, link uyuşmazlıkları.
+  - (b) Varlık sınıfı başına önerilere katıl ya da itiraz et, gerekçesiyle.
+  - (c) Sanal izleme pilotu tasarla (kod yazma, yalnız tasarım):
+    - Hyperliquid'den aday cüzdan ve vault seçimi;
+    - günlük veri toplama;
+    - TEST_YAPISI ile uyumlu değerlendirme: izleme başlangıcından sonraki dönem, maliyet ve kayma, kırmızı bayrak filtreleri;
+    - Binance lider verisini günlük kaydetme.
+  - (d) Kullanıcıya sorulacak kararlar. Para, hesap ve hukuk soruları Codex'e değil kullanıcıya.
+
 ## 7. Liste bittiyse
 - [ ] **7.1** `DURUM.md`'ye ve bu dosyanın sonuna 10 satırlık özet: ne bitti, sayılar, takılanlar, lider kararı gerekenler.
 
