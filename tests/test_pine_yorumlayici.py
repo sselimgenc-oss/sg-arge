@@ -419,3 +419,13 @@ def test_fast_parser_matches_pynescript_ast(tmp_path, monkeypatch) -> None:
     assert list(tmp_path.glob("*.pkl"))                              # disk önbelleği
     AY._bellek.clear()
     assert temiz(AY.ayristir(kaynak)) == temiz(parse(kaynak))        # önbellekten okunan da aynı
+
+
+def test_pivot_point_levels_traditional_from_previous_anchor_period() -> None:
+    df = _veri(48, freq="1h")
+    kod = "p = ta.pivot_point_levels('Traditional', timeframe.change('D'))\nx = array.get(p, 0)\ny = array.get(p, 1)\n"
+    x, y = _seri(kod, df, tf="60"), _seri(kod, df, ad="y", tf="60")
+    gun1 = df.iloc[:24]
+    pp = (gun1["high"].max() + gun1["low"].min() + gun1["close"].iloc[-1]) / 3
+    assert np.isnan(x[23]) and x[24] == pytest.approx(pp) and x[47] == pytest.approx(pp)
+    assert y[24] == pytest.approx(2 * pp - gun1["low"].min())

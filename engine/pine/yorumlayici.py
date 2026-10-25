@@ -974,10 +974,8 @@ class Yorumlayici:
             return self._yerlesik("matrix." + ad, e, on_arg=nesne)
         if isinstance(nesne, _Cizim):
             return self._yerlesik(f"{nesne.tur}.{ad}", e, on_arg=nesne)
-        if nesne is None or (isinstance(nesne, float) and na(nesne)):   # çizim nesnesi (label/line/box) ya da na
-            if ad.startswith("get_"):
-                raise Desteklenmiyor(f"çizim nesnesinden okuma: {ad}")
-            return None
+        if nesne is None or (isinstance(nesne, float) and na(nesne)):   # na çizim kimliği: okuma na, yazma etkisiz
+            return NA if ad.startswith("get_") else None
         if isinstance(nesne, _Nesne) and ad == "copy":
             return _Nesne(nesne._tip, nesne._alan)
         raise Desteklenmiyor(f"yöntem {ad} ({type(nesne).__name__})")
@@ -1185,6 +1183,8 @@ class Yorumlayici:
     def _strateji(self, ad: str, konum, adli) -> Any:
         if ad == "strategy":
             return None
+        if ad in ("strategy.convert_to_account", "strategy.convert_to_symbol"):   # hesap ve sembol para birimi USD
+            return konum[0] if konum else adli.get("value")
         c = self.ctx
         if self.guvenlik_modu:
             return None
@@ -1454,6 +1454,11 @@ class Yorumlayici:
         if k == "sar":
             x = b("start", "inc", "max")
             return self._durum(e, T.Sar)(x["start"], x["inc"], x["max"], h, l, c)
+        if k == "pivot_point_levels":
+            x = b("type", "anchor", "developing")
+            if _dogru(x.get("developing")) or str(x["type"]) not in ("Traditional", "Fibonacci", "Classic", "Camarilla"):
+                raise Desteklenmiyor(f"ta.pivot_point_levels ({x['type']}, developing={x.get('developing')})")
+            return self._durum(e, T.PivotSeviyeleri)(x["type"], x["anchor"], h, l, c)
         if k == "vwap":
             x = b("source", "anchor", "stdev_mult", source=(h + l + c) / 3)
             carpan = x.get("stdev_mult")
