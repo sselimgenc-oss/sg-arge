@@ -78,3 +78,26 @@ def test_paid_data_rule() -> None:
     assert tv2._ucretli("CME_MINI:MNQ1!", "1", "x = request.footprint(50, 70)")
     assert tv2._ucretli("CME_MINI:NQ1!", "5", "x = close") is None
     assert tv2._ucretli("BINANCE:BTCUSDT", "1", "x = request.footprint(50, 70)") is None
+
+
+def test_library_source_uses_inventory_pub_and_version(monkeypatch, tmp_path) -> None:
+    inventory = tmp_path / "libraries.csv"
+    inventory.write_text(
+        "yol,pub,sayfa\nben/lib,PUB;abc123,https://example.invalid/library\n",
+        encoding="utf-8",
+    )
+    calls = []
+
+    class Response:
+        text = '{"source":"export f() => 1"}'
+
+    def get(url, timeout):
+        calls.append((url, timeout))
+        return Response()
+
+    monkeypatch.setattr(tv2, "KUTUPHANELER", inventory)
+    monkeypatch.setattr(tv2, "CACHE", tmp_path / "cache")
+    monkeypatch.setattr(tv2.requests, "get", get)
+
+    assert tv2.kutuphane_kaynak("ben", "lib", 3) == "export f() => 1"
+    assert calls == [("https://pine-facade.tradingview.com/pine-facade/get/PUB%3Babc123/3?no_4xx=true", 30)]

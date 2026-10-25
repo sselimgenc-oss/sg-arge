@@ -39,6 +39,11 @@ Dal: `codex/analiz`
   4 skipped` ve 162.52 sn (önce 183.35 sn).
 - **ALDIM: E2** — Eksik kütüphane import'larını envantere ekleme ve ilgili
   stratejileri yeniden çalıştırma.
+- **E2 tamamlandı:** Envanterde yedi açık Pine kütüphanesi doğrulandı ve
+  sürümlü PUB çağrısı için ağsız test eklendi. Sonuçlanmış 299 TV-2 kaynağı
+  tarandı: import kullanan altı stratejinin tamamı yalnız `TradingView/ta`
+  kullanıyor. Altısı yeniden koşuldu; üçü veri/footprint eksikliğiyle
+  `desteklenmiyor`, üçü `izle` sonucunda kaldı. Karar/kapı/eşik değişmedi.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
