@@ -67,3 +67,71 @@ Bugünkü durum: `paper/panel/data.json` → `sg-pano` statik HTML (GitHub Pages
 - **Arka uç + ön yüz:** FastAPI + veritabanı (SQLite/Postgres) + React. Canlı fiyat, emir geçmişi, kullanıcı girişi, Telegram geri bildirimi (Faz 3 "uyguladım/atladım" butonu) için doğru temel; bakım yükü yüksek.
 - **Mobil:** PWA (aynı web uygulaması telefona kurulur) ya da Telegram bot arayüzü.
 - **Ölçütler:** güncelleme sıklığı (canlı mı, saatlik mi), kimlik doğrulama (gerçek hesap verisi görünecekse şart), maliyet, bakım, Faz 3 emir yoluyla uyum, sırların güvenliği (API anahtarları panoda olmaz).
+
+## Sol 6.1 eleştirisi (Codex, 2026-10-25)
+
+### 4. Copy trade
+
+- **Yön:** Yalnız biz kopyalayalım; sinyal yayımlamak ayrı bir ürün, müşteri/uygunluk yükü ve
+  düzenleyici riski getirir. Kopyalama bile yatırım tavsiyesi değildir: lider seçimi ve her gerçek
+  para kararı kullanıcıda kalmalı.
+- **Temel sorun:** Liderin ekrandaki geçmişi backtest değildir. Hayatta kalma yanlılığı,
+  sonradan değişen kaldıraç/sermaye, açık işlemlerin sakladığı zarar ve kapatılmış lider hesabı
+  yüzünden ``yüksek ROI`` tek başına bilgi değildir. Platformun verdiği işlem zaman damgası ve
+  dolum fiyatı yoksa lider sadece izleme havuzunda kalır.
+- **TEST_YAPISI uyarlaması:** Lideri katıldığımız gün ``t0`` ile dondur; t0 öncesini yalnız
+  keşif bilgisi say. t0 sonrası her sinyal için lider zamanı/fiyatı, bizim gözlem zamanımız,
+  emir zamanı, dolum fiyatı, ücret ve fonlama kaydedilsin. Kendi gölge defterimizde aynı
+  nominal-risk ve iki maliyet senaryosuyla hesaplanan net sonuç liderin yayınladığı ROI'den
+  önceliklidir. Lider değişirse (kaldıraç, sembol evreni, pozisyon boyutu) yeni sürüm ve yeni
+  t0 açılır; eski sonuçla birleştirilmez.
+- **Gecikme/kayma:** Her işlem için ``gözlem−lider``, ``emir−gözlem`` ve
+  ``bizim_dolum−lider_fiyat`` dağılımı saklanmalı; p50/p95 gecikme ve p95 ters kayma bütçesi
+  aşılırsa lider başarısız sayılmalı. API yoksa veya sadece periyodik portföy anlık görüntüsü
+  varsa gecikme ölçülemez; otomatik kopyalama yapılmaz. Kısmi dolum, fonlama, spread ve liderin
+  kapanışından sonra gelen sinyal ayrıca maliyettir.
+- **Risk:** Copy trade ana portföyün dışında teknik bir kitap olabilir ama ekonomik olarak
+  toplam zarar bütçesine dahil edilmelidir. Başlangıçta toplam copy tahsisi en çok %10, lider
+  başına %2, tek platform başına %5; kaldıraç için mutlak üst sınır ve her lider için günlük
+  zarar/azami düşüş kesicisi tanımlanmalı. Aynı sembol ve yönlü beta çakışmaları liderler
+  arasında da netleştirilmelidir. Liderin ani risk artışı, API kesintisi veya veri bütünlüğü
+  bozulması yeni girişleri derhal durdurur; kör biçimde pozisyon tersleme yapılmaz.
+- **Canlı karar:** ``30 işlem veya 3 ay`` tek başına zayıf; 30 korelasyonlu işlem çok az
+  bağımsız kanıt taşır. En az 90 gün *ve* yeterli aktif hafta, net sonuç pozitif, önceden
+  tanımlı maliyet/kayma altında PF eşiği ve MDD sınırı birlikte aranmalı. Buna ek olarak,
+  ardışık Bayesçi izleme kullanılabilir: her kapalı işlemden sonra pozitif beklenti olasılığı
+  güncellenir; örneğin P(E[R]>0) >= %95 ve gözlenen MDD bütçe içinde değilse tahsis artmaz.
+  Çok lider tarandığı için bu olasılık/karar eşiği deneme sayısına göre sıkılaştırılmalı;
+  sıralamaya bakıp seçme yanlılığı aksi halde geri gelir.
+- **Hukuk/vergi:** Türkiye'de SPK düzenlemeleri, platformun Türkiye'ye hizmet koşulları,
+  türev/kaldıraç uygunluğu ve vergi yükümlülüğü hukukçu/mali müşavir tarafından işlem öncesi
+  yazılı doğrulanmalı. Bu kayıt teknik tasarım önerisidir, hukuki görüş değildir. API anahtarı
+  yalnız emir yetkisi kadar dar olmalı; para çekme izni, pano/CI sırrı ve üçüncü taraf günlükleri
+  yasaktır.
+
+### 5. Pano
+
+- **Öneri:** İki aşamalı ilerleyelim. Faz 2'de GitHub Pages üzerinde statik React/Vite (veya
+  Svelte) + sürümlü JSON/CSV özetleri: ucuz, denetlenebilir ve bugünkü saatlik akışa yeterli.
+  Faz 3'te emir ve kullanıcı geri bildirimi gerçekten devreye alınacaksa FastAPI + Postgres +
+  React/PWA'ya geçilsin. Streamlit/Dash araştırma ve iç prova için hızlıdır, fakat yetkilendirme,
+  denetim izi ve emir akışı için kalıcı ürün temeli olmamalıdır.
+- **Neden şimdi FastAPI değil:** Gerçek kullanıcı, gerçek zamanlı emir ya da gizli veri yokken
+  sunucu, kimlik doğrulama, yedekleme ve saldırı yüzeyi getirir. Buna karşılık statik panel,
+  sonuçların yeniden üretilebilir snapshot'larını ve PR denetimini korur. Telegram ise alarm ve
+  kısa onay kanalıdır; tablo/analiz panosunun yerine geçmez.
+- **Sözleşme önce:** ``paper`` ve ``results`` doğrudan UI'ın veritabanı değildir. Önce sürümlü
+  bir okuma modeli tanımlansın: strateji/kitap kimliği, hesaplama zamanı, veri kesim zamanı,
+  kaynak commit'i, pozisyonlar, özkaynak, karar/uyarı ve açıklama. Şema geriye uyumlu olmalı;
+  UI yalnız bu yayınlanmış API/JSON'u tüketmeli. Böylece statik ön yüz daha sonra API'ye düşük
+  maliyetle bağlanır.
+- **Faz 3 birleşimi:** Emir önerisi ``önerildi → kullanıcı onayladı/atladı → gönderildi →
+  broker kabul/dolum → uzlaştırıldı`` durum makinesiyle, her geçişte kullanıcı/zaman/idempotency
+  anahtarı ve denetim kaydıyla taşınmalı. PWA bu onay ekranını telefona getirir; Telegram yalnız
+  imzalı bağlantı/uyarı üretir, emir parametresini chat metninden kabul etmez. Başlangıçta
+  varsayılan yalnız-okunur ve paper modudur; gerçek emir için MFA, rol tabanlı yetki, ayrı emir
+  servisi ve sır kasası gerekir.
+- **Geçiş eşiği:** Statik panel saatlik güncelleme, geçmiş görüntüleme ve koç/radar için
+  yeterliyse orada kalın. Birden çok kullanıcı, dakikalık veri, kişiye özel portföy veya onaylı
+  emir gereksinimi ortaya çıktığında FastAPI/Postgres'e geçin. SQLite yerel/prova için yeterli;
+  eşzamanlılık ve kalıcı denetim ihtiyacında Postgres seçin.
