@@ -18,7 +18,11 @@ Dal: `codex/analiz`
 - **6.6 tamamlandı:** Copy-trade PDF’sindeki 12 kritik iddia denetlendi;
   varlık sınıfı görüşleri, t0 tabanlı sanal izleme pilotu ve kullanıcı kararları
   `docs/FAZ2_NOTLAR.md` sonuna eklendi. Hukuki/para kararı verilmedi.
-- Sıradaki madde: **6.4**.
+- **6.4 tamamlandı:** `docs/FAZ3_YURUTME.md` sonuna emir yolu, manuel ölçüm,
+  gerçek enstrüman farkı, risk bölüşümü, güvenlik ve aşamalı geçiş eleştirisi
+  eklendi.
+- C listesi tamamlandı. Ek iş havuzuna geçilmedi; yürürlükteki sonuçları
+  değiştirecek ek bir madde alınmadı.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 

@@ -54,3 +54,34 @@
   - Gedik forex MT5 sunuyor mu, otomatik işlem serbest mi?
   - Vakıf ve Gedik hangi algoritmik platforma bağlanıyor?
   - Binance TradFi ürünleri API'de var mı?
+
+## Sol 6.1 eleştirisi
+
+Bu bölüm tartışma girdisidir; emir yolu, eşik, hesap veya risk kararı
+değiştirmez.
+
+- **Emir yolu:** Copy trade veya strateji sinyali doğrudan canlı emre
+  bağlanmamalı. Önce salt-okunur veri, sonra sanal defter, sonra kullanıcı
+  onaylı küçük deneme; her geçişte emir kimliği, zaman damgası ve uzlaştırma
+  kaydı tutulmalı. API anahtarında çekim yetkisi olmamalı.
+- **Manuel ölçüm:** Sinyal zamanı, gözlem zamanı, kullanıcı/emir zamanı,
+  gerçek dolum, ücret, fonlama ve kayma ayrı kaydedilmeli. Kaçırılan veya
+  kısmi dolan sinyal de deftere yazılmalı; yalnız başarılı uygulamalar
+  seçilerek sonuç güzelleştirilmemeli.
+- **Test verisi / gerçek enstrüman:** TV-2 veya U7 sonucu, gerçek brokerın
+  sembolü, seansı, spreadi, tick değeri, komisyonu, swap/fonlaması ve
+  kaldıraç koşullarıyla aynı değildir. Canlıya geçiş öncesi aynı strateji,
+  gerçek enstrüman verisi ve maliyetleriyle yeniden uygulanabilirlik kontrolü
+  ister; sonuç yoksa `doğrulanamaz` kalır.
+- **Risk bölüşümü:** Her kitap ve copy lideri için brüt açık risk, yön/
+  sembol çakışması, kaldıraç, günlük zarar ve toplam zarar bütçesi birlikte
+  izlenmeli. Liderin pozisyonu büyütmesi, veri/API kesintisi veya kayma
+  bütçesinin aşılması yeni girişleri durdurmalı; otomatik tersleme yapılmamalı.
+- **Güvenlik:** Salt-okunur anahtar varsayılan olmalı; emir anahtarı ayrı,
+  çekimsiz, IP kısıtlı ve sır kasasında tutulmalı. Kullanıcı onayı olmadan
+  emir gönderilmemeli. Acil durdurma, bağlantı kesilmesi, stale veri ve
+  uzlaştırma uyuşmazlığı fail-closed davranmalı.
+- **Aşamalı geçiş:** `kaynak doğrulama → sanal izleme (t0 sonrası) → paper /
+  manuel küçük uygulama → kullanıcı onaylı sınırlı canlı` sırası korunmalı.
+  Her aşamanın süresi ve geçiş kararı kullanıcıya aittir; bu metin geçiş
+  eşiği tanımlamaz.
