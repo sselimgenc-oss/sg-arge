@@ -30,15 +30,15 @@ Kurallar `docs/GOREV_CODEX_2026-10-25.md` "Genel kurallar" ve "Hâlâ Codex yapm
 - [x] **1.1** Koşu 40151651235'in `tv2-0`, `tv2-5`, `tv2-6`, `tv2-7` artifact'larını indir (`gh run download 40151651235 -n tv2-0-40151651235` ...). (2026-10-25: 26/26/26/24 satır kurtarıldı; iki tamamlanmış mevcut satır korundu, `8fba59a`.)
   - Satır kuralıyla `results/tv2/satirlar` + `getiriler`'e kopyala: mevcut satır `zaman_asimi` değilse ezilmez.
   - Commit: `tv2: 0/5/6/7 artifact'tan kurtarıldı`.
-- [ ] **1.2** `.github/workflows/tv2.yml` "Commit result checkpoints" adımını düzelt:
+- [x] **1.2** `.github/workflows/tv2.yml` "Commit result checkpoints" adımını düzelt: (2026-10-25: satır-birleştirme betiği + birim testi, rebase abort/fetch/uzak baştan birleştirme ve dördüncü denemede `exit 1`; `aeb117c`, `f65ae43`.)
   - Çakışmada sonuç kaybolmasın: `pull --rebase` başarısızsa `git rebase --abort`.
   - Sonra `git fetch` + `git reset --hard origin/<dal>`, ardından runner'daki yeni satırları satır kuralıyla yeniden kopyala, commit, push.
   - 4 deneme de başarısızsa adım **exit 1** versin (sessiz başarı yok).
   - Kopyalama mantığını `backtests/tv2_birlestir_satir.py` gibi küçük bir betiğe koy ve testini yaz.
-- [ ] **1.3** Lider notu 07:15: `backtests/tv2.py::veri()` Binance spot'ta sembol yoksa USDⓈ-M futures'ı (`https://fapi.binance.com/fapi/v1/klines`) denesin; satıra `kaynak=binance_um` yazsın.
+- [x] **1.3** Lider notu 07:15: `backtests/tv2.py::veri()` Binance spot'ta sembol yoksa USDⓈ-M futures'ı (`https://fapi.binance.com/fapi/v1/klines`) denesin; satıra `kaynak=binance_um` yazsın. (2026-10-25: sahte indirme testi; altı veri_yok satırı yeniden denendi, spot/UM'de de yok, `a605f59`, `a8c59af`.)
   - Testi sahte indirmeyle yaz.
   - Sonra ip7Wyl0i, cXpZ682G, jLKPS0lF, 2wxKTakm, N18VdyZl, 6tlWqaYm için `veri_yok` satırlarını yeniden koş (kısa koşular; yerelde zaman aşımı olursa 2. turdaki koşuya ekle).
-- [ ] **1.4** `kuyruk_kripto_kalan.txt`'yi yenile: satırı olmayan + `zaman_asimi` olanlar. Sayıyı buraya yaz.
+- [x] **1.4** `kuyruk_kripto_kalan.txt`'yi yenile: satırı olmayan + `zaman_asimi` olanlar. Sayıyı buraya yaz. (2026-10-25: 208 → 17, `bc419b7`.)
 
 ## 2. TV-2 kripto, ikinci tur (Actions)
 - [ ] **2.1** Yenilenen kalan kuyrukla `tv2.yml` koşusu (8 parça, parça başı `timeout 7200`). Bitince 1.1'deki kuralla sonuçları doğrula: her parçanın commit'i dala gelmiş olmalı.
