@@ -21,8 +21,8 @@ Dal: `codex/analiz`
 - **6.4 tamamlandı:** `docs/FAZ3_YURUTME.md` sonuna emir yolu, manuel ölçüm,
   gerçek enstrüman farkı, risk bölüşümü, güvenlik ve aşamalı geçiş eleştirisi
   eklendi.
-- C listesi tamamlandı. Ek iş havuzuna geçilmedi; yürürlükteki sonuçları
-  değiştirecek ek bir madde alınmadı.
+- **ALDIM: E4** — `desteklenmiyor` ve `hata` sonuçlarını gruplama; en sık üç
+  eksik Pine özelliğini belgeye dayalı test ve kodla ele alma.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
