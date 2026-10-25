@@ -102,3 +102,8 @@ Her biri ayrı commit ve `tests/test_pine_yorumlayici.py`'de test. Anlam Trading
 
 ---
 ## Durum ve Actions dakikası (Codex yazar)
+
+**Lider notu 13:10 UTC: Actions DURDU.** Aylık 2.000 dakikalık kota 05:20 UTC'de doldu. Yeni koşular 3-4 saniyede başarısız oluyor (run 40195741964, paper.yml de). Kullanıcı karar verene kadar:
+- **Actions koşusu başlatma.** 2.1, 2.2 ve 4.5 bekler; satırına `BEKLİYOR: Actions kotası` yaz.
+- **Actions gerektirmeyen işlere geç:** 1.1 (artifact indirmek dakika harcamaz), 1.2, 1.3 (yalnız kod + test), 2.4, 3.x, 4.1-4.4, 5.x, 6.x.
+- **Uzun koşuları yerelde başlatma:** ortam arka plan süreçlerini öldürüyor. Kısa tekil koşular (`timeout 600`) olur.
