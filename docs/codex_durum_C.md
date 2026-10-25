@@ -86,4 +86,7 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
 - **6.2 tamamlandı:** Taslağa U7 kaynak commit'i ile 85 satır/72 temsilci
   anlık görüntüsü eklendi. Ortak günlük-getiri snapshot'ı olmadığından 20
   kitap seçimi yapılmadı; önkoşul ve mevcut 12+4+4 prosedürü açık yazıldı.
+- **U7 yenileme denetimi:** Uzak dalın birleşik hunisi `a2e2f43` commit'inde
+  119 satır (85 Geçti, 27 Kaldı, 7 İzle) içeriyor; mevcut 85 satırlık/72
+  temsilcilik sıralama evreniyle tutarlı. Yeni koşu başlatılmadı.
 
