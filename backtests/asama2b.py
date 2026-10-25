@@ -349,6 +349,21 @@ def _validation_returns(result: BacktestResult, daily_equity: bool = False) -> p
     return equity.pct_change().dropna()
 
 
+def write_daily_returns(
+    result: BacktestResult, card_id: str, market: str, results_dir: Path, *, daily_equity: bool
+) -> None:
+    """Persist the realistic OOS daily return series used by bootstrap/DSR.
+
+    A card can be evaluated in more than one market, so the market is part of
+    the stable filename.  This is an output-only checkpoint: it never feeds a
+    gate or alters the backtest result.
+    """
+    safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", f"{card_id}__{market}")
+    target = results_dir / "getiriler" / f"{safe}.csv"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    _validation_returns(result, daily_equity=daily_equity).rename("net_getiri").to_csv(target, index_label="tarih")
+
+
 def _bootstrap_and_dsr(
     result: BacktestResult,
     annualization: int,
@@ -481,6 +496,7 @@ def evaluate_card(
     prepared.runtime_cache.clear()  # the OOS / pre-period books are built next; their arrays must not coexist with these
     final = max(frame.index.max() for frame in data.values())
     oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final, pit_universe=pit_universe).run(trusted_inputs=intraday)
+    write_daily_returns(oos, card["id"], market, results_dir, daily_equity=intraday)
     pre = None
     if intraday and market != "KRIPTO25":
         row["_intraday_no_pre"] = True
@@ -570,6 +586,7 @@ def evaluate_rotation_card(
     pre_start = pd.Timestamp("2018-01-01" if market == "KRIPTO25" else "2015-01-01", tz="UTC")
     final = max(frame.index.max() for frame in (prepared.frames or data).values())
     oos = tarama.prepare(card, data, market, benchmark=benchmark, start=OOS_START, end=final, pit_universe=pit_universe).run()
+    write_daily_returns(oos, card["id"], market, results_dir, daily_equity=False)
     oos_m = _metrics(oos, ann)
     row.update(oos_islem=oos_m["islem"], oos_ort_r=oos_m["cagr"], oos_net=oos_m["getiri"])
     try:

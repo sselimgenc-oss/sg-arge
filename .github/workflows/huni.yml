@@ -107,7 +107,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add results/u7/faz1/tarama.csv results/u7/faz1/tarama_ozet.md \
             results/u7/faz1/asama2a.csv results/u7/faz1/asama2a_ozet.md \
-            results/u7/faz1/asama2b.csv results/u7/faz1/asama2b_ozet.md
+            results/u7/faz1/asama2b.csv results/u7/faz1/asama2b_ozet.md \
+            results/u7/faz1/getiriler
           git commit -m "u7: Faz 1 checkpoints ${{ github.run_id }}" || exit 0
           # Veri indirme adimi izlenen MANIFEST'i degistirir. Kosu verisini ya da
           # islem dokumlerini commit etmeden rebase'in temiz bir agacta calismasi icin sakla.
