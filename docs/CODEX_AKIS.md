@@ -31,3 +31,14 @@ Kullanıcı kararı: hız için işler 3 paralel Codex oturumuna bölündü. Mad
 
 ## Ertelenen (sonra)
 5.2 renko (takıldı), 5.5 yavaş betikler, 5.6 PR (B 5.4'ü bitirince lider değerlendirir), 6.5 kütüphaneler.
+
+## Liste biterse: ortak ek iş havuzu (boş durmak yok)
+Kullanıcı: "lider limiti yenilenene kadar ne kadar çok iş varsa yapsın". Kendi listesi biten oturum bu havuzdan **ilk boş maddeyi** alır. Aldığını hemen durum dosyasına `ALDIM: E<n>` diye yazıp push eder; başka oturum aynı maddeyi almaz.
+- **E1:** Ertelenen 5.5. Yavaş 7 betik için profil + davranış değiştirmeyen hızlandırma + test.
+- **E2:** Ertelenen 6.5. Eksik kütüphane `import`'ları, csv'ye ekle, ilgili stratejileri yeniden koş.
+- **E3:** `veri_yok` kripto stratejileri (31) için ikinci kaynak dene (Bybit/OKX klines, CoinGecko). Bulunanları yeniden koş.
+- **E4:** `desteklenmiyor` (12) ve `hata` çıkan stratejilerin hata metinlerini grupla (`docs/denetim/desteklenmiyor_gruplari.md`). En sık 3 eksik Pine özelliğini, TradingView belgesine dayanarak test + kodla ekle.
+- **E5:** `islem_yok` (11) stratejileri. Gerçekten sinyal yok mu, yoksa yorumlayıcı hatası mı? Kaynağı oku, her biri için 1 satır sonuç.
+- **E6:** Test paketi süresini ölç; 10 saniyeden uzun testleri hızlandır (davranış aynı).
+- **E7:** `docs/SANAL_HAVUZ.md` taslağını TV-2'nin son sayılarıyla güncelle (yalnız öneri).
+- **E8:** Ertelenen 5.2 renko. TradingView belgesinde yalnız açıkça yazan kısmı (kutu boyu, kapanış tabanlı) uygula; belirsizi listele.
