@@ -104,4 +104,6 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
 - **G5 tamamlandı:** Geçen iki stratejide son-bar koşulu yalnız etiket/tablo
   güncellemesine bağlı bulundu; emir çağrısı yok. Kanıt
   `docs/denetim/son_bar_baglami.md` içinde, karar değişmedi.
+- **ALDIM: G6** — Geçen TV-2 adaylarında `process_orders_on_close` emir
+  zamanlaması denetimi; yalnız raporlama.
 
