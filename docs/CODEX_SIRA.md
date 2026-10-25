@@ -112,3 +112,15 @@ Her biri ayrı commit ve `tests/test_pine_yorumlayici.py`'de test. Anlam Trading
 - **Hemen:** 2.1'i başlat. Bitince 2.2'yi, sonra 4.5'i başlat.
 - **Aynı anda en fazla 1 matris koşusu.**
 - **Repo herkese açık:** secret, anahtar ya da kişisel veriyi commit'leme.
+
+**Lider notu 13:30 UTC: başarısız koşuları yeniden koş** (kullanıcı isteği; sırayla, aynı anda 1 matris):
+1. **TV-2 kripto, run 40195741964:** kota yüzünden 4 sn'de düştü. 2.1 olarak yeniden başlat (`gh workflow run tv2.yml --ref codex/tv2-kosu`).
+2. **Uçtan uca huni, run 40145166229:**
+   - `asama2a` işi düştü, diğer 8 iş geçti.
+   - Önce logda sebebi bul (`gh run view 40145166229 --log-failed`).
+   - Kod hatasıysa düzelt + test, sonra yalnız düşen işi koş (`gh run rerun 40145166229 --failed`, ya da `huni.yml`'i yalnız aşama 2a ile).
+   - Sonuçları #200'e commit'le; 3.1/3.4 ile birleştir.
+3. **Paper trade (12, 13. koşular):**
+   - Saatlik zamanlayıcı (:17) kendisi yeniden deniyor. Dokunma (`paper/` Codex yapmaz).
+   - Lider kontrol eder.
+4. Her biri bitince sonucu bu dosyaya 1 satır yaz.
