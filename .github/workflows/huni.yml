@@ -158,8 +158,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add results/u7/reddit/tarama.csv results/u7/reddit/tarama_ozet.md \
             results/u7/reddit/asama2a.csv results/u7/reddit/asama2a_ozet.md \
-            results/u7/reddit/asama2b.csv results/u7/reddit/asama2b_ozet.md \
-            results/u7/reddit/getiriler
+            results/u7/reddit/asama2b.csv results/u7/reddit/asama2b_ozet.md
+          git add results/u7/reddit/getiriler 2>/dev/null || true
           git commit -m "u7: Reddit checkpoints ${{ github.run_id }}" || exit 0
           git stash push --include-untracked -m "u7-runner-artifacts" || true
           for i in 1 2 3 4; do
