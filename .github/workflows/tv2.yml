@@ -115,7 +115,10 @@ jobs:
             git rebase --abort || true
             git fetch origin "${{ github.ref_name }}"
             git checkout "origin/${{ github.ref_name }}" -- .
-            python scripts/tv2_artifact_kurtar.py "$saved" --part "${{ matrix.parca }}"
+            # Kurtarıcı, seçilen kuyrukla aynı parça sahipliğini kullanmalıdır.
+            # Aksi halde varsayılan kripto kuyruğu kripto-dışı artifact satırlarını
+            # sahiplenmez ve commit adımı yanlışlıkla "nothing to commit" olur.
+            python scripts/tv2_artifact_kurtar.py "$saved" --part "${{ matrix.parca }}" --queue "${{ inputs.kuyruk }}"
             git add results/tv2/satirlar results/tv2/getiriler
             git commit -m "tv2: kripto parca ${{ matrix.parca }} (${{ github.run_id }})" || exit 0
             git push origin HEAD:"${{ github.ref_name }}" && exit 0
