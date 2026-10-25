@@ -36,14 +36,14 @@
 - [ ] **Kuyruk** `results/tv2/kuyruk_kripto_disi.txt`: önce son sürümü 2026'dan önce olanlar (~78), sonra kalanı. A'daki iş akışıyla koş.
 
 ## D. Kapsam (öncelik 4)
-- [ ] **Kaynağı kapalı / bulunamadı 33 strateji:** eski alfanümerik id ve script sayfasındaki `script_id_part` ile yeniden ara. Bulunanları `arastirma/tv2_surumler.csv`'ye ekle (aynı sütunlar, `kaynak_acik=acik`).
+- [x] (2026-10-25: 33/33 denendi, hiçbiri açılmadı) **Kaynağı kapalı / bulunamadı 33 strateji:** eski alfanümerik id ve script sayfasındaki `script_id_part` ile yeniden ara. Bulunanları `arastirma/tv2_surumler.csv`'ye ekle (aynı sütunlar, `kaynak_acik=acik`).
 - [ ] **Yeni kütüphane `import`'ları:** `arastirma/tv2_kutuphaneler.csv`'ye satır ekle. PUB kimliği kütüphane sayfasındaki `"script_id_part"`'tan alınır.
 
 ## E. Beyin fırtınası (Sol 6.1)
 Her biri ilgili dosyanın sonuna "Sol 6.1 eleştirisi" başlığıyla yazılır.
 - [ ] **`docs/FAZ3_YURUTME.md`:** emir yolu, manuel ölçüm, test verisi ile gerçek enstrüman farkı, risk bölüşümü, güvenlik, aşamalı geçiş.
-- [ ] **`docs/FAZ2_NOTLAR.md` bölüm 4, copy trade:** yalnız biz kopyalarız (kullanıcı kararı). Kaynaklar, "başarılı" ölçütü (izlemeye başladıktan sonraki dönem), gecikme ve kayma, risk, vergi.
-- [ ] **`docs/FAZ2_NOTLAR.md` bölüm 5, pano altyapısı:** statik / Streamlit-Dash / FastAPI+React / PWA-Telegram; Faz 3 ile uyum.
+- [x] (yazıldı) **`docs/FAZ2_NOTLAR.md` bölüm 4, copy trade:** yalnız biz kopyalarız (kullanıcı kararı). Kaynaklar, "başarılı" ölçütü (izlemeye başladıktan sonraki dönem), gecikme ve kayma, risk, vergi.
+- [x] (yazıldı) **`docs/FAZ2_NOTLAR.md` bölüm 5, pano altyapısı:** statik / Streamlit-Dash / FastAPI+React / PWA-Telegram; Faz 3 ile uyum.
 
 ## Codex yapmaz (lideri bekler)
 - **Yorumlayıcı ve emülatör** anlamını değiştiren kod (`engine/pine`, `engine/tv_emulator.py`). Desteklenmeyen özellik çıkarsa listele, ekleme.
