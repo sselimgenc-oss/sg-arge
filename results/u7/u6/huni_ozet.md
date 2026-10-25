@@ -1,5 +1,7 @@
 # U6 huni ozeti
 
+v1 tablo: bilgi, eleme değil; karar: results/u7/huni_ozet.csv karar_adim2.
+
 Kilitli donem acilmadi. DSR deneme sayisi: 205.
 
 | varyant | IS PF/islem | null | OOS PF 2x | DSR | karar | neden |
