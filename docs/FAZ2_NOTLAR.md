@@ -50,12 +50,15 @@ Faz 2'de gerçek veriyle kurulabilecek olanlar:
 - **Açıklama:** Her öneri "neden" ile gelir: hangi işlemler, kaç örnek, IS/OOS farkı, deneme sayısı.
 
 ## 4. Copy trade (kullanıcı isteği, 2026-10-25)
-Araştırılacak; Sol 6.1 (Codex) de fikir sunacak. Sorular:
-- **Yön:** başkalarını kopyalamak mı (Binance copy trading lider portföyleri, eToro, ZuluTrade, MT5 sinyalleri), bizim sinyallerimizi kopyalatmak mı (Binance lider portföyü, Telegram/Discord kanalı), ikisi birden mi?
+Araştırılacak; Sol 6.1 (Codex) de fikir sunacak.
+**Yön (kullanıcı kararı, 2026-10-25):** yalnız başarılı olanları **biz kopyalayacağız**. Kendi sinyallerimizi kopyalatmak ya da yayımlamak amaç değil.
+Sorular:
+- **Kaynaklar:** Binance copy trading lider portföyleri, Bybit/OKX/Bitget lider listeleri, eToro, ZuluTrade, MT5 sinyalleri. Hangisi Türkiye'den ve bizim hesaplarımızdan (Binance, Gedik MT5) kullanılabilir?
 - **Kopyalanan lider için doğrulama:** yayımlanan performans hayatta kalma yanlılığı taşır. Kendi test yapımız uygulanabilir mi: sadece katıldıktan sonraki dönem, gerçekçi maliyet, kayma, gecikme?
 - **Teknik yol:** Binance copy trading API var mı, sınırları ne? Lider işlemleri nasıl okunur? Kopyalama gecikmesi ve kaymanın ölçülmesi.
 - **Risk:** %10 zarar bütçesine dahil mi, ayrı mı? Lider başına sınır, kaldıraç sınırı, ani lider değişimi.
-- **Hukuk ve vergi:** Türkiye'de sinyal satma ya da yönetme sınırları (SPK yatırım danışmanlığı izni). Kendi sinyallerimizi yayımlamadan önce kullanıcı ve uzman kararı gerekir.
+- **Hukuk ve vergi:** Türkiye'den yabancı platformda kopyalama ve kazancın vergisi (kullanıcı ve uzman kararı).
+- **"Başarılı" ölçütü:** TEST_YAPISI'na göre tanımlanır. Liderin bizim izlemeye başladığımız tarihten sonraki dönemi, gerçekçi maliyet, düşüş, kaldıraç ve hesap yaşı esas alınır. Önce sanal havuzda (gölge) izlenir, gerçek para sonra.
 
 ## 5. Pano: HTML'den uygulama altyapısına geçiş (kullanıcı isteği, 2026-10-25)
 Bugünkü durum: `paper/panel/data.json` → `sg-pano` statik HTML (GitHub Pages), 3,5-5 saatte bir güncelleniyor. Sol 6.1 de fikir sunacak. Değerlendirilecek seçenekler:
