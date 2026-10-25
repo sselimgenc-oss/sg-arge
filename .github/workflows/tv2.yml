@@ -13,7 +13,6 @@ permissions:
 
 jobs:
   tv2:
-    if: ${{ inputs.parca == '' || inputs.parca == matrix.parca }}
     strategy:
       fail-fast: false
       matrix:
@@ -42,7 +41,12 @@ jobs:
           from pathlib import Path
           ids = Path('results/tv2/kuyruk_kripto_kalan.txt').read_text().splitlines()
           part = int('${{ matrix.parca }}')
+          requested = '${{ inputs.parca }}'
           todo = []
+          if requested and requested != str(part):
+              Path('/tmp/tv2-queue.txt').write_text('')
+              print(f'part {part}: dispatch {requested}, atlandi')
+              raise SystemExit
           for i, ident in enumerate(ids):
               if i % 8 != part:
                   continue
