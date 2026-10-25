@@ -27,6 +27,12 @@ Dal: `codex/analiz`
   için kod veya rapor değişikliği yapılmadı.
 - **ALDIM: E7** — TV-2 nihai değerleriyle `docs/SANAL_HAVUZ.md` taslağını
   güncelleme (yalnız öneri; karar/kapı/eşik değiştirmeden).
+- **E7 tamamlandı:** TV-2 uzak sonuç anlık görüntüsündeki 19 satır ve 15
+  temsilci, seçim veya terfi kararı üretmeden `docs/SANAL_HAVUZ.md` taslağına
+  işlendi. 6.6 kaynak denetim tablosunda her iddiaya bağlantı ve sonuç da
+  açıkça eklendi.
+- **ALDIM: E6** — Test paketini süreleriyle ölçme; 10 saniyeyi aşan testleri
+  davranışı değiştirmeden hızlandırma.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
