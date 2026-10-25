@@ -94,4 +94,6 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
 - **G3 tamamlandı:** Dokuz kaynak `docs/denetim/lookahead_baglami.md` içinde
   sınıflandı: altısı önceki HTF barı (`[1]`), üçü geri kaydırmasız riskli
   kullanım. Etiket, kapı ve sıralama değişmedi.
+- **ALDIM: G4** — `calc_on_order_fills` kullanan kaynakların nedensellik
+  bağlamını denetleme; yalnız raporlama.
 
