@@ -99,4 +99,6 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
 - **G4 tamamlandı:** 299 kaynak tarandı; açıkça `true` olan geçen aday yok.
   Aktif kullanımın sonuç dağılımı `docs/denetim/order_fill_baglami.md` içinde
   kaydedildi; kapı ve maliyet değişmedi.
+- **ALDIM: G5** — Son-bar durum değişkenlerinin işlem mantığı bağlamını
+  denetleme; yalnız raporlama.
 
