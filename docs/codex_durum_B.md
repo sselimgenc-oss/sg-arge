@@ -5,3 +5,4 @@
 - 2026-10-25 21:30 TR — 2.2 TAKILDI: `OvE4qQgh` tekil koşusu 45 dakikayı aştı; Actions süreci sonuç üretebilmesi için iptal edilmedi. Diğer uzun kimlikler bu sonuçtan sonra sıraya alınacak; Oturum B 2.3'e geçti.
 - 2026-10-25 21:30 TR — 2.3 tamamlandı (ara): `--birlestir` ve `tv2_sirala` çalıştı, `d303754` ile itildi. 300 satır: geçti 19, kaldı 46, izle 166, işlem_yok 11, desteklenmiyor 12, veri_yok 31, veri_ücretli 2, zaman_aşımı 13. Uzun kuyruk sonucu geldiğinde yeniden üretilecek.
 - 2026-10-25 21:30 TR — 2.4 tamamlandı: aşırı net sonuçlar karar değiştirilmeden `docs/denetim/tv2_supheli.md` içinde gruplandı ve olası motor nedenleri eklendi; `8b5ac09`.
+- 2026-10-25 21:30 TR — 3.1 tamamlandı: Faz 1 checkpoint özetleri #200 uzak dalında mevcut (`tarama`, `asama2a`, `asama2b`); `u7-faz1-40145166229` artifact'i de saklı.
