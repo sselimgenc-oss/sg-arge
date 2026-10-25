@@ -101,4 +101,7 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
   kaydedildi; kapı ve maliyet değişmedi.
 - **ALDIM: G5** — Son-bar durum değişkenlerinin işlem mantığı bağlamını
   denetleme; yalnız raporlama.
+- **G5 tamamlandı:** Geçen iki stratejide son-bar koşulu yalnız etiket/tablo
+  güncellemesine bağlı bulundu; emir çağrısı yok. Kanıt
+  `docs/denetim/son_bar_baglami.md` içinde, karar değişmedi.
 
