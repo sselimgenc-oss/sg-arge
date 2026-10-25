@@ -107,6 +107,12 @@ Her biri ayrı commit ve `tests/test_pine_yorumlayici.py`'de test. Anlam Trading
     - Binance lider verisini günlük kaydetme.
   - (d) Kullanıcıya sorulacak kararlar. Para, hesap ve hukuk soruları Codex'e değil kullanıcıya.
 
+- [ ] **6.7** ML araştırması, Sol 6.1 değerlendirmesi (kullanıcı isteği 2026-10-25). Kaynaklar: `arastirma/ml/algoritmik_trading_makine_ogrenmesi_2026.pdf` ve `docs/FAZ2_NOTLAR.md` bölüm 6. Dosyanın sonuna "Sol 6.1 eleştirisi: ML" yaz:
+  - (a) Kritik iddiaları kaynağından doğrula: DSR formülü ve N_eff, `arch.bootstrap.StepM` API'si, skfolio `CombinatorialPurgedCV`/HRP, jdehorty kaynağındaki etiket satırı, 2026 kaynakları.
+  - (b) 3 pilotun sırası ve kapsamı hakkında görüş.
+  - (c) **Kod (yalnız bilgi, karar değiştirmez):** `backtests/tv2_sirala.py` çıktısına `dsr` ve `n_eff` sütunlarını ekle. Kapı, sıralama ve eşik **değişmez**; test yaz.
+  - (d) TV-2'de `lookahead_on` + üst zaman dilimi okuyan stratejileri listele (`results/tv2/lookahead_listesi.csv`: id, satır, ifade, karar).
+
 ## 7. Liste bittiyse
 - [ ] **7.1** `DURUM.md`'ye ve bu dosyanın sonuna 10 satırlık özet: ne bitti, sayılar, takılanlar, lider kararı gerekenler.
 

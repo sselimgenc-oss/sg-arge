@@ -103,6 +103,35 @@ Bugünkü durum: `paper/panel/data.json` → `sg-pano` statik HTML (GitHub Pages
 - **Mobil:** PWA (aynı web uygulaması telefona kurulur) ya da Telegram bot arayüzü.
 - **Ölçütler:** güncelleme sıklığı (canlı mı, saatlik mi), kimlik doğrulama (gerçek hesap verisi görünecekse şart), maliyet, bakım, Faz 3 emir yoluyla uyum, sırların güvenliği (API anahtarları panoda olmaz).
 
+## 6. Makine öğrenmesi katmanı (kullanıcı isteği, 2026-10-25)
+Argon derin araştırması: `arastirma/ml/algoritmik_trading_makine_ogrenmesi_2026.pdf` (18 s.).
+
+**Ana fikir:**
+- Ham fiyat yönü tahmini neredeyse işe yaramıyor: örneklem dışı R² %0,1-0,4, yön doğruluğu %51-54.
+- ML'in değeri mevcut stratejilerin **üstünde** bir katman olmasında.
+- Bizim hat (yazar ayarı, yayın sonrası sınama, maliyet) parametre aşırı uyumunu zaten yapısal olarak önlüyor.
+
+**Önerilen 3 pilot:**
+
+| # | Pilot | Ne yapar | Emek |
+|---|---|---|---|
+| 1 | Çoklu test elemesi + HRP | Tek kapıyı geçenlerde şans eseri geçenleri ayıklar (Deflated Sharpe, efektif bağımsız deneme sayısı N_eff, Romano-Wolf StepM / BH-FDR q≤0,10). Korelasyon kümelemesiyle 20 gölge kitap seçer, ağırlıkları HRP (CVaR) ile belirler. Ek veri gerekmez | 2-3 gün |
+| 2 | Meta-labeling + rejim filtresi | Strateji sinyallerini sığ LightGBM / lojistik modelle veto eder ya da boyutlar. Özellikler: rejim (HMM, volatilite oranı, Hurst, ADX), stratejinin son işlemleri, funding/taker oranı. Doğrulama: CPCV + PBO < 0,15 | 5-7 gün |
+| 3 | Volatilite tahmini | %10 oynaklık ölçeklemesinde geriye dönük standart sapma yerine HAR-RV + kuantil LightGBM | 2-3 gün |
+
+**Lider yorumu:**
+- **Pilot 1 en değerli ve en ucuz.** 942 stratejiden seçim yaptığımız için en iyisinin Sharpe'ı yalnız şans eseri yaklaşık 3,25 σ şişebilir.
+  - Ancak DSR/StepM'i kapıya eklemek **yöntem ve kural değişikliği**dir (TEST_YAPISI).
+  - Önce yalnız **bilgi sütunu** olarak hesaplanır; kapıya ya da sıralamaya almak kullanıcı kararı.
+- **Pilot 3** ölçekleme yöntemini değiştirir. O da önce gölge karşılaştırma olarak yapılır, karar kullanıcının.
+- **Pilot 2** en çok veri ister: strateji başına yeterli işlem gerekir. Gölge kitaplar birkaç ay işlem biriktirdikten sonra yapılmalı.
+- **Hemen yapılacak denetim:**
+  - Rapordaki kırmızı bayrak 4: `request.security(..., lookahead=barmerge.lookahead_on)` ile üst zaman diliminin henüz kapanmamış barını okuyan stratejiler geleceği görür.
+  - Yorumlayıcımız TradingView'ı birebir taklit ediyor; TV'de de bu sızıntı var.
+  - Bu yüzden böyle stratejiler "geçti" çıksa bile canlıda aynı sonucu vermez. TV-2'de bunlar işaretlenmeli (S1 denetimi kapsamı).
+- **TradingView "ML" betikleri:** jdehorty Lorentzian Classification aslında KNN. Rapora göre etiketi geçmiş 4 barlık momentum ve komşu seçimi yarı rastgele. Gelecek tahmini değil, trend filtresi gibi davranıyor. Bizim testte diğer stratejiler gibi değerlendirilir; ayrıca güven verilmez.
+- **Doğrulanacaklar:** bazı 2026 kaynakları (Rahimikia Mart 2026, PickMyTrade, Quant67). Sol 6.1 doğrulayacak.
+
 ## Sol 6.1 eleştirisi (Codex, 2026-10-25)
 
 ### 4. Copy trade
