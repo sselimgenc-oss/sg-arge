@@ -81,3 +81,6 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
 9. E3, iki kaynak denemesinde sadık tarihsel eşleme bulunamadığı için takıldı.
 10. E8, resmî renko algoritması yetersiz tanımlı olduğu için takıldı; ücretli footprint/veri vekilliği kararları kullanıcı listesinde.
 
+- **ALDIM: 6.2** — TV-2 ve U7 sonuçlarıyla sanal havuz taslağını yalnız öneri
+  düzeyinde birleştirme; `paper/` veya karar/kapı/eşik değişikliği yok.
+
