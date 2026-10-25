@@ -41,7 +41,7 @@ Kurallar `docs/GOREV_CODEX_2026-10-25.md` "Genel kurallar" ve "Hâlâ Codex yapm
 - [x] **1.4** `kuyruk_kripto_kalan.txt`'yi yenile: satırı olmayan + `zaman_asimi` olanlar. Sayıyı buraya yaz. (2026-10-25: 208 → 17, `bc419b7`.)
 
 ## 2. TV-2 kripto, ikinci tur (Actions)
-- [ ] **2.1** Yenilenen kalan kuyrukla `tv2.yml` koşusu (8 parça, parça başı `timeout 7200`). Bitince 1.1'deki kuralla sonuçları doğrula: her parçanın commit'i dala gelmiş olmalı.
+- [x] **2.1** Yenilenen kalan kuyrukla `tv2.yml` koşusu (8 parça, parça başı `timeout 7200`). Bitince 1.1'deki kuralla sonuçları doğrula: her parçanın commit'i dala gelmiş olmalı. (2026-10-25: run `40197100719` 8/8 başarılı; commit yarışı nedeniyle artifact'lar satır kuralıyla kurtarıldı ve `93f7984` ile itildi. 4 satır sonuçlandı, 13 satır 7200 sn sınırında kaldı.)
 - [ ] **2.2** 2 saatte kesilenler → `results/tv2/kuyruk_uzun.txt`. Tek tek `timeout 18000` ile (`--dakikalik`) ayrı koşu. Yine kesilen olursa satırına `zaman_asimi_uzun` notu.
 - [ ] **2.3** `python -m backtests.tv2 --birlestir` + `python -m backtests.tv2_sirala`. Karar sayılarını (gecti/kaldi/izle/islem_yok/desteklenmiyor/veri_yok/veri_ucretli/hata/zaman_asimi) buraya yaz.
 - [ ] **2.4** **Şüpheli sonuç listesi** `docs/denetim/tv2_supheli.md`: net getirisi −100%'ün altında veya +300%'ün üstünde olanlar (örn. w45uet8E, anNnwsQo, jTHvkEVo, zCYYilCg).
