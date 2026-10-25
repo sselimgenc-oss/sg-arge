@@ -11,7 +11,11 @@ Dal: `codex/analiz`
 - **6.7 tamamlandı:** ML iddiaları kaynak/PDF ve ortam kanıtıyla denetlendi;
   `dsr`/`n_eff` yalnız bilgi sütunu olarak eklendi ve üst zaman dilimi +
   `lookahead_on` satırları listelendi. Test: `4 passed`.
-- Sıradaki madde: **6.1**.
+- **6.1 tamamlandı:** U7 dalından `karar_adim2` karşılığı olan OOS net>0 ve
+  en az 10 haftalık 85 varyant (U4: 14, U6: 71) alındı; TV-2 ile aynı %10
+  oynaklık ölçeği, 4 haftalık blok bootstrap p10, kopya ayıklama ve `TOHUM`
+  uygulandı. 72 temsilci çıktı: `results/u7/siralama.csv`.
+- Sıradaki madde: **6.6**.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
