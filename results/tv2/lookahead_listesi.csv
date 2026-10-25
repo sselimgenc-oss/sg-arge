@@ -1,0 +1,17 @@
+id,satır,ifade,karar
+zwR6q7AL,163,"request.security(syminfo.tickerid, \"D\", close[1], lookahead = barmerge.lookahead_on)",izle
+zwR6q7AL,164,"request.security(syminfo.tickerid, \"D\", high[1], lookahead = barmerge.lookahead_on)",izle
+zwR6q7AL,165,"request.security(syminfo.tickerid, \"D\", low[1], lookahead = barmerge.lookahead_on)",izle
+XsQ38Pkh,56,"security(syminfo.tickerid, \"D\", open, barmerge.gaps_off, barmerge.lookahead_on)",desteklenmiyor
+XsQ38Pkh,57,"security(syminfo.tickerid, \"D\", open[1], barmerge.gaps_off, barmerge.lookahead_on)",desteklenmiyor
+TgXEkOq4,22,"request.security(syminfo.tickerid, \"60\", close[1], barmerge.gaps_off, barmerge.lookahead_on)",izle
+TgXEkOq4,23,"request.security(syminfo.tickerid, \"60\", open[1], barmerge.gaps_off, barmerge.lookahead_on)",izle
+TgXEkOq4,25,"request.security(syminfo.tickerid, \"240\", close[1], barmerge.gaps_off, barmerge.lookahead_on)",izle
+TgXEkOq4,26,"request.security(syminfo.tickerid, \"240\", open[1], barmerge.gaps_off, barmerge.lookahead_on)",izle
+6ve1ax1D,148,"request.security(syminfo.tickerid, \"D\", [high[1], low[1], close[1], high[2], low[2]], lookahead=barmerge.lookahead_on)",veri_ucretli
+w45uet8E,22,"request.security(syminfo.tickerid, tf_macro, [ta.sma(close, ma_s_len), ta.sma(close, ma_l_len)], lookahead=barmerge.lookahead_on)",izle
+u4g3IrXS,96,"request.security(syminfo.tickerid, entryTF, ta.rsi(close, entryLen)[1], lookahead = barmerge.lookahead_on)",veri_yok
+u4g3IrXS,99,"request.security(syminfo.tickerid, so1TF, ta.rsi(close, so1Len)[1], lookahead = barmerge.lookahead_on)",veri_yok
+fqS79J4w,23,"request.security(syminfo.tickerid, tf_mayor, [high[1], low[1]], lookahead=barmerge.lookahead_on)",veri_yok
+asmZOvXE,31,"request.security(syminfo.tickerid, pivotTimeframeInput, [high[1], low[1], close[1]], gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_on)",izle
+0VIgV9kM,85,"request.security(syminfo.tickerid, HTF, f_count(), lookahead=barmerge.lookahead_on)",zaman_asimi

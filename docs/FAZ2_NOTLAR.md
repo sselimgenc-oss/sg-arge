@@ -199,3 +199,42 @@ Argon derin araştırması: `arastirma/ml/algoritmik_trading_makine_ogrenmesi_20
   yeterliyse orada kalın. Birden çok kullanıcı, dakikalık veri, kişiye özel portföy veya onaylı
   emir gereksinimi ortaya çıktığında FastAPI/Postgres'e geçin. SQLite yerel/prova için yeterli;
   eşzamanlılık ve kalıcı denetim ihtiyacında Postgres seçin.
+
+## Sol 6.1 eleştirisi: ML
+
+### Kaynak iddiaları denetimi
+
+| İddia | Sonuç | Denetim notu |
+|---|---|---|
+| DSR formülü ve beklenen maksimum düzeltmesi | doğrulandı | PDF’deki Bailey–López de Prado formülü, mevcut `backtests/asama2b.py` DSR hesabının PSR/çarpıklık/basıklık bileşenleriyle uyumlu. |
+| `N_eff=(Σλ)^2/Σλ²` | doğrulandı | PDF’deki özdeğer formülü uygulandı; yalnız bilgi sütunu olarak `results/tv2/siralama.csv` içine yazılıyor. |
+| `arch.bootstrap.StepM` API’si | doğrulanamadı | PDF iddiayı ve API adını veriyor; mevcut `.venv` içinde `arch` kurulu değil, çalıştırılabilir API doğrulaması yapılmadı. |
+| `skfolio` `CombinatorialPurgedCV` / HRP API’si | doğrulanamadı | PDF’de yöntem ve sınıf adları var; mevcut `.venv` içinde `skfolio` kurulu değil. |
+| `jdehorty` Lorentzian’ın KNN/etiket yapısı | doğrulanamadı | PDF’de kaynak incelemesi var, ancak bu denetimde orijinal Pine kaynak dosyası bağımsız olarak alınmadı. |
+| 2026 kaynakları ve güncel kütüphane sürümleri | doğrulanamadı | PDF bibliyografyasında yer alıyor; dış kaynak ve paket kurulumu olmadan tarih/sürüm teyidi yapılmadı. |
+
+### Pilot görüşü
+
+Önerilen sıra korunmalı: (1) kapıyı ve mevcut sıralamayı değiştirmeyen bilgi
+amaçlı DSR/`N_eff` ve korelasyon kümeleri; (2) yeterli gölge işlem biriktikten
+sonra purged/embargo CPCV ile meta-labeling; (3) en son volatilite tahmini.
+Pilot 1’de DSR, StepM veya HRP sonuçları mevcut kapı, sıra ve eşiklere
+uygulanmamalı; yalnız raporlanmalıdır. Pilot 2 ve 3, karar üretmeden gölgede
+karşılaştırılmalıdır.
+
+### Bilgi amaçlı kod değişikliği
+
+`backtests/tv2_sirala.py` mevcut ortak ölçekleme, blok bootstrap p10 ve kopya
+ayıklama mantığını değiştirmeden iki bilgi sütunu üretir: korelasyon
+özdeğerlerinden `n_eff` ve `n_eff` denemesiyle hesaplanan `dsr`. Sıralama,
+temsilci seçimi, kapı ve eşik bu sütunları kullanmaz. `tests/test_tv2_sirala.py`
+bu ayrımı ve korelasyonla beklenen `N_eff` davranışını doğrular.
+
+### `lookahead_on` denetimi
+
+TV-2 sonuçları `origin/codex/tv2-kosu` dalından `git show` ile okundu. Üst
+zaman dilimiyle birlikte `lookahead_on` kullanan satırlar
+`results/tv2/lookahead_listesi.csv` dosyasına; satır numarası, ifade ve mevcut
+karar ile yazıldı. `close[1]` kullanan satırlar da listede bırakıldı: bu,
+gelecek sızıntısını azaltan bir kullanım olabilir, fakat `lookahead_on` seçimi
+ayrıca denetim işaretidir. Liste kararları değiştirmez.
