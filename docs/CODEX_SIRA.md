@@ -107,3 +107,8 @@ Her biri ayrı commit ve `tests/test_pine_yorumlayici.py`'de test. Anlam Trading
 - **Actions koşusu başlatma.** 2.1, 2.2 ve 4.5 bekler; satırına `BEKLİYOR: Actions kotası` yaz.
 - **Actions gerektirmeyen işlere geç:** 1.1 (artifact indirmek dakika harcamaz), 1.2, 1.3 (yalnız kod + test), 2.4, 3.x, 4.1-4.4, 5.x, 6.x.
 - **Uzun koşuları yerelde başlatma:** ortam arka plan süreçlerini öldürüyor. Kısa tekil koşular (`timeout 600`) olur.
+
+**Lider notu 13:20 UTC: Actions AÇIK.** Repo herkese açık yapıldı (kullanıcı kararı), Actions dakikası artık sınırsız. `BEKLİYOR: Actions kotası` maddeleri serbest:
+- **Hemen:** 2.1'i başlat. Bitince 2.2'yi, sonra 4.5'i başlat.
+- **Aynı anda en fazla 1 matris koşusu.**
+- **Repo herkese açık:** secret, anahtar ya da kişisel veriyi commit'leme.
