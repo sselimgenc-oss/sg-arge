@@ -53,3 +53,7 @@ Koşu 20:30–22:27 sürdü, 4 iş düştü:
 - **Adım 6'nın yfinance kısmı yapıldı:** `backtests/tv2.py::_yfinance_gun_ici`. Codex yalnız Dukascopy (FX/CFD) ve vnstock yükleyicilerini eklesin, aynı `veri()` dalına.
 - **Kapsam taraması** (969 kaynak, yapay veri): ilk geçişte 806 çalıştı. Sonra şunlar eklendi: na demet, bantlı vwap, kütüphane import (5 kütüphane), FIFO, enum ve küçük yerleşikler, alt koşu security, time(tz), tireli import. Kalan desteklenmeyenler: `request.footprint` (2), `request.earnings`/`financial` (2), `renko` (1), `ta.pivot_point_levels` (1), `max_position_size` (1), birkaç tekil ad. Ayrıca ~70 strateji yavaş (90 sn'de bitmedi).
 - **Yeni karar `islem_yok`:** tüm geçmişte 0 işlem. `input.source` ile dış göstergeden sinyal bekleyen bağlayıcı şablonlar (9 tane) böyle çıkar.
+
+### Not 5 (lider, ~01:10 UTC)
+- **Hızlı ayrıştırıcı** (`engine/pine/ayristir.py`): pynescript'in ANTLR'si SLL modunda ~100 kat hızlı, AST birebir aynı, disk önbelleği `data/tv2/ast`. Taramada "yavaş" çıkan 62 stratejinin 53'ü artık çalışıyor; sebep ayrıştırmaydı, bar yürütmesi değil. **Codex: Actions koşularından önce `git pull`.**
+- **`request.footprint` (3 strateji):** iki DOGEUSDT.P stratejisi için gerçek footprint Binance vadeli aggTrades arşivinden (`data.binance.vision`) kurulabilir: 2 saatlik bar başına, fiyat satırı başına alıcı/satıcı hacmi, yalnız sürüm tarihinden itibaren. Ayrı iş. `6ve1ax1D` (CME:MNQ1!, 1 dakika): CME işlem akışı verisi ücretli, 1 dakikalık veri de yalnız 7 günlük ücretsiz. **Kullanıcıya sorulacak.**
