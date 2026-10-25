@@ -239,6 +239,23 @@ def kutuphane_kaynak(kullanici: str, ad: str, surum: int) -> str | None:
 
 yorumlayici.KUTUPHANE_SAGLAYICI = kutuphane_kaynak
 
+FOOTPRINT_TICK = {"BITSTAMP:BTCUSD": 1.0, "BITSTAMP:ETHUSD": 0.1}   # TradingView mintick (varsayım, uyarıda yazılır)
+
+
+def _footprint_veri(sembol: str, dk: int):
+    """request.footprint: Binance aggTrades özeti (backtests.tv2_footprint); `.P` vadeli (um), diğerleri spot."""
+    from backtests import tv2_footprint
+    bsym = _binance_sembol(sembol)
+    piyasa = "um" if sembol.upper().endswith(".P") else "spot"
+    okunan = tv2_footprint.oku(bsym, piyasa, dk)
+    if okunan is None:
+        return None
+    barlar, taban = okunan
+    return barlar, taban, FOOTPRINT_TICK.get(sembol.upper(), binance_tick(bsym))
+
+
+yorumlayici.FOOTPRINT_SAGLAYICI = _footprint_veri
+
 
 def strateji(kimlik: str):
     """(modül, KAYNAK sözlüğü): el çevirisi varsa o, yoksa tv2_surumler.csv satırından Pine yorumlayıcısı."""
@@ -284,7 +301,8 @@ def kos(kimlik: str) -> dict:
                                  mintick=tick, kimlik=kimlik)
             modul.veri_saglayici = _dis_veri
             satir["uyari"] = "; ".join(modul.uyarilar + ([f"mintick veri kaynağından ({tick})"] if re.search(
-                r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []))
+                r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []) + (
+                ["footprint: Binance aggTrades (GOREV_TV2 Ek 3), satır mintick'i varsayım"] if "request.footprint" in src else []))
         yazar = calistir(modul, df)
         # nedensellik: geleceği gören kod kısa pencerede de aynı biçimde yakalanır; uzun geçmişte (1H ~80 bin bar) 6 kesim pahalı
         pencere = df.iloc[-NEDENSELLIK_BAR:]

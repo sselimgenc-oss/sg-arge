@@ -122,6 +122,62 @@ class _Enum:
         return self.baslik
 
 
+class _HacimSatiri:
+    """footprint volume_row: [alt, üst) fiyat aralığında alıcı/satıcı hacmi."""
+
+    def __init__(self, alt: float, ust: float, buy: float, sell: float, buy_imb: bool, sell_imb: bool) -> None:
+        self.alt, self.ust, self.buy, self.sell, self.buy_imb, self.sell_imb = alt, ust, buy, sell, buy_imb, sell_imb
+
+    def yontem(self, ad: str) -> Any:
+        return {"up_price": self.ust, "down_price": self.alt, "buy_volume": self.buy, "sell_volume": self.sell,
+                "total_volume": self.buy + self.sell, "delta": self.buy - self.sell,
+                "has_buy_imbalance": self.buy_imb, "has_sell_imbalance": self.sell_imb}[ad]
+
+
+class _Footprint:
+    """request.footprint sonucu (bir bar): satırlar artan fiyat sırasında; POC en büyük toplam hacimli satır, değer alanı
+    POC'tan başlayıp her adımda komşulardan büyüğünü ekleyerek toplamın va_percent'ine ulaşana kadar genişler."""
+
+    def __init__(self, satirlar: list[_HacimSatiri], va: float) -> None:
+        self.satirlar = satirlar
+        toplam = [x.buy + x.sell for x in satirlar]
+        self.poc_i = int(np.argmax(toplam))
+        alt = ust = self.poc_i
+        hedef, birikim = sum(toplam) * va / 100, toplam[self.poc_i]
+        while birikim < hedef and (alt > 0 or ust < len(satirlar) - 1):
+            a = toplam[alt - 1] if alt > 0 else -1
+            u = toplam[ust + 1] if ust < len(satirlar) - 1 else -1
+            if u >= a:
+                ust += 1
+                birikim += u
+            else:
+                alt -= 1
+                birikim += a
+        self.val_i, self.vah_i = alt, ust
+
+    def yontem(self, ad: str, konum: list) -> Any:
+        if ad == "buy_volume":
+            return sum(x.buy for x in self.satirlar)
+        if ad == "sell_volume":
+            return sum(x.sell for x in self.satirlar)
+        if ad == "total_volume":
+            return sum(x.buy + x.sell for x in self.satirlar)
+        if ad == "delta":
+            return sum(x.buy - x.sell for x in self.satirlar)
+        if ad == "poc":
+            return self.satirlar[self.poc_i]
+        if ad == "vah":
+            return self.satirlar[self.vah_i]
+        if ad == "val":
+            return self.satirlar[self.val_i]
+        if ad == "rows":
+            return list(self.satirlar)
+        if ad == "get_row_by_price":
+            fiyat = konum[0] if konum else NA
+            return next((x for x in self.satirlar if x.alt <= fiyat < x.ust), NA)
+        raise Desteklenmiyor(f"footprint.{ad}")
+
+
 class _Matris:
     """Pine matrix: satır listeleri."""
 
@@ -972,6 +1028,10 @@ class Yorumlayici:
             return self._yerlesik("map." + ad, e, on_arg=nesne)
         if isinstance(nesne, _Matris):
             return self._yerlesik("matrix." + ad, e, on_arg=nesne)
+        if isinstance(nesne, _Footprint):
+            return self._yerlesik("footprint." + ad, e, on_arg=nesne)
+        if isinstance(nesne, _HacimSatiri):
+            return self._yerlesik("volume_row." + ad, e, on_arg=nesne)
         if isinstance(nesne, _Cizim):
             return self._yerlesik(f"{nesne.tur}.{ad}", e, on_arg=nesne)
         if nesne is None or (isinstance(nesne, float) and na(nesne)):   # na çizim kimliği: okuma na, yazma etkisiz
@@ -1046,6 +1106,16 @@ class Yorumlayici:
             return self._security(e)
         if ad == "request.security_lower_tf":
             return self._alt_dilim(e, dizi=True)
+        if ad == "request.footprint":
+            konum, adli = self._argumanlar(e, on_arg)
+            return self._footprint(konum, adli)
+        if ad.startswith(("footprint.", "volume_row.")):
+            konum, adli = self._argumanlar(e, on_arg)
+            nesne = konum[0] if konum else adli.get("id")
+            if not isinstance(nesne, (_Footprint, _HacimSatiri)):        # na footprint / satır
+                return NA
+            alt = ad.split(".", 1)[1]
+            return nesne.yontem(alt, konum[1:]) if isinstance(nesne, _Footprint) else nesne.yontem(alt)
         if ad in ("request.financial", "request.quandl", "request.earnings",
                   "request.dividends", "request.splits", "request.economic", "request.seed", "request.currency_rate"):
             raise Desteklenmiyor(ad)
@@ -1690,6 +1760,37 @@ class Yorumlayici:
             return degerler
         return degerler[-1] if degerler else NA
 
+    def _footprint(self, konum, adli) -> Any:
+        """Bu barın footprint'i: sağlayıcı (koşucu) işlem arşivinden bar ve fiyat seviyesi başına alıcı/satıcı hacmi verir;
+        satır boyu ticks_per_row x sembolün mintick'i. Veri olmayan bar na."""
+        tik = konum[0] if konum else adli.get("ticks_per_row")
+        va = konum[1] if len(konum) > 1 else adli.get("va_percent", 70)
+        imb = konum[2] if len(konum) > 2 else adli.get("imbalance_percent", 300)
+        anahtar = ("fp", self.sembol, self.tf_dk)
+        if anahtar not in self.guvenlik:
+            veri = FOOTPRINT_SAGLAYICI(self.sembol, self.tf_dk) if FOOTPRINT_SAGLAYICI else None
+            if veri is None:
+                raise Desteklenmiyor(f"request.footprint: işlem verisi yok ({self.sembol} {self.tf_dk}dk)")
+            self.guvenlik[anahtar] = veri
+        barlar, taban, mintick = self.guvenlik[anahtar]
+        b = barlar.get(int(self.zaman_ms[self.i]))
+        if b is None:
+            return NA
+        satir_boyu = float(tik) * mintick
+        kat = max(int(round(satir_boyu / taban)), 1)
+        seviye, buy, sell = b
+        satir = seviye // kat
+        idx, ters = np.unique(satir, return_inverse=True)
+        al, sat = np.bincount(ters, weights=buy), np.bincount(ters, weights=sell)
+        oran = float(imb) / 100
+        satirlar = []
+        for k, s_ in enumerate(idx):
+            alt_fiyat = float(s_) * kat * taban
+            buy_imb = k > 0 and sat[k - 1] > 0 and al[k] >= oran * sat[k - 1]          # çapraz: alış / alttaki satış
+            sell_imb = k < len(idx) - 1 and al[k + 1] > 0 and sat[k] >= oran * al[k + 1]
+            satirlar.append(_HacimSatiri(alt_fiyat, alt_fiyat + kat * taban, float(al[k]), float(sat[k]), buy_imb, sell_imb))
+        return _Footprint(satirlar, float(va))
+
     def _birlestir(self, dk: int) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
         """Grafik barlarını `dk` dakikalık kovalara birleştirir: (yüksek dilim barları, grafik→kova haritası, kova bitişleri)."""
         bas, bit = _kova(self.df.index, dk, self.tz)
@@ -1715,6 +1816,7 @@ class Yorumlayici:
 
 # ---------------------------------------------------------------------- yardımcılar
 HA_ONEK = "HEIKINASHI|"
+FOOTPRINT_SAGLAYICI = None  # (sembol, dakika) -> ({bar_ms: (seviyeler, buy, sell)}, taban, mintick) | None
 KUTUPHANE_SAGLAYICI = None   # (kullanıcı, ad, sürüm) -> Pine kaynağı | None; koşucu (backtests.tv2) bağlar
 
 
