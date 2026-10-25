@@ -89,4 +89,6 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
 - **U7 yenileme denetimi:** Uzak dalın birleşik hunisi `a2e2f43` commit'inde
   119 satır (85 Geçti, 27 Kaldı, 7 İzle) içeriyor; mevcut 85 satırlık/72
   temsilcilik sıralama evreniyle tutarlı. Yeni koşu başlatılmadı.
+- **ALDIM: G3** — `lookahead_on` işaretlerinin kaynak bağlamı denetimi;
+  yalnız risk sınıflaması, karar değişikliği yok.
 
