@@ -276,6 +276,7 @@ class Yorumlayici:
         self.tipler: dict[str, A.TypeDef] = {}
         self.eksik_kutuphane: dict[str, str] = {}
         self.enumlar: dict[str, dict[str, _Enum]] = {}
+        self._yontem_cagrilari: dict[int, A.Call] = {}
         self.yol: tuple = ()
         self.kapsam: list[dict[str, _Yuva]] = [{}]
         self.ctx = None
@@ -999,6 +1000,12 @@ class Yorumlayici:
             ad = f.id
             if ad in self.fonksiyonlar:
                 return self._kullanici(e, self.fonksiyonlar[ad], None)
+            if ad in self.yontemler and e.args:        # yöntem fonksiyon biçiminde: manage_kz(nesne, ...)
+                tureme = self._yontem_cagrilari.get(id(e))
+                if tureme is None:
+                    tureme = self._yontem_cagrilari[id(e)] = A.Call(func=e.func, args=e.args[1:])
+                    tureme.lineno = getattr(e, "lineno", 0)
+                return self._kullanici(tureme, self.yontemler[ad], self._deger(e.args[0].value))
             ad = V4_ADLAR.get(ad, ad)
             return self._yerlesik(ad, e)
         if isinstance(f, A.Attribute):
@@ -1199,6 +1206,8 @@ class Yorumlayici:
             b, _ = _kova(self.df.index[self.i - 1:self.i + 1], tf, self.tz)
             return bool(b[0] != b[1])
         if ad == "runtime.error":
+            if self.guvenlik_modu:      # security yalnız ifadesini hesaplar; betiğin grafik korumaları alt koşuda çalışmaz
+                return None
             raise PineHatasi(f"runtime.error: {konum[0] if konum else ''}")
         if ad in ("ticker.heikinashi", "heikinashi"):
             sem = str(konum[0] if konum else adli.get("symbol", self.sembol))

@@ -452,3 +452,11 @@ def test_trade_comments_are_readable() -> None:
                    "x = strategy.closedtrades > 0 ? strategy.closedtrades.exit_comment(0) + '/' + strategy.closedtrades.entry_comment(0) : ''\n")
     calistir(ps, df)
     assert ps.y._bul("x").deger == "cikis/giris"
+
+
+def test_method_called_as_function_and_runtime_error_ignored_in_security() -> None:
+    df = _veri(40)
+    kod = ("//@version=5\nindicator('t')\ntype K\n    float v = 0\nmethod ekle(K this, float x) =>\n    this.v += x\n    this.v\n"
+           "var k = K.new()\nx = ekle(k, 1.0)\nif not timeframe.isintraday\n    runtime.error('gun ici')\n"
+           "d = request.security(syminfo.tickerid, 'D', close)\n")
+    assert _seri(kod, df, tf="240")[-1] == len(df)
