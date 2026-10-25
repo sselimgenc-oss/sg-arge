@@ -14,6 +14,7 @@ yeniden koşuda güncellenir) ve `results/tv2/getiriler/<id>.csv` (uygulanabilir
 from __future__ import annotations
 
 import argparse
+import csv
 import importlib
 import json
 import pkgutil
@@ -36,6 +37,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "data" / "tv2"
 OUT = ROOT / "results" / "tv2"
 SURUMLER = ROOT / "arastirma" / "tv2_surumler.csv"
+ESLESME = ROOT / "arastirma" / "tv2_veri_eslesme.csv"
 
 KRIPTO_BORSALARI = {"BINANCE", "BYBIT", "OKX", "COINBASE", "BITSTAMP", "KUCOIN", "BITGET", "MEXC", "KRAKEN", "BINANCEUS",
                     "BITFINEX", "GATEIO", "PHEMEX", "CRYPTO", "BLACKBULL"}
@@ -112,6 +114,9 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
         if taban != dk:
             df = _yeniden_ornekle(df, dk)
         return _kapanmis(df, dk), f"Binance {bsym} {aralik}" + ("" if taban == dk else f" → {tf}")
+    dis = _eslenmis_veri(sembol, dk)
+    if dis is not None:
+        return dis
     kok = ad.split(".")[0]
     if dk >= 1440 and (kok in YFINANCE or (borsa in HISSE_BORSALARI and re.fullmatch(r"[A-Z]{1,5}", kok))):
         import yfinance as yf
@@ -125,6 +130,48 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
     if dk < 1440 and (kok in YFINANCE or (borsa in HISSE_BORSALARI and re.fullmatch(r"[A-Z]{1,5}", kok))):
         return _yfinance_gun_ici(YFINANCE.get(kok, kok), dk)
     return None, "veri_yok: gün içi/yerel piyasa (Dukascopy bekliyor)" if dk < 1440 else f"veri_yok: eşleme yok ({sembol})"
+
+
+def _esleme(sembol: str) -> dict[str, str] | None:
+    """Return the first external-source mapping for a TradingView symbol."""
+    if not ESLESME.exists():
+        return None
+    wanted = sembol.upper()
+    with ESLESME.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            if row.get("yayin_sembolu", "").upper() == wanted:
+                return row
+    return None
+
+
+def _eslenmis_veri(sembol: str, dk: int) -> tuple[pd.DataFrame | None, str] | None:
+    """Mapped Dukascopy/vnstock data.  Absence of a mapping lets normal fallbacks run."""
+    row = _esleme(sembol)
+    if row is None or row.get("kaynak") not in {"dukascopy", "vnstock"}:
+        return None
+    code = row.get("esdeger_sembol") or row.get("veri_sembolu") or ""
+    if row["kaynak"] == "dukascopy":
+        from data import dukascopy
+
+        frames = [dukascopy.load_archive(code, year) for year in range(2010, pd.Timestamp.now(tz="UTC").year + 1)]
+        frames = [frame for frame in frames if not frame.empty]
+        if not frames:
+            return None, f"veri_yok: Dukascopy önbelleği {code}"
+        frame = pd.concat(frames).sort_index()
+        if dk != 1:
+            frame = _yeniden_ornekle(frame, dk)
+        return _kapanmis(frame, dk), f"Dukascopy {code} (eşleme)"
+    try:
+        from vnstock import Vnstock  # type: ignore[import-not-found]
+        raw = Vnstock().stock(symbol=code, source="VCI").quote.history(start="2010-01-01", end=pd.Timestamp.now().date().isoformat(), interval="1D")
+    except (ImportError, AttributeError, ValueError) as exc:
+        return None, f"veri_yok: vnstock {code} ({type(exc).__name__})"
+    if raw is None or raw.empty:
+        return None, f"veri_yok: vnstock {code}"
+    raw.columns = [str(column).lower() for column in raw.columns]
+    raw.index = pd.to_datetime(raw.index if not isinstance(raw.index, pd.RangeIndex) else raw["time"], utc=True)
+    frame = raw[["open", "high", "low", "close", "volume"]].dropna()
+    return _kapanmis(frame, dk), f"vnstock {code} (eşleme)"
 
 
 YF_ARALIK = {1: ("1m", "7d"), 2: ("2m", "60d"), 5: ("5m", "60d"), 15: ("15m", "60d"), 30: ("30m", "60d"),
