@@ -1279,7 +1279,7 @@ class Yorumlayici:
                 c.close_all()                                     # Pine: izin verilmeyen yöndeki giriş çıkış olur
                 return None
             c.entry(str(b["id"]), yon, qty=_sayi(b.get("qty")), limit=_sayi(b.get("limit")), stop=_sayi(b.get("stop")),
-                    oca=self._oca(b))
+                    oca=self._oca(b), comment=_yorum(b))
             return None
         if ad == "strategy.order":
             b = _bagla(["id", "direction", "qty", "limit", "stop", "oca_name", "oca_type", "comment"], konum, adli)
@@ -1289,7 +1289,7 @@ class Yorumlayici:
             if isinstance(yon, bool):
                 yon = LONG if yon else SHORT
             c.order(str(b["id"]), yon, qty=_sayi(b.get("qty")), limit=_sayi(b.get("limit")), stop=_sayi(b.get("stop")),
-                    oca=self._oca(b))
+                    oca=self._oca(b), comment=_yorum(b))
             return None
         if ad == "strategy.default_entry_qty":
             fiyat = konum[0] if konum else adli["fill_price"]
@@ -1301,7 +1301,7 @@ class Yorumlayici:
             c.exit(str(b["id"]), from_entry=None if fe in (None, "") or na(fe) else str(fe), qty=_sayi(b.get("qty")),
                    qty_percent=_sayi(b.get("qty_percent")), profit=_sayi(b.get("profit")), limit=_sayi(b.get("limit")),
                    loss=_sayi(b.get("loss")), stop=_sayi(b.get("stop")), trail_price=_sayi(b.get("trail_price")),
-                   trail_points=_sayi(b.get("trail_points")), trail_offset=_sayi(b.get("trail_offset")))
+                   trail_points=_sayi(b.get("trail_points")), trail_offset=_sayi(b.get("trail_offset")), comment=_yorum(b))
             return None
         if ad == "strategy.close":
             if self.surum < 5:
@@ -1311,12 +1311,12 @@ class Yorumlayici:
             else:
                 b = _bagla(["id", "comment", "qty", "qty_percent", "alert_message", "immediately"], konum, adli)
             c.close(str(b["id"]), qty=_sayi(b.get("qty")), qty_percent=_sayi(b.get("qty_percent")),
-                    immediately=_dogru(b.get("immediately", False)))
+                    immediately=_dogru(b.get("immediately", False)), comment=_yorum(b))
             return None
         if ad == "strategy.close_all":
             if self.surum < 5 and konum and not _dogru(konum[0]):
                 return None
-            c.close_all(immediately=_dogru(adli.get("immediately", False)))
+            c.close_all(immediately=_dogru(adli.get("immediately", False)), comment=_yorum(adli))
             return None
         if ad == "strategy.cancel":
             if self.surum < 5 and len(konum) > 1 and not _dogru(konum[1]):
@@ -1370,7 +1370,7 @@ class Yorumlayici:
             t = c.acik[k]
             bilgi = {"entry_price": t.fiyat, "entry_bar_index": t.bar, "size": t.yon * t.adet, "entry_id": t.entry_id,
                      "entry_time": int(self.zaman_ms[t.bar]), "profit": t.yon * (self.c[self.i] - t.fiyat) * t.adet,
-                     "commission": t.komisyon}
+                     "commission": t.komisyon, "entry_comment": t.yorum}
             return bilgi[alan] if alan in bilgi else _yok(ad)
         alan = ad[len("strategy.closedtrades."):]
         if not 0 <= k < len(c.kapali):
@@ -1379,6 +1379,7 @@ class Yorumlayici:
         bilgi = {"entry_price": t["giris_fiyat"], "exit_price": t["cikis_fiyat"], "profit": t["net"],
                  "entry_bar_index": t["giris_bar"], "exit_bar_index": t["cikis_bar"], "size": t["yon"] * t["adet"],
                  "entry_id": t["entry_id"], "exit_id": t["exit_id"], "commission": t["komisyon"],
+                 "entry_comment": t.get("entry_comment", ""), "exit_comment": t.get("exit_comment", ""),
                  "entry_time": int(self.zaman_ms[t["giris_bar"]]), "exit_time": int(self.zaman_ms[t["cikis_bar"]]),
                  "profit_percent": t["net"] / (t["giris_fiyat"] * t["adet"]) * 100 if t["giris_fiyat"] * t["adet"] else NA}
         return bilgi[alan] if alan in bilgi else _yok(ad)
@@ -1931,6 +1932,11 @@ def _sayi(x):
     if isinstance(x, (int, float)):
         return None if na(float(x)) else float(x)
     return None
+
+
+def _yorum(b: dict) -> str:
+    v = b.get("comment")
+    return "" if v is None or (isinstance(v, float) and na(v)) else str(v)
 
 
 def _bagla(adlar: list[str], konum: list, adli: dict, varsayilan: dict | None = None) -> dict:

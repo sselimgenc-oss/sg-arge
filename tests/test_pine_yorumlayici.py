@@ -443,3 +443,12 @@ def test_footprint_rows_poc_value_area_and_missing_bar(monkeypatch) -> None:
     d, pp, u, t = (_seri(kod, df, ad=k, tf="120") for k in ("d", "p", "u", "t"))
     assert np.isnan(d[0]) and d[1] == pytest.approx(6.0 - 1.0 + 4.0 - 10.0) and t[1] == pytest.approx(21.0)
     assert pp[1] == 150 and u[1] == 200                            # POC: 14 hacimli üst satır
+
+
+def test_trade_comments_are_readable() -> None:
+    df = _veri(30)
+    ps = _strateji("if bar_index == 2\n    strategy.entry('L', strategy.long, 1, comment='giris')\n"
+                   "if bar_index == 5\n    strategy.close('L', comment='cikis')\n"
+                   "x = strategy.closedtrades > 0 ? strategy.closedtrades.exit_comment(0) + '/' + strategy.closedtrades.entry_comment(0) : ''\n")
+    calistir(ps, df)
+    assert ps.y._bul("x").deger == "cikis/giris"
