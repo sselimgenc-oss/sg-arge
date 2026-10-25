@@ -60,8 +60,8 @@ jobs:
           for i, ident in enumerate(ids):
               if i % 8 != part:
                   continue
-            if single and ident != single:
-                continue
+              if single and ident != single:
+                  continue
               row = Path('results/tv2/satirlar') / f'{ident}.json'
               if row.exists():
                   try:
