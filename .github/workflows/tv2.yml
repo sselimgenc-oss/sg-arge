@@ -1,0 +1,125 @@
+name: TV-2 kripto kuyruğu
+
+on:
+  workflow_dispatch:
+    inputs:
+      parca:
+        description: "0-7 kuyruk parcasi (bos: tum matris)"
+        required: false
+        default: ""
+      kimlik:
+        description: "Tekil uzun kosu strateji kimligi (bos: parca kuyrugu)"
+        required: false
+        default: ""
+      uzun:
+        description: "Tekil kosuda 18000 sn zaman asimi"
+        required: false
+        type: boolean
+        default: false
+      kuyruk:
+        description: "Koşulacak kuyruk dosyası"
+        required: false
+        default: "results/tv2/kuyruk_kripto_disi.txt"
+
+permissions:
+  contents: write
+
+jobs:
+  tv2:
+    strategy:
+      fail-fast: false
+      matrix:
+        parca: ["0", "1", "2", "3", "4", "5", "6", "7"]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Restore TV-2 caches
+        uses: actions/cache@v4
+        with:
+          path: data/tv2
+          key: tv2-${{ runner.os }}-${{ matrix.parca }}-${{ github.run_id }}
+          restore-keys: tv2-${{ runner.os }}-${{ matrix.parca }}-
+      - name: Select unfinished slice
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          queue_path = Path('${{ inputs.kuyruk }}')
+          ids = queue_path.read_text().splitlines()
+          part = int('${{ matrix.parca }}')
+          requested = '${{ inputs.parca }}'
+          single = '${{ inputs.kimlik }}'
+          todo = []
+          if requested and requested != str(part):
+              Path('/tmp/tv2-queue.txt').write_text('')
+              print(f'part {part}: dispatch {requested}, atlandi')
+              raise SystemExit
+          for i, ident in enumerate(ids):
+              if i % 8 != part:
+                  continue
+              if single and ident != single:
+                  continue
+              row = Path('results/tv2/satirlar') / f'{ident}.json'
+              if row.exists():
+                  try:
+                      if json.loads(row.read_text()).get('karar') != 'zaman_asimi':
+                          continue
+                  except (ValueError, OSError):
+                      pass
+              todo.append(ident)
+          Path('/tmp/tv2-queue.txt').write_text('\n'.join(todo) + ('\n' if todo else ''))
+          print(f'part {part}: {len(todo)} strateji')
+          PY
+      - name: Run slice with checkpoints
+        # `tv2` kendi destek/veri hatalarini satira yazar. Zaman asimi ya da
+        # beklenmedik süreç hatasinda da bir satir yaz; tek kimlik tum parcayi
+        # sessizce basarisiz yapmasin.
+        run: |
+          xargs -r -P2 -I{} bash -c '
+            ident="$1"
+            seconds=7200
+            test "${{ inputs.uzun }}" = "true" && seconds=18000
+            if ! timeout "$seconds" python -m backtests.tv2 --ayri --dakikalik "$ident"; then
+              test -f "results/tv2/satirlar/$ident.json" || python -c "import json, pathlib, sys; pathlib.Path(\"results/tv2/satirlar\").mkdir(parents=True, exist_ok=True); pathlib.Path(f\"results/tv2/satirlar/{sys.argv[1]}.json\").write_text(json.dumps({\"id\": sys.argv[1], \"karar\": \"hata\", \"neden\": \"islemci sureci sifir olmayan kodla sonlandi\"}, ensure_ascii=False))" "$ident"
+            fi
+          ' _ {} < /tmp/tv2-queue.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tv2-${{ matrix.parca }}-${{ github.run_id }}
+          path: |
+            results/tv2/satirlar/
+            results/tv2/getiriler/
+          retention-days: 14
+      - name: Commit result checkpoints
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          saved="$(mktemp -d)"
+          mkdir -p "$saved/satirlar" "$saved/getiriler"
+          cp -a results/tv2/satirlar/. "$saved/satirlar/"
+          cp -a results/tv2/getiriler/. "$saved/getiriler/"
+          for i in 1 2 3 4; do
+            # A previous concurrent part may have changed the same result
+            # path.  Start from remote and reapply this part with the row
+            # rule; never leave a rebase conflict holding unpublished output.
+            git rebase --abort || true
+            git fetch origin "${{ github.ref_name }}"
+            git checkout "origin/${{ github.ref_name }}" -- .
+            python scripts/tv2_artifact_kurtar.py "$saved" --part "${{ matrix.parca }}"
+            git add results/tv2/satirlar results/tv2/getiriler
+            git commit -m "tv2: kripto parca ${{ matrix.parca }} (${{ github.run_id }})" || exit 0
+            git push origin HEAD:"${{ github.ref_name }}" && exit 0
+            sleep $((i*5))
+          done
+          echo "TV-2 result checkpoints could not be pushed after four attempts" >&2
+          exit 1

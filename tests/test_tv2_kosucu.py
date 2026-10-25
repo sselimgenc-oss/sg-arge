@@ -74,6 +74,20 @@ def test_yfinance_intraday_picks_largest_divisor_and_resamples(monkeypatch, tmp_
     assert len(df) == 12 and "UTC hizalı" in notu
 
 
+def test_mapped_dukascopy_archive_is_used(monkeypatch, tmp_path) -> None:
+    mapping = tmp_path / "map.csv"
+    mapping.write_text("id,yayin_sembolu,tf,kaynak,veri_sembolu,esdeger_sembol\nX,OANDA:EURUSD,5,dukascopy,EURUSD,EURUSD\n", encoding="utf-8")
+    monkeypatch.setattr(tv2, "ESLESME", mapping)
+    frame = pd.DataFrame({"open": [1.], "high": [1.1], "low": [.9], "close": [1.], "volume": [1.]},
+                         index=pd.DatetimeIndex([pd.Timestamp("2024-01-01", tz="UTC")]))
+    monkeypatch.setattr("data.dukascopy.load_archive", lambda *_args: frame)
+
+    data, note = tv2._eslenmis_veri("OANDA:EURUSD", 5)
+
+    assert data is not None
+    assert note == "Dukascopy EURUSD (eşleme)"
+
+
 def test_paid_data_rule() -> None:
     assert tv2._ucretli("CME_MINI:MNQ1!", "1", "x = request.footprint(50, 70)")
     assert tv2._ucretli("CME_MINI:NQ1!", "5", "x = close") is None
@@ -92,3 +106,24 @@ def test_mapped_dukascopy_archive_is_used(monkeypatch, tmp_path) -> None:
 
     assert data is not None
     assert note == "Dukascopy EURUSD (eşleme)"
+
+
+def test_crypto_falls_back_from_spot_to_binance_um(monkeypatch, tmp_path) -> None:
+    index = pd.date_range("2024-01-01", periods=3, freq="1h", tz="UTC")
+    frame = pd.DataFrame({"open": 1., "high": 1., "low": 1., "close": 1., "volume": 1.}, index=index)
+    urls = []
+
+    def fetch(_asset, _interval, **kwargs):
+        urls.append(kwargs.get("url", "spot"))
+        if kwargs.get("url") is None:
+            raise tv2.requests.HTTPError("spot yok")
+        return frame
+
+    monkeypatch.setattr(tv2, "CACHE", tmp_path)
+    monkeypatch.setattr(tv2, "fetch_binance", fetch)
+    monkeypatch.setattr(tv2, "_kapanmis", lambda df, _dk: df)
+
+    data, note = tv2.veri("BYBIT:NVDAXUSDT.P", "60")
+
+    assert data is not None and note.startswith("binance_um NVDAXUSDT")
+    assert urls == ["spot", tv2.BINANCE_UM_KLINES_URL]
