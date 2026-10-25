@@ -47,3 +47,28 @@ def test_decision_labels(monkeypatch) -> None:
     assert satir["etiket"] == "temiz" and satir["karar"] in {"gecti", "kaldi", "izle"}
     assert satir["karar"] == ("izle" if satir["uyg_sinama_hafta"] < tv2.KAPI_HAFTA
                               else "gecti" if satir["uyg_sinama_net_yuzde"] > 0 else "kaldi")
+
+
+def test_zero_trades_is_its_own_decision_not_watch(monkeypatch) -> None:
+    from strategies.tv2 import ospkem6i
+    monkeypatch.setattr(ospkem6i, "bar", lambda ctx, i, v: None)
+    satir = _sahte(monkeypatch, "2023-01-01", 0.002)
+    assert satir["karar"] == "islem_yok" and "0 işlem" in satir["neden"]
+
+
+def test_yfinance_intraday_picks_largest_divisor_and_resamples(monkeypatch, tmp_path) -> None:
+    import sys
+    import types
+    index = pd.date_range("2024-01-01", periods=48, freq="60min", tz="UTC")
+    ham = pd.DataFrame({"Open": 1.0, "High": 2.0, "Low": 0.5, "Close": 1.5, "Volume": 1.0}, index=index)
+    cagri = {}
+
+    def indir(kod, period, interval, **_):
+        cagri.update(kod=kod, period=period, interval=interval)
+        return ham
+
+    monkeypatch.setitem(sys.modules, "yfinance", types.SimpleNamespace(download=indir))
+    monkeypatch.setattr(tv2, "CACHE", tmp_path)
+    df, notu = tv2.veri("TVC:DXY", "240")
+    assert cagri == {"kod": "DX-Y.NYB", "period": "730d", "interval": "60m"}
+    assert len(df) == 12 and "UTC hizalı" in notu

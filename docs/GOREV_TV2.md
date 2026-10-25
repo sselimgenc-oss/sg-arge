@@ -33,3 +33,18 @@ Yalnız gerçekten çalıştırılamayan kod: harici veri servisi, Pine içinde 
 ## Ek 1 (kullanıcı kararları, 2026-10-24, denetim 18:46 B2/B3)
 1. **Dakikalık (15 dakikanın altı):** sürüm tarihinden 1 yıl önce başlayan pencereyle koşulur (`backtests/tv2.py --dakikalik`). Tüm dönem sütunu bu pencereyi kapsar; `pencere_bas` sütununda yazılır.
 2. **Eşdeğer veri kabul:** BITFINEX/BITSTAMP/COINBASE/BYBIT `…USD` ve vadeli `.P` semboller Binance spot `…USDT` verisiyle koşulur; `veri` sütununda açık. mintick Binance'ten (TradingView sembol servisi erişilemiyor); tick cinsinden parametre kullananlarda `uyari`.
+
+## Ek 2: Kapsam kuralı (kullanıcı, 2026-10-24)
+"942 stratejiyi test edeceğiz diye yola çıktık; 'geçersiz, ulaşamadık' kabul etmiyorum."
+- Her strateji ya bir test sonucu ile biter ya da açık bir **çözüm görevi** ile kuyruğa döner. "Desteklenmiyor", "veri_yok", "zaman_asimi" nihai sonuç değildir.
+- "yetersiz_kanit" bir test sonucudur (test edildi, kanıt kısa); eleme değildir.
+- Çözüm yolları:
+  - **Desteklenmiyor:** `calc_on_order_fills`, kütüphane `import` (kaynak pine-facade'den), `heikinashi`, `risk.max_intraday_*`, `matrix` ve `request.security_lower_tf` yorumlayıcıya eklenecek; her biri testle.
+  - **Zaman aşımı:** Actions'ta 6 saat sınırı, gerekirse hızlandırma.
+  - **Kripto dışı veri:**
+    - FX/metal/endeks CFD (OANDA, FX, TVC): Dukascopy ücretsiz dakikalık geçmiş.
+    - CME vadeli: Dukascopy endeks/emtia CFD eşdeğeri, yoksa yfinance (60m ≤ 730 gün).
+    - ABD hisse/ETF: yfinance gün içi, gerekirse Alpaca/Polygon ücretsiz anahtar (kullanıcı kararı).
+    - NSE: yfinance `.NS`; HNX/HOSE: vnstock.
+    - Eşdeğer veri `veri` sütununda açık yazılır (Ek 1 kuralı).
+  - **Kaynağı kapalı / bulunamadı (33):** eski alfanümerik id ve sayfa üzerinden yeniden aranır. Gerçekten kapalıysa yazarın yayımladığı performans "doğrulanamadı" etiketiyle satır olur ve ayrı raporlanır.

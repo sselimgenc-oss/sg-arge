@@ -554,14 +554,24 @@ class Vwap:
 
     def __init__(self) -> None:
         self.gun = None
-        self.pv = self.v = 0.0
+        self.pv = self.v = self.pv2 = 0.0
 
-    def __call__(self, x, hacim, gun):
-        if gun != self.gun:
-            self.gun, self.pv, self.v = gun, 0.0, 0.0
+    def __call__(self, x, hacim, gun, capa=None, carpan=None):
+        """`capa` (anchor) verilirse doğru olduğu barda sıfırlanır, yoksa gün değişiminde. `carpan` verilirse
+        (vwap, üst, alt) demeti: bantlar vwap ± carpan x hacim ağırlıklı standart sapma."""
+        yeni = bool(capa) if capa is not None and not na(capa) else gun != self.gun
+        if yeni or self.gun is None:
+            self.gun, self.pv, self.v, self.pv2 = gun, 0.0, 0.0, 0.0
         self.pv += f(x) * f(hacim)
+        self.pv2 += f(x) * f(x) * f(hacim)
         self.v += f(hacim)
-        return self.pv / self.v if self.v else NA
+        orta = self.pv / self.v if self.v else NA
+        if carpan is None:
+            return orta
+        if na(orta):
+            return NA, NA, NA
+        sd = math.sqrt(max(self.pv2 / self.v - orta * orta, 0.0))
+        return orta, orta + carpan * sd, orta - carpan * sd
 
 
 class Obv:
@@ -573,6 +583,41 @@ class Obv:
             self.t += f(hacim) if c > self.c1 else -f(hacim) if c < self.c1 else 0.0
         self.c1 = c
         return self.t
+
+
+class HacimDegiskeni:
+    """ta.accdist / iii / nvi / pvi / pvt / wad / wvad (TradingView başvuru tanımları)."""
+
+    def __init__(self, ad: str) -> None:
+        self.ad, self.c1, self.v1, self.t = ad, NA, NA, 0.0
+        self.endeks = 1.0
+
+    def __call__(self, o, h, l, c, hacim):
+        ad, c1, v1 = self.ad, self.c1, self.v1
+        self.c1, self.v1 = c, hacim
+        aralik = h - l
+        if ad == "ta.iii":
+            return NA if aralik == 0 or not hacim else (2 * c - h - l) / (aralik * hacim)
+        if ad == "ta.wvad":
+            return NA if aralik == 0 else (c - o) / aralik * f(hacim)
+        if ad == "ta.accdist":
+            self.t += 0.0 if aralik == 0 else (2 * c - l - h) / aralik * f(hacim)
+            return self.t
+        if ad == "ta.pvt":
+            if not na(c1) and c1:
+                self.t += (c - c1) / c1 * f(hacim)
+            return self.t
+        if ad == "ta.wad":
+            if not na(c1):
+                gain = c - min(l, c1) if c > c1 else c - max(h, c1) if c < c1 else 0.0
+                self.t += gain
+            return self.t
+        onceki = self.endeks or 1.0                    # nvi / pvi
+        if not na(c1) and c1 and c:
+            kosul = f(hacim) < f(v1) if ad == "ta.nvi" else f(hacim) > f(v1)
+            if kosul:
+                self.endeks = onceki + (c - c1) / c1 * onceki
+        return self.endeks
 
 
 class Median:
