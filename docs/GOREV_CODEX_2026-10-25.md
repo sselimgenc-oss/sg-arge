@@ -45,9 +45,16 @@ Her biri ilgili dosyanın sonuna "Sol 6.1 eleştirisi" başlığıyla yazılır.
 - [x] (yazıldı) **`docs/FAZ2_NOTLAR.md` bölüm 4, copy trade:** yalnız biz kopyalarız (kullanıcı kararı). Kaynaklar, "başarılı" ölçütü (izlemeye başladıktan sonraki dönem), gecikme ve kayma, risk, vergi.
 - [x] (yazıldı) **`docs/FAZ2_NOTLAR.md` bölüm 5, pano altyapısı:** statik / Streamlit-Dash / FastAPI+React / PWA-Telegram; Faz 3 ile uyum.
 
-## Codex yapmaz (lideri bekler)
-- **Yorumlayıcı ve emülatör** anlamını değiştiren kod (`engine/pine`, `engine/tv_emulator.py`). Desteklenmeyen özellik çıkarsa listele, ekleme.
-- **Kapı, eşik ve sıralama yöntemi; sanal havuz ve gölge kitap aday seçimi.**
-- **`main`'e birleştirme, denetim raporları, kullanıcı kararı gereken her şey.** Para, hesap, ücretli veri, yeni kural.
+## F. Önemli işler (kullanıcı kararı 2026-10-25: Codex yapar, lider pazartesi 14:15 TR denetler)
+Her biri ayrı commit; testsiz kod yok; tam paket (`pytest tests/`) yeşil olmadan push yok.
+- [ ] **Yorumlayıcı eksikleri:** `strategy.risk.max_position_size`, `renko` (ticker.renko + security), `request.earnings` / `request.financial` (yfinance; olmayan veri na). Her biri `tests/test_pine_yorumlayici.py`'de bir testle. Mevcut kalıplar: `_cizim`, `_matris`, `_footprint`, `_kutuphane`. Anlam TradingView belgesine dayanmalı; belge yoksa yapma, listele.
+- [ ] **Sıralama genişletme (TEST_YAPISI Adım 3):** `backtests/tv2_sirala.py` mantığı U7'nin `karar_adim2 == Geçti` varyantlarına uygulanır (aynı ölçek %10 oynaklık, blok bootstrap p10, kopya ayıklama, aynı tohum). Çıktı `results/u7/siralama.csv`. Eşikler ve yöntem değişmez.
+- [ ] **Sanal havuz (TEST_YAPISI Adım 4) taslağı:** `docs/SANAL_HAVUZ.md`. Geçen ve sıralanan adayların (TV-2 + U7) eşit risk sepeti; 20 gölge kitap aday listesi (12 güçlü + 4 çeşitlendirici + 4 kura, tohum sabit). **Yalnız öneri.** Gölge kitaba ekleme ve `paper/` değişikliği yok; kullanıcı onaylar.
+- [ ] **TV-2 S1 denetimi:** geçen ilk 5 stratejinin Pine kaynağını oku. Yorumlayıcının yaptığıyla karşılaştır (girişler, çıkışlar, boyut, security kullanımı); şüpheli her şeyi `docs/denetim/S1_codex.md`'ye yaz.
+
+## Hâlâ Codex yapmaz
+- `main`'e birleştirme. PR açılır, lider birleştirir.
+- Kapı, eşik, karar kuralı, maliyet varsayımı değişikliği.
+- `paper/`, `paper.yml`, gölge kitaplar; para, hesap, ücretli veri, yeni kural (kullanıcı kararı).
 
 ## Durum (Codex yazar)
