@@ -20,7 +20,7 @@ Her adım bitince bu dosyadaki kutuyu işaretle, `#200` dalına veya `claude/mag
   - "yok" yazmadan önce en az iki kaynak dene ve not et.
 - [ ] 6. Veri yükleyicisi: `backtests/tv2.py` `_dis_veri`'ye eşleme tablosunu okuyan dal (Dukascopy/vnstock), testiyle. Sonra eşlenen ilk 78'i Actions'ta koş.
 - [x] 7. Kaynağı kapalı/bulunamadı 33: eski alfanümerik id ve script sayfası üzerinden yeniden ara; bulunanları `tv2_surumler.csv`'ye ekle. (2026-10-25: 33/33 tekrar denendi; hiçbiri açılmadı, her satırda deneme nedeni kaydedildi.)
-- [ ] 8. Faz 1 (Actions).
+- [x] 8. Faz 1 (Actions). (2026-10-25: özel `faz1_u7` işi tamamlandı; özet tablolar U7 dalına alındı. Genel iş akışındaki eski asama2a zinciri ayrı USDTRY/artefakt bağlamında başarısız.)
 - [ ] Sabah: bu dosyanın sonuna 10 satırlık özet (ne bitti, ne takıldı, Actions dakikası).
 
 ## Lider notları
