@@ -2,7 +2,7 @@
   "meta": {
     "title": "Kağıt Hesaplar",
     "subtitle": "sg-arge Paper Portföyü: C07, R01, A6-010 / 5,000 $ sanal sermaye (1/N)",
-    "last_update": "25/10 17:22",
+    "last_update": "25/10 19:23",
     "test_period": "gün 53 · 01.09.2026–23.10.2026 geriye dönük (aynı kurallar, gerçek veri) · 24.10.2026'dan itibaren canlı paper",
     "exchange_rate": null,
     "currency": "USD",
@@ -10,7 +10,7 @@
     "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
     "data_version": "sgarge_paper_v1",
     "veri_notu": null,
-    "updated_at": "2026-10-25T14:22:02.624739+00:00",
+    "updated_at": "2026-10-25T16:23:07.258752+00:00",
     "fiyat_zamani": "2026-10-23T19:30:00+00:00",
     "fiyat_kaynagi": "anlik",
     "anlik_not": "Açık pozisyonlar saatlik fiyatla değerlenir; işlemler ve defter yalnız günlük kapanışta güncellenir."
@@ -1122,7 +1122,7 @@
         "tf": "4H",
         "baslangic": "2026-09-01",
         "canli_baslangic": "2026-10-24",
-        "ozkaynak": 4964.07,
+        "ozkaynak": 4963.63,
         "mdd": 2.25,
         "mdd_uyari": 0.15,
         "acik_pozisyonlar": [
@@ -1135,9 +1135,9 @@
             "duration": "0 gün",
             "entry_price": 744.5,
             "stop_price": 720.7823,
-            "size_usd": 389.14,
-            "unrealized_pnl": -0.5,
-            "r": -0.04
+            "size_usd": 388.69,
+            "unrealized_pnl": -0.95,
+            "r": -0.08
           }
         ],
         "kapanmis_islemler": [
@@ -2786,6 +2786,10 @@
           {
             "tarih": "2026-10-25 08:00:00",
             "ozkaynak": 4964.07
+          },
+          {
+            "tarih": "2026-10-25 12:00:00",
+            "ozkaynak": 4963.63
           }
         ]
       },
