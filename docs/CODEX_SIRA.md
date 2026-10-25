@@ -27,7 +27,7 @@ Kurallar `docs/GOREV_CODEX_2026-10-25.md` "Genel kurallar" ve "Hâlâ Codex yapm
 ---
 
 ## 1. Kurtarma ve iş akışı onarımı (önce bunlar, Actions gerektirmez)
-- [ ] **1.1** Koşu 40151651235'in `tv2-0`, `tv2-5`, `tv2-6`, `tv2-7` artifact'larını indir (`gh run download 40151651235 -n tv2-0-40151651235` ...).
+- [x] **1.1** Koşu 40151651235'in `tv2-0`, `tv2-5`, `tv2-6`, `tv2-7` artifact'larını indir (`gh run download 40151651235 -n tv2-0-40151651235` ...). (2026-10-25: 26/26/26/24 satır kurtarıldı; iki tamamlanmış mevcut satır korundu, `8fba59a`.)
   - Satır kuralıyla `results/tv2/satirlar` + `getiriler`'e kopyala: mevcut satır `zaman_asimi` değilse ezilmez.
   - Commit: `tv2: 0/5/6/7 artifact'tan kurtarıldı`.
 - [ ] **1.2** `.github/workflows/tv2.yml` "Commit result checkpoints" adımını düzelt:
