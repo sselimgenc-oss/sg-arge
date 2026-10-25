@@ -56,6 +56,8 @@ Dal: `codex/analiz`
   Bybit lineer uç noktası hiçbir adayda uygun bar vermedi; OKX bazı sembol
   adlarını yanıtladı ancak yayın kontratıyla eşdeğer, yeterli tarihsel seri
   kanıtı vermedi. Sadık olmayan vekil eşleme eklenmedi; yeniden koşu yapılmadı.
+- **ALDIM: E8** — `ticker.renko` / `request.security` için belgelenmiş kısmı
+  denetleme; belirsiz algoritmayı listeleme.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
