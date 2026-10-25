@@ -58,6 +58,14 @@ Sorular:
 - **Teknik yol:** Binance copy trading API var mı, sınırları ne? Lider işlemleri nasıl okunur? Kopyalama gecikmesi ve kaymanın ölçülmesi.
 - **Risk:** %10 zarar bütçesine dahil mi, ayrı mı? Lider başına sınır, kaldıraç sınırı, ani lider değişimi.
 - **Hukuk ve vergi:** Türkiye'den yabancı platformda kopyalama ve kazancın vergisi (kullanıcı ve uzman kararı).
+- **Bakılacak platform (kullanıcı notu, 2026-10-25):** [Hyperdash copy trading](https://hyperdash.com/copytrading).
+  - Hyperliquid (zincir üstü perp DEX) üzerindeki cüzdanları izleyip kopyalama.
+  - Artısı: işlemler zincir üstünde açık, bu yüzden liderin geçmişi doğrulanabilir; hayatta kalma yanlılığını kendi verimizle ölçebiliriz.
+  - Bakılacaklar:
+    - kopyalama nasıl yürütülüyor: kendi cüzdanımız mı, emanet mi, API ajan anahtarı mı;
+    - ücret ve kayma;
+    - Türkiye'den erişim ve hukuki durum;
+    - Binance hesabımızla ilişkisi: ayrı cüzdan ve USDC gerekir.
 - **"Başarılı" ölçütü:** TEST_YAPISI'na göre tanımlanır. Liderin bizim izlemeye başladığımız tarihten sonraki dönemi, gerçekçi maliyet, düşüş, kaldıraç ve hesap yaşı esas alınır. Önce sanal havuzda (gölge) izlenir, gerçek para sonra.
 
 ## 5. Pano: HTML'den uygulama altyapısına geçiş (kullanıcı isteği, 2026-10-25)
