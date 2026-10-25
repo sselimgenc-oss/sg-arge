@@ -37,3 +37,5 @@ Son doğrulama: `./.venv/bin/python -m pytest -q tests/` → 1328 geçti, 4 atla
 - 02:00 — G2 TAMAMLANDI — `docs/denetim/bootstrap_dsr_bilgi.md` TV-2/U7 p10
   ve DSR alanlarının kaynak/dal ayrımını yazıyor. TV-2’de bilgi DSR sütunu
   var; U7’de ortak DSR yok. Aile deneme sayısı varsayılmadı, karar değişmedi.
+- 02:05 — 4.2 TAKILDI (ikinci deneme) — `.venv/bin/pip install vnstock`
+  paket endeksinde sürüm bulamadı; yükleyici veya veri eşlemesi uydurulmadı.
