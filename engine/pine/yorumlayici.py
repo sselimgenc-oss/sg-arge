@@ -35,6 +35,7 @@ import pynescript.ast as A
 from pynescript.ast import parse
 
 from engine.pine import ta as T
+from engine.pine.ayristir import ayristir
 from engine.tv_emulator import LONG, SHORT, Ayarlar
 
 NA = T.NA
@@ -251,6 +252,7 @@ class Yorumlayici:
         self.v = df["volume"].to_numpy(float) if "volume" in df else np.zeros(len(df))
         self.zaman_ms = (df.index.asi8 // 1_000_000).astype(np.int64)
         self.n = len(df)
+        self._seriler = {"open": self.o, "high": self.h, "low": self.l, "close": self.c, "volume": self.v}
         yerel = df.index.tz_convert(self.tz)
         self.yil, self.ay, self.gun = yerel.year.to_numpy(), yerel.month.to_numpy(), yerel.day.to_numpy()
         self.saat, self.dakika_, self.saniye = yerel.hour.to_numpy(), yerel.minute.to_numpy(), yerel.second.to_numpy()
@@ -287,7 +289,7 @@ class Yorumlayici:
         if not kaynak:
             self.eksik_kutuphane[takma] = yol
             return
-        lib = parse(on_isle(kaynak))
+        lib = ayristir(on_isle(kaynak))
         for x in lib.body:
             if isinstance(x, A.FunctionDef):
                 f = _Fonksiyon(x.name, x, bool(x.method))
@@ -679,7 +681,7 @@ class Yorumlayici:
         k = self.i - int(n)
         if self.df is None:
             raise Desteklenmiyor(f"veri yokken seri: {ad}")
-        seri = {"open": self.o, "high": self.h, "low": self.l, "close": self.c, "volume": self.v}.get(ad)
+        seri = self._seriler.get(ad)
         if seri is not None:
             return float(seri[k]) if 0 <= k <= self.i else NA
         if ad in ("hl2", "hlc3", "ohlc4", "hlcc4"):
@@ -793,8 +795,22 @@ class Yorumlayici:
         kok, _, alan = ad.rpartition(".")
         if kok in self.enumlar and alan in self.enumlar[kok]:
             return self.enumlar[kok][alan]
-        c = self.ctx
-        s = {
+        if ad == "barstate.isfirst":
+            return self.i == 0
+        if ad in ("barstate.islast", "barstate.islastconfirmedhistory"):
+            return self.i == self.n - 1 if self.df is not None else False
+        s = self._sabitler if self.df is not None and hasattr(self, "_sabitler") else None
+        if s is None:
+            s = self._sabit_tablosu()
+            if self.df is not None:
+                self._sabitler = s
+        if ad in s:
+            return s[ad]
+        return self._yerlesik_degisken_kalan(ad)
+
+    def _sabit_tablosu(self) -> dict:
+        """Bar boyunca değişmeyen yerleşik adlar (bir kez kurulur)."""
+        return {
             "strategy.long": LONG, "strategy.short": SHORT,
             "strategy.percent_of_equity": "percent_of_equity", "strategy.fixed": "fixed", "strategy.cash": "cash",
             "strategy.commission.percent": "percent", "strategy.commission.cash_per_contract": "cash_per_contract",
@@ -812,8 +828,6 @@ class Yorumlayici:
             "timeframe.isminutes": self.tf_dk < 1440, "timeframe.isseconds": False, "timeframe.isdwm": self.tf_dk >= 1440,
             "timeframe.isticks": False,
             "barstate.isconfirmed": True, "barstate.ishistory": True, "barstate.isrealtime": False, "barstate.isnew": True,
-            "barstate.isfirst": self.i == 0, "barstate.islast": self.i == self.n - 1 if self.df is not None else False,
-            "barstate.islastconfirmedhistory": self.i == self.n - 1 if self.df is not None else False,
             "dayofweek.sunday": 1, "dayofweek.monday": 2, "dayofweek.tuesday": 3, "dayofweek.wednesday": 4,
             "dayofweek.thursday": 5, "dayofweek.friday": 6, "dayofweek.saturday": 7,
             "barmerge.lookahead_on": True, "barmerge.lookahead_off": False, "barmerge.gaps_on": True,
@@ -824,8 +838,8 @@ class Yorumlayici:
             "last_bar_time": int(self.zaman_ms[-1]) if self.df is not None else NA,
             "last_bar_index": self.n - 1 if self.df is not None else NA,
         }
-        if ad in s:
-            return s[ad]
+
+    def _yerlesik_degisken_kalan(self, ad: str) -> Any:
         if ad in DISPLAY:
             return DISPLAY[ad]
         if ad in ("label.all", "line.all", "box.all", "table.all", "linefill.all", "polyline.all"):
@@ -1038,10 +1052,11 @@ class Yorumlayici:
                   "request.dividends", "request.splits", "request.economic", "request.seed", "request.currency_rate"):
             raise Desteklenmiyor(ad)
         konum, adli = self._argumanlar(e, on_arg)
-        if ad.split(".")[0] in _Cizim.ALANLAR and ad.count(".") == 1:
+        kok = ad.split(".", 1)[0]
+        if kok in _Cizim.ALANLAR and ad.count(".") == 1:
             return self._cizim(ad, konum, adli)
-        if ad in GORSEL_AD or ad.split(".")[0] in GORSEL_NS or ad.startswith("color.") or ad in ("color",):
-            if ad.split(".")[-1].startswith("get_") and ad.split(".")[0] in GORSEL_NS:
+        if ad in GORSEL_AD or kok in GORSEL_NS or kok == "color":
+            if ad.rsplit(".", 1)[-1].startswith("get_") and kok in GORSEL_NS:
                 raise Desteklenmiyor(f"çizimden okuma: {ad}")
             return None
         if ad.startswith("strategy"):
@@ -2222,7 +2237,7 @@ class PineStrateji:
 
     def __init__(self, kaynak: str | A.Script, *, sembol: str, tf: str, tz: str = "UTC", mintick: float = 0.01,
                  kimlik: str = "", surum: int | None = None) -> None:
-        self.program = parse(on_isle(kaynak)) if isinstance(kaynak, str) else kaynak
+        self.program = ayristir(on_isle(kaynak)) if isinstance(kaynak, str) else kaynak
         self.kaynak_metni = kaynak if isinstance(kaynak, str) else None
         self.sembol, self.tf_dk, self.tz, self.mintick, self.kimlik = sembol, tf_dakika(tf), tz, mintick, kimlik
         self._surum = surum or (surum_metinden(self.kaynak_metni) if self.kaynak_metni else (_surum(self.program) or 5))

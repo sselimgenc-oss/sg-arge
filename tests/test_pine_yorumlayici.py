@@ -399,3 +399,23 @@ def test_enum_and_small_builtins() -> None:
         y.adim(None, i)
     assert y._bul("x").deger == 1 and y._bul("s").deger == "Uzun--240" and y._bul("z").deger == 1
     assert y._bul("f").deger == "1970-01-01 00:00" and y._bul("b").deger == int(df.index[-1].value // 1_000_000)
+
+
+def test_fast_parser_matches_pynescript_ast(tmp_path, monkeypatch) -> None:
+    import pynescript.ast as A
+    from engine.pine import ayristir as AY
+    monkeypatch.setattr(AY, "ONBELLEK", tmp_path)
+    monkeypatch.setattr(AY, "_bellek", {})
+    kaynak = OSPKEM6I + "var float[] d = array.new(0)\nif close > open\n    array.push(d, close)\nx = d.size() > 0 ? d.get(0) : na\n"
+
+    def temiz(p):
+        for n in A.walk(p):
+            if hasattr(n, "annotations"):
+                n.annotations = []
+        p.body = [d for d in p.body if not isinstance(d, A.Comment)]
+        return A.dump(p)
+
+    assert temiz(AY.ayristir(kaynak)) == temiz(parse(kaynak))
+    assert list(tmp_path.glob("*.pkl"))                              # disk önbelleği
+    AY._bellek.clear()
+    assert temiz(AY.ayristir(kaynak)) == temiz(parse(kaynak))        # önbellekten okunan da aynı
