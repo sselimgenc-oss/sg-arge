@@ -52,6 +52,10 @@ Dal: `codex/analiz`
   hızlandırma doğrulanamadığından yorumlayıcı kodu değiştirilmedi.
 - **ALDIM: E3** — `veri_yok` kripto stratejilerinde ikinci kaynak deneme ve
   bulunanları yeniden koşma.
+- **TAKILDI: E3** — 28 kripto `veri_yok` satırı iki kaynakta yoklandı.
+  Bybit lineer uç noktası hiçbir adayda uygun bar vermedi; OKX bazı sembol
+  adlarını yanıtladı ancak yayın kontratıyla eşdeğer, yeterli tarihsel seri
+  kanıtı vermedi. Sadık olmayan vekil eşleme eklenmedi; yeniden koşu yapılmadı.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
