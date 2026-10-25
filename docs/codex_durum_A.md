@@ -34,3 +34,6 @@ Son doğrulama: `./.venv/bin/python -m pytest -q tests/` → 1328 geçti, 4 atla
 - 01:50 — ALDIM: E1 — Yavaş yedi TV-2 betiği profil ve davranış değişmeyen hızlandırma için inceleniyor.
 - 01:52 — E1 TAKILDI: `cProfile` ile toplu ve tekil olmak üzere iki ayrıştırma denemesi sonuç üretmeden uzadı; `docs/denetim/yavas_profil.md` kaynak boyutlarını ve sınırı kaydeder. Tasarruf kuralı gereği üçüncü deneme/hızlandırma yapılmadı.
 - 01:52 — ALDIM: G2 — Geçen stratejiler için bootstrap p10 ve DSR bilgi tablosu hazırlanıyor.
+- 02:00 — G2 TAMAMLANDI — `docs/denetim/bootstrap_dsr_bilgi.md` TV-2/U7 p10
+  ve DSR alanlarının kaynak/dal ayrımını yazıyor. TV-2’de bilgi DSR sütunu
+  var; U7’de ortak DSR yok. Aile deneme sayısı varsayılmadı, karar değişmedi.
