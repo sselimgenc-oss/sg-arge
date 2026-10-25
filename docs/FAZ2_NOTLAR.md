@@ -48,3 +48,19 @@ Faz 2'de gerçek veriyle kurulabilecek olanlar:
 - **Çoklu deneme sayacı:** Her denenen öneri DSR deneme sayısına eklenir. Koç ne kadar çok öneri denerse eşik o kadar yükselir. Aksi halde koç geçmişe uyan sahte iyileştirmeler üretir.
 - **Doğrulama:** Önerilen varyant önce **gölge modda** paper'da en az 3–6 ay orijinalin yanında koşar. Yalnız orijinali anlamlı biçimde geçerse kullanıcı onayıyla devreye alınır.
 - **Açıklama:** Her öneri "neden" ile gelir: hangi işlemler, kaç örnek, IS/OOS farkı, deneme sayısı.
+
+## 4. Copy trade (kullanıcı isteği, 2026-10-25)
+Araştırılacak; Sol 6.1 (Codex) de fikir sunacak. Sorular:
+- **Yön:** başkalarını kopyalamak mı (Binance copy trading lider portföyleri, eToro, ZuluTrade, MT5 sinyalleri), bizim sinyallerimizi kopyalatmak mı (Binance lider portföyü, Telegram/Discord kanalı), ikisi birden mi?
+- **Kopyalanan lider için doğrulama:** yayımlanan performans hayatta kalma yanlılığı taşır. Kendi test yapımız uygulanabilir mi: sadece katıldıktan sonraki dönem, gerçekçi maliyet, kayma, gecikme?
+- **Teknik yol:** Binance copy trading API var mı, sınırları ne? Lider işlemleri nasıl okunur? Kopyalama gecikmesi ve kaymanın ölçülmesi.
+- **Risk:** %10 zarar bütçesine dahil mi, ayrı mı? Lider başına sınır, kaldıraç sınırı, ani lider değişimi.
+- **Hukuk ve vergi:** Türkiye'de sinyal satma ya da yönetme sınırları (SPK yatırım danışmanlığı izni). Kendi sinyallerimizi yayımlamadan önce kullanıcı ve uzman kararı gerekir.
+
+## 5. Pano: HTML'den uygulama altyapısına geçiş (kullanıcı isteği, 2026-10-25)
+Bugünkü durum: `paper/panel/data.json` → `sg-pano` statik HTML (GitHub Pages), 3,5-5 saatte bir güncelleniyor. Sol 6.1 de fikir sunacak. Değerlendirilecek seçenekler:
+- **Statik kalıp güçlendirme:** aynı JSON, modern ön yüz (React/Vite ya da Svelte), GitHub Pages. En ucuzu; canlı veri yok.
+- **Python panosu:** Streamlit / Dash / Panel. Hızlı, Python kodumuzla aynı dil; sunucu gerekir (Streamlit Community Cloud, Fly.io, küçük VPS).
+- **Arka uç + ön yüz:** FastAPI + veritabanı (SQLite/Postgres) + React. Canlı fiyat, emir geçmişi, kullanıcı girişi, Telegram geri bildirimi (Faz 3 "uyguladım/atladım" butonu) için doğru temel; bakım yükü yüksek.
+- **Mobil:** PWA (aynı web uygulaması telefona kurulur) ya da Telegram bot arayüzü.
+- **Ölçütler:** güncelleme sıklığı (canlı mı, saatlik mi), kimlik doğrulama (gerçek hesap verisi görünecekse şart), maliyet, bakım, Faz 3 emir yoluyla uyum, sırların güvenliği (API anahtarları panoda olmaz).
