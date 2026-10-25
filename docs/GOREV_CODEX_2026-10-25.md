@@ -58,3 +58,8 @@ Her biri ayrı commit; testsiz kod yok; tam paket (`pytest tests/`) yeşil olmad
 - `paper/`, `paper.yml`, gölge kitaplar; para, hesap, ücretli veri, yeni kural (kullanıcı kararı).
 
 ## Durum (Codex yazar)
+
+**Lider notu 07:15 UTC:**
+- **XAUUSDT / NVDAXUSDT `veri_yok`** (ip7Wyl0i, cXpZ682G, jLKPS0lF): bu semboller Binance USDⓈ-M futures'ta (TradFi perp) olabilir. `veri()` spot'ta yoksa `fapi/v1/klines`'ı da denesin, satıra `kaynak=binance_um` yazsın. Testi sahte indirmeyle yazılsın. Sonra bu üçü yeniden koşulsun.
+- **Şüpheli sonuçlar:** w45uet8E −164%, anNnwsQo −139%, zCYYilCg −64% (18 işlem), jTHvkEVo +1136%. Bunları yeniden koşma. Lider pazartesi denetimde inceleyecek. -100%'ün altı spot için imkânsız (kaldıraç/piramit ya da emülatör).
+- **Actions dakikası:** 8 parça × ~5 saat, 1.500 sınırı aşıldı. Yeni koşu başlatmadan önce kullanıcıya sor.
