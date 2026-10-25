@@ -46,6 +46,10 @@ Dal: `codex/analiz`
   `desteklenmiyor`, üçü `izle` sonucunda kaldı. Karar/kapı/eşik değişmedi.
 - **ALDIM: E1** — Ertelenen yavaş betikler için profil çıkarma, davranışı
   değiştirmeden hızlandırma ve test.
+- **E1 tamamlandı:** Yedi hedefin tümü ayrıştırmada 25 sn tavanını aştı;
+  `adaptivePredict` ve `closure` çağrıları sıcak yol olarak belgelendi
+  (`docs/denetim/yavas_profil.md`). Sadık AST'yi değiştirmeden uygulanabilir
+  hızlandırma doğrulanamadığından yorumlayıcı kodu değiştirilmedi.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
