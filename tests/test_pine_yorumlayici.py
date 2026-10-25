@@ -399,3 +399,64 @@ def test_enum_and_small_builtins() -> None:
         y.adim(None, i)
     assert y._bul("x").deger == 1 and y._bul("s").deger == "Uzun--240" and y._bul("z").deger == 1
     assert y._bul("f").deger == "1970-01-01 00:00" and y._bul("b").deger == int(df.index[-1].value // 1_000_000)
+
+
+def test_fast_parser_matches_pynescript_ast(tmp_path, monkeypatch) -> None:
+    import pynescript.ast as A
+    from engine.pine import ayristir as AY
+    monkeypatch.setattr(AY, "ONBELLEK", tmp_path)
+    monkeypatch.setattr(AY, "_bellek", {})
+    kaynak = OSPKEM6I + "var float[] d = array.new(0)\nif close > open\n    array.push(d, close)\nx = d.size() > 0 ? d.get(0) : na\n"
+
+    def temiz(p):
+        for n in A.walk(p):
+            if hasattr(n, "annotations"):
+                n.annotations = []
+        p.body = [d for d in p.body if not isinstance(d, A.Comment)]
+        return A.dump(p)
+
+    assert temiz(AY.ayristir(kaynak)) == temiz(parse(kaynak))
+    assert list(tmp_path.glob("*.pkl"))                              # disk önbelleği
+    AY._bellek.clear()
+    assert temiz(AY.ayristir(kaynak)) == temiz(parse(kaynak))        # önbellekten okunan da aynı
+
+
+def test_pivot_point_levels_traditional_from_previous_anchor_period() -> None:
+    df = _veri(48, freq="1h")
+    kod = "p = ta.pivot_point_levels('Traditional', timeframe.change('D'))\nx = array.get(p, 0)\ny = array.get(p, 1)\n"
+    x, y = _seri(kod, df, tf="60"), _seri(kod, df, ad="y", tf="60")
+    gun1 = df.iloc[:24]
+    pp = (gun1["high"].max() + gun1["low"].min() + gun1["close"].iloc[-1]) / 3
+    assert np.isnan(x[23]) and x[24] == pytest.approx(pp) and x[47] == pytest.approx(pp)
+    assert y[24] == pytest.approx(2 * pp - gun1["low"].min())
+
+
+def test_footprint_rows_poc_value_area_and_missing_bar(monkeypatch) -> None:
+    import engine.pine.yorumlayici as Y
+    df = _veri(5, freq="2h")
+    bar = int(df.index[1].value // 1_000_000)
+    seviye = np.array([100, 101, 102, 150, 151])                  # taban 1.0, mintick 1 x 50 tik: satır [100,150) ve [150,200)
+    buy, sell = np.array([1.0, 2.0, 3.0, 4.0, 0.0]), np.array([0.5, 0.5, 0.0, 1.0, 9.0])
+    monkeypatch.setattr(Y, "FOOTPRINT_SAGLAYICI", lambda s, dk: ({bar: (seviye, buy, sell)}, 1.0, 1.0))
+    kod = ("//@version=6\nindicator('t')\nf = request.footprint(50, 70)\nd = na(f) ? na : f.delta()\n"
+           "p = na(f) ? na : f.poc().down_price()\nu = na(f) ? na : f.poc().up_price()\nt = na(f) ? na : f.total_volume()\n")
+    d, pp, u, t = (_seri(kod, df, ad=k, tf="120") for k in ("d", "p", "u", "t"))
+    assert np.isnan(d[0]) and d[1] == pytest.approx(6.0 - 1.0 + 4.0 - 10.0) and t[1] == pytest.approx(21.0)
+    assert pp[1] == 150 and u[1] == 200                            # POC: 14 hacimli üst satır
+
+
+def test_trade_comments_are_readable() -> None:
+    df = _veri(30)
+    ps = _strateji("if bar_index == 2\n    strategy.entry('L', strategy.long, 1, comment='giris')\n"
+                   "if bar_index == 5\n    strategy.close('L', comment='cikis')\n"
+                   "x = strategy.closedtrades > 0 ? strategy.closedtrades.exit_comment(0) + '/' + strategy.closedtrades.entry_comment(0) : ''\n")
+    calistir(ps, df)
+    assert ps.y._bul("x").deger == "cikis/giris"
+
+
+def test_method_called_as_function_and_runtime_error_ignored_in_security() -> None:
+    df = _veri(40)
+    kod = ("//@version=5\nindicator('t')\ntype K\n    float v = 0\nmethod ekle(K this, float x) =>\n    this.v += x\n    this.v\n"
+           "var k = K.new()\nx = ekle(k, 1.0)\nif not timeframe.isintraday\n    runtime.error('gun ici')\n"
+           "d = request.security(syminfo.tickerid, 'D', close)\n")
+    assert _seri(kod, df, tf="240")[-1] == len(df)

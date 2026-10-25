@@ -35,6 +35,7 @@ import pynescript.ast as A
 from pynescript.ast import parse
 
 from engine.pine import ta as T
+from engine.pine.ayristir import ayristir
 from engine.tv_emulator import LONG, SHORT, Ayarlar
 
 NA = T.NA
@@ -119,6 +120,62 @@ class _Enum:
 
     def __str__(self) -> str:
         return self.baslik
+
+
+class _HacimSatiri:
+    """footprint volume_row: [alt, üst) fiyat aralığında alıcı/satıcı hacmi."""
+
+    def __init__(self, alt: float, ust: float, buy: float, sell: float, buy_imb: bool, sell_imb: bool) -> None:
+        self.alt, self.ust, self.buy, self.sell, self.buy_imb, self.sell_imb = alt, ust, buy, sell, buy_imb, sell_imb
+
+    def yontem(self, ad: str) -> Any:
+        return {"up_price": self.ust, "down_price": self.alt, "buy_volume": self.buy, "sell_volume": self.sell,
+                "total_volume": self.buy + self.sell, "delta": self.buy - self.sell,
+                "has_buy_imbalance": self.buy_imb, "has_sell_imbalance": self.sell_imb}[ad]
+
+
+class _Footprint:
+    """request.footprint sonucu (bir bar): satırlar artan fiyat sırasında; POC en büyük toplam hacimli satır, değer alanı
+    POC'tan başlayıp her adımda komşulardan büyüğünü ekleyerek toplamın va_percent'ine ulaşana kadar genişler."""
+
+    def __init__(self, satirlar: list[_HacimSatiri], va: float) -> None:
+        self.satirlar = satirlar
+        toplam = [x.buy + x.sell for x in satirlar]
+        self.poc_i = int(np.argmax(toplam))
+        alt = ust = self.poc_i
+        hedef, birikim = sum(toplam) * va / 100, toplam[self.poc_i]
+        while birikim < hedef and (alt > 0 or ust < len(satirlar) - 1):
+            a = toplam[alt - 1] if alt > 0 else -1
+            u = toplam[ust + 1] if ust < len(satirlar) - 1 else -1
+            if u >= a:
+                ust += 1
+                birikim += u
+            else:
+                alt -= 1
+                birikim += a
+        self.val_i, self.vah_i = alt, ust
+
+    def yontem(self, ad: str, konum: list) -> Any:
+        if ad == "buy_volume":
+            return sum(x.buy for x in self.satirlar)
+        if ad == "sell_volume":
+            return sum(x.sell for x in self.satirlar)
+        if ad == "total_volume":
+            return sum(x.buy + x.sell for x in self.satirlar)
+        if ad == "delta":
+            return sum(x.buy - x.sell for x in self.satirlar)
+        if ad == "poc":
+            return self.satirlar[self.poc_i]
+        if ad == "vah":
+            return self.satirlar[self.vah_i]
+        if ad == "val":
+            return self.satirlar[self.val_i]
+        if ad == "rows":
+            return list(self.satirlar)
+        if ad == "get_row_by_price":
+            fiyat = konum[0] if konum else NA
+            return next((x for x in self.satirlar if x.alt <= fiyat < x.ust), NA)
+        raise Desteklenmiyor(f"footprint.{ad}")
 
 
 class _Matris:
@@ -219,6 +276,7 @@ class Yorumlayici:
         self.tipler: dict[str, A.TypeDef] = {}
         self.eksik_kutuphane: dict[str, str] = {}
         self.enumlar: dict[str, dict[str, _Enum]] = {}
+        self._yontem_cagrilari: dict[int, A.Call] = {}
         self.yol: tuple = ()
         self.kapsam: list[dict[str, _Yuva]] = [{}]
         self.ctx = None
@@ -251,6 +309,7 @@ class Yorumlayici:
         self.v = df["volume"].to_numpy(float) if "volume" in df else np.zeros(len(df))
         self.zaman_ms = (df.index.asi8 // 1_000_000).astype(np.int64)
         self.n = len(df)
+        self._seriler = {"open": self.o, "high": self.h, "low": self.l, "close": self.c, "volume": self.v}
         yerel = df.index.tz_convert(self.tz)
         self.yil, self.ay, self.gun = yerel.year.to_numpy(), yerel.month.to_numpy(), yerel.day.to_numpy()
         self.saat, self.dakika_, self.saniye = yerel.hour.to_numpy(), yerel.minute.to_numpy(), yerel.second.to_numpy()
@@ -287,7 +346,7 @@ class Yorumlayici:
         if not kaynak:
             self.eksik_kutuphane[takma] = yol
             return
-        lib = parse(on_isle(kaynak))
+        lib = ayristir(on_isle(kaynak))
         for x in lib.body:
             if isinstance(x, A.FunctionDef):
                 f = _Fonksiyon(x.name, x, bool(x.method))
@@ -443,6 +502,8 @@ class Yorumlayici:
             v = self._deger(d.value) if d.value is not None else tuple(NA for _ in yuvalar)
             if isinstance(v, list) and len(v) == len(yuvalar):
                 v = tuple(v)
+            elif isinstance(v, list) and not v:        # security_lower_tf, alt bar yok: her eleman boş dizi
+                v = tuple([] for _ in yuvalar)
             elif not isinstance(v, tuple) and na(v):   # ör. üst dilimin ilk kapanmış barından önce security: hepsi na
                 v = tuple(NA for _ in yuvalar)
             if not isinstance(v, tuple):
@@ -679,7 +740,7 @@ class Yorumlayici:
         k = self.i - int(n)
         if self.df is None:
             raise Desteklenmiyor(f"veri yokken seri: {ad}")
-        seri = {"open": self.o, "high": self.h, "low": self.l, "close": self.c, "volume": self.v}.get(ad)
+        seri = self._seriler.get(ad)
         if seri is not None:
             return float(seri[k]) if 0 <= k <= self.i else NA
         if ad in ("hl2", "hlc3", "ohlc4", "hlcc4"):
@@ -787,14 +848,30 @@ class Yorumlayici:
             return getattr(nesne, e.attr)
         if nesne is None or na(nesne):
             return NA
+        if isinstance(kok, A.Name) and kok is e.value and kok.id in SABIT_NS:   # `size` değişkeni varken size.tiny: sabit
+            return self._yerlesik_degisken(_nokta(e))
         raise Desteklenmiyor(f"öznitelik {e.attr} ({type(nesne).__name__})")
 
     def _yerlesik_degisken(self, ad: str) -> Any:
         kok, _, alan = ad.rpartition(".")
         if kok in self.enumlar and alan in self.enumlar[kok]:
             return self.enumlar[kok][alan]
-        c = self.ctx
-        s = {
+        if ad == "barstate.isfirst":
+            return self.i == 0
+        if ad in ("barstate.islast", "barstate.islastconfirmedhistory"):
+            return self.i == self.n - 1 if self.df is not None else False
+        s = self._sabitler if self.df is not None and hasattr(self, "_sabitler") else None
+        if s is None:
+            s = self._sabit_tablosu()
+            if self.df is not None:
+                self._sabitler = s
+        if ad in s:
+            return s[ad]
+        return self._yerlesik_degisken_kalan(ad)
+
+    def _sabit_tablosu(self) -> dict:
+        """Bar boyunca değişmeyen yerleşik adlar (bir kez kurulur)."""
+        return {
             "strategy.long": LONG, "strategy.short": SHORT,
             "strategy.percent_of_equity": "percent_of_equity", "strategy.fixed": "fixed", "strategy.cash": "cash",
             "strategy.commission.percent": "percent", "strategy.commission.cash_per_contract": "cash_per_contract",
@@ -812,8 +889,6 @@ class Yorumlayici:
             "timeframe.isminutes": self.tf_dk < 1440, "timeframe.isseconds": False, "timeframe.isdwm": self.tf_dk >= 1440,
             "timeframe.isticks": False,
             "barstate.isconfirmed": True, "barstate.ishistory": True, "barstate.isrealtime": False, "barstate.isnew": True,
-            "barstate.isfirst": self.i == 0, "barstate.islast": self.i == self.n - 1 if self.df is not None else False,
-            "barstate.islastconfirmedhistory": self.i == self.n - 1 if self.df is not None else False,
             "dayofweek.sunday": 1, "dayofweek.monday": 2, "dayofweek.tuesday": 3, "dayofweek.wednesday": 4,
             "dayofweek.thursday": 5, "dayofweek.friday": 6, "dayofweek.saturday": 7,
             "barmerge.lookahead_on": True, "barmerge.lookahead_off": False, "barmerge.gaps_on": True,
@@ -824,8 +899,8 @@ class Yorumlayici:
             "last_bar_time": int(self.zaman_ms[-1]) if self.df is not None else NA,
             "last_bar_index": self.n - 1 if self.df is not None else NA,
         }
-        if ad in s:
-            return s[ad]
+
+    def _yerlesik_degisken_kalan(self, ad: str) -> Any:
         if ad in DISPLAY:
             return DISPLAY[ad]
         if ad in ("label.all", "line.all", "box.all", "table.all", "linefill.all", "polyline.all"):
@@ -925,6 +1000,12 @@ class Yorumlayici:
             ad = f.id
             if ad in self.fonksiyonlar:
                 return self._kullanici(e, self.fonksiyonlar[ad], None)
+            if ad in self.yontemler and e.args:        # yöntem fonksiyon biçiminde: manage_kz(nesne, ...)
+                tureme = self._yontem_cagrilari.get(id(e))
+                if tureme is None:
+                    tureme = self._yontem_cagrilari[id(e)] = A.Call(func=e.func, args=e.args[1:])
+                    tureme.lineno = getattr(e, "lineno", 0)
+                return self._kullanici(tureme, self.yontemler[ad], self._deger(e.args[0].value))
             ad = V4_ADLAR.get(ad, ad)
             return self._yerlesik(ad, e)
         if isinstance(f, A.Attribute):
@@ -958,12 +1039,14 @@ class Yorumlayici:
             return self._yerlesik("map." + ad, e, on_arg=nesne)
         if isinstance(nesne, _Matris):
             return self._yerlesik("matrix." + ad, e, on_arg=nesne)
+        if isinstance(nesne, _Footprint):
+            return self._yerlesik("footprint." + ad, e, on_arg=nesne)
+        if isinstance(nesne, _HacimSatiri):
+            return self._yerlesik("volume_row." + ad, e, on_arg=nesne)
         if isinstance(nesne, _Cizim):
             return self._yerlesik(f"{nesne.tur}.{ad}", e, on_arg=nesne)
-        if nesne is None or (isinstance(nesne, float) and na(nesne)):   # çizim nesnesi (label/line/box) ya da na
-            if ad.startswith("get_"):
-                raise Desteklenmiyor(f"çizim nesnesinden okuma: {ad}")
-            return None
+        if nesne is None or (isinstance(nesne, float) and na(nesne)):   # na çizim kimliği: okuma na, yazma etkisiz
+            return NA if ad.startswith("get_") else None
         if isinstance(nesne, _Nesne) and ad == "copy":
             return _Nesne(nesne._tip, nesne._alan)
         raise Desteklenmiyor(f"yöntem {ad} ({type(nesne).__name__})")
@@ -1034,14 +1117,25 @@ class Yorumlayici:
             return self._security(e)
         if ad == "request.security_lower_tf":
             return self._alt_dilim(e, dizi=True)
+        if ad == "request.footprint":
+            konum, adli = self._argumanlar(e, on_arg)
+            return self._footprint(konum, adli)
+        if ad.startswith(("footprint.", "volume_row.")):
+            konum, adli = self._argumanlar(e, on_arg)
+            nesne = konum[0] if konum else adli.get("id")
+            if not isinstance(nesne, (_Footprint, _HacimSatiri)):        # na footprint / satır
+                return NA
+            alt = ad.split(".", 1)[1]
+            return nesne.yontem(alt, konum[1:]) if isinstance(nesne, _Footprint) else nesne.yontem(alt)
         if ad in ("request.financial", "request.quandl", "request.earnings",
                   "request.dividends", "request.splits", "request.economic", "request.seed", "request.currency_rate"):
             raise Desteklenmiyor(ad)
         konum, adli = self._argumanlar(e, on_arg)
-        if ad.split(".")[0] in _Cizim.ALANLAR and ad.count(".") == 1:
+        kok = ad.split(".", 1)[0]
+        if kok in _Cizim.ALANLAR and ad.count(".") == 1:
             return self._cizim(ad, konum, adli)
-        if ad in GORSEL_AD or ad.split(".")[0] in GORSEL_NS or ad.startswith("color.") or ad in ("color",):
-            if ad.split(".")[-1].startswith("get_") and ad.split(".")[0] in GORSEL_NS:
+        if ad in GORSEL_AD or kok in GORSEL_NS or kok == "color":
+            if ad.rsplit(".", 1)[-1].startswith("get_") and kok in GORSEL_NS:
                 raise Desteklenmiyor(f"çizimden okuma: {ad}")
             return None
         if ad.startswith("strategy"):
@@ -1112,6 +1206,8 @@ class Yorumlayici:
             b, _ = _kova(self.df.index[self.i - 1:self.i + 1], tf, self.tz)
             return bool(b[0] != b[1])
         if ad == "runtime.error":
+            if self.guvenlik_modu:      # security yalnız ifadesini hesaplar; betiğin grafik korumaları alt koşuda çalışmaz
+                return None
             raise PineHatasi(f"runtime.error: {konum[0] if konum else ''}")
         if ad in ("ticker.heikinashi", "heikinashi"):
             sem = str(konum[0] if konum else adli.get("symbol", self.sembol))
@@ -1170,6 +1266,8 @@ class Yorumlayici:
     def _strateji(self, ad: str, konum, adli) -> Any:
         if ad == "strategy":
             return None
+        if ad in ("strategy.convert_to_account", "strategy.convert_to_symbol"):   # hesap ve sembol para birimi USD
+            return konum[0] if konum else adli.get("value")
         c = self.ctx
         if self.guvenlik_modu:
             return None
@@ -1194,7 +1292,7 @@ class Yorumlayici:
                 c.close_all()                                     # Pine: izin verilmeyen yöndeki giriş çıkış olur
                 return None
             c.entry(str(b["id"]), yon, qty=_sayi(b.get("qty")), limit=_sayi(b.get("limit")), stop=_sayi(b.get("stop")),
-                    oca=self._oca(b))
+                    oca=self._oca(b), comment=_yorum(b))
             return None
         if ad == "strategy.order":
             b = _bagla(["id", "direction", "qty", "limit", "stop", "oca_name", "oca_type", "comment"], konum, adli)
@@ -1204,7 +1302,7 @@ class Yorumlayici:
             if isinstance(yon, bool):
                 yon = LONG if yon else SHORT
             c.order(str(b["id"]), yon, qty=_sayi(b.get("qty")), limit=_sayi(b.get("limit")), stop=_sayi(b.get("stop")),
-                    oca=self._oca(b))
+                    oca=self._oca(b), comment=_yorum(b))
             return None
         if ad == "strategy.default_entry_qty":
             fiyat = konum[0] if konum else adli["fill_price"]
@@ -1216,7 +1314,7 @@ class Yorumlayici:
             c.exit(str(b["id"]), from_entry=None if fe in (None, "") or na(fe) else str(fe), qty=_sayi(b.get("qty")),
                    qty_percent=_sayi(b.get("qty_percent")), profit=_sayi(b.get("profit")), limit=_sayi(b.get("limit")),
                    loss=_sayi(b.get("loss")), stop=_sayi(b.get("stop")), trail_price=_sayi(b.get("trail_price")),
-                   trail_points=_sayi(b.get("trail_points")), trail_offset=_sayi(b.get("trail_offset")))
+                   trail_points=_sayi(b.get("trail_points")), trail_offset=_sayi(b.get("trail_offset")), comment=_yorum(b))
             return None
         if ad == "strategy.close":
             if self.surum < 5:
@@ -1226,12 +1324,12 @@ class Yorumlayici:
             else:
                 b = _bagla(["id", "comment", "qty", "qty_percent", "alert_message", "immediately"], konum, adli)
             c.close(str(b["id"]), qty=_sayi(b.get("qty")), qty_percent=_sayi(b.get("qty_percent")),
-                    immediately=_dogru(b.get("immediately", False)))
+                    immediately=_dogru(b.get("immediately", False)), comment=_yorum(b))
             return None
         if ad == "strategy.close_all":
             if self.surum < 5 and konum and not _dogru(konum[0]):
                 return None
-            c.close_all(immediately=_dogru(adli.get("immediately", False)))
+            c.close_all(immediately=_dogru(adli.get("immediately", False)), comment=_yorum(adli))
             return None
         if ad == "strategy.cancel":
             if self.surum < 5 and len(konum) > 1 and not _dogru(konum[1]):
@@ -1285,7 +1383,7 @@ class Yorumlayici:
             t = c.acik[k]
             bilgi = {"entry_price": t.fiyat, "entry_bar_index": t.bar, "size": t.yon * t.adet, "entry_id": t.entry_id,
                      "entry_time": int(self.zaman_ms[t.bar]), "profit": t.yon * (self.c[self.i] - t.fiyat) * t.adet,
-                     "commission": t.komisyon}
+                     "commission": t.komisyon, "entry_comment": t.yorum}
             return bilgi[alan] if alan in bilgi else _yok(ad)
         alan = ad[len("strategy.closedtrades."):]
         if not 0 <= k < len(c.kapali):
@@ -1294,6 +1392,7 @@ class Yorumlayici:
         bilgi = {"entry_price": t["giris_fiyat"], "exit_price": t["cikis_fiyat"], "profit": t["net"],
                  "entry_bar_index": t["giris_bar"], "exit_bar_index": t["cikis_bar"], "size": t["yon"] * t["adet"],
                  "entry_id": t["entry_id"], "exit_id": t["exit_id"], "commission": t["komisyon"],
+                 "entry_comment": t.get("entry_comment", ""), "exit_comment": t.get("exit_comment", ""),
                  "entry_time": int(self.zaman_ms[t["giris_bar"]]), "exit_time": int(self.zaman_ms[t["cikis_bar"]]),
                  "profit_percent": t["net"] / (t["giris_fiyat"] * t["adet"]) * 100 if t["giris_fiyat"] * t["adet"] else NA}
         return bilgi[alan] if alan in bilgi else _yok(ad)
@@ -1439,6 +1538,11 @@ class Yorumlayici:
         if k == "sar":
             x = b("start", "inc", "max")
             return self._durum(e, T.Sar)(x["start"], x["inc"], x["max"], h, l, c)
+        if k == "pivot_point_levels":
+            x = b("type", "anchor", "developing")
+            if _dogru(x.get("developing")) or str(x["type"]) not in ("Traditional", "Fibonacci", "Classic", "Camarilla", "Woodie"):
+                raise Desteklenmiyor(f"ta.pivot_point_levels ({x['type']}, developing={x.get('developing')})")
+            return self._durum(e, T.PivotSeviyeleri)(x["type"], x["anchor"], h, l, c, self.o[self.i])
         if k == "vwap":
             x = b("source", "anchor", "stdev_mult", source=(h + l + c) / 3)
             carpan = x.get("stdev_mult")
@@ -1640,7 +1744,8 @@ class Yorumlayici:
             return tuple([x] for x in v) if isinstance(v, tuple) else [v]
         if dk >= self.tf_dk:
             if dizi:                    # alt dilim grafik diliminden büyük değilse: tek elemanlı dizi
-                return [self._deger(dugumler["expression"])]
+                v = self._deger(dugumler["expression"])
+                return tuple([x] for x in v) if isinstance(v, tuple) else [v]
             raise Desteklenmiyor("request.security düşük zaman dilimi (ayrıştırma)")
         anahtar = ("alt", sembol, dk)
         g = self.guvenlik.get(anahtar)
@@ -1670,6 +1775,37 @@ class Yorumlayici:
             return degerler
         return degerler[-1] if degerler else NA
 
+    def _footprint(self, konum, adli) -> Any:
+        """Bu barın footprint'i: sağlayıcı (koşucu) işlem arşivinden bar ve fiyat seviyesi başına alıcı/satıcı hacmi verir;
+        satır boyu ticks_per_row x sembolün mintick'i. Veri olmayan bar na."""
+        tik = konum[0] if konum else adli.get("ticks_per_row")
+        va = konum[1] if len(konum) > 1 else adli.get("va_percent", 70)
+        imb = konum[2] if len(konum) > 2 else adli.get("imbalance_percent", 300)
+        anahtar = ("fp", self.sembol, self.tf_dk)
+        if anahtar not in self.guvenlik:
+            veri = FOOTPRINT_SAGLAYICI(self.sembol, self.tf_dk) if FOOTPRINT_SAGLAYICI else None
+            if veri is None:
+                raise Desteklenmiyor(f"request.footprint: işlem verisi yok ({self.sembol} {self.tf_dk}dk)")
+            self.guvenlik[anahtar] = veri
+        barlar, taban, mintick = self.guvenlik[anahtar]
+        b = barlar.get(int(self.zaman_ms[self.i]))
+        if b is None:
+            return NA
+        satir_boyu = float(tik) * mintick
+        kat = max(int(round(satir_boyu / taban)), 1)
+        seviye, buy, sell = b
+        satir = seviye // kat
+        idx, ters = np.unique(satir, return_inverse=True)
+        al, sat = np.bincount(ters, weights=buy), np.bincount(ters, weights=sell)
+        oran = float(imb) / 100
+        satirlar = []
+        for k, s_ in enumerate(idx):
+            alt_fiyat = float(s_) * kat * taban
+            buy_imb = k > 0 and sat[k - 1] > 0 and al[k] >= oran * sat[k - 1]          # çapraz: alış / alttaki satış
+            sell_imb = k < len(idx) - 1 and al[k + 1] > 0 and sat[k] >= oran * al[k + 1]
+            satirlar.append(_HacimSatiri(alt_fiyat, alt_fiyat + kat * taban, float(al[k]), float(sat[k]), buy_imb, sell_imb))
+        return _Footprint(satirlar, float(va))
+
     def _birlestir(self, dk: int) -> tuple[pd.DataFrame, np.ndarray, np.ndarray]:
         """Grafik barlarını `dk` dakikalık kovalara birleştirir: (yüksek dilim barları, grafik→kova haritası, kova bitişleri)."""
         bas, bit = _kova(self.df.index, dk, self.tz)
@@ -1695,6 +1831,7 @@ class Yorumlayici:
 
 # ---------------------------------------------------------------------- yardımcılar
 HA_ONEK = "HEIKINASHI|"
+FOOTPRINT_SAGLAYICI = None  # (sembol, dakika) -> ({bar_ms: (seviyeler, buy, sell)}, taban, mintick) | None
 KUTUPHANE_SAGLAYICI = None   # (kullanıcı, ad, sürüm) -> Pine kaynağı | None; koşucu (backtests.tv2) bağlar
 
 
@@ -1809,6 +1946,11 @@ def _sayi(x):
     if isinstance(x, (int, float)):
         return None if na(float(x)) else float(x)
     return None
+
+
+def _yorum(b: dict) -> str:
+    v = b.get("comment")
+    return "" if v is None or (isinstance(v, float) and na(v)) else str(v)
 
 
 def _bagla(adlar: list[str], konum: list, adli: dict, varsayilan: dict | None = None) -> dict:
@@ -2161,7 +2303,8 @@ def _metin(ad: str, konum, adli) -> Any:
     if ad == "substring":
         return x[int(konum[1]):int(konum[2])] if len(konum) > 2 else x[int(konum[1]):]
     if ad == "split":
-        return x.split(konum[1])
+        ayrac = konum[1] if len(konum) > 1 else adli.get("separator", "")
+        return list(x) if ayrac == "" else x.split(ayrac)          # Pine: boş ayraç harflere böler
     if ad == "pos":
         k = x.find(konum[1])
         return NA if k < 0 else k
@@ -2222,7 +2365,7 @@ class PineStrateji:
 
     def __init__(self, kaynak: str | A.Script, *, sembol: str, tf: str, tz: str = "UTC", mintick: float = 0.01,
                  kimlik: str = "", surum: int | None = None) -> None:
-        self.program = parse(on_isle(kaynak)) if isinstance(kaynak, str) else kaynak
+        self.program = ayristir(on_isle(kaynak)) if isinstance(kaynak, str) else kaynak
         self.kaynak_metni = kaynak if isinstance(kaynak, str) else None
         self.sembol, self.tf_dk, self.tz, self.mintick, self.kimlik = sembol, tf_dakika(tf), tz, mintick, kimlik
         self._surum = surum or (surum_metinden(self.kaynak_metni) if self.kaynak_metni else (_surum(self.program) or 5))

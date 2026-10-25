@@ -47,7 +47,7 @@ YFINANCE = {"SPX": "^GSPC", "SPX500": "^GSPC", "US500": "^GSPC", "SPY": "SPY", "
             "QQQ": "QQQ", "DJI": "^DJI", "US30": "^DJI", "XAUUSD": "GC=F", "GOLD": "GC=F", "XAGUSD": "SI=F", "USOIL": "CL=F",
             "WTI": "CL=F", "EURUSD": "EURUSD=X", "GBPUSD": "GBPUSD=X", "USDJPY": "JPY=X", "AUDUSD": "AUDUSD=X", "DAX": "^GDAXI",
             "DE40": "^GDAXI", "GER40": "^GDAXI", "VIX": "^VIX", "VIX9D": "^VIX9D", "VXN": "^VXN", "TNX": "^TNX",
-            "DXY": "DX-Y.NYB", "US10Y": "^TNX", "ES1!": "ES=F", "NQ1!": "NQ=F", "GC1!": "GC=F", "CL1!": "CL=F", "BTC1!": "BTC=F"}
+            "DXY": "DX-Y.NYB", "US10Y": "^TNX", "ES1!": "ES=F", "NQ1!": "NQ=F", "MES1!": "MES=F", "MNQ1!": "MNQ=F", "YM1!": "YM=F", "RTY1!": "RTY=F", "GC1!": "GC=F", "CL1!": "CL=F", "BTC1!": "BTC=F"}
 HISSE_BORSALARI = {"NASDAQ", "NYSE", "AMEX", "ARCA", "BATS", "NYSEARCA", "CBOE", "TVC", "CME", "CME_MINI", "COMEX", "NYMEX", ""}
 KAPI_HAFTA = 10
 NEDENSELLIK_BAR = 15_000
@@ -286,6 +286,23 @@ def kutuphane_kaynak(kullanici: str, ad: str, surum: int) -> str | None:
 
 yorumlayici.KUTUPHANE_SAGLAYICI = kutuphane_kaynak
 
+FOOTPRINT_TICK = {"BITSTAMP:BTCUSD": 1.0, "BITSTAMP:ETHUSD": 0.1}   # TradingView mintick (varsayım, uyarıda yazılır)
+
+
+def _footprint_veri(sembol: str, dk: int):
+    """request.footprint: Binance aggTrades özeti (backtests.tv2_footprint); `.P` vadeli (um), diğerleri spot."""
+    from backtests import tv2_footprint
+    bsym = _binance_sembol(sembol)
+    piyasa = "um" if sembol.upper().endswith(".P") else "spot"
+    okunan = tv2_footprint.oku(bsym, piyasa, dk)
+    if okunan is None:
+        return None
+    barlar, taban = okunan
+    return barlar, taban, FOOTPRINT_TICK.get(sembol.upper(), binance_tick(bsym))
+
+
+yorumlayici.FOOTPRINT_SAGLAYICI = _footprint_veri
+
 
 def strateji(kimlik: str):
     """(modül, KAYNAK sözlüğü): el çevirisi varsa o, yoksa tv2_surumler.csv satırından Pine yorumlayıcısı."""
@@ -302,10 +319,21 @@ def strateji(kimlik: str):
     return None, kaynak
 
 
+def _ucretli(sembol: str, tf: str, src: str | None) -> str | None:
+    """GOREV_TV2 Ek 3 (kullanıcı kararı): ücretsiz verisi olmayan, yani CME/CBOT/COMEX/NYMEX işlem akışı (footprint).
+    Gün içi kısa ücretsiz geçmiş (yfinance) ücretli sayılmaz: eldeki veriyle test edilir, etiketi yetersiz_kanit."""
+    if str(sembol).upper().startswith(("CME", "CBOT", "COMEX", "NYMEX")) and src and "request.footprint" in src:
+        return "CME işlem akışı (footprint) ücretli"
+    return None
+
+
 def kos(kimlik: str) -> dict:
     modul, kaynak = strateji(kimlik)
     satir: dict = {"id": kimlik, "sembol": kaynak["sembol"], "tf": kaynak["tf"], "url": kaynak["url"],
                    "tur": "pine" if kaynak.get("pine") else "modul"}
+    ucret = _ucretli(kaynak["sembol"], kaynak["tf"], pine_kaynak(kimlik, kaynak["pub"]) if kaynak.get("pine") else None)
+    if ucret:
+        return satir | {"karar": "veri_ucretli", "neden": ucret}
     pencere_bas = None
     if dakika(str(kaynak["tf"])) < DAKIKALIK_ALT:
         if not DAKIKALIK_KOS:
@@ -331,7 +359,8 @@ def kos(kimlik: str) -> dict:
                                  mintick=tick, kimlik=kimlik)
             modul.veri_saglayici = _dis_veri
             satir["uyari"] = "; ".join(modul.uyarilar + ([f"mintick veri kaynağından ({tick})"] if re.search(
-                r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []))
+                r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []) + (
+                ["footprint: Binance aggTrades (GOREV_TV2 Ek 3), satır mintick'i varsayım"] if "request.footprint" in src else []))
         yazar = calistir(modul, df)
         # nedensellik: geleceği gören kod kısa pencerede de aynı biçimde yakalanır; uzun geçmişte (1H ~80 bin bar) 6 kesim pahalı
         pencere = df.iloc[-NEDENSELLIK_BAR:]

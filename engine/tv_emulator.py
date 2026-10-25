@@ -85,7 +85,8 @@ class _Islem:
     bar: int
     komisyon: float
     dolan_cikislar: set = field(default_factory=set)   # Pine: aynı exit kimliği aynı giriş için bir kez dolar
-    kendi_cikisi: bool = False                 # kendi exit/close emriyle (yabancı FIFO kapanışı değil) azaldı mı
+    kendi_cikisi: bool = False
+    yorum: str = ""                 # kendi exit/close emriyle (yabancı FIFO kapanışı değil) azaldı mı
 
 
 @dataclass
@@ -249,7 +250,7 @@ class Baglam:
         cevrildi = bool(self.acik and self.acik[0].yon == -yon)
         if cevrildi:                                   # ters çevirme: önce karşı pozisyon kapanır (tek emir sayılır)
             dolum = self._kayma(fiyat, yon) if kaymali else fiyat
-            self._kapat(list(self.acik), None, dolum, bar, emir.kimlik, say=False)
+            self._kapat(list(self.acik), None, dolum, bar, emir.kimlik, say=False, yorum=emir.yorum)
             self.dolum_sayisi += 1
         if sum(1 for t in self.acik if t.yon == yon) >= max(1, self.a.pyramiding):
             return
@@ -259,7 +260,7 @@ class Baglam:
             return
         if not cevrildi:
             self.dolum_sayisi += 1
-        self.acik.append(_Islem(emir.kimlik, yon, adet, adet, dolum, bar, self._komisyon(dolum, adet)))
+        self.acik.append(_Islem(emir.kimlik, yon, adet, adet, dolum, bar, self._komisyon(dolum, adet), yorum=emir.yorum))
 
     def _ham(self, emir: _Emir, fiyat: float, bar: int, kaymali: bool) -> None:
         yon, kalan = emir.yon, float(emir.adet or 0.0)
@@ -267,11 +268,11 @@ class Baglam:
         if self.acik and self.acik[0].yon == -yon:
             mevcut = sum(t.adet for t in self.acik)
             kapanan = min(mevcut, kalan)
-            self._kapat(list(self.acik), kapanan, dolum, bar, emir.kimlik, say=False)
+            self._kapat(list(self.acik), kapanan, dolum, bar, emir.kimlik, say=False, yorum=emir.yorum)
             kalan -= kapanan
         self.dolum_sayisi += 1
         if kalan > 1e-12:
-            self.acik.append(_Islem(emir.kimlik, yon, kalan, kalan, dolum, bar, self._komisyon(dolum, kalan)))
+            self.acik.append(_Islem(emir.kimlik, yon, kalan, kalan, dolum, bar, self._komisyon(dolum, kalan), yorum=emir.yorum))
 
     def _oca_iptal(self, emir: _Emir) -> None:
         if emir.oca:
@@ -279,7 +280,8 @@ class Baglam:
                 if diger.oca == emir.oca:
                     del self.bekleyen[anahtar]
 
-    def _kapat(self, hedef: list[_Islem], adet: float | None, fiyat: float, bar: int, exit_id: str, say: bool = True) -> None:
+    def _kapat(self, hedef: list[_Islem], adet: float | None, fiyat: float, bar: int, exit_id: str, say: bool = True,
+               yorum: str = "") -> None:
         kalan = sum(t.adet for t in hedef) if adet is None else adet
         if say and kalan > 1e-12:
             self.dolum_sayisi += 1
@@ -296,7 +298,8 @@ class Baglam:
             self.kapali.append({"entry_id": t.entry_id, "exit_id": exit_id, "yon": t.yon, "adet": q,
                                 "giris_bar": t.bar, "giris_zaman": self.df.index[t.bar], "giris_fiyat": t.fiyat,
                                 "cikis_bar": bar, "cikis_zaman": self.df.index[bar], "cikis_fiyat": fiyat,
-                                "brut": brut, "komisyon": giris_kom + cikis_kom, "net": net})
+                                "brut": brut, "komisyon": giris_kom + cikis_kom, "net": net,
+                                "entry_comment": t.yorum, "exit_comment": yorum})
             t.adet -= q
             t.komisyon -= giris_kom
             kalan -= q
@@ -395,7 +398,7 @@ class Baglam:
         for t in hedef:
             t.dolan_cikislar.add(emir.kimlik)
             t.kendi_cikisi = True
-        self._kapat(uygula, adet, dolum, bar, emir.kimlik)
+        self._kapat(uygula, adet, dolum, bar, emir.kimlik, yorum=emir.yorum)
 
     def _temizle(self) -> None:
         """Bağlandığı işlemler kapanan çıkış emri düşer (Pine: girişi kapanan exit iptal olur)."""
@@ -420,7 +423,7 @@ class Baglam:
                     for t in hedef:
                         t.kendi_cikisi = True
                     self._kapat(self._uygulama(hedef), adet, self._kayma(fiyat, -hedef[0].yon), bar,
-                                emir.kimlik if emir.kimlik != "__hepsi__" else "close_all")
+                                emir.kimlik if emir.kimlik != "__hepsi__" else "close_all", yorum=emir.yorum)
             elif emir.tur in ("giris", "emir") and emir.piyasa:
                 del self.bekleyen[anahtar]
                 (self._ac if emir.tur == "giris" else self._ham)(emir, fiyat, bar, kaymali=True)

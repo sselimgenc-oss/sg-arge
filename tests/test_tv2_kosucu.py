@@ -86,3 +86,9 @@ def test_mapped_dukascopy_archive_is_used(monkeypatch, tmp_path) -> None:
 
     assert data is not None
     assert note == "Dukascopy EURUSD (eşleme)"
+
+
+def test_paid_data_rule() -> None:
+    assert tv2._ucretli("CME_MINI:MNQ1!", "1", "x = request.footprint(50, 70)")
+    assert tv2._ucretli("CME_MINI:NQ1!", "5", "x = close") is None
+    assert tv2._ucretli("BINANCE:BTCUSDT", "1", "x = request.footprint(50, 70)") is None
