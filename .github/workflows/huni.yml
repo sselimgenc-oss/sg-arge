@@ -168,6 +168,8 @@ jobs:
           done
 
   veri:
+    # U7'nin hedefli checkpoint işleri genel Faz 1 hunisini yeniden başlatmaz.
+    if: ${{ !inputs.faz1_u7 && !inputs.reddit_u7 }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
