@@ -91,4 +91,7 @@ Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dalla
   temsilcilik sıralama evreniyle tutarlı. Yeni koşu başlatılmadı.
 - **ALDIM: G3** — `lookahead_on` işaretlerinin kaynak bağlamı denetimi;
   yalnız risk sınıflaması, karar değişikliği yok.
+- **G3 tamamlandı:** Dokuz kaynak `docs/denetim/lookahead_baglami.md` içinde
+  sınıflandı: altısı önceki HTF barı (`[1]`), üçü geri kaydırmasız riskli
+  kullanım. Etiket, kapı ve sıralama değişmedi.
 
