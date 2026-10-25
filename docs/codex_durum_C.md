@@ -68,3 +68,16 @@ Dal: `codex/analiz`
 Karar, kapı ve eşik değiştirilmedi. TV-2 ve U7 sonuçları ilgili uzak dallardan
 `git show` ile salt-okunur okunacaktır.
 
+## 7.1 — C oturum özeti
+
+1. S1 denetimi tamamlandı; dış TradingView işlem-listesi karşılaştırması açık risktir.
+2. ML `dsr`/`n_eff` bilgi sütunları eklendi; kapı ve sıralama değişmedi.
+3. U7 için 85 uygun varyanttan 72 küme temsilcisi sıralandı.
+4. Copy-trade iddiaları bağlantılı sonuç tablosuyla denetlendi; para/hukuk kararı verilmedi.
+5. Faz 3 yürütme riskleri belgeye işlendi.
+6. Sanal havuz yalnız öneri olarak TV-2 19 satır / 15 temsilci snapshot'ıyla yazıldı.
+7. Test paketi 1320 geçti, 4 atlandı; en yavaş test 9.51 sn'ye indirildi.
+8. Kütüphane import kullanan altı TV-2 kaynağı yeniden koşuldu.
+9. E3, iki kaynak denemesinde sadık tarihsel eşleme bulunamadığı için takıldı.
+10. E8, resmî renko algoritması yetersiz tanımlı olduğu için takıldı; ücretli footprint/veri vekilliği kararları kullanıcı listesinde.
+
