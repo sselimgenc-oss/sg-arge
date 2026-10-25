@@ -58,6 +58,10 @@ Dal: `codex/analiz`
   kanıtı vermedi. Sadık olmayan vekil eşleme eklenmedi; yeniden koşu yapılmadı.
 - **ALDIM: E8** — `ticker.renko` / `request.security` için belgelenmiş kısmı
   denetleme; belirsiz algoritmayı listeleme.
+- **TAKILDI: E8** — `docs/CODEX_SIRA.md` 5.2'deki belge denetimi doğrulandı:
+  resmî kaynak ticker kimliği ve `request.security` örneğini açıklar, fakat
+  Traditional/ATR tuğla oluşumu, ters dönüş ve zaman eşleme algoritmasını
+  tanımlamaz. Sadık olmayan uygulama eklenmedi.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
