@@ -50,6 +50,8 @@ Dal: `codex/analiz`
   `adaptivePredict` ve `closure` çağrıları sıcak yol olarak belgelendi
   (`docs/denetim/yavas_profil.md`). Sadık AST'yi değiştirmeden uygulanabilir
   hızlandırma doğrulanamadığından yorumlayıcı kodu değiştirilmedi.
+- **ALDIM: E3** — `veri_yok` kripto stratejilerinde ikinci kaynak deneme ve
+  bulunanları yeniden koşma.
 
 İstenen sıra: `6.3 → 6.7 → 6.1 → 6.6 → 6.4`
 
