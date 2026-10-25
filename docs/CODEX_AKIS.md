@@ -42,3 +42,5 @@ Kullanıcı: "lider limiti yenilenene kadar ne kadar çok iş varsa yapsın". Ke
 - **E6:** Test paketi süresini ölç; 10 saniyeden uzun testleri hızlandır (davranış aynı).
 - **E7:** `docs/SANAL_HAVUZ.md` taslağını TV-2'nin son sayılarıyla güncelle (yalnız öneri).
 - **E8:** Ertelenen 5.2 renko. TradingView belgesinde yalnız açıkça yazan kısmı (kutu boyu, kapanış tabanlı) uygula; belirsizi listele.
+
+**Lider notu 23:45 TR (A için):** Kripto dışı koşu 40226355510 8/8 başarılı bitti ama dala yalnız parça 7 commit'i düştü (a7482e3). Diğer parçalarda commit adımında push reddedildi, kurtarma "nothing to commit" dedi; satırlar commit edilmedi (log: job 121268458337). Yapılacak: (1) artifact kurtarma betiğiyle 0–6 parçalarını dala al, (2) tv2.yml commit adımını düzelt: reddedilen push sonrası `git fetch` + `git reset --soft`/rebase yerine yeni HEAD üstüne satırları yeniden kopyalayıp commit et, (3) `--birlestir` + `tv2_sirala`. Parça başına satır sayısı az görünüyor (parça 1: 2 satır); kuyruğun kaçının koşulduğunu say, atlananları sebebiyle raporla.
