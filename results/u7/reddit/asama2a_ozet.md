@@ -9,7 +9,7 @@ Kart: 3 | T6b'ye gecen: 0 | elenen/dogrulanamaz: 3
 
 | Kart | Piyasa | Para | Islem | PF | ortR | null PF p95 | null ortR p95 | p(PF) | p(ortR) | Tekrar | Karar |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| RD-01 | ABD25 | yerel | 1590 | 1.25 | 0.025 | 1.63 | 0.121 | 0.990 | 1.000 | 200 | Reddedildi (piyasa betasi): PF p=0.990, ortR p=1.000 (esik 0.05) |
+| RD-01 | ABD25 | yerel | 1591 | 1.25 | 0.025 | 1.66 | 0.123 | 0.995 | 1.000 | 200 | Reddedildi (piyasa betasi): PF p=0.995, ortR p=1.000 (esik 0.05) |
 | RD-02 | ABD25 | yerel | 373 | 1.34 | 0.060 | 1.81 | 0.246 | 0.826 | 1.000 | 200 | Reddedildi (piyasa betasi): PF p=0.826, ortR p=1.000 (esik 0.05) |
 | RD-03 | ABD25 | yerel | 30 | 2.48 | 0.059 | 2.34 | 0.137 | 0.040 | 0.438 | 200 | Reddedildi (piyasa betasi): PF p=0.040, CAGR p=0.438 (esit 0.05) |
 
