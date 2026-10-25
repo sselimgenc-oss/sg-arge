@@ -53,6 +53,7 @@ KAPI_HAFTA = 10
 NEDENSELLIK_BAR = 15_000
 DAKIKALIK_ALT = 15            # bu dakikanın altı yalnız --dakikalik ile ve pencereli koşulur
 DAKIKALIK_KOS = False
+OKX_ARALIK = {"1m": "1m", "3m": "3m", "5m": "5m", "15m": "15m", "30m": "30m", "1h": "1H", "2h": "2H", "4h": "4H", "6h": "6H", "12h": "12H", "1d": "1D"}
 BINANCE_UM_KLINES_URL = "https://fapi.binance.com/fapi/v1/klines"
 
 
@@ -71,6 +72,29 @@ def _binance_sembol(sembol: str) -> str:
     if s.startswith("XBT"):
         s = "BTC" + s[3:]
     return s[:-3] + "USDT" if s.endswith("USD") and not s.endswith("USDT") else s
+
+
+def _okx_veri(bsym: str, dk: int) -> tuple[pd.DataFrame | None, str]:
+    """Try a public OKX swap candle page when Binance has no symbol."""
+    interval = next((v for k, v in OKX_ARALIK.items() if dakika(k) == dk), None)
+    if interval is None or not bsym.endswith(("USDT", "USDC")):
+        return None, f"veri_yok: OKX aralık/sembol {bsym}"
+    quote = "USDC" if bsym.endswith("USDC") else "USDT"
+    inst = f"{bsym[:-len(quote)]}-{quote}-SWAP"
+    try:
+        response = requests.get("https://www.okx.com/api/v5/market/candles",
+                                params={"instId": inst, "bar": interval, "limit": 1000}, timeout=30)
+        response.raise_for_status()
+        payload = response.json()
+        rows = payload.get("data", []) if payload.get("code") == "0" else []
+    except (requests.RequestException, ValueError):
+        return None, f"veri_yok: OKX {inst}"
+    if not rows:
+        return None, f"veri_yok: OKX {inst}"
+    frame = pd.DataFrame(rows, columns=["timestamp", "open", "high", "low", "close", "volume", "volume_ccy", "volume_ccy_quote", "confirm"])
+    frame.index = pd.to_datetime(frame.pop("timestamp").astype("int64"), unit="ms", utc=True)
+    frame = frame[["open", "high", "low", "close", "volume"]].apply(pd.to_numeric, errors="coerce").dropna()
+    return _kapanmis(frame.sort_index(), dk), f"OKX {inst} {interval} (ikinci kaynak)"
 
 
 def binance_tick(bsym: str) -> float:
@@ -115,8 +139,14 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
                                        url=BINANCE_UM_KLINES_URL)
                     kaynak = "binance_um"
                 except requests.HTTPError:
+                    alt, alt_note = _okx_veri(bsym, dk)
+                    if alt is not None:
+                        return alt, alt_note
                     return None, f"veri_yok: Binance spot/UM {bsym} yok"
             if df.empty:
+                alt, alt_note = _okx_veri(bsym, dk)
+                if alt is not None:
+                    return alt, alt_note
                 return None, f"veri_yok: Binance {bsym}"
             CACHE.mkdir(parents=True, exist_ok=True)
             df.to_parquet(yol)
