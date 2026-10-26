@@ -1,25 +1,15 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-26 11:45 UTC, lider (Opus). Son denetim: `docs/denetim/2026-10-26-1115.md`.
+Son güncelleme: 2026-10-26 (akşam), lider. Faz 1 kapanış: `docs/FAZ1_KAPANIS.md`.
 
 ## Şu an
-**Faz 2: paper trade çalışıyor.** C07 + R01 (ABD günlük) + A6-010 (emtia günlük), eşit ağırlık, 5.000 USD sanal (`paper/portfoy.yaml`). Gerçek para yok.
-- Defter 2026-09-01'den geriye dönük (aynı kurallar, gerçek veri); **canlı paper 2026-10-24'ten itibaren.** Karar canlı döneme bakılarak verilir.
-- `paper.yml` saat :17'ye zamanlı ama GitHub cron'u atlıyor: pratikte ~3,5-5 saatte bir. **Kullanıcı kararı 2026-10-24: kabul** (denetim A1 kapandı; defter günlük kapanışla çalıştığı için işlemler etkilenmez, yalnız pano gecikir). Defter yalnız kapanmış günlük barla (yarım bar koruması); açık pozisyonlar saatlik fiyatla yalnız panoda değerlenir.
-- Pano: `sg-pano` reposu, GitHub Pages (https://sselimgenc-oss.github.io/sg-pano/). Veri `PANEL_TOKEN` ile gönderilir.
-- Alarmlar: portföy MDD %10 uyarı, %15 yeni giriş durur; bir satır 30 kapanmış işlemden sonra PF < 1 ise inceleme.
-- **Gölge kitap** (ana portföyden ayrı, `docs/GOREV_F2_GOLGE.md` Ek 2): U4-H1 (kripto 4H), T8-07 ve V2B (emtia 1H); her biri 5.000 USD, risk %0,25; 2026-09-01'den geriye dönük, canlı 2026-10-24'ten. Karar yalnız canlı döneme bakılarak, 6 ay sonra.
+**FAZ 1 KAPANDI (2026-10-26, kullanıcı onayı).** Rapor: `docs/FAZ1_KAPANIS.md`.
+**Paper (yeni portföy, 2026-10-26'dan):** 11 kitap — ABD 4, kripto 5, emtia 2; tek portföy 5.000 USD sanal, %75 kitaplarda, %25 nakit (`paper/portfoy.yaml`). Gerçek para yok.
+- Risk: kitap zirveden %10 → kitap durur; portföy zirveden %5 → yeni giriş durur.
+- Eski Faz 2 paper kitapları (C07, R01, A6-010, gölge U4-H1/T8-07/V2B) emekli; defter `paper-defter` dalında `paper/defter/arsiv/2026-10-26/`.
+- Pano: `sg-pano` (GitHub Pages), `PANEL_TOKEN` ile.
 
-| Ajan | Görev |
-|---|---|
-| Lider | Lider + **denetçi** (6 saatte bir, `docs/denetim/`). U7 denetimi, `results/U7_SONUC.md`. |
-| Codex | U7 (#200) **birleşti**. TV-2 kripto + kripto dışı + analiz ana dala birleştirildi (2026-10-26 denetimi). Sırada: kripto dışı 556 kimliğin yeniden koşusu (`tv2.yml` commit hatası düzeltildi), NVDAX veri kaynağı, `docs/CODEX_AKIS.md` havuzu. |
-| Sonnet | **Limit bitti, 2026-10-27 Salı 18:00'e kadar görev yok.** Son iş: GOREV_U7 Ek 4 (#206, birleşti): 17 kart çevrildi, 21 Doğrulanamaz (çoğu durum makinesi/açık kâr/izleyen stop: TV-2 yürütücüsüyle yeniden ele alınır). |
-| Argon | Derin araştırma (abonelik 3 ay). Teslim: copy trade, ML, radar, pano, risk, emir yolu (`arastirma/`). Sırada: veri kaynakları, vergi, BIST maliyet, Telegram rehberi, Renko. |
-
-**TV-2** (`docs/GOREV_TV2.md`, `docs/TEST_YAPISI.md`): Pine kodu çeviri yapılmadan yürütülür (`engine/pine`, `engine/tv_emulator.py`, `backtests/tv2.py`). Açık kaynak 969 (+33 kapalı/bulunamadı); kapsam kuralı Ek 2: her strateji sonuç ya da çözüm görevi. Kripto 296: 92+ koşuldu (19 geçti), kalan 204 lider ortamında kuyrukta. Kripto dışı 636 veri eşlemesi bekliyor (yfinance gün içi hazır; Dukascopy/vnstock Codex). Yorumlayıcı 2026-10-24/25 gecesi: calc_on_order_fills, gün içi risk, Heikin Ashi, matrix, alt dilim, kütüphane import, enum, FIFO kapanış, hızlı ayrıştırıcı (~100x). Yapay veri taraması: 969'un ~%90'ı çalışıyor.
-
-**Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`, ek: `docs/denetim/2026-10-24-1846.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
+**Faz 2 başı (sıralı):** (1) TV-2 Pine paper motoru — G4RNcGXg, wcegMOXj (BTC→USD), yhoK9cH4; kaynaklar `paper/tv2_kaynak/`; (2) 200 günlük ortalama kuralı (nedensel); (3) QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I doğrulamaları; (4) repo temizliği (aşağıda madde 5, silme listesi kullanıcıya gösterilecek).
 
 ## Faz 1 NİHAİ KARAR (kullanıcı onayı 2026-10-26)
 `docs/faz1_son_denetim.md` → ilk dalga 11 risk kitabı + 3 gölge (kripto). Paper öncesi kontroller tamam (#246). **Kullanıcı onayı 2026-10-26: paper başlasın; "gölge" yok — 3 kripto kitabı normal kitap.** Kurulum: `docs/GOREV_PAPER_KURULUM.md` (Aşama A 11 U7 kitabı, Aşama B 3 TV-2 kitabı). Eski 6 paper kitabı arşive. Sonra: `paper/` uygulaması (kullanıcı onayı), Faz 1 sonuç raporu, repo temizliği.
