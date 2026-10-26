@@ -444,14 +444,17 @@ def kos(kimlik: str) -> dict:
             " (harici gösterge bağlayıcısı: sinyal input.source ile başka göstergeden bekleniyor)" if baglayici else "")}
     elif bas is None:
         satir |= {"karar": "izle", "neden": "sürüm tarihi yok: sınama dönemi belirlenemedi"}
-    elif etiket == "yetersiz_kanit":
-        satir |= {"karar": "izle", "neden": "sürüm sonrası 1 yıldan az veri"}
-    elif satir["uyg_sinama_hafta"] < KAPI_HAFTA:
-        satir |= {"karar": "izle", "neden": f"sınamada {satir['uyg_sinama_hafta']} işlem haftası (< {KAPI_HAFTA})"}
+    elif not satir["uyg_sinama_islem"]:
+        satir |= {"karar": "islem_yok", "neden": "sınamada 0 işlem"}
     elif satir["uyg_sinama_net_yuzde"] > 0:
         satir |= {"karar": "gecti", "neden": ""}
     else:
         satir |= {"karar": "kaldi", "neden": "uygulanabilir sınama net <= 0"}
+    # Kullanıcı kararı 2026-10-26: kısa sınama bekletilmez, aynı tek kapıdan geçer;
+    # kısa olduğu yalnız bilgi olarak işaretlenir.
+    if bas is not None and not hatalar and satir["yazar_tum_islem"] and (
+            etiket == "yetersiz_kanit" or satir["uyg_sinama_hafta"] < KAPI_HAFTA):
+        satir["kisa_sinama"] = True
     return satir
 
 

@@ -42,10 +42,14 @@ def _sahte(monkeypatch, surum: str | None, trend: float) -> dict:
 def test_decision_labels(monkeypatch) -> None:
     assert _sahte(monkeypatch, None, 0.002)["karar"] == "izle"                      # sürüm tarihi yok
     assert _sahte(monkeypatch, "2024-03-01", 0.002)["etiket"] == "yetersiz_kanit"   # sürüm sonrası < 1 yıl
-    assert _sahte(monkeypatch, "2024-03-01", 0.002)["karar"] == "izle"
+    kisa = _sahte(monkeypatch, "2024-03-01", 0.002)                                  # kısa sınama aynı kapıdan geçer
+    assert kisa["kisa_sinama"] is True
+    assert kisa["karar"] == ("islem_yok" if not kisa["uyg_sinama_islem"]
+                             else "gecti" if kisa["uyg_sinama_net_yuzde"] > 0 else "kaldi")
     satir = _sahte(monkeypatch, "2022-12-01", 0.002)
-    assert satir["etiket"] == "temiz" and satir["karar"] in {"gecti", "kaldi", "izle"}
-    assert satir["karar"] == ("izle" if satir["uyg_sinama_hafta"] < tv2.KAPI_HAFTA
+    assert satir["etiket"] == "temiz" and satir["karar"] in {"gecti", "kaldi", "islem_yok"}
+    assert satir.get("kisa_sinama", False) == (satir["uyg_sinama_hafta"] < tv2.KAPI_HAFTA)
+    assert satir["karar"] == ("islem_yok" if not satir["uyg_sinama_islem"]
                               else "gecti" if satir["uyg_sinama_net_yuzde"] > 0 else "kaldi")
 
 
@@ -116,6 +120,27 @@ def test_library_source_uses_inventory_pub_and_version(monkeypatch, tmp_path) ->
     assert tv2.kutuphane_kaynak("ben", "lib", 3) == "export f() => 1"
     assert calls == [("https://pine-facade.tradingview.com/pine-facade/get/PUB%3Babc123/3?no_4xx=true", 30)]
 
+
+
+def test_crypto_falls_back_from_spot_to_binance_um(monkeypatch, tmp_path) -> None:
+    index = pd.date_range("2024-01-01", periods=3, freq="1h", tz="UTC")
+    frame = pd.DataFrame({"open": 1., "high": 1., "low": 1., "close": 1., "volume": 1.}, index=index)
+    urls = []
+
+    def fetch(_asset, _interval, **kwargs):
+        urls.append(kwargs.get("url", "spot"))
+        if kwargs.get("url") is None:
+            raise tv2.requests.HTTPError("spot yok")
+        return frame
+
+    monkeypatch.setattr(tv2, "CACHE", tmp_path)
+    monkeypatch.setattr(tv2, "fetch_binance", fetch)
+    monkeypatch.setattr(tv2, "_kapanmis", lambda df, _dk: df)
+
+    data, note = tv2.veri("BYBIT:TSLAXUSDT.P", "60")
+
+    assert data is not None and note.startswith("binance_um TSLAXUSDT")
+    assert urls == ["spot", tv2.BINANCE_UM_KLINES_URL]
 
 
 def test_nvdaxusdt_is_not_substituted_with_binance_nvdausdt(monkeypatch, tmp_path) -> None:
