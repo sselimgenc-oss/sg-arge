@@ -14,13 +14,12 @@
 - Actions koşularını başlatma yetkisi olan oturum başlatır; yoksa durum dosyasına `KOSU_ISTEGI: dal, iş akışı, girdiler` yaz, kullanıcı başlatır.
 
 ## Oturum 1: TV-2 sonuç (dal `codex/tv2-son`, `main`'den; durum `docs/codex_durum_1.md`)
-1. **Kripto dışı koşu 40316028018** bitince: `codex/kripto-disi`'deki yeni satırları `codex/tv2-son`'a birleştir; 636 kimliğin kaçının satırı var say. Eksik varsa yalnız eksikler için yeni kuyruk → `KOSU_ISTEGI`.
-2. `python -m backtests.tv2 --birlestir` + `python -m backtests.tv2_sirala`; kripto dışı geçenleri `docs/denetim/tv2_supheli.md` ölçütleriyle tara (aşırı getiri, < 30 işlem, `lookahead_on`, `veri_kisa`).
-3. **NVDAXUSDT veri kaynağı:** Binance USD-M'de bu sembol yok (Argon raporu; Binance'te NVDAUSDT). Satırın verisi nereden geldi? Yanlışsa satırı `veri_yok` neden "sembol eşlemesi yanlış" olarak düzelt; doğru eşleme NVDAUSDT ise yeniden koş. Aynı denetimi diğer TradFi perp eşlemeleri için yap.
-4. `zaman_asimi` 13 kimlik: `uzun=true` tekil koşu, aynı anda 1 (`KOSU_ISTEGI`).
-5. `lookahead_baglami.md`'deki 3 riskli kaynak: geçti/izle kararı varsa satıra `lookahead_riskli=true` bilgi sütunu (kapı değişmez) ve kaynak satır numarası.
-6. **`izle` → karar (kullanıcı kararı 2026-10-26):** "sürüm sonrası 1 yıldan az veri" ve "< 10 işlem haftası" nedeniyle `izle` kalan satırlara **eldeki sınama penceresiyle** aynı tek kapı uygulanır: uygulanabilir sınama net > 0 → `gecti`, değilse `kaldi`; sınamada hiç işlem yoksa `islem_yok`. Satıra `kisa_sinama=true` bilgi sütunu ve sınama hafta sayısı yazılır; yeniden koşu gerekmez (satırdaki değerler yeterli). `tv2_sirala` bu satırları da sıralar. Kapı eşiği değişmez. Lider ön sayımı: 373 izle → ~66 gecti, ~307 kaldi/islem_yok.
-7. PR: `[TV-2] kripto dışı sonuçlar + eşleme düzeltmeleri + izle kararı`.
+**Kullanıcı 2026-10-26: yalnız stratejileri netleştiren işler. Başka iş yok.** Sıra:
+1. `codex/kripto-disi` satırlarını birleştir (koşu 40316028018 bitti) + **`izle` kararı**: kısa sınama penceresiyle aynı tek kapı (net > 0 → `gecti`, değilse `kaldi`, işlem yoksa `islem_yok`; `kisa_sinama=true` bilgi). Yeniden koşu yok.
+2. `python -m backtests.tv2 --birlestir` + `python -m backtests.tv2_sirala` → **PR hemen** (`[TV-2] kripto dışı + izle kararı`).
+3. **Dukascopy (veri_yok 214 + Dukascopy karşılığı olan ABD endeks CFD'leri):** indirme adımı (Actions cache, repoya veri yok) + yalnız bu kimliklerle kuyruk → `KOSU_ISTEGI`. Ayrı PR.
+4. Geri kalan bütün `veri_yok` (yerel piyasa, Binance'ten kalkmış, eşleme) ve `zaman_asimi` 13: **yeni deneme yok**, mevcut nedenle kapanır.
+Kapı, maliyet, karar kodu değişmez.
 
 ## Oturum 2: U7 kapanış + havuz (dal `codex/u7-son`, `main`'den; durum `docs/codex_durum_2.md`)
 1. **U1 5m:** 14 varyantın 6'sı bitti. `huni.yml` `u1_5m=true` + `--resume` ile kalan 8 (`KOSU_ISTEGI`); bitince `u7_ozet` yenile.
@@ -30,7 +29,6 @@
 5. PR: `[U7] kapanış + sanal havuz önerisi`.
 
 ## Bekleyen (sırası gelmedi, kullanıcı/Argon girdisi bekliyor)
-- `veri_yok` 77 ve vnstock (BIST): Argon veri kaynakları raporu gelince.
 - Renko (E8): Argon raporu geldi (`arastirma/renko/`). TradingView ATR kutu boyunu **son barın ATR'siyle bütün geçmişe** uygular ve Renko geri testleri sentetik açılış fiyatından dolum yüzünden sistematik olarak sahte kâr üretir (TradingView belgesi). Öneri: Renko stratejileri yorumlanmaz, `desteklenmiyor` nedeni "renko geri testi güvenilmez" ile kapanır **Kullanıcı onayladı (2026-10-26).** Oturum 1, sırası gelince Renko kullanan stratejileri bu nedenle kapatsın.
 - Faz 2 Telegram/Cloudflare: kullanıcı hesap kararı + Argon rehberi.
 - Faz 3 risk kuralları: kullanıcı onayı.
