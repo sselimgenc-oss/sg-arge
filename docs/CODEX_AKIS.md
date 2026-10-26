@@ -22,6 +22,10 @@
 Kapı, maliyet, karar kodu değişmez.
 
 ## Oturum 2: U7 kapanış + havuz (dal `codex/u7-son`, `main`'den; durum `docs/codex_durum_2.md`)
+**ACİL (lider, koşu 40324514036 başarısız):**
+- (a) `u1_5m` işi yalnız 6 varyantı listeledi, hepsi zaten `checkpoint`; kalan 8 varyant **hiç koşmadı** (adım 1 sn). Neden listede yok? `u1_huni.py --tf 5m` ızgarasını `docs/GOREV_U1.md` ile karşılaştır; 14 değil 6 ise "kalan 8" yanlış sayımdır, durum dosyasına yaz.
+- (b) Commit adımı: `git pull --rebase` "unstaged changes" ile 4 kez düştü, döngü sessizce bitti, `faa7e61` itilmedi. `huni.yml`'de pull'dan önce `git stash -u` (ya da `git checkout -- . && git clean -fd` yalnız izlenmeyen veri için) ve döngü sonunda başarısızsa `exit 1`. tv2.yml'deki düzeltmenin aynısı.
+- (c) `sonuc_pr`: "GitHub Actions is not permitted to create pull requests". Sonuçlar `huni/40324514036` dalında (SONUC.csv/md). Bu dalı `codex/u7-son`'a birleştir; PR açma adımı başarısızsa işi düşürmesin (`|| echo`), lider PR'ı elle açar.
 1. **U1 5m:** 14 varyantın 6'sı bitti. `huni.yml` `u1_5m=true` + `--resume` ile kalan 8 (`KOSU_ISTEGI`); bitince `u7_ozet` yenile.
 2. Faz 1 2b'deki 10 `Koşullu` satırın şerh nedenlerini tek tabloda topla (`results/u7/kosullu.md`); karar değiştirme.
 3. `results/u7/siralama.csv`'yi `main`'deki U7 sonuçlarıyla yeniden üret (TV-2 ile aynı yöntem; `dsr`/`n_eff` bilgi).
