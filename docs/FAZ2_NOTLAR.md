@@ -13,6 +13,17 @@
 - **Akış:** tara → mevcut 422 kartla tekrar ele (URL + isim benzerliği) → `docs/radar/<yıl>-W<hafta>.md` PR'ı → ajan kartı yazar (uydurma yok) → `huni.yml`.
 - **Kısıtlar:** Yalnız ücretsiz kaynaklar. Giriş yapılmaz, form doldurulmaz. Kart yazımı ajanla yapılır; otomatik LLM çağrısı ücretli olduğu için yalnız kullanıcı onayıyla eklenir.
 
+### Argon radar notu (2026-10-26, `arastirma/radar_notu.md`) — lider özeti
+- **Otomatik okunabilir, izinli:** arXiv q-fin (RSS + API, istekler arası 3 sn), GitHub Search API (anahtarlı; arama 30/dk),
+  Reddit `r/algotrading/.rss` (anahtarsız JSON kapalı), QuantifiedStrategies RSS, Quantpedia blog RSS.
+- **Otomatik okunmaz:** SSRN (bot yasak), PapersWithBacktest (tam kod ücretli), ProRealCode toplu indirme önerilmiyor
+  (tekil sayfa, elle bağlantı).
+- **Telif:** QuantifiedStrategies metni kopyalanmaz; kartta yalnız kural özeti + bağlantı.
+- **Kalite sırası:** akademik (arXiv/Quantpedia) > küratörlü replikasyon > kural blogları > GitHub/ProRealCode > Reddit.
+- **McLean–Pontiff (2016):** yayın sonrası getiri ortalama %58 düşer (%26'sı veri madenciliği); en hızlı düşen,
+  yalnız fiyat/hacimden hesaplanan teknik kurallar. Bizim kapı zaten yalnız yayım sonrası dönemi sayıyor (uyumlu);
+  radar yeni yayınlara (arXiv ön baskı) ve fiyat dışı veriye (funding, açık pozisyon, tasfiye) öncelik versin.
+
 ## 2. strateji-test-pano: Faz 2 arayüzü
 **Kullanıcı kararı:** Bu depo arayüz ve fikir taslağı olarak hazırlandı; içindeki stratejiler ve rakamlar önemli değil. Faz 1'den sonra bu arayüz bizim gerçek sonuçlarımızla doldurulup faaliyete alınacak.
 
@@ -355,3 +366,24 @@ kararı olarak kullanılmayacak.
 
 ## 9. BIST strateji fikirleri (Argon, 2026-10-26)
 `arastirma/bist/bist_viop_maliyet_anomaliler_2026.pdf` bölüm 3: 8 fikir (gece/kapanış seansı, 1 hafta atlamalı momentum + PD/DD, temettü sonrası sürüklenme, bilgi şoku, yabancı akışı, pay geri alım duyurusu, endeksten çıkarılma, bayram öncesi). Raporun brüt alfa rakamları doğrulanmadı. Günlük veriyle test edilebilenler (momentum, endeksten çıkarılma, bayram, temettü) radar kartı olarak sıraya alınabilir; veri (temettü/endeks değişikliği tarihleri, KAP) eksik olanlar sonra.
+
+### Argon Hyperliquid notu (2026-10-26, `arastirma/copytrade/hyperliquid_notu.md`) — lider özeti
+- **Veri (ücretsiz, anahtarsız):** lider tablosu `stats-data.hyperliquid.xyz/Mainnet/leaderboard`; `/info`:
+  `portfolio`, `userFills(ByTime)` (son 10.000 işlem), `clearinghouseState` (açık pozisyon, kaldıraç); WebSocket
+  `userFills` anlık. REST sınırı IP başına 1.200 ağırlık/dk.
+- **Kritik sınır:** WebSocket'te IP başına en çok **10 farklı cüzdan** anlık izlenir. Tasarım: seçilmiş ≤ 10 cüzdan
+  WebSocket'te, adaylar `clearinghouseState` REST yoklamasıyla (ağırlık 2) dakikalık.
+- **Lider tablosu tuzağı:** PnL açık pozisyon kârını içerir, ikiz hesap mümkün → yalnız **gerçekleşmiş net PnL**
+  (komisyon + funding sonrası) sayılır.
+- **Seçim ölçütleri:** Sortino > 1,5; Calmar > 1; K-oranı > 1,5; en büyük işlem/gün toplam kârın < %30'u ve en iyi
+  işlem çıkarılınca PF > 1,2; MAE ile martingale/zarara ekleme tespiti; DSR ile seçim yanlılığı (binlerce cüzdan).
+- **Kopyalanabilir tarz:** yalnız tutma süresi saat–gün, düşük–orta kaldıraç, likit coin. Scalp/HFT, piyasa yapıcı,
+  20x+ kaldıraç, sığ altcoin kopyalanamaz (gecikme 0,5–2 sn, taker %0,035–0,045, min emir 10 USD).
+- **Karar süresi:** sanal kopyada en az 4–12 hafta ve 50–100 işlem; canlıda %30–50 bozulma beklenir.
+- **Güvenlik:** API ajan cüzdanı işlem imzalar, **para çekemez**; sunucuya yalnız ajan anahtarı konur.
+- **Hukuk/vergi (2026, doğrulanacak):** SPK yurt dışı platformlara erişim engeli koyabiliyor (PancakeSwap örneği);
+  bireysel kripto kazancına özel vergi şu an yok, genel hükümler ve kayıt saklama geçerli. Kullanıcı ve uzman kararı.
+
+**Lider önerisi — aşamalar:** (1) Tarama, 0 USD, Actions günlük: lider tablosu anlık görüntüsü → ölçütler →
+aday listesi, kendi kaydımızla ileriye dönük geçmiş biriktirme. (2) Sunucu: ≤ 10 cüzdan anlık sanal kopya
+(gecikme + kayma + komisyon + funding dahil). (3) Faz 3: kullanıcı onayıyla küçük gerçek kopya, ajan cüzdanı.
