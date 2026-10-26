@@ -27,6 +27,7 @@ Faz 1 şu dört şart sağlanınca kapanır; sonrası Faz 2/3:
 2. **Sıralama tek tabloda:** TV-2 + U7 geçenler, aynı yöntemle (`tv2_sirala`, kopya ayıklama).
 3. **Aday tablosu → kullanıcı seçimi:** geçen bütün küme temsilcileri (TV-2 + U7 + Dukascopy sonrası) tek tabloda (`results/faz1_adaylar.csv` + `.md`); paper'a hangilerinin gireceğini kullanıcı eleyerek seçer (kullanıcı kararı 2026-10-26).
 4. **Faz 1 sonuç raporu** (lider): geçenler, kalanlar, kapanmayanların nedeni.
+5. **Repo temizliği (kullanıcı onayı 2026-10-26):** seçimden sonra `faz1-son` etiketi; kalan stratejilerin satır/getiri dosyaları ve kodları, eski görev/durum/denetim notları `main`'den kaldırılır. Kalır: geçenler + kodları, aday tablosu, tek özet `results/faz1_tum_sonuclar.csv` (kimlik, sembol, karar, neden; DSR deneme sayısı ve radar tekrar ayıklaması için), motor, paper. Testlerin kullandığı örnekler korunur; silme listesi birleştirmeden önce kullanıcıya gösterilir.
 Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 kuyruğuna gider.
 
 **Durum 2026-10-26 16:30 TR (kullanıcı kararı: Faz 2/3 araştırması durduruldu, tüm güç Faz 1'e):**
