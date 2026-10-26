@@ -13,7 +13,7 @@ Son güncelleme: 2026-10-26 (akşam), lider. Faz 1 kapanış: `docs/FAZ1_KAPANIS
 
 **Kullanıcı kararı 2026-10-26 (4 doğrulama):** QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I kapıyı geçti ama getiri küçük / kanıt zayıf (`docs/faz2_dogrulama.md`) → paper'a **alınmadı**; konu kapandı.
 
-**Faz 2 başı (sıralı):** (1) TV-2 Pine paper motoru — G4RNcGXg, wcegMOXj (BTC→USD), yhoK9cH4; kaynaklar `paper/tv2_kaynak/`; (2) 200 günlük ortalama kuralı (nedensel); (3) QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I doğrulamaları. Repo temizliği yapıldı (madde 5).
+**Faz 2 başı — KAPANDI (2026-10-26):** TV-2 Pine kitapları G4RNcGXg + yhoK9cH4 paper'da (#256; wcegMOXj kullanıcı kararıyla çıktı); 4 doğrulama yapıldı, paper'a alınmadı (#258); 200 günlük kural kullanıcı kararıyla kaldırıldı (test edilmemiş kural paper'ı test edilenden farklılaştırırdı). **Strateji seçimi kapandı; Faz 2 asıl iş: pano + koç (`docs/GOREV_FAZ2_PANO.md`).**
 
 ## Faz 1 NİHAİ KARAR (kullanıcı onayı 2026-10-26)
 `docs/faz1_son_denetim.md` → ilk dalga 11 risk kitabı + 3 gölge (kripto). Paper öncesi kontroller tamam (#246). **Kullanıcı onayı 2026-10-26: paper başlasın; "gölge" yok — 3 kripto kitabı normal kitap.** Kurulum: `docs/GOREV_PAPER_KURULUM.md` (Aşama A 11 U7 kitabı, Aşama B 3 TV-2 kitabı). Eski 6 paper kitabı arşive. Sonra: `paper/` uygulaması (kullanıcı onayı), Faz 1 sonuç raporu, repo temizliği.

@@ -36,7 +36,9 @@ Ağırlık toplamı .75 → .90 olur; kalan .10 nakit rezerv.
    için, sabit örnek veriyle).
 8. Yerel prova çıktısı PR açıklamasına.
 
-## İş 2 — 200 günlük ortalama kuralı (PR: `[Faz2] 200 günlük kural`)
+## İş 2 — İPTAL (kullanıcı kararı 2026-10-26: stratejiler bu kuralla test edilmedi; uygulanmayacak)
+
+~~200 günlük ortalama kuralı~~
 
 Kural (`docs/PAPER_PLAN.md`): bir kitabın **yeni uzun** girişinde, referansın **sinyal gününden önceki kapanmış günlük
 kapanışı** 200 günlük basit ortalamasının altındaysa giriş büyüklüğü **yarıya** iner. Referans (lider kararı): ABD ve Emtia kitapları
