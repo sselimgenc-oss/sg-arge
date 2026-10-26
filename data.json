@@ -2,7 +2,7 @@
   "meta": {
     "title": "Kağıt Hesaplar",
     "subtitle": "sg-arge Paper Portföyü: C07, R01, A6-010 / 5,000 $ sanal sermaye (1/N)",
-    "last_update": "26/10 09:16",
+    "last_update": "26/10 16:16",
     "test_period": "gün 53 · 01.09.2026–23.10.2026 geriye dönük (aynı kurallar, gerçek veri) · 24.10.2026'dan itibaren canlı paper",
     "exchange_rate": null,
     "currency": "USD",
@@ -10,7 +10,7 @@
     "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
     "data_version": "sgarge_paper_v1",
     "veri_notu": null,
-    "updated_at": "2026-10-26T06:16:36.270884+00:00",
+    "updated_at": "2026-10-26T13:16:39.413755+00:00",
     "fiyat_zamani": "2026-10-23T19:30:00+00:00",
     "fiyat_kaynagi": "anlik",
     "anlik_not": "Açık pozisyonlar saatlik fiyatla değerlenir; işlemler ve defter yalnız günlük kapanışta güncellenir."
@@ -1122,7 +1122,7 @@
         "tf": "4H",
         "baslangic": "2026-09-01",
         "canli_baslangic": "2026-10-24",
-        "ozkaynak": 4960.41,
+        "ozkaynak": 4964.01,
         "mdd": 2.25,
         "mdd_uyari": 0.15,
         "acik_pozisyonlar": [
@@ -1132,12 +1132,12 @@
             "asset": "BNBUSDT",
             "type": "Alış",
             "entry_date": "25.10.2026",
-            "duration": "0 gün",
+            "duration": "1 gün",
             "entry_price": 744.5,
             "stop_price": 720.7823,
-            "size_usd": 385.48,
-            "unrealized_pnl": -4.16,
-            "r": -0.34
+            "size_usd": 389.08,
+            "unrealized_pnl": -0.56,
+            "r": -0.05
           }
         ],
         "kapanmis_islemler": [
@@ -2802,6 +2802,14 @@
           {
             "tarih": "2026-10-26 00:00:00",
             "ozkaynak": 4960.41
+          },
+          {
+            "tarih": "2026-10-26 04:00:00",
+            "ozkaynak": 4961.52
+          },
+          {
+            "tarih": "2026-10-26 08:00:00",
+            "ozkaynak": 4964.01
           }
         ]
       },
