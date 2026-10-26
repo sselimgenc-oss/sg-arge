@@ -92,7 +92,49 @@ def test_paper_runner_matches_the_tv2_emulator_on_same_frame(monkeypatch: pytest
     paper, _ = tv2_kitap.calistir_kitap(satir, frame.index[80], 250.0, veri_al=lambda *_: (frame, "sabit"))
     source = tv2_kitap.kaynak("G4RNcGXg")
     _, info = tv2.strateji("G4RNcGXg")
-    module = PineStrateji(source, sembol=info["sembol"], tf=info["tf"], kimlik="G4RNcGXg", surum=1)
-    direct = calistir(tv2_kitap._BaslangicKapisi(module, frame.index[80]), frame, initial_capital=250.0,
-                      **gercekci(module.AYARLAR, False))
-    assert list(paper.trades["net_pnl"]) == list(direct.islemler["net"])
+    module = PineStrateji(source, sembol=info["sembol"], tf=info["tf"], tz="America/New_York", mintick=0.01,
+                          kimlik="G4RNcGXg", surum=1)
+    direct = calistir(tv2_kitap._BaslangicKapisi(module, frame.index[80]), frame, **gercekci(module.AYARLAR, False))
+    olcek = 250.0 / module.AYARLAR.initial_capital
+    assert list(paper.trades["net_pnl"]) == pytest.approx(list(direct.islemler["net"] * olcek))
+    pd.testing.assert_series_equal(paper.equity, direct.ozkaynak * olcek, check_names=False)
+
+
+def test_fixed_quantity_book_is_scaled_to_its_own_capital() -> None:
+    """G4RNcGXg sabit 3 adet / 10.000 USD: 250 USD kitapta adet, maliyet, PnL ve özkaynak 250 / 10.000 ile küçülür."""
+    frame = _frame(10)
+    t = frame.index
+    sonuc = SimpleNamespace(
+        dolumlar=[{"tarih": t[2], "tip": "giris", "yon": 1, "fiyat": 100.0, "adet": 3.0, "maliyet": 1.5, "neden": "L"}],
+        acik_islemler=[{"yon": 1, "adet": 3.0, "giris_tarihi": t[2], "giris_fiyati": 100.0, "maliyet": 1.5}],
+        bekleyen_emirler=[],
+        islemler=pd.DataFrame({"exit_id": ["x"], "net": [40.0]}),
+        ozkaynak=pd.Series(10_000.0, index=t),
+    )
+    olcek = 250 / 10_000
+    paper = tv2_kitap._paper_sonuc(sonuc, frame, sembol="AMEX:SPY", olcek=olcek)
+    assert paper.fills[0]["adet"] == pytest.approx(3 * olcek) and paper.fills[0]["maliyet"] == pytest.approx(1.5 * olcek)
+    assert paper.open_positions[0]["adet"] == pytest.approx(3 * olcek)
+    assert list(paper.trades["net_pnl"]) == pytest.approx([40 * olcek])
+    assert paper.marked_equity == pytest.approx(250.0)
+
+
+def test_crypto_book_uses_tv2_setup_for_mintick_timezone_and_cost(monkeypatch: pytest.MonkeyPatch) -> None:
+    """TV-2 `kos` ile aynı: Binance verisinde mintick borsa tick'i, saat dilimi UTC, maliyet kripto."""
+    frame = _frame(140, "4h") * 1e-4
+    btc = _frame(140, "4h") * 500
+    seen: dict = {}
+    real = tv2_kitap.PineStrateji
+
+    def spy(*args, **kwargs):
+        seen.update(kwargs)
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(tv2_kitap, "PineStrateji", spy)
+    monkeypatch.setattr(tv2_kitap, "_closed", lambda value, _tf: value)
+    monkeypatch.setattr(tv2, "binance_tick", lambda bsym: 1e-5 if bsym == "ETHBTC" else 0.01)
+    monkeypatch.setattr(tv2_kitap, "calistir", lambda *a, **k: seen.update(maliyet=k) or calistir(*a, **k))
+    tv2_kitap.calistir_kitap(SimpleNamespace(id="wcegMOXj"), frame.index[70], 250.0,
+                             veri_al=lambda symbol, _tf: (btc if symbol.endswith("BTCUSDT") else frame, f"Binance {symbol.split(':')[-1]} 6h"))
+    assert seen["mintick"] == 1e-5 and seen["tz"] == "UTC"
+    assert seen["maliyet"]["commission_value"] == 0.1

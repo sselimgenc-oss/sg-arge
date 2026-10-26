@@ -149,10 +149,12 @@ def _closed(frame: pd.DataFrame, tf: str) -> pd.DataFrame:
 
 
 def _paper_sonuc(sonuc: Any, frame: pd.DataFrame, *, sembol: str,
-                 btc_kur: pd.Series | None = None) -> PaperSonuc:
-    fills = [{**item, "sembol": sembol, "stop": np.nan} for item in sonuc.dolumlar]
+                 btc_kur: pd.Series | None = None, olcek: float = 1.0) -> PaperSonuc:
+    """``olcek`` = kitap sermayesi / yazarın initial_capital'ı: adet, maliyet, PnL ve özkaynak bu oranla küçülür."""
+    fills = [{**item, "adet": item["adet"] * olcek, "maliyet": item["maliyet"] * olcek, "sembol": sembol, "stop": np.nan}
+             for item in sonuc.dolumlar]
     open_positions = [{"sembol": sembol, "giris_tarihi": item["giris_tarihi"], "giris_fiyati": item["giris_fiyati"],
-                       "adet": item["adet"], "stop": np.nan, "hedef": np.nan,
+                       "adet": item["adet"] * olcek, "stop": np.nan, "hedef": np.nan,
                        "son_kapanis": float(frame.loc[frame.index[-1], "close"]), "yon": item["yon"]}
                       for item in sonuc.acik_islemler]
     orders = []
@@ -160,12 +162,14 @@ def _paper_sonuc(sonuc: Any, frame: pd.DataFrame, *, sembol: str,
         tip = "giris" if item["tur"] in {"giris", "emir"} else "cikis"
         signal = frame.index[item["verildi"]]
         orders.append({"sinyal_tarihi": signal, "sembol": sembol, "tip": tip,
-                       "referans_fiyat": float(frame.loc[signal, "close"]), "adet": item["adet"],
+                       "referans_fiyat": float(frame.loc[signal, "close"]),
+                       "adet": None if item["adet"] is None else item["adet"] * olcek,
                        "stop": item["stop"], "hedef": item["limit"]})
     trades = sonuc.islemler.rename(columns={"exit_id": "exit_reason", "net": "net_pnl"}).copy()
     if "exit_reason" not in trades:
         trades = pd.DataFrame(columns=["exit_reason", "net_pnl"])
-    equity = sonuc.ozkaynak.astype(float)
+    trades["net_pnl"] = trades["net_pnl"].astype(float) * olcek
+    equity = sonuc.ozkaynak.astype(float) * olcek
     btc_bakiye = None
     if btc_kur is not None:
         btc_kur = btc_kur.reindex(equity.index).ffill()
@@ -196,7 +200,7 @@ def calistir_kitap(satir: Any, baslangic: pd.Timestamp, sermaye_usd: float, *,
     start = start.tz_localize("UTC") if start.tzinfo is None else start.tz_convert("UTC")
     if frame.index[-1] < start:
         raise KaynakDogrulamaHatasi(f"{satir.id}: başlangıçtan sonra kapanmış bar yok")
-    kripto = sembol.upper().startswith("BINANCE:")
+    kripto = note.startswith("Binance")  # TV-2 `kos` ile aynı kural
     btc_kur = None
     initial = sermaye_usd
     if satir.id == "wcegMOXj":
@@ -209,7 +213,14 @@ def calistir_kitap(satir: Any, baslangic: pd.Timestamp, sermaye_usd: float, *,
             raise KaynakDogrulamaHatasi("wcegMOXj: başlangıç için aynı zaman damgalı BTCUSDT kapanışı yok")
         rate0 = float(btc_kur.loc[btc_kur.index >= start].dropna().iloc[0])
         initial = sermaye_usd / rate0
-    modul = PineStrateji(source, sembol=sembol, tf=tf, kimlik=satir.id, surum=int(float(meta.surum)))
+    # TV-2 `kos` ile aynı kurulum: mintick veri kaynağından, saat dilimi piyasaya göre, dış veri sağlayıcısı.
+    tick = tv2.binance_tick(note.split()[1]) if kripto else 0.01
+    modul = PineStrateji(source, sembol=sembol, tf=tf, tz="UTC" if kripto else "America/New_York", mintick=tick,
+                         kimlik=satir.id, surum=int(float(meta.surum)))
+    modul.veri_saglayici = tv2._dis_veri
     gated = _BaslangicKapisi(modul, start, maske_tarihi)
-    sonuc = calistir(gated, frame, initial_capital=initial, **gercekci(modul.AYARLAR, kripto))
-    return _paper_sonuc(sonuc, frame, sembol=sembol, btc_kur=btc_kur), frame.index[-1]
+    # TV-2 ile aynı koşu yazarın initial_capital'ıyla yapılır (sabit adetli stratejiler, ör. G4RNcGXg 3 adet SPY,
+    # küçük kitap sermayesinde kaldıraçlanmasın); sonuç kitap sermayesine oranlanır, yüzdeler TV-2 ile aynı kalır.
+    sonuc = calistir(gated, frame, **gercekci(modul.AYARLAR, kripto))
+    olcek = initial / modul.AYARLAR.initial_capital
+    return _paper_sonuc(sonuc, frame, sembol=sembol, btc_kur=btc_kur, olcek=olcek), frame.index[-1]
