@@ -4,7 +4,7 @@ Bu proje, finansal piyasalar için kantitatif borsa stratejileri geliştirmek, o
 
 > **Güncel durum her zaman `DURUM.md`'dedir** (kimin hangi işte olduğu, son kararlar). Çalışma kuralları: `docs/PROTOKOL.md`.
 >
-> **Şu an (2026-10-24):** Faz 2 paper trade çalışıyor (C07 + R01 + A6-010); pano `sg-pano` (GitHub Pages). Faz 1 sonuçları: `docs/FAZ1_SONUC_RAPORU.md`.
+> **Şu an (2026-10-24):** Faz 2 paper trade çalışıyor (C07 + R01 + A6-010); pano `sg-pano` (GitHub Pages). Faz 1 sonuçları: `docs/FAZ1_KAPANIS.md`.
 
 ---
 

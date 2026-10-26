@@ -9,7 +9,7 @@ Son güncelleme: 2026-10-26 (akşam), lider. Faz 1 kapanış: `docs/FAZ1_KAPANIS
 - Eski Faz 2 paper kitapları (C07, R01, A6-010, gölge U4-H1/T8-07/V2B) emekli; defter `paper-defter` dalında `paper/defter/arsiv/2026-10-26/`.
 - Pano: `sg-pano` (GitHub Pages), `PANEL_TOKEN` ile.
 
-**Faz 2 başı (sıralı):** (1) TV-2 Pine paper motoru — G4RNcGXg, wcegMOXj (BTC→USD), yhoK9cH4; kaynaklar `paper/tv2_kaynak/`; (2) 200 günlük ortalama kuralı (nedensel); (3) QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I doğrulamaları; (4) repo temizliği (aşağıda madde 5, silme listesi kullanıcıya gösterilecek).
+**Faz 2 başı (sıralı):** (1) TV-2 Pine paper motoru — G4RNcGXg, wcegMOXj (BTC→USD), yhoK9cH4; kaynaklar `paper/tv2_kaynak/`; (2) 200 günlük ortalama kuralı (nedensel); (3) QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I doğrulamaları. Repo temizliği yapıldı (madde 5).
 
 ## Faz 1 NİHAİ KARAR (kullanıcı onayı 2026-10-26)
 `docs/faz1_son_denetim.md` → ilk dalga 11 risk kitabı + 3 gölge (kripto). Paper öncesi kontroller tamam (#246). **Kullanıcı onayı 2026-10-26: paper başlasın; "gölge" yok — 3 kripto kitabı normal kitap.** Kurulum: `docs/GOREV_PAPER_KURULUM.md` (Aşama A 11 U7 kitabı, Aşama B 3 TV-2 kitabı). Eski 6 paper kitabı arşive. Sonra: `paper/` uygulaması (kullanıcı onayı), Faz 1 sonuç raporu, repo temizliği.
@@ -20,7 +20,7 @@ Faz 1 şu dört şart sağlanınca kapanır; sonrası Faz 2/3:
 2. **Sıralama tek tabloda:** TV-2 + U7 geçenler, aynı yöntemle (`tv2_sirala`, kopya ayıklama).
 3. **Aday tablosu → kullanıcı seçimi:** geçen bütün küme temsilcileri (TV-2 + U7 + Dukascopy sonrası) tek tabloda (`results/faz1_adaylar.csv` + `.md`); paper'a hangilerinin gireceğini kullanıcı eleyerek seçer (kullanıcı kararı 2026-10-26).
 4. **Faz 1 sonuç raporu** (lider): geçenler, kalanlar, kapanmayanların nedeni.
-5. **Repo temizliği (kullanıcı onayı 2026-10-26):** seçimden sonra `faz1-son` etiketi; kalan stratejilerin satır/getiri dosyaları ve kodları, eski görev/durum/denetim notları `main`'den kaldırılır. Kalır: geçenler + kodları, aday tablosu, tek özet `results/faz1_tum_sonuclar.csv` (kimlik, sembol, karar, neden; DSR deneme sayısı ve radar tekrar ayıklaması için), motor, paper. Testlerin kullandığı örnekler korunur; silme listesi birleştirmeden önce kullanıcıya gösterilir.
+5. **Repo temizliği — YAPILDI (kullanıcı onayı 2026-10-26):** önceki durum `faz1-son` dalında. `main`'den kaldırılanlar: geçmeyen 837 TV-2 strateji satır/getiri dosyası, 10 eski görev/durum belgesi, 16 eski denetim notu. Tüm 933 TV-2 kararı tek dosyada: `results/faz1_tum_sonuclar.csv` (kimlik, sembol, tf, karar, neden, net, url; DSR deneme sayısı ve tekrar ayıklaması için). Kalanlar: geçen 96 TV-2 satırı, U7 kartları ve kodu, `results/u1`, `u4`, `u7`, veri, `arastirma/`, motor, paper; aday tablosunun okuduğu iki şüphe taraması notu (`docs/denetim/tv2_supheli.md`, `tv2_kripto_disi_supheli.md`).
 Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 kuyruğuna gider.
 
 **Durum 2026-10-26 16:30 TR (kullanıcı kararı: Faz 2/3 araştırması durduruldu, tüm güç Faz 1'e):**
@@ -40,11 +40,11 @@ Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 ku
 3. Küçük iyileştirmeler: hesap kartları saatlik değerlenmiyor (yalnız toplam); fiyat zamanı saatlik barın başlangıcını gösteriyor.
 
 ## Kapanan fazların özeti
-- **Faz 1** (`docs/FAZ1_SONUC_RAPORU.md`): 422 strateji, 137 test. Geçti 2 (C07, R01), Koşullu 3 (A6-010, T8-07, V2B emtia 1H), Reddedildi 132, Doğrulanamaz 273. Önerilen portföy OOS %7,5, MDD %2,9.
+- **Faz 1** (`docs/FAZ1_SONUC_RAPORU.md`, `faz1-son` dalında): 422 strateji, 137 test. Geçti 2 (C07, R01), Koşullu 3 (A6-010, T8-07, V2B emtia 1H), Reddedildi 132, Doğrulanamaz 273. Önerilen portföy OOS %7,5, MDD %2,9.
 - **U5** (`arastirma/U5_ozet.md`): TradingView 1.298 script; 4H/1D süzgecinden 205 aday → U6/U7'de test. **942'si yalnız zaman dilimi yüzünden ayrıldı (denetim K1).**
 - **U4** (`results/U4_SONUC.md`): seyrek işlem, 4 kart × 4 kol. 16/16 Reddedildi. Kripto 4H trend IS ve OOS'ta kârlı (3x maliyette de) ama MDD95 %28, DSR düşük, kâr büyük coinlerde.
 - **U1** (`results/U1_SONUC.md`): kripto gün içi, 14 varyantın 14'ü Reddedildi. 15m/5m'de brüt kenar yok; 1H'de küçük ama maliyete yetmiyor.
-- **U3** (`docs/GOREV_U3.md`, `arastirma/U3_mtf.csv`): 53 MTF strateji kaydı, test edilmedi.
+- **U3** (`docs/GOREV_U3.md` `faz1-son` dalında, `arastirma/U3_mtf.csv`): 53 MTF strateji kaydı, test edilmedi.
 - **T35** (`arastirma/TUM_KAYITLAR.csv`): 80 bölgesel strateji kaydı.
 
 ## Temizlik (2026-10-24, kullanıcı onayı)

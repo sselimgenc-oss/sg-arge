@@ -1,1 +1,0 @@
-{"id": "QKgb0Fud", "sembol": "NASDAQ:AAPL", "tf": "5", "url": "https://www.tradingview.com/script/QKgb0Fud/", "tur": "pine", "pencere_bas": "2019-11-13", "veri": "yfinance AAPL 5m (son 60d)", "veri_kisa": true, "bas": "2026-07-31", "son": "2026-10-23", "bar": 4680, "uyari": "", "karar": "desteklenmiyor", "neden": "request.security başka sembol, veri yok (BRK.A)"}

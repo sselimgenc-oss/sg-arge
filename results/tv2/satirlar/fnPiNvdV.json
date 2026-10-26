@@ -1,1 +1,0 @@
-{"id": "fnPiNvdV", "sembol": "NASDAQ:AVGO", "tf": "1W", "url": "https://www.tradingview.com/script/fnPiNvdV/", "tur": "pine", "veri": "yfinance AVGO", "bas": "2009-08-03", "son": "2026-10-19", "bar": 899, "uyari": "calc_on_every_tick geçmiş barlarda etkisiz", "karar": "desteklenmiyor", "neden": "request.financial"}
