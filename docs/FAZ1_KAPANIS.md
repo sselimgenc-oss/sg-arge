@@ -2,7 +2,7 @@
 
 Tarih: 2026-10-26 · Hazırlayan: lider (Claude) · Değerlendirme ortağı: Sol 6.1 (Codex) · Karar: kullanıcı
 
-Faz 1'in hedefi: toplanan bütün stratejileri tek, önceden yazılmış kurallarla ve ücretsiz veriyle test etmek, paper'a girecek listeyi çıkarmak. Bu rapor 2026-10-23 tarihli ilk raporun (`docs/FAZ1_SONUC_RAPORU.md`) yerine geçer.
+Faz 1'in hedefi: toplanan bütün stratejileri tek, önceden yazılmış kurallarla ve ücretsiz veriyle test etmek, paper'a girecek listeyi çıkarmak. Bu rapor 2026-10-23 tarihli ilk raporun (`docs/FAZ1_SONUC_RAPORU.md`, `faz1-son` etiketinde) yerine geçer.
 
 ## 1. Ne test edildi
 
@@ -65,4 +65,4 @@ Yedek: TV-oF6FmwfR, TV-jc2hs2qK, U4-H3 ABD. Bekleme (doğrulama): QCkIgf3z, BR74
 1. TV-2 Pine paper motoru: G4RNcGXg, wcegMOXj (BTC→USD), yhoK9cH4 (Actions'ta kaynak çek + SHA256 doğrula). Kaynaklar `paper/tv2_kaynak/`.
 2. 200 günlük ortalama kuralı (nedensel).
 3. Bekleyen doğrulamalar: QCkIgf3z (Coinbase ↔ Binance), BR74LOKo/zuEOEYPK (gerçek perp + funding), 9u8pzF0I (kontrat).
-4. Repo temizliği (kullanıcı onaylı plan, DURUM madde 5).
+4. ~~Repo temizliği~~ yapıldı (2026-10-26): geçmeyen TV-2 satır/getiri dosyaları, eski görev ve denetim notları silindi; hepsi `faz1-son` etiketinde. Tüm TV-2 kararları tek dosyada: `results/faz1_tum_sonuclar.csv`.
