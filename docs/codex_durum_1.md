@@ -9,3 +9,4 @@ Dal: `codex/tv2-son`
 - 15:12 — 6. madde — 371 `izle` satırı eldeki kısa sınamayla tek kapıdan geçirildi: 64 `gecti`, 246 `kaldi`, 61 `islem_yok`; her satıra `kisa_sinama=true` ve hafta sayısı yazıldı, sıralama yenilendi.
 - 17:30 — 3. madde — 214 `veri_yok` Dukascopy eşlemesi (ABD endeks CFD eşdeğerleri dahil) için yalnız ilgili kimliklerden kuyruk oluşturuldu. Workflow önce 14 sembolün arşivini Actions cache'ine indirir; veri repoya yazılmaz.
 - 17:30 — KOSU_ISTEGI: dal `codex/tv2-son`; iş akışı `TV-2 kripto kuyruğu`; girdiler `kuyruk=results/tv2/kuyruk_dukascopy.txt`, `dukascopy=true`. Sekiz parça birlikte çalıştırılmalı.
+- 17:30 — 4. madde — Dukascopy kuyruğu dışındaki 187 `veri_yok` ve 13 `zaman_asimi` satırı mevcut gerekçeleriyle kapatıldı; yeni deneme veya uzun koşu istenmedi.
