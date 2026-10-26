@@ -20,7 +20,7 @@ Faz 1 şu dört şart sağlanınca kapanır; sonrası Faz 2/3:
 2. **Sıralama tek tabloda:** TV-2 + U7 geçenler, aynı yöntemle (`tv2_sirala`, kopya ayıklama).
 3. **Aday tablosu → kullanıcı seçimi:** geçen bütün küme temsilcileri (TV-2 + U7 + Dukascopy sonrası) tek tabloda (`results/faz1_adaylar.csv` + `.md`); paper'a hangilerinin gireceğini kullanıcı eleyerek seçer (kullanıcı kararı 2026-10-26).
 4. **Faz 1 sonuç raporu** (lider): geçenler, kalanlar, kapanmayanların nedeni.
-5. **Repo temizliği — YAPILDI (kullanıcı onayı 2026-10-26):** önceki durum `faz1-son` etiketinde. `main`'den kaldırılanlar: geçmeyen 837 TV-2 strateji satır/getiri dosyası, 10 eski görev/durum belgesi, 16 eski denetim notu. Tüm 933 TV-2 kararı tek dosyada: `results/faz1_tum_sonuclar.csv` (kimlik, sembol, tf, karar, neden, net, url; DSR deneme sayısı ve tekrar ayıklaması için). Kalanlar: geçen 96 TV-2 satırı, U7 kartları ve kodu, `results/u1`, `u4`, `u7`, veri, `arastirma/`, motor, paper; aday tablosunun okuduğu iki şüphe taraması notu (`docs/denetim/tv2_supheli.md`, `tv2_kripto_disi_supheli.md`).
+5. **Repo temizliği — YAPILDI (kullanıcı onayı 2026-10-26):** önceki durum `faz1-son` dalında. `main`'den kaldırılanlar: geçmeyen 837 TV-2 strateji satır/getiri dosyası, 10 eski görev/durum belgesi, 16 eski denetim notu. Tüm 933 TV-2 kararı tek dosyada: `results/faz1_tum_sonuclar.csv` (kimlik, sembol, tf, karar, neden, net, url; DSR deneme sayısı ve tekrar ayıklaması için). Kalanlar: geçen 96 TV-2 satırı, U7 kartları ve kodu, `results/u1`, `u4`, `u7`, veri, `arastirma/`, motor, paper; aday tablosunun okuduğu iki şüphe taraması notu (`docs/denetim/tv2_supheli.md`, `tv2_kripto_disi_supheli.md`).
 Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 kuyruğuna gider.
 
 **Durum 2026-10-26 16:30 TR (kullanıcı kararı: Faz 2/3 araştırması durduruldu, tüm güç Faz 1'e):**
@@ -40,11 +40,11 @@ Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 ku
 3. Küçük iyileştirmeler: hesap kartları saatlik değerlenmiyor (yalnız toplam); fiyat zamanı saatlik barın başlangıcını gösteriyor.
 
 ## Kapanan fazların özeti
-- **Faz 1** (`docs/FAZ1_SONUC_RAPORU.md`, `faz1-son` etiketinde): 422 strateji, 137 test. Geçti 2 (C07, R01), Koşullu 3 (A6-010, T8-07, V2B emtia 1H), Reddedildi 132, Doğrulanamaz 273. Önerilen portföy OOS %7,5, MDD %2,9.
+- **Faz 1** (`docs/FAZ1_SONUC_RAPORU.md`, `faz1-son` dalında): 422 strateji, 137 test. Geçti 2 (C07, R01), Koşullu 3 (A6-010, T8-07, V2B emtia 1H), Reddedildi 132, Doğrulanamaz 273. Önerilen portföy OOS %7,5, MDD %2,9.
 - **U5** (`arastirma/U5_ozet.md`): TradingView 1.298 script; 4H/1D süzgecinden 205 aday → U6/U7'de test. **942'si yalnız zaman dilimi yüzünden ayrıldı (denetim K1).**
 - **U4** (`results/U4_SONUC.md`): seyrek işlem, 4 kart × 4 kol. 16/16 Reddedildi. Kripto 4H trend IS ve OOS'ta kârlı (3x maliyette de) ama MDD95 %28, DSR düşük, kâr büyük coinlerde.
 - **U1** (`results/U1_SONUC.md`): kripto gün içi, 14 varyantın 14'ü Reddedildi. 15m/5m'de brüt kenar yok; 1H'de küçük ama maliyete yetmiyor.
-- **U3** (`docs/GOREV_U3.md` `faz1-son` etiketinde, `arastirma/U3_mtf.csv`): 53 MTF strateji kaydı, test edilmedi.
+- **U3** (`docs/GOREV_U3.md` `faz1-son` dalında, `arastirma/U3_mtf.csv`): 53 MTF strateji kaydı, test edilmedi.
 - **T35** (`arastirma/TUM_KAYITLAR.csv`): 80 bölgesel strateji kaydı.
 
 ## Temizlik (2026-10-24, kullanıcı onayı)

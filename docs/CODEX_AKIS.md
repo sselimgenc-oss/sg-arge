@@ -13,7 +13,7 @@
 - Her madde: commit + push; durum dosyasına tek satır `HH:MM — madde — sonuç`.
 - Actions koşularını başlatma yetkisi olan oturum başlatır; yoksa durum dosyasına `KOSU_ISTEGI: dal, iş akışı, girdiler` yaz, kullanıcı başlatır.
 
-## Oturum 1: TV-2 sonuç (dal `codex/tv2-son`, `main`'den; durum `docs/codex_durum_1.md`, `faz1-son` etiketinde)
+## Oturum 1: TV-2 sonuç (dal `codex/tv2-son`, `main`'den; durum `docs/codex_durum_1.md`, `faz1-son` dalında)
 **Kullanıcı 2026-10-26: yalnız stratejileri netleştiren işler. Başka iş yok.** Sıra:
 1. `codex/kripto-disi` satırlarını birleştir (koşu 40316028018 bitti) + **`izle` kararı**: kısa sınama penceresiyle aynı tek kapı (net > 0 → `gecti`, değilse `kaldi`, işlem yoksa `islem_yok`; `kisa_sinama=true` bilgi). Yeniden koşu yok.
 2. `python -m backtests.tv2 --birlestir` + `python -m backtests.tv2_sirala` → **PR hemen** (`[TV-2] kripto dışı + izle kararı`).
@@ -21,7 +21,7 @@
 4. Geri kalan bütün `veri_yok` (yerel piyasa, Binance'ten kalkmış, eşleme) ve `zaman_asimi` 13: **yeni deneme yok**, mevcut nedenle kapanır.
 Kapı, maliyet, karar kodu değişmez.
 
-## Oturum 2: U7 kapanış + havuz (dal `codex/u7-son`, `main`'den; durum `docs/codex_durum_2.md`, `faz1-son` etiketinde)
+## Oturum 2: U7 kapanış + havuz (dal `codex/u7-son`, `main`'den; durum `docs/codex_durum_2.md`, `faz1-son` dalında)
 **ACİL (lider, koşu 40324514036 başarısız):**
 - (a) `u1_5m` işi yalnız 6 varyantı listeledi, hepsi zaten `checkpoint`; kalan 8 varyant **hiç koşmadı** (adım 1 sn). Neden listede yok? `u1_huni.py --tf 5m` ızgarasını `docs/GOREV_U1.md` ile karşılaştır; 14 değil 6 ise "kalan 8" yanlış sayımdır, durum dosyasına yaz.
 - (b) Commit adımı: `git pull --rebase` "unstaged changes" ile 4 kez düştü, döngü sessizce bitti, `faa7e61` itilmedi. `huni.yml`'de pull'dan önce `git stash -u` (ya da `git checkout -- . && git clean -fd` yalnız izlenmeyen veri için) ve döngü sonunda başarısızsa `exit 1`. tv2.yml'deki düzeltmenin aynısı.
