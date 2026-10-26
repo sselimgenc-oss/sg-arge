@@ -140,7 +140,9 @@ def run(root: Path, client: PublicClient, today: str | None = None, version: str
         leaders = leaders[:limit]
     _write_gzip(leaders, root / "veri" / "lider" / f"{today}.csv.gz")
     liquid = {"BTC", "ETH", "SOL", "HYPE", "XRP", "DOGE", "ADA", "AVAX", "LINK", "SUI", "LTC", "BCH", "PEPE", "WIF", "AAVE", "CRV", "ARB", "OP", "APT", "INJ"}
-    start = int((datetime.now(UTC) - timedelta(days=180)).timestamp() * 1000)
+    rules = load_rules()
+    # 180 gün geçmiş şartının ölçülebilmesi için pencere ondan uzun olmalı.
+    start = int((datetime.now(UTC) - timedelta(days=int(rules["fills_lookback_days"]))).timestamp() * 1000)
     rows = []
     copies = []
     for leader in leaders:
@@ -149,7 +151,10 @@ def run(root: Path, client: PublicClient, today: str | None = None, version: str
         funding = client.info({"type": "userFunding", "user": address, "startTime": start}, weight=20)
         state = client.info({"type": "clearinghouseState", "user": address}, weight=2)
         leverage = [float(x.get("position", {}).get("leverage", {}).get("value", 0)) for x in state.get("assetPositions", [])]
-        metrics = calculate_metrics(fills, funding=funding, liquid_coins=liquid, leverages=leverage)
+        metrics = calculate_metrics(fills, funding=funding, liquid_coins=liquid, leverages=leverage,
+                                    account_value=leader["accountValue"],
+                                    martingale_max_ratio=float(rules["martingale_max_ratio"]),
+                                    martingale_min_additions=int(rules["martingale_min_additions"]))
         decision, reason = evaluate(metrics)
         rows.append({"address": address, "account_value": leader["accountValue"], "sonuc": decision, "neden": reason, **metrics})
         _write_gzip(fills, root / "veri" / "fills" / f"{address.lower()}.csv.gz", append=True)
@@ -167,7 +172,7 @@ def run(root: Path, client: PublicClient, today: str | None = None, version: str
     table.to_csv(root / "veri" / "adaylar" / f"{today}.csv", index=False)
     candidates = table.loc[table.sonuc == "aday", "address"].tolist() if not table.empty else []
     statuses = {str(x["address"]).lower(): str(x["sonuc"]) for x in rows}
-    update(watch_path, candidates, today, version, statuses, int(load_rules()["max_watchlist"]))
+    update(watch_path, candidates, today, version, statuses, int(rules["max_watchlist"]))
     _write_report(root, today, table, copies)
     return table
 

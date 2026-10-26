@@ -23,10 +23,27 @@ def test_round_trip_and_realized_net_pnl():
 
 
 def test_martingale_only_flags_same_direction_addition_while_losing():
-    bad = [fill(1_000, "B", 1, 0), fill(2_000, "B", 1, 1, pnl=-1)]
-    safe = [fill(1_000, "B", 1, 0), fill(2_000, "A", 1, 1, pnl=-1)]
-    assert martingale_ratio(bad) == 1
-    assert martingale_ratio(safe) == 0
+    bad = [fill(1_000, "B", 1, 0, price=100), fill(2_000, "B", 1, 1, price=90)]   # long, adds below entry
+    good = [fill(1_000, "B", 1, 0, price=100), fill(2_000, "B", 1, 1, price=110)]  # pyramiding into a winner
+    safe = [fill(1_000, "B", 1, 0), fill(2_000, "A", 1, 1, pnl=-1)]                # reduction, not addition
+    short_bad = [fill(1_000, "A", 1, 0, price=100), fill(2_000, "A", 1, -1, price=110)]
+    assert martingale_ratio(bad) == (1, 1)
+    assert martingale_ratio(good) == (0, 1)
+    assert martingale_ratio(safe) == (0, 0)
+    assert martingale_ratio(short_bad) == (1, 1)
+
+
+def test_martingale_signal_needs_enough_losing_additions():
+    adds = [fill(1_000, "B", 1, 0, price=100)] + [fill(2_000 + i, "B", 1, 1 + i, price=90 - i) for i in range(5)]
+    assert calculate_metrics(adds, account_value=10_000)["martingale_signal"]
+    assert not calculate_metrics(adds[:3], account_value=10_000)["martingale_signal"]
+
+
+def test_returns_use_account_value_not_one_dollar():
+    day = 86_400_000
+    fills = [fill(0, "B", 1, 0), fill(day, "A", 1, 1, pnl=100), fill(2 * day, "B", 1, 0), fill(3 * day, "A", 1, 1, pnl=-50)]
+    m = calculate_metrics(fills, account_value=10_000)
+    assert 0 < m["ulcer_index"] < 0.01  # a 50 USD dip on 10k is ~0.5 %, not a wipe-out
 
 
 def test_metrics_include_signed_funding():
@@ -56,6 +73,12 @@ def test_copy_charges_friction_and_funding():
     ledger = simulate([fill(1_000, "B", 1, 0, pnl=10, price=100)], 1_000, slippage=.0005, taker_fee=.00045,
                       funding=[{"time": 2_000, "usdc": -2}])
     assert round(ledger.net_pnl.iloc[0], 3) == 7.905
+
+
+def test_copy_reads_documented_funding_shape_and_does_not_double_charge_fees():
+    ledger = simulate([fill(1_000, "A", 1, 1, pnl=10, fee=3, price=100)], 1_000, slippage=0, taker_fee=.00045,
+                      funding=[{"time": 2_000, "delta": {"usdc": "-2"}}])
+    assert round(ledger.net_pnl.iloc[0], 3) == 7.955  # 10 − our taker 0.045 − funding 2; leader fee not charged
 
 
 def test_prefilter_keeps_watchlist_and_caps_ranked():

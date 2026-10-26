@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: "17 3 * * *"
   workflow_dispatch:
+  # İlk deneme koşusu için: lider dalında bu iş akışı ya da copytrade kodu değişince de koşar.
+  push:
+    branches: [claude/magical-ride-c7apbp]
+    paths: [.github/workflows/copytrade.yml, copytrade/**]
 
 permissions:
   contents: write
@@ -33,8 +37,17 @@ jobs:
         run: python -m copytrade.tarama --root copytrade
       - name: Commit archive to its dedicated branch
         run: |
+          # Arşiv dalı main'den ayrı (yalnız veri); her gün onun ucuna eklenir, yoksa ilk koşuda yetim dal açılır.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f copytrade/veri copytrade/izleme.csv copytrade/kopya copytrade/RAPOR.md
+          out=$(mktemp -d)
+          for p in veri izleme.csv kopya RAPOR.md; do [ -e "copytrade/$p" ] && cp -r "copytrade/$p" "$out/"; done
+          if git rev-parse -q --verify origin/copytrade-veri >/dev/null; then
+            git checkout -f -B copytrade-veri origin/copytrade-veri
+          else
+            git checkout -f --orphan copytrade-veri && git rm -rfq . && git clean -fdq
+          fi
+          mkdir -p copytrade && cp -r "$out"/. copytrade/
+          git add -f copytrade
           git commit -m "copytrade: günlük tarama $(date -u +%F)" || exit 0
-          git push origin HEAD:copytrade-veri
+          git push origin copytrade-veri

@@ -10,3 +10,8 @@ max_median_leverage: 5.0
 max_leverage: 15.0
 min_liquid_coin_share: 0.80
 max_watchlist: 50
+# Martingale işareti (lider kararı 2026-10-26): en az 5 ekleme ve eklemelerin > %25'i zarardaki pozisyona
+martingale_max_ratio: 0.25
+martingale_min_additions: 5
+# Ölçüm penceresi: 180 gün geçmiş şartı için fill'ler 365 günden çekilir
+fills_lookback_days: 365

@@ -54,39 +54,53 @@ def closed_round_trips(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return rows
 
 
-def martingale_ratio(fills: list[dict[str, Any]]) -> float:
-    """Share of additions made while the pre-fill position is losing.
+def martingale_ratio(fills: list[dict[str, Any]]) -> tuple[float, int]:
+    """Share of same-direction additions made while the open position is under water.
 
-    ``closedPnl`` is the only portable response field; a negative value on an
-    addition is intentionally a conservative proxy when candle data is absent.
+    An addition never closes PnL, so ``closedPnl`` cannot show it; instead the running average entry price per coin
+    is rebuilt from the fills and the addition's price is compared with it. Returns (ratio, number of additions).
     """
     data = _frame(fills)
-    candidates = triggered = 0
+    position: defaultdict[str, float] = defaultdict(float)
+    entry: dict[str, float] = {}
+    additions = losing = 0
     for row in data.to_dict("records"):
-        before = float(row.get("startPosition", 0))
+        coin = str(row.get("coin", ""))
+        before = float(row.get("startPosition", position[coin]))
         signed = float(row.get("sz", 0)) * (-1 if str(row.get("side", "")) in {"A", "Sell", "sell"} else 1)
-        if before and before * signed > 0:
-            candidates += 1
-            if float(row.get("closedPnl", 0)) < 0:
-                triggered += 1
-    return triggered / candidates if candidates else 0.0
+        px = float(row.get("px", 0))
+        after = before + signed
+        if abs(before) > 1e-12 and before * signed > 0:
+            if coin in entry:  # opening fill seen: we know the average entry
+                additions += 1
+                if (px - entry[coin]) * (1 if before > 0 else -1) < 0:
+                    losing += 1
+                entry[coin] = (entry[coin] * abs(before) + px * abs(signed)) / abs(after)
+        elif abs(before) < 1e-12 or before * after < 0:
+            entry[coin] = px  # new position (or flip): fresh average
+        if abs(after) < 1e-12:
+            entry.pop(coin, None)
+        position[coin] = after
+    return (losing / additions if additions else 0.0), additions
 
 
 def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]] | None = None,
                       portfolio: list[dict[str, Any]] | None = None, liquid_coins: set[str] | None = None,
-                      leverages: list[float] | None = None) -> dict[str, Any]:
+                      leverages: list[float] | None = None, account_value: float | None = None,
+                      martingale_max_ratio: float = 0.25, martingale_min_additions: int = 5) -> dict[str, Any]:
+    """``account_value`` is the return denominator when no ``portfolio`` history is given (never 1 USD)."""
     data = _frame(fills)
-    funding_frame = _frame(funding or [])
+    funding_frame = pd.DataFrame({"time": pd.to_datetime([x.get("time") for x in funding or []], unit="ms", utc=True),
+                                  "net_pnl": [_funding_amount(x) for x in funding or []]})
     if data.empty:
         return {"history_days": 0, "closed_trades": 0, "martingale_signal": False}
     data["net_pnl"] = data["closedPnl"] - data["fee"]
     if not funding_frame.empty:
-        funding_frame["net_pnl"] = [_funding_amount(item) for item in (funding or [])]
         cash = pd.concat([data[["time", "net_pnl"]], funding_frame[["time", "net_pnl"]]]).sort_values("time")
     else:
         cash = data[["time", "net_pnl"]]
     daily = cash.set_index("time")["net_pnl"].resample("1D").sum()
-    denominator = 1.0
+    denominator = float(account_value) if account_value and account_value > 0 else 1.0
     if portfolio:
         values = [float(x.get("accountValue", x.get("value", 0))) for x in portfolio]
         positive = [x for x in values if x > 0]
@@ -111,7 +125,7 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
     volumes = (data["px"].abs() * data["sz"].abs()).groupby(data.get("coin", "")).sum()
     total_volume = float(volumes.sum())
     liquid_share = (float(volumes[volumes.index.isin(liquid_coins or set())].sum()) / total_volume if total_volume else 0.0)
-    ratio = martingale_ratio(fills)
+    ratio, additions = martingale_ratio(fills)
     return {
         "history_days": int((data.time.iloc[-1] - data.time.iloc[0]).total_seconds() // 86400),
         "closed_trades": len(rounds), "profitable_month_ratio": float((daily.resample("MS").sum() > 0).mean()),
@@ -122,5 +136,6 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
         "median_holding_hours": float(pd.Series([x["holding_hours"] for x in rounds]).median()) if rounds else None,
         "median_leverage": float(pd.Series(leverages or []).median()) if leverages else None,
         "max_leverage": max(leverages) if leverages else None, "liquid_coin_share": liquid_share,
-        "martingale_ratio": ratio, "martingale_signal": ratio > 0,
+        "martingale_ratio": ratio, "martingale_additions": additions,
+        "martingale_signal": additions >= martingale_min_additions and ratio > martingale_max_ratio,
     }
