@@ -25,7 +25,7 @@ Son güncelleme: 2026-10-26 11:45 UTC, lider (Opus). Son denetim: `docs/denetim/
 Faz 1 şu dört şart sağlanınca kapanır; sonrası Faz 2/3:
 1. **Her test edilebilir stratejinin tek satır sonucu var:** TV-2 kripto + kripto dışı 636 + U7. `veri_yok` satırları **bir kez** ikinci kaynakla denenir (Argon veri raporu), bulunamazsa `veri_yok` olarak kapanır; kapanışı bekletmez.
 2. **Sıralama tek tabloda:** TV-2 + U7 geçenler, aynı yöntemle (`tv2_sirala`, kopya ayıklama).
-3. **Geçen her strateji canlı paper teste girer** (kullanıcı kararı 2026-10-26: 20 gölge kitap seçimi kaldırıldı, sayı sınırı yok). Kopya ayıklama sonrası temsilci listesi kullanıcıya bilgi olarak sunulur → `paper/`'a girer.
+3. **Aday tablosu → kullanıcı seçimi:** geçen bütün küme temsilcileri (TV-2 + U7 + Dukascopy sonrası) tek tabloda (`results/faz1_adaylar.csv` + `.md`); paper'a hangilerinin gireceğini kullanıcı eleyerek seçer (kullanıcı kararı 2026-10-26).
 4. **Faz 1 sonuç raporu** (lider): geçenler, kalanlar, kapanmayanların nedeni.
 Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 kuyruğuna gider.
 

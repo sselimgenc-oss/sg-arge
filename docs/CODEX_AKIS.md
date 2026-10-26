@@ -29,7 +29,7 @@ Kapı, maliyet, karar kodu değişmez.
 1. **U1 5m:** 14 varyantın 6'sı bitti. `huni.yml` `u1_5m=true` + `--resume` ile kalan 8 (`KOSU_ISTEGI`); bitince `u7_ozet` yenile.
 2. Faz 1 2b'deki 10 `Koşullu` satırın şerh nedenlerini tek tabloda topla (`results/u7/kosullu.md`); karar değiştirme.
 3. `results/u7/siralama.csv`'yi `main`'deki U7 sonuçlarıyla yeniden üret (TV-2 ile aynı yöntem; `dsr`/`n_eff` bilgi).
-4. Oturum 1'in 2. maddesi bitince: `docs/SANAL_HAVUZ.md` → **geçen tüm küme temsilcileri** (TV-2 kripto + kripto dışı + U7) listesi ve hepsinin paper'da tek işte koşma planı (Actions süresi tahmini). 20 seçim/kura **yok** (kullanıcı kararı 2026-10-26). **Yalnız plan**; `paper/` yok.
+4. **Paper planı DURDU (kullanıcı 2026-10-26).** Yerine: `results/faz1_adaylar.csv` + `.md` — TV-2 `siralama.csv` + U7 `siralama.csv` küme temsilcileri tek tabloda, ortak sütunlar: kaynak, kimlik/ad, piyasa/sembol, tf, sınama hafta, sınama işlem, ölçekli yıllık getiri, p10 alt sınır, PF, MDD, kisa_sinama, şüphe işareti (`docs/denetim/tv2_kripto_disi_supheli.md`), lookahead_riskli. Sıra: ölçekli yıllık getiri. Kararı değiştirme, eleme yapma. Üreten betik `scripts/faz1_adaylar.py` (Dukascopy sonrası yeniden koşulacak). `docs/SANAL_HAVUZ.md`'ye ve `paper/`'a dokunma.
 5. PR: `[U7] kapanış + sanal havuz önerisi`.
 
 ## Bekleyen (sırası gelmedi, kullanıcı/Argon girdisi bekliyor)
