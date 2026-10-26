@@ -70,10 +70,19 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add results/u7/u1/parca results/u7/u1/getiriler results/u7/u1/huni_ozet.csv results/u7/u1/huni_ozet.md
           git commit -m "u7: U1 5m checkpoints ${{ github.run_id }}" || exit 0
+          git stash push --include-untracked -m "u7-runner-artifacts" || true
+          pushed=false
           for i in 1 2 3 4; do
-            git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:"${{ github.ref_name }}" && break
+            if git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:"${{ github.ref_name }}"; then
+              pushed=true
+              break
+            fi
             sleep $((i*5))
           done
+          [ "$pushed" = true ] || {
+            echo "U1 checkpoints could not be pushed after four attempts" >&2
+            exit 1
+          }
 
   faz1_u7:
     if: ${{ inputs.faz1_u7 }}
@@ -371,4 +380,5 @@ jobs:
             echo
             sed -n '/## Özet sayılar/,/^## Paper/p' results/SONUC.md | head -20
           } > /tmp/huni-pr.md
-          gh pr create --base main --head "$branch" --title "chore: huni sonuçları ${{ github.run_id }}" --body-file /tmp/huni-pr.md
+          gh pr create --base main --head "$branch" --title "chore: huni sonuçları ${{ github.run_id }}" --body-file /tmp/huni-pr.md || \
+            echo "PR oluşturulamadı; sonuç dalı itildi, lider PR'ı elle açacak."
