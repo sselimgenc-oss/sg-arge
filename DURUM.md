@@ -9,6 +9,8 @@ Son güncelleme: 2026-10-26 (akşam), lider. Faz 1 kapanış: `docs/FAZ1_KAPANIS
 - Eski Faz 2 paper kitapları (C07, R01, A6-010, gölge U4-H1/T8-07/V2B) emekli; defter `paper-defter` dalında `paper/defter/arsiv/2026-10-26/`.
 - Pano: `sg-pano` (GitHub Pages), `PANEL_TOKEN` ile.
 
+**Kullanıcı kararı 2026-10-26:** wcegMOXj (yalnız ETHBTC, tek enstrüman) listeden çıktı; payı (%5) nakit.
+
 **Faz 2 başı (sıralı):** (1) TV-2 Pine paper motoru — G4RNcGXg, wcegMOXj (BTC→USD), yhoK9cH4; kaynaklar `paper/tv2_kaynak/`; (2) 200 günlük ortalama kuralı (nedensel); (3) QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I doğrulamaları. Repo temizliği yapıldı (madde 5).
 
 ## Faz 1 NİHAİ KARAR (kullanıcı onayı 2026-10-26)

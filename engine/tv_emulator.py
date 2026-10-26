@@ -95,6 +95,12 @@ class Sonuc:
     ozkaynak: pd.Series
     emir_kaydi: list[tuple]
     ayarlar: Ayarlar
+    # Paper katmanı, emülatörün zaten ürettiği gerçek dolumları ve son
+    # durumunu kaydeder. Bunlar hesaplama yolunu değiştirmez; TV-2 sonucu
+    # geriye dönük uyumlu kalır.
+    dolumlar: list[dict] = field(default_factory=list)
+    acik_islemler: list[dict] = field(default_factory=list)
+    bekleyen_emirler: list[dict] = field(default_factory=list)
 
     def ozet(self) -> dict[str, float]:
         t = self.islemler
@@ -125,6 +131,7 @@ class Baglam:
         self.bekleyen: dict[str, _Emir] = {}
         self.gerceklesen = 0.0
         self.emir_kaydi: list[tuple] = []
+        self.dolumlar: list[dict] = []
         self.ara = False                               # bar içi ek yürütmede verilen emir aynı barda dolabilir
         self.dolum_sayisi = 0                          # gerçekleşen emir sayısı (strategy.risk.max_intraday_filled_orders)
 
@@ -261,6 +268,8 @@ class Baglam:
         if not cevrildi:
             self.dolum_sayisi += 1
         self.acik.append(_Islem(emir.kimlik, yon, adet, adet, dolum, bar, self._komisyon(dolum, adet), yorum=emir.yorum))
+        self.dolumlar.append({"tarih": self.df.index[bar], "tip": "giris", "yon": yon, "sembol": "",
+                              "fiyat": dolum, "adet": adet, "maliyet": self._komisyon(dolum, adet), "neden": emir.kimlik})
 
     def _ham(self, emir: _Emir, fiyat: float, bar: int, kaymali: bool) -> None:
         yon, kalan = emir.yon, float(emir.adet or 0.0)
@@ -273,6 +282,8 @@ class Baglam:
         self.dolum_sayisi += 1
         if kalan > 1e-12:
             self.acik.append(_Islem(emir.kimlik, yon, kalan, kalan, dolum, bar, self._komisyon(dolum, kalan), yorum=emir.yorum))
+            self.dolumlar.append({"tarih": self.df.index[bar], "tip": "giris", "yon": yon, "sembol": "",
+                                  "fiyat": dolum, "adet": kalan, "maliyet": self._komisyon(dolum, kalan), "neden": emir.kimlik})
 
     def _oca_iptal(self, emir: _Emir) -> None:
         if emir.oca:
@@ -300,6 +311,8 @@ class Baglam:
                                 "cikis_bar": bar, "cikis_zaman": self.df.index[bar], "cikis_fiyat": fiyat,
                                 "brut": brut, "komisyon": giris_kom + cikis_kom, "net": net,
                                 "entry_comment": t.yorum, "exit_comment": yorum})
+            self.dolumlar.append({"tarih": self.df.index[bar], "tip": "cikis", "yon": t.yon, "sembol": "",
+                                  "fiyat": fiyat, "adet": q, "maliyet": cikis_kom, "neden": exit_id})
             t.adet -= q
             t.komisyon -= giris_kom
             kalan -= q
@@ -530,7 +543,12 @@ def calistir(modul: Any, df: pd.DataFrame, ayarlar: Ayarlar | None = None, **deg
         eq[i] = ctx.equity
     islemler = pd.DataFrame(ctx.kapali, columns=["entry_id", "exit_id", "yon", "adet", "giris_bar", "giris_zaman", "giris_fiyat",
                                                   "cikis_bar", "cikis_zaman", "cikis_fiyat", "brut", "komisyon", "net"])
-    return Sonuc(islemler, pd.Series(eq, index=df.index, name="ozkaynak"), ctx.emir_kaydi, a)
+    acik = [{"entry_id": t.entry_id, "yon": t.yon, "adet": t.adet, "giris_tarihi": df.index[t.bar],
+             "giris_fiyati": t.fiyat, "maliyet": t.komisyon} for t in ctx.acik]
+    bekleyen = [{"kimlik": e.kimlik, "tur": e.tur, "yon": e.yon, "adet": e.adet, "stop": e.stop,
+                 "limit": e.limit, "from_entry": e.from_entry, "verildi": e.verildi} for e in ctx.bekleyen.values()]
+    return Sonuc(islemler, pd.Series(eq, index=df.index, name="ozkaynak"), ctx.emir_kaydi, a,
+                 ctx.dolumlar, acik, bekleyen)
 
 
 def _ara_yurut(modul: Any, ctx: Baglam, i: int) -> None:
