@@ -39,3 +39,15 @@ Durum: tamamlandı; dal uzak repoya gönderildi. PR oluşturma, geçersiz
   `codex/faz2-basi` (PR oluşturma sayfası:
   `https://github.com/sselimgenc-oss/sg-arge/pull/new/codex/faz2-basi`).
 
+
+## Lider denetimi (2026-10-26)
+
+- **Düzeltildi — TV-2 kurulumu:** `PineStrateji` TV-2 `kos` ile aynı kurulmuyordu (mintick hep 0,01, saat dilimi hep
+  UTC, dış veri sağlayıcısı yok). ETHBTC'de `stop = hprice + syminfo.mintick` ve 1 tick kayma %30 sapma demekti.
+  Artık mintick Binance verisinde borsa tick'i, ABD'de 0,01; saat dilimi kripto UTC / ABD New York; kripto kuralı
+  veri notuna göre. Test eklendi.
+- **Düzeltildi — sabit adet kaldıracı:** G4RNcGXg `strategy.fixed` 3 adet, pyramiding 3, yazar sermayesi 10.000.
+  250 USD kitapta 9 SPY ≈ 20x kaldıraçtı (prova: 2 ayda +%20). Koşu artık yazarın `initial_capital`'ıyla (TV-2 ile
+  aynı) yapılır, adet/maliyet/PnL/özkaynak kitap sermayesine oranlanır. Prova: 2 ayda +%0,5. Test eklendi.
+- **Kullanıcı kararı:** wcegMOXj portföyden çıktı (tek enstrüman ETHBTC). BTC→USD kodu kalır, kullanılmaz.
+- İş 2 (200 günlük kural) bu dalda yok; İş 3 dalı (`codex/faz2-dogrulama`) uzak repoya gönderilmemiş.
