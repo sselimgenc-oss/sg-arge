@@ -1,0 +1,38 @@
+# Faz 2 İş 3: bekleyen 4 stratejinin asıl piyasaya yakın ücretsiz veriyle doğrulaması.
+# Codex/Claude ortamlarının vekili Coinbase'i engellediği için Actions'ta koşar; sonucu koşulan dala yazar.
+name: Faz 2 doğrulama
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dogrula:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m backtests.faz2_dogrulama
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: faz2-dogrulama
+          path: results/faz2_dogrulama.csv
+          if-no-files-found: warn
+      - name: Sonucu dala yaz
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add results/faz2_dogrulama.csv
+          git diff --cached --quiet && { echo "sonuç değişmedi"; exit 0; }
+          git commit -m "faz2: doğrulama sonucu (${{ github.run_id }})"
+          git push origin HEAD:"${{ github.ref_name }}"
