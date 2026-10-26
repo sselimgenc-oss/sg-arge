@@ -44,7 +44,7 @@ Kapanmayanlar: döviz pariteleri (kullanıcı kullanmayacak), altın/endeks gün
 | — | Nakit (Faz 2 başı payları 15 + rezerv 10) | 25 | |
 
 Risk kuralları (paper'da çalışan): kitap kendi zirvesinden %10 gerilerse durur; portföy zirveden %5 gerilerse yeni giriş durur.
-Henüz çalışmayan: SPY/BTC 200 günlük ortalama altında yeni uzun riskin yarıya inmesi (Faz 2 başı; her tarihte nedensel uygulanmalı).
+200 günlük ortalama kuralı önerilmişti; test edilmediği için kullanıcı kararıyla kaldırıldı (2026-10-26).
 Yedek: TV-oF6FmwfR, TV-jc2hs2qK, U4-H3 ABD. Bekleme (doğrulama): QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I. Çıkan: TV-IMKs0OPw (yazar kodunda 2025-01-01 tarih filtresi; ölü).
 
 ## 4. Dürüst değerlendirme
@@ -63,6 +63,6 @@ Yedek: TV-oF6FmwfR, TV-jc2hs2qK, U4-H3 ABD. Bekleme (doğrulama): QCkIgf3z, BR74
 ## 6. Faz 2 başı (sıralı)
 
 1. TV-2 Pine paper motoru: G4RNcGXg, wcegMOXj (BTC→USD), yhoK9cH4 (Actions'ta kaynak çek + SHA256 doğrula). Kaynaklar `paper/tv2_kaynak/`.
-2. 200 günlük ortalama kuralı (nedensel).
+2. ~~200 günlük ortalama kuralı~~ kaldırıldı (kullanıcı kararı).
 3. Bekleyen doğrulamalar: QCkIgf3z (Coinbase ↔ Binance), BR74LOKo/zuEOEYPK (gerçek perp + funding), 9u8pzF0I (kontrat).
 4. ~~Repo temizliği~~ yapıldı (2026-10-26): geçmeyen TV-2 satır/getiri dosyaları, eski görev ve denetim notları silindi; hepsi `faz1-son` dalında. Tüm TV-2 kararları tek dosyada: `results/faz1_tum_sonuclar.csv`.

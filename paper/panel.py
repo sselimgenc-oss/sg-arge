@@ -231,6 +231,8 @@ def uret(
     accounts, strategies = [], []
     for rank, satir in enumerate(portfoy.satirlar, start=1):
         label, i = satir.etiket, info[satir.etiket]
+        alan = satir.alan or satir.piyasa
+        gorunen = f"{satir.id} · {alan}"
         series_row = series.get(label, pd.Series(dtype=float))
         mine = [t for t in trades if t["_satir"] == label]
         own_pnl = [t["pnl"] for t in mine if t["pnl"] is not None]
@@ -254,15 +256,15 @@ def uret(
         }
         status = "durduruldu (MDD kapısı)" if stopped else ("pozisyonda" if held else "tetikte bekliyor")
         accounts.append({
-            "id": satir.id, "name": f"{satir.id} · {satir.piyasa}", "strategies_label": names[label], "status": status, **common,
+            "id": satir.id, "name": gorunen, "strategies_label": names[label], "status": status, **common,
             "luck_prob": "veri yok", "expectation_desc": expectation, "expectation_60d": f"Kaynak: {i.get('kaynak') or '-'} · {i.get('en_iyi_piyasa') if isinstance(i.get('en_iyi_piyasa'), str) else satir.piyasa}/{_tf(i.get('en_iyi_tf'))}",
             "score": None,
         })
         strategies.append({
             "rank": rank, "code": satir.id, "name": names[label], "mtf": f"{_tf(i.get('en_iyi_tf'))} ({i.get('tarz') if isinstance(i.get('tarz'), str) else 'swing'})", "score": None,
-            "status": i.get("nihai_durum") or "veri yok", "allocation": f"%{satir.agirlik * 100:.0f}", "account": f"{satir.id} · {satir.piyasa}",
+            "status": i.get("nihai_durum") or "veri yok", "allocation": f"%{satir.agirlik * 100:.0f}", "account": gorunen,
             "j_score": None, "p_main": None, "dd_pct": f"%{float(i['bootstrap_mdd_p95']) * 100:.1f}" if pd.notna(i.get("bootstrap_mdd_p95")) else None,
-            "status_badge": i.get("nihai_durum") or "veri yok", "desc": i.get("alt_neden") or "", "display_title": f"{satir.id} · {satir.piyasa}",
+            "status_badge": i.get("nihai_durum") or "veri yok", "desc": i.get("alt_neden") or "", "display_title": gorunen,
             "subtitle": names[label], "live_status_tag": status, "is_active_trade": held > 0,
             "active_trade_symbol": ", ".join(open_rows[open_rows["satir"] == label]["sembol"]) if held else "Nakit",
             "active_trade_detail": f"{held} açık pozisyon" if held else "Açık pozisyon yok", "balance_usd": _clean(value, 2),
@@ -310,7 +312,7 @@ def uret(
             sr = series.get(satir.etiket, pd.Series(dtype=float))
             diff = float(sr.iloc[-1] - (sr.iloc[-2] if len(sr) > 1 else capital[satir.etiket])) if len(sr) else 0.0
             closed_here = sum(t["pnl"] or 0.0 for t in trades if t["_satir"] == satir.etiket and t["_exit"] == last_key)
-            selected["account_breakdown"].append({"account": f"{satir.id} · {satir.piyasa}", "closed": _clean(closed_here, 2), "open": _clean(diff - closed_here, 2), "total": _clean(diff, 2)})
+            selected["account_breakdown"].append({"account": f"{satir.id} · {satir.alan or satir.piyasa}", "closed": _clean(closed_here, 2), "open": _clean(diff - closed_here, 2), "total": _clean(diff, 2)})
         green = sum(1 for d in days if d["pnl"] and d["pnl"] > 0)
         month_net = sum(d["pnl"] or 0.0 for d in days)
         month_trades = sum(d["closed"] for d in days)
