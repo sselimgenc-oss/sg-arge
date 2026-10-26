@@ -355,7 +355,7 @@ def uret(
     }
     sagliklar = {
         satir.etiket: saglik.hesapla(satir.id, satir.piyasa, series.get(satir.etiket, pd.Series(dtype=float)),
-                                     [trade for trade in trades if trade["_satir"] == satir.etiket])
+                                     [trade for trade in trades if trade["_satir"] == satir.etiket], tf=satir.tf)
         for satir in portfoy.satirlar
     }
     kitaplar = [{

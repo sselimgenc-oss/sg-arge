@@ -60,3 +60,11 @@ def test_health_frequency_and_losing_streak_thresholds(monkeypatch, tmp_path) ->
     assert health["sinyal_sikligi"]["durum"] == "red"  # expected ~8 trades, none closed in time
     losses = saglik.hesapla("X", "ABD25", equity, [{"pnl": -1}] * 5, root=tmp_path)
     assert losses["ardisik_kayip"]["durum"] in {"yellow", "red"}
+
+
+def test_u4_paper_book_finds_its_u7_expansion_and_trade_rate_uses_calendar_weeks():
+    from paper import saglik
+    weekly = saglik.backtest_haftalik("U4-H2", piyasa="KRIPTO25", tf="1D")
+    n, weeks = saglik.backtest_islem_sayisi("U4-H2", "KRIPTO25", tf="1D")
+    assert len(weekly) > 100 and n and weeks
+    assert len(weekly) > weeks  # all test weeks, not only weeks with a trade

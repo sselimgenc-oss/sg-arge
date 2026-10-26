@@ -36,13 +36,33 @@ def haftalik_getiriler(series: pd.Series) -> pd.Series:
     return values.resample("W-FRI").last().pct_change().dropna()
 
 
-def _return_file(kitap_id: str, root: Path = ROOT) -> Path | None:
-    found = sorted((root / "results").glob(f"**/getiriler/{kitap_id}.csv"))
-    return found[0] if found else None
+def _varyant(kitap_id: str, piyasa: str | None, tf: str | None) -> list[str]:
+    """Paper ids name the card (``U4-H2``); U7 stores each expansion as ``U4-H2:KRIPTO25:1D`` (file ``U4-H2_KRIPTO25_1D``)."""
+    names = [kitap_id]
+    if piyasa and tf:
+        names.insert(0, f"{kitap_id}:{piyasa}:{tf}")
+    return names
 
 
-def backtest_haftalik(kitap_id: str, root: Path = ROOT) -> pd.Series:
-    path = _return_file(kitap_id, root)
+def _return_file(kitap_id: str, root: Path = ROOT, piyasa: str | None = None, tf: str | None = None) -> Path | None:
+    for name in _varyant(kitap_id, piyasa, tf):
+        found = sorted((root / "results").glob(f"**/getiriler/{name.replace(':', '_')}.csv"))
+        if found:
+            return found[0]
+    return None
+
+
+def _sinama_basi(kitap_id: str, root: Path = ROOT) -> pd.Timestamp | None:
+    """TV-2: test window starts at the script version date (TEST_YAPISI); U7 files already hold OOS 2023+."""
+    tv2 = root / "results" / "tv2" / "satirlar" / f"{kitap_id}.json"
+    if tv2.exists():
+        date = json.loads(tv2.read_text(encoding="utf-8")).get("surum_tarihi")
+        return pd.Timestamp(date, tz="UTC") if date else None
+    return None
+
+
+def backtest_haftalik(kitap_id: str, root: Path = ROOT, piyasa: str | None = None, tf: str | None = None) -> pd.Series:
+    path = _return_file(kitap_id, root, piyasa, tf)
     if path is None:
         return pd.Series(dtype=float)
     frame = pd.read_csv(path)
@@ -50,16 +70,27 @@ def backtest_haftalik(kitap_id: str, root: Path = ROOT) -> pd.Series:
     value = next((c for c in frame if c.lower() in {"net_getiri", "getiri", "return", "returns"}), None)
     if date is None or value is None:
         return pd.Series(dtype=float)
-    return haftalik_getiriler(pd.Series(pd.to_numeric(frame[value], errors="coerce").fillna(0).to_numpy(),
-                                        index=pd.to_datetime(frame[date], utc=True)))
+    daily = pd.Series(pd.to_numeric(frame[value], errors="coerce").fillna(0).to_numpy(),
+                      index=pd.to_datetime(frame[date], utc=True))
+    start = _sinama_basi(kitap_id, root)
+    if start is not None:
+        daily = daily[daily.index >= start]
+    return haftalik_getiriler(daily)
 
 
-def backtest_islem_sayisi(kitap_id: str, piyasa: str, root: Path = ROOT) -> tuple[int | None, float | None]:
+def backtest_islem_sayisi(kitap_id: str, piyasa: str, root: Path = ROOT, tf: str | None = None) -> tuple[int | None, float | None]:
     """Return actual test-window trade count and weeks, never infer it from returns."""
     tv2 = root / "results" / "tv2" / "satirlar" / f"{kitap_id}.json"
     if tv2.exists():
         row = json.loads(tv2.read_text(encoding="utf-8"))
         return row.get("uyg_sinama_islem"), row.get("uyg_sinama_hafta")
+    ozet = root / "results" / "u7" / "huni_ozet.csv"
+    if ozet.exists():
+        table = pd.read_csv(ozet)
+        for name in _varyant(kitap_id, piyasa, tf):
+            hit = table[table["varyant"] == name]
+            if len(hit) and pd.notna(hit.iloc[0].get("oos_islem")) and pd.notna(hit.iloc[0].get("oos_islem_hafta")):
+                return int(hit.iloc[0]["oos_islem"]), float(hit.iloc[0]["oos_islem_hafta"])
     for path in sorted((root / "results" / "u7").glob(f"**/parca/{kitap_id}.csv")):
         row = pd.read_csv(path)
         if len(row):
@@ -128,10 +159,11 @@ def _light(flags: list[str]) -> str:
     return "🔴" if "red" in flags else ("🟡" if "yellow" in flags else "🟢")
 
 
-def hesapla(kitap_id: str, piyasa: str, equity: pd.Series, trades: list[dict[str, Any]], *, root: Path = ROOT) -> dict[str, Any]:
+def hesapla(kitap_id: str, piyasa: str, equity: pd.Series, trades: list[dict[str, Any]], *, root: Path = ROOT,
+            tf: str | None = None) -> dict[str, Any]:
     """Build the dashboard health payload. Missing source data stays explicit, never fabricated."""
     live = haftalik_getiriler(equity).tail(26)
-    backtest = backtest_haftalik(kitap_id, root)
+    backtest = backtest_haftalik(kitap_id, root, piyasa, tf)
     cone = blok_bootstrap(backtest, len(live), seed=sum(map(ord, kitap_id)))
     flags: list[str] = []
     live_mdd, bt_mdd = _mdd(live), _mdd(backtest)
@@ -145,7 +177,10 @@ def hesapla(kitap_id: str, piyasa: str, equity: pd.Series, trades: list[dict[str
     if cusum is not None:
         cusum_status = "red" if cusum >= CUSUM_RED else "yellow" if cusum >= CUSUM_YELLOW else "green"
         flags.append(cusum_status)
-    bt_n, bt_weeks = backtest_islem_sayisi(kitap_id, piyasa, root)
+    bt_n, bt_weeks = backtest_islem_sayisi(kitap_id, piyasa, root, tf)
+    # The stored week count is "weeks with a trade"; the rate needs all calendar weeks of the test window.
+    if len(backtest):
+        bt_weeks = float(len(backtest))
     live_n = len(trades)
     frequency: dict[str, Any] = {"canli": live_n, "beklenen": None, "p95": None, "p99": None, "durum": None}
     if bt_n is not None and bt_weeks and bt_weeks > 0 and len(live):
