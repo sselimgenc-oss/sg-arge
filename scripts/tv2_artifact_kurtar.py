@@ -22,7 +22,7 @@ def _karar(path: Path) -> str | None:
 
 
 def recover(artifact: Path, queue: Path, results: Path, part: int) -> tuple[int, int]:
-    """Only merge IDs owned by *part*; preserve every non-timeout local row."""
+    """Only merge IDs owned by *part*; preserve every local row except timeouts and missing data."""
     ids = queue.read_text(encoding="utf-8").splitlines()
     owned = set(ids[part::8])
     rows, returns = results / "satirlar", results / "getiriler"
@@ -34,7 +34,8 @@ def recover(artifact: Path, queue: Path, results: Path, part: int) -> tuple[int,
         if not source.exists():
             continue
         target = rows / source.name
-        if target.exists() and _karar(target) != "zaman_asimi":
+        # Zaman aşımı ve veri yok satırları yeniden koşulabilir; yeni sonuç onları geçer.
+        if target.exists() and _karar(target) not in {"zaman_asimi", "veri_yok"}:
             skipped += 1
             continue
         shutil.copy2(source, target)
