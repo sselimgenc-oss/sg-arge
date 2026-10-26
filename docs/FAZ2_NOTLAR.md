@@ -367,7 +367,7 @@ kararı olarak kullanılmayacak.
 ## 9. BIST strateji fikirleri (Argon, 2026-10-26)
 `arastirma/bist/bist_viop_maliyet_anomaliler_2026.pdf` bölüm 3: 8 fikir (gece/kapanış seansı, 1 hafta atlamalı momentum + PD/DD, temettü sonrası sürüklenme, bilgi şoku, yabancı akışı, pay geri alım duyurusu, endeksten çıkarılma, bayram öncesi). Raporun brüt alfa rakamları doğrulanmadı. Günlük veriyle test edilebilenler (momentum, endeksten çıkarılma, bayram, temettü) radar kartı olarak sıraya alınabilir; veri (temettü/endeks değişikliği tarihleri, KAP) eksik olanlar sonra.
 
-### Argon Hyperliquid notu (2026-10-26, `arastirma/copytrade/hyperliquid_notu.md`) — lider özeti
+## 10. Argon Hyperliquid notu (2026-10-26, `arastirma/copytrade/hyperliquid_notu.md`) — lider özeti
 - **Veri (ücretsiz, anahtarsız):** lider tablosu `stats-data.hyperliquid.xyz/Mainnet/leaderboard`; `/info`:
   `portfolio`, `userFills(ByTime)` (son 10.000 işlem), `clearinghouseState` (açık pozisyon, kaldıraç); WebSocket
   `userFills` anlık. REST sınırı IP başına 1.200 ağırlık/dk.
