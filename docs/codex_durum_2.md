@@ -9,3 +9,4 @@
 - 15:18 — U1 5m yeniden deneme — KOSU_ISTEGI: dal=`codex/u7-son`, iş akışı=`Uctan uca huni`, girdiler=`u1_5m=true` (diğer girdiler varsayılan). Düzeltme sonrası `--resume` ile bir kez daha başlatılacak; altı checkpoint doğrulanacak.
 - 17:29 — Sanal havuz — tamamlandı; `main`deki TV-2 (86) ve U7 (72) geçen küme temsilcisinin 158'i `docs/SANAL_HAVUZ.md` içinde eksiksiz listelendi. Aynı dosyaya tek Actions işiyle birlikte paper çalışma planı ve 45–85 dk süre tahmini eklendi; `paper/` değişmedi.
 - 17:41 — U1 5m yeniden deneme — çalışıyor: `Uctan uca huni` Actions koşusu `40339726440`, dal=`codex/u7-son`, girdi=`u1_5m=true`; 5m veri indirme sürüyor. Koşu tamamlanınca sonuç/checkpoint doğrulanıp `u7_ozet` yenilenecek; sonraki Oturum 2 maddesine geçilmedi.
+- 17:44 — kullanıcı talimatıyla durduruldu; yarım kalan: U1 5m yeniden deneme Actions koşusu `40339726440` sürüyor, sonuç/checkpoint doğrulaması ve `u7_ozet` yenilemesi yapılmadı.
