@@ -25,7 +25,7 @@
 1. **U1 5m:** 14 varyantın 6'sı bitti. `huni.yml` `u1_5m=true` + `--resume` ile kalan 8 (`KOSU_ISTEGI`); bitince `u7_ozet` yenile.
 2. Faz 1 2b'deki 10 `Koşullu` satırın şerh nedenlerini tek tabloda topla (`results/u7/kosullu.md`); karar değiştirme.
 3. `results/u7/siralama.csv`'yi `main`'deki U7 sonuçlarıyla yeniden üret (TV-2 ile aynı yöntem; `dsr`/`n_eff` bilgi).
-4. Oturum 1'in 2. maddesi bitince: `docs/SANAL_HAVUZ.md` 20 gölge kitap önerisi (12 güçlü + 4 çeşitlendirici + 4 kura, tohum sabit) TV-2 kripto + kripto dışı + U7 birlikte. **Yalnız öneri**; `paper/` yok.
+4. Oturum 1'in 2. maddesi bitince: `docs/SANAL_HAVUZ.md` → **geçen tüm küme temsilcileri** (TV-2 kripto + kripto dışı + U7) listesi ve hepsinin paper'da tek işte koşma planı (Actions süresi tahmini). 20 seçim/kura **yok** (kullanıcı kararı 2026-10-26). **Yalnız plan**; `paper/` yok.
 5. PR: `[U7] kapanış + sanal havuz önerisi`.
 
 ## Bekleyen (sırası gelmedi, kullanıcı/Argon girdisi bekliyor)
