@@ -27,6 +27,7 @@ Faz 1 şu dört şart sağlanınca kapanır; sonrası Faz 2/3:
 2. **Sıralama tek tabloda:** TV-2 + U7 geçenler, aynı yöntemle (`tv2_sirala`, kopya ayıklama).
 3. **Geçen her strateji canlı paper teste girer** (kullanıcı kararı 2026-10-26: 20 gölge kitap seçimi kaldırıldı, sayı sınırı yok). Kopya ayıklama sonrası temsilci listesi kullanıcıya bilgi olarak sunulur → `paper/`'a girer.
 4. **Faz 1 sonuç raporu** (lider): geçenler, kalanlar, kapanmayanların nedeni.
+5. **Faz 1 kapanış toplantısı** (kullanıcı isteği 2026-10-26): kullanıcı + lider (Claude) + Sol 6.1. 1-4 bitip strateji sayısı kesinleşince lider sonuç raporuyla toplantıyı çağırır; gündem: kesin liste, paper'a geçiş, Faz 2/3 sırası.
 Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 kuyruğuna gider.
 
 **Durum 2026-10-26 16:30 TR (kullanıcı kararı: Faz 2/3 araştırması durduruldu, tüm güç Faz 1'e):**
