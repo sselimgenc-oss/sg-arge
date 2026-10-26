@@ -85,8 +85,8 @@ class _Islem:
     bar: int
     komisyon: float
     dolan_cikislar: set = field(default_factory=set)   # Pine: aynı exit kimliği aynı giriş için bir kez dolar
-    kendi_cikisi: bool = False
-    yorum: str = ""                 # kendi exit/close emriyle (yabancı FIFO kapanışı değil) azaldı mı
+    kendi_cikisi: bool = False                 # kendi exit/close emriyle (yabancı FIFO kapanışı değil) azaldı mı
+    yorum: str = ""                            # giriş emrinin comment'i (işlem listesinde entry_comment)
 
 
 @dataclass

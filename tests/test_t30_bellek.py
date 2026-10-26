@@ -143,9 +143,9 @@ def test_worker_count_follows_free_memory(monkeypatch) -> None:
 
 
 def test_memory_ceiling_on_large_synthetic_book() -> None:
-    """14k bars x 5 symbols: signals + engine of a position-state exit card stay under the ceiling (tracemalloc peak)."""
+    """30k bars x 5 symbols: signals + engine of a position-state exit card stay under the ceiling (tracemalloc peak)."""
     data = yaml.safe_load((SPEC / "A3-002d.yaml").read_text(encoding="utf-8"))
-    frames = {f"S{i}": intraday(i, 14_000) for i in range(5)}
+    frames = {f"S{i}": intraday(i, 30_000) for i in range(5)}
     start, end = frames["S0"].index[0], frames["S0"].index[-1]
     tracemalloc.start()
     prepared = tarama.prepare(data, frames, "KRIPTO25", start=start, end=end)

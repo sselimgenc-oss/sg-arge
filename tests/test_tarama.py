@@ -217,7 +217,7 @@ def test_stage_decision_rule() -> None:
 @pytest.mark.skipif(not SPEC.is_dir(), reason="docs/spec not present")
 def test_all_ready_daily_cards_run_or_are_skipped_with_a_reason() -> None:
     """No ready 1D/1W card may crash the scan: it either produces metrics or a named skip."""
-    data = {f"S{i}": synthetic(i, periods=2800) for i in range(2)}
+    data = {f"S{i}": synthetic(i, periods=2800) for i in range(4)}
     benchmark = synthetic(99, periods=2800)
     cards = tarama.load_cards(SPEC, "1D,1W")
     assert len(cards) >= 40
