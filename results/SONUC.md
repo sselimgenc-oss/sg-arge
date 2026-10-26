@@ -8,12 +8,12 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 |---|---:|---:|---:|
 | Geçti | 2 | 2 | 0 |
 | Koşullu | 3 | 1 | 2 |
-| Bekliyor | 5 | 0 | 5 |
+| Bekliyor | 83 | 77 | 6 |
 | Reddedildi | 132 | 105 | 27 |
-| Doğrulanamaz | 273 | 118 | 155 |
+| Doğrulanamaz | 411 | 254 | 157 |
 | Ertelendi | 3 | 2 | 1 |
 | Kapsam dışı | 4 | 2 | 2 |
-| **Toplam** | **422** | 230 | 192 |
+| **Toplam** | **638** | 443 | 195 |
 
 ## Paper trade'e hazır (Geçti)
 
@@ -36,9 +36,87 @@ Bu rapor mevcut sonuç dosyalarını birleştirir; yeni backtest veya istatistik
 |---|---|---|---|
 | A3-002a | geraked CEZLSMA | - | asama1: tarama bekliyor |
 | A3-002c | geraked CP1 | - | asama1: tarama bekliyor |
-| A3-002d | geraked BBRSI | - | asama1: tarama bekliyor |
 | A3-002f | geraked DHLAOS | - | asama1: tarama bekliyor |
-| O1-064 | Try this NQ Strategy + Code | - | asama1: tarama bekliyor |
+| RD-03 | Faber GTAA (taktik varlik dagilimi): 5 ETF, 10 aylik SMA, aylik | - | asama1: tarama bekliyor |
+| RD-04 | 4H washout donusu: Williams %R(30) < -90 giris, > -50 cikis, %3 stop | - | asama1: tarama bekliyor |
+| TV-3BXWqwnF | BTC Turtle Paper Strategy v1 - Bitstamp | - | asama1: tarama bekliyor |
+| TV-3Q75d98D | Simple ZigZag Double | - | asama1: tarama bekliyor |
+| TV-4NV68grw | Micro-Trendline Momentum Breakout [ATR Optimized] (Anant) | - | asama1: tarama bekliyor |
+| TV-4bBrEQ7T | Feynman Renormalization: Armed Confluence & Risk Framework [Aht] | - | asama1: tarama bekliyor |
+| TV-5EGVP61U | EMA 9,20 with Support and Resistance Breakout | - | asama1: tarama bekliyor |
+| TV-6GReiiLS | Up/Dn Volume Sentiment Strategy | - | asama1: tarama bekliyor |
+| TV-6ZReHYKn | Golden Cross, SMA 200 Moving Average Strategy (by ChartArt) | - | asama1: tarama bekliyor |
+| TV-6knHPR6c | BEST Supertrend Strategy | - | asama1: tarama bekliyor |
+| TV-70PkIvTL | Vix FIX / StochRSI Strategy | - | asama1: tarama bekliyor |
+| TV-71yKm18B | TRADLEWARE-Ichimoku TK-Cross + MFI SOL | - | asama1: tarama bekliyor |
+| TV-7S2pDMA5 | MultiCross v4.20 | - | asama1: tarama bekliyor |
+| TV-7rQKeCN2 | Stable Main Force System v6 | - | asama1: tarama bekliyor |
+| TV-8YopUUSO | Monthly Performance Table (Drop-in) | - | asama1: tarama bekliyor |
+| TV-9URAiZJE | HIGH CAGR 25%+ 50 / 200 EMA Cross - SPY, Daily Timeframe | - | asama1: tarama bekliyor |
+| TV-ALiYX5Gu | EMA + ADX CLEAN (4H/1D) | - | asama1: tarama bekliyor |
+| TV-ANmKXWWJ | ATR Breakout Trend Strategy | - | asama1: tarama bekliyor |
+| TV-AORNVoek | Trend Pullback RSI+ATR | Daily Stocks | - | asama1: tarama bekliyor |
+| TV-AR7LCcVC | 55/20 Wilder's MACD Trend Armbrust Capital | - | asama1: tarama bekliyor |
+| TV-BJDRgy7z | InvestAI - Backtest Long Short v3 | - | asama1: tarama bekliyor |
+| TV-BjjAOuub | Beginner Trend & Risk Model (EMA + RSI) | - | asama1: tarama bekliyor |
+| TV-DUCODGjC | Trendline Angle Pro V6 (Degree + Strategy) | - | asama1: tarama bekliyor |
+| TV-GDcSJIo9 | EMA Ride V2 Strategy | - | asama1: tarama bekliyor |
+| TV-HPbRZvsV | Optimized Trend Tracker STRATEGY & SCREENER | - | asama1: tarama bekliyor |
+| TV-HfxNiEab | Hull Moving Average Cloud v2 | - | asama1: tarama bekliyor |
+| TV-HjySseyp | Consecutive Up/Down Strat + alerts via TradingConnector to Forex | - | asama1: tarama bekliyor |
+| TV-Iv1wlVa8 | Monthly Returns with Benchmark | - | asama1: tarama bekliyor |
+| TV-JFIZkwZR | RSI Mean Reversion | - | asama1: tarama bekliyor |
+| TV-KO7Qe4Xb | Strategy Validation Framework - Standardised ATR Exits & 1% Ris | - | asama1: tarama bekliyor |
+| TV-KW2v4SNI | SMA(4)/SMA(30) | - | asama1: tarama bekliyor |
+| TV-LBcj22se | Trend Pulse OBV | - | asama1: tarama bekliyor |
+| TV-MI47rsio | Trend Persistence Analysis Framework | - | asama1: tarama bekliyor |
+| TV-MoL1SwLE | 3-Strategy Auto Switch - Range + Trend + Breakout | - | asama1: tarama bekliyor |
+| TV-NgSIfKQx | Bitcoin SuperFlip | Supertrend EMA Trend-Following Strategy | - | asama1: tarama bekliyor |
+| TV-OKxIjdsz | BTC Trend-Momentum Strategy | - | asama1: tarama bekliyor |
+| TV-Ospkem6i | EMA + MACD + RSI Confluence Strategy | - | asama1: tarama bekliyor |
+| TV-PDt7xwn2 | Hull MA and Candle cross | - | asama1: tarama bekliyor |
+| TV-Q9OQye4C | Hull Suite Strategy | - | asama1: tarama bekliyor |
+| TV-QEVAQHl6 | SPY 200SMA +4% Entry -3% Exit Strategy (QQQ/TQQQ) | - | asama1: tarama bekliyor |
+| TV-QfY9ozPr | SPY - Daily Timeframe - 20% CAGR - High Risk/High Reward | - | asama1: tarama bekliyor |
+| TV-VO6DY8s1 | MACD ReLoaded STRATEGY | - | asama1: tarama bekliyor |
+| TV-VcRiudNf | MHIDa Strategy Honesty Dashboard | - | asama1: tarama bekliyor |
+| TV-WWuTjyDx | Capitulation Stretch Reversion [Jayadev Rana] | - | asama1: tarama bekliyor |
+| TV-X0F9OE4L | Gradient Ribbon | EMA Ribbon Slope-Acceleration System | - | asama1: tarama bekliyor |
+| TV-XRZCjbFr | Channel Reversion System | - | asama1: tarama bekliyor |
+| TV-YsWWsOGs | Best Supertrend CCI Strategy | - | asama1: tarama bekliyor |
+| TV-aKf0t6Mz | GoldenCrossover_CP5394 | - | asama1: tarama bekliyor |
+| TV-bZ815rmw | Bot Acumulacion GGAL | MA + ADX | - | asama1: tarama bekliyor |
+| TV-d1K2qpL3 | BTC 4H Momentum - Long Only [Ensar] | - | asama1: tarama bekliyor |
+| TV-dpZLkrdx | HMA_ATR Strategy | - | asama1: tarama bekliyor |
+| TV-eDyfoKkr | Joey Strategy | - | asama1: tarama bekliyor |
+| TV-gf21APTn | HULLTSIBOT | - | asama1: tarama bekliyor |
+| TV-jc2hs2qK | Price and Volume Breakout Buy Strategy [TradeDots] | - | asama1: tarama bekliyor |
+| TV-k13xEYxZ | Zero Line Momentum Strategy: Precision Trend Following | - | asama1: tarama bekliyor |
+| TV-kzp8e4X3 | Monthly Returns in PineScript Strategies | - | asama1: tarama bekliyor |
+| TV-n3eosaZK | Rudy Breakout Momentum v2 | - | asama1: tarama bekliyor |
+| TV-oF6FmwfR | Pro SMA Trend Strategy | - | asama1: tarama bekliyor |
+| TV-pRrH9OWy | EMA Golden/Dead Cross Strategy | - | asama1: tarama bekliyor |
+| TV-qQ0MJCVL | HullMA Strategy | - | asama1: tarama bekliyor |
+| TV-qo43NaGV | BB + MACD v6.1.5 (Qing Smart Distribution) | - | asama1: tarama bekliyor |
+| TV-roaahmoi | Alligator + MA Trend Catcher [TradeDots] | - | asama1: tarama bekliyor |
+| TV-tevFM5BB | Market Structure Swing Strategy | - | asama1: tarama bekliyor |
+| TV-tuC7aGNI | Strategy 432 BTC - Donchian Breakout Continuation | - | asama1: tarama bekliyor |
+| TV-uC1oajDr | Woodies CCI Trend Strategy | Zero-Line Reject & Turbo Cross | - | asama1: tarama bekliyor |
+| TV-uvZ46BZ2 | Momentum Strategy_Public | - | asama1: tarama bekliyor |
+| TV-vJc6IOTz | Trend Pulse Channel Strategy | - | asama1: tarama bekliyor |
+| TV-vpopCZIt | EMA-RSI-ATR Strategy (AXSUSDT - D) | - | asama1: tarama bekliyor |
+| TV-wigMmPHd | Trend + RSI Strategy (Refined) | - | asama1: tarama bekliyor |
+| TV-x9pPfwmI | AC20/55EMAGDCrossTest | - | asama1: tarama bekliyor |
+| TV-zb7PgKWs | Hull Moving Average Crossover Strategy | - | asama1: tarama bekliyor |
+| TV-zoY9DmsF | Reversion Guard | RSI + Bollinger Band [Customizable] | - | asama1: tarama bekliyor |
+| TV-zrDoqm9F | Webhook Alert Strategy Template | - | asama1: tarama bekliyor |
+| U1-H2-A | U1 Hat 2 - Kripto 1 saat sikismasindan 15 dk / 5 dk kirilim | - | asama1: tarama bekliyor |
+| U1-H2-B | U1 Hat 2 - Kripto ABD seans acilisi akisi (1 saat kurulum, 15 dk / 5 dk giris) | - | asama1: tarama bekliyor |
+| U1-H2-C | U1 Hat 2 - Kripto trend icinde geri cekilme (1 saat kurulum, 15 dk / 5 dk giris) | - | asama1: tarama bekliyor |
+| U4-H1 | U4 H1 - Zaman serisi momentumu / trend takibi (SMA100 + 100 bar getirisi) | - | asama1: tarama bekliyor |
+| U4-H2 | U4 H2 - Donchian kirilimi (55 bar giris, 20 bar cikis) | - | asama1: tarama bekliyor |
+| U4-H3 | U4 H3 - Dusuk volatilite rejiminde trend (EMA20/50, SMA200, ATR14/ATR100 < 1) | - | asama1: tarama bekliyor |
+| U4-H4 | U4 H4 - Yukselen trendde kisa geri cekilme (SMA200 + RSI(2) < 10) | - | asama1: tarama bekliyor |
 
 ## Önerilen portföy
 
@@ -204,7 +282,140 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | P3-008 | Strategy based on Squeeze Momentum Indicator [LazyBear] | KRIPTO25/1D | OOS ortR<=0 |
 | P3-011 | MACD Strategy with trailing ATR stop | KRIPTO25/1D | OOS ortR<=0 |
 
-## Doğrulanamaz (273)
+## Doğrulanamaz (411)
+
+<details><summary><b>kaynakta sinyal tanimi yok</b> (126)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| A1-009 | 1% per week on NASDAQ100 | - |
+| A1-029 | SPX Trading Strategy for ThinkorSwim | - |
+| A2-005 | GDS Renko RSI + MACD 4-Mode Demo EA | - |
+| A2-009 | The Playground Series v1 to V4 | - |
+| A2-017 | ZoneUS30 | - |
+| A2-024 | Most Famous Blessing 3.9.6 EA and Setfiles | - |
+| A2-025 | The Equilibrium, a key to success! | - |
+| A2-026 | v2v dynamic trading system | - |
+| A2-027 | Happs Trading System | - |
+| A2-028 | TCO Trader EA | - |
+| A2-029 | Simple Zigzag + Fibonacci Strategy | - |
+| A3-002d | geraked BBRSI | - |
+| A3-005 | Indice-Trading-Strategy (EMA200 + range filtresi, Pine) | T16: sinyal tanimi eksik (range filtresi parametreleri, stop/TP yuzdeleri) |
+| A3-008c | stratestic Momentum(30) | T16: sinyal tanimi eksik (giris/cikis kurali kutuphane kodunda, kaynakta yok) |
+| A3-012 | freqtrade/freqtrade-strategies (resmi örnek depo) | T16: sinyal tanimi eksik (toplu depo; tek bir strateji tanimi yok) |
+| A3-013 | NostalgiaForInfinity (NFI) | - |
+| A3-014 | nateemma/strategies (MomentumRegimeBasket15mFast, ML stratejileri) | - |
+| G004 | TIS BTC Momentum + Confluencia | T16: sinyal tanimi eksik (SMA50 zaman dilimi, ATR periyodu, ters 2 ATR mum tanimi) |
+| M027 | Renko Automated Trading System | T20: kapanis bazli sentetik Renko sayaci renko_sayac(kutu=22, ilk_bar=1) ilkeli (tugla yalniz kapanmis barla olusur, look-ahead yok); 120 puan stop; kaynaktaki short/reversal kolu long-only modda yok. Puan birimi GER40 icin: piyasa_kisiti GER40 oldugundan evre |
+| O1-002 | FIRSATÇITRENDİFLİSİSTEMANILBy (Fırsatçı Trend + IF'li sistem) | - |
+| O1-007 | SÜPERTRENDMOSTOPTİMİZASYONLU | - |
+| O1-037 | Simple and Profitable Scalping Strategy (ForexSignals TV) | - |
+| O1-041 | Optimization moving average crossing strategy with 'machine learning' | - |
+| O1-062 | High and Low Reversals Indicator + Intraday Strategy | - |
+| O1-064 | Try this NQ Strategy + Code | - |
+| T8-03 | SMC Pro BTC - ICT order block + FVG [DOE] | - |
+| T8-08 | Lorentzian Classification (k-NN ML) | - |
+| TV-04erUlJM | LINK Above $12.20: Is $15 Back on the Table? | - |
+| TV-0BcdTWoV | Sector Rotation Z-Score Strategy | - |
+| TV-0igXqoj5 | Turtle Swing v2.0 | - |
+| TV-16yhUQN3 | RSI5_50 with Divergence | - |
+| TV-1OnkbAiE | HVN Fade & Break | Volume Profile Fade & Breakout Strategy | - |
+| TV-2TrSqi61 | Volatility Arbitrage Dispersion Trading Strategy | - |
+| TV-2wyXTTMc | Vol-Target Trend Engine | - |
+| TV-4AzLMpYa | LuxAlgo SMC Pro Ultimate [v6] | - |
+| TV-522xf0n5 | Trend Safety Switch | - |
+| TV-5zYcH3Gx | open>open[1]=BUY_else_SELL | - |
+| TV-67fpKimh | Real Turtle | - |
+| TV-69ZFfJ5L | XGBoost Mini Strategy [The Quant Science] | - |
+| TV-6MgStabF | Lobster Channel Breakout | - |
+| TV-6XPbhz9C | Mean Reversion Setup LliterH | - |
+| TV-7cisWbRB | DRO Momentum Surge | - |
+| TV-7yIh8gog | GLD Machine Learning Strategy (Lasso Feature Selection) | - |
+| TV-8GIAFRcP | Follow the Money v1.10 | - |
+| TV-8iAYXXsS | Hyperliquid-Ready Webhook Strategy Template | - |
+| TV-8zGpvRaM | Buy Tuesday Strategy (by ChartArt) | - |
+| TV-9SEB7IHb | VWAP Mean Reversion Strategy   Range Bound Forex  RSI Volume | - |
+| TV-A8gB4ha7 | Gann Fan v15 [Phases + Signals] | - |
+| TV-ApE4pUTA | columbcille - My Strategy | - |
+| TV-BXDmlQdj | Concordance Allocation Strategy [JOAT] | - |
+| TV-C1hyNDWO | 4MA Strategy | - |
+| TV-C9c7lz9r | BTC Future 4H ai by Unlock Money | - |
+| TV-CeFIpdwB | Concordance Strategy [JOAT] | - |
+| TV-DGHCEcnB | Sovereign Trend Strategy [JOAT] | - |
+| TV-Dln4aFaM | Narrow Range + Inside Day, Long Only Strategy (by ChartArt) | - |
+| TV-EcEYc8ap | Gravity Trend | ADX Strength Meter & Quality-Scored DMI System | - |
+| TV-FQVb4qo4 | MTF Matrix Strategy | - |
+| TV-GZCiUApZ | Singularity Convergence Protocol [JOAT] | - |
+| TV-GlCHqK0R | Trader Tom Inspired Breakout Strategy v6 | - |
+| TV-IFSv46kK | Tomukas Daily Scale-In | - |
+| TV-Ibi0s0z5 | Desire To Trade Mechanical Volatility Breakout | - |
+| TV-JH9IMLVt | Convergence Protocol [JOAT] | - |
+| TV-KKGMELzx | SPY Wheel Strategy | - |
+| TV-KYB6AmC1 | Indicator420 strategy | - |
+| TV-M6uONKNI | Power Surge | BB Momentum Squeeze Release | - |
+| TV-MyuUXFMc | BTCUSD 4H EMA Swing Strategy | - |
+| TV-N0nYQBlh | Simple SuperTrend Strategy for BTCUSD 4H | - |
+| TV-N3ItY18G | Vortex Reversal Engine [forexobroker] | - |
+| TV-NXbsqL9n | RSI V Pattern strategy | - |
+| TV-NeEiwmDq | Donchian Breakout with ATR Trailing Stop (Trend Following) | - |
+| TV-OePmdMFg | Investments/swing trading strategy for different assets | - |
+| TV-PDUqNlVa | BBWP + MACD + EMA Trend Strategy | - |
+| TV-PftCy6TI | Concordia Regime Execution [JOAT] | - |
+| TV-Q1O23zJP | 20 years old Turtles strategy still work!! | - |
+| TV-Qg1Jra51 | RSI Bullish Divergence (Oversold) Breakout | - |
+| TV-R9nsvSZR | Strategy for UT Bot Alerts indicator | - |
+| TV-ROM3crig | BEST Engulfing + Breakout Strategy | - |
+| TV-RcF7t6Am | TRADE Strategy v8.4 (Pine v6 Ready) | - |
+| TV-RehzSQ8g | SPXL - Buy The Panic VIX | - |
+| TV-TQVitTEQ | [Tutorial][RS]Working with orders | - |
+| TV-TapWBWNO | VALUE TREND + RSI (ARROWS ONLY) | - |
+| TV-TlwmnFdI | System 2 - Structure Continuation | - |
+| TV-V3NuuiPx | R-based Strategy Template [Daveatt] | - |
+| TV-VFzCk3HX | TASC 2026.08 An Ag Selling Model | - |
+| TV-XTAGdX8Z | Btcusdt Dual-Engine Trend Strategy | - |
+| TV-XnvfXLPF | NoNonsense Forex - high timeframe trading absurd NON-REPAINTING | - |
+| TV-Y9ppyIk2 | CA Demand Reclaim & Trendline Breakout Strategy v1 | - |
+| TV-Z4kcoUGT | Trend Flow Strategy | - |
+| TV-ZvpONhex | U&D | - |
+| TV-abjeWQD5 | Narrow Range + Inside Day, Short Only Strategy (by ChartArt) | - |
+| TV-adstHm9N | Fractional EMA Cross Backtest Strategy | - |
+| TV-b4HV7iJR | Optimal F by Ralph Vince. Position Sizing and Risk Analysis | - |
+| TV-bA9UFcgj | SPY Bear Regime Short System | - |
+| TV-bE05CfsO | BTC/USD Quant Trend Engine Long Only v3 - BTC/USD, 4H Timeframe | - |
+| TV-bSGjA2Ie | Momentum Slope Navigator Strategy v1.0.2 | - |
+| TV-bmIiC79T | BTC 4H RSI + Bullish Engulfing | - |
+| TV-efVFRo0C | PEAD - Post Earnings Announcement Drift | - |
+| TV-et8U6rd3 | TRADLEWARE-DCA+Trend ETF | - |
+| TV-f80Cfpfp | RSI W Pattern strategy | - |
+| TV-fDrDSlEM | Vantage Protocol [JOAT] | - |
+| TV-fp0zbifH | CNPS 9 - SMA7/50 Cross | - |
+| TV-hcXGamAi | Vortex Nexus Alpha [JOAT] | - |
+| TV-jjhUHcje | Stepped trailing strategy example | - |
+| TV-kbYTJ8V2 | Aurora KAMA | KAMA Adaptive Trend Strategy | - |
+| TV-mfw4fJST | VIX MACD Long | - |
+| TV-mpjNqADq | SuperTrend Regime Confluence | - |
+| TV-mzv5SGie | Silver Risk Management outperformed Buy & Hold | - |
+| TV-odnW4iA5 | 0 Turtle Breakout Pro v6.13 | - |
+| TV-ouvmvItR | Volume Vault | Volume Order Block Retest Strategy | - |
+| TV-qNLQQ9aB | ZigZag Elliott Wave Strategy (Demo) | - |
+| TV-qSLcZSyw | RSI Divergence Indicator strategy | - |
+| TV-qrCrfG0m | Bastion Execution Protocol [JOAT] | - |
+| TV-rP7izVek | SilverStream v2 | - |
+| TV-rjAoFt4N | TSI HMA CCI | - |
+| TV-tWS24Z2K | Two level TP + TrailStp exits example | - |
+| TV-u5R6y8cl | Session King - ALMA with Session Filter | - |
+| TV-vrrutnMb | Return Dispersion Matrix Strategy [The Quant Science] | - |
+| TV-woRXiMlC | TURKS - Tiered Unit Risk Kernel Strategy | - |
+| TV-wu1VhNpf | TASC 2026.07 Risk-On, Risk-Off, Or Caution | - |
+| TV-x8rkJOjn | anh Manh dep trai | - |
+| TV-xDJH00mL | EMA Ribbon + Smoothed RSI Trend Strategy | - |
+| TV-yI5AU2ny | Bucket 3 Momentum | - |
+| TV-yMCa3XZD | MACD + SMA 200 Strategy (by ChartArt) | - |
+| TV-yMnDhKLs | WJ BUY Strategy | - |
+| TV-zBaDqbla | Easy System 420 | - |
+| TV-zxTxzt8o | Claude one | - |
+
+</details>
 
 <details><summary><b>kaynak erisilemedi</b> (117)</summary>
 
@@ -372,51 +583,20 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 </details>
 
-<details><summary><b>kaynakta sinyal tanimi yok</b> (22)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| A1-029 | SPX Trading Strategy for ThinkorSwim | - |
-| A2-005 | GDS Renko RSI + MACD 4-Mode Demo EA | - |
-| A2-009 | The Playground Series v1 to V4 | - |
-| A2-017 | ZoneUS30 | - |
-| A2-024 | Most Famous Blessing 3.9.6 EA and Setfiles | - |
-| A2-025 | The Equilibrium, a key to success! | - |
-| A2-026 | v2v dynamic trading system | - |
-| A2-027 | Happs Trading System | - |
-| A2-028 | TCO Trader EA | - |
-| A2-029 | Simple Zigzag + Fibonacci Strategy | - |
-| A3-005 | Indice-Trading-Strategy (EMA200 + range filtresi, Pine) | T16: sinyal tanimi eksik (range filtresi parametreleri, stop/TP yuzdeleri) |
-| A3-008c | stratestic Momentum(30) | T16: sinyal tanimi eksik (giris/cikis kurali kutuphane kodunda, kaynakta yok) |
-| A3-012 | freqtrade/freqtrade-strategies (resmi örnek depo) | T16: sinyal tanimi eksik (toplu depo; tek bir strateji tanimi yok) |
-| A3-013 | NostalgiaForInfinity (NFI) | - |
-| A3-014 | nateemma/strategies (MomentumRegimeBasket15mFast, ML stratejileri) | - |
-| G004 | TIS BTC Momentum + Confluencia | T16: sinyal tanimi eksik (SMA50 zaman dilimi, ATR periyodu, ters 2 ATR mum tanimi) |
-| O1-002 | FIRSATÇITRENDİFLİSİSTEMANILBy (Fırsatçı Trend + IF'li sistem) | - |
-| O1-007 | SÜPERTRENDMOSTOPTİMİZASYONLU | - |
-| O1-041 | Optimization moving average crossing strategy with 'machine learning' | - |
-| O1-062 | High and Low Reversals Indicator + Intraday Strategy | - |
-| T8-03 | SMC Pro BTC - ICT order block + FVG [DOE] | - |
-| T8-08 | Lorentzian Classification (k-NN ML) | - |
-
-</details>
-
-<details><summary><b>ozel kod (seans_saat)</b> (22)</summary>
+<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: seans_saat)</b> (20)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
 |---|---|---|
 | A1-004 | ADX strategy with NASDAQ 30-minutes timeframe | - |
-| A1-010 | Monday in Dax40 with 1% | - |
 | A1-015 | Late lunch trade DAX40 strategy | - |
-| A2-001 | GER40 Evening Coil | - |
-| A2-003 | Buy GBPJPY Every Monday | - |
-| A2-004 | SessionReopenEA | - |
 | A2-012 | ORB Risk Managed - Opening Range Breakout | - |
 | A2-013 | Opening Range Breakout with NR4 / NR7 Contraction Filters | - |
 | A2-015 | EMA Cross Scalper M15 (XAUUSD) | - |
 | A2-019 | Williams%R, SAR X-over 15 minute candles | - |
 | A6-023 | Attention Prop Traders: first half hour predicts last half hour | - |
 | A7-001 | NQ 5 dk trend-pullback scalp (37 strateji backtest'inden kalan) | - |
+| G001 | KISS - Keep It Simple and Stupid (DAX 5m) | - |
+| G002 | VWAP-RSI Scalper FINAL v1 | - |
 | M004 | Beat the Market: Intraday Momentum Strategy for S&P500 ETF (SPY) | - |
 | M005 | Intraday Momentum for ES and NQ (Noise Area 90-Day Variant) | - |
 | O1-053 | Open Range Breakout DAX 5/15M | - |
@@ -427,6 +607,81 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 | O3-009 | Stocks in Play – 5 dk ORB + Relative Volume (Zarattini/Barbon/Aziz) | - |
 | O3-016 | Gap down + 25 MA filtresi (S&P 500 gun ici) | - |
 | P3-013 | ORB Strategy [LuciTech] | - |
+
+</details>
+
+<details><summary><b>ozel kod (ozel_gosterge)</b> (19)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| A6-009 | Trading the Channel (Inside Channel, Kaufman) | - |
+| A6-014 | Trend trading system with Market Meanness Index (Why 90% of Backtests Fail) | T21: kaynak erisilemedi (https://financial-hacker.com/why-90-of-backtests-fail/) -> Argon T19. Zorro LowPass (2. derece) ve MMI tanimlari kartta yalniz sozle var; resmi Zorro kodu bu sandbox'tan okunamadi, bellekten yazilmadi |
+| TV-7C1kIEOn | BBTrend w SuperTrend decision - Strategy [presentTrading] | - |
+| TV-7v1PWf2e | Adaptive Regime Momentum [JOAT] | - |
+| TV-FEnNQpAn | RORO System Oscillator | - |
+| TV-GP3FEy2z | Supertrend Ichimoku Trendfollowing | - |
+| TV-IMKs0OPw | Volatility Reversion Scalper | - |
+| TV-PUEDA3c6 | Confluence x4 Signal Test Bench | - |
+| TV-QA8AC0vs | Kiki moons | - |
+| TV-QTYaYuX7 | Hull Fisher | - |
+| TV-W67tJltC | Z-Edge | Confluence Z-score Strategy | - |
+| TV-dpkq3n4O | LinReg Scale-In Strategy | - |
+| TV-dwgn7hrE | Coil Breaker | RSI Range Compression | - |
+| TV-egTb7TgJ | TRADLEWARE-Gaussian Channel + StochRSI ETH | - |
+| TV-hezSShJr | Hybrid Breakout | VCP-Inspired Trend | - |
+| TV-qgTc4zie | Kaufman Moving Average Adaptive Strategy by MKB | - |
+| TV-sPNx5Z74 | Percent Supertrend Strategy (Long Only) | - |
+| TV-xYflA6O7 | Sadashi Market Reversion Strategy | - |
+| TV-yvDyq0pv | Moon Phases Strategy [LuxAlgo] | - |
+
+</details>
+
+<details><summary><b>ozel kod (durum_makinesi)</b> (18)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| M019 | FullStochastic with Filters - Buy&Sell for Amibroker (AFL) | T20: motorda kalmadi. AFL kodu PositionScore (portfoy siralamasi), ExRem/BarsSince zincirleri ve ForeNmSth3 3 barlik tahmin fonksiyonunu kullanir; tahmin formulu kartta yok |
+| O1-048 | Stochastic Gold Trader | T20: motorda kalmadi. 2 asamali kurulum/tetik durum makinesi: kurulumun ne zaman sifirlandigi ve RSI sayaci (RSICounter/RSICounterAdj, LastRSI) kartta yalnizca ozet olarak var; kaynak kodu okunamadi, tahmin yazilmadi |
+| RD-01 | SPY/QQQ dip alimi (RSI(2) / 3 dusen kapanis / IBS, SMA(200) filtresi) | - |
+| TV-1s588fgS | Bollinger Bands  + RSI Live Radar Strategy | - |
+| TV-97gxVA5b | Compression Breakout System | - |
+| TV-TIpnJpU8 | PresentTrend - Strategy [presentTrading] | - |
+| TV-TbK1rB5B | TrendShift | Supertrend + ADX Regime-Adaptive Strategy | - |
+| TV-VOFjU544 | GXG Trend Engine | - |
+| TV-X5M5zevX | Code A - Terminal Core | - |
+| TV-Xr2xrNAY | Volatility Capture RSI-Bollinger - Strategy [presentTrading] | - |
+| TV-Z9O5w3SG | Execution-Aware Trend [BSL] | - |
+| TV-buSJAz8o | Golden Ratio | Fibonacci Trend Confirmation Strategy | - |
+| TV-cz5KaioF | EMA 40 Pullback Pyramid Strategy | - |
+| TV-o9qty0BL | PAXG 4-Supertend + 40Bars Breakout add | - |
+| TV-qDPWh3KO | TrendGuard Flag Finder - Strategy [presentTrading] | - |
+| TV-qUrvPAmT | WLD 4H Auto Entry Confirmed | - |
+| TV-vMuEblZr | EW Bottom Signals 1.4X VOLUME_strategy | - |
+| TV-zMwHN2Uu | BTCUSDT 4H Breakout Retest Strategy - S/R + RSI/MACD/SMA Filter | - |
+
+</details>
+
+<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: tanim_belirsiz)</b> (17)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| A2-011 | APEX VELOCITY | T21: kaynak erisilemedi (https://www.mql5.com/en/code/78275) -> Argon T19. cikis kurallari (ATR carpanli basabas, iz suren, maks. hesap dususu) sayisal degerleriyle kartta yok |
+| A6-020 | Market Sentiment and an Overnight Anomaly | - |
+| A7-002 | RSI asiri alim/satim Forex sistemi (PF 2.41) | - |
+| A7-005 | Long-only ABD hisseleri dakikalik gun ici (Level4) | - |
+| G005 | XLP Mean Reversion w/ Twist | - |
+| G013 | Trend Trigger | EMA + MTF Stochastic (TradingView) | - |
+| M001 | Opening Range Breakout (ORB) 0DTE Options Strategy | - |
+| M009 | 5-Year SPY Put Credit Spread Backtest | - |
+| M020b | The 30-Minute Stock Trader - Strategy 2: Mean-Reversion Long (Laurens Bensdorp) | - |
+| O1-008 | Anıl Özekşi Sistem 1 | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Anil-Özekşi-Sistem-1) -> Argon T19. OTT/StochSlow(500,200,111) bolge kosullari (ott2_bull, stoc1_bull ...) ve seans penceresi Matriks tanimlariyla kartta yok |
+| O1-010 | FirsatciTrend 4Bölge LONG | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/FirsatciTrend-4Bölge-LONG) -> Argon T19. TOTT/SOTT/HHV-OTT bolge kosullari kartta tanimli degil; seans penceresi |
+| O1-013 | OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG) -> Argon T19. TOTT/SOTT ve HOTT/LOTT bolge kosullari kartta tanimli degil; seans penceresi |
+| O1-016 | Sistem 1 (piyasa sartlarina gore sekillenen sistem) | - |
+| O1-055 | Intraday Profit Maker (Best with Automation) | T21: kaynak erisilemedi (https://www.wisestocktrader.com/indicators/4853-intraday-profit-maker-best-with-automation-for-amibroker-afl) -> Argon T19. 'aLPivs == 1' pivot tanimi (cok barli onay mi, low == LLV(12) mi) ve repaint eden ZigZag belirsiz |
+| O2-017 | TemaTrendFollowing | T21: kaynak erisilemedi (https://jesse.trade/strategies/tematrendfollowing) -> Argon T19. CMO esigi ve TEMA 20/70 (4H) parametre degerleri kartta yok, 'tema' kutuphanede yok |
+| O2-019 | CloudScalper | T21: kaynak erisilemedi (https://jesse.trade/strategies/cloudscalper) -> Argon T19. bbw_expansion tanimi (Bollinger genisligi genislemesi) ve esikleri kartta yok |
+| O2-023 | Intraday Trading Strategy for Futures Contract NQ | - |
 
 </details>
 
@@ -451,76 +706,82 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 </details>
 
-<details><summary><b>ozel kod (tanim_belirsiz)</b> (11)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| A2-011 | APEX VELOCITY | T21: kaynak erisilemedi (https://www.mql5.com/en/code/78275) -> Argon T19. cikis kurallari (ATR carpanli basabas, iz suren, maks. hesap dususu) sayisal degerleriyle kartta yok |
-| A5-014 | Seasonality, Trend-following, and Mean reversion in Bitcoin | - |
-| O1-006 | MOTT-4B Kurgu | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4B-Kurgu) -> Argon T19. 5 MOTT bandinin (OTT(HHV)/OTT(LLV) ve ara ortalamalar) formulu kartta yok; O1-009 ile ayni sistemin kopyasi gorunuyor |
-| O1-008 | Anıl Özekşi Sistem 1 | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/Anil-Özekşi-Sistem-1) -> Argon T19. OTT/StochSlow(500,200,111) bolge kosullari (ott2_bull, stoc1_bull ...) ve seans penceresi Matriks tanimlariyla kartta yok |
-| O1-009 | MOTT 4 Kurgu Stratejisi | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4-Kurgu-Stratejisi) -> Argon T19. 5 MOTT bandinin formulu kartta yok; O1-006 ile ayni sistemin kopyasi gorunuyor |
-| O1-010 | FirsatciTrend 4Bölge LONG | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/FirsatciTrend-4Bölge-LONG) -> Argon T19. TOTT/SOTT/HHV-OTT bolge kosullari kartta tanimli degil; seans penceresi |
-| O1-013 | OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/OTT-STOCK-HHV-LLV-HOTT-LOTT-LONG) -> Argon T19. TOTT/SOTT ve HOTT/LOTT bolge kosullari kartta tanimli degil; seans penceresi |
-| O1-055 | Intraday Profit Maker (Best with Automation) | T21: kaynak erisilemedi (https://www.wisestocktrader.com/indicators/4853-intraday-profit-maker-best-with-automation-for-amibroker-afl) -> Argon T19. 'aLPivs == 1' pivot tanimi (cok barli onay mi, low == LLV(12) mi) ve repaint eden ZigZag belirsiz |
-| O2-017 | TemaTrendFollowing | T21: kaynak erisilemedi (https://jesse.trade/strategies/tematrendfollowing) -> Argon T19. CMO esigi ve TEMA 20/70 (4H) parametre degerleri kartta yok, 'tema' kutuphanede yok |
-| O2-019 | CloudScalper | T21: kaynak erisilemedi (https://jesse.trade/strategies/cloudscalper) -> Argon T19. bbw_expansion tanimi (Bollinger genisligi genislemesi) ve esikleri kartta yok |
-| T8-06 | TOTT/OTT tek bantlı (Twin Optimized Trend Tracker, saatlik kurgu) | - |
-
-</details>
-
-<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: tanim_belirsiz)</b> (10)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| A6-020 | Market Sentiment and an Overnight Anomaly | - |
-| A7-002 | RSI asiri alim/satim Forex sistemi (PF 2.41) | - |
-| A7-005 | Long-only ABD hisseleri dakikalik gun ici (Level4) | - |
-| G005 | XLP Mean Reversion w/ Twist | - |
-| G013 | Trend Trigger | EMA + MTF Stochastic (TradingView) | - |
-| M001 | Opening Range Breakout (ORB) 0DTE Options Strategy | - |
-| M009 | 5-Year SPY Put Credit Spread Backtest | - |
-| M020b | The 30-Minute Stock Trader - Strategy 2: Mean-Reversion Long (Laurens Bensdorp) | - |
-| O1-016 | Sistem 1 (piyasa sartlarina gore sekillenen sistem) | - |
-| O2-023 | Intraday Trading Strategy for Futures Contract NQ | - |
-
-</details>
-
-<details><summary><b>ozel kod (desen)</b> (6)</summary>
+<details><summary><b>ozel kod (desen)</b> (8)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
 |---|---|---|
 | A1-027 | Bjorgum Double Tap | T20: motorda kalmadi. 5x3 pivot matrisli cift dip/tepe algoritmasi (Bjorgum Pine); genel bir desen ilkeline indirgenemedi, Pine kaynagi raw.githubusercontent'ta yok |
-| A2-006 | Price Action Intraday Trading - Expert for MT5 | T20: motorda kalmadi. 'Destek seviyesinde' kosulunun tanimi kaynakta yok (SRLookback=20 yalniz parametre adi); pin bar/engulfing/inside bar tanimlari ise standart, ama destek tanimi olmadan sinyal eksik kalir |
 | A3-002e | geraked ABSAR | T20: motorda kalmadi. Pine kaynagi (ABSAR.pine, raw.githubusercontent) okundu: ZigZag dizisi + ABC fibonacci orani + 6 ortalamali bulut + Parabolic SAR + son 6 bar stochastic donusu, durumlu dizi algoritmasi; stop = lowest(low, 5), hedef = giris + 2 x risk (ka |
 | A6-015 | Double Bottom Country ETF Trading | T20: motorda kalmadi. Aylik yeniden tarama, 24 ulke ETF evreni (evrenimizde yok), gecmise donuk merkezli yerel dip teyidi ve limit alim emri; evren disi |
 | O1-046 | Fractal breakout intraday Strategy EUR/USD 1H | T20: motorda kalmadi. FX, pip cinsinden hedef/iz suren (stop tipi pips motorda yok) ve 10:00-23:00 seans penceresi (seans saati paketi); piyasa_kisiti FX |
 | P3-010 | Dynamic Swing Anchored VWAP STRAT (Zeiierman/PineIndicators) | T20: motorda kalmadi. Zeiierman dinamik cipali VWAP: cipanin pivotta mi onayda mi basladigi ve swing_length=10'un pivot tanimi kaynaktan dogrulanamadi (kaynak okunamadi); tahmin yazilmadi |
+| TV-WrEqzgAo | PPO Divergence Strategy | - |
+| TV-ZDhizQgu | Qing LRC + S/R + EMA (Trend Cross Logic) | - |
+| TV-rvBgD3aP | Elliott Wave Impulse Strategy | Wave 5 & Reversal Entries | - |
 
 </details>
 
-<details><summary><b>ozel kod (durum_makinesi)</b> (6)</summary>
+<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: ozel_gosterge)</b> (5)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| G006 | AutoTune Filter (Financial Hacker) | - |
+| M003 | 5min /ES Futures Strategy For ThinkOrSwim (HalfTrend with Deviation Bands) | T21: kaynak erisilemedi (https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/) -> Argon T19. Price girdisi celisiyor: kart high kullanir, kaynak metni 5m ayarinda low der; ayrica yalniz ES vadeli (piyasa_kisiti ES). HalfTrend adiml |
+| M026 | A simple RKD Expert Advisor based on a specified custom RKD indicator (autoRKD_EA) | - |
+| O1-045 | VECTORIAL DAX (M5) | T21: kaynak erisilemedi (https://www.prorealcode.com/prorealtime-trading-strategies/vectorial-dax-m5/) -> Argon T19. ATAN acisi pipsize'a bagli (GER40 piyasa_kisiti), 10:00-22:00 seans ve zararda zaman stopu (seans saati paketi) |
+| O1-050 | EURUSD 15-minutes timeframe Dhigh / Dlow Strategy | T21: kaynak erisilemedi (https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/) -> Argon T19. pip cinsinden kismi kar/izsuren (FX), TEMA/ucgen MA ve cari gun Dhigh/Dlow, seans penceresi; ProBuilder kodu oku |
+
+</details>
+
+<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: durum_makinesi)</b> (4)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
 |---|---|---|
 | A2-020 | Quantum London Trading | T20: motorda kalmadi. Artan lotlu sepet (grid: ayni yonde 40'a kadar kademeli pozisyon) ve repaint eden Quantum gostergesi; motor sembol basina tek pozisyon tutar, gostergenin periyodu kaynakta yok |
 | A3-001 | XAUUSD Pullback Window (4 fazlı durum makinesi) | T20: motorda kalmadi. 4 fazli durum makinesi (SCANNING/ARMED/WINDOW_OPEN/ENTRY); EMA egim acisi, ATR bandi ve saat filtresi parametreleri kartta yok, kaynak kodu (sunrise_ogle_xauusd.py) okunmadi. Kaynak okunursa ayri is (genel 'sonra/ardisik' durum ilkeli ger |
-| M019 | FullStochastic with Filters - Buy&Sell for Amibroker (AFL) | T20: motorda kalmadi. AFL kodu PositionScore (portfoy siralamasi), ExRem/BarsSince zincirleri ve ForeNmSth3 3 barlik tahmin fonksiyonunu kullanir; tahmin formulu kartta yok |
-| O1-048 | Stochastic Gold Trader | T20: motorda kalmadi. 2 asamali kurulum/tetik durum makinesi: kurulumun ne zaman sifirlandigi ve RSI sayaci (RSICounter/RSICounterAdj, LastRSI) kartta yalnizca ozet olarak var; kaynak kodu okunamadi, tahmin yazilmadi |
 | O1-061 | Chewie's Super Trend, Hull Average, Donchian Trend Ribbon Trading System | - |
 | O2-008 | Highest Open / Lowest Open Trade | T20: motorda kalmadi. Gun ici en yuksek/en dusuk 1H acilis seviyeleri, 'asagi kirip geri donus' durumu ve NY 08:00-12:00 seans penceresi (seans saati paketi) gerektirir |
 
 </details>
 
-<details><summary><b>ozel kod (ozel_gosterge)</b> (5)</summary>
+<details><summary><b>ozel kod (seans_saat)</b> (4)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
 |---|---|---|
-| A6-009 | Trading the Channel (Inside Channel, Kaufman) | - |
-| A6-014 | Trend trading system with Market Meanness Index (Why 90% of Backtests Fail) | T21: kaynak erisilemedi (https://financial-hacker.com/why-90-of-backtests-fail/) -> Argon T19. Zorro LowPass (2. derece) ve MMI tanimlari kartta yalniz sozle var; resmi Zorro kodu bu sandbox'tan okunamadi, bellekten yazilmadi |
-| M003 | 5min /ES Futures Strategy For ThinkOrSwim (HalfTrend with Deviation Bands) | T21: kaynak erisilemedi (https://usethinkscript.com/threads/5min-es-futures-strategy-for-thinkorswim.9911/) -> Argon T19. Price girdisi celisiyor: kart high kullanir, kaynak metni 5m ayarinda low der; ayrica yalniz ES vadeli (piyasa_kisiti ES). HalfTrend adiml |
-| O1-045 | VECTORIAL DAX (M5) | T21: kaynak erisilemedi (https://www.prorealcode.com/prorealtime-trading-strategies/vectorial-dax-m5/) -> Argon T19. ATAN acisi pipsize'a bagli (GER40 piyasa_kisiti), 10:00-22:00 seans ve zararda zaman stopu (seans saati paketi) |
-| O1-050 | EURUSD 15-minutes timeframe Dhigh / Dlow Strategy | T21: kaynak erisilemedi (https://www.prorealcode.com/prorealtime-trading-strategies/eurusd-15-minutes-timeframe-dhigh-dlow-strategy/) -> Argon T19. pip cinsinden kismi kar/izsuren (FX), TEMA/ucgen MA ve cari gun Dhigh/Dlow, seans penceresi; ProBuilder kodu oku |
+| A1-010 | Monday in Dax40 with 1% | - |
+| A2-001 | GER40 Evening Coil | - |
+| A2-003 | Buy GBPJPY Every Monday | - |
+| A2-004 | SessionReopenEA | - |
+
+</details>
+
+<details><summary><b>ozel kod (tanim_belirsiz)</b> (4)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| A5-014 | Seasonality, Trend-following, and Mean reversion in Bitcoin | - |
+| O1-006 | MOTT-4B Kurgu | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4B-Kurgu) -> Argon T19. 5 MOTT bandinin (OTT(HHV)/OTT(LLV) ve ara ortalamalar) formulu kartta yok; O1-009 ile ayni sistemin kopyasi gorunuyor |
+| O1-009 | MOTT 4 Kurgu Stratejisi | T21: kaynak erisilemedi (https://algokutuphanesi.com/Sistem/Detay/MatriksIq/MOTT-4-Kurgu-Stratejisi) -> Argon T19. 5 MOTT bandinin formulu kartta yok; O1-006 ile ayni sistemin kopyasi gorunuyor |
+| T8-06 | TOTT/OTT tek bantlı (Twin Optimized Trend Tracker, saatlik kurgu) | - |
+
+</details>
+
+<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: tick_veri)</b> (3)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| A1-006 | SCALPING CAC40 10 SECONDS | - |
+| A6-017 | Can Weakening Morning Order Flow Predict SPY Reversals? | - |
+| O2-011 | PulseStrike Scalper - Statistical Burst Detection EA | - |
+
+</details>
+
+<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: desen)</b> (2)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| A2-006 | Price Action Intraday Trading - Expert for MT5 | T20: motorda kalmadi. 'Destek seviyesinde' kosulunun tanimi kaynakta yok (SRLookback=20 yalniz parametre adi); pin bar/engulfing/inside bar tanimlari ise standart, ama destek tanimi olmadan sinyal eksik kalir |
+| M002 | Key Reversal Patterns Using Kase Bars | - |
 
 </details>
 
@@ -533,43 +794,7 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 </details>
 
-<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: ozel_gosterge)</b> (2)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| G006 | AutoTune Filter (Financial Hacker) | - |
-| M026 | A simple RKD Expert Advisor based on a specified custom RKD indicator (autoRKD_EA) | - |
-
-</details>
-
-<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: seans_saat)</b> (2)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| G001 | KISS - Keep It Simple and Stupid (DAX 5m) | - |
-| G002 | VWAP-RSI Scalper FINAL v1 | - |
-
-</details>
-
-<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: tick_veri)</b> (2)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| A1-006 | SCALPING CAC40 10 SECONDS | - |
-| A6-017 | Can Weakening Morning Order Flow Predict SPY Reversals? | - |
-
-</details>
-
-<details><summary><b>ozel kod (portfoy_rotasyonu)</b> (2)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| A4-001 | Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion | T22: kural agaci Composer acik uc noktasindan okunabildi (https://stagehand-api.composer.trade/api/v1/public/symphonies/dsPSLcRMdQldkyolwGon/score); eski 'erisim engellendi' notu gecersiz. Kurallar tam (RSI/cumulative-return/moving-average-return pencereleri k |
-| A4-006 | Opening Range Breakout for Stocks in Play | T22: bu is paketine girmedi (5 dakikalik ABD gun ici veri yok); kural Codex'in seans/rotasyon paketinde. |
-
-</details>
-
-<details><summary><b>ozel kod (renko)</b> (2)</summary>
+<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: renko)</b> (2)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
 |---|---|---|
@@ -586,11 +811,11 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 </details>
 
-<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: desen)</b> (1)</summary>
+<details><summary><b>kaynakta sinyal tanimi yok (ozel kod: portfoy_rotasyonu)</b> (1)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
 |---|---|---|
-| M002 | Key Reversal Patterns Using Kase Bars | - |
+| A4-006 | Opening Range Breakout for Stocks in Play | T22: bu is paketine girmedi (5 dakikalik ABD gun ici veri yok); kural Codex'in seans/rotasyon paketinde. |
 
 </details>
 
@@ -618,6 +843,14 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 </details>
 
+<details><summary><b>ozel kod (cok_enstruman)</b> (1)</summary>
+
+| ID | Strateji | Gerekçe (karttaki not) |
+|---|---|---|
+| RD-02 | Ay sonu SPY/TLT: ay bitimine 4 islem gunu kala goreli getiriye gore kosullu SPY | - |
+
+</details>
+
 <details><summary><b>ozel kod (durum_bilgisi)</b> (1)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
@@ -634,35 +867,11 @@ Ayrıntı (adaylar tek tek, korelasyon, yöntem): [`results/portfoy.md`](portfoy
 
 </details>
 
-<details><summary><b>ozel kod (tick_veri)</b> (1)</summary>
+<details><summary><b>ozel kod (portfoy_rotasyonu)</b> (1)</summary>
 
 | ID | Strateji | Gerekçe (karttaki not) |
 |---|---|---|
-| O2-011 | PulseStrike Scalper - Statistical Burst Detection EA | - |
-
-</details>
-
-<details><summary><b>piyasa ozgu (FX)</b> (1)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| O1-037 | Simple and Profitable Scalping Strategy (ForexSignals TV) | - |
-
-</details>
-
-<details><summary><b>piyasa ozgu (GER40)</b> (1)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| M027 | Renko Automated Trading System | T20: kapanis bazli sentetik Renko sayaci renko_sayac(kutu=22, ilk_bar=1) ilkeli (tugla yalniz kapanmis barla olusur, look-ahead yok); 120 puan stop; kaynaktaki short/reversal kolu long-only modda yok. Puan birimi GER40 icin: piyasa_kisiti GER40 oldugundan evre |
-
-</details>
-
-<details><summary><b>piyasa ozgu (US100)</b> (1)</summary>
-
-| ID | Strateji | Gerekçe (karttaki not) |
-|---|---|---|
-| A1-009 | 1% per week on NASDAQ100 | - |
+| A4-001 | Short Term Momentum that Works 2.0 - Macro Filter + Mean Reversion | T22: kural agaci Composer acik uc noktasindan okunabildi (https://stagehand-api.composer.trade/api/v1/public/symphonies/dsPSLcRMdQldkyolwGon/score); eski 'erisim engellendi' notu gecersiz. Kurallar tam (RSI/cumulative-return/moving-average-return pencereleri k |
 
 </details>
 
