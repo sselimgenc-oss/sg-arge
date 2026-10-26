@@ -18,7 +18,7 @@ Kullanıcı panoyu açtığında üç soruya cevap görsün:
 
 ## 2. Beklenti bandı (kitap kartı)
 - Her kitap için backtest sınama döneminden haftalık getiri dağılımı (`results/u7/**/getiriler`, TV-2 için
-  `results/tv2/getiriler/<id>.csv`; mevcut `gunluk._expectations` varsa onu kullan).
+  `results/tv2/getiriler/<id>.csv`). Eski `gunluk._expectations` (asama2b tablosu) bu kitaplar için geçerli değil, kullanma.
 - Canlı hafta sayısı n için bootstrap ile n haftalık birikimli getirinin %10–%90 aralığı; canlı değer bandın
   altında / içinde / üstünde. Ayrıca beklenen ve gerçekleşen işlem sıklığı.
 - Panelde: "beklenti içinde" / "beklentinin altında (n hafta)" / "beklentinin üstünde". Bu bilgi amaçlıdır;
