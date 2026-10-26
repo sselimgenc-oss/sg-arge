@@ -11,6 +11,8 @@ Son güncelleme: 2026-10-26 (akşam), lider. Faz 1 kapanış: `docs/FAZ1_KAPANIS
 
 **Kullanıcı kararı 2026-10-26:** wcegMOXj (yalnız ETHBTC, tek enstrüman) listeden çıktı; payı (%5) nakit.
 
+**Kullanıcı kararı 2026-10-26 (4 doğrulama):** QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I kapıyı geçti ama getiri küçük / kanıt zayıf (`docs/faz2_dogrulama.md`) → paper'a **alınmadı**; konu kapandı.
+
 **Faz 2 başı (sıralı):** (1) TV-2 Pine paper motoru — G4RNcGXg, wcegMOXj (BTC→USD), yhoK9cH4; kaynaklar `paper/tv2_kaynak/`; (2) 200 günlük ortalama kuralı (nedensel); (3) QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I doğrulamaları. Repo temizliği yapıldı (madde 5).
 
 ## Faz 1 NİHAİ KARAR (kullanıcı onayı 2026-10-26)
