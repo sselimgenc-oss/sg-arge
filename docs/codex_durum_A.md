@@ -39,3 +39,9 @@ Son doğrulama: `./.venv/bin/python -m pytest -q tests/` → 1328 geçti, 4 atla
   var; U7’de ortak DSR yok. Aile deneme sayısı varsayılmadı, karar değişmedi.
 - 02:05 — 4.2 TAKILDI (ikinci deneme) — `.venv/bin/pip install vnstock`
   paket endeksinde sürüm bulamadı; yükleyici veya veri eşlemesi uydurulmadı.
+- 04:25 — TV-2 kripto-dışı koşusu `40242234050`: 8/8 parça başarıyla tamamlandı,
+  fakat bu dala sonuç/getiri checkpoint commit'i gelmedi (dalda 377 satır, 276 getiri
+  dosyası değişmeden kaldı). Sekiz artifact doğrulandı. 1.1 satır kuralıyla
+  indirme iki kez denendi: API yönlendirmesi ve yetkili `gh run download` sırasıyla
+  Actions blob deposunda HTTP 403 aldı. TAKILDI; artifact erişimi sağlanmadan
+  `--birlestir` ve `tv2_sirala` eksik örneklem üretmemesi için çalıştırılmadı.
