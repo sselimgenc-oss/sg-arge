@@ -4,6 +4,10 @@ name: Faz 2 doğrulama
 
 on:
   workflow_dispatch:
+  # Lider dalında bu dosya değişince de koşar (API'den dispatch izni yok).
+  push:
+    branches: [claude/magical-ride-c7apbp]
+    paths: [.github/workflows/faz2_dogrulama.yml]
 
 permissions:
   contents: write
