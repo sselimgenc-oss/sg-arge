@@ -58,3 +58,20 @@ sonraki açılış olması; sentetik kenarın hedef Sharpe'ı vermesi (tolerans)
 ## Başlarken / bitirirken
 `git checkout main && git pull origin main && git checkout -b codex/kapi-v3`. `AGENTS.md` kuralları geçerli.
 Bitince `python -m pytest -q` (sonuç PR'a) ve `git push -u origin codex/kapi-v3`. PR başlığı: `[Faz2] Kapı v3 — İş 1`.
+
+## Lider denetimi 1 (2026-10-27) — `codex/kapi-v3` birleştirilmedi; düzeltilecekler
+Korunacaklar: `aile_A.csv` (530), `aile_B.csv` (119), `bhy`, `wilson`, `delay_signals`, `tv_one_bar_delay`, `u7_placebo`, `classify`.
+1. **Gerçek şablonlar:** `calibration_rows`'daki sentetik fikstür kaldırılır. Şablon = `aile_A`'dan sınamada ≥ 1 işlemi
+   olanlar + `aile_B`'nin 119'u. Her şablon için motor tabanlı plasebo bir kez: 1.000 net (null dağılım) + 200'ünün
+   **günlük getiri serisi** (kenarsız tabanlar).
+2. **Kenar:** her simülasyonda rastgele bir taban serisi; aktif günlere `d = SR × σ_aktif / √periods`. Gerçekleşen
+   ortalama çıkarılmaz, Sharpe hedefe eşitlenmez (`inject_sharpe_edge`'deki ortalama düzeltmesi kaldırılır). SR 0 = taban.
+3. **Tam boru hattı (adım 2–6):** adım 2 şablonun kendi asgari kanıtı; adım 3 kaydırılmış net − şablonun gerçek gecikme
+   kaybı (gerçek net − 1 bar gecikmeli net) > 0; adım 4 şablonun null dağılımına göre p; adım 5 NW t + blok bootstrap
+   (kalibrasyonda 200 tekrar, sonuçta not); adım 6 her tekrarda gerçek aile büyüklüğünde aile (%10 kenarlı, kalan SR 0), BHY q ≤ 0,10.
+4. **Hücreler:** aile × piyasa × tf × sınama uzunluğu; hücre başına ≥ 1.000 kenarlı ve ≥ 1.000 SR 0 gözlemi; Wilson.
+   t* kuralı §3 metniyle aynı (SR 0 için Wilson üst ucu ≤ %10 dahil); t = 2'de SR 0 hedefi tutmuyorsa hücre "geçersiz".
+5. **Hız:** `tv_trade_placebo`'da her işlem için `choices` listesi yeniden kurulmaz; boş aralıklardan vektörlü örnekleme.
+   Actions'ta aile × piyasa matrisi, her iş < 6 saat.
+6. **Testler:** SR 0'da geçme oranı 0 ya da 1 değil; SR 1,0'da gerçekleşen Sharpe ortalaması hedefe yakın ama
+   tekrarlar arasında saçılıyor; BHY elle hesaplanmış örnek; TV yerleştirmede çakışma yok, işlem sayısı korunuyor.
