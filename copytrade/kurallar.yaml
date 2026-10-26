@@ -1,0 +1,17 @@
+min_history_days: 180
+min_closed_trades: 50
+min_profitable_month_ratio: 0.70
+max_largest_trade_share: 0.30
+min_profit_factor_without_best: 1.20
+min_sortino: 1.50
+min_calmar: 1.00
+min_median_holding_hours: 1.0
+max_median_leverage: 5.0
+max_leverage: 15.0
+min_liquid_coin_share: 0.80
+max_watchlist: 50
+# Martingale işareti (lider kararı 2026-10-26): en az 5 ekleme ve eklemelerin > %25'i zarardaki pozisyona
+martingale_max_ratio: 0.25
+martingale_min_additions: 5
+# Ölçüm penceresi: 180 gün geçmiş şartı için fill'ler 365 günden çekilir
+fills_lookback_days: 365

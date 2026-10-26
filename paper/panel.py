@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from paper import gunluk  # noqa: E402
+from paper import gunluk, koc, saglik  # noqa: E402
 
 PANEL_PATH = Path(__file__).resolve().parent / "panel" / "data.json"
 DATA_VERSION = "sgarge_paper_v1"
@@ -79,6 +79,19 @@ def _read(directory: Path, name: str) -> pd.DataFrame:
     return gunluk._read(directory, name)  # noqa: SLF001
 
 
+NEDEN_ETIKETLERI = {
+    "signal": "Sinyal", "stop": "Zarar durdur", "gap_stop": "Açılış boşluğunda zarar durdur",
+    "target": "Hedef fiyat", "gap_target": "Açılış boşluğunda hedef", "time_stop": "Zaman durdurma",
+    "zaman_stop": "Zaman durdurma",
+}
+
+
+def neden_etiketi(neden: Any) -> str:
+    """Motor nedenini panoda okunur göster; bilinmeyen Pine etiketini koru."""
+    raw = str(neden or "signal")
+    return NEDEN_ETIKETLERI.get(raw.lower(), raw)
+
+
 # ----------------------------------------------------------------------------------------------- closed trades from fills
 def kapanmis_islemler(fills: pd.DataFrame, names: dict[str, str]) -> list[dict[str, Any]]:
     """Pair entry / partial / exit fills of the ledger into closed trades (long only)."""
@@ -115,7 +128,8 @@ def kapanmis_islemler(fills: pd.DataFrame, names: dict[str, str]) -> list[dict[s
             "entry_date": _dmy(entry["tarih"]), "exit_date": _dmy(row["tarih"]), "entry_price": _clean(float(entry["fiyat"]), 4),
             "exit_price": _clean(book["got"] / book["sold_qty"], 4) if book["sold_qty"] else None,
             "r": _clean(pnl / risk, 2) if risk and math.isfinite(risk) and risk > 0 else None, "pnl": _clean(pnl, 2),
-            "reason": str(row.get("neden") or "signal") + ("+partial" if book["partial"] else ""),
+            "reason": neden_etiketi(row.get("neden")),
+            "giris_nedeni": neden_etiketi(entry.get("neden")), "cikis_nedeni": neden_etiketi(row.get("neden")),
             "_entry": str(entry["tarih"]), "_exit": str(row["tarih"]), "_hold": (pd.Timestamp(row["tarih"]) - pd.Timestamp(entry["tarih"])).days,
         })
         del open_book[key]
@@ -174,7 +188,9 @@ def uret(
     sonuc = pd.read_csv(sonuc_csv) if sonuc_csv.exists() else pd.DataFrame()
     equity, fills = _read(defter, "ozkaynak"), _read(defter, "dolumlar")
     positions, orders, alarms = _read(defter, "pozisyonlar"), _read(defter, "emirler"), _read(defter, "alarmlar")
-    now_trt = (simdi or pd.Timestamp.now(tz="UTC")).tz_convert("Europe/Istanbul")
+    now_utc = pd.Timestamp(simdi or pd.Timestamp.now(tz="UTC"))
+    now_utc = now_utc.tz_localize("UTC") if now_utc.tzinfo is None else now_utc.tz_convert("UTC")
+    now_trt = now_utc.tz_convert("Europe/Istanbul")
     capital = {r.etiket: portfoy.sermaye * r.agirlik for r in portfoy.satirlar}
     info = {}
     for r in portfoy.satirlar:
@@ -337,24 +353,41 @@ def uret(
                        "durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
         "data_version": DATA_VERSION, "veri_notu": veri_notu,
     }
+    sagliklar = {
+        satir.etiket: saglik.hesapla(satir.id, satir.piyasa, series.get(satir.etiket, pd.Series(dtype=float)),
+                                     [trade for trade in trades if trade["_satir"] == satir.etiket], tf=satir.tf)
+        for satir in portfoy.satirlar
+    }
+    kitaplar = [{
+        "id": satir.id, "ad": names[satir.etiket], "piyasa": satir.piyasa, "alan": satir.alan or satir.piyasa,
+        "saglik": sagliklar[satir.etiket],
+    } for satir in portfoy.satirlar]
+    koc_bulgulari = koc.bulgular(sagliklar, fills, alarms, simdi=now_utc)
+    isik_sayaci = {light: sum(health["isik"] == light for health in sagliklar.values()) for light in ("🟢", "🟡", "🔴")}
     payload = {
         "meta": meta,
         "kpis": {
             "total_value": _clean(total_value, 2), "total_return_pct": _clean((total_value / initial - 1) * 100, 2), "last_day_pct": _clean(last_day_pct, 2),
             "open_positions_count": len(open_positions), "closed_trades_count": len(trades), "win_rate_pct": stats["win_rate"],
-            "total_try": _clean(total_value * usdtry, 0) if usdtry else None, "initial_total_capital": initial, "net_pnl": _clean(total_value - initial, 2),
+            "total_try": _clean(total_value * usdtry, 0) if usdtry else None, "initial_total_capital": initial, "net_pnl": _clean(total_value - initial, 2), "saglik_isiklari": isik_sayaci,
         },
         "alerts": alerts, "last_24h": {"summary": summary, "chips": chips}, "accounts": accounts,
         "closed_trades_list": [{k: v for k, v in t.items() if not k.startswith("_")} for t in reversed(trades)],
+        # Faz 2 arayüzü için Türkçe, doğrudan işlem dizisi; eski ad korunur.
+        "islemler": [{k: v for k, v in t.items() if not k.startswith("_")} for t in reversed(trades)],
         "open_positions": open_positions, "pending_orders": pending, "stats": stats,
         "scorecards": [],  # no validated score exists for these rows: results/SONUC.csv carries status, PF, OOS and bootstrap MDD95 instead
         "shadow_mode": {"closed_count": None, "actual_pnl": None, "shadow_filtered_pnl": None, "filtered_skipped_trades": None, "accuracy_pct": None, "trades": []},
         "calendar": calendar,
+        # Legacy dashboard consumer; the new, structured notes are top-level ``koc``.
         "coach": {"findings": [], "simulator_strategies": [
             {"id": s.id, "name": f"{s.id} · {s.piyasa}", "pnl": _clean(sum(t["pnl"] or 0.0 for t in trades if t["_satir"] == s.etiket), 2),
              "trades": sum(1 for t in trades if t["_satir"] == s.etiket), "active": not stopped} for s in portfoy.satirlar]},
         "risk": {"concentrations": [], "leverage_drawdown_montecarlo": [], "correlation_note": held_text},
         "periodic_returns": periodic, "strategies_27": strategies,
+        "kitaplar": kitaplar,
+        "koni": {satir.id: sagliklar[satir.etiket]["koni"] for satir in portfoy.satirlar},
+        "koc": koc_bulgulari,
     }
     golge_dir = defter / "golge"
     golge_kitaplar = []

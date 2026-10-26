@@ -1,0 +1,31 @@
+name: Plasebo kalibrasyonu
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/kapi-kontrol]
+    paths: [backtests/plasebo.py, .github/workflows/plasebo.yml]
+
+jobs:
+  plasebo:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -r requirements.txt
+      - run: python -m backtests.plasebo --reps 1000
+      - run: python -m backtests.plasebo --only-13 --reps 1000
+      - name: Sonuçları dala yaz
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add results/plasebo.csv results/kapi_kontrol_13.csv
+          git diff --cached --quiet && exit 0
+          git commit -m "[Faz2] plasebo sonuçları"
+          # Dal koşu sırasında ilerlemiş olabilir: sonuç dosyaları başka kimsenin değiştirmediği yollar.
+          for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin HEAD:"${GITHUB_REF_NAME}" && exit 0; sleep 5; done
+          exit 1
