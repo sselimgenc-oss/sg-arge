@@ -1,0 +1,40 @@
+name: Copy trade aday taraması
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: copytrade-veri
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Restore public-data archive
+        run: |
+          git fetch origin copytrade-veri || true
+          git checkout origin/copytrade-veri -- copytrade/veri copytrade/izleme.csv copytrade/kopya copytrade/RAPOR.md 2>/dev/null || true
+      - name: Scan public chain data
+        run: python -m copytrade.tarama --root copytrade
+      - name: Commit archive to its dedicated branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f copytrade/veri copytrade/izleme.csv copytrade/kopya copytrade/RAPOR.md
+          git commit -m "copytrade: günlük tarama $(date -u +%F)" || exit 0
+          git push origin HEAD:copytrade-veri
