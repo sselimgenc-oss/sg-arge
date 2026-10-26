@@ -45,3 +45,8 @@ Son doğrulama: `./.venv/bin/python -m pytest -q tests/` → 1328 geçti, 4 atla
   indirme iki kez denendi: API yönlendirmesi ve yetkili `gh run download` sırasıyla
   Actions blob deposunda HTTP 403 aldı. TAKILDI; artifact erişimi sağlanmadan
   `--birlestir` ve `tv2_sirala` eksik örneklem üretmemesi için çalıştırılmadı.
+- 11:35 — A1 TAKILDI (erişim yeniden denemesi) — `40226355510` koşusunun 8/8 işi
+  `success` ve GitHub kimlik doğrulaması geçerli; ancak `gh run download` ile
+  `tv2-0-40226355510` indirmesi yine Actions blob adresinde HTTP 403 aldı.
+  Önceki iki indirme denemesi kayıtlı olduğundan üçüncü yol denenmedi; 0–6
+  artifact'ı ve satır-kuralı kurtarması erişim sağlanana kadar bekliyor.
