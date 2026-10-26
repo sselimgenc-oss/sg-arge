@@ -74,3 +74,7 @@ def test_check_scale_rejects_wrong_divisor():
     dukascopy.check_scale(frame, 110.0)
     with pytest.raises(ValueError):
         dukascopy.check_scale(frame, 1.102)
+def test_supported_fx_metals_and_index_symbols_have_point_scales():
+    assert dukascopy.POINT_DIVISOR["XAUUSD"] == 1_000
+    assert dukascopy.POINT_DIVISOR["XAGUSD"] == 1_000
+    assert dukascopy.POINT_DIVISOR["USATECHIDXUSD"] == 1_000

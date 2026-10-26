@@ -124,3 +124,32 @@ Seçim yapıldığında `results/canli/sanal_havuz_adaylari.csv` şu alanları t
 `sira, strateji_id, aile, grup, kaynak_snapshot, kategori, kume_id,
 bootstrap_p10, ort_korelasyon, tohum, secim_nedeni`. Böylece lider kararı
 öncesi 20 adayın neden ve hangi sonuçla seçildiği denetlenebilir.
+
+## G1 ön önerisi — 2026-10-26
+
+Bu yalnız `results/tv2/siralama.csv` içindeki mevcut kripto snapshot’ının
+tekrar üretilebilir okumasıdır. Kripto dışı koşunun 0–6 artifact’ları henüz
+geri alınamadığından nihai havuz değildir ve hiçbir `paper/` dosyasını
+değiştirmez.
+
+| Kategori | Sıra | Strateji | Sembol | TF | Neden |
+| --- | ---: | --- | --- | --- | --- |
+| güçlü | 1 | wcegMOXj | BINANCE:ETHBTC | 360 | sıralama küme temsilcisi |
+| güçlü | 2 | 3UcIwSrE | KRAKEN:ETHUSD | 60 | sıralama küme temsilcisi |
+| güçlü | 3 | VQjItUaK | BITFINEX:XRPUSD | 60 | sıralama küme temsilcisi |
+| güçlü | 4 | j9rq1wQq | BINANCE:QTUMUSDT | 12H | sıralama küme temsilcisi |
+| güçlü | 5 | mXygJWkv | BINANCE:BTCUSDT | 60 | sıralama küme temsilcisi |
+| güçlü | 6 | zFKRj4Gi | BITFINEX:BTCUSD | 480 | sıralama küme temsilcisi |
+| güçlü | 7 | 627VbHkS | BITFINEX:BTCUSD | 360 | sıralama küme temsilcisi |
+| güçlü | 8 | QPIGo8hs | BINANCE:ETHBTC | 120 | sıralama küme temsilcisi |
+| güçlü | 9 | YqnWtjnn | BITFINEX:BTCUSD | 360 | sıralama küme temsilcisi |
+| güçlü | 10 | KUyDNRyQ | BITSTAMP:ETHBTC | 60 | sıralama küme temsilcisi |
+| güçlü | 11 | hLZPT7it | BITFINEX:BTCUSD | 480 | sıralama küme temsilcisi |
+| güçlü | 12 | XJfWHHEc | BITFINEX:BTCUSD | 360 | sıralama küme temsilcisi |
+| çeşitlendirici | 13 | VHbRaeUe | BITFINEX:BTCUSD | 360 | ilk 12’ye en düşük ortalama mutlak günlük korelasyon (0.215) |
+| çeşitlendirici | 14 | lncoD9BX | BITFINEX:BTCUSD | 480 | aynı ölçütte 0.282 |
+| çeşitlendirici | 15 | warXbPtA | BITFINEX:BTCUSD | 480 | aynı ölçütte 0.314 |
+
+Snapshot yalnız 15 küme temsilcisi içerdiği için 4. çeşitlendirici ve 4 kura
+adayı üretilemedi. Eksik beş yer doldurulmaz; kripto dışı sonuçların tam
+birleştirilmesinden sonra 20 aday kuralı yeniden uygulanır.
