@@ -37,12 +37,12 @@ Yazarın iddia ettiği getiri hiçbir aşamada kullanılmaz.
 
 ## Adım 4: canlı izleme
 - **Sanal havuz:** Adım 2'yi geçen ve izle listesindeki bütün adaylar tek bir işte, ortak veri indirmesi ve sinyal hesabıyla, kendi zaman dilimlerinin kapanışında sanal olarak izlenir (günde en çok birkaç koşu). Kitap sayısı sınırı yoktur; gerçek Actions maliyeti ölçülür ve DURUM'a yazılır.
-- **Gölge kitaplar (20):** 12 güçlü temsilci (Adım 3 sırası), 4 portföyü çeşitlendiren aday (en düşük ortalama korelasyon), 4 kura ile (geçen ama ilk 16'ya girmeyen temsilcilerden, tohum önceden kaydedilir). Her kitap 5.000 USD sanal sermaye, yazarın mantığı, bizim gerçekçi maliyetimiz, ortak ölçekte risk.
+- **Canlı paper kitapları (sınırsız, kullanıcı kararı 2026-10-26):** Adım 2'yi geçen **her** strateji (kopya ayıklamadan sonra küme temsilcisi) kendi kitabıyla canlı paper teste girer; sayı sınırı, seçim ya da kura yoktur. Her kitap 5.000 USD sanal sermaye, yazarın mantığı, bizim gerçekçi maliyetimiz, ortak ölçekte risk. (Eski "20 gölge kitap" seçimi kaldırıldı.)
 - **Deneme kaydı:** `results/canli/denemeler.csv`: kitaba giren, çıkan, yerine giren her strateji tarihiyle. Hiçbir satır silinmez.
 
 ## Adım 5: canlı karar
 Sermaye koruması ve başarı kanıtı ayrıdır.
-- **Durdurma (zarar bütçesi):** kitap başlangıç sanal sermayesinin **%10'unu** kaybederse durur ve yerine sıradaki temsilci girer (deneme kaydına yazılır). Kullanıcı kararı, 2026-10-24.
+- **Durdurma (zarar bütçesi):** kitap başlangıç sanal sermayesinin **%10'unu** kaybederse durur (deneme kaydına yazılır). Kullanıcı kararı, 2026-10-24.
 - **İlerleme:** ayda bir, ayın ilk günü (sabit) kontrol. Kitabın canlı haftalık net getirilerinden, sıfır merkezli temkinli önselle, "beklenen haftalık getiri > 0" olasılığı hesaplanır; en az 26 canlı hafta ve en az 10 işlem haftası varsa ve olasılık eşiği aşılırsa kitap **gerçek para adayı** olur.
 - **Eşik kalibrasyonu:** eşik, sıfır kenarlı (getirileri ortalamaya göre merkezlenmiş) stratejilerin simülasyonunda yanlış terfi oranını aylık kontrol boyunca ≤ %10 tutacak şekilde, canlı sonuçlar görülmeden belirlenir ve bu dosyaya yazılır.
 - Gerçek para kararı ve boyutu her zaman kullanıcınındır; önce küçük.
