@@ -1,30 +1,30 @@
 {
   "meta": {
     "title": "Kağıt Hesaplar",
-    "subtitle": "sg-arge Paper Portföyü: C07, R01, A6-010 / 5,000 $ sanal sermaye (1/N)",
-    "last_update": "26/10 16:16",
-    "test_period": "gün 53 · 01.09.2026–23.10.2026 geriye dönük (aynı kurallar, gerçek veri) · 24.10.2026'dan itibaren canlı paper",
+    "subtitle": "sg-arge Paper Portföyü: TV-zoY9DmsF, TV-DUCODGjC, TV-dpkq3n4O, TV-70PkIvTL, TV-71yKm18B, TV-3BXWqwnF, TV-egTb7TgJ, TV-Q9OQye4C, U4-H2, TV-KO7Qe4Xb, U4-H3 / 5,000 $ sanal sermaye (1/N)",
+    "last_update": "26/10 22:24",
+    "test_period": "gün 0 - 26.10.2026 başlangıç",
     "exchange_rate": null,
     "currency": "USD",
     "fiat_currency": "TRY",
     "footer_note": "Kağıt üzerinde al-sat: sanal defter, gerçek emir gönderilmez. Sinyal ve dolumlar sg-arge backtest motoruyla aynı yoldan üretilir; durum, PF, OOS ve bootstrap MDD95 results/SONUC.csv'den gelir. Saatler İstanbul saatidir.",
     "data_version": "sgarge_paper_v1",
     "veri_notu": null,
-    "updated_at": "2026-10-26T13:16:39.413755+00:00",
-    "fiyat_zamani": "2026-10-23T19:30:00+00:00",
-    "fiyat_kaynagi": "anlik",
+    "updated_at": "2026-10-26T19:24:41.272867+00:00",
+    "fiyat_zamani": "2026-10-26T19:24:41.272867+00:00",
+    "fiyat_kaynagi": "son_kapanis",
     "anlik_not": "Açık pozisyonlar saatlik fiyatla değerlenir; işlemler ve defter yalnız günlük kapanışta güncellenir."
   },
   "kpis": {
-    "total_value": 5035.9,
-    "total_return_pct": 0.72,
-    "last_day_pct": -0.26,
-    "open_positions_count": 11,
-    "closed_trades_count": 19,
-    "win_rate_pct": 21.1,
+    "total_value": 5000.0,
+    "total_return_pct": 0.0,
+    "last_day_pct": null,
+    "open_positions_count": 0,
+    "closed_trades_count": 0,
+    "win_rate_pct": null,
     "total_try": null,
     "initial_total_capital": 5000.0,
-    "net_pnl": 35.9
+    "net_pnl": 0.0
   },
   "alerts": [
     {
@@ -34,580 +34,278 @@
     }
   ],
   "last_24h": {
-    "summary": "Son bar 23.10.2026: 2 dolum, 2 emir yarın açılışta bekliyor, 11 açık pozisyon.",
-    "chips": [
-      {
-        "label": "BRK-B alış",
-        "type": "open",
-        "action": "giris",
-        "asset": "BRK-B"
-      },
-      {
-        "label": "COST satış",
-        "type": "close",
-        "action": "kismi",
-        "asset": "COST"
-      }
-    ]
+    "summary": "Henüz defter kaydı yok.",
+    "chips": []
   },
   "accounts": [
     {
-      "id": "C07",
-      "name": "C07 · ABD25",
-      "strategies_label": "Codex Algo 21: wd_adx_breakout_risk",
-      "status": "pozisyonda",
-      "current_value": 1670.72,
-      "initial_capital": 1666.66,
-      "total_return_pct": 0.24,
-      "last_day_pct": -0.11,
-      "max_drawdown_pct": 0.92,
-      "win_rate_pct": 0.0,
-      "profit_factor": 0.0,
-      "closed_trades": 2,
-      "open_trades": 6,
-      "avg_holding_time": "15.5 gün",
-      "last_run": "23.10.2026",
-      "sparkline": [
-        1664.12,
-        1664.14,
-        1663.91,
-        1669.8,
-        1669.66,
-        1672.62,
-        1670.72
-      ],
+      "id": "TV-zoY9DmsF",
+      "name": "TV-zoY9DmsF · ABD25",
+      "strategies_label": "Reversion Guard | RSI + Bollinger Band [Customizable]",
+      "status": "tetikte bekliyor",
+      "current_value": 450.0,
+      "initial_capital": 450.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
       "luck_prob": "veri yok",
-      "expectation_desc": "Backtest: Gecti · PF (IS, 1x) 2.18 · OOS getiri 13.0% · bootstrap MDD95 10.1% · evren pit",
-      "expectation_60d": "Kaynak: Codex Algo 21 raporu · ABD25/1D",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · ABD25/1D",
       "score": null
     },
     {
-      "id": "R01",
-      "name": "R01 · ABD25",
-      "strategies_label": "Qullamaggie breakout continuation + episodic pivot",
-      "status": "pozisyonda",
-      "current_value": 1700.96,
-      "initial_capital": 1666.66,
-      "total_return_pct": 2.06,
-      "last_day_pct": -0.89,
-      "max_drawdown_pct": 0.89,
-      "win_rate_pct": 33.3,
-      "profit_factor": 1.01,
-      "closed_trades": 3,
-      "open_trades": 4,
-      "avg_holding_time": "11.3 gün",
-      "last_run": "23.10.2026",
-      "sparkline": [
-        1681.29,
-        1686.14,
-        1685.84,
-        1688.48,
-        1685.75,
-        1716.31,
-        1700.96
-      ],
+      "id": "TV-DUCODGjC",
+      "name": "TV-DUCODGjC · ABD25",
+      "strategies_label": "Trendline Angle Pro V6 (Degree + Strategy)",
+      "status": "tetikte bekliyor",
+      "current_value": 350.0,
+      "initial_capital": 350.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
       "luck_prob": "veri yok",
-      "expectation_desc": "Backtest: Gecti · PF (IS, 1x) 2.02 · OOS getiri 1.6% · bootstrap MDD95 13.8% · evren pit",
-      "expectation_60d": "Kaynak: Reddit_ve_Quant_Stratejileri_Backtest_Raporu.pdf · ABD25/1D",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · ABD25/1D",
       "score": null
     },
     {
-      "id": "A6-010",
-      "name": "A6-010 · EMTIA",
-      "strategies_label": "The Gap Momentum System",
-      "status": "pozisyonda",
-      "current_value": 1663.78,
-      "initial_capital": 1666.67,
-      "total_return_pct": -0.17,
-      "last_day_pct": 0.24,
-      "max_drawdown_pct": 1.55,
-      "win_rate_pct": 21.4,
-      "profit_factor": 0.6,
-      "closed_trades": 14,
-      "open_trades": 1,
-      "avg_holding_time": "8.1 gün",
-      "last_run": "23.10.2026",
-      "sparkline": [
-        1654.65,
-        1658.36,
-        1657.52,
-        1658.63,
-        1658.16,
-        1659.72,
-        1663.78
-      ],
+      "id": "TV-dpkq3n4O",
+      "name": "TV-dpkq3n4O · ABD25",
+      "strategies_label": "LinReg Scale-In Strategy",
+      "status": "tetikte bekliyor",
+      "current_value": 350.0,
+      "initial_capital": 350.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
       "luck_prob": "veri yok",
-      "expectation_desc": "Backtest: Kosullu · PF (IS, 1x) 1.38 · OOS getiri 7.8% · bootstrap MDD95 10.6% · evren sabit",
-      "expectation_60d": "Kaynak: strateji_listesi (2).xlsx · EMTIA/1D",
+      "expectation_desc": "Backtest: Dogrulanamaz · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · ABD25/1D",
+      "score": null
+    },
+    {
+      "id": "TV-70PkIvTL",
+      "name": "TV-70PkIvTL · ABD25",
+      "strategies_label": "Vix FIX / StochRSI Strategy",
+      "status": "tetikte bekliyor",
+      "current_value": 350.0,
+      "initial_capital": 350.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "luck_prob": "veri yok",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · ABD25/1D",
+      "score": null
+    },
+    {
+      "id": "TV-71yKm18B",
+      "name": "TV-71yKm18B · KRIPTO25",
+      "strategies_label": "TRADLEWARE-Ichimoku TK-Cross + MFI SOL",
+      "status": "tetikte bekliyor",
+      "current_value": 500.0,
+      "initial_capital": 500.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "luck_prob": "veri yok",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · KRIPTO25/1D",
+      "score": null
+    },
+    {
+      "id": "TV-3BXWqwnF",
+      "name": "TV-3BXWqwnF · KRIPTO25",
+      "strategies_label": "BTC Turtle Paper Strategy v1 - Bitstamp",
+      "status": "tetikte bekliyor",
+      "current_value": 300.0,
+      "initial_capital": 300.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "luck_prob": "veri yok",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · KRIPTO25/1D",
+      "score": null
+    },
+    {
+      "id": "TV-egTb7TgJ",
+      "name": "TV-egTb7TgJ · KRIPTO25",
+      "strategies_label": "TRADLEWARE-Gaussian Channel + StochRSI ETH",
+      "status": "tetikte bekliyor",
+      "current_value": 150.0,
+      "initial_capital": 150.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "luck_prob": "veri yok",
+      "expectation_desc": "Backtest: Dogrulanamaz · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · KRIPTO25/1D",
+      "score": null
+    },
+    {
+      "id": "TV-Q9OQye4C",
+      "name": "TV-Q9OQye4C · KRIPTO25",
+      "strategies_label": "Hull Suite Strategy",
+      "status": "tetikte bekliyor",
+      "current_value": 150.0,
+      "initial_capital": 150.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "luck_prob": "veri yok",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · KRIPTO25/1D",
+      "score": null
+    },
+    {
+      "id": "U4-H2",
+      "name": "U4-H2 · KRIPTO25",
+      "strategies_label": "U4 H2 - Donchian kirilimi (55 bar giris, 20 bar cikis)",
+      "status": "tetikte bekliyor",
+      "current_value": 150.0,
+      "initial_capital": 150.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "luck_prob": "veri yok",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: docs/GOREV_U4.md · KRIPTO25/1D",
+      "score": null
+    },
+    {
+      "id": "TV-KO7Qe4Xb",
+      "name": "TV-KO7Qe4Xb · EMTIA",
+      "strategies_label": "Strategy Validation Framework - Standardised ATR Exits & 1% Ris",
+      "status": "tetikte bekliyor",
+      "current_value": 650.0,
+      "initial_capital": 650.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "luck_prob": "veri yok",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: arastirma/U5_tv.csv · EMTIA/1D",
+      "score": null
+    },
+    {
+      "id": "U4-H3",
+      "name": "U4-H3 · EMTIA",
+      "strategies_label": "U4 H3 - Dusuk volatilite rejiminde trend (EMA20/50, SMA200, ATR14/ATR100 < 1)",
+      "status": "tetikte bekliyor",
+      "current_value": 350.0,
+      "initial_capital": 350.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "luck_prob": "veri yok",
+      "expectation_desc": "Backtest: Bekliyor · PF (IS, 1x) veri yok · OOS getiri veri yok · bootstrap MDD95 veri yok · evren nan",
+      "expectation_60d": "Kaynak: docs/GOREV_U4.md · EMTIA/1D",
       "score": null
     }
   ],
-  "closed_trades_list": [
-    {
-      "id": 19,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "DBA",
-      "type": "Alış",
-      "entry_date": "13.10.2026",
-      "exit_date": "20.10.2026",
-      "entry_price": 28.54,
-      "exit_price": 28.34,
-      "r": -0.27,
-      "pnl": -2.22,
-      "reason": "signal"
-    },
-    {
-      "id": 18,
-      "account": "R01 · ABD25",
-      "strategy": "Qullamaggie breakout continuation + episodic pivot",
-      "asset": "MSFT",
-      "type": "Alış",
-      "entry_date": "28.09.2026",
-      "exit_date": "19.10.2026",
-      "entry_price": 505.47,
-      "exit_price": 525.868,
-      "r": 1.25,
-      "pnl": 10.4,
-      "reason": "signal+partial"
-    },
-    {
-      "id": 17,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "CPER",
-      "type": "Alış",
-      "entry_date": "13.10.2026",
-      "exit_date": "16.10.2026",
-      "entry_price": 40.58,
-      "exit_price": 39.79,
-      "r": -0.46,
-      "pnl": -3.82,
-      "reason": "signal"
-    },
-    {
-      "id": 16,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "DBA",
-      "type": "Alış",
-      "entry_date": "05.10.2026",
-      "exit_date": "09.10.2026",
-      "entry_price": 28.5,
-      "exit_price": 28.41,
-      "r": -0.14,
-      "pnl": -1.19,
-      "reason": "signal"
-    },
-    {
-      "id": 15,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "UNG",
-      "type": "Alış",
-      "entry_date": "01.10.2026",
-      "exit_date": "06.10.2026",
-      "entry_price": 10.35,
-      "exit_price": 10.74,
-      "r": 0.34,
-      "pnl": 2.84,
-      "reason": "signal"
-    },
-    {
-      "id": 14,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "SLV",
-      "type": "Alış",
-      "entry_date": "02.09.2026",
-      "exit_date": "02.10.2026",
-      "entry_price": 58.73,
-      "exit_price": 55.46,
-      "r": -0.57,
-      "pnl": -4.79,
-      "reason": "signal"
-    },
-    {
-      "id": 13,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "GLD",
-      "type": "Alış",
-      "entry_date": "30.09.2026",
-      "exit_date": "02.10.2026",
-      "entry_price": 384.39,
-      "exit_price": 384.45,
-      "r": -0.01,
-      "pnl": -0.12,
-      "reason": "signal"
-    },
-    {
-      "id": 12,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "UNG",
-      "type": "Alış",
-      "entry_date": "02.09.2026",
-      "exit_date": "30.09.2026",
-      "entry_price": 10.57,
-      "exit_price": 10.32,
-      "r": -0.31,
-      "pnl": -2.61,
-      "reason": "signal"
-    },
-    {
-      "id": 11,
-      "account": "R01 · ABD25",
-      "strategy": "Qullamaggie breakout continuation + episodic pivot",
-      "asset": "META",
-      "type": "Alış",
-      "entry_date": "22.09.2026",
-      "exit_date": "29.09.2026",
-      "entry_price": 731.4,
-      "exit_price": 725.0,
-      "r": -0.2,
-      "pnl": -1.69,
-      "reason": "signal"
-    },
-    {
-      "id": 10,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "CPER",
-      "type": "Alış",
-      "entry_date": "25.09.2026",
-      "exit_date": "28.09.2026",
-      "entry_price": 40.51,
-      "exit_price": 39.71,
-      "r": -0.38,
-      "pnl": -3.2,
-      "reason": "signal"
-    },
-    {
-      "id": 9,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "CPER",
-      "type": "Alış",
-      "entry_date": "22.09.2026",
-      "exit_date": "24.09.2026",
-      "entry_price": 41.03,
-      "exit_price": 40.56,
-      "r": -0.23,
-      "pnl": -1.94,
-      "reason": "signal"
-    },
-    {
-      "id": 8,
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "CVX",
-      "type": "Alış",
-      "entry_date": "02.09.2026",
-      "exit_date": "21.09.2026",
-      "entry_price": 210.49,
-      "exit_price": 204.4892,
-      "r": -0.5,
-      "pnl": -4.2,
-      "reason": "stop"
-    },
-    {
-      "id": 7,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "USO",
-      "type": "Alış",
-      "entry_date": "02.09.2026",
-      "exit_date": "18.09.2026",
-      "entry_price": 139.42,
-      "exit_price": 156.85,
-      "r": 1.3,
-      "pnl": 10.82,
-      "reason": "signal"
-    },
-    {
-      "id": 6,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "GLD",
-      "type": "Alış",
-      "entry_date": "17.09.2026",
-      "exit_date": "18.09.2026",
-      "entry_price": 400.28,
-      "exit_price": 400.48,
-      "r": -0.01,
-      "pnl": -0.01,
-      "reason": "signal"
-    },
-    {
-      "id": 5,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "CPER",
-      "type": "Alış",
-      "entry_date": "11.09.2026",
-      "exit_date": "15.09.2026",
-      "entry_price": 39.22,
-      "exit_price": 38.51,
-      "r": -0.34,
-      "pnl": -1.71,
-      "reason": "signal"
-    },
-    {
-      "id": 4,
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "JNJ",
-      "type": "Alış",
-      "entry_date": "03.09.2026",
-      "exit_date": "15.09.2026",
-      "entry_price": 277.32,
-      "exit_price": 261.482,
-      "r": -0.95,
-      "pnl": -7.93,
-      "reason": "stop"
-    },
-    {
-      "id": 3,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "CPER",
-      "type": "Alış",
-      "entry_date": "08.09.2026",
-      "exit_date": "10.09.2026",
-      "entry_price": 41.0,
-      "exit_price": 39.2898,
-      "r": -1.02,
-      "pnl": -3.36,
-      "reason": "stop"
-    },
-    {
-      "id": 2,
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "GLD",
-      "type": "Alış",
-      "entry_date": "02.09.2026",
-      "exit_date": "08.09.2026",
-      "entry_price": 399.71,
-      "exit_price": 403.56,
-      "r": 0.14,
-      "pnl": 1.2,
-      "reason": "signal"
-    },
-    {
-      "id": 1,
-      "account": "R01 · ABD25",
-      "strategy": "Qullamaggie breakout continuation + episodic pivot",
-      "asset": "AAPL",
-      "type": "Alış",
-      "entry_date": "02.09.2026",
-      "exit_date": "08.09.2026",
-      "entry_price": 326.87,
-      "exit_price": 316.5866,
-      "r": -1.03,
-      "pnl": -8.59,
-      "reason": "stop"
-    }
-  ],
-  "open_positions": [
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "ABBV",
-      "type": "Alış",
-      "entry_date": "12.10.2026",
-      "duration": "11 gün",
-      "entry_price": 275.9556,
-      "stop_price": 269.5674,
-      "size_usd": 134.93,
-      "unrealized_pnl": 4.6,
-      "r": 0.55,
-      "current_price": 285.7
-    },
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "BRK-B",
-      "type": "Alış",
-      "entry_date": "23.10.2026",
-      "duration": "0 gün",
-      "entry_price": 545.37,
-      "stop_price": 526.2967,
-      "size_usd": 104.22,
-      "unrealized_pnl": -0.56,
-      "r": -0.17,
-      "current_price": 542.46
-    },
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "CVX",
-      "type": "Alış",
-      "entry_date": "19.10.2026",
-      "duration": "4 gün",
-      "entry_price": 223.88,
-      "stop_price": 218.8724,
-      "size_usd": 108.91,
-      "unrealized_pnl": 4.35,
-      "r": 0.68,
-      "current_price": 233.2
-    },
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "MA",
-      "type": "Alış",
-      "entry_date": "14.10.2026",
-      "duration": "9 gün",
-      "entry_price": 605.5,
-      "stop_price": 603.5938,
-      "size_usd": 170.12,
-      "unrealized_pnl": 4.9,
-      "r": 0.6,
-      "current_price": 623.47
-    },
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "MSFT",
-      "type": "Alış",
-      "entry_date": "06.10.2026",
-      "duration": "17 gün",
-      "entry_price": 531.68,
-      "stop_price": 509.1609,
-      "size_usd": 122.44,
-      "unrealized_pnl": -1.67,
-      "r": -0.2,
-      "current_price": 524.525
-    },
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "V",
-      "type": "Alış",
-      "entry_date": "14.10.2026",
-      "duration": "9 gün",
-      "entry_price": 395.91,
-      "stop_price": 394.2206,
-      "size_usd": 170.08,
-      "unrealized_pnl": 5.02,
-      "r": 0.6,
-      "current_price": 407.94
-    },
-    {
-      "account": "R01 · ABD25",
-      "strategy": "Qullamaggie breakout continuation + episodic pivot",
-      "asset": "BRK-B",
-      "type": "Alış",
-      "entry_date": "21.10.2026",
-      "duration": "2 gün",
-      "entry_price": 539.5,
-      "stop_price": 531.2243,
-      "size_usd": 552.35,
-      "unrealized_pnl": 3.01,
-      "r": 0.33,
-      "current_price": 542.46
-    },
-    {
-      "account": "R01 · ABD25",
-      "strategy": "Qullamaggie breakout continuation + episodic pivot",
-      "asset": "COST",
-      "type": "Alış",
-      "entry_date": "15.10.2026",
-      "duration": "8 gün",
-      "entry_price": 998.11,
-      "stop_price": 999.1081,
-      "size_usd": 243.24,
-      "unrealized_pnl": 1.26,
-      "r": 0.25,
-      "current_price": 1003.32
-    },
-    {
-      "account": "R01 · ABD25",
-      "strategy": "Qullamaggie breakout continuation + episodic pivot",
-      "asset": "MA",
-      "type": "Alış",
-      "entry_date": "14.10.2026",
-      "duration": "9 gün",
-      "entry_price": 605.5,
-      "stop_price": 606.1055,
-      "size_usd": 77.77,
-      "unrealized_pnl": 2.24,
-      "r": 1.32,
-      "current_price": 623.47
-    },
-    {
-      "account": "R01 · ABD25",
-      "strategy": "Qullamaggie breakout continuation + episodic pivot",
-      "asset": "PG",
-      "type": "Alış",
-      "entry_date": "09.10.2026",
-      "duration": "14 gün",
-      "entry_price": 149.5798,
-      "stop_price": 149.7294,
-      "size_usd": 242.32,
-      "unrealized_pnl": 17.34,
-      "r": 4.86,
-      "current_price": 161.11
-    },
-    {
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "USO",
-      "type": "Alış",
-      "entry_date": "16.10.2026",
-      "duration": "7 gün",
-      "entry_price": 156.97,
-      "stop_price": 142.6467,
-      "size_usd": 97.99,
-      "unrealized_pnl": 7.26,
-      "r": 0.88,
-      "current_price": 169.53
-    }
-  ],
-  "pending_orders": [
-    {
-      "account": "C07 · ABD25",
-      "strategy": "Codex Algo 21: wd_adx_breakout_risk",
-      "asset": "XOM",
-      "signal_date": "23.10.2026",
-      "order": "Alış (yarın açılışta)",
-      "stop": 171.5547,
-      "stop_distance": 11.6553
-    },
-    {
-      "account": "A6-010 · EMTIA",
-      "strategy": "The Gap Momentum System",
-      "asset": "DBA",
-      "signal_date": "23.10.2026",
-      "order": "Alış (yarın açılışta)",
-      "stop": 27.1608,
-      "stop_distance": 0.7092
-    }
-  ],
+  "closed_trades_list": [],
+  "open_positions": [],
+  "pending_orders": [],
   "stats": {
-    "net_pnl": -22.12,
-    "total_trades": 19,
-    "win_rate": 21.1,
-    "profit_factor": 0.53,
-    "avg_win": 6.31,
-    "avg_loss": -3.16,
-    "win_loss_ratio": 2.0,
-    "expectancy_per_trade": -1.16,
-    "sqn": -1.24,
-    "max_win": 10.82,
-    "max_loss": -8.59,
-    "max_consecutive_losses": "7 Z",
-    "avg_holding_time_hours": 224.8,
-    "kelly_criterion": -0.184,
-    "best_day_gain": 0.7,
-    "green_days_pct": 45.9,
-    "sharpe_annual": 1.65,
-    "sortino": 2.15,
-    "long_trades": 19,
+    "net_pnl": 0,
+    "total_trades": 0,
+    "win_rate": null,
+    "profit_factor": null,
+    "avg_win": null,
+    "avg_loss": null,
+    "win_loss_ratio": null,
+    "expectancy_per_trade": null,
+    "sqn": null,
+    "max_win": null,
+    "max_loss": null,
+    "max_consecutive_losses": null,
+    "avg_holding_time_hours": null,
+    "kelly_criterion": null,
+    "best_day_gain": null,
+    "green_days_pct": null,
+    "sharpe_annual": null,
+    "sortino": null,
+    "long_trades": 0,
     "short_trades": 0,
-    "long_pnl": -22.12,
+    "long_pnl": 0,
     "short_pnl": 0.0
   },
   "scorecards": [],
@@ -621,173 +319,94 @@
   },
   "calendar": {
     "month": "Ekim 2026",
-    "month_summary": "Ekim Ayı Net: 62 $ | 9 yeşil gün | Toplam 7 kapanan işlem",
+    "month_summary": "Henüz defter kaydı yok.",
     "selected_day": {
-      "date": "23 Ekim 2026",
-      "pnl": -13.19,
-      "closed_pnl": 0,
-      "open_pnl_change": -13.19,
-      "account_breakdown": [
-        {
-          "account": "C07 · ABD25",
-          "closed": 0,
-          "open": -1.9,
-          "total": -1.9
-        },
-        {
-          "account": "R01 · ABD25",
-          "closed": 0,
-          "open": -15.35,
-          "total": -15.35
-        },
-        {
-          "account": "A6-010 · EMTIA",
-          "closed": 0,
-          "open": 4.06,
-          "total": 4.06
-        }
-      ]
+      "date": null,
+      "pnl": null,
+      "closed_pnl": null,
+      "open_pnl_change": null,
+      "account_breakdown": []
     },
-    "days": [
-      {
-        "day": 1,
-        "pnl": -0.07,
-        "closed": 0
-      },
-      {
-        "day": 2,
-        "pnl": 5.94,
-        "closed": 2
-      },
-      {
-        "day": 3,
-        "pnl": null,
-        "closed": 0
-      },
-      {
-        "day": 4,
-        "pnl": null,
-        "closed": 0
-      },
-      {
-        "day": 5,
-        "pnl": 3.25,
-        "closed": 0
-      },
-      {
-        "day": 6,
-        "pnl": 5.98,
-        "closed": 1
-      },
-      {
-        "day": 7,
-        "pnl": -3.37,
-        "closed": 0
-      },
-      {
-        "day": 8,
-        "pnl": -5.42,
-        "closed": 0
-      },
-      {
-        "day": 9,
-        "pnl": 8.84,
-        "closed": 1
-      },
-      {
-        "day": 10,
-        "pnl": null,
-        "closed": 0
-      },
-      {
-        "day": 11,
-        "pnl": null,
-        "closed": 0
-      },
-      {
-        "day": 12,
-        "pnl": 9.8,
-        "closed": 0
-      },
-      {
-        "day": 13,
-        "pnl": -4.21,
-        "closed": 0
-      },
-      {
-        "day": 14,
-        "pnl": -0.84,
-        "closed": 0
-      },
-      {
-        "day": 15,
-        "pnl": 7.12,
-        "closed": 0
-      },
-      {
-        "day": 16,
-        "pnl": 8.58,
-        "closed": 1
-      },
-      {
-        "day": 17,
-        "pnl": null,
-        "closed": 0
-      },
-      {
-        "day": 18,
-        "pnl": null,
-        "closed": 0
-      },
-      {
-        "day": 19,
-        "pnl": -1.35,
-        "closed": 1
-      },
-      {
-        "day": 20,
-        "pnl": 9.62,
-        "closed": 1
-      },
-      {
-        "day": 21,
-        "pnl": -3.33,
-        "closed": 0
-      },
-      {
-        "day": 22,
-        "pnl": 35.09,
-        "closed": 0
-      },
-      {
-        "day": 23,
-        "pnl": -13.19,
-        "closed": 0
-      }
-    ]
+    "days": []
   },
   "coach": {
     "findings": [],
     "simulator_strategies": [
       {
-        "id": "C07",
-        "name": "C07 · ABD25",
-        "pnl": -12.13,
-        "trades": 2,
+        "id": "TV-zoY9DmsF",
+        "name": "TV-zoY9DmsF · ABD25",
+        "pnl": 0,
+        "trades": 0,
         "active": true
       },
       {
-        "id": "R01",
-        "name": "R01 · ABD25",
-        "pnl": 0.12,
-        "trades": 3,
+        "id": "TV-DUCODGjC",
+        "name": "TV-DUCODGjC · ABD25",
+        "pnl": 0,
+        "trades": 0,
         "active": true
       },
       {
-        "id": "A6-010",
-        "name": "A6-010 · EMTIA",
-        "pnl": -10.11,
-        "trades": 14,
+        "id": "TV-dpkq3n4O",
+        "name": "TV-dpkq3n4O · ABD25",
+        "pnl": 0,
+        "trades": 0,
+        "active": true
+      },
+      {
+        "id": "TV-70PkIvTL",
+        "name": "TV-70PkIvTL · ABD25",
+        "pnl": 0,
+        "trades": 0,
+        "active": true
+      },
+      {
+        "id": "TV-71yKm18B",
+        "name": "TV-71yKm18B · KRIPTO25",
+        "pnl": 0,
+        "trades": 0,
+        "active": true
+      },
+      {
+        "id": "TV-3BXWqwnF",
+        "name": "TV-3BXWqwnF · KRIPTO25",
+        "pnl": 0,
+        "trades": 0,
+        "active": true
+      },
+      {
+        "id": "TV-egTb7TgJ",
+        "name": "TV-egTb7TgJ · KRIPTO25",
+        "pnl": 0,
+        "trades": 0,
+        "active": true
+      },
+      {
+        "id": "TV-Q9OQye4C",
+        "name": "TV-Q9OQye4C · KRIPTO25",
+        "pnl": 0,
+        "trades": 0,
+        "active": true
+      },
+      {
+        "id": "U4-H2",
+        "name": "U4-H2 · KRIPTO25",
+        "pnl": 0,
+        "trades": 0,
+        "active": true
+      },
+      {
+        "id": "TV-KO7Qe4Xb",
+        "name": "TV-KO7Qe4Xb · EMTIA",
+        "pnl": 0,
+        "trades": 0,
+        "active": true
+      },
+      {
+        "id": "U4-H3",
+        "name": "U4-H3 · EMTIA",
+        "pnl": 0,
+        "trades": 0,
         "active": true
       }
     ]
@@ -795,4966 +414,409 @@
   "risk": {
     "concentrations": [],
     "leverage_drawdown_montecarlo": [],
-    "correlation_note": "11 açık pozisyon, brüt maruziyet özkaynağın %40'i."
+    "correlation_note": "Açık pozisyon yok: sanal sermayenin tamamı nakitte."
   },
-  "periodic_returns": [
-    {
-      "day": "23.10.2026",
-      "swing": -0.26,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "22.10.2026",
-      "swing": 0.7,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "21.10.2026",
-      "swing": -0.07,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "20.10.2026",
-      "swing": 0.19,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "19.10.2026",
-      "swing": -0.03,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "16.10.2026",
-      "swing": 0.17,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "15.10.2026",
-      "swing": 0.14,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "14.10.2026",
-      "swing": -0.02,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "13.10.2026",
-      "swing": -0.08,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "12.10.2026",
-      "swing": 0.2,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "09.10.2026",
-      "swing": 0.18,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "08.10.2026",
-      "swing": -0.11,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "07.10.2026",
-      "swing": -0.07,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "06.10.2026",
-      "swing": 0.12,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "05.10.2026",
-      "swing": 0.07,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "02.10.2026",
-      "swing": 0.12,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "01.10.2026",
-      "swing": -0.0,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "30.09.2026",
-      "swing": -0.02,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "29.09.2026",
-      "swing": -0.03,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "28.09.2026",
-      "swing": -0.36,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "25.09.2026",
-      "swing": -0.19,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "24.09.2026",
-      "swing": 0.27,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "23.09.2026",
-      "swing": -0.1,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "22.09.2026",
-      "swing": 0.2,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "21.09.2026",
-      "swing": -0.11,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "18.09.2026",
-      "swing": 0.04,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "17.09.2026",
-      "swing": 0.04,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "16.09.2026",
-      "swing": -0.21,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "15.09.2026",
-      "swing": 0.16,
-      "trend": null,
-      "daytrade": null
-    },
-    {
-      "day": "14.09.2026",
-      "swing": -0.04,
-      "trend": null,
-      "daytrade": null
-    }
-  ],
+  "periodic_returns": [],
   "strategies_27": [
     {
       "rank": 1,
-      "code": "C07",
-      "name": "Codex Algo 21: wd_adx_breakout_risk",
+      "code": "TV-zoY9DmsF",
+      "name": "Reversion Guard | RSI + Bollinger Band [Customizable]",
       "mtf": "1D (swing)",
       "score": null,
-      "status": "Gecti",
-      "allocation": "%33",
-      "account": "C07 · ABD25",
+      "status": "Bekliyor",
+      "allocation": "%9",
+      "account": "TV-zoY9DmsF · ABD25",
       "j_score": null,
       "p_main": null,
-      "dd_pct": "%10.1",
-      "status_badge": "Gecti",
-      "desc": "asama2b: tum paper kapilari gecti",
-      "display_title": "C07 · ABD25",
-      "subtitle": "Codex Algo 21: wd_adx_breakout_risk",
-      "live_status_tag": "pozisyonda",
-      "is_active_trade": true,
-      "active_trade_symbol": "ABBV, BRK-B, CVX, MA, MSFT, V",
-      "active_trade_detail": "6 açık pozisyon",
-      "balance_usd": 1670.72,
-      "total_return_pct": 0.24,
-      "last_day_pct": -0.11,
-      "max_drawdown_pct": 0.92,
-      "win_rate_pct": 0.0,
-      "profit_factor": 0.0,
-      "closed_trades": 2,
-      "open_trades": 6,
-      "avg_holding_time": "15.5 gün",
-      "last_run": "23.10.2026",
-      "sparkline": [
-        1664.12,
-        1664.14,
-        1663.91,
-        1669.8,
-        1669.66,
-        1672.62,
-        1670.72
-      ],
-      "initial_capital": 1666.66,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "TV-zoY9DmsF · ABD25",
+      "subtitle": "Reversion Guard | RSI + Bollinger Band [Customizable]",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 450.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 450.0,
       "alpha_conf": "hesaplanmadı",
-      "footer_badge_1": "Backtest OOS getiri 13.0% · PF (IS) 2.18",
-      "footer_badge_2": "Bootstrap MDD95 10.1% · durum Gecti"
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
     },
     {
       "rank": 2,
-      "code": "R01",
-      "name": "Qullamaggie breakout continuation + episodic pivot",
+      "code": "TV-DUCODGjC",
+      "name": "Trendline Angle Pro V6 (Degree + Strategy)",
       "mtf": "1D (swing)",
       "score": null,
-      "status": "Gecti",
-      "allocation": "%33",
-      "account": "R01 · ABD25",
+      "status": "Bekliyor",
+      "allocation": "%7",
+      "account": "TV-DUCODGjC · ABD25",
       "j_score": null,
       "p_main": null,
-      "dd_pct": "%13.8",
-      "status_badge": "Gecti",
-      "desc": "asama2b: tum paper kapilari gecti",
-      "display_title": "R01 · ABD25",
-      "subtitle": "Qullamaggie breakout continuation + episodic pivot",
-      "live_status_tag": "pozisyonda",
-      "is_active_trade": true,
-      "active_trade_symbol": "BRK-B, COST, MA, PG",
-      "active_trade_detail": "4 açık pozisyon",
-      "balance_usd": 1700.96,
-      "total_return_pct": 2.06,
-      "last_day_pct": -0.89,
-      "max_drawdown_pct": 0.89,
-      "win_rate_pct": 33.3,
-      "profit_factor": 1.01,
-      "closed_trades": 3,
-      "open_trades": 4,
-      "avg_holding_time": "11.3 gün",
-      "last_run": "23.10.2026",
-      "sparkline": [
-        1681.29,
-        1686.14,
-        1685.84,
-        1688.48,
-        1685.75,
-        1716.31,
-        1700.96
-      ],
-      "initial_capital": 1666.66,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "TV-DUCODGjC · ABD25",
+      "subtitle": "Trendline Angle Pro V6 (Degree + Strategy)",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 350.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 350.0,
       "alpha_conf": "hesaplanmadı",
-      "footer_badge_1": "Backtest OOS getiri 1.6% · PF (IS) 2.02",
-      "footer_badge_2": "Bootstrap MDD95 13.8% · durum Gecti"
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
     },
     {
       "rank": 3,
-      "code": "A6-010",
-      "name": "The Gap Momentum System",
+      "code": "TV-dpkq3n4O",
+      "name": "LinReg Scale-In Strategy",
       "mtf": "1D (swing)",
       "score": null,
-      "status": "Kosullu",
-      "allocation": "%33",
-      "account": "A6-010 · EMTIA",
+      "status": "Dogrulanamaz",
+      "allocation": "%7",
+      "account": "TV-dpkq3n4O · ABD25",
       "j_score": null,
       "p_main": null,
-      "dd_pct": "%10.6",
-      "status_badge": "Kosullu",
-      "desc": "asama2b: on donem negatif",
-      "display_title": "A6-010 · EMTIA",
-      "subtitle": "The Gap Momentum System",
-      "live_status_tag": "pozisyonda",
-      "is_active_trade": true,
-      "active_trade_symbol": "USO",
-      "active_trade_detail": "1 açık pozisyon",
-      "balance_usd": 1663.78,
-      "total_return_pct": -0.17,
-      "last_day_pct": 0.24,
-      "max_drawdown_pct": 1.55,
-      "win_rate_pct": 21.4,
-      "profit_factor": 0.6,
-      "closed_trades": 14,
-      "open_trades": 1,
-      "avg_holding_time": "8.1 gün",
-      "last_run": "23.10.2026",
-      "sparkline": [
-        1654.65,
-        1658.36,
-        1657.52,
-        1658.63,
-        1658.16,
-        1659.72,
-        1663.78
-      ],
-      "initial_capital": 1666.67,
+      "dd_pct": null,
+      "status_badge": "Dogrulanamaz",
+      "desc": "dogrulanamaz: ozel kod (ozel_gosterge)",
+      "display_title": "TV-dpkq3n4O · ABD25",
+      "subtitle": "LinReg Scale-In Strategy",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 350.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 350.0,
       "alpha_conf": "hesaplanmadı",
-      "footer_badge_1": "Backtest OOS getiri 7.8% · PF (IS) 1.38",
-      "footer_badge_2": "Bootstrap MDD95 10.6% · durum Kosullu"
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Dogrulanamaz"
+    },
+    {
+      "rank": 4,
+      "code": "TV-70PkIvTL",
+      "name": "Vix FIX / StochRSI Strategy",
+      "mtf": "1D (swing)",
+      "score": null,
+      "status": "Bekliyor",
+      "allocation": "%7",
+      "account": "TV-70PkIvTL · ABD25",
+      "j_score": null,
+      "p_main": null,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "TV-70PkIvTL · ABD25",
+      "subtitle": "Vix FIX / StochRSI Strategy",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 350.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 350.0,
+      "alpha_conf": "hesaplanmadı",
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
+    },
+    {
+      "rank": 5,
+      "code": "TV-71yKm18B",
+      "name": "TRADLEWARE-Ichimoku TK-Cross + MFI SOL",
+      "mtf": "1D (swing)",
+      "score": null,
+      "status": "Bekliyor",
+      "allocation": "%10",
+      "account": "TV-71yKm18B · KRIPTO25",
+      "j_score": null,
+      "p_main": null,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "TV-71yKm18B · KRIPTO25",
+      "subtitle": "TRADLEWARE-Ichimoku TK-Cross + MFI SOL",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 500.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 500.0,
+      "alpha_conf": "hesaplanmadı",
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
+    },
+    {
+      "rank": 6,
+      "code": "TV-3BXWqwnF",
+      "name": "BTC Turtle Paper Strategy v1 - Bitstamp",
+      "mtf": "1D (swing)",
+      "score": null,
+      "status": "Bekliyor",
+      "allocation": "%6",
+      "account": "TV-3BXWqwnF · KRIPTO25",
+      "j_score": null,
+      "p_main": null,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "TV-3BXWqwnF · KRIPTO25",
+      "subtitle": "BTC Turtle Paper Strategy v1 - Bitstamp",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 300.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 300.0,
+      "alpha_conf": "hesaplanmadı",
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
+    },
+    {
+      "rank": 7,
+      "code": "TV-egTb7TgJ",
+      "name": "TRADLEWARE-Gaussian Channel + StochRSI ETH",
+      "mtf": "1D (swing)",
+      "score": null,
+      "status": "Dogrulanamaz",
+      "allocation": "%3",
+      "account": "TV-egTb7TgJ · KRIPTO25",
+      "j_score": null,
+      "p_main": null,
+      "dd_pct": null,
+      "status_badge": "Dogrulanamaz",
+      "desc": "dogrulanamaz: ozel kod (ozel_gosterge)",
+      "display_title": "TV-egTb7TgJ · KRIPTO25",
+      "subtitle": "TRADLEWARE-Gaussian Channel + StochRSI ETH",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 150.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 150.0,
+      "alpha_conf": "hesaplanmadı",
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Dogrulanamaz"
+    },
+    {
+      "rank": 8,
+      "code": "TV-Q9OQye4C",
+      "name": "Hull Suite Strategy",
+      "mtf": "1D (swing)",
+      "score": null,
+      "status": "Bekliyor",
+      "allocation": "%3",
+      "account": "TV-Q9OQye4C · KRIPTO25",
+      "j_score": null,
+      "p_main": null,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "TV-Q9OQye4C · KRIPTO25",
+      "subtitle": "Hull Suite Strategy",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 150.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 150.0,
+      "alpha_conf": "hesaplanmadı",
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
+    },
+    {
+      "rank": 9,
+      "code": "U4-H2",
+      "name": "U4 H2 - Donchian kirilimi (55 bar giris, 20 bar cikis)",
+      "mtf": "1D (swing)",
+      "score": null,
+      "status": "Bekliyor",
+      "allocation": "%3",
+      "account": "U4-H2 · KRIPTO25",
+      "j_score": null,
+      "p_main": null,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "U4-H2 · KRIPTO25",
+      "subtitle": "U4 H2 - Donchian kirilimi (55 bar giris, 20 bar cikis)",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 150.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 150.0,
+      "alpha_conf": "hesaplanmadı",
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
+    },
+    {
+      "rank": 10,
+      "code": "TV-KO7Qe4Xb",
+      "name": "Strategy Validation Framework - Standardised ATR Exits & 1% Ris",
+      "mtf": "1D (swing)",
+      "score": null,
+      "status": "Bekliyor",
+      "allocation": "%13",
+      "account": "TV-KO7Qe4Xb · EMTIA",
+      "j_score": null,
+      "p_main": null,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "TV-KO7Qe4Xb · EMTIA",
+      "subtitle": "Strategy Validation Framework - Standardised ATR Exits & 1% Ris",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 650.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 650.0,
+      "alpha_conf": "hesaplanmadı",
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
+    },
+    {
+      "rank": 11,
+      "code": "U4-H3",
+      "name": "U4 H3 - Dusuk volatilite rejiminde trend (EMA20/50, SMA200, ATR14/ATR100 < 1)",
+      "mtf": "1D (swing)",
+      "score": null,
+      "status": "Bekliyor",
+      "allocation": "%7",
+      "account": "U4-H3 · EMTIA",
+      "j_score": null,
+      "p_main": null,
+      "dd_pct": null,
+      "status_badge": "Bekliyor",
+      "desc": "asama1: tarama bekliyor",
+      "display_title": "U4-H3 · EMTIA",
+      "subtitle": "U4 H3 - Dusuk volatilite rejiminde trend (EMA20/50, SMA200, ATR14/ATR100 < 1)",
+      "live_status_tag": "tetikte bekliyor",
+      "is_active_trade": false,
+      "active_trade_symbol": "Nakit",
+      "active_trade_detail": "Açık pozisyon yok",
+      "balance_usd": 350.0,
+      "total_return_pct": 0.0,
+      "last_day_pct": null,
+      "max_drawdown_pct": null,
+      "win_rate_pct": null,
+      "profit_factor": null,
+      "closed_trades": 0,
+      "open_trades": 0,
+      "avg_holding_time": null,
+      "last_run": null,
+      "sparkline": [],
+      "initial_capital": 350.0,
+      "alpha_conf": "hesaplanmadı",
+      "footer_badge_1": "Backtest OOS getiri veri yok · PF (IS) veri yok",
+      "footer_badge_2": "Bootstrap MDD95 veri yok · durum Bekliyor"
     }
   ],
   "golge": {
     "not": "gölge kitaplar: ana portföyden ayrı; 2026-10-24 öncesi geriye dönük, yalnız canlı dönem değerlendirilir",
-    "kitaplar": [
-      {
-        "id": "U4-H1",
-        "piyasa": "KRIPTO25",
-        "tf": "4H",
-        "baslangic": "2026-09-01",
-        "canli_baslangic": "2026-10-24",
-        "ozkaynak": 4964.01,
-        "mdd": 2.25,
-        "mdd_uyari": 0.15,
-        "acik_pozisyonlar": [
-          {
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BNBUSDT",
-            "type": "Alış",
-            "entry_date": "25.10.2026",
-            "duration": "1 gün",
-            "entry_price": 744.5,
-            "stop_price": 720.7823,
-            "size_usd": 389.08,
-            "unrealized_pnl": -0.56,
-            "r": -0.05
-          }
-        ],
-        "kapanmis_islemler": [
-          {
-            "id": 24,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "TRXUSDT",
-            "type": "Alış",
-            "entry_date": "16.10.2026",
-            "exit_date": "18.10.2026",
-            "entry_price": 0.3346,
-            "exit_price": 0.3334,
-            "r": -0.42,
-            "pnl": -5.27,
-            "reason": "signal"
-          },
-          {
-            "id": 23,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "SOLUSDT",
-            "type": "Alış",
-            "entry_date": "29.09.2026",
-            "exit_date": "07.10.2026",
-            "entry_price": 118.22,
-            "exit_price": 118.25,
-            "r": -0.04,
-            "pnl": -0.44,
-            "reason": "signal"
-          },
-          {
-            "id": 22,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BTCUSDT",
-            "type": "Alış",
-            "entry_date": "29.09.2026",
-            "exit_date": "07.10.2026",
-            "entry_price": 83068.0,
-            "exit_price": 84150.39,
-            "r": 0.31,
-            "pnl": 3.87,
-            "reason": "signal"
-          },
-          {
-            "id": 21,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "ETHUSDT",
-            "type": "Alış",
-            "entry_date": "07.10.2026",
-            "exit_date": "07.10.2026",
-            "entry_price": 2697.49,
-            "exit_price": 2625.1583,
-            "r": -1.11,
-            "pnl": -0.51,
-            "reason": "stop"
-          },
-          {
-            "id": 20,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BNBUSDT",
-            "type": "Alış",
-            "entry_date": "06.10.2026",
-            "exit_date": "07.10.2026",
-            "entry_price": 779.53,
-            "exit_price": 758.7006,
-            "r": -1.11,
-            "pnl": -13.87,
-            "reason": "stop"
-          },
-          {
-            "id": 19,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "ETHUSDT",
-            "type": "Alış",
-            "entry_date": "18.09.2026",
-            "exit_date": "06.10.2026",
-            "entry_price": 2479.44,
-            "exit_price": 2691.91,
-            "r": 1.75,
-            "pnl": 18.17,
-            "reason": "signal"
-          },
-          {
-            "id": 18,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BNBUSDT",
-            "type": "Alış",
-            "entry_date": "17.09.2026",
-            "exit_date": "29.09.2026",
-            "entry_price": 725.92,
-            "exit_price": 753.6,
-            "r": 0.93,
-            "pnl": 11.48,
-            "reason": "signal"
-          },
-          {
-            "id": 17,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "TRXUSDT",
-            "type": "Alış",
-            "entry_date": "17.09.2026",
-            "exit_date": "24.09.2026",
-            "entry_price": 0.3352,
-            "exit_price": 0.3391,
-            "r": 0.64,
-            "pnl": 7.88,
-            "reason": "signal"
-          },
-          {
-            "id": 16,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "TRXUSDT",
-            "type": "Alış",
-            "entry_date": "17.09.2026",
-            "exit_date": "17.09.2026",
-            "entry_price": 0.3362,
-            "exit_price": 0.3345,
-            "r": -0.55,
-            "pnl": -6.78,
-            "reason": "signal"
-          },
-          {
-            "id": 15,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "XRPUSDT",
-            "type": "Alış",
-            "entry_date": "14.09.2026",
-            "exit_date": "15.09.2026",
-            "entry_price": 1.3987,
-            "exit_price": 1.3278,
-            "r": -1.06,
-            "pnl": -13.19,
-            "reason": "stop"
-          },
-          {
-            "id": 14,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "TRXUSDT",
-            "type": "Alış",
-            "entry_date": "12.09.2026",
-            "exit_date": "15.09.2026",
-            "entry_price": 0.3385,
-            "exit_price": 0.3332,
-            "r": -1.19,
-            "pnl": -14.86,
-            "reason": "stop"
-          },
-          {
-            "id": 13,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "ETHUSDT",
-            "type": "Alış",
-            "entry_date": "11.09.2026",
-            "exit_date": "15.09.2026",
-            "entry_price": 2559.43,
-            "exit_price": 2474.29,
-            "r": -0.67,
-            "pnl": -8.35,
-            "reason": "signal"
-          },
-          {
-            "id": 12,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BNBUSDT",
-            "type": "Alış",
-            "entry_date": "14.09.2026",
-            "exit_date": "15.09.2026",
-            "entry_price": 722.52,
-            "exit_price": 715.09,
-            "r": -0.38,
-            "pnl": -4.76,
-            "reason": "signal"
-          },
-          {
-            "id": 11,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BTCUSDT",
-            "type": "Alış",
-            "entry_date": "14.09.2026",
-            "exit_date": "15.09.2026",
-            "entry_price": 78578.02,
-            "exit_price": 78189.2,
-            "r": -0.29,
-            "pnl": -0.07,
-            "reason": "signal"
-          },
-          {
-            "id": 10,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BNBUSDT",
-            "type": "Alış",
-            "entry_date": "13.09.2026",
-            "exit_date": "14.09.2026",
-            "entry_price": 718.89,
-            "exit_price": 716.41,
-            "r": -0.18,
-            "pnl": -2.27,
-            "reason": "signal"
-          },
-          {
-            "id": 9,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BNBUSDT",
-            "type": "Alış",
-            "entry_date": "11.09.2026",
-            "exit_date": "13.09.2026",
-            "entry_price": 728.58,
-            "exit_price": 716.31,
-            "r": -0.42,
-            "pnl": -5.31,
-            "reason": "signal"
-          },
-          {
-            "id": 8,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BNBUSDT",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "10.09.2026",
-            "entry_price": 693.46,
-            "exit_price": 707.95,
-            "r": 0.61,
-            "pnl": 7.62,
-            "reason": "signal"
-          },
-          {
-            "id": 7,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "SOLUSDT",
-            "type": "Alış",
-            "entry_date": "02.09.2026",
-            "exit_date": "09.09.2026",
-            "entry_price": 98.11,
-            "exit_price": 102.34,
-            "r": 0.65,
-            "pnl": 8.1,
-            "reason": "signal"
-          },
-          {
-            "id": 6,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "ETHUSDT",
-            "type": "Alış",
-            "entry_date": "02.09.2026",
-            "exit_date": "09.09.2026",
-            "entry_price": 2381.87,
-            "exit_price": 2465.49,
-            "r": 0.7,
-            "pnl": 8.68,
-            "reason": "signal"
-          },
-          {
-            "id": 5,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "BTCUSDT",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "08.09.2026",
-            "entry_price": 78679.01,
-            "exit_price": 78482.0,
-            "r": -0.18,
-            "pnl": -2.19,
-            "reason": "signal"
-          },
-          {
-            "id": 4,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "XRPUSDT",
-            "type": "Alış",
-            "entry_date": "02.09.2026",
-            "exit_date": "06.09.2026",
-            "entry_price": 1.3369,
-            "exit_price": 1.4112,
-            "r": 0.84,
-            "pnl": 5.79,
-            "reason": "signal"
-          },
-          {
-            "id": 3,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "XRPUSDT",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "02.09.2026",
-            "entry_price": 1.38,
-            "exit_price": 1.3252,
-            "r": -0.7,
-            "pnl": -2.1,
-            "reason": "signal"
-          },
-          {
-            "id": 2,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "SOLUSDT",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "02.09.2026",
-            "entry_price": 103.66,
-            "exit_price": 97.4744,
-            "r": -1.05,
-            "pnl": -13.1,
-            "reason": "stop"
-          },
-          {
-            "id": 1,
-            "account": "U4-H1 · KRIPTO25",
-            "strategy": "U4-H1:KRIPTO25",
-            "asset": "ETHUSDT",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "02.09.2026",
-            "entry_price": 2472.21,
-            "exit_price": 2368.9851,
-            "r": -1.07,
-            "pnl": -13.38,
-            "reason": "stop"
-          }
-        ],
-        "ozkaynak_serisi": [
-          {
-            "tarih": "2026-09-01 00:00:00",
-            "ozkaynak": 5000.0
-          },
-          {
-            "tarih": "2026-09-01 04:00:00",
-            "ozkaynak": 4994.96
-          },
-          {
-            "tarih": "2026-09-01 08:00:00",
-            "ozkaynak": 4986.97
-          },
-          {
-            "tarih": "2026-09-01 12:00:00",
-            "ozkaynak": 4983.91
-          },
-          {
-            "tarih": "2026-09-01 16:00:00",
-            "ozkaynak": 4968.12
-          },
-          {
-            "tarih": "2026-09-01 20:00:00",
-            "ozkaynak": 4970.33
-          },
-          {
-            "tarih": "2026-09-02 00:00:00",
-            "ozkaynak": 4973.88
-          },
-          {
-            "tarih": "2026-09-02 04:00:00",
-            "ozkaynak": 4972.79
-          },
-          {
-            "tarih": "2026-09-02 08:00:00",
-            "ozkaynak": 4954.99
-          },
-          {
-            "tarih": "2026-09-02 12:00:00",
-            "ozkaynak": 4962.4
-          },
-          {
-            "tarih": "2026-09-02 16:00:00",
-            "ozkaynak": 4962.92
-          },
-          {
-            "tarih": "2026-09-02 20:00:00",
-            "ozkaynak": 4966.8
-          },
-          {
-            "tarih": "2026-09-03 00:00:00",
-            "ozkaynak": 4973.73
-          },
-          {
-            "tarih": "2026-09-03 04:00:00",
-            "ozkaynak": 4975.98
-          },
-          {
-            "tarih": "2026-09-03 08:00:00",
-            "ozkaynak": 4988.12
-          },
-          {
-            "tarih": "2026-09-03 12:00:00",
-            "ozkaynak": 5044.2
-          },
-          {
-            "tarih": "2026-09-03 16:00:00",
-            "ozkaynak": 5045.41
-          },
-          {
-            "tarih": "2026-09-03 20:00:00",
-            "ozkaynak": 5037.7
-          },
-          {
-            "tarih": "2026-09-04 00:00:00",
-            "ozkaynak": 5033.44
-          },
-          {
-            "tarih": "2026-09-04 04:00:00",
-            "ozkaynak": 5026.34
-          },
-          {
-            "tarih": "2026-09-04 08:00:00",
-            "ozkaynak": 5038.99
-          },
-          {
-            "tarih": "2026-09-04 12:00:00",
-            "ozkaynak": 5007.36
-          },
-          {
-            "tarih": "2026-09-04 16:00:00",
-            "ozkaynak": 5012.26
-          },
-          {
-            "tarih": "2026-09-04 20:00:00",
-            "ozkaynak": 5012.82
-          },
-          {
-            "tarih": "2026-09-05 00:00:00",
-            "ozkaynak": 5013.19
-          },
-          {
-            "tarih": "2026-09-05 04:00:00",
-            "ozkaynak": 5024.77
-          },
-          {
-            "tarih": "2026-09-05 08:00:00",
-            "ozkaynak": 5029.93
-          },
-          {
-            "tarih": "2026-09-05 12:00:00",
-            "ozkaynak": 5047.17
-          },
-          {
-            "tarih": "2026-09-05 16:00:00",
-            "ozkaynak": 5052.27
-          },
-          {
-            "tarih": "2026-09-05 20:00:00",
-            "ozkaynak": 5047.96
-          },
-          {
-            "tarih": "2026-09-06 00:00:00",
-            "ozkaynak": 5057.96
-          },
-          {
-            "tarih": "2026-09-06 04:00:00",
-            "ozkaynak": 5048.18
-          },
-          {
-            "tarih": "2026-09-06 08:00:00",
-            "ozkaynak": 5053.23
-          },
-          {
-            "tarih": "2026-09-06 12:00:00",
-            "ozkaynak": 5039.9
-          },
-          {
-            "tarih": "2026-09-06 16:00:00",
-            "ozkaynak": 5042.9
-          },
-          {
-            "tarih": "2026-09-06 20:00:00",
-            "ozkaynak": 5052.78
-          },
-          {
-            "tarih": "2026-09-07 00:00:00",
-            "ozkaynak": 5039.65
-          },
-          {
-            "tarih": "2026-09-07 04:00:00",
-            "ozkaynak": 5035.26
-          },
-          {
-            "tarih": "2026-09-07 08:00:00",
-            "ozkaynak": 5036.92
-          },
-          {
-            "tarih": "2026-09-07 12:00:00",
-            "ozkaynak": 5021.98
-          },
-          {
-            "tarih": "2026-09-07 16:00:00",
-            "ozkaynak": 5034.37
-          },
-          {
-            "tarih": "2026-09-07 20:00:00",
-            "ozkaynak": 5030.11
-          },
-          {
-            "tarih": "2026-09-08 00:00:00",
-            "ozkaynak": 5029.5
-          },
-          {
-            "tarih": "2026-09-08 04:00:00",
-            "ozkaynak": 5033.0
-          },
-          {
-            "tarih": "2026-09-08 08:00:00",
-            "ozkaynak": 5030.22
-          },
-          {
-            "tarih": "2026-09-08 12:00:00",
-            "ozkaynak": 5038.41
-          },
-          {
-            "tarih": "2026-09-08 16:00:00",
-            "ozkaynak": 5029.75
-          },
-          {
-            "tarih": "2026-09-08 20:00:00",
-            "ozkaynak": 5032.26
-          },
-          {
-            "tarih": "2026-09-09 00:00:00",
-            "ozkaynak": 5031.04
-          },
-          {
-            "tarih": "2026-09-09 04:00:00",
-            "ozkaynak": 5039.16
-          },
-          {
-            "tarih": "2026-09-09 08:00:00",
-            "ozkaynak": 5034.8
-          },
-          {
-            "tarih": "2026-09-09 12:00:00",
-            "ozkaynak": 5024.32
-          },
-          {
-            "tarih": "2026-09-09 16:00:00",
-            "ozkaynak": 5018.85
-          },
-          {
-            "tarih": "2026-09-09 20:00:00",
-            "ozkaynak": 5009.11
-          },
-          {
-            "tarih": "2026-09-10 00:00:00",
-            "ozkaynak": 5009.74
-          },
-          {
-            "tarih": "2026-09-10 04:00:00",
-            "ozkaynak": 5006.93
-          },
-          {
-            "tarih": "2026-09-10 08:00:00",
-            "ozkaynak": 5005.32
-          },
-          {
-            "tarih": "2026-09-10 12:00:00",
-            "ozkaynak": 5000.08
-          },
-          {
-            "tarih": "2026-09-10 16:00:00",
-            "ozkaynak": 4999.43
-          },
-          {
-            "tarih": "2026-09-10 20:00:00",
-            "ozkaynak": 4999.43
-          },
-          {
-            "tarih": "2026-09-11 00:00:00",
-            "ozkaynak": 4999.43
-          },
-          {
-            "tarih": "2026-09-11 04:00:00",
-            "ozkaynak": 4999.43
-          },
-          {
-            "tarih": "2026-09-11 08:00:00",
-            "ozkaynak": 4999.43
-          },
-          {
-            "tarih": "2026-09-11 12:00:00",
-            "ozkaynak": 4999.43
-          },
-          {
-            "tarih": "2026-09-11 16:00:00",
-            "ozkaynak": 4995.6
-          },
-          {
-            "tarih": "2026-09-11 20:00:00",
-            "ozkaynak": 4994.14
-          },
-          {
-            "tarih": "2026-09-12 00:00:00",
-            "ozkaynak": 4997.73
-          },
-          {
-            "tarih": "2026-09-12 04:00:00",
-            "ozkaynak": 4998.28
-          },
-          {
-            "tarih": "2026-09-12 08:00:00",
-            "ozkaynak": 5004.04
-          },
-          {
-            "tarih": "2026-09-12 12:00:00",
-            "ozkaynak": 5001.26
-          },
-          {
-            "tarih": "2026-09-12 16:00:00",
-            "ozkaynak": 4995.85
-          },
-          {
-            "tarih": "2026-09-12 20:00:00",
-            "ozkaynak": 4997.41
-          },
-          {
-            "tarih": "2026-09-13 00:00:00",
-            "ozkaynak": 4995.79
-          },
-          {
-            "tarih": "2026-09-13 04:00:00",
-            "ozkaynak": 4994.72
-          },
-          {
-            "tarih": "2026-09-13 08:00:00",
-            "ozkaynak": 4991.34
-          },
-          {
-            "tarih": "2026-09-13 12:00:00",
-            "ozkaynak": 4993.27
-          },
-          {
-            "tarih": "2026-09-13 16:00:00",
-            "ozkaynak": 4994.92
-          },
-          {
-            "tarih": "2026-09-13 20:00:00",
-            "ozkaynak": 4983.19
-          },
-          {
-            "tarih": "2026-09-14 00:00:00",
-            "ozkaynak": 4987.07
-          },
-          {
-            "tarih": "2026-09-14 04:00:00",
-            "ozkaynak": 4989.63
-          },
-          {
-            "tarih": "2026-09-14 08:00:00",
-            "ozkaynak": 4988.85
-          },
-          {
-            "tarih": "2026-09-14 12:00:00",
-            "ozkaynak": 4989.12
-          },
-          {
-            "tarih": "2026-09-14 16:00:00",
-            "ozkaynak": 5005.06
-          },
-          {
-            "tarih": "2026-09-14 20:00:00",
-            "ozkaynak": 4987.72
-          },
-          {
-            "tarih": "2026-09-15 00:00:00",
-            "ozkaynak": 4984.66
-          },
-          {
-            "tarih": "2026-09-15 04:00:00",
-            "ozkaynak": 4975.5
-          },
-          {
-            "tarih": "2026-09-15 08:00:00",
-            "ozkaynak": 4978.02
-          },
-          {
-            "tarih": "2026-09-15 12:00:00",
-            "ozkaynak": 4969.61
-          },
-          {
-            "tarih": "2026-09-15 16:00:00",
-            "ozkaynak": 4950.63
-          },
-          {
-            "tarih": "2026-09-15 20:00:00",
-            "ozkaynak": 4950.63
-          },
-          {
-            "tarih": "2026-09-16 00:00:00",
-            "ozkaynak": 4950.63
-          },
-          {
-            "tarih": "2026-09-16 04:00:00",
-            "ozkaynak": 4950.63
-          },
-          {
-            "tarih": "2026-09-16 08:00:00",
-            "ozkaynak": 4950.63
-          },
-          {
-            "tarih": "2026-09-16 12:00:00",
-            "ozkaynak": 4950.63
-          },
-          {
-            "tarih": "2026-09-16 16:00:00",
-            "ozkaynak": 4950.63
-          },
-          {
-            "tarih": "2026-09-16 20:00:00",
-            "ozkaynak": 4950.63
-          },
-          {
-            "tarih": "2026-09-17 00:00:00",
-            "ozkaynak": 4949.96
-          },
-          {
-            "tarih": "2026-09-17 04:00:00",
-            "ozkaynak": 4946.17
-          },
-          {
-            "tarih": "2026-09-17 08:00:00",
-            "ozkaynak": 4944.25
-          },
-          {
-            "tarih": "2026-09-17 12:00:00",
-            "ozkaynak": 4944.24
-          },
-          {
-            "tarih": "2026-09-17 16:00:00",
-            "ozkaynak": 4946.36
-          },
-          {
-            "tarih": "2026-09-17 20:00:00",
-            "ozkaynak": 4947.05
-          },
-          {
-            "tarih": "2026-09-18 00:00:00",
-            "ozkaynak": 4956.43
-          },
-          {
-            "tarih": "2026-09-18 04:00:00",
-            "ozkaynak": 4958.67
-          },
-          {
-            "tarih": "2026-09-18 08:00:00",
-            "ozkaynak": 4961.55
-          },
-          {
-            "tarih": "2026-09-18 12:00:00",
-            "ozkaynak": 4976.98
-          },
-          {
-            "tarih": "2026-09-18 16:00:00",
-            "ozkaynak": 4983.71
-          },
-          {
-            "tarih": "2026-09-18 20:00:00",
-            "ozkaynak": 4977.84
-          },
-          {
-            "tarih": "2026-09-19 00:00:00",
-            "ozkaynak": 4979.13
-          },
-          {
-            "tarih": "2026-09-19 04:00:00",
-            "ozkaynak": 4977.61
-          },
-          {
-            "tarih": "2026-09-19 08:00:00",
-            "ozkaynak": 4982.52
-          },
-          {
-            "tarih": "2026-09-19 12:00:00",
-            "ozkaynak": 4982.45
-          },
-          {
-            "tarih": "2026-09-19 16:00:00",
-            "ozkaynak": 4983.93
-          },
-          {
-            "tarih": "2026-09-19 20:00:00",
-            "ozkaynak": 4984.35
-          },
-          {
-            "tarih": "2026-09-20 00:00:00",
-            "ozkaynak": 4975.18
-          },
-          {
-            "tarih": "2026-09-20 04:00:00",
-            "ozkaynak": 4978.25
-          },
-          {
-            "tarih": "2026-09-20 08:00:00",
-            "ozkaynak": 4982.7
-          },
-          {
-            "tarih": "2026-09-20 12:00:00",
-            "ozkaynak": 4993.36
-          },
-          {
-            "tarih": "2026-09-20 16:00:00",
-            "ozkaynak": 4996.8
-          },
-          {
-            "tarih": "2026-09-20 20:00:00",
-            "ozkaynak": 4997.85
-          },
-          {
-            "tarih": "2026-09-21 00:00:00",
-            "ozkaynak": 5002.73
-          },
-          {
-            "tarih": "2026-09-21 04:00:00",
-            "ozkaynak": 4998.94
-          },
-          {
-            "tarih": "2026-09-21 08:00:00",
-            "ozkaynak": 5017.74
-          },
-          {
-            "tarih": "2026-09-21 12:00:00",
-            "ozkaynak": 5028.19
-          },
-          {
-            "tarih": "2026-09-21 16:00:00",
-            "ozkaynak": 5025.16
-          },
-          {
-            "tarih": "2026-09-21 20:00:00",
-            "ozkaynak": 5027.03
-          },
-          {
-            "tarih": "2026-09-22 00:00:00",
-            "ozkaynak": 5028.44
-          },
-          {
-            "tarih": "2026-09-22 04:00:00",
-            "ozkaynak": 5026.19
-          },
-          {
-            "tarih": "2026-09-22 08:00:00",
-            "ozkaynak": 5021.69
-          },
-          {
-            "tarih": "2026-09-22 12:00:00",
-            "ozkaynak": 5009.99
-          },
-          {
-            "tarih": "2026-09-22 16:00:00",
-            "ozkaynak": 5010.51
-          },
-          {
-            "tarih": "2026-09-22 20:00:00",
-            "ozkaynak": 5012.97
-          },
-          {
-            "tarih": "2026-09-23 00:00:00",
-            "ozkaynak": 5024.19
-          },
-          {
-            "tarih": "2026-09-23 04:00:00",
-            "ozkaynak": 5016.99
-          },
-          {
-            "tarih": "2026-09-23 08:00:00",
-            "ozkaynak": 5010.41
-          },
-          {
-            "tarih": "2026-09-23 12:00:00",
-            "ozkaynak": 4985.24
-          },
-          {
-            "tarih": "2026-09-23 16:00:00",
-            "ozkaynak": 4992.82
-          },
-          {
-            "tarih": "2026-09-23 20:00:00",
-            "ozkaynak": 4997.66
-          },
-          {
-            "tarih": "2026-09-24 00:00:00",
-            "ozkaynak": 5001.27
-          },
-          {
-            "tarih": "2026-09-24 04:00:00",
-            "ozkaynak": 5005.23
-          },
-          {
-            "tarih": "2026-09-24 08:00:00",
-            "ozkaynak": 4988.18
-          },
-          {
-            "tarih": "2026-09-24 12:00:00",
-            "ozkaynak": 4995.04
-          },
-          {
-            "tarih": "2026-09-24 16:00:00",
-            "ozkaynak": 4994.47
-          },
-          {
-            "tarih": "2026-09-24 20:00:00",
-            "ozkaynak": 4992.31
-          },
-          {
-            "tarih": "2026-09-25 00:00:00",
-            "ozkaynak": 4989.88
-          },
-          {
-            "tarih": "2026-09-25 04:00:00",
-            "ozkaynak": 4989.4
-          },
-          {
-            "tarih": "2026-09-25 08:00:00",
-            "ozkaynak": 4996.09
-          },
-          {
-            "tarih": "2026-09-25 12:00:00",
-            "ozkaynak": 4991.2
-          },
-          {
-            "tarih": "2026-09-25 16:00:00",
-            "ozkaynak": 4992.08
-          },
-          {
-            "tarih": "2026-09-25 20:00:00",
-            "ozkaynak": 4992.82
-          },
-          {
-            "tarih": "2026-09-26 00:00:00",
-            "ozkaynak": 4991.21
-          },
-          {
-            "tarih": "2026-09-26 04:00:00",
-            "ozkaynak": 4991.25
-          },
-          {
-            "tarih": "2026-09-26 08:00:00",
-            "ozkaynak": 4991.85
-          },
-          {
-            "tarih": "2026-09-26 12:00:00",
-            "ozkaynak": 4991.71
-          },
-          {
-            "tarih": "2026-09-26 16:00:00",
-            "ozkaynak": 4989.38
-          },
-          {
-            "tarih": "2026-09-26 20:00:00",
-            "ozkaynak": 4991.65
-          },
-          {
-            "tarih": "2026-09-27 00:00:00",
-            "ozkaynak": 4990.87
-          },
-          {
-            "tarih": "2026-09-27 04:00:00",
-            "ozkaynak": 4995.83
-          },
-          {
-            "tarih": "2026-09-27 08:00:00",
-            "ozkaynak": 4995.73
-          },
-          {
-            "tarih": "2026-09-27 12:00:00",
-            "ozkaynak": 4991.53
-          },
-          {
-            "tarih": "2026-09-27 16:00:00",
-            "ozkaynak": 4993.43
-          },
-          {
-            "tarih": "2026-09-27 20:00:00",
-            "ozkaynak": 4993.36
-          },
-          {
-            "tarih": "2026-09-28 00:00:00",
-            "ozkaynak": 4986.41
-          },
-          {
-            "tarih": "2026-09-28 04:00:00",
-            "ozkaynak": 4981.09
-          },
-          {
-            "tarih": "2026-09-28 08:00:00",
-            "ozkaynak": 4984.83
-          },
-          {
-            "tarih": "2026-09-28 12:00:00",
-            "ozkaynak": 4985.14
-          },
-          {
-            "tarih": "2026-09-28 16:00:00",
-            "ozkaynak": 4984.67
-          },
-          {
-            "tarih": "2026-09-28 20:00:00",
-            "ozkaynak": 4986.63
-          },
-          {
-            "tarih": "2026-09-29 00:00:00",
-            "ozkaynak": 4982.21
-          },
-          {
-            "tarih": "2026-09-29 04:00:00",
-            "ozkaynak": 4989.51
-          },
-          {
-            "tarih": "2026-09-29 08:00:00",
-            "ozkaynak": 4991.79
-          },
-          {
-            "tarih": "2026-09-29 12:00:00",
-            "ozkaynak": 4980.66
-          },
-          {
-            "tarih": "2026-09-29 16:00:00",
-            "ozkaynak": 4983.97
-          },
-          {
-            "tarih": "2026-09-29 20:00:00",
-            "ozkaynak": 4983.7
-          },
-          {
-            "tarih": "2026-09-30 00:00:00",
-            "ozkaynak": 4981.43
-          },
-          {
-            "tarih": "2026-09-30 04:00:00",
-            "ozkaynak": 4980.85
-          },
-          {
-            "tarih": "2026-09-30 08:00:00",
-            "ozkaynak": 4987.1
-          },
-          {
-            "tarih": "2026-09-30 12:00:00",
-            "ozkaynak": 4986.63
-          },
-          {
-            "tarih": "2026-09-30 16:00:00",
-            "ozkaynak": 4980.11
-          },
-          {
-            "tarih": "2026-09-30 20:00:00",
-            "ozkaynak": 4982.84
-          },
-          {
-            "tarih": "2026-10-01 00:00:00",
-            "ozkaynak": 4985.12
-          },
-          {
-            "tarih": "2026-10-01 04:00:00",
-            "ozkaynak": 4980.34
-          },
-          {
-            "tarih": "2026-10-01 08:00:00",
-            "ozkaynak": 4985.77
-          },
-          {
-            "tarih": "2026-10-01 12:00:00",
-            "ozkaynak": 4984.06
-          },
-          {
-            "tarih": "2026-10-01 16:00:00",
-            "ozkaynak": 4989.3
-          },
-          {
-            "tarih": "2026-10-01 20:00:00",
-            "ozkaynak": 4990.89
-          },
-          {
-            "tarih": "2026-10-02 00:00:00",
-            "ozkaynak": 4998.81
-          },
-          {
-            "tarih": "2026-10-02 04:00:00",
-            "ozkaynak": 5003.7
-          },
-          {
-            "tarih": "2026-10-02 08:00:00",
-            "ozkaynak": 5006.22
-          },
-          {
-            "tarih": "2026-10-02 12:00:00",
-            "ozkaynak": 4994.27
-          },
-          {
-            "tarih": "2026-10-02 16:00:00",
-            "ozkaynak": 4984.31
-          },
-          {
-            "tarih": "2026-10-02 20:00:00",
-            "ozkaynak": 4986.17
-          },
-          {
-            "tarih": "2026-10-03 00:00:00",
-            "ozkaynak": 4989.22
-          },
-          {
-            "tarih": "2026-10-03 04:00:00",
-            "ozkaynak": 4988.44
-          },
-          {
-            "tarih": "2026-10-03 08:00:00",
-            "ozkaynak": 4989.19
-          },
-          {
-            "tarih": "2026-10-03 12:00:00",
-            "ozkaynak": 4990.38
-          },
-          {
-            "tarih": "2026-10-03 16:00:00",
-            "ozkaynak": 4990.69
-          },
-          {
-            "tarih": "2026-10-03 20:00:00",
-            "ozkaynak": 4990.22
-          },
-          {
-            "tarih": "2026-10-04 00:00:00",
-            "ozkaynak": 4992.81
-          },
-          {
-            "tarih": "2026-10-04 04:00:00",
-            "ozkaynak": 4995.53
-          },
-          {
-            "tarih": "2026-10-04 08:00:00",
-            "ozkaynak": 4996.1
-          },
-          {
-            "tarih": "2026-10-04 12:00:00",
-            "ozkaynak": 4996.21
-          },
-          {
-            "tarih": "2026-10-04 16:00:00",
-            "ozkaynak": 4996.63
-          },
-          {
-            "tarih": "2026-10-04 20:00:00",
-            "ozkaynak": 5004.67
-          },
-          {
-            "tarih": "2026-10-05 00:00:00",
-            "ozkaynak": 5000.09
-          },
-          {
-            "tarih": "2026-10-05 04:00:00",
-            "ozkaynak": 5003.46
-          },
-          {
-            "tarih": "2026-10-05 08:00:00",
-            "ozkaynak": 5001.4
-          },
-          {
-            "tarih": "2026-10-05 12:00:00",
-            "ozkaynak": 4993.14
-          },
-          {
-            "tarih": "2026-10-05 16:00:00",
-            "ozkaynak": 4997.58
-          },
-          {
-            "tarih": "2026-10-05 20:00:00",
-            "ozkaynak": 4998.51
-          },
-          {
-            "tarih": "2026-10-06 00:00:00",
-            "ozkaynak": 4995.39
-          },
-          {
-            "tarih": "2026-10-06 04:00:00",
-            "ozkaynak": 4996.56
-          },
-          {
-            "tarih": "2026-10-06 08:00:00",
-            "ozkaynak": 5000.49
-          },
-          {
-            "tarih": "2026-10-06 12:00:00",
-            "ozkaynak": 4997.23
-          },
-          {
-            "tarih": "2026-10-06 16:00:00",
-            "ozkaynak": 4996.22
-          },
-          {
-            "tarih": "2026-10-06 20:00:00",
-            "ozkaynak": 4994.73
-          },
-          {
-            "tarih": "2026-10-07 00:00:00",
-            "ozkaynak": 4971.27
-          },
-          {
-            "tarih": "2026-10-07 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-07 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-07 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-07 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-07 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-08 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-08 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-08 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-08 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-08 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-08 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-09 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-09 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-09 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-09 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-09 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-09 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-10 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-10 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-10 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-10 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-10 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-10 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-11 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-11 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-11 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-11 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-11 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-11 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-12 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-12 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-12 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-12 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-12 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-12 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-13 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-13 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-13 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-13 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-13 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-13 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-14 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-14 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-14 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-14 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-14 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-14 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-15 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-15 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-15 08:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-15 12:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-15 16:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-15 20:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-16 00:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-16 04:00:00",
-            "ozkaynak": 4970.43
-          },
-          {
-            "tarih": "2026-10-16 08:00:00",
-            "ozkaynak": 4971.86
-          },
-          {
-            "tarih": "2026-10-16 12:00:00",
-            "ozkaynak": 4969.46
-          },
-          {
-            "tarih": "2026-10-16 16:00:00",
-            "ozkaynak": 4970.9
-          },
-          {
-            "tarih": "2026-10-16 20:00:00",
-            "ozkaynak": 4971.38
-          },
-          {
-            "tarih": "2026-10-17 00:00:00",
-            "ozkaynak": 4970.42
-          },
-          {
-            "tarih": "2026-10-17 04:00:00",
-            "ozkaynak": 4972.34
-          },
-          {
-            "tarih": "2026-10-17 08:00:00",
-            "ozkaynak": 4974.73
-          },
-          {
-            "tarih": "2026-10-17 12:00:00",
-            "ozkaynak": 4971.14
-          },
-          {
-            "tarih": "2026-10-17 16:00:00",
-            "ozkaynak": 4968.51
-          },
-          {
-            "tarih": "2026-10-17 20:00:00",
-            "ozkaynak": 4967.07
-          },
-          {
-            "tarih": "2026-10-18 00:00:00",
-            "ozkaynak": 4966.59
-          },
-          {
-            "tarih": "2026-10-18 04:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-18 08:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-18 12:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-18 16:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-18 20:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-19 00:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-19 04:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-19 08:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-19 12:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-19 16:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-19 20:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-20 00:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-20 04:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-20 08:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-20 12:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-20 16:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-20 20:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-21 00:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-21 04:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-21 08:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-21 12:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-21 16:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-21 20:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-22 00:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-22 04:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-22 08:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-22 12:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-22 16:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-22 20:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-23 00:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-23 04:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-23 08:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-23 12:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-23 16:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-23 20:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-24 00:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-24 04:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-24 08:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-24 12:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-24 16:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-24 20:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-25 00:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-25 04:00:00",
-            "ozkaynak": 4965.16
-          },
-          {
-            "tarih": "2026-10-25 08:00:00",
-            "ozkaynak": 4964.07
-          },
-          {
-            "tarih": "2026-10-25 12:00:00",
-            "ozkaynak": 4963.63
-          },
-          {
-            "tarih": "2026-10-25 16:00:00",
-            "ozkaynak": 4963.41
-          },
-          {
-            "tarih": "2026-10-25 20:00:00",
-            "ozkaynak": 4961.53
-          },
-          {
-            "tarih": "2026-10-26 00:00:00",
-            "ozkaynak": 4960.41
-          },
-          {
-            "tarih": "2026-10-26 04:00:00",
-            "ozkaynak": 4961.52
-          },
-          {
-            "tarih": "2026-10-26 08:00:00",
-            "ozkaynak": 4964.01
-          }
-        ]
-      },
-      {
-        "id": "T8-07",
-        "piyasa": "EMTIA",
-        "tf": "1H",
-        "baslangic": "2026-09-01",
-        "canli_baslangic": "2026-10-24",
-        "ozkaynak": 4966.57,
-        "mdd": 1.5,
-        "mdd_uyari": 0.15,
-        "acik_pozisyonlar": [
-          {
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "21.10.2026",
-            "duration": "2 gün",
-            "entry_price": 159.56,
-            "stop_price": 165.9395,
-            "size_usd": 492.75,
-            "unrealized_pnl": 28.98,
-            "r": 2.35
-          }
-        ],
-        "kapanmis_islemler": [
-          {
-            "id": 8,
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "20.10.2026",
-            "exit_date": "21.10.2026",
-            "entry_price": 160.04,
-            "exit_price": 158.5986,
-            "r": -0.35,
-            "pnl": -4.38,
-            "reason": "signal"
-          },
-          {
-            "id": 7,
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "15.10.2026",
-            "exit_date": "15.10.2026",
-            "entry_price": 11.1401,
-            "exit_price": 11.0001,
-            "r": -0.35,
-            "pnl": -4.31,
-            "reason": "signal"
-          },
-          {
-            "id": 6,
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "13.10.2026",
-            "exit_date": "14.10.2026",
-            "entry_price": 11.215,
-            "exit_price": 11.1249,
-            "r": -0.29,
-            "pnl": -3.56,
-            "reason": "stop"
-          },
-          {
-            "id": 5,
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "09.10.2026",
-            "exit_date": "12.10.2026",
-            "entry_price": 11.1,
-            "exit_price": 10.81,
-            "r": -0.89,
-            "pnl": -11.08,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 4,
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "25.09.2026",
-            "exit_date": "28.09.2026",
-            "entry_price": 40.59,
-            "exit_price": 39.72,
-            "r": -1.86,
-            "pnl": -23.22,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 3,
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "18.09.2026",
-            "exit_date": "18.09.2026",
-            "entry_price": 156.32,
-            "exit_price": 154.141,
-            "r": -0.56,
-            "pnl": -7.02,
-            "reason": "signal"
-          },
-          {
-            "id": 2,
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "04.09.2026",
-            "exit_date": "08.09.2026",
-            "entry_price": 10.68,
-            "exit_price": 10.4074,
-            "r": -0.88,
-            "pnl": -11.06,
-            "reason": "stop"
-          },
-          {
-            "id": 1,
-            "account": "T8-07 · EMTIA",
-            "strategy": "StackLight MTF momentum stack + Stochastic",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "03.09.2026",
-            "entry_price": 10.445,
-            "exit_price": 10.5102,
-            "r": 0.2,
-            "pnl": 2.45,
-            "reason": "stop"
-          }
-        ],
-        "ozkaynak_serisi": [
-          {
-            "tarih": "2026-09-01 13:30:00",
-            "ozkaynak": 5000.0
-          },
-          {
-            "tarih": "2026-09-01 14:30:00",
-            "ozkaynak": 5000.0
-          },
-          {
-            "tarih": "2026-09-01 15:30:00",
-            "ozkaynak": 5000.0
-          },
-          {
-            "tarih": "2026-09-01 16:30:00",
-            "ozkaynak": 5000.0
-          },
-          {
-            "tarih": "2026-09-01 17:30:00",
-            "ozkaynak": 4999.54
-          },
-          {
-            "tarih": "2026-09-01 18:30:00",
-            "ozkaynak": 5006.42
-          },
-          {
-            "tarih": "2026-09-01 19:30:00",
-            "ozkaynak": 5006.27
-          },
-          {
-            "tarih": "2026-09-02 13:30:00",
-            "ozkaynak": 5006.72
-          },
-          {
-            "tarih": "2026-09-02 14:30:00",
-            "ozkaynak": 5009.86
-          },
-          {
-            "tarih": "2026-09-02 15:30:00",
-            "ozkaynak": 5010.59
-          },
-          {
-            "tarih": "2026-09-02 16:30:00",
-            "ozkaynak": 5004.93
-          },
-          {
-            "tarih": "2026-09-02 17:30:00",
-            "ozkaynak": 5008.07
-          },
-          {
-            "tarih": "2026-09-02 18:30:00",
-            "ozkaynak": 5013.0
-          },
-          {
-            "tarih": "2026-09-02 19:30:00",
-            "ozkaynak": 5013.0
-          },
-          {
-            "tarih": "2026-09-03 13:30:00",
-            "ozkaynak": 5012.55
-          },
-          {
-            "tarih": "2026-09-03 14:30:00",
-            "ozkaynak": 5002.45
-          },
-          {
-            "tarih": "2026-09-03 15:30:00",
-            "ozkaynak": 5002.45
-          },
-          {
-            "tarih": "2026-09-03 16:30:00",
-            "ozkaynak": 5002.45
-          },
-          {
-            "tarih": "2026-09-03 17:30:00",
-            "ozkaynak": 5002.45
-          },
-          {
-            "tarih": "2026-09-03 18:30:00",
-            "ozkaynak": 5002.45
-          },
-          {
-            "tarih": "2026-09-03 19:30:00",
-            "ozkaynak": 5002.45
-          },
-          {
-            "tarih": "2026-09-04 13:30:00",
-            "ozkaynak": 5002.45
-          },
-          {
-            "tarih": "2026-09-04 14:30:00",
-            "ozkaynak": 5002.45
-          },
-          {
-            "tarih": "2026-09-04 15:30:00",
-            "ozkaynak": 4998.93
-          },
-          {
-            "tarih": "2026-09-04 16:30:00",
-            "ozkaynak": 4999.91
-          },
-          {
-            "tarih": "2026-09-04 17:30:00",
-            "ozkaynak": 5002.83
-          },
-          {
-            "tarih": "2026-09-04 18:30:00",
-            "ozkaynak": 4998.53
-          },
-          {
-            "tarih": "2026-09-04 19:30:00",
-            "ozkaynak": 4997.64
-          },
-          {
-            "tarih": "2026-09-08 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-08 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-08 15:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-08 16:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-08 17:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-08 18:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-08 19:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-09 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-09 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-09 15:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-09 16:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-09 17:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-09 18:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-09 19:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-10 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-10 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-10 15:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-10 16:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-10 17:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-10 18:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-10 19:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-11 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-11 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-11 15:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-11 16:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-11 17:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-11 18:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-11 19:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-14 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-14 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-14 15:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-14 16:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-14 17:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-14 18:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-14 19:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-15 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-15 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-15 15:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-15 16:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-15 17:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-15 18:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-15 19:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-16 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-16 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-16 15:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-16 16:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-16 17:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-16 18:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-16 19:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-17 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-17 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-17 15:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-17 16:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-17 17:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-17 18:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-17 19:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-18 13:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-18 14:30:00",
-            "ozkaynak": 4991.39
-          },
-          {
-            "tarih": "2026-09-18 15:30:00",
-            "ozkaynak": 4986.62
-          },
-          {
-            "tarih": "2026-09-18 16:30:00",
-            "ozkaynak": 4984.69
-          },
-          {
-            "tarih": "2026-09-18 17:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-18 18:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-18 19:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-21 13:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-21 14:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-21 15:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-21 16:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-21 17:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-21 18:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-21 19:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-22 13:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-22 14:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-22 15:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-22 16:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-22 17:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-22 18:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-22 19:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-23 13:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-23 14:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-23 15:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-23 16:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-23 17:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-23 18:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-23 19:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-24 13:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-24 14:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-24 15:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-24 16:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-24 17:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-24 18:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-24 19:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-25 13:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-25 14:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-25 15:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-25 16:30:00",
-            "ozkaynak": 4984.37
-          },
-          {
-            "tarih": "2026-09-25 17:30:00",
-            "ozkaynak": 4985.0
-          },
-          {
-            "tarih": "2026-09-25 18:30:00",
-            "ozkaynak": 4985.26
-          },
-          {
-            "tarih": "2026-09-25 19:30:00",
-            "ozkaynak": 4985.13
-          },
-          {
-            "tarih": "2026-09-28 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-28 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-28 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-28 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-28 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-28 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-28 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-29 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-29 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-29 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-29 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-29 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-29 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-29 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-30 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-30 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-30 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-30 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-30 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-30 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-09-30 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-01 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-01 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-01 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-01 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-01 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-01 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-01 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-02 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-02 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-02 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-02 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-02 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-02 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-02 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-05 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-05 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-05 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-05 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-05 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-05 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-05 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-06 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-06 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-06 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-06 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-06 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-06 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-06 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-07 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-07 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-07 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-07 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-07 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-07 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-07 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-08 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-08 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-08 15:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-08 16:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-08 17:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-08 18:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-08 19:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-09 13:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-09 14:30:00",
-            "ozkaynak": 4961.16
-          },
-          {
-            "tarih": "2026-10-09 15:30:00",
-            "ozkaynak": 4960.93
-          },
-          {
-            "tarih": "2026-10-09 16:30:00",
-            "ozkaynak": 4960.4
-          },
-          {
-            "tarih": "2026-10-09 17:30:00",
-            "ozkaynak": 4960.22
-          },
-          {
-            "tarih": "2026-10-09 18:30:00",
-            "ozkaynak": 4957.63
-          },
-          {
-            "tarih": "2026-10-09 19:30:00",
-            "ozkaynak": 4957.64
-          },
-          {
-            "tarih": "2026-10-12 13:30:00",
-            "ozkaynak": 4950.08
-          },
-          {
-            "tarih": "2026-10-12 14:30:00",
-            "ozkaynak": 4950.08
-          },
-          {
-            "tarih": "2026-10-12 15:30:00",
-            "ozkaynak": 4950.08
-          },
-          {
-            "tarih": "2026-10-12 16:30:00",
-            "ozkaynak": 4950.08
-          },
-          {
-            "tarih": "2026-10-12 17:30:00",
-            "ozkaynak": 4950.08
-          },
-          {
-            "tarih": "2026-10-12 18:30:00",
-            "ozkaynak": 4950.08
-          },
-          {
-            "tarih": "2026-10-12 19:30:00",
-            "ozkaynak": 4950.08
-          },
-          {
-            "tarih": "2026-10-13 13:30:00",
-            "ozkaynak": 4950.08
-          },
-          {
-            "tarih": "2026-10-13 14:30:00",
-            "ozkaynak": 4947.94
-          },
-          {
-            "tarih": "2026-10-13 15:30:00",
-            "ozkaynak": 4948.82
-          },
-          {
-            "tarih": "2026-10-13 16:30:00",
-            "ozkaynak": 4951.11
-          },
-          {
-            "tarih": "2026-10-13 17:30:00",
-            "ozkaynak": 4952.53
-          },
-          {
-            "tarih": "2026-10-13 18:30:00",
-            "ozkaynak": 4956.91
-          },
-          {
-            "tarih": "2026-10-13 19:30:00",
-            "ozkaynak": 4957.44
-          },
-          {
-            "tarih": "2026-10-14 13:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-14 14:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-14 15:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-14 16:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-14 17:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-14 18:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-14 19:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-15 13:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-15 14:30:00",
-            "ozkaynak": 4946.51
-          },
-          {
-            "tarih": "2026-10-15 15:30:00",
-            "ozkaynak": 4942.35
-          },
-          {
-            "tarih": "2026-10-15 16:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-15 17:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-15 18:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-15 19:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-16 13:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-16 14:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-16 15:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-16 16:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-16 17:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-16 18:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-16 19:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-19 13:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-19 14:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-19 15:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-19 16:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-19 17:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-19 18:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-19 19:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-20 13:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-20 14:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-20 15:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-20 16:30:00",
-            "ozkaynak": 4942.2
-          },
-          {
-            "tarih": "2026-10-20 17:30:00",
-            "ozkaynak": 4941.41
-          },
-          {
-            "tarih": "2026-10-20 18:30:00",
-            "ozkaynak": 4943.57
-          },
-          {
-            "tarih": "2026-10-20 19:30:00",
-            "ozkaynak": 4943.62
-          },
-          {
-            "tarih": "2026-10-21 13:30:00",
-            "ozkaynak": 4941.0
-          },
-          {
-            "tarih": "2026-10-21 14:30:00",
-            "ozkaynak": 4937.74
-          },
-          {
-            "tarih": "2026-10-21 15:30:00",
-            "ozkaynak": 4939.49
-          },
-          {
-            "tarih": "2026-10-21 16:30:00",
-            "ozkaynak": 4937.93
-          },
-          {
-            "tarih": "2026-10-21 17:30:00",
-            "ozkaynak": 4937.82
-          },
-          {
-            "tarih": "2026-10-21 18:30:00",
-            "ozkaynak": 4937.82
-          },
-          {
-            "tarih": "2026-10-21 19:30:00",
-            "ozkaynak": 4938.17
-          },
-          {
-            "tarih": "2026-10-22 13:30:00",
-            "ozkaynak": 4942.84
-          },
-          {
-            "tarih": "2026-10-22 14:30:00",
-            "ozkaynak": 4940.17
-          },
-          {
-            "tarih": "2026-10-22 15:30:00",
-            "ozkaynak": 4942.8
-          },
-          {
-            "tarih": "2026-10-22 16:30:00",
-            "ozkaynak": 4945.81
-          },
-          {
-            "tarih": "2026-10-22 17:30:00",
-            "ozkaynak": 4946.52
-          },
-          {
-            "tarih": "2026-10-22 18:30:00",
-            "ozkaynak": 4945.99
-          },
-          {
-            "tarih": "2026-10-22 19:30:00",
-            "ozkaynak": 4946.16
-          },
-          {
-            "tarih": "2026-10-23 13:30:00",
-            "ozkaynak": 4959.76
-          },
-          {
-            "tarih": "2026-10-23 14:30:00",
-            "ozkaynak": 4959.47
-          },
-          {
-            "tarih": "2026-10-23 15:30:00",
-            "ozkaynak": 4963.89
-          },
-          {
-            "tarih": "2026-10-23 16:30:00",
-            "ozkaynak": 4963.5
-          },
-          {
-            "tarih": "2026-10-23 17:30:00",
-            "ozkaynak": 4964.3
-          },
-          {
-            "tarih": "2026-10-23 18:30:00",
-            "ozkaynak": 4965.52
-          },
-          {
-            "tarih": "2026-10-23 19:30:00",
-            "ozkaynak": 4966.57
-          }
-        ]
-      },
-      {
-        "id": "V2B",
-        "piyasa": "EMTIA",
-        "tf": "1H",
-        "baslangic": "2026-09-01",
-        "canli_baslangic": "2026-10-24",
-        "ozkaynak": 4864.21,
-        "mdd": 3.9,
-        "mdd_uyari": 0.15,
-        "acik_pozisyonlar": [
-          {
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "22.10.2026",
-            "duration": "1 gün",
-            "entry_price": 161.2822,
-            "stop_price": 164.5816,
-            "size_usd": 379.77,
-            "unrealized_pnl": 18.48,
-            "r": 1.53
-          }
-        ],
-        "kapanmis_islemler": [
-          {
-            "id": 46,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "20.10.2026",
-            "exit_date": "22.10.2026",
-            "entry_price": 160.675,
-            "exit_price": 161.29,
-            "r": 0.09,
-            "pnl": 1.05,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 45,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "20.10.2026",
-            "exit_date": "21.10.2026",
-            "entry_price": 39.75,
-            "exit_price": 39.3466,
-            "r": -0.87,
-            "pnl": -10.5,
-            "reason": "stop"
-          },
-          {
-            "id": 44,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "09.10.2026",
-            "exit_date": "20.10.2026",
-            "entry_price": 148.88,
-            "exit_price": 157.7899,
-            "r": 1.64,
-            "pnl": 19.99,
-            "reason": "stop"
-          },
-          {
-            "id": 43,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "GLD",
-            "type": "Alış",
-            "entry_date": "16.10.2026",
-            "exit_date": "19.10.2026",
-            "entry_price": 384.71,
-            "exit_price": 379.1896,
-            "r": -1.07,
-            "pnl": -13.0,
-            "reason": "stop"
-          },
-          {
-            "id": 42,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "15.10.2026",
-            "exit_date": "16.10.2026",
-            "entry_price": 11.145,
-            "exit_price": 10.6,
-            "r": -1.05,
-            "pnl": -12.82,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 41,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "09.10.2026",
-            "exit_date": "14.10.2026",
-            "entry_price": 11.111,
-            "exit_price": 11.1666,
-            "r": 0.1,
-            "pnl": 1.26,
-            "reason": "stop"
-          },
-          {
-            "id": 40,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "12.10.2026",
-            "exit_date": "14.10.2026",
-            "entry_price": 40.58,
-            "exit_price": 40.21,
-            "r": -0.88,
-            "pnl": -10.75,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 39,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "GLD",
-            "type": "Alış",
-            "entry_date": "12.10.2026",
-            "exit_date": "13.10.2026",
-            "entry_price": 382.43,
-            "exit_price": 381.96,
-            "r": -0.18,
-            "pnl": -2.24,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 38,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "12.10.2026",
-            "exit_date": "13.10.2026",
-            "entry_price": 28.42,
-            "exit_price": 28.5621,
-            "r": 0.4,
-            "pnl": 4.87,
-            "reason": "stop"
-          },
-          {
-            "id": 37,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "09.10.2026",
-            "exit_date": "09.10.2026",
-            "entry_price": 40.22,
-            "exit_price": 40.31,
-            "r": 0.09,
-            "pnl": 1.13,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 36,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "09.10.2026",
-            "exit_date": "09.10.2026",
-            "entry_price": 28.43,
-            "exit_price": 28.1955,
-            "r": -1.12,
-            "pnl": -13.67,
-            "reason": "stop"
-          },
-          {
-            "id": 35,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "05.10.2026",
-            "exit_date": "08.10.2026",
-            "entry_price": 10.55,
-            "exit_price": 10.7867,
-            "r": 0.66,
-            "pnl": 8.06,
-            "reason": "stop"
-          },
-          {
-            "id": 34,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "07.10.2026",
-            "exit_date": "08.10.2026",
-            "entry_price": 40.01,
-            "exit_price": 39.5737,
-            "r": -1.09,
-            "pnl": -13.37,
-            "reason": "stop"
-          },
-          {
-            "id": 33,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "06.10.2026",
-            "exit_date": "07.10.2026",
-            "entry_price": 28.785,
-            "exit_price": 28.616,
-            "r": -0.75,
-            "pnl": -9.17,
-            "reason": "stop"
-          },
-          {
-            "id": 32,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "05.10.2026",
-            "exit_date": "06.10.2026",
-            "entry_price": 39.895,
-            "exit_price": 39.995,
-            "r": 0.12,
-            "pnl": 1.5,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 31,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "06.10.2026",
-            "exit_date": "06.10.2026",
-            "entry_price": 28.645,
-            "exit_price": 28.745,
-            "r": 0.28,
-            "pnl": 3.4,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 30,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "05.10.2026",
-            "exit_date": "06.10.2026",
-            "entry_price": 28.47,
-            "exit_price": 28.585,
-            "r": 0.29,
-            "pnl": 3.54,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 29,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "01.10.2026",
-            "exit_date": "02.10.2026",
-            "entry_price": 149.9,
-            "exit_price": 143.56,
-            "r": -1.14,
-            "pnl": -13.91,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 28,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "28.09.2026",
-            "exit_date": "29.09.2026",
-            "entry_price": 10.79,
-            "exit_price": 10.445,
-            "r": -0.69,
-            "pnl": -8.56,
-            "reason": "signal"
-          },
-          {
-            "id": 27,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "24.09.2026",
-            "exit_date": "29.09.2026",
-            "entry_price": 153.26,
-            "exit_price": 145.43,
-            "r": -1.14,
-            "pnl": -14.18,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 26,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "25.09.2026",
-            "exit_date": "28.09.2026",
-            "entry_price": 28.535,
-            "exit_price": 28.317,
-            "r": -1.05,
-            "pnl": -12.96,
-            "reason": "stop"
-          },
-          {
-            "id": 25,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "23.09.2026",
-            "exit_date": "28.09.2026",
-            "entry_price": 40.79,
-            "exit_price": 39.72,
-            "r": -1.89,
-            "pnl": -23.54,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 24,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "17.09.2026",
-            "exit_date": "25.09.2026",
-            "entry_price": 10.471,
-            "exit_price": 11.05,
-            "r": 1.97,
-            "pnl": 24.6,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 23,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "22.09.2026",
-            "exit_date": "25.09.2026",
-            "entry_price": 28.66,
-            "exit_price": 28.27,
-            "r": -1.69,
-            "pnl": -21.07,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 22,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "SLV",
-            "type": "Alış",
-            "entry_date": "22.09.2026",
-            "exit_date": "23.09.2026",
-            "entry_price": 60.635,
-            "exit_price": 59.0,
-            "r": -1.15,
-            "pnl": -14.32,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 21,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "GLD",
-            "type": "Alış",
-            "entry_date": "22.09.2026",
-            "exit_date": "23.09.2026",
-            "entry_price": 399.77,
-            "exit_price": 394.5105,
-            "r": -0.98,
-            "pnl": -12.28,
-            "reason": "stop"
-          },
-          {
-            "id": 20,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "22.09.2026",
-            "exit_date": "22.09.2026",
-            "entry_price": 41.185,
-            "exit_price": 41.385,
-            "r": 0.27,
-            "pnl": 3.42,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 19,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "SLV",
-            "type": "Alış",
-            "entry_date": "18.09.2026",
-            "exit_date": "22.09.2026",
-            "entry_price": 59.94,
-            "exit_price": 60.2397,
-            "r": 0.13,
-            "pnl": 0.29,
-            "reason": "stop"
-          },
-          {
-            "id": 18,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "21.09.2026",
-            "exit_date": "22.09.2026",
-            "entry_price": 40.83,
-            "exit_price": 41.0342,
-            "r": 0.29,
-            "pnl": 3.66,
-            "reason": "stop"
-          },
-          {
-            "id": 17,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "18.09.2026",
-            "exit_date": "21.09.2026",
-            "entry_price": 157.3159,
-            "exit_price": 148.88,
-            "r": -1.69,
-            "pnl": -21.11,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 16,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "GLD",
-            "type": "Alış",
-            "entry_date": "18.09.2026",
-            "exit_date": "18.09.2026",
-            "entry_price": 399.395,
-            "exit_price": 401.392,
-            "r": 0.21,
-            "pnl": 2.66,
-            "reason": "stop"
-          },
-          {
-            "id": 15,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "18.09.2026",
-            "exit_date": "18.09.2026",
-            "entry_price": 39.975,
-            "exit_price": 40.155,
-            "r": 0.2,
-            "pnl": 2.55,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 14,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "15.09.2026",
-            "exit_date": "16.09.2026",
-            "entry_price": 10.4927,
-            "exit_price": 10.48,
-            "r": -0.07,
-            "pnl": -0.89,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 13,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "15.09.2026",
-            "exit_date": "16.09.2026",
-            "entry_price": 159.56,
-            "exit_price": 159.31,
-            "r": -0.06,
-            "pnl": -0.78,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 12,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "14.09.2026",
-            "exit_date": "15.09.2026",
-            "entry_price": 10.425,
-            "exit_price": 10.475,
-            "r": 0.13,
-            "pnl": 1.64,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 11,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "11.09.2026",
-            "exit_date": "14.09.2026",
-            "entry_price": 154.18,
-            "exit_price": 154.9509,
-            "r": 0.1,
-            "pnl": 1.29,
-            "reason": "stop"
-          },
-          {
-            "id": 10,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "04.09.2026",
-            "exit_date": "11.09.2026",
-            "entry_price": 141.47,
-            "exit_price": 152.5,
-            "r": 2.6,
-            "pnl": 32.43,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 9,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "10.09.2026",
-            "exit_date": "11.09.2026",
-            "entry_price": 29.26,
-            "exit_price": 29.0639,
-            "r": -0.75,
-            "pnl": -9.43,
-            "reason": "stop"
-          },
-          {
-            "id": 8,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "CPER",
-            "type": "Alış",
-            "entry_date": "03.09.2026",
-            "exit_date": "10.09.2026",
-            "entry_price": 39.9,
-            "exit_price": 39.4,
-            "r": -0.99,
-            "pnl": -12.36,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 7,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "SLV",
-            "type": "Alış",
-            "entry_date": "09.09.2026",
-            "exit_date": "09.09.2026",
-            "entry_price": 60.93,
-            "exit_price": 61.2347,
-            "r": 0.12,
-            "pnl": 1.53,
-            "reason": "stop"
-          },
-          {
-            "id": 6,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "SLV",
-            "type": "Alış",
-            "entry_date": "08.09.2026",
-            "exit_date": "09.09.2026",
-            "entry_price": 60.02,
-            "exit_price": 60.3201,
-            "r": 0.17,
-            "pnl": 2.07,
-            "reason": "stop"
-          },
-          {
-            "id": 5,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "08.09.2026",
-            "exit_date": "09.09.2026",
-            "entry_price": 29.105,
-            "exit_price": 29.01,
-            "r": -0.42,
-            "pnl": -5.32,
-            "reason": "gap_stop"
-          },
-          {
-            "id": 4,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "04.09.2026",
-            "exit_date": "08.09.2026",
-            "entry_price": 10.7,
-            "exit_price": 10.3226,
-            "r": -0.96,
-            "pnl": -11.97,
-            "reason": "stop"
-          },
-          {
-            "id": 3,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "USO",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "04.09.2026",
-            "entry_price": 136.86,
-            "exit_price": 139.0703,
-            "r": 0.52,
-            "pnl": 6.51,
-            "reason": "stop"
-          },
-          {
-            "id": 2,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "UNG",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "03.09.2026",
-            "entry_price": 10.445,
-            "exit_price": 10.4972,
-            "r": 0.12,
-            "pnl": 1.52,
-            "reason": "stop"
-          },
-          {
-            "id": 1,
-            "account": "V2B · EMTIA",
-            "strategy": "VOLTRAN-2B saatlik momentum şeridi + likidite dönüşü (v3)",
-            "asset": "DBA",
-            "type": "Alış",
-            "entry_date": "01.09.2026",
-            "exit_date": "02.09.2026",
-            "entry_price": 29.45,
-            "exit_price": 29.12,
-            "r": -1.19,
-            "pnl": -14.83,
-            "reason": "gap_stop"
-          }
-        ],
-        "ozkaynak_serisi": [
-          {
-            "tarih": "2026-09-01 13:30:00",
-            "ozkaynak": 5000.0
-          },
-          {
-            "tarih": "2026-09-01 14:30:00",
-            "ozkaynak": 5000.42
-          },
-          {
-            "tarih": "2026-09-01 15:30:00",
-            "ozkaynak": 5009.19
-          },
-          {
-            "tarih": "2026-09-01 16:30:00",
-            "ozkaynak": 5008.77
-          },
-          {
-            "tarih": "2026-09-01 17:30:00",
-            "ozkaynak": 5011.76
-          },
-          {
-            "tarih": "2026-09-01 18:30:00",
-            "ozkaynak": 5018.31
-          },
-          {
-            "tarih": "2026-09-01 19:30:00",
-            "ozkaynak": 5018.31
-          },
-          {
-            "tarih": "2026-09-02 13:30:00",
-            "ozkaynak": 4999.84
-          },
-          {
-            "tarih": "2026-09-02 14:30:00",
-            "ozkaynak": 5005.48
-          },
-          {
-            "tarih": "2026-09-02 15:30:00",
-            "ozkaynak": 5007.58
-          },
-          {
-            "tarih": "2026-09-02 16:30:00",
-            "ozkaynak": 5003.63
-          },
-          {
-            "tarih": "2026-09-02 17:30:00",
-            "ozkaynak": 5005.78
-          },
-          {
-            "tarih": "2026-09-02 18:30:00",
-            "ozkaynak": 5009.66
-          },
-          {
-            "tarih": "2026-09-02 19:30:00",
-            "ozkaynak": 5009.07
-          },
-          {
-            "tarih": "2026-09-03 13:30:00",
-            "ozkaynak": 5014.1
-          },
-          {
-            "tarih": "2026-09-03 14:30:00",
-            "ozkaynak": 5004.47
-          },
-          {
-            "tarih": "2026-09-03 15:30:00",
-            "ozkaynak": 5002.96
-          },
-          {
-            "tarih": "2026-09-03 16:30:00",
-            "ozkaynak": 5003.59
-          },
-          {
-            "tarih": "2026-09-03 17:30:00",
-            "ozkaynak": 5002.03
-          },
-          {
-            "tarih": "2026-09-03 18:30:00",
-            "ozkaynak": 5001.82
-          },
-          {
-            "tarih": "2026-09-03 19:30:00",
-            "ozkaynak": 5002.52
-          },
-          {
-            "tarih": "2026-09-04 13:30:00",
-            "ozkaynak": 4994.12
-          },
-          {
-            "tarih": "2026-09-04 14:30:00",
-            "ozkaynak": 4994.64
-          },
-          {
-            "tarih": "2026-09-04 15:30:00",
-            "ozkaynak": 4991.29
-          },
-          {
-            "tarih": "2026-09-04 16:30:00",
-            "ozkaynak": 4990.23
-          },
-          {
-            "tarih": "2026-09-04 17:30:00",
-            "ozkaynak": 4993.47
-          },
-          {
-            "tarih": "2026-09-04 18:30:00",
-            "ozkaynak": 4990.68
-          },
-          {
-            "tarih": "2026-09-04 19:30:00",
-            "ozkaynak": 4991.31
-          },
-          {
-            "tarih": "2026-09-08 13:30:00",
-            "ozkaynak": 5020.81
-          },
-          {
-            "tarih": "2026-09-08 14:30:00",
-            "ozkaynak": 5015.6
-          },
-          {
-            "tarih": "2026-09-08 15:30:00",
-            "ozkaynak": 5008.17
-          },
-          {
-            "tarih": "2026-09-08 16:30:00",
-            "ozkaynak": 5009.46
-          },
-          {
-            "tarih": "2026-09-08 17:30:00",
-            "ozkaynak": 5011.93
-          },
-          {
-            "tarih": "2026-09-08 18:30:00",
-            "ozkaynak": 5005.52
-          },
-          {
-            "tarih": "2026-09-08 19:30:00",
-            "ozkaynak": 5004.08
-          },
-          {
-            "tarih": "2026-09-09 13:30:00",
-            "ozkaynak": 5035.99
-          },
-          {
-            "tarih": "2026-09-09 14:30:00",
-            "ozkaynak": 5021.25
-          },
-          {
-            "tarih": "2026-09-09 15:30:00",
-            "ozkaynak": 5026.89
-          },
-          {
-            "tarih": "2026-09-09 16:30:00",
-            "ozkaynak": 5031.16
-          },
-          {
-            "tarih": "2026-09-09 17:30:00",
-            "ozkaynak": 5033.12
-          },
-          {
-            "tarih": "2026-09-09 18:30:00",
-            "ozkaynak": 5030.21
-          },
-          {
-            "tarih": "2026-09-09 19:30:00",
-            "ozkaynak": 5030.54
-          },
-          {
-            "tarih": "2026-09-10 13:30:00",
-            "ozkaynak": 5001.84
-          },
-          {
-            "tarih": "2026-09-10 14:30:00",
-            "ozkaynak": 5006.96
-          },
-          {
-            "tarih": "2026-09-10 15:30:00",
-            "ozkaynak": 5010.1
-          },
-          {
-            "tarih": "2026-09-10 16:30:00",
-            "ozkaynak": 5010.9
-          },
-          {
-            "tarih": "2026-09-10 17:30:00",
-            "ozkaynak": 5017.11
-          },
-          {
-            "tarih": "2026-09-10 18:30:00",
-            "ozkaynak": 5018.1
-          },
-          {
-            "tarih": "2026-09-10 19:30:00",
-            "ozkaynak": 5019.17
-          },
-          {
-            "tarih": "2026-09-11 13:30:00",
-            "ozkaynak": 4990.16
-          },
-          {
-            "tarih": "2026-09-11 14:30:00",
-            "ozkaynak": 4990.16
-          },
-          {
-            "tarih": "2026-09-11 15:30:00",
-            "ozkaynak": 4990.16
-          },
-          {
-            "tarih": "2026-09-11 16:30:00",
-            "ozkaynak": 4990.16
-          },
-          {
-            "tarih": "2026-09-11 17:30:00",
-            "ozkaynak": 4990.16
-          },
-          {
-            "tarih": "2026-09-11 18:30:00",
-            "ozkaynak": 4991.23
-          },
-          {
-            "tarih": "2026-09-11 19:30:00",
-            "ozkaynak": 4991.46
-          },
-          {
-            "tarih": "2026-09-14 13:30:00",
-            "ozkaynak": 5001.59
-          },
-          {
-            "tarih": "2026-09-14 14:30:00",
-            "ozkaynak": 5000.46
-          },
-          {
-            "tarih": "2026-09-14 15:30:00",
-            "ozkaynak": 4998.75
-          },
-          {
-            "tarih": "2026-09-14 16:30:00",
-            "ozkaynak": 4994.13
-          },
-          {
-            "tarih": "2026-09-14 17:30:00",
-            "ozkaynak": 4992.79
-          },
-          {
-            "tarih": "2026-09-14 18:30:00",
-            "ozkaynak": 4988.17
-          },
-          {
-            "tarih": "2026-09-14 19:30:00",
-            "ozkaynak": 4986.88
-          },
-          {
-            "tarih": "2026-09-15 13:30:00",
-            "ozkaynak": 4993.3
-          },
-          {
-            "tarih": "2026-09-15 14:30:00",
-            "ozkaynak": 4994.71
-          },
-          {
-            "tarih": "2026-09-15 15:30:00",
-            "ozkaynak": 4995.15
-          },
-          {
-            "tarih": "2026-09-15 16:30:00",
-            "ozkaynak": 4997.52
-          },
-          {
-            "tarih": "2026-09-15 17:30:00",
-            "ozkaynak": 4996.66
-          },
-          {
-            "tarih": "2026-09-15 18:30:00",
-            "ozkaynak": 4997.15
-          },
-          {
-            "tarih": "2026-09-15 19:30:00",
-            "ozkaynak": 4999.02
-          },
-          {
-            "tarih": "2026-09-16 13:30:00",
-            "ozkaynak": 4991.61
-          },
-          {
-            "tarih": "2026-09-16 14:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-16 15:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-16 16:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-16 17:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-16 18:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-16 19:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-17 13:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-17 14:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-17 15:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-17 16:30:00",
-            "ozkaynak": 4991.4
-          },
-          {
-            "tarih": "2026-09-17 17:30:00",
-            "ozkaynak": 4989.83
-          },
-          {
-            "tarih": "2026-09-17 18:30:00",
-            "ozkaynak": 4985.29
-          },
-          {
-            "tarih": "2026-09-17 19:30:00",
-            "ozkaynak": 4984.64
-          },
-          {
-            "tarih": "2026-09-18 13:30:00",
-            "ozkaynak": 4990.27
-          },
-          {
-            "tarih": "2026-09-18 14:30:00",
-            "ozkaynak": 4988.31
-          },
-          {
-            "tarih": "2026-09-18 15:30:00",
-            "ozkaynak": 4987.1
-          },
-          {
-            "tarih": "2026-09-18 16:30:00",
-            "ozkaynak": 4988.45
-          },
-          {
-            "tarih": "2026-09-18 17:30:00",
-            "ozkaynak": 4991.48
-          },
-          {
-            "tarih": "2026-09-18 18:30:00",
-            "ozkaynak": 4985.13
-          },
-          {
-            "tarih": "2026-09-18 19:30:00",
-            "ozkaynak": 4985.17
-          },
-          {
-            "tarih": "2026-09-21 13:30:00",
-            "ozkaynak": 4964.96
-          },
-          {
-            "tarih": "2026-09-21 14:30:00",
-            "ozkaynak": 4961.75
-          },
-          {
-            "tarih": "2026-09-21 15:30:00",
-            "ozkaynak": 4964.03
-          },
-          {
-            "tarih": "2026-09-21 16:30:00",
-            "ozkaynak": 4960.82
-          },
-          {
-            "tarih": "2026-09-21 17:30:00",
-            "ozkaynak": 4960.96
-          },
-          {
-            "tarih": "2026-09-21 18:30:00",
-            "ozkaynak": 4960.4
-          },
-          {
-            "tarih": "2026-09-21 19:30:00",
-            "ozkaynak": 4962.13
-          },
-          {
-            "tarih": "2026-09-22 13:30:00",
-            "ozkaynak": 4984.32
-          },
-          {
-            "tarih": "2026-09-22 14:30:00",
-            "ozkaynak": 4980.39
-          },
-          {
-            "tarih": "2026-09-22 15:30:00",
-            "ozkaynak": 4982.07
-          },
-          {
-            "tarih": "2026-09-22 16:30:00",
-            "ozkaynak": 4985.9
-          },
-          {
-            "tarih": "2026-09-22 17:30:00",
-            "ozkaynak": 4984.02
-          },
-          {
-            "tarih": "2026-09-22 18:30:00",
-            "ozkaynak": 4992.26
-          },
-          {
-            "tarih": "2026-09-22 19:30:00",
-            "ozkaynak": 4994.09
-          },
-          {
-            "tarih": "2026-09-23 13:30:00",
-            "ozkaynak": 4949.72
-          },
-          {
-            "tarih": "2026-09-23 14:30:00",
-            "ozkaynak": 4962.32
-          },
-          {
-            "tarih": "2026-09-23 15:30:00",
-            "ozkaynak": 4957.31
-          },
-          {
-            "tarih": "2026-09-23 16:30:00",
-            "ozkaynak": 4957.11
-          },
-          {
-            "tarih": "2026-09-23 17:30:00",
-            "ozkaynak": 4959.31
-          },
-          {
-            "tarih": "2026-09-23 18:30:00",
-            "ozkaynak": 4960.48
-          },
-          {
-            "tarih": "2026-09-23 19:30:00",
-            "ozkaynak": 4962.62
-          },
-          {
-            "tarih": "2026-09-24 13:30:00",
-            "ozkaynak": 4963.59
-          },
-          {
-            "tarih": "2026-09-24 14:30:00",
-            "ozkaynak": 4984.68
-          },
-          {
-            "tarih": "2026-09-24 15:30:00",
-            "ozkaynak": 4986.31
-          },
-          {
-            "tarih": "2026-09-24 16:30:00",
-            "ozkaynak": 4991.99
-          },
-          {
-            "tarih": "2026-09-24 17:30:00",
-            "ozkaynak": 4992.7
-          },
-          {
-            "tarih": "2026-09-24 18:30:00",
-            "ozkaynak": 4995.11
-          },
-          {
-            "tarih": "2026-09-24 19:30:00",
-            "ozkaynak": 4992.6
-          },
-          {
-            "tarih": "2026-09-25 13:30:00",
-            "ozkaynak": 4946.97
-          },
-          {
-            "tarih": "2026-09-25 14:30:00",
-            "ozkaynak": 4950.11
-          },
-          {
-            "tarih": "2026-09-25 15:30:00",
-            "ozkaynak": 4944.65
-          },
-          {
-            "tarih": "2026-09-25 16:30:00",
-            "ozkaynak": 4945.79
-          },
-          {
-            "tarih": "2026-09-25 17:30:00",
-            "ozkaynak": 4947.32
-          },
-          {
-            "tarih": "2026-09-25 18:30:00",
-            "ozkaynak": 4948.67
-          },
-          {
-            "tarih": "2026-09-25 19:30:00",
-            "ozkaynak": 4946.83
-          },
-          {
-            "tarih": "2026-09-28 13:30:00",
-            "ozkaynak": 4920.35
-          },
-          {
-            "tarih": "2026-09-28 14:30:00",
-            "ozkaynak": 4921.85
-          },
-          {
-            "tarih": "2026-09-28 15:30:00",
-            "ozkaynak": 4911.87
-          },
-          {
-            "tarih": "2026-09-28 16:30:00",
-            "ozkaynak": 4914.33
-          },
-          {
-            "tarih": "2026-09-28 17:30:00",
-            "ozkaynak": 4912.89
-          },
-          {
-            "tarih": "2026-09-28 18:30:00",
-            "ozkaynak": 4917.82
-          },
-          {
-            "tarih": "2026-09-28 19:30:00",
-            "ozkaynak": 4917.26
-          },
-          {
-            "tarih": "2026-09-29 13:30:00",
-            "ozkaynak": 4901.42
-          },
-          {
-            "tarih": "2026-09-29 14:30:00",
-            "ozkaynak": 4900.81
-          },
-          {
-            "tarih": "2026-09-29 15:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-29 16:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-29 17:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-29 18:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-29 19:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-30 13:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-30 14:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-30 15:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-30 16:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-30 17:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-30 18:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-09-30 19:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-10-01 13:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-10-01 14:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-10-01 15:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-10-01 16:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-10-01 17:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-10-01 18:30:00",
-            "ozkaynak": 4900.56
-          },
-          {
-            "tarih": "2026-10-01 19:30:00",
-            "ozkaynak": 4900.66
-          },
-          {
-            "tarih": "2026-10-02 13:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-02 14:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-02 15:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-02 16:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-02 17:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-02 18:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-02 19:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-05 13:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-05 14:30:00",
-            "ozkaynak": 4886.65
-          },
-          {
-            "tarih": "2026-10-05 15:30:00",
-            "ozkaynak": 4884.64
-          },
-          {
-            "tarih": "2026-10-05 16:30:00",
-            "ozkaynak": 4885.04
-          },
-          {
-            "tarih": "2026-10-05 17:30:00",
-            "ozkaynak": 4885.25
-          },
-          {
-            "tarih": "2026-10-05 18:30:00",
-            "ozkaynak": 4884.87
-          },
-          {
-            "tarih": "2026-10-05 19:30:00",
-            "ozkaynak": 4883.8
-          },
-          {
-            "tarih": "2026-10-06 13:30:00",
-            "ozkaynak": 4892.77
-          },
-          {
-            "tarih": "2026-10-06 14:30:00",
-            "ozkaynak": 4892.68
-          },
-          {
-            "tarih": "2026-10-06 15:30:00",
-            "ozkaynak": 4898.59
-          },
-          {
-            "tarih": "2026-10-06 16:30:00",
-            "ozkaynak": 4898.7
-          },
-          {
-            "tarih": "2026-10-06 17:30:00",
-            "ozkaynak": 4902.66
-          },
-          {
-            "tarih": "2026-10-06 18:30:00",
-            "ozkaynak": 4905.24
-          },
-          {
-            "tarih": "2026-10-06 19:30:00",
-            "ozkaynak": 4903.67
-          },
-          {
-            "tarih": "2026-10-07 13:30:00",
-            "ozkaynak": 4901.25
-          },
-          {
-            "tarih": "2026-10-07 14:30:00",
-            "ozkaynak": 4906.96
-          },
-          {
-            "tarih": "2026-10-07 15:30:00",
-            "ozkaynak": 4903.56
-          },
-          {
-            "tarih": "2026-10-07 16:30:00",
-            "ozkaynak": 4901.17
-          },
-          {
-            "tarih": "2026-10-07 17:30:00",
-            "ozkaynak": 4899.97
-          },
-          {
-            "tarih": "2026-10-07 18:30:00",
-            "ozkaynak": 4897.76
-          },
-          {
-            "tarih": "2026-10-07 19:30:00",
-            "ozkaynak": 4896.57
-          },
-          {
-            "tarih": "2026-10-08 13:30:00",
-            "ozkaynak": 4898.38
-          },
-          {
-            "tarih": "2026-10-08 14:30:00",
-            "ozkaynak": 4883.59
-          },
-          {
-            "tarih": "2026-10-08 15:30:00",
-            "ozkaynak": 4880.61
-          },
-          {
-            "tarih": "2026-10-08 16:30:00",
-            "ozkaynak": 4880.61
-          },
-          {
-            "tarih": "2026-10-08 17:30:00",
-            "ozkaynak": 4880.61
-          },
-          {
-            "tarih": "2026-10-08 18:30:00",
-            "ozkaynak": 4880.61
-          },
-          {
-            "tarih": "2026-10-08 19:30:00",
-            "ozkaynak": 4880.61
-          },
-          {
-            "tarih": "2026-10-09 13:30:00",
-            "ozkaynak": 4880.61
-          },
-          {
-            "tarih": "2026-10-09 14:30:00",
-            "ozkaynak": 4880.4
-          },
-          {
-            "tarih": "2026-10-09 15:30:00",
-            "ozkaynak": 4864.2
-          },
-          {
-            "tarih": "2026-10-09 16:30:00",
-            "ozkaynak": 4864.84
-          },
-          {
-            "tarih": "2026-10-09 17:30:00",
-            "ozkaynak": 4867.27
-          },
-          {
-            "tarih": "2026-10-09 18:30:00",
-            "ozkaynak": 4862.88
-          },
-          {
-            "tarih": "2026-10-09 19:30:00",
-            "ozkaynak": 4863.43
-          },
-          {
-            "tarih": "2026-10-12 13:30:00",
-            "ozkaynak": 4866.06
-          },
-          {
-            "tarih": "2026-10-12 14:30:00",
-            "ozkaynak": 4871.43
-          },
-          {
-            "tarih": "2026-10-12 15:30:00",
-            "ozkaynak": 4867.45
-          },
-          {
-            "tarih": "2026-10-12 16:30:00",
-            "ozkaynak": 4864.82
-          },
-          {
-            "tarih": "2026-10-12 17:30:00",
-            "ozkaynak": 4869.51
-          },
-          {
-            "tarih": "2026-10-12 18:30:00",
-            "ozkaynak": 4866.31
-          },
-          {
-            "tarih": "2026-10-12 19:30:00",
-            "ozkaynak": 4867.12
-          },
-          {
-            "tarih": "2026-10-13 13:30:00",
-            "ozkaynak": 4876.18
-          },
-          {
-            "tarih": "2026-10-13 14:30:00",
-            "ozkaynak": 4875.38
-          },
-          {
-            "tarih": "2026-10-13 15:30:00",
-            "ozkaynak": 4874.43
-          },
-          {
-            "tarih": "2026-10-13 16:30:00",
-            "ozkaynak": 4876.96
-          },
-          {
-            "tarih": "2026-10-13 17:30:00",
-            "ozkaynak": 4878.71
-          },
-          {
-            "tarih": "2026-10-13 18:30:00",
-            "ozkaynak": 4883.3
-          },
-          {
-            "tarih": "2026-10-13 19:30:00",
-            "ozkaynak": 4884.58
-          },
-          {
-            "tarih": "2026-10-14 13:30:00",
-            "ozkaynak": 4872.08
-          },
-          {
-            "tarih": "2026-10-14 14:30:00",
-            "ozkaynak": 4871.53
-          },
-          {
-            "tarih": "2026-10-14 15:30:00",
-            "ozkaynak": 4872.35
-          },
-          {
-            "tarih": "2026-10-14 16:30:00",
-            "ozkaynak": 4873.13
-          },
-          {
-            "tarih": "2026-10-14 17:30:00",
-            "ozkaynak": 4871.55
-          },
-          {
-            "tarih": "2026-10-14 18:30:00",
-            "ozkaynak": 4871.72
-          },
-          {
-            "tarih": "2026-10-14 19:30:00",
-            "ozkaynak": 4871.8
-          },
-          {
-            "tarih": "2026-10-15 13:30:00",
-            "ozkaynak": 4875.98
-          },
-          {
-            "tarih": "2026-10-15 14:30:00",
-            "ozkaynak": 4879.53
-          },
-          {
-            "tarih": "2026-10-15 15:30:00",
-            "ozkaynak": 4878.35
-          },
-          {
-            "tarih": "2026-10-15 16:30:00",
-            "ozkaynak": 4878.84
-          },
-          {
-            "tarih": "2026-10-15 17:30:00",
-            "ozkaynak": 4879.37
-          },
-          {
-            "tarih": "2026-10-15 18:30:00",
-            "ozkaynak": 4878.94
-          },
-          {
-            "tarih": "2026-10-15 19:30:00",
-            "ozkaynak": 4879.22
-          },
-          {
-            "tarih": "2026-10-16 13:30:00",
-            "ozkaynak": 4864.46
-          },
-          {
-            "tarih": "2026-10-16 14:30:00",
-            "ozkaynak": 4860.52
-          },
-          {
-            "tarih": "2026-10-16 15:30:00",
-            "ozkaynak": 4866.56
-          },
-          {
-            "tarih": "2026-10-16 16:30:00",
-            "ozkaynak": 4868.88
-          },
-          {
-            "tarih": "2026-10-16 17:30:00",
-            "ozkaynak": 4869.77
-          },
-          {
-            "tarih": "2026-10-16 18:30:00",
-            "ozkaynak": 4871.27
-          },
-          {
-            "tarih": "2026-10-16 19:30:00",
-            "ozkaynak": 4871.42
-          },
-          {
-            "tarih": "2026-10-19 13:30:00",
-            "ozkaynak": 4862.11
-          },
-          {
-            "tarih": "2026-10-19 14:30:00",
-            "ozkaynak": 4862.41
-          },
-          {
-            "tarih": "2026-10-19 15:30:00",
-            "ozkaynak": 4865.26
-          },
-          {
-            "tarih": "2026-10-19 16:30:00",
-            "ozkaynak": 4865.36
-          },
-          {
-            "tarih": "2026-10-19 17:30:00",
-            "ozkaynak": 4862.3
-          },
-          {
-            "tarih": "2026-10-19 18:30:00",
-            "ozkaynak": 4862.44
-          },
-          {
-            "tarih": "2026-10-19 19:30:00",
-            "ozkaynak": 4862.62
-          },
-          {
-            "tarih": "2026-10-20 13:30:00",
-            "ozkaynak": 4855.36
-          },
-          {
-            "tarih": "2026-10-20 14:30:00",
-            "ozkaynak": 4855.36
-          },
-          {
-            "tarih": "2026-10-20 15:30:00",
-            "ozkaynak": 4855.36
-          },
-          {
-            "tarih": "2026-10-20 16:30:00",
-            "ozkaynak": 4855.49
-          },
-          {
-            "tarih": "2026-10-20 17:30:00",
-            "ozkaynak": 4856.2
-          },
-          {
-            "tarih": "2026-10-20 18:30:00",
-            "ozkaynak": 4855.37
-          },
-          {
-            "tarih": "2026-10-20 19:30:00",
-            "ozkaynak": 4855.1
-          },
-          {
-            "tarih": "2026-10-21 13:30:00",
-            "ozkaynak": 4842.38
-          },
-          {
-            "tarih": "2026-10-21 14:30:00",
-            "ozkaynak": 4839.63
-          },
-          {
-            "tarih": "2026-10-21 15:30:00",
-            "ozkaynak": 4841.11
-          },
-          {
-            "tarih": "2026-10-21 16:30:00",
-            "ozkaynak": 4839.79
-          },
-          {
-            "tarih": "2026-10-21 17:30:00",
-            "ozkaynak": 4840.55
-          },
-          {
-            "tarih": "2026-10-21 18:30:00",
-            "ozkaynak": 4842.08
-          },
-          {
-            "tarih": "2026-10-21 19:30:00",
-            "ozkaynak": 4842.56
-          },
-          {
-            "tarih": "2026-10-22 13:30:00",
-            "ozkaynak": 4846.28
-          },
-          {
-            "tarih": "2026-10-22 14:30:00",
-            "ozkaynak": 4845.91
-          },
-          {
-            "tarih": "2026-10-22 15:30:00",
-            "ozkaynak": 4845.91
-          },
-          {
-            "tarih": "2026-10-22 16:30:00",
-            "ozkaynak": 4848.21
-          },
-          {
-            "tarih": "2026-10-22 17:30:00",
-            "ozkaynak": 4848.76
-          },
-          {
-            "tarih": "2026-10-22 18:30:00",
-            "ozkaynak": 4848.35
-          },
-          {
-            "tarih": "2026-10-22 19:30:00",
-            "ozkaynak": 4848.48
-          },
-          {
-            "tarih": "2026-10-23 13:30:00",
-            "ozkaynak": 4858.97
-          },
-          {
-            "tarih": "2026-10-23 14:30:00",
-            "ozkaynak": 4858.74
-          },
-          {
-            "tarih": "2026-10-23 15:30:00",
-            "ozkaynak": 4862.15
-          },
-          {
-            "tarih": "2026-10-23 16:30:00",
-            "ozkaynak": 4861.85
-          },
-          {
-            "tarih": "2026-10-23 17:30:00",
-            "ozkaynak": 4862.46
-          },
-          {
-            "tarih": "2026-10-23 18:30:00",
-            "ozkaynak": 4863.4
-          },
-          {
-            "tarih": "2026-10-23 19:30:00",
-            "ozkaynak": 4864.21
-          }
-        ]
-      }
-    ]
+    "kitaplar": []
   }
 }
