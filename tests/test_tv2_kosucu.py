@@ -72,3 +72,9 @@ def test_yfinance_intraday_picks_largest_divisor_and_resamples(monkeypatch, tmp_
     df, notu = tv2.veri("TVC:DXY", "240")
     assert cagri == {"kod": "DX-Y.NYB", "period": "730d", "interval": "60m"}
     assert len(df) == 12 and "UTC hizalı" in notu
+
+
+def test_paid_data_rule() -> None:
+    assert tv2._ucretli("CME_MINI:MNQ1!", "1", "x = request.footprint(50, 70)")
+    assert tv2._ucretli("CME_MINI:NQ1!", "5", "x = close") is None
+    assert tv2._ucretli("BINANCE:BTCUSDT", "1", "x = request.footprint(50, 70)") is None

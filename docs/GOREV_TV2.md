@@ -48,3 +48,7 @@ Yalnız gerçekten çalıştırılamayan kod: harici veri servisi, Pine içinde 
     - NSE: yfinance `.NS`; HNX/HOSE: vnstock.
     - Eşdeğer veri `veri` sütununda açık yazılır (Ek 1 kuralı).
   - **Kaynağı kapalı / bulunamadı (33):** eski alfanümerik id ve sayfa üzerinden yeniden aranır. Gerçekten kapalıysa yazarın yayımladığı performans "doğrulanamadı" etiketiyle satır olur ve ayrı raporlanır.
+
+## Ek 3: Footprint ve ücretli veri (kullanıcı, 2026-10-25)
+- **`request.footprint` (Binance sembolleri):** footprint Binance'in herkese açık aggTrades arşivinden (`data.binance.vision`) gerçek veriyle kurulur. `.P` → USDT-M vadeli arşivi; yazarın piyasası budur, spot eşdeğeri değil. Her işlemin alıcı/satıcı bayrağı vardır. Footprint bar başına ve satır başına hesaplanır, yalnız sürüm tarihinden 30 gün öncesinden itibaren. Öncesi `na`.
+- **Ücretsiz verisi olmayanlar** (CME işlem akışı; `6ve1ax1D`, `1kEKmbb9`): karar `veri_ucretli`, ayrı raporlanır. Kısa ücretsiz gün içi geçmişi olan CME stratejileri (yfinance 5m 60 gün, 60m 730 gün) ücretli sayılmaz; eldeki veriyle test edilir.
