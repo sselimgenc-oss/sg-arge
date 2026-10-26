@@ -37,7 +37,7 @@ COSTS = (1.0, 2.0, 3.0)
 PERIODS = {
     "ON": (pd.Timestamp("2015-01-01", tz="UTC"), pd.Timestamp("2017-12-31", tz="UTC")),
     "IS": (pd.Timestamp("2018-01-01", tz="UTC"), pd.Timestamp("2022-12-31", tz="UTC")),
-    "OOS": (pd.Timestamp("2023-01-01", tz="UTC"), pd.Timestamp("2025-09-30", tz="UTC")),
+    "OOS": (pd.Timestamp("2023-01-01", tz="UTC"), pd.Timestamp("2100-01-01", tz="UTC")),
 }
 ARMS = (("KRIPTO25", "4H"), ("KRIPTO25", "1D"), ("ABD25", "1D"), ("EMTIA", "1D"))
 

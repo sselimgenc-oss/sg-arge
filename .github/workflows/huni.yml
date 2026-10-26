@@ -19,6 +19,18 @@ on:
         description: "PIT Asama 2b de calissin"
         type: boolean
         default: true
+      u1_5m:
+        description: "U7 U1 5m checkpoint kosusunu calistir"
+        type: boolean
+        default: false
+      faz1_u7:
+        description: "U7 Faz 1 kosusunu calistir"
+        type: boolean
+        default: false
+      reddit_u7:
+        description: "U7 Reddit RD-01..04 kosusunu calistir"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -28,7 +40,136 @@ env:
   ARTIFACT_SUFFIX: ${{ github.run_id }}
 
 jobs:
+  u1_5m:
+    if: ${{ inputs.u1_5m }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Download U1 5m archive
+        run: python data/fetch.py --interval 5m --allow-partial
+      - name: Resume U1 5m funnel
+        run: python backtests/u1_huni.py --tf 5m --tekrar 200 --tekrar-yuksek 1000 --bootstrap-tekrar 1000 --isci 1 --resume --veri-kok data --results-dir results/u7/u1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: u7-u1-5m-${{ github.run_id }}
+          path: results/u7/u1/
+          retention-days: 14
+      - name: Commit U1 checkpoints and summaries to this branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/u7/u1/parca results/u7/u1/getiriler results/u7/u1/huni_ozet.csv results/u7/u1/huni_ozet.md
+          git commit -m "u7: U1 5m checkpoints ${{ github.run_id }}" || exit 0
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((i*5))
+          done
+
+  faz1_u7:
+    if: ${{ inputs.faz1_u7 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Download Faz 1 daily archive
+        run: |
+          python data/fetch.py --interval 1d --allow-partial --evren pit
+          python data/fetch.py --interval 1d --rotasyon --allow-partial
+          python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+      - name: Run U7 Faz 1 stages
+        run: |
+          python backtests/tarama.py --results-dir results/u7/faz1
+          python backtests/asama2a.py --results-dir results/u7/faz1 --tekrar 200 --tekrar-yuksek 1000 --isci 1
+          python backtests/asama2b.py --results-dir results/u7/faz1 --null-tekrar 200 --bootstrap-tekrar 1000 --isci 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: u7-faz1-${{ github.run_id }}
+          path: results/u7/faz1/
+          retention-days: 14
+      - name: Commit Faz 1 summaries to this branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/u7/faz1/tarama.csv results/u7/faz1/tarama_ozet.md \
+            results/u7/faz1/asama2a.csv results/u7/faz1/asama2a_ozet.md \
+            results/u7/faz1/asama2b.csv results/u7/faz1/asama2b_ozet.md \
+            results/u7/faz1/getiriler
+          git commit -m "u7: Faz 1 checkpoints ${{ github.run_id }}" || exit 0
+          # Veri indirme adimi izlenen MANIFEST'i degistirir. Kosu verisini ya da
+          # islem dokumlerini commit etmeden rebase'in temiz bir agacta calismasi icin sakla.
+          git stash push --include-untracked -m "u7-runner-artifacts" || true
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((i*5))
+          done
+
+  reddit_u7:
+    if: ${{ inputs.reddit_u7 }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Download Reddit daily archive
+        run: |
+          python data/fetch.py --interval 1d --allow-partial --evren pit
+          python data/fetch.py --interval 1d --rotasyon --allow-partial
+          python -c "from data.fetch import Asset, fetch_asset; fetch_asset(Asset('USDTRY=X', 'FX', 'yfinance'), '1d', append=False)"
+      - name: Run U7 Reddit stages
+        run: |
+          python backtests/tarama.py --results-dir results/u7/reddit --kart-ids RD-01,RD-02,RD-03,RD-04
+          python backtests/asama2a.py --results-dir results/u7/reddit --kart-ids RD-01,RD-02,RD-03,RD-04 --tekrar 200 --tekrar-yuksek 1000 --isci 1
+          python backtests/asama2b.py --results-dir results/u7/reddit --kart-ids RD-01,RD-02,RD-03,RD-04 --codex-ids '' --null-tekrar 200 --bootstrap-tekrar 1000 --isci 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: u7-reddit-${{ github.run_id }}
+          path: results/u7/reddit/
+          retention-days: 14
+      - name: Commit Reddit checkpoints and daily returns to this branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results/u7/reddit/tarama.csv results/u7/reddit/tarama_ozet.md \
+            results/u7/reddit/asama2a.csv results/u7/reddit/asama2a_ozet.md \
+            results/u7/reddit/asama2b.csv results/u7/reddit/asama2b_ozet.md
+          git add results/u7/reddit/getiriler 2>/dev/null || true
+          git commit -m "u7: Reddit checkpoints ${{ github.run_id }}" || exit 0
+          git stash push --include-untracked -m "u7-runner-artifacts" || true
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((i*5))
+          done
+
   veri:
+    # U7'nin hedefli checkpoint işleri genel Faz 1 hunisini yeniden başlatmaz.
+    if: ${{ !inputs.faz1_u7 && !inputs.reddit_u7 }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -66,7 +207,9 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          # huni-data artifact'inin kökü data/ olduğundan, proje köküne
+          # açılırsa daily/ olur; koşucular data/daily/ bekler.
+          path: data
       - run: python backtests/tarama.py --tf "${{ inputs.tf }}" --kart-ids "${{ inputs.kartlar }}" --birlestir
       - uses: actions/upload-artifact@v4
         with:
@@ -88,7 +231,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          path: data
       - uses: actions/download-artifact@v4
         with:
           name: huni-tarama-${{ env.ARTIFACT_SUFFIX }}
@@ -114,7 +257,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          path: data
       - uses: actions/download-artifact@v4
         with:
           name: huni-asama2a-${{ env.ARTIFACT_SUFFIX }}
@@ -144,7 +287,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          path: data
       - uses: actions/download-artifact@v4
         with:
           name: huni-asama2b-sabit-${{ env.ARTIFACT_SUFFIX }}
@@ -178,7 +321,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: huni-data-${{ env.ARTIFACT_SUFFIX }}
-          path: .
+          path: data
       - uses: actions/download-artifact@v4
         with:
           name: huni-asama2b-pit-${{ env.ARTIFACT_SUFFIX }}

@@ -50,7 +50,7 @@ ANNUALIZATION = 365  # bootstrap/DSR run on one equity close per UTC day, crypto
 
 COLUMNS = [
     "varyant", "kart", "tf", "is_islem", "is_PF", "is_ortR", "null_tekrar", "null_pf_p95", "null_ortr_p95", "p_pf", "p_ortr",
-    "null_gecti", "oos_islem", "oos_ortR", "oos_PF_1x", "oos_PF_2x", "oos_PF_3x", "oos_net_1x", "oos_net_2x", "oos_net_3x",
+    "null_gecti", "oos_islem", "oos_islem_hafta", "oos_ortR", "oos_PF_1x", "oos_PF_2x", "oos_PF_3x", "oos_net_1x", "oos_net_2x", "oos_net_3x",
     "net_gecikme", "mdd_p95", "cagr_p05", "dsr", "dsr_deneme", "kardes_gecen", "kardes_oran", "havuz_pf", "havuz_pf_ci90_alt",
     "havuz_pf_ci90_ust", "en_buyuk_kar_payi", "en_buyuk_kar_sembol", "en_iyi_ay", "en_iyi_ay_haric_pf", "karar", "neden",
 ]
@@ -102,6 +102,26 @@ def _daily_returns(result) -> pd.Series:
     return asama2b._validation_returns(result, daily_equity=True)  # noqa: SLF001 - the Faz 1 definition of validation returns
 
 
+def _checkpoint_path(results_dir: Path, variant: str) -> Path:
+    safe = variant.replace("[", "_").replace("]", "").replace("=", "-").replace(":", "_")
+    return results_dir / "parca" / f"{safe}.csv"
+
+
+def _write_daily_returns(returns: pd.Series, variant: str, results_dir: Path) -> None:
+    """Persist the applicable OOS return series used by U7 ranking."""
+    safe = variant.replace("[", "_").replace("]", "").replace("=", "-").replace(":", "_")
+    target = results_dir / "getiriler" / f"{safe}.csv"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    returns.rename("net_getiri").to_csv(target, index_label="tarih")
+
+
+def _trading_weeks(trades: pd.DataFrame) -> int:
+    if trades.empty or "entry_date" not in trades:
+        return 0
+    dates = pd.to_datetime(trades["entry_date"], utc=True, errors="coerce").dropna()
+    return len(set(zip(dates.dt.isocalendar().year, dates.dt.isocalendar().week)))
+
+
 def stage_2a(variant: str, card: dict[str, Any], data: dict[str, pd.DataFrame], reps: int, reps_high: int, workers: int) -> dict[str, Any]:
     """IS pooled null test; returns the 2a columns."""
     start, end = u1.PERIODS["IS"]
@@ -142,6 +162,8 @@ def stage_2b(variant: str, card: dict[str, Any], data: dict[str, pd.DataFrame], 
         "net_gecikme": calculate_metrics(delayed, annualization=annual)["getiri"],
     }
     returns = _daily_returns(runs[1.0])
+    _write_daily_returns(returns, variant, results_dir)
+    out["oos_islem_hafta"] = _trading_weeks(runs[1.0].trades)
     trials = trials_for(card)
     out["dsr_deneme"] = trials
     if len(returns) >= 3:
@@ -217,6 +239,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--isci", type=int, default=0, help="null worker processes (0 = CPU count, capped by free memory)")
     parser.add_argument("--veri-kok", type=Path, default=ROOT / "data")
     parser.add_argument("--results-dir", type=Path, default=ROOT / "results" / "u1")
+    parser.add_argument("--resume", action="store_true", help="reuse completed per-variant checkpoint rows")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
@@ -235,6 +258,13 @@ def main(argv: list[str] | None = None) -> int:
     rows: list[dict[str, Any]] = []
     loaded_tf, data = None, {}
     for variant, card in items:
+        checkpoint = _checkpoint_path(args.results_dir, variant)
+        if args.resume and checkpoint.exists():
+            saved = pd.read_csv(checkpoint)
+            if len(saved) == 1 and saved.loc[0, "varyant"] == variant:
+                rows.append(saved.iloc[0].to_dict())
+                LOG.info("%s: checkpoint", variant)
+                continue
         if card["tf"] != loaded_tf:
             data, loaded_tf = {}, card["tf"]
             gc.collect()
@@ -246,6 +276,8 @@ def main(argv: list[str] | None = None) -> int:
                                boot_reps=args.bootstrap_tekrar, results_dir=args.results_dir)
         LOG.info("%s: %s (%s)", variant, row["karar"], row["neden"])
         rows.append(row)
+        checkpoint.parent.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame([row], columns=COLUMNS).to_csv(checkpoint, index=False)
     if rows:
         write_outputs(pd.DataFrame(rows, columns=COLUMNS), args.results_dir)
     return 0

@@ -1,0 +1,13 @@
+id,piyasa,tf,durum,islem,PF_1x,PF_2x,net_1x,net_2x,sharpe,mdd,maruziyet,asama2_aday,neden,kart_yazari,piyasa_kisiti,stop_eklendi,dolum,PF_1x_b,net_1x_b,islem_b,pf_alarmi,data_hash,git_sha
+RD-01,BIST30,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,,,,,,,
+RD-01,ABD25,1D,Hesaplandi,1591,1.24861,1.12513,0.198908,0.100425,0.886635,-0.0728973,0.196492,True,,sonnet,ABD,False,,,,,False,96a8865a58fff7967ddb4f9adbb1230b0a69bf752884e7bf511ba0630729f814,c2548ff721163597194529c1d7f454e3b796fbb9
+RD-01,KRIPTO25,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,,,,,,,
+RD-01,EMTIA,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,,,,,,,
+RD-02,BIST30,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,kapanis,,,,,,
+RD-02,ABD25,1D,Hesaplandi,373,1.3416,1.14801,0.115789,0.0528241,0.708503,-0.0334364,0.0813045,True,,sonnet,ABD,True,kapanis,1.44545,0.143597,369,False,96a8865a58fff7967ddb4f9adbb1230b0a69bf752884e7bf511ba0630729f814,c2548ff721163597194529c1d7f454e3b796fbb9
+RD-02,KRIPTO25,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,kapanis,,,,,,
+RD-02,EMTIA,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,kapanis,,,,,,
+RD-03,BIST30,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,kapanis,,,,,,
+RD-03,ABD25,1D,Hesaplandi,30,2.43536,2.31999,0.311674,0.296629,0.81018,-0.0936523,0.615631,True,,sonnet,ABD,False,kapanis,2.47815,0.315315,30,False,96a8865a58fff7967ddb4f9adbb1230b0a69bf752884e7bf511ba0630729f814,c2548ff721163597194529c1d7f454e3b796fbb9
+RD-03,KRIPTO25,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,kapanis,,,,,,
+RD-03,EMTIA,1D,Dogrulanamaz,,,,,,,,,False,piyasa_ozgu:ABD,sonnet,ABD,,kapanis,,,,,,

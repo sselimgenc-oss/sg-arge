@@ -141,6 +141,16 @@ def test_intraday_equity_is_sampled_once_per_utc_day_for_bootstrap() -> None:
     assert len(returns) == 2
 
 
+def test_daily_return_checkpoint_is_named_by_card_and_market(tmp_path: Path) -> None:
+    index = pd.date_range("2024-01-01", periods=72, freq="1h", tz="UTC")
+    equity = pd.Series(100 + np.arange(72), index=index)
+    result = BacktestResult(100.0, equity, pd.Series(0.0, index=index), pd.DataFrame(), 0)
+    asama2b.write_daily_returns(result, "RD-01", "KRIPTO25", tmp_path, daily_equity=True)
+    saved = pd.read_csv(tmp_path / "getiriler" / "RD-01__KRIPTO25.csv")
+    assert list(saved.columns) == ["tarih", "net_getiri"]
+    assert len(saved) == 2
+
+
 def test_intraday_candidate_filter_and_daily_result_regression(tmp_path: Path) -> None:
     cards = tmp_path / "cards"
     results = tmp_path / "results"
