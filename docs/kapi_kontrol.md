@@ -18,9 +18,9 @@ Bu ölçüm `backtests/plasebo.py` ile üretilir. Paper, kapı, eşik ve karar t
 
 Bu rapor bilgi amaçlıdır; hangi kitabın kalacağına dair öneri içermez.
 
-## Yerel çalışma özeti (2026-10-27)
+## Çalıştırma notu
 
-`results/kapi_kontrol_13.csv` 1.000 tekrar ile üretildi. Yerel ağ politikası Binance geçmişini engellediği için beş kripto kitabı ile U4-H2 kripto satırı `hata` olarak kaydedildi; bunlardan ölçüm çıkarılmadı. Kalan altı U7 kitabı ile iki TV-2 kitapta tablo doldu. Tam kapsamdaki `results/plasebo.csv` üretimi, aynı nedenle dal iş akışına bırakıldı.
+1.000 tekrarlı hesap yerelde çalıştırılmaz. `.github/workflows/plasebo.yml`, yalnız `codex/kapi-kontrol` dalında tam kalibrasyon ile 13 kitap kontrolünü üretir ve iki CSV'yi aynı dala commitler.
 
 - Çıktı, geçme/kalma kararı değildir.
 - Eski huni null sütunları U7 satırlarında korunur; TV-2 için eski huni sonucu yoktur.
