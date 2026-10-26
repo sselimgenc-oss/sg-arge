@@ -13,7 +13,7 @@ Son güncelleme: 2026-10-26 (akşam), lider. Faz 1 kapanış: `docs/FAZ1_KAPANIS
 
 **Kullanıcı kararı 2026-10-26 (4 doğrulama):** QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I kapıyı geçti ama getiri küçük / kanıt zayıf (`docs/faz2_dogrulama.md`) → paper'a **alınmadı**; konu kapandı.
 
-**ŞU AN TEK İŞ (kullanıcı kararı 2026-10-27): Kapı v3 ve tüm stratejilerin yeniden değerlendirilmesi** — taslak `docs/KAPI_V3.md` (onay bekliyor). Pilot: eski "net > 0" kapısını rastgele girişlerin %67 (TV-2) / %99,6'sı (U7) geçerdi; 13 kitaptan alfa t ≥ 2 yalnız TV-zoY9DmsF ve yhoK9cH4 (`docs/kapi_kontrol.md`, `results/kapi_kontrol_13.csv`). Sol görüşü: `docs/sol_kapi_gorus.md`.
+**ŞU AN TEK İŞ (kullanıcı kararı 2026-10-27): Kapı v3 ve tüm stratejilerin yeniden değerlendirilmesi** — `docs/KAPI_V3.md` **DONDURULDU v3.0** (kullanıcı şartlı onayı + Sol "değişikliklerle onay": Geçti/Yetersiz/Kaldı, güç + yanlış-geçme kalibrasyonu, q ≤ 0,10). Görev: `docs/GOREV_KAPI_V3.md` (İş 1 koşucu + kalibrasyon → lider denetimi → İş 2 tüm stratejiler). Paper aynen sürer. Pilot: eski "net > 0" kapısını rastgele girişlerin %67 (TV-2) / %99,6'sı (U7) geçerdi (`docs/kapi_kontrol.md`).
 **Sırada (bu iş bitmeden başlamaz):** (1) pano + koç (kod `main`'de, denetlendi); (2) copy trade taraması (kod `main`'de, günlük zamanlama kapalı); (3) program (PWA + sunucu); (4) strateji radarı; (5) ML.
 
 **Kapı değerlendirmesi (2026-10-26, `docs/kapi_degerlendirme.md`):** 7 yapay zekâ ortak: "net > 0" kapısı geçirgen (beta, çoklu test, kısa sınama). Lider bulgusu: paper'daki 11 U7 kitabından 10'u eski hunideki rastgele giriş testini geçmemişti (yalnız TV-71yKm18B geçti). Paper'a dokunulmaz; Kapı v3 önerisi kullanıcı kararında.
