@@ -32,6 +32,7 @@ Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 ku
 
 **Durum 2026-10-26 16:30 TR (kullanıcı kararı: Faz 2/3 araştırması durduruldu, tüm güç Faz 1'e):**
 - TV-2 (kripto + kripto dışı, 933 satır): geçti 32, kaldı 58, izle 373 (357'si "sürüm sonrası 1 yıldan az veri"), veri_yok 401 (365'i Dukascopy FX/CFD gün içi önbellek bekliyor), işlem_yok 32, diğer 37.
+- **Döviz pariteleri (kullanıcı kararı 2026-10-26):** kullanılmayacak; FX stratejileri Dukascopy kuyruğundan çıkarıldı, `veri_yok` olarak kalır ve temizlikte gider. Dukascopy yalnız altın, gümüş ve ABD endeks CFD'leri için.
 - **`izle` 373 (kullanıcı kararı 2026-10-26):** bekletilmez; eldeki kısa sınama penceresiyle aynı tek kapı uygulanır (`kisa_sinama=true` bilgi sütunu). Ön sayım ~66 geçer, hepsi paper'a.
 - U7: 85 Geçti → 72 küme temsilcisi (`results/u7/siralama.csv`, PR #215); U1 5m kalan 8 varyant koşuyor.
 - Kalan iş: (a) Dukascopy ikinci kaynak denemesi (veri_yok 365), (b) TV-2 + U7 tek sıralama, (c) geçen tüm temsilcilerin (~100) paper'a alınma planı, (d) Faz 1 sonuç raporu.

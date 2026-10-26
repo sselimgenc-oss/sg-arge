@@ -35,10 +35,10 @@ jobs:
     strategy:
       fail-fast: false
       # Dukascopy eşzamanlı isteklere 429 döndürüyor; az iş, sıralı yıllar.
-      max-parallel: 4
+      max-parallel: 5
       matrix:
-        sembol: [XAUUSD, EURUSD, USDJPY, USATECHIDXUSD, XAGUSD, USA500IDXUSD, NZDUSD, GBPUSD,
-                 USA30IDXUSD, AUDUSD, EURGBP, EURAUD, GBPJPY, EURJPY]
+        # Döviz pariteleri kullanıcı kararıyla (2026-10-26) dışarıda: yalnız emtia + endeks.
+        sembol: [XAUUSD, XAGUSD, USATECHIDXUSD, USA500IDXUSD, USA30IDXUSD]
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
