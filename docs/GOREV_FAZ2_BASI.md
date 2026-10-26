@@ -21,13 +21,12 @@ Ağırlık toplamı .75 → .90 olur; kalan .10 nakit rezerv.
    kripto %0,1/taraf, diğerleri %0,05/taraf + 1 tick; dolum sonraki bar açılışı) bu 3 kitap için **yalnız kapanmış
    barlarla** çalıştıran ince katman. Yeni bir backtest yöntemi yazılmaz; TV-2'nin `veri()` ve `strateji` yolları kullanılır.
 2. **Kaynak doğrulama:** her koşuda `paper/tv2_kaynak/SURUMLER.csv` SHA256'sı kontrol edilir; uyuşmazsa o kitap çalışmaz,
-   DURDUR alarmı yazılır. G4RNcGXg ve wcegMOXj dosyadan; yhoK9cH4 Actions'ta pine-facade'den (`PUB;yhoK9cH4`, 1.0)
-   çekilir, repoya **yazılmaz** (lisans belirtilmemiş), yalnız önbellekte/çalışma dizininde tutulur.
+   DURDUR alarmı yazılır. G4RNcGXg ve wcegMOXj dosyadan; yhoK9cH4 Actions'ta pine-facade'den çekilir (gerçek anahtar `PUB;561a4540b4d14f56b4c68cd3cecade24`, `arastirma/tv2_surumler.csv`; sürüm **1.0** sabit: `.../get/<pub>/1.0`, `last` değil), repoya **yazılmaz** (lisans belirtilmemiş), yalnız önbellekte/çalışma dizininde tutulur.
 3. **wcegMOXj USD:** her değerlemede aynı zaman damgalı BTCUSDT kapanışıyla USD'ye çevrilir; defterde BTC bakiyesi,
    kur ve USD karşılığı ayrı kolon. Portföy özkaynağına USD girer.
 4. **Portföye bağlama:** `paper/portfoy.yaml` satırlarına `kaynak: tv2` ile eklenir; `gunluk.py` `kaynak` alanına göre
    kart motoru ya da `tv2_kitap` yolunu seçer. Mevcut risk kuralları bu kitaplara da uygulanır (kitap %10 zirve
-   düşüşü → kitap durur; portföy %5 → yeni giriş yok). Başlangıç = PR'ın birleştiği gün, geriye dönük dolum yok.
+   düşüşü → kitap durur; portföy %5 → yeni giriş yok). Başlangıç: satır düzeyinde `baslangic` alanı (ör. `{id: G4RNcGXg, ..., kaynak: tv2, baslangic: 2026-10-27}`); varsa portföy `baslangic`'ını o kitap için geçersiz kılar. Codex PR'ı açtığı günün ertesini yazar; birleşme kayarsa lider birleştirmeden önce tarihi düzeltir. Bu tarihten önceki barlar işlenmez (ısınma hariç), geriye dönük dolum yok.
 5. **Veri tazeliği:** SPY 1s ve META 15dk gün içi veri (yfinance sınırları: 60dk ≈ 730 gün, 15dk ≈ 60 gün) yalnız
    canlı dönem için yeterli; ısınma için gereken bar sayısı kaynaktan hesaplanıp kontrol edilir, yetmezse alarm.
    Saatlik iş (`.github/workflows/paper.yml`) 15dk kitabı için ek tetik gerektirmez; her koşuda kapanmış barları işler.
