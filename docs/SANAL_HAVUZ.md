@@ -1,155 +1,208 @@
-# Sanal havuz taslağı
+# Sanal havuz — tüm geçen küme temsilcileri
 
-Bu belge bir **öneri taslağıdır**. Gölge kitaba aday eklemez, herhangi bir
-karar/kapı/eşik değiştirmez ve gerçek para için talimat değildir.
+Bu belge yalnız çalışma planıdır. Herhangi bir stratejiyi `paper/`a eklemez,
+kapı/eşik/karar değiştirmez, gerçek para veya hesap bilgisi içermez.
 
-## TV-2 sonuç anlık görüntüsü
+## Kapsam ve kaynak anlık görüntüsü
 
-Kaynak, `origin/codex/tv2-kosu` dalındaki
-`8b5ac099b20a7e1a7aec9d22f2aecd665a790442` commit'inin
-`results/tv2/siralama.csv` dosyasıdır. Dosyada 19 sıralı satır ve 15 küme
-temsilcisi vardır. Aşağıdaki değerler ham sonuç değerleridir; burada yeni
-filtre veya sıralama uygulanmadı.
+- TV-2: `results/tv2/siralama.csv` içindeki **86** `temsilci=true` satırı.
+- U7: `results/u7/siralama.csv` içindeki **72** `temsilci=true` satırı.
+- Toplam: **158 geçen küme temsilcisi**. İzle/Kaldı/Uygulanamaz satırlar bu
+  listeye eklenmez; hiçbir ek seçim, kura veya 20-kitap sınırı uygulanmaz.
+- Kaynak sonuçlar yalnız karşılaştırma/sıralama içindir; karar kaynağı
+  `docs/TEST_YAPISI.md` Adım 2’deki mevcut statüdür.
 
-| Sıra | Kimlik | Sembol / zaman dilimi | Sınama işlem | Ölçekli yıllık getiri | Haftalık p10 | PF | MDD |
-|---:|---|---|---:|---:|---:|---:|---:|
-| 1 | wcegMOXj | BINANCE:ETHBTC / 360 | 257 | 14.43% | 0.127% | 2.193 | 1.13% |
-| 2 | 3UcIwSrE | KRAKEN:ETHUSD / 60 | 2,988 | 4.45% | 0.016% | 1.081 | 2.40% |
-| 3 | VQjItUaK | BITFINEX:XRPUSD / 60 | 2,902 | 4.63% | -0.003% | 1.110 | 0.00% |
-| 4 | j9rq1wQq | BINANCE:QTUMUSDT / 12H | 221 | 3.23% | -0.021% | 1.371 | 0.01% |
-| 5 | mXygJWkv | BINANCE:BTCUSDT / 60 | 638 | 2.68% | -0.026% | 1.057 | 34.76% |
-| 6 | zFKRj4Gi | BITFINEX:BTCUSD / 480 | 117 | 5.27% | -0.026% | 1.307 | 5.13% |
-| 7 | 627VbHkS | BITFINEX:BTCUSD / 360 | 42 | 6.86% | -0.027% | 1.570 | 4.35% |
-| 8 | QPIGo8hs | BINANCE:ETHBTC / 120 | 899 | 3.33% | -0.028% | 1.116 | 0.00% |
-| 9 | YqnWtjnn | BITFINEX:BTCUSD / 360 | 126 | 8.96% | -0.031% | 1.605 | 1.77% |
-| 10 | KUyDNRyQ | BITSTAMP:ETHBTC / 60 | 620 | 3.28% | -0.032% | 1.656 | 16.95% |
-| 11 | hLZPT7it | BITFINEX:BTCUSD / 480 | 38 | 6.30% | -0.032% | 1.221 | 7.71% |
-| 12 | XJfWHHEc | BITFINEX:BTCUSD / 360 | 36 | 5.54% | -0.032% | 1.578 | 5.13% |
-| 13 | warXbPtA | BITFINEX:BTCUSD / 480 | 49 | 5.61% | -0.037% | 1.438 | 4.58% |
-| 14 | lncoD9BX | BITFINEX:BTCUSD / 480 | 47 | 4.06% | -0.082% | 1.345 | 3.99% |
-| 17 | VHbRaeUe | BITFINEX:BTCUSD / 360 | 79 | 1.80% | -0.112% | 1.111 | 9.03% |
+## Tam temsilci listesi
 
-## U7 sonuç anlık görüntüsü
+| Kaynak | Sıra | Kimlik / varyant | Piyasa / sembol | TF |
+|---|---:|---|---|---|
+| TV-2 | 1 | 9u8pzF0I | CME_MINI:MNQ1! | 120 |
+| TV-2 | 2 | yhoK9cH4 | NASDAQ:META | 15 |
+| TV-2 | 3 | QCkIgf3z | COINBASE:ETHUSD | 15 |
+| TV-2 | 5 | zuEOEYPK | BINGX:BTCUSDT.P | 180 |
+| TV-2 | 6 | BR74LOKo | BYBIT:BTCUSDT.P | 15 |
+| TV-2 | 8 | jTHvkEVo | BLOFIN:SOLUSDT.P | 30 |
+| TV-2 | 9 | Ak5HYG42 | AMEX:XLE | 60 |
+| TV-2 | 10 | G4RNcGXg | AMEX:SPY | 60 |
+| TV-2 | 11 | OUzp2NR6 | NASDAQ:QQQ | 60 |
+| TV-2 | 12 | k1yakMMf | NASDAQ:MSTR | 5 |
+| TV-2 | 13 | wcegMOXj | BINANCE:ETHBTC | 360 |
+| TV-2 | 15 | 2d3g3VaV | CME_MINI:MNQ1! | 60 |
+| TV-2 | 16 | R9qM6XrY | BITFINEX:BTCUSD | 480 |
+| TV-2 | 17 | CSGmHoik | NASDAQ:TQQQ | 15 |
+| TV-2 | 18 | Z0svV2QP | CME_MINI:MNQ1! | 5 |
+| TV-2 | 20 | PZ5MpxP1 | NASDAQ:AAPL | 60 |
+| TV-2 | 21 | VO1vEJJW | POLONIEX:ETHUSDT | 3D |
+| TV-2 | 23 | hWvuZJN1 | AMEX:SPY | 60 |
+| TV-2 | 24 | xXrbltSH | CME_MINI:NQ1! | 15 |
+| TV-2 | 25 | oZYSB6Ui | AMEX:SPY | 60 |
+| TV-2 | 26 | 3UcIwSrE | KRAKEN:ETHUSD | 60 |
+| TV-2 | 27 | 2tMo7Zsp | AMEX:SPY | 5 |
+| TV-2 | 28 | WfaaCqaN | NASDAQ:QQQ | 60 |
+| TV-2 | 29 | 0EJ6ny4g | AMEX:SPY | 1W |
+| TV-2 | 30 | VQjItUaK | BITFINEX:XRPUSD | 60 |
+| TV-2 | 31 | 2SC4QXCp | BYBIT:DOTUSDT.P | 3 |
+| TV-2 | 32 | vnCdOkpO | BINANCE:BCHUSDT | 5 |
+| TV-2 | 33 | 5jxP6TDu | AMEX:SPY | 60 |
+| TV-2 | 34 | jn1rXKpM | TVC:GOLD | 30 |
+| TV-2 | 35 | j9rq1wQq | BINANCE:QTUMUSDT | 12H |
+| TV-2 | 36 | 7cAVZopZ | BYBIT:FILUSDT | 15 |
+| TV-2 | 37 | LyRkTIRb | NASDAQ:MSTR | 5 |
+| TV-2 | 38 | ABkXz6BY | BINANCE:LINKUSDT | 15 |
+| TV-2 | 39 | 627VbHkS | BITFINEX:BTCUSD | 360 |
+| TV-2 | 40 | QPIGo8hs | BINANCE:ETHBTC | 120 |
+| TV-2 | 41 | mXygJWkv | BINANCE:BTCUSDT | 60 |
+| TV-2 | 42 | iLXxAcTj | TVC:GOLD | 120 |
+| TV-2 | 43 | KUyDNRyQ | BITSTAMP:ETHBTC | 60 |
+| TV-2 | 44 | lGAXIACq | NASDAQ:QQQ | 60 |
+| TV-2 | 45 | zFKRj4Gi | BITFINEX:BTCUSD | 480 |
+| TV-2 | 46 | YqnWtjnn | BITFINEX:BTCUSD | 360 |
+| TV-2 | 47 | XJfWHHEc | BITFINEX:BTCUSD | 360 |
+| TV-2 | 48 | warXbPtA | BITFINEX:BTCUSD | 480 |
+| TV-2 | 49 | SiriKvsf | BINANCE:XRPUSDT | 15 |
+| TV-2 | 50 | hLZPT7it | BITFINEX:BTCUSD | 480 |
+| TV-2 | 51 | pjUZ1vMs | TVC:GOLD | 120 |
+| TV-2 | 52 | Xwlq5xrB | NASDAQ:AAPL | 60 |
+| TV-2 | 53 | 0mCoTcC1 | NASDAQ:AAPL | 60 |
+| TV-2 | 54 | MNBZqC72 | NYSE:MSI | 15 |
+| TV-2 | 55 | mUKDFKzn | AMEX:SPY | 60 |
+| TV-2 | 56 | lncoD9BX | BITFINEX:BTCUSD | 480 |
+| TV-2 | 59 | i0XSbToM | COINBASE:BTCUSD | 60 |
+| TV-2 | 60 | VHbRaeUe | BITFINEX:BTCUSD | 360 |
+| TV-2 | 62 | V3jpZpIs | BINANCE:FILUSDT.P | 30 |
+| TV-2 | 63 | UUHabgvo | BITFINEX:BTCUSD | 360 |
+| TV-2 | 64 | yhKXgYZE | NASDAQ:TQQQ | 60 |
+| TV-2 | 67 | E7jfjUgH | TVC:GOLD | 60 |
+| TV-2 | 68 | d117dN6D | COINBASE:BTCUSD | 60 |
+| TV-2 | 69 | 9INeZNIZ | CME_MINI:ES1! | 5 |
+| TV-2 | 70 | de5JB2fZ | NASDAQ:TSLA | 60 |
+| TV-2 | 71 | RUbAzilz | PIONEX:ZECUSDT.P | 60 |
+| TV-2 | 72 | Zx1H2viP | BINANCE:XRPUSDT.P | 15 |
+| TV-2 | 73 | SFnKkOyk | NASDAQ:ASST | 5 |
+| TV-2 | 74 | Wl9QUzkZ | NASDAQ:TSLA | 5 |
+| TV-2 | 75 | j36wYVnI | BYBIT:XAUTUSDT | 120 |
+| TV-2 | 76 | jSNZ1CmV | COINBASE:ETHUSD | 60 |
+| TV-2 | 77 | NA6e6cHO | CME_MINI:NQ1! | 30S |
+| TV-2 | 78 | pcoISSiu | BINANCE:BTCEUR | 15 |
+| TV-2 | 79 | xK7GI7Bi | NASDAQ:MSTR | 10 |
+| TV-2 | 80 | 8lqbmL5S | BINANCE:ETHUSDT | 15 |
+| TV-2 | 81 | 32ZHCA6S | NYSE:NKE | 5 |
+| TV-2 | 82 | 0GhXXwWS | BINANCE:DOGEUSDT | 120 |
+| TV-2 | 83 | 0mSobwAz | NASDAQ:AAPL | 3 |
+| TV-2 | 84 | 2pqi4yFB | CME_MINI:MNQ1! | 5 |
+| TV-2 | 85 | 2u7KKcCG | NASDAQ:GOOGL | 120 |
+| TV-2 | 86 | DdDDGP97 | CME_MINI:ES1! | 1 |
+| TV-2 | 87 | DdjIDVdn | CME_MINI:NQ1! | 1 |
+| TV-2 | 88 | GoeqO1ev | COINBASE:ETHUSD | 120 |
+| TV-2 | 89 | LA06Kpl1 | CME_MINI:MNQ1! | 1 |
+| TV-2 | 90 | N6ZDwigU | AMEX:SPY | 1 |
+| TV-2 | 91 | QK2FNhOB | CME_MINI:MNQ1! | 3 |
+| TV-2 | 92 | U0wTnRuE | NASDAQ:TSLA | 120 |
+| TV-2 | 93 | ZqnuKIAw | CME_MINI:MNQ1! | 3 |
+| TV-2 | 94 | bwmZOabG | CME_MINI:NQ1! | 10 |
+| TV-2 | 95 | ii4VZhUA | NASDAQ:TSLA | 1 |
+| TV-2 | 96 | qgofvS9I | BYBIT:HYPEUSDT.P | 3 |
+| U7 | 1 | TV-zoY9DmsF | ABD25 | 1D |
+| U7 | 2 | TV-sPNx5Z74 | ABD25 | 1D |
+| U7 | 3 | TV-DUCODGjC | ABD25 | 1D |
+| U7 | 4 | TV-IMKs0OPw | ABD25 | 1D |
+| U7 | 5 | TV-71yKm18B | KRIPTO25 | 4H |
+| U7 | 6 | TV-dpkq3n4O | ABD25 | 1D |
+| U7 | 7 | TV-70PkIvTL | ABD25 | 1D |
+| U7 | 8 | TV-bZ815rmw | ABD25 | 1D |
+| U7 | 9 | TV-KO7Qe4Xb | EMTIA | 1D |
+| U7 | 10 | TV-3Q75d98D | KRIPTO25 | 1D |
+| U7 | 11 | TV-3BXWqwnF | KRIPTO25 | 1D |
+| U7 | 12 | TV-Q9OQye4C | KRIPTO25 | 1D |
+| U7 | 13 | TV-ANmKXWWJ | KRIPTO25 | 4H |
+| U7 | 14 | TV-egTb7TgJ | KRIPTO25 | 1D |
+| U7 | 15 | TV-6ZReHYKn | ABD25 | 1D |
+| U7 | 16 | TV-wigMmPHd | ABD25 | 1D |
+| U7 | 17 | TV-qo43NaGV | ABD25 | 1D |
+| U7 | 18 | TV-oF6FmwfR | KRIPTO25 | 1D |
+| U7 | 19 | TV-XRZCjbFr | ABD25 | 1D |
+| U7 | 20 | TV-OKxIjdsz | KRIPTO25 | 1D |
+| U7 | 23 | TV-Z9O5w3SG | KRIPTO25 | 1D |
+| U7 | 24 | TV-roaahmoi | KRIPTO25 | 4H |
+| U7 | 25 | TV-HfxNiEab | KRIPTO25 | 4H |
+| U7 | 27 | U4-H2:KRIPTO25:4H | KRIPTO25 | 4H |
+| U7 | 29 | U4-H3:ABD25:1D | ABD25 | 1D |
+| U7 | 30 | U4-H2:KRIPTO25:1D | KRIPTO25 | 1D |
+| U7 | 31 | TV-TIpnJpU8 | KRIPTO25 | 4H |
+| U7 | 32 | TV-jc2hs2qK | KRIPTO25 | 4H |
+| U7 | 33 | TV-eDyfoKkr | ABD25 | 1D |
+| U7 | 34 | TV-AORNVoek | ABD25 | 1D |
+| U7 | 36 | TV-5EGVP61U | ABD25 | 1D |
+| U7 | 37 | TV-97gxVA5b | ABD25 | 1D |
+| U7 | 38 | TV-vpopCZIt | KRIPTO25 | 1D |
+| U7 | 39 | TV-NgSIfKQx | KRIPTO25 | 1D |
+| U7 | 40 | TV-rvBgD3aP | ABD25 | 1D |
+| U7 | 41 | U4-H3:EMTIA:1D | EMTIA | 1D |
+| U7 | 42 | TV-KW2v4SNI | ABD25 | 1D |
+| U7 | 44 | TV-GDcSJIo9 | ABD25 | 1D |
+| U7 | 45 | TV-n3eosaZK | ABD25 | 1D |
+| U7 | 46 | TV-PUEDA3c6 | ABD25 | 1D |
+| U7 | 47 | TV-o9qty0BL | KRIPTO25 | 4H |
+| U7 | 48 | TV-tuC7aGNI | KRIPTO25 | 4H |
+| U7 | 49 | TV-xYflA6O7 | ABD25 | 1D |
+| U7 | 50 | U4-H4:ABD25:1D | ABD25 | 1D |
+| U7 | 51 | TV-FEnNQpAn | KRIPTO25 | 1D |
+| U7 | 52 | TV-W67tJltC | KRIPTO25 | 1D |
+| U7 | 53 | U4-H2:EMTIA:1D | EMTIA | 1D |
+| U7 | 54 | TV-HPbRZvsV | KRIPTO25 | 1D |
+| U7 | 56 | TV-cz5KaioF | ABD25 | 1D |
+| U7 | 57 | TV-VOFjU544 | KRIPTO25 | 1D |
+| U7 | 58 | U4-H3:KRIPTO25:4H | KRIPTO25 | 4H |
+| U7 | 59 | TV-zrDoqm9F | EMTIA | 1D |
+| U7 | 60 | TV-BJDRgy7z | KRIPTO25 | 1D |
+| U7 | 62 | TV-LBcj22se | ABD25 | 1D |
+| U7 | 63 | TV-X0F9OE4L | KRIPTO25 | 1D |
+| U7 | 64 | TV-vJc6IOTz | ABD25 | 1D |
+| U7 | 65 | TV-Xr2xrNAY | KRIPTO25 | 4H |
+| U7 | 66 | U4-H4:EMTIA:1D | EMTIA | 1D |
+| U7 | 68 | TV-VO6DY8s1 | KRIPTO25 | 1D |
+| U7 | 69 | TV-buSJAz8o | KRIPTO25 | 1D |
+| U7 | 70 | TV-GP3FEy2z | ABD25 | 1D |
+| U7 | 73 | TV-TbK1rB5B | KRIPTO25 | 1D |
+| U7 | 74 | TV-yvDyq0pv | KRIPTO25 | 4H |
+| U7 | 75 | TV-BjjAOuub | ABD25 | 1D |
+| U7 | 76 | TV-hezSShJr | ABD25 | 1D |
+| U7 | 77 | TV-qgTc4zie | KRIPTO25 | 1D |
+| U7 | 78 | TV-dpZLkrdx | KRIPTO25 | 1D |
+| U7 | 79 | U4-H1:ABD25:1D | ABD25 | 1D |
+| U7 | 80 | TV-WWuTjyDx | ABD25 | 1D |
+| U7 | 81 | U4-H2:ABD25:1D | ABD25 | 1D |
+| U7 | 82 | TV-uC1oajDr | KRIPTO25 | 1D |
+| U7 | 85 | TV-QTYaYuX7 | KRIPTO25 | 1D |
 
-U7 sıralaması analiz dalında, `origin/codex/u7-tum-stratejiler`
-`aaefebbde7aecdf7b0262b39efd6abb3e3518b32` kaynak verisinden türetildi.
-85 sıralı varyant ve 72 küme temsilcisi vardır. Aşağıdaki ilk 12 temsilci
-yalnız kaynak/sıralama görünürlüğü içindir; TV-2 ile birleştirilmiş kitap
-listesi değildir.
+## Tek Actions işiyle birlikte paper çalıştırma planı
 
-| Sıra | Varyant | Piyasa / zaman dilimi | Sınama işlem | Ölçekli yıllık getiri | Haftalık p10 |
-|---:|---|---|---:|---:|---:|
-| 1 | TV-zoY9DmsF | ABD25 / 1D | 119 | 13.24% | 0.157% |
-| 2 | TV-sPNx5Z74 | ABD25 / 1D | 23 | 11.05% | 0.116% |
-| 3 | TV-DUCODGjC | ABD25 / 1D | 295 | 10.59% | 0.107% |
-| 4 | TV-IMKs0OPw | ABD25 / 1D | 211 | 9.71% | 0.101% |
-| 5 | TV-71yKm18B | KRIPTO25 / 4H | 226 | 13.48% | 0.098% |
-| 6 | TV-dpkq3n4O | ABD25 / 1D | 150 | 9.94% | 0.092% |
-| 7 | TV-70PkIvTL | ABD25 / 1D | 126 | 10.75% | 0.091% |
-| 8 | TV-bZ815rmw | ABD25 / 1D | 26 | 9.52% | 0.081% |
-| 9 | TV-KO7Qe4Xb | EMTIA / 1D | 76 | 8.13% | 0.069% |
-| 10 | TV-3Q75d98D | KRIPTO25 / 1D | 307 | 12.42% | 0.069% |
-| 11 | TV-3BXWqwnF | KRIPTO25 / 1D | 94 | 12.32% | 0.068% |
-| 12 | TV-Q9OQye4C | KRIPTO25 / 1D | 285 | 11.22% | 0.064% |
+1. Tetikleyici, sonuç anlık görüntüsünün commit SHA’sını ve yukarıdaki 158
+   kimliği değişmez girdi olarak kaydeder. Her kaynak kendi sembolü, zaman
+   dilimi, mantığı ve mevcut gerçekçi maliyet varsayımıyla çalışır.
+2. İş, veriyi ortak bir indirme/cache adımında alır; ardından zaman dilimine
+   göre aynı iş içinde kapanmış-bar sinyal gruplarını yürütür. Hiçbir sinyal
+   aynı bar bilgisiyle aynı bar fiyatında doldurulmaz.
+3. Çıktı yalnız gözlem kaydıdır: her temsilci için kaynak anlık görüntüsü,
+   son kapanmış bar, sinyal/durum, maliyet sonrası varsayımsal getiri ve
+   veri/vekil sembol uyarısı. Kayıtlar eklemeli tutulur; geçmiş satırlar
+   silinmez.
+4. Hata veya eksik veri yalnız ilgili temsilciyi `bekliyor` olarak kaydeder;
+   diğer 157 satırın çalışmasını ve mevcut kararını değiştirmez. Yeniden
+   deneme, ayrı bir kuyruk ve durum kaydıyla yapılır.
+5. İşin ilk başarılı çalışmasından sonra lider, çalışma süresi ve API/cache
+   tüketimini DURUM’a yazar. Bu plan henüz workflow ya da `paper/` dosyası
+   oluşturmaz.
 
-## Öneri olarak sonraki adım
+## Süre tahmini
 
-- TV-2 ve U7 aynı kaynak anlık görüntüsünde birlikte değerlendirilmeden aday
-  havuzu oluşturulmasın.
-- Bu önkoşul sağlandığında mevcut prosedür uygulanır: önce birleşik sıralamada
-  en yüksek 12 küme temsilcisi, sonra onlarla en düşük ortalama korelasyonlu
-  4 çeşitlendirici ve kalan uygun temsilcilerden sabit tohumla 4 kura adayı.
-  Ortak günlük getiri kesişimi ve seçim kaydı olmadan bu 20 aday yazılmaz.
-- Birleştirme yapılırsa, yalnız `docs/TEST_YAPISI.md` içindeki mevcut
-  prosedür ve kayıt gereklilikleri kullanılsın; bu taslak yeni sayı ya da
-  terfi kararı üretmez.
-- Veri vekilliği olan satırlar (örneğin Kraken/Bitfinex/Bitstamp sembollerinin
-  Binance verisiyle çalıştırılması) sanal izlemede kaynak notuyla korunmalı;
-  bunlar canlı uygulanabilirlik kanıtı değildir.
+| Aşama | Kapsam | Tahmini süre |
+|---|---|---:|
+| Ortak veri/cache | TV-2 kaynakları + U7 piyasa grupları | 15–30 dk |
+| Sinyal/değerlendirme | 158 temsilci, TF kapanış grupları | 25–45 dk |
+| Kayıt/doğrulama | 158 gözlem satırı ve hata özeti | 5–10 dk |
+| **Toplam tek Actions işi** | Başarılı cache ile | **45–85 dk** |
 
-Bu belge `docs/TEST_YAPISI.md` Adım 4'ün önceden yazılmış yürütme
-taslağıdır. Bir aday listesi ya da gölge kitap değişikliği değildir; liste,
-TV-2 ve U7 sonuçları birleştirildikten sonra aynı kuralla tek seferde üretilir.
-
-## Girdi ve uygunluk
-
-- Kaynaklar: `results/tv2/` ile `results/u7/` sonuçları ve günlük net getiri
-  serileri. Her satır kaynak commit'i ve hesaplama zamanıyla kaydedilir.
-- Adaylar: Adım 0'ı geçen; Adım 2 `Geçti` olanların tamamı ile `İzle`
-  olanların tamamı. Koruma listesi ayrıca etiketlenir; sessiz eleme yapılmaz.
-- Sıralama, `backtests/tv2_sirala.py` / U7 eşdeğerinin ortak %10 yıllık
-  oynaklık, blok bootstrap p10 ve kopya kümeleri çıktısını kullanır. Yazarın
-  bildirdiği getiri, kart sırası veya elle seçilmiş sembol kullanılmaz.
-
-## 20 gölge kitap adayı
-
-Liste, aynı sonuç snapshot'ında aşağıdaki sırayla ve yinelenebilir biçimde
-oluşturulur:
-
-1. Kopya kümelerinin en yüksek sıralı **12** temsilcisi `guclu` olarak alınır.
-2. Kalan temsilcilerden mevcut 12'ye ortalama günlük-getiri korelasyonu en
-   düşük olan **4** aday `cesitlendirici` olarak alınır. Aynı sembol + aynı yön
-   için en çok üç kitap kuralı uygulanır.
-3. Kalan uygun temsilciler arasından sabit tohum **20261024** ile örneklenen
-   **4** aday `kura` olarak alınır. Evren, tohum, örnekleme algoritması ve
-   adayların sıralanmadan önceki kimlik sırası sonuç dosyasına yazılır.
-
-Yeterli temsilci yoksa eksik yer doldurulmaz; sayı ve neden açıkça yazılır.
-Bu aşama yeni eşik üretmez, bir sıralama sonucunu değiştirmez ve kart
-parametresine dokunmaz.
-
-## Paper yürütmesi
-
-- Her aday kendi yazar mantığı ve zaman diliminde, kapanmış bar sonrasında
-  hesaplanır; maliyet bizim gerçekçi maliyet varsayımımızdır.
-- Ortak karşılaştırma ölçeği yıllık %10 oynaklıktır. Her kitap 5.000 USD
-  başlangıç sanal sermayesiyle, birbirinden ve ana portföyden ayrı izlenir.
-- Sanal havuzun kitap sayısı sınırsızdır. Yalnız seçilen 20 aday gölge kitap
-  önerisidir; bu belge hiçbirini `paper/`e eklemez.
-- Her giriş/çıkış/değiştirme `results/canli/denemeler.csv` içinde kitap,
-  strateji, kaynak sonuç snapshot'ı, tarih, neden ve önceki/sonraki adayla
-  kalıcı biçimde kaydedilir. Satır silinmez.
-
-## Canlı değerlendirme sınırı
-
-Bir kitabın başlangıç sermayesinden %10 düşmesi, yalnız o kitabı durdurur;
-yerine gelecek temsilci yukarıdaki kayıtla belirlenir. Aylık değerlendirme,
-en az 26 canlı hafta ve 10 işlem haftasından önce gerçek para adayı üretmez.
-Olasılık eşiği ve yanlış-terfi kalibrasyonu TEST_YAPISI'nda önceden yazılan
-prosedürden alınır; bu taslakta değiştirilmez.
-
-## Üretilecek kayıt
-
-Seçim yapıldığında `results/canli/sanal_havuz_adaylari.csv` şu alanları taşır:
-`sira, strateji_id, aile, grup, kaynak_snapshot, kategori, kume_id,
-bootstrap_p10, ort_korelasyon, tohum, secim_nedeni`. Böylece lider kararı
-öncesi 20 adayın neden ve hangi sonuçla seçildiği denetlenebilir.
-
-## G1 ön önerisi — 2026-10-26
-
-Bu yalnız `results/tv2/siralama.csv` içindeki mevcut kripto snapshot’ının
-tekrar üretilebilir okumasıdır. Kripto dışı koşunun 0–6 artifact’ları henüz
-geri alınamadığından nihai havuz değildir ve hiçbir `paper/` dosyasını
-değiştirmez.
-
-| Kategori | Sıra | Strateji | Sembol | TF | Neden |
-| --- | ---: | --- | --- | --- | --- |
-| güçlü | 1 | wcegMOXj | BINANCE:ETHBTC | 360 | sıralama küme temsilcisi |
-| güçlü | 2 | 3UcIwSrE | KRAKEN:ETHUSD | 60 | sıralama küme temsilcisi |
-| güçlü | 3 | VQjItUaK | BITFINEX:XRPUSD | 60 | sıralama küme temsilcisi |
-| güçlü | 4 | j9rq1wQq | BINANCE:QTUMUSDT | 12H | sıralama küme temsilcisi |
-| güçlü | 5 | mXygJWkv | BINANCE:BTCUSDT | 60 | sıralama küme temsilcisi |
-| güçlü | 6 | zFKRj4Gi | BITFINEX:BTCUSD | 480 | sıralama küme temsilcisi |
-| güçlü | 7 | 627VbHkS | BITFINEX:BTCUSD | 360 | sıralama küme temsilcisi |
-| güçlü | 8 | QPIGo8hs | BINANCE:ETHBTC | 120 | sıralama küme temsilcisi |
-| güçlü | 9 | YqnWtjnn | BITFINEX:BTCUSD | 360 | sıralama küme temsilcisi |
-| güçlü | 10 | KUyDNRyQ | BITSTAMP:ETHBTC | 60 | sıralama küme temsilcisi |
-| güçlü | 11 | hLZPT7it | BITFINEX:BTCUSD | 480 | sıralama küme temsilcisi |
-| güçlü | 12 | XJfWHHEc | BITFINEX:BTCUSD | 360 | sıralama küme temsilcisi |
-| çeşitlendirici | 13 | VHbRaeUe | BITFINEX:BTCUSD | 360 | ilk 12’ye en düşük ortalama mutlak günlük korelasyon (0.215) |
-| çeşitlendirici | 14 | lncoD9BX | BITFINEX:BTCUSD | 480 | aynı ölçütte 0.282 |
-| çeşitlendirici | 15 | warXbPtA | BITFINEX:BTCUSD | 480 | aynı ölçütte 0.314 |
-
-Snapshot yalnız 15 küme temsilcisi içerdiği için 4. çeşitlendirici ve 4 kura
-adayı üretilemedi. Eksik beş yer doldurulmaz; kripto dışı sonuçların tam
-birleştirilmesinden sonra 20 aday kuralı yeniden uygulanır.
+İlk kurulumda uzak veri sağlayıcı gecikmesi veya önbelleksiz indirme toplamı
+90 dakikaya yaklaştırabilir. Bu tahmin yalnız kaynak tüketimi planlamasıdır;
+hiçbir temsilciyi elemez veya terfi ettirmez.
