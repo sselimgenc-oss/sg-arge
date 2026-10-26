@@ -37,3 +37,14 @@ def test_recover_replaces_only_timeout_rows_and_only_its_part(tmp_path: Path) ->
     assert json.loads((results / "satirlar" / "i.json").read_text())["karar"] == "gecti"
     assert not (results / "satirlar" / "b.json").exists()
     assert (results / "getiriler" / "a.csv").exists()
+
+
+def test_recover_replaces_missing_data_rows(tmp_path: Path) -> None:
+    queue = tmp_path / "queue.txt"
+    queue.write_text("a\n", encoding="utf-8")
+    artifact, results = tmp_path / "artifact", tmp_path / "results"
+    _row(artifact / "satirlar" / "a.json", "kaldi")
+    _row(results / "satirlar" / "a.json", "veri_yok")
+
+    assert kurtar.recover(artifact, queue, results, 0) == (1, 0)
+    assert json.loads((results / "satirlar" / "a.json").read_text())["karar"] == "kaldi"

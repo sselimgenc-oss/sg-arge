@@ -20,12 +20,53 @@ on:
         description: "Koşulacak kuyruk dosyası"
         required: false
         default: "results/tv2/kuyruk_kripto_disi.txt"
+      dukascopy:
+        description: "Dukascopy dakikalık arşivi indir ve veri_yok satırlarını yeniden koş"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
 
 jobs:
+  duka:
+    if: ${{ inputs.dukascopy }}
+    strategy:
+      fail-fast: false
+      matrix:
+        sembol: [XAUUSD, EURUSD, USDJPY, USATECHIDXUSD, XAGUSD, USA500IDXUSD, NZDUSD, GBPUSD,
+                 USA30IDXUSD, AUDUSD, EURGBP, EURAUD, GBPJPY, EURJPY]
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Restore Dukascopy archive
+        uses: actions/cache@v4
+        with:
+          path: data/tv2/dukascopy/${{ matrix.sembol }}
+          key: duka-${{ matrix.sembol }}-${{ github.run_id }}
+          restore-keys: duka-${{ matrix.sembol }}-
+      - name: Download 1-minute candles (yıllar paralel)
+        # Her yıl ayrı Parquet dosyasıdır; yıllar birbirinden bağımsız indirilir.
+        run: |
+          seq 2019 "$(date -u +%Y)" | xargs -P4 -I{} python -m data.dukascopy "${{ matrix.sembol }}" --yillar {}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: duka-${{ matrix.sembol }}-${{ github.run_id }}
+          path: data/tv2/dukascopy/${{ matrix.sembol }}/
+          retention-days: 3
+
   tv2:
+    needs: duka
+    if: ${{ always() && needs.duka.result != 'cancelled' }}
     strategy:
       fail-fast: false
       matrix:
@@ -47,6 +88,20 @@ jobs:
           path: data/tv2
           key: tv2-${{ runner.os }}-${{ matrix.parca }}-${{ github.run_id }}
           restore-keys: tv2-${{ runner.os }}-${{ matrix.parca }}-
+      - name: Fetch Dukascopy archives
+        if: ${{ inputs.dukascopy }}
+        uses: actions/download-artifact@v4
+        with:
+          pattern: duka-*-${{ github.run_id }}
+          path: /tmp/duka
+      - name: Place Dukascopy archives
+        if: ${{ inputs.dukascopy }}
+        run: |
+          for d in /tmp/duka/duka-*; do
+            sym="$(basename "$d" | sed -E 's/^duka-(.*)-[0-9]+$/\1/')"
+            mkdir -p "data/tv2/dukascopy/$sym" && cp -a "$d/." "data/tv2/dukascopy/$sym/"
+          done
+          ls data/tv2/dukascopy
       - name: Select unfinished slice
         run: |
           python - <<'PY'
@@ -70,7 +125,8 @@ jobs:
               row = Path('results/tv2/satirlar') / f'{ident}.json'
               if row.exists():
                   try:
-                      if json.loads(row.read_text()).get('karar') != 'zaman_asimi':
+                      redo = {'zaman_asimi', 'veri_yok'} if '${{ inputs.dukascopy }}' == 'true' else {'zaman_asimi'}
+                      if json.loads(row.read_text()).get('karar') not in redo:
                           continue
                   except (ValueError, OSError):
                       pass
