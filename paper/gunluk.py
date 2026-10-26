@@ -246,6 +246,23 @@ def indir_golge(directory: Path = ROOT / "data" / "hourly", *, kitaplar: list[Go
     return failed
 
 
+def indir_saatlik_kripto(symbols: list[str], directory: Path = ROOT / "data" / "hourly",
+                         simdi: pd.Timestamp | None = None) -> list[str]:
+    """Refresh the 1h Binance archive the 4H portfolio rows resample from (last 120 days)."""
+    from data.fetch import fetch_asset  # noqa: PLC0415
+
+    now = pd.Timestamp(simdi or pd.Timestamp.now(tz="UTC"))
+    now = now.tz_localize("UTC") if now.tzinfo is None else now.tz_convert("UTC")
+    failed = []
+    for symbol in symbols:
+        try:
+            fetch_asset(Asset(symbol, "KRIPTO25", "binance"), "1h", append=True,
+                        start_override=now - pd.Timedelta(days=120), directory=directory)
+        except Exception as exc:  # noqa: BLE001
+            failed.append(f"{symbol} ({type(exc).__name__})")
+    return failed
+
+
 def yukle_veri(portfoy: Portfoy, directory: Path = DATA_DIR) -> Veri:
     frames, digests = {}, []
     for market in sorted({r.piyasa for r in portfoy.satirlar}):
@@ -314,7 +331,7 @@ def portfoy_ozkaynak(seriler: dict[str, pd.Series], sermaye: float) -> pd.Series
     allocated = sum(float(s.iloc[0]) for s in seriler.values())
     total = pd.Series(max(sermaye - allocated, 0.0), index=index)
     for etiket, series in seriler.items():
-        total += series.reindex(index).ffill().fillna(sermaye)
+        total += series.reindex(index).ffill().fillna(float(series.iloc[0]))
     return total
 
 
@@ -394,16 +411,40 @@ def calistir(
     sermaye = {r.etiket: portfoy.sermaye * r.agirlik for r in portfoy.satirlar}
     alarms = _read(defter, "alarmlar")
     stop_rows = alarms[alarms["tip"] == "DURDUR"] if not alarms.empty else alarms
+
+    # Kitap başına durdurma (kullanıcı kararı 2026-10-24/26): kitap kendi zirvesinden `kitap_mdd_durdur` gerilerse
+    # o kitapta yeni giriş kapanır. Kayıtlı DURDUR satırları kalıcıdır; yeni geçiş nedenseldir (o güne kadarki
+    # özkaynak, sonradan kapatılan girişlere bağlı değildir).
+    book_stops = {str(r["satir"]): pd.Timestamp(r["tarih"], tz="UTC") for _, r in stop_rows.iterrows()
+                  if str(r["satir"]) != PORTFOLIO_ROW} if len(stop_rows) else {}
+    stop_rows = stop_rows[stop_rows["satir"] == PORTFOLIO_ROW] if len(stop_rows) else stop_rows
     stop_date = pd.Timestamp(stop_rows.iloc[0]["tarih"], tz="UTC") if len(stop_rows) else None
 
+    def _mask(etiket: str, mask: pd.Timestamp | None) -> pd.Timestamp | None:
+        dates = [d for d in (mask, book_stops.get(etiket)) if d is not None]
+        return min(dates) if dates else None
+
     def run_all(mask: pd.Timestamp | None):
-        return {r.etiket: kitap(r, veri, portfoy.baslangic, sermaye[r.etiket], maske_tarihi=mask,
+        return {r.etiket: kitap(r, veri, portfoy.baslangic, sermaye[r.etiket], maske_tarihi=_mask(r.etiket, mask),
                                 risk_per_trade=risk_per_trade, max_total_risk=max_total_risk, tf_override=tf_override)[0] for r in portfoy.satirlar}
 
     results = run_all(stop_date)
+    new_book_alarms: list[dict[str, Any]] = []
+    esik = portfoy.alarm.get("kitap_mdd_durdur")
+    if esik:
+        for r in portfoy.satirlar:
+            if r.etiket in book_stops:
+                continue
+            crossed = ilk_asim(ozkaynak_serisi(results[r.etiket], sermaye[r.etiket]).loc[lambda s: s.index >= portfoy.baslangic], esik)
+            if crossed is not None:
+                book_stops[r.etiket] = crossed
+                new_book_alarms.append({"tarih": _day(crossed), "tip": "DURDUR", "satir": r.etiket,
+                                        "mesaj": f"kitap MDD >= %{esik:.0%}: bu kitapta yeni giris yok"})
+        if new_book_alarms:
+            results = run_all(stop_date)
     series = {e: ozkaynak_serisi(res, sermaye[e]).loc[lambda s: s.index >= portfoy.baslangic] for e, res in results.items()}
     total = portfoy_ozkaynak(series, portfoy.sermaye)
-    new_alarms: list[dict[str, Any]] = []
+    new_alarms: list[dict[str, Any]] = list(new_book_alarms)
     last_day = total.index[-1]
     if stop_date is None:
         crossed = ilk_asim(total, portfoy.alarm.get("mdd_durdur", 0.15))
@@ -619,6 +660,10 @@ def main() -> int:
     intraday = [r for r in portfoy.satirlar if r.tf == "4H"]
     if intraday:
         symbols = set().union(*[set(_card(r.id).get("cekirdek", [])) | set(_card(r.id).get("kardesler", [])) for r in intraday])
+        if args.indirme:  # saatlik kripto arşivi repoda tutulmaz; her koşuda son 120 gün indirilir
+            failed = indir_saatlik_kripto(sorted(symbols))
+            if failed:
+                print("UYARI indirilemeyen 1h semboller:", ", ".join(failed), file=sys.stderr)
         raw = {}
         for symbol in symbols:
             archive = ROOT / "data" / "hourly" / f"{symbol}.parquet"

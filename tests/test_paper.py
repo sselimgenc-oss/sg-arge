@@ -18,6 +18,8 @@ from paper import anlik, gunluk, panel, parite
 from tests.test_tarama import synthetic
 
 ROOT = Path(__file__).resolve().parents[1]
+# Davranış testleri canlı paper/portfoy.yaml değiştikçe kırılmasın: sabit bir test portföyü (Faz 2 düzeni: C07/R01/A6-010 + gölge).
+FIXTURE = ROOT / "tests" / "fixtures" / "paper_portfoy_eski.yaml"
 BARS = 1500
 
 
@@ -30,7 +32,7 @@ def veri(seed: int = 0, bars: int = BARS) -> gunluk.Veri:
 
 
 def portfoy(start: str = "2016-06-01", **alarm) -> gunluk.Portfoy:
-    p = gunluk.yukle_portfoy()
+    p = gunluk.yukle_portfoy(FIXTURE)
     p.baslangic = pd.Timestamp(start, tz="UTC")
     p.alarm.update(alarm)
     return p
@@ -52,7 +54,7 @@ def csv(defter: Path, name: str) -> pd.DataFrame:
 # ------------------------------------------------------------------------------------------ engine state recording
 def test_recording_the_state_does_not_change_the_backtest() -> None:
     data = veri()
-    satir = gunluk.yukle_portfoy().satirlar[1]  # R01: card path with partial profit
+    satir = gunluk.yukle_portfoy(FIXTURE).satirlar[1]  # R01: card path with partial profit
     prepared = tarama.prepare(gunluk._card(satir.id), data.frames["ABD25"], "ABD25", benchmark=data.benchmarks["ABD25"],  # noqa: SLF001
                               start=pd.Timestamp("2016-01-04", tz="UTC"), end=pd.Timestamp("2017-12-29", tz="UTC"))
     plain, recorded = prepared.run(), prepared.run(record_state=True)
@@ -202,9 +204,9 @@ def test_shadow_1h_bucket_waits_until_close_plus_five_minutes() -> None:
 
 
 def test_shadow_portfolio_is_separate_from_the_main_book() -> None:
-    kitaplar = gunluk.golge_kitaplari()
+    kitaplar = gunluk.golge_kitaplari(path=FIXTURE)
     shadow = kitaplar[0].portfoy
-    main = gunluk.yukle_portfoy()
+    main = gunluk.yukle_portfoy(FIXTURE)
     assert shadow.sermaye == 5000 and shadow.satirlar[0].etiket == "U4-H1:KRIPTO25"
     assert [(book.id, book.tf, book.portfoy.sermaye) for book in kitaplar] == [("U4-H1", "4H", 5000), ("T8-07", "1H", 5000), ("V2B", "1H", 5000)]
     assert all(book.portfoy.baslangic == pd.Timestamp("2026-09-01", tz="UTC") and book.portfoy.canli_baslangic == pd.Timestamp("2026-10-24", tz="UTC") for book in kitaplar)
@@ -233,7 +235,7 @@ def test_shadow_equity_records_a_same_day_4h_close(monkeypatch: pytest.MonkeyPat
     hourly = pd.date_range("2026-10-24 00:00", periods=12, freq="1h", tz="UTC")
     frame = pd.DataFrame({"open": 100.0, "high": 200.0, "low": 90.0, "close": 100.0, "volume": 1.0}, index=hourly)
     shadow_dir = tmp_path / "defter" / "golge"
-    shadow = gunluk.golge_kitaplari()[0]
+    shadow = gunluk.golge_kitaplari(path=FIXTURE)[0]
     gunluk.calistir_golge_kitap(shadow, gunluk.Veri({"KRIPTO25": {"BTCUSDT": frame}}, {}, "shadow"), shadow_dir,
                                 simdi=pd.Timestamp("2026-10-24 12:05", tz="UTC"))
 
@@ -243,12 +245,14 @@ def test_shadow_equity_records_a_same_day_4h_close(monkeypatch: pytest.MonkeyPat
     assert len(row) == 1 and row.iloc[0]["ozkaynak"] == pytest.approx(5100.0)
     assert equity[equity["satir"] == gunluk.PORTFOLIO_ROW]["tarih"].nunique() == 3
     assert seen["tf_override"] == "4H"
-    payload = panel.uret(tmp_path / "defter", gunluk.yukle_portfoy(), ROOT / "results" / "SONUC.csv")
+    eski = gunluk.golge_kitaplari
+    monkeypatch.setattr(gunluk, "golge_kitaplari", lambda *_a, **_k: eski(path=FIXTURE))
+    payload = panel.uret(tmp_path / "defter", gunluk.yukle_portfoy(FIXTURE), ROOT / "results" / "SONUC.csv")
     assert payload["golge"]["kitaplar"][0]["ozkaynak"] == pytest.approx(5100.0)
 
 
 def test_shadow_books_keep_their_equity_separate(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    kitaplar = gunluk.golge_kitaplari()
+    kitaplar = gunluk.golge_kitaplari(path=FIXTURE)
     stamp = pd.Timestamp("2026-09-01 12:00", tz="UTC")
 
     def fake_kitap(satir, *_args, **_kwargs):
@@ -267,7 +271,7 @@ def test_shadow_books_keep_their_equity_separate(monkeypatch: pytest.MonkeyPatch
 
 
 def test_shadow_drops_pre_start_fills_and_migrates_only_flat_legacy_csvs(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    kitap = gunluk.golge_kitaplari()[0]
+    kitap = gunluk.golge_kitaplari(path=FIXTURE)[0]
     before, start = pd.Timestamp("2026-08-31 20:00", tz="UTC"), kitap.portfoy.baslangic
     result = SimpleNamespace(
         equity=pd.Series([4900.0, 5000.0], index=[before, start]), marked_equity=5000.0,
@@ -296,7 +300,7 @@ def test_shadow_download_limits_a_fresh_archive_to_120_days(monkeypatch: pytest.
 
     monkeypatch.setattr(fetch, "fetch_asset", fake_fetch)
     now = pd.Timestamp("2026-10-24 12:00", tz="UTC")
-    assert gunluk.indir_golge(tmp_path, simdi=now) == []
+    assert gunluk.indir_golge(tmp_path, simdi=now, kitaplar=gunluk.golge_kitaplari(path=FIXTURE)) == []
     assert len(calls) == 12
     crypto = [call for call in calls if call[0].endswith("USDT")]
     emtia = [call for call in calls if not call[0].endswith("USDT")]
@@ -313,7 +317,7 @@ def test_daily_wait_does_not_skip_the_independent_shadow_book(monkeypatch: pytes
     monkeypatch.setattr(gunluk, "ilk_bar_bekleniyor", lambda *_args: ["main:wait"])
     monkeypatch.setattr(gunluk, "yukle_golge_veri", lambda *_args, **_kwargs: object())
     monkeypatch.setattr(gunluk, "calistir_golge_kitap", lambda *args: called.append(args))
-    monkeypatch.setattr(sys, "argv", ["gunluk.py", "--defter", str(tmp_path / "defter"), "--rapor", str(tmp_path / "RAPOR.md")])
+    monkeypatch.setattr(sys, "argv", ["gunluk.py", "--portfoy", str(FIXTURE), "--defter", str(tmp_path / "defter"), "--rapor", str(tmp_path / "RAPOR.md")])
     assert gunluk.main() == 0
     assert len(called) == 3
 
@@ -475,3 +479,17 @@ def test_workflow_writes_only_to_the_paper_branch_and_guards_the_panel_token() -
     assert flow["jobs"]["paper"]["env"]["PANEL_REPO"] == "sselimgenc-oss/sg-pano"
     assert any(step.get("run") == "python paper/anlik.py" for step in steps)
     assert "git push origin main" not in text and "${PANEL_REPO}" in text and "sg-test-panel" not in text and "bot_engine" not in text
+
+
+def test_portfolio_equity_keeps_unallocated_cash_and_late_books_at_their_own_capital() -> None:
+    idx = pd.date_range("2026-10-26", periods=3, freq="D", tz="UTC")
+    early = pd.Series([3000.0, 3300.0, 3300.0], index=idx)          # %60
+    late = pd.Series([1000.0, 900.0], index=idx[1:])                 # %20, bir gün geç başlar
+    total = gunluk.portfoy_ozkaynak({"a": early, "b": late}, 5000.0)
+    # %20 nakit + kitaplar; geç kitap başlamadan önce kendi sermayesiyle (1.000) sayılır, portföy sermayesiyle değil.
+    assert list(total.round(6)) == [5000.0, 5300.0, 5200.0]
+
+
+def test_book_drawdown_stop_is_recorded_per_book() -> None:
+    src = (Path(gunluk.__file__)).read_text(encoding="utf-8")
+    assert "kitap_mdd_durdur" in src and "bu kitapta yeni giris yok" in src
