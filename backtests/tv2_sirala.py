@@ -16,6 +16,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from backtests.asama2b import deflated_sharpe_ratio
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "results" / "tv2"
 HEDEF_OYNAKLIK = 0.10
@@ -78,6 +80,27 @@ def kumele(seriler: dict[str, pd.Series], sira: list[str]) -> dict[str, str]:
     return temsilci
 
 
+def etkin_deneme_sayisi(seriler: dict[str, pd.Series]) -> float:
+    """Return correlation-eigenvalue effective trial count for information only.
+
+    This deliberately does not participate in the ranking or representative
+    selection.  Missing dates are treated as zero returns, matching the
+    existing copy-clustering input.
+    """
+    if not seriler:
+        return float("nan")
+    frame = pd.concat(seriler, axis=1).fillna(0.0)
+    if frame.shape[1] == 1:
+        return 1.0
+    corr = frame.corr().fillna(0.0).to_numpy(dtype=float)
+    np.fill_diagonal(corr, 1.0)
+    eigenvalues = np.clip(np.linalg.eigvalsh(corr), 0.0, None)
+    denominator = float(np.square(eigenvalues).sum())
+    if denominator <= 0:
+        return float("nan")
+    return float(eigenvalues.sum() ** 2 / denominator)
+
+
 def main() -> None:
     satirlar = [json.loads(p.read_text()) for p in sorted((OUT / "satirlar").glob("*.json"))]
     gecen = [s for s in satirlar if s.get("karar") == "gecti"]
@@ -97,6 +120,11 @@ def main() -> None:
             "uyg_sinama_mdd": s.get("uyg_sinama_mdd"), "altut_sinama_yuzde": s.get("altut_sinama_yuzde"),
             "veri": s.get("veri"), "uyari": s.get("uyari", ""),
         })
+    n_eff = etkin_deneme_sayisi(seriler)
+    trials = max(1, int(np.ceil(n_eff))) if np.isfinite(n_eff) else 1
+    for row in kayit:
+        row["n_eff"] = n_eff
+        row["dsr"] = deflated_sharpe_ratio(seriler[row["id"]], trials)
     tablo = pd.DataFrame(kayit).sort_values("alt_sinir_haftalik_p10", ascending=False, na_position="last")
     kume = kumele(seriler, list(tablo["id"]))
     tablo["kume_temsilcisi"] = tablo["id"].map(kume)
