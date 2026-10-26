@@ -22,8 +22,12 @@ Dal: `codex/paper-kurulum` (`main`'den). Durum: `docs/codex_durum_paper.md`. PR:
 | U4-H3:EMTIA:1D | EMTIA | 1D | 7 |
 | yhoK9cH4 (TV-2, META 15dk) | META | 15 | 5 |
 
+## Lider kararları (Codex sorularına, 2026-10-26)
+1. **Sermaye:** tek portföy, toplam sanal sermaye **5.000 USD** (mevcut mimari; "her kitap 5.000 USD" ifadesi geçersiz). `agirlik` = pay / 100; ağırlık toplamı **≤ 1** olabilir, kalan **nakit** olarak boş durur (11 U7 = 0,75; TV-2 payları 0,15 Aşama B'ye kadar nakit; 0,10 rezerv). `gunluk.py`'deki "toplam = 1" doğrulaması "≤ 1 ve kalan nakit" olarak değişir; test eklenir.
+2. **4 saatlik kitap (TV-71yKm18B):** yeni akış yazma; gölge kitap için zaten var olan 4s yolunu (`indir_golge`, `yukle_golge_veri`, `kapanmamis_4h_bari_at`, saatlik → 4s) normal kitaplara açık hale getir: satırda `tf: 4H` olan kitap bu veri akışını kullanır. Kart TF'si değişmez (`tf_override` yok).
+
 ## Aşama A — bugün: 11 U7 kitabı (kart motoru, mevcut `paper/gunluk.py` yolu)
-1. `paper/portfoy.yaml`: `satirlar` yeni 11 U7 kitabı (`kaynak: kart`), `agirlik` = pay / 100. Her kitap 5.000 USD sanal sermaye.
+1. `paper/portfoy.yaml`: `satirlar` yeni 11 U7 kitabı (`kaynak: kart`), `agirlik` = pay / 100. 
 2. **Eski kitaplar emekliye:** C07, R01, A6-010 ve `golge:` bölümü (U4-H1, T8-07, V2B) yeni portföyden çıkar. Defterleri **silinmez**: `paper/defter/arsiv/2026-10-26/` altına taşınır; panoda "arşiv" olarak kalır. `golge` kod yolu kullanılmaz hale gelir (silme ayrı temizlikte).
 3. Başlangıç: `baslangic` = `canli_baslangic` = kurulum PR'ının birleştiği gün (geriye dönük dolum yok; geçmiş zaten backtest).
 4. Risk kuralları (`docs/PAPER_PLAN.md`): kitap zirvesinden %10 → kitap durur; portföy zirvesinden %5 → yeni giriş durur; SPY/BTC önceki kapanışı 200 günlük ortalamanın altındaysa yeni uzun risk yarıya; aynı sembolde aynı yönde en çok 3 kitap. `alarmlar` bu eşiklere güncellenir.
