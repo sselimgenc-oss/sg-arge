@@ -36,6 +36,6 @@ Alan tavanları: ABD %35, kripto %30, emtia %20, keşif %5. Gölge kitaplar ayn�
 - Her kitap, kendi sermaye zirvesinden %10 gerilediğinde durur; yeniden başlatma insan onayı ve mutabakat ister.
 - Sermaye girişlerinden arındırılmış portföy özkaynağı zirveden %5 gerilerse yeni girişler durur; açık koruyucu çıkışlar çalışmaya devam eder.
 - Günlük korelasyonu 0,6'nın üzerindeki çiftlere eşzamanlı bağımsız tam bütçe verilmez. Haftalık ve son 90 günlük korelasyon uyarı olarak kaydedilir.
-- SPY ve BTC betası risk açılmadan kaydedilir. Önceki kapanış kendi 200 günlük ortalamasının altındaysa, yalnız yeni uzun yön riski yarıya iner; koruyucu azaltma/çıkış emirleri otomatik küçültülmez.
+- ~~200 günlük ortalama kuralı~~ **kaldırıldı (kullanıcı kararı 2026-10-26):** stratejiler bu kuralla test edilmedi; paper test edilenden farklı çalışmasın. Koruma: kitap %10, portföy %5 durdurma.
 
 Bu taslak karar ya da kapı değişikliği değildir. Adım 0'daki `KOŞULLU` sonuçlar ve CSV'deki mutabakat açıkları listede kalır; lider ve kullanıcı karar vermeden etkinleştirilmez.
