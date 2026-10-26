@@ -51,14 +51,28 @@ def _tv2() -> pd.DataFrame:
     return pd.DataFrame(satirlar)
 
 
+def _u7_mdd(grup: str, varyant: str) -> float:
+    """Sınama (OOS 2023→) günlük net getirilerinden bileşik en büyük düşüş."""
+    yol = ROOT / "results" / "u7" / grup / "getiriler" / f"{varyant.replace(':', '_')}.csv"
+    if not yol.exists():
+        return float("nan")
+    ozk = (1 + pd.read_csv(yol)["net_getiri"]).cumprod()
+    return float((1 - ozk / ozk.cummax()).max())
+
+
 def _u7() -> pd.DataFrame:
     df = pd.read_csv(U7)
     df = df[df["temsilci"].astype(str) == "True"]
+    pf = {}
+    for grup in df["grup"].unique():
+        huni = pd.read_csv(ROOT / "results" / "u7" / grup / "huni_ozet.csv")
+        pf |= dict(zip(huni["varyant"], huni["oos_PF_1x"]))
     return pd.DataFrame({
         "kaynak": "U7-" + df["grup"], "kimlik": df["varyant"], "sembol": df["piyasa"], "tf": df["tf"],
         "sinama_hafta": df["sinama_hafta"], "sinama_islem": df["sinama_islem"],
         "olcekli_yillik_getiri": df["olcekli_yillik_getiri"], "alt_sinir_haftalik_p10": df["alt_sinir_haftalik_p10"],
-        "sinama_net_yuzde": df["oos_net_1x"] * 100, "pf": None, "mdd": None,
+        "sinama_net_yuzde": df["oos_net_1x"] * 100, "pf": df["varyant"].map(pf),
+        "mdd": [_u7_mdd(g, v) for g, v in zip(df["grup"], df["varyant"])],
         "kisa_sinama": False, "lookahead_riskli": False, "supheli": "", "veri": "", "url": "",
     })
 
