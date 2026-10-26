@@ -29,7 +29,7 @@ Alan tavanları: ABD %35, kripto %30, emtia %20, keşif %5. Gölge kitaplar ayn�
 - Kitap başına sanal sermaye 5.000 USD'dir; miktar, donmuş kaynakta yazan birim ve uygulanabilir notional/teminat sınırıyla riskten hesaplanır. Geçmiş düşük oynaklık sınırsız kaldıraç gerekçesi değildir.
 - `wcegMOXj` için hesap birimi BTC'dir: ETH adetinden oluşan PnL her değerleme anında aynı zaman damgalı BTCUSD kapanışı ile USD'ye çevrilir. BTC bakiyesi, USD karşılığı ve dönüşüm kuru ayrı kaydedilir. Bu mutabakat tamamlanana kadar risk payı kullanılamaz.
 - TV-2 kitapları G4RNcGXg, wcegMOXj ve yhoK9cH4 için kaynak Pine metni, varsayılan parametreler ve maliyet varsayımı hash'lenmeden emir üretilemez.
-- Aynı sembol/yön pozisyonları toplanır; aynı anda en fazla üç kitap açık risk taşır.
+- Aynı sembol/yön pozisyonları toplanır; **aynı sembolde aynı yönde** en fazla üç kitap aynı anda açık risk taşır (toplam kitap sayısı sınırı değildir).
 
 ## Durdurma ve rejim kuralları
 
