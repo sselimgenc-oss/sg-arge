@@ -54,3 +54,23 @@
   - Gedik forex MT5 sunuyor mu, otomatik işlem serbest mi?
   - Vakıf ve Gedik hangi algoritmik platforma bağlanıyor?
   - Binance TradFi ürünleri API'de var mı?
+
+## 5. Argon risk araştırması (2026-10-26)
+Kaynak: `arastirma/risk/coklu_hesap_risk_mimarisi_2026.pdf` (17 sayfa, 20 kural K-01…K-20).
+
+Öne çıkan kurallar:
+- **K-01 bütçe:** %10 tek şemsiye; %3 Binance, %3 VİOP, %2 FX, %2 korelasyon/kayma tamponu.
+- **K-02 kademeli kesinti:** alt hesap −%5 (toplam −%6) → pozisyonlar %50 küçülür; −%7,5…−%10 → hesap kapanır.
+- **K-04/K-07 kaldıraç:** en fazla çeyrek Kelly; Binance vadeli izole marj 2–3x, VİOP 3–4x, FX CFD 3–5x.
+- **K-08/K-09 taşıma maliyeti:** geri teste 8 saatlik fonlama, VİOP nema, FX 3x çarşamba swap'ı zorunlu.
+- **K-10 günlük kill switch:** strateji −%1, hesap −%1,5, portföy −%2,5 → emirler silinir, gün sonuna kadar kilit.
+- **K-11 ardışık kayıp:** 5 kayıp → %50 küçült; 7 kayıp → 24 saat teşhis.
+- **K-12/K-13/K-14 teknik:** veri bayatlığı > 1,5 sn → yeni emir yok; Binance `countdownCancelAll` (30 sn, 10 sn'de bir yenile) ile ölü adam anahtarı; API ağırlığı %80 / 429 / 5xx → kill switch.
+- **K-15/K-16/K-17 canlı izleme:** kayma geri test varsayımının 2 katı → dur; 60 gün sonra canlı Sharpe < 0,5 × geri test → bütçe yarı; 90 günde < 0,35 × ya da DD > 1,5 × geri test MaxDD → kapat; CUSUM erken uyarı.
+- **K-18 aşamalı geçiş:** paper (30 işlem) → %10 (4 hafta) → %25–50 (6 hafta) → %100 (PSR ≥ 0,95).
+- **K-19 alfa çürümesi:** yayımlanmış stratejilerde geri test Sharpe'ına baştan %50 iskonto.
+
+**Lider yorumu:**
+- Bölüm 3'teki 4., 5. ve 6. soruların (risk sınırları, güvenlik, aşamalı geçiş) somut karşılığı bu kurallar. K-10, K-13, K-15, K-16 ve K-18 doğrudan Faz 3 taslağına alınmaya aday; hepsi **yeni kural**, kullanıcı onayı gerekir.
+- K-19 (%50 iskonto) ve t ≥ 3.0 mevcut kapıyı değiştirir; yalnız bilgi olarak tutulur, kapı değişikliği kullanıcı kararı.
+- Bazı kaynaklar zayıf (Medium yazıları, "Ekim 2026 özeti" gibi doğrulanamayan tarihler). Eşikler uygulamadan önce birincil kaynaktan (Binance API belgesi, SPK/Takasbank) teyit edilmeli.

@@ -199,3 +199,18 @@ Argon derin araştırması: `arastirma/ml/algoritmik_trading_makine_ogrenmesi_20
   yeterliyse orada kalın. Birden çok kullanıcı, dakikalık veri, kişiye özel portföy veya onaylı
   emir gereksinimi ortaya çıktığında FastAPI/Postgres'e geçin. SQLite yerel/prova için yeterli;
   eşzamanlılık ve kalıcı denetim ihtiyacında Postgres seçin.
+
+## 7. Argon araştırmaları (2026-10-26): radar ve pano
+**Radar** (`arastirma/radar/strateji_toplama_ve_eleme_2026.pdf`):
+- Yasal ve sağlam kaynaklar: arXiv `q-fin` API, OpenAlex (SSRN DOI), GitHub Search API (kod araması 10 istek/dk), PapersWithBacktest (Hugging Face veri setleri), QuantifiedStrategies / ProRealCode / MQL5 / Substack RSS, Reddit OAuth (100 istek/dk ücretsiz).
+- TradingView: kullanım şartları otomatik kazımayı yasaklıyor, reCAPTCHA var → radar dışı, linkleri kullanıcı elle ekler (bölüm 1 ile aynı karar).
+- Önerilen ön eleme: K ≤ 4 parametre, N ≥ 100 işlem, t ≥ 3.0, 2× maliyet stresi. Haftalık 300+ ham içerikten 1–2 aday kalır.
+- **Lider yorumu:** kaynak listesi bölüm 1'i doğruluyor, uygulanabilir. Ön eleme ölçütleri yeni bir kapı demek; TEST_YAPISI v2'nin tek kapısını değiştirmez. Ancak radar girişinde yalnız **sıralama/öncelik** bilgisi olarak kullanılabilir. Kapı olarak kullanmak kullanıcı kararı.
+
+**Pano** (`arastirma/pano/pano_altyapi_karsilastirmasi_2026.pdf`):
+- Öneri ($0/ay): iki katman.
+  1. Telegram bot + Cloudflare Worker (+ D1 SQLite): sinyal mesajı, "Uyguladım / Atladım / Panoyu aç" butonları; kararlar sonraki Actions koşusunda okunur.
+  2. Svelte/React statik PWA, Cloudflare Pages + Zero Trust Access (yalnız kullanıcının e-postası); canlı fiyat tarayıcıdan Binance public WebSocket ile.
+- Uyarı: GitHub Pages ücretsiz planda public depo gerektirir; gerçek hesap verisi orada gösterilmemeli.
+- İlk günden FastAPI + Postgres + React kurmak bakım yükü yüzünden önerilmiyor.
+- **Lider yorumu:** bölüm 5 seçenekleriyle uyumlu ve Faz 3 yol D'nin (Telegram + manuel, geri bildirim butonu) ihtiyacını doğrudan karşılıyor. Repo artık public olduğundan gerçek hesap verisi kesinlikle `paper/panel/data.json`'a girmemeli. Cloudflare hesabı açmak kullanıcı kararı.
