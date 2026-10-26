@@ -30,6 +30,6 @@
 
 ## Bekleyen (sırası gelmedi, kullanıcı/Argon girdisi bekliyor)
 - `veri_yok` 77 ve vnstock (BIST): Argon veri kaynakları raporu gelince.
-- Renko (E8): Argon raporu geldi (`arastirma/renko/`). TradingView ATR kutu boyunu **son barın ATR'siyle bütün geçmişe** uygular ve Renko geri testleri sentetik açılış fiyatından dolum yüzünden sistematik olarak sahte kâr üretir (TradingView belgesi). Öneri: Renko stratejileri yorumlanmaz, `desteklenmiyor` nedeni "renko geri testi güvenilmez" ile kapanır (lider önerisi, kullanıcı onayı bekliyor).
+- Renko (E8): Argon raporu geldi (`arastirma/renko/`). TradingView ATR kutu boyunu **son barın ATR'siyle bütün geçmişe** uygular ve Renko geri testleri sentetik açılış fiyatından dolum yüzünden sistematik olarak sahte kâr üretir (TradingView belgesi). Öneri: Renko stratejileri yorumlanmaz, `desteklenmiyor` nedeni "renko geri testi güvenilmez" ile kapanır **Kullanıcı onayladı (2026-10-26).** Oturum 1, sırası gelince Renko kullanan stratejileri bu nedenle kapatsın.
 - Faz 2 Telegram/Cloudflare: kullanıcı hesap kararı + Argon rehberi.
 - Faz 3 risk kuralları: kullanıcı onayı.
