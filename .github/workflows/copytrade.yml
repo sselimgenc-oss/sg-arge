@@ -1,13 +1,10 @@
 name: Copy trade aday taraması
 
 on:
-  schedule:
-    - cron: "17 3 * * *"
+  # Sırada (kullanıcı kararı 2026-10-27: tek iş; önce kapı v3). Günlük zamanlama sırası gelince açılır:
+  # schedule:
+  #   - cron: "17 3 * * *"
   workflow_dispatch:
-  # İlk deneme koşusu için: lider dalında bu iş akışı ya da copytrade kodu değişince de koşar.
-  push:
-    branches: [claude/magical-ride-c7apbp]
-    paths: [.github/workflows/copytrade.yml, copytrade/**]
 
 permissions:
   contents: write
