@@ -349,3 +349,9 @@ kararı olarak kullanılmayacak.
   uygunluğu hangi yetkili kurum veya hukukçu tarafından yazılı teyit edilecek?
 - Başarılı sanal izleme sonrasında canlı işlem hiç yapılmayacak mı, yoksa
   ayrı kullanıcı onayı ve güvenlik incelemesi mi gerekecek?
+
+## 8. Argon: Telegram + Cloudflare kurulum rehberi (2026-10-26)
+`arastirma/pano/telegram_cloudflare_rehberi_2026.pdf`: BotFather ile bot, chat_id, inline butonlar; Cloudflare Worker webhook (gizli başlık `X-Telegram-Bot-Api-Secret-Token` + `ALLOWED_CHAT_ID` kontrolü, parametreli SQL ile D1); GitHub Actions'ın D1'i yalnız-okuma API token'ıyla okuması; Pages + Zero Trust ile tek e-postaya açık site. Bölüm 7'deki pano önerisinin uygulama adımları hazır. **Başlamak için kullanıcı kararı: Cloudflare hesabı ve Telegram botu açılsın mı.** Bot token ve API anahtarları yalnız GitHub Secrets / Cloudflare secrets'ta; public repoda asla.
+
+## 9. BIST strateji fikirleri (Argon, 2026-10-26)
+`arastirma/bist/bist_viop_maliyet_anomaliler_2026.pdf` bölüm 3: 8 fikir (gece/kapanış seansı, 1 hafta atlamalı momentum + PD/DD, temettü sonrası sürüklenme, bilgi şoku, yabancı akışı, pay geri alım duyurusu, endeksten çıkarılma, bayram öncesi). Raporun brüt alfa rakamları doğrulanmadı. Günlük veriyle test edilebilenler (momentum, endeksten çıkarılma, bayram, temettü) radar kartı olarak sıraya alınabilir; veri (temettü/endeks değişikliği tarihleri, KAP) eksik olanlar sonra.

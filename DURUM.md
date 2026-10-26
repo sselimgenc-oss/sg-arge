@@ -21,6 +21,21 @@ Son güncelleme: 2026-10-26 11:45 UTC, lider (Opus). Son denetim: `docs/denetim/
 
 **Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`, ek: `docs/denetim/2026-10-24-1846.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
 
+## Faz 1 kapanış ölçütü (kullanıcı hedefi 2026-10-26: "şu faz 1 bitsin")
+Faz 1 şu dört şart sağlanınca kapanır; sonrası Faz 2/3:
+1. **Her test edilebilir stratejinin tek satır sonucu var:** TV-2 kripto + kripto dışı 636 + U7. `veri_yok` satırları **bir kez** ikinci kaynakla denenir (Argon veri raporu), bulunamazsa `veri_yok` olarak kapanır; kapanışı bekletmez.
+2. **Sıralama tek tabloda:** TV-2 + U7 geçenler, aynı yöntemle (`tv2_sirala`, kopya ayıklama).
+3. **Geçen her strateji canlı paper teste girer** (kullanıcı kararı 2026-10-26: 20 gölge kitap seçimi kaldırıldı, sayı sınırı yok). Kopya ayıklama sonrası temsilci listesi kullanıcıya bilgi olarak sunulur → `paper/`'a girer.
+4. **Faz 1 sonuç raporu** (lider): geçenler, kalanlar, kapanmayanların nedeni.
+Bu listeye yeni test turu eklenmez; yeni fikirler (BIST 8 fikir, radar) Faz 2 kuyruğuna gider.
+
+**Durum 2026-10-26 16:30 TR (kullanıcı kararı: Faz 2/3 araştırması durduruldu, tüm güç Faz 1'e):**
+- TV-2 (kripto + kripto dışı, 933 satır): geçti 32, kaldı 58, izle 373 (357'si "sürüm sonrası 1 yıldan az veri"), veri_yok 401 (365'i Dukascopy FX/CFD gün içi önbellek bekliyor), işlem_yok 32, diğer 37.
+- **`izle` 373 (kullanıcı kararı 2026-10-26):** bekletilmez; eldeki kısa sınama penceresiyle aynı tek kapı uygulanır (`kisa_sinama=true` bilgi sütunu). Ön sayım ~66 geçer, hepsi paper'a.
+- U7: 85 Geçti → 72 küme temsilcisi (`results/u7/siralama.csv`, PR #215); U1 5m kalan 8 varyant koşuyor.
+- Kalan iş: (a) Dukascopy ikinci kaynak denemesi (veri_yok 365), (b) TV-2 + U7 tek sıralama, (c) geçen tüm temsilcilerin (~100) paper'a alınma planı, (d) Faz 1 sonuç raporu.
+- Son Argon raporları arşivde: `arastirma/veri/`, `arastirma/bist/`, `arastirma/mt5/` (Faz 2/3 için; şimdilik işlenmeyecek).
+
 ## Sırada (kullanıcı kararı bekleyen)
 - **Kararlar 2026-10-24 (denetim):** düşüş kapısı → getiri/düşüş ≥ 0,5; DSR aile bazlı, eleyici değil (Koşullu(DSR) → gölge kitapta canlı teyit); 942 TV stratejisinin hepsi test edilecek (`docs/GOREV_TV2.md`); short fazı U7'den sonra. Bekleyen: Dukascopy gün içi veri (K8), Pine içi ML (K5).
 - **Test yapısı v2 (kullanıcı onayı 2026-10-24, `docs/TEST_YAPISI.md`):** huni eleyici değil. Nedensellik denetimi → sadık test (yazarın sembolü/tf/kodu, long+short; sınama = sürüm tarihi sonrası) → tek kapı (uygulanabilir sonuçta sınama net > 0) → belirsizlik + kopya ayıklama ile sıralama → sanal havuz + 20 gölge kitap → canlı karar (zarar bütçesi %10, aylık kalibre kontrol). Bütün ailelere uygulanır.

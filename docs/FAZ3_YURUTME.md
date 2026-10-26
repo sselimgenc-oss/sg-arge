@@ -129,3 +129,15 @@ değiştirmez.
   manuel küçük uygulama → kullanıcı onaylı sınırlı canlı` sırası korunmalı.
   Her aşamanın süresi ve geçiş kararı kullanıcıya aittir; bu metin geçiş
   eşiği tanımlamaz.
+
+## 7. Argon: BIST/VİOP maliyeti ve vergi (2026-10-26)
+**Maliyet** (`arastirma/bist/bist_viop_maliyet_anomaliler_2026.pdf`):
+- Çift yönlü açık maliyet: aktif kurum (onbinde 2) ~4,9 bps; standart banka tarifesi (binde 2) ~42,7 bps; VİOP XU030 aktif ~4,1 bps. Spread/kayma ayrıca 8–90 bps (küçük hisselerde yüksek).
+- Banka tarifesiyle kısa vadeli BIST stratejilerinden net kâr çıkmaz. **Kullanıcı teyidi gerekli: Gedik ve Vakıf'taki komisyon oranın ne?** Geri testte bu oran kullanılmalı.
+- Tek fiyat açılış/kapanış seansları ve pasif limit emirle spread ödenmez; BISTECH emir iptal cezası 0,75 bps.
+
+**Vergi** (`arastirma/vergi/bireysel_vergi_rehberi_2026.pdf`):
+- BIST pay ve pay/endeks VİOP: %0 stopaj, beyan yok. Döviz/altın/emtia VİOP ve SPK lisanslı forex (Gedik): %10 nihai stopaj.
+- Yurt dışı ABD hissesi (Alpaca/IBKR): değer artışı kazancı yıllık beyan, %15–40 dilim; temettüde ABD'de kesilen vergi mahsup edilir.
+- Yurt dışı forex/CFD ve kripto: yıllık beyan; **otomatik bot ile yoğun işlemde "ticari kazanç" riski** (GVK m. 37). Kripto işlem vergisi teklifi raporda "geri çekildi" deniyor; doğrulanmalı.
+- **Lider yorumu:** vergi açısından en sade yol BIST/VİOP pay-endeks ürünleri; Binance vadeli ve yurt dışı hesaplarda beyan yükü ve ticari kazanç riski var. Gerçek parayla başlamadan önce mali müşavir teyidi önerilir (kullanıcı kararı).
