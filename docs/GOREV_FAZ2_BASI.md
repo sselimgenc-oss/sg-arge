@@ -1,7 +1,7 @@
 # Görev: Faz 2 başı — TV-2 Pine kitapları ve 200 günlük kural (kullanıcı onayı 2026-10-26)
 
 Kaynak: `docs/FAZ1_KAPANIS.md` §3 ve §6, `docs/GOREV_PAPER_KURULUM.md` Aşama B, `docs/PAPER_PLAN.md`.
-Dal: `codex/faz2-basi` (`main`'den). Durum: `docs/codex_durum_faz2.md`. İki ayrı PR (iş 1, iş 2); sırayla.
+Dal: `codex/faz2-basi` (`main`'den). Durum: `docs/codex_durum_faz2.md`. Ayrı PR'lar: İş 1, İş 2 sırayla; İş 3 ayrı oturumda paralel yapılabilir (dal `codex/faz2-dogrulama`, `paper/`'a dokunmaz).
 
 **Değişmez:** yöntem, kapılar, eşikler, karar kodu, mevcut 11 kitabın kartları ve ağırlıkları. Testler zayıflatılmaz.
 Gerçek para / aracı kurum yok. Repo herkese açık: anahtar ve kişisel veri yok. PR açmadan önce **tam test paketi**
@@ -47,6 +47,36 @@ SPY, Kripto kitapları BTCUSDT; Keşif (META) SPY. Açık pozisyonlar ve çıkı
 2. Kart motorunda (`tarama.prepare` sonrası boyutlandırma) ve `tv2_kitap`'ta aynı yardımcı fonksiyon kullanılır.
 3. Defterde her girişe `rejim_carpani` (1 ya da 0,5) ve referans/ortalama değerleri yazılır; panelde bugünkü rejim.
 4. Testler: eşik altı/üstü, sınırda eşitlik (altında değilse 1), kısa girişte etkisiz, nedensellik testi.
+
+## İş 3 — Bekleyen 4 doğrulama (PR: `[Faz2] 4 doğrulama`)
+
+Kaynak: Gemini araştırma notu (`arastirma/faz2_dogrulama_veri_notu.md`). Amaç: TV-2'de vekil veriyle geçen 4 stratejiyi
+asıl piyasaya yakın **ücretsiz** veriyle, **aynı TV-2 emülatörü, aynı maliyet ve aynı kapıyla** (uygulanabilir sınama
+net > 0) yeniden koşmak. Yöntem, kapı, eşik değişmez; yalnız veri (ve perp için funding) değişir.
+Çıktı: `results/faz2_dogrulama.csv` (kimlik, veri, sınama işlem, net %, PF, MDD, TV-2 ilk sonuç, fark) + kısa
+`docs/faz2_dogrulama.md`. Paper'a ekleme **yok**; karar kullanıcının.
+
+| Kimlik | Asıl sembol | TV-2'de kullanılan | Doğrulama verisi |
+|---|---|---|---|
+| QCkIgf3z | COINBASE:ETHUSD 15 | Binance ETHUSDT 15m | Coinbase Exchange API `GET /products/ETH-USD/candles`, granularity 900 (anahtarsız, 300 mum/istek, sayfala) |
+| BR74LOKo | BYBIT:BTCUSDT.P 15 | Binance spot BTCUSDT 15m | Binance USDⓈ-M perp BTCUSDT 15m (`data.binance.vision` futures/um) + funding |
+| zuEOEYPK | BINGX:BTCUSDT.P 180 | Binance spot 1h → 180 | Binance USDⓈ-M perp 1h → 180 + funding |
+| 9u8pzF0I | CME_MINI:MNQ1! 120 | yfinance MNQ=F 60m (düzeltilmemiş) | aşağıda |
+
+1. **Perp + funding:** Binance UM perp klines ve funding geçmişi (`data.binance.vision` futures/um monthly
+   `fundingRate`; yoksa `fapi/v1/fundingRate`). Bybit API GitHub Actions (ABD IP) tarafından engellenebilir; Binance UM
+   vekil kabul (notta borsalar arası fark 1–5 bps). Funding anında (00/08/16 UTC) açık pozisyona
+   `pozisyon_değeri × oran` uygulanır (uzun öder, kısa alır, oran negatifse tersi). Funding'li ve funding'siz sonuç
+   ayrı kolon.
+2. **9u8pzF0I (MNQ):** (a) Pine kaynağında pozisyon büyüklüğü / `default_qty` / kontrat çarpanı nasıl
+   yorumlanıyor, emülatör MNQ için $2 çarpanı ve 0,25 tick'i doğru kullanıyor mu — yaz. (b) Vade devri:
+   MNQ=F serisinde çeyreklik devir günlerini (Mar/Haz/Eyl/Ara 3. Cuma'dan önceki Pazartesi civarı, boşluğa göre tespit)
+   bul, serinin geçmişini fark kadar kaydırarak geriye dönük düzeltilmiş (back-adjusted) seri üret, yeniden koş.
+   (c) Vade boşluğu olmayan vekil olarak QQQ 60m → 120 ile koş (yalnız seans saatleri olduğunu not et).
+   Üç sonuç ayrı satır. Devir barında açık pozisyon PnL'i kaç puan katkı yaptı, ayrıca raporla.
+3. Her doğrulama için TV-2 ilk sonucuyla fark tablosu; kapıyı geçip geçmediği.
+4. Testler: funding hesabı (uzun/kısa, işaret), back-adjust (devir boşluğu kapanır, devir sonrası fiyatlar
+   değişmez), Coinbase sayfalama (örnek yanıtla, ağ yok).
 
 ## Teslim
 
