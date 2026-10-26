@@ -37,7 +37,7 @@ Yazarın iddia ettiği getiri hiçbir aşamada kullanılmaz.
 
 ## Adım 4: canlı izleme
 - **Sanal havuz:** Adım 2'yi geçen ve izle listesindeki bütün adaylar tek bir işte, ortak veri indirmesi ve sinyal hesabıyla, kendi zaman dilimlerinin kapanışında sanal olarak izlenir (günde en çok birkaç koşu). Kitap sayısı sınırı yoktur; gerçek Actions maliyeti ölçülür ve DURUM'a yazılır.
-- **Canlı paper kitapları (sınırsız, kullanıcı kararı 2026-10-26):** Adım 2'yi geçen **her** strateji (kopya ayıklamadan sonra küme temsilcisi) kendi kitabıyla canlı paper teste girer; sayı sınırı, seçim ya da kura yoktur. Her kitap 5.000 USD sanal sermaye, yazarın mantığı, bizim gerçekçi maliyetimiz, ortak ölçekte risk. (Eski "20 gölge kitap" seçimi kaldırıldı.)
+- **Paper'a giriş (kullanıcı kararı 2026-10-26, ikinci):** Adım 2'yi geçen küme temsilcileri tek bir aday tablosunda kullanıcıya sunulur; paper'a hangilerinin gireceğini **kullanıcı seçer** (sayı sınırı yok, kura yok). Her kitap 5.000 USD sanal sermaye, yazarın mantığı, bizim gerçekçi maliyetimiz, ortak ölçekte risk.
 - **Deneme kaydı:** `results/canli/denemeler.csv`: kitaba giren, çıkan, yerine giren her strateji tarihiyle. Hiçbir satır silinmez.
 
 ## Adım 5: canlı karar
