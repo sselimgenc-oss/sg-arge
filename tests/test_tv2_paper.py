@@ -60,7 +60,7 @@ def test_source_failure_writes_a_per_book_stop_alarm(monkeypatch: pytest.MonkeyP
     monkeypatch.setattr(tv2_kitap, "calistir_kitap", lambda *_args, **_kwargs: (_ for _ in ()).throw(tv2_kitap.KaynakDogrulamaHatasi("SHA256 uyuşmuyor")))
     gunluk.calistir(portfolio, gunluk.Veri({}, {}, "sabit"), tmp_path, bugun=start)
     alarms = gunluk._read(tmp_path, "alarmlar")  # noqa: SLF001
-    assert ((alarms["tip"] == "DURDUR") & (alarms["satir"] == satir.etiket) & alarms["mesaj"].str.contains("SHA256")).any()
+    assert ((alarms["tip"] == "KAYNAK_HATASI") & (alarms["satir"] == satir.etiket) & alarms["mesaj"].str.contains("SHA256")).any()
 
 
 def test_open_bar_is_not_given_to_tv2_runner(monkeypatch: pytest.MonkeyPatch) -> None:

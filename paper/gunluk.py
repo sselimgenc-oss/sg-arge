@@ -550,8 +550,9 @@ def calistir(
         latest = max(f.index[-1] for f in frames.values())
         if (reference_day - latest).days > limit:
             new_alarms.append({"tarih": _day(reference_day), "tip": "VERI_ESKI", "satir": market, "mesaj": f"son bar {_day(latest)}"})
+    # Kalıcı DURDUR değil: geçici ağ hatası kitabı sonsuza dek kapatmasın; kitap bu koşuda çalışmaz, sonraki koşu yeniden dener.
     for etiket, message in kaynak_hatalari.items():
-        new_alarms.append({"tarih": _day(reference_day), "tip": "DURDUR", "satir": etiket,
+        new_alarms.append({"tarih": _day(reference_day), "tip": "KAYNAK_HATASI", "satir": etiket,
                            "mesaj": f"TV-2 kitap çalışmadı: {message}"})
     # existing equity rows that the re-run now disagrees with (data revision): keep the row, write an alarm
     known = _read(defter, "ozkaynak")

@@ -51,3 +51,4 @@ Durum: tamamlandı; dal uzak repoya gönderildi. PR oluşturma, geçersiz
   aynı) yapılır, adet/maliyet/PnL/özkaynak kitap sermayesine oranlanır. Prova: 2 ayda +%0,5. Test eklendi.
 - **Kullanıcı kararı:** wcegMOXj portföyden çıktı (tek enstrüman ETHBTC). BTC→USD kodu kalır, kullanılmaz.
 - İş 2 (200 günlük kural) bu dalda yok; İş 3 dalı (`codex/faz2-dogrulama`) uzak repoya gönderilmemiş.
+- **Düzeltildi — kaynak hatası alarmı:** SHA/ağ/veri hatası artık kalıcı `DURDUR` değil `KAYNAK_HATASI`; kitap o koşuda çalışmaz, sonraki koşu yeniden dener (tek bir pine-facade hatası yho kitabını kalıcı kapatırdı).
