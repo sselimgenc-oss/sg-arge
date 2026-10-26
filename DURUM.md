@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-25 01:30 UTC, lider (Opus).
+Son güncelleme: 2026-10-26 11:45 UTC, lider (Opus). Son denetim: `docs/denetim/2026-10-26-1115.md`.
 
 ## Şu an
 **Faz 2: paper trade çalışıyor.** C07 + R01 (ABD günlük) + A6-010 (emtia günlük), eşit ağırlık, 5.000 USD sanal (`paper/portfoy.yaml`). Gerçek para yok.
@@ -13,9 +13,9 @@ Son güncelleme: 2026-10-25 01:30 UTC, lider (Opus).
 | Ajan | Görev |
 |---|---|
 | Lider | Lider + **denetçi** (6 saatte bir, `docs/denetim/`). U7 denetimi, `results/U7_SONUC.md`. |
-| Codex | **U7** (#200, taslak): U4, U6 (97/97), U1 5m bitti; Reddit 1/2a bitti; Faz 1 GitHub Actions'ta koşuyor (uzun koşular Actions'ta: Codex ortamı arka plan süreçlerini öldürüyor). Sonra `[TV-2] veri eşleme` (Dukascopy, vnstock). Gece görev listesi: `docs/GOREV_GECE_2026-10-24.md`. |
+| Codex | U7 (#200) **birleşti**. TV-2 kripto + kripto dışı + analiz ana dala birleştirildi (2026-10-26 denetimi). Sırada: kripto dışı 556 kimliğin yeniden koşusu (`tv2.yml` commit hatası düzeltildi), NVDAX veri kaynağı, `docs/CODEX_AKIS.md` havuzu. |
 | Sonnet | **Limit bitti, 2026-10-27 Salı 18:00'e kadar görev yok.** Son iş: GOREV_U7 Ek 4 (#206, birleşti): 17 kart çevrildi, 21 Doğrulanamaz (çoğu durum makinesi/açık kâr/izleyen stop: TV-2 yürütücüsüyle yeniden ele alınır). |
-| Argon | **İptal** (kullanıcı, 2026-10-24). `arastirma/argon/GOREV_ARGON_1.md` uygulanmayacak; erişilemeyen kaynaklar (K2) Codex/lider işine döner. |
+| Argon | Derin araştırma (abonelik 3 ay). Teslim: copy trade, ML, radar, pano, risk, emir yolu (`arastirma/`). Sırada: veri kaynakları, vergi, BIST maliyet, Telegram rehberi, Renko. |
 
 **TV-2** (`docs/GOREV_TV2.md`, `docs/TEST_YAPISI.md`): Pine kodu çeviri yapılmadan yürütülür (`engine/pine`, `engine/tv_emulator.py`, `backtests/tv2.py`). Açık kaynak 969 (+33 kapalı/bulunamadı); kapsam kuralı Ek 2: her strateji sonuç ya da çözüm görevi. Kripto 296: 92+ koşuldu (19 geçti), kalan 204 lider ortamında kuyrukta. Kripto dışı 636 veri eşlemesi bekliyor (yfinance gün içi hazır; Dukascopy/vnstock Codex). Yorumlayıcı 2026-10-24/25 gecesi: calc_on_order_fills, gün içi risk, Heikin Ashi, matrix, alt dilim, kütüphane import, enum, FIFO kapanış, hızlı ayrıştırıcı (~100x). Yapay veri taraması: 969'un ~%90'ı çalışıyor.
 

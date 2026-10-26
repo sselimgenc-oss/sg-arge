@@ -196,6 +196,7 @@ def fetch_binance(
     *,
     start: pd.Timestamp | None = None,
     session: requests.Session | None = None,
+    url: str = BINANCE_KLINES_URL,
 ) -> pd.DataFrame:
     client = session or requests.Session()
     cursor = max(start or BINANCE_START, BINANCE_START)
@@ -203,7 +204,7 @@ def fetch_binance(
     pages: list[pd.DataFrame] = []
     while cursor < end:
         response = client.get(
-            BINANCE_KLINES_URL,
+            url,
             params={
                 "symbol": asset.symbol,
                 "interval": interval,

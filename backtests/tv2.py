@@ -14,6 +14,7 @@ yeniden koşuda güncellenir) ve `results/tv2/getiriler/<id>.csv` (uygulanabilir
 from __future__ import annotations
 
 import argparse
+import csv
 import importlib
 import json
 import pkgutil
@@ -36,21 +37,25 @@ ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "data" / "tv2"
 OUT = ROOT / "results" / "tv2"
 SURUMLER = ROOT / "arastirma" / "tv2_surumler.csv"
+ESLESME = ROOT / "arastirma" / "tv2_veri_eslesme.csv"
 
 KRIPTO_BORSALARI = {"BINANCE", "BYBIT", "OKX", "COINBASE", "BITSTAMP", "KUCOIN", "BITGET", "MEXC", "KRAKEN", "BINANCEUS",
                     "BITFINEX", "GATEIO", "PHEMEX", "CRYPTO", "BLACKBULL"}
+KRIPTO_TAKMA_ADLARI = {"BTCUSD", "ETHUSD"}  # request.security() içindeki öneksiz sürekli spot takma adları
 BINANCE_ARALIK = {"1m": 1, "3m": 3, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "2h": 120, "4h": 240, "6h": 360, "8h": 480,
                   "12h": 720, "1d": 1440, "3d": 4320, "1w": 10080}
 YFINANCE = {"SPX": "^GSPC", "SPX500": "^GSPC", "US500": "^GSPC", "SPY": "SPY", "NDX": "^NDX", "NAS100": "^NDX", "US100": "^NDX",
             "QQQ": "QQQ", "DJI": "^DJI", "US30": "^DJI", "XAUUSD": "GC=F", "GOLD": "GC=F", "XAGUSD": "SI=F", "USOIL": "CL=F",
             "WTI": "CL=F", "EURUSD": "EURUSD=X", "GBPUSD": "GBPUSD=X", "USDJPY": "JPY=X", "AUDUSD": "AUDUSD=X", "DAX": "^GDAXI",
             "DE40": "^GDAXI", "GER40": "^GDAXI", "VIX": "^VIX", "VIX9D": "^VIX9D", "VXN": "^VXN", "TNX": "^TNX",
-            "DXY": "DX-Y.NYB", "US10Y": "^TNX", "ES1!": "ES=F", "NQ1!": "NQ=F", "GC1!": "GC=F", "CL1!": "CL=F", "BTC1!": "BTC=F"}
+            "DXY": "DX-Y.NYB", "US10Y": "^TNX", "ES1!": "ES=F", "NQ1!": "NQ=F", "MES1!": "MES=F", "MNQ1!": "MNQ=F", "YM1!": "YM=F", "RTY1!": "RTY=F", "GC1!": "GC=F", "CL1!": "CL=F", "BTC1!": "BTC=F"}
 HISSE_BORSALARI = {"NASDAQ", "NYSE", "AMEX", "ARCA", "BATS", "NYSEARCA", "CBOE", "TVC", "CME", "CME_MINI", "COMEX", "NYMEX", ""}
 KAPI_HAFTA = 10
 NEDENSELLIK_BAR = 15_000
 DAKIKALIK_ALT = 15            # bu dakikanın altı yalnız --dakikalik ile ve pencereli koşulur
 DAKIKALIK_KOS = False
+OKX_ARALIK = {"1m": "1m", "3m": "3m", "5m": "5m", "15m": "15m", "30m": "30m", "1h": "1H", "2h": "2H", "4h": "4H", "6h": "6H", "12h": "12H", "1d": "1D"}
+BINANCE_UM_KLINES_URL = "https://fapi.binance.com/fapi/v1/klines"
 
 
 def dakika(tf: str) -> int:
@@ -68,6 +73,29 @@ def _binance_sembol(sembol: str) -> str:
     if s.startswith("XBT"):
         s = "BTC" + s[3:]
     return s[:-3] + "USDT" if s.endswith("USD") and not s.endswith("USDT") else s
+
+
+def _okx_veri(bsym: str, dk: int) -> tuple[pd.DataFrame | None, str]:
+    """Try a public OKX swap candle page when Binance has no symbol."""
+    interval = next((v for k, v in OKX_ARALIK.items() if dakika(k) == dk), None)
+    if interval is None or not bsym.endswith(("USDT", "USDC")):
+        return None, f"veri_yok: OKX aralık/sembol {bsym}"
+    quote = "USDC" if bsym.endswith("USDC") else "USDT"
+    inst = f"{bsym[:-len(quote)]}-{quote}-SWAP"
+    try:
+        response = requests.get("https://www.okx.com/api/v5/market/candles",
+                                params={"instId": inst, "bar": interval, "limit": 1000}, timeout=30)
+        response.raise_for_status()
+        payload = response.json()
+        rows = payload.get("data", []) if payload.get("code") == "0" else []
+    except (requests.RequestException, ValueError):
+        return None, f"veri_yok: OKX {inst}"
+    if not rows:
+        return None, f"veri_yok: OKX {inst}"
+    frame = pd.DataFrame(rows, columns=["timestamp", "open", "high", "low", "close", "volume", "volume_ccy", "volume_ccy_quote", "confirm"])
+    frame.index = pd.to_datetime(frame.pop("timestamp").astype("int64"), unit="ms", utc=True)
+    frame = frame[["open", "high", "low", "close", "volume"]].apply(pd.to_numeric, errors="coerce").dropna()
+    return _kapanmis(frame.sort_index(), dk), f"OKX {inst} {interval} (ikinci kaynak)"
 
 
 def binance_tick(bsym: str) -> float:
@@ -90,7 +118,7 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
     if not ad:                                  # önek yok: 'SPY', 'VIX', 'BTCUSDT'
         borsa, ad = "", borsa
     dk = dakika(tf)
-    if borsa in KRIPTO_BORSALARI or ad.endswith(("USDT", "USDT.P", "USDC")):
+    if borsa in KRIPTO_BORSALARI or ad.endswith(("USDT", "USDT.P", "USDC")) or ad in KRIPTO_TAKMA_ADLARI:
         bsym = _binance_sembol(sembol.upper())
         taban = max((v for v in BINANCE_ARALIK.values() if dk % v == 0 and v <= dk), default=None)
         if taban is None:
@@ -98,20 +126,37 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
         aralik = next(k for k, v in BINANCE_ARALIK.items() if v == taban)
         ek = f"_{bas:%Y%m%d}" if bas is not None else ""
         yol = CACHE / f"{bsym}_{aralik}{ek}.parquet"
+        kaynak = "Binance"
         if yol.exists() and time.time() - yol.stat().st_mtime < 6 * 3600:
             df = pd.read_parquet(yol)
         else:
             try:
                 df = fetch_binance(Asset(bsym, "KRIPTO", "binance"), aralik, start=bas)
             except requests.HTTPError:
-                return None, f"veri_yok: Binance {bsym} yok"
+                # TradingView'deki bazı USDT perpetual'lar spotta listeli değildir.
+                # Aynı sözleşmeyi USDⓈ-M klines'tan dene; sonuç satırı kaynağı taşır.
+                try:
+                    df = fetch_binance(Asset(bsym, "KRIPTO", "binance"), aralik, start=bas,
+                                       url=BINANCE_UM_KLINES_URL)
+                    kaynak = "binance_um"
+                except requests.HTTPError:
+                    alt, alt_note = _okx_veri(bsym, dk)
+                    if alt is not None:
+                        return alt, alt_note
+                    return None, f"veri_yok: Binance spot/UM {bsym} yok"
             if df.empty:
+                alt, alt_note = _okx_veri(bsym, dk)
+                if alt is not None:
+                    return alt, alt_note
                 return None, f"veri_yok: Binance {bsym}"
             CACHE.mkdir(parents=True, exist_ok=True)
             df.to_parquet(yol)
         if taban != dk:
             df = _yeniden_ornekle(df, dk)
-        return _kapanmis(df, dk), f"Binance {bsym} {aralik}" + ("" if taban == dk else f" → {tf}")
+        return _kapanmis(df, dk), f"{kaynak} {bsym} {aralik}" + ("" if taban == dk else f" → {tf}")
+    dis = _eslenmis_veri(sembol, dk)
+    if dis is not None:
+        return dis
     kok = ad.split(".")[0]
     if dk >= 1440 and (kok in YFINANCE or (borsa in HISSE_BORSALARI and re.fullmatch(r"[A-Z]{1,5}", kok))):
         import yfinance as yf
@@ -125,6 +170,48 @@ def veri(sembol: str, tf: str, bas: pd.Timestamp | None = None) -> tuple[pd.Data
     if dk < 1440 and (kok in YFINANCE or (borsa in HISSE_BORSALARI and re.fullmatch(r"[A-Z]{1,5}", kok))):
         return _yfinance_gun_ici(YFINANCE.get(kok, kok), dk)
     return None, "veri_yok: gün içi/yerel piyasa (Dukascopy bekliyor)" if dk < 1440 else f"veri_yok: eşleme yok ({sembol})"
+
+
+def _esleme(sembol: str) -> dict[str, str] | None:
+    """Return the first external-source mapping for a TradingView symbol."""
+    if not ESLESME.exists():
+        return None
+    wanted = sembol.upper()
+    with ESLESME.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            if row.get("yayin_sembolu", "").upper() == wanted:
+                return row
+    return None
+
+
+def _eslenmis_veri(sembol: str, dk: int) -> tuple[pd.DataFrame | None, str] | None:
+    """Mapped Dukascopy/vnstock data.  Absence of a mapping lets normal fallbacks run."""
+    row = _esleme(sembol)
+    if row is None or row.get("kaynak") not in {"dukascopy", "vnstock"}:
+        return None
+    code = row.get("esdeger") or row.get("esdeger_sembol") or row.get("veri_sembolu") or ""
+    if row["kaynak"] == "dukascopy":
+        from data import dukascopy
+
+        frames = [dukascopy.load_archive(code, year) for year in range(2010, pd.Timestamp.now(tz="UTC").year + 1)]
+        frames = [frame for frame in frames if not frame.empty]
+        if not frames:
+            return None, f"veri_yok: Dukascopy önbelleği {code}"
+        frame = pd.concat(frames).sort_index()
+        if dk != 1:
+            frame = _yeniden_ornekle(frame, dk)
+        return _kapanmis(frame, dk), f"Dukascopy {code} (eşleme)"
+    try:
+        from vnstock import Vnstock  # type: ignore[import-not-found]
+        raw = Vnstock().stock(symbol=code, source="VCI").quote.history(start="2010-01-01", end=pd.Timestamp.now().date().isoformat(), interval="1D")
+    except (ImportError, AttributeError, ValueError) as exc:
+        return None, f"veri_yok: vnstock {code} ({type(exc).__name__})"
+    if raw is None or raw.empty:
+        return None, f"veri_yok: vnstock {code}"
+    raw.columns = [str(column).lower() for column in raw.columns]
+    raw.index = pd.to_datetime(raw.index if not isinstance(raw.index, pd.RangeIndex) else raw["time"], utc=True)
+    frame = raw[["open", "high", "low", "close", "volume"]].dropna()
+    return _kapanmis(frame, dk), f"vnstock {code} (eşleme)"
 
 
 YF_ARALIK = {1: ("1m", "7d"), 2: ("2m", "60d"), 5: ("5m", "60d"), 15: ("15m", "60d"), 30: ("30m", "60d"),
@@ -166,6 +253,11 @@ def _yeniden_ornekle(df: pd.DataFrame, dk: int) -> pd.DataFrame:
 def _kapanmis(df: pd.DataFrame, dk: int) -> pd.DataFrame:
     simdi = pd.Timestamp.now(tz="UTC")
     return df[df.index + pd.to_timedelta(int(dk), unit="min") <= simdi]
+
+
+def _veri_kisa(notu: str) -> bool:
+    """yfinance'ın 1-30 dakikalık, en çok 7/60 günlük penceresini yalnız bilgi olarak işaretle."""
+    return notu.startswith("yfinance ") and bool(re.search(r"\(son (?:7d|60d)\)", notu))
 
 
 def surum_tarihi(kimlik: str, kaynak: dict | None = None) -> tuple[pd.Timestamp | None, str]:
@@ -239,6 +331,23 @@ def kutuphane_kaynak(kullanici: str, ad: str, surum: int) -> str | None:
 
 yorumlayici.KUTUPHANE_SAGLAYICI = kutuphane_kaynak
 
+FOOTPRINT_TICK = {"BITSTAMP:BTCUSD": 1.0, "BITSTAMP:ETHUSD": 0.1}   # TradingView mintick (varsayım, uyarıda yazılır)
+
+
+def _footprint_veri(sembol: str, dk: int):
+    """request.footprint: Binance aggTrades özeti (backtests.tv2_footprint); `.P` vadeli (um), diğerleri spot."""
+    from backtests import tv2_footprint
+    bsym = _binance_sembol(sembol)
+    piyasa = "um" if sembol.upper().endswith(".P") else "spot"
+    okunan = tv2_footprint.oku(bsym, piyasa, dk)
+    if okunan is None:
+        return None
+    barlar, taban = okunan
+    return barlar, taban, FOOTPRINT_TICK.get(sembol.upper(), binance_tick(bsym))
+
+
+yorumlayici.FOOTPRINT_SAGLAYICI = _footprint_veri
+
 
 def strateji(kimlik: str):
     """(modül, KAYNAK sözlüğü): el çevirisi varsa o, yoksa tv2_surumler.csv satırından Pine yorumlayıcısı."""
@@ -255,10 +364,21 @@ def strateji(kimlik: str):
     return None, kaynak
 
 
+def _ucretli(sembol: str, tf: str, src: str | None) -> str | None:
+    """GOREV_TV2 Ek 3 (kullanıcı kararı): ücretsiz verisi olmayan, yani CME/CBOT/COMEX/NYMEX işlem akışı (footprint).
+    Gün içi kısa ücretsiz geçmiş (yfinance) ücretli sayılmaz: eldeki veriyle test edilir, etiketi yetersiz_kanit."""
+    if str(sembol).upper().startswith(("CME", "CBOT", "COMEX", "NYMEX")) and src and "request.footprint" in src:
+        return "CME işlem akışı (footprint) ücretli"
+    return None
+
+
 def kos(kimlik: str) -> dict:
     modul, kaynak = strateji(kimlik)
     satir: dict = {"id": kimlik, "sembol": kaynak["sembol"], "tf": kaynak["tf"], "url": kaynak["url"],
                    "tur": "pine" if kaynak.get("pine") else "modul"}
+    ucret = _ucretli(kaynak["sembol"], kaynak["tf"], pine_kaynak(kimlik, kaynak["pub"]) if kaynak.get("pine") else None)
+    if ucret:
+        return satir | {"karar": "veri_ucretli", "neden": ucret}
     pencere_bas = None
     if dakika(str(kaynak["tf"])) < DAKIKALIK_ALT:
         if not DAKIKALIK_KOS:
@@ -269,6 +389,8 @@ def kos(kimlik: str) -> dict:
             satir["pencere_bas"] = pencere_bas.date()
     df, notu = veri(str(kaynak["sembol"]), str(kaynak["tf"]), bas=pencere_bas)
     satir["veri"] = notu
+    if _veri_kisa(notu):
+        satir["veri_kisa"] = True
     if df is None:
         return satir | {"karar": "veri_yok", "neden": notu}
     satir |= {"bas": df.index[0].date(), "son": df.index[-1].date(), "bar": len(df)}
@@ -284,7 +406,8 @@ def kos(kimlik: str) -> dict:
                                  mintick=tick, kimlik=kimlik)
             modul.veri_saglayici = _dis_veri
             satir["uyari"] = "; ".join(modul.uyarilar + ([f"mintick veri kaynağından ({tick})"] if re.search(
-                r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []))
+                r"\b(profit|loss|trail_points|trail_offset)\s*=|syminfo\.mintick", src) else []) + (
+                ["footprint: Binance aggTrades (GOREV_TV2 Ek 3), satır mintick'i varsayım"] if "request.footprint" in src else []))
         yazar = calistir(modul, df)
         # nedensellik: geleceği gören kod kısa pencerede de aynı biçimde yakalanır; uzun geçmişte (1H ~80 bin bar) 6 kesim pahalı
         pencere = df.iloc[-NEDENSELLIK_BAR:]

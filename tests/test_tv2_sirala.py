@@ -32,3 +32,13 @@ def test_copies_join_the_better_ranked_representative() -> None:
     ayri = _seri(5)
     kume = S.kumele({"a": a, "k": kopya, "b": ayri}, ["a", "k", "b"])
     assert kume == {"a": "a", "k": "a", "b": "b"}
+
+
+def test_effective_trials_is_information_only_and_tracks_correlation() -> None:
+    a = _seri(10)
+    identical = a.copy()
+    independent = _seri(11)
+    assert S.etkin_deneme_sayisi({"a": a}) == 1.0
+    correlated = S.etkin_deneme_sayisi({"a": a, "b": identical})
+    mixed = S.etkin_deneme_sayisi({"a": a, "b": independent})
+    assert 1.0 <= correlated < mixed <= 2.0

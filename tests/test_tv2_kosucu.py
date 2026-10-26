@@ -69,6 +69,97 @@ def test_yfinance_intraday_picks_largest_divisor_and_resamples(monkeypatch, tmp_
 
     monkeypatch.setitem(sys.modules, "yfinance", types.SimpleNamespace(download=indir))
     monkeypatch.setattr(tv2, "CACHE", tmp_path)
-    df, notu = tv2.veri("TVC:DXY", "240")
+    df, notu = tv2._yfinance_gun_ici("DX-Y.NYB", 240)
     assert cagri == {"kod": "DX-Y.NYB", "period": "730d", "interval": "60m"}
     assert len(df) == 12 and "UTC hizalı" in notu
+
+
+def test_mapped_dukascopy_archive_is_used(monkeypatch, tmp_path) -> None:
+    mapping = tmp_path / "map.csv"
+    mapping.write_text("id,yayin_sembolu,tf,kaynak,veri_sembolu,esdeger_sembol\nX,OANDA:EURUSD,5,dukascopy,EURUSD,EURUSD\n", encoding="utf-8")
+    monkeypatch.setattr(tv2, "ESLESME", mapping)
+    frame = pd.DataFrame({"open": [1.], "high": [1.1], "low": [.9], "close": [1.], "volume": [1.]},
+                         index=pd.DatetimeIndex([pd.Timestamp("2024-01-01", tz="UTC")]))
+    monkeypatch.setattr("data.dukascopy.load_archive", lambda *_args: frame)
+
+    data, note = tv2._eslenmis_veri("OANDA:EURUSD", 5)
+
+    assert data is not None
+    assert note == "Dukascopy EURUSD (eşleme)"
+
+
+def test_paid_data_rule() -> None:
+    assert tv2._ucretli("CME_MINI:MNQ1!", "1", "x = request.footprint(50, 70)")
+    assert tv2._ucretli("CME_MINI:NQ1!", "5", "x = close") is None
+    assert tv2._ucretli("BINANCE:BTCUSDT", "1", "x = request.footprint(50, 70)") is None
+
+
+def test_library_source_uses_inventory_pub_and_version(monkeypatch, tmp_path) -> None:
+    inventory = tmp_path / "libraries.csv"
+    inventory.write_text(
+        "yol,pub,sayfa\nben/lib,PUB;abc123,https://example.invalid/library\n",
+        encoding="utf-8",
+    )
+    calls = []
+
+    class Response:
+        text = '{"source":"export f() => 1"}'
+
+    def get(url, timeout):
+        calls.append((url, timeout))
+        return Response()
+
+    monkeypatch.setattr(tv2, "KUTUPHANELER", inventory)
+    monkeypatch.setattr(tv2, "CACHE", tmp_path / "cache")
+    monkeypatch.setattr(tv2.requests, "get", get)
+
+    assert tv2.kutuphane_kaynak("ben", "lib", 3) == "export f() => 1"
+    assert calls == [("https://pine-facade.tradingview.com/pine-facade/get/PUB%3Babc123/3?no_4xx=true", 30)]
+
+
+
+def test_crypto_falls_back_from_spot_to_binance_um(monkeypatch, tmp_path) -> None:
+    index = pd.date_range("2024-01-01", periods=3, freq="1h", tz="UTC")
+    frame = pd.DataFrame({"open": 1., "high": 1., "low": 1., "close": 1., "volume": 1.}, index=index)
+    urls = []
+
+    def fetch(_asset, _interval, **kwargs):
+        urls.append(kwargs.get("url", "spot"))
+        if kwargs.get("url") is None:
+            raise tv2.requests.HTTPError("spot yok")
+        return frame
+
+    monkeypatch.setattr(tv2, "CACHE", tmp_path)
+    monkeypatch.setattr(tv2, "fetch_binance", fetch)
+    monkeypatch.setattr(tv2, "_kapanmis", lambda df, _dk: df)
+
+    data, note = tv2.veri("BYBIT:NVDAXUSDT.P", "60")
+
+    assert data is not None and note.startswith("binance_um NVDAXUSDT")
+    assert urls == ["spot", tv2.BINANCE_UM_KLINES_URL]
+
+
+def test_unprefixed_btcusd_uses_binance_equivalent(monkeypatch, tmp_path) -> None:
+    index = pd.date_range("2024-01-01", periods=3, freq="1h", tz="UTC")
+    frame = pd.DataFrame({"open": 1., "high": 1., "low": 1., "close": 1., "volume": 1.}, index=index)
+    seen = []
+
+    def fetch(asset, _interval, **_kwargs):
+        seen.append(asset.symbol)
+        return frame
+
+    monkeypatch.setattr(tv2, "CACHE", tmp_path)
+    monkeypatch.setattr(tv2, "fetch_binance", fetch)
+    monkeypatch.setattr(tv2, "_kapanmis", lambda df, _dk: df)
+
+    data, note = tv2.veri("BTCUSD", "60")
+
+    assert data is not None and note.startswith("Binance BTCUSDT")
+    assert seen == ["BTCUSDT"]
+
+
+def test_yfinance_short_intraday_window_is_information_only() -> None:
+    assert tv2._veri_kisa("yfinance SPY 5m (son 60d)")
+    assert tv2._veri_kisa("yfinance SPY 1m (son 7d)")
+    assert not tv2._veri_kisa("yfinance SPY 60m (son 730d)")
+    assert not tv2._veri_kisa("Binance BTCUSDT 5m")
