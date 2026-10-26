@@ -47,7 +47,7 @@ LEDGER_COLUMNS = {
     "emirler": ["sinyal_tarihi", "satir", "sembol", "tip", "referans_fiyat", "adet_gosterge", "stop", "hedef"],
     "dolumlar": ["tarih", "satir", "sembol", "tip", "fiyat", "adet", "maliyet", "neden", "referans_fiyat", "kayma_pct", "stop"],
     "pozisyonlar": ["tarih", "satir", "sembol", "giris_tarihi", "giris_fiyati", "adet", "stop", "hedef", "son_kapanis", "acik_kar"],
-    "ozkaynak": ["tarih", "satir", "ozkaynak"],
+    "ozkaynak": ["tarih", "satir", "ozkaynak", "btc_bakiye", "btc_usd_kur", "usd_karsiligi"],
     "alarmlar": ["tarih", "tip", "satir", "mesaj"],
 }
 LEDGER_KEYS = {
@@ -69,6 +69,8 @@ class Satir:
     kaynak: str  # "kart" | "codex"
     agirlik: float
     tf: str = "1D"
+    alan: str = ""
+    baslangic: pd.Timestamp | None = None
 
     @property
     def etiket(self) -> str:
@@ -94,7 +96,9 @@ class GolgeKitap:
 
 def yukle_portfoy(path: Path = PORTFOLIO_PATH) -> Portfoy:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
-    rows = [Satir(str(r["id"]), str(r["piyasa"]), str(r["kaynak"]), float(r["agirlik"]), str(r.get("tf", "1D"))) for r in raw["satirlar"]]
+    rows = [Satir(str(r["id"]), str(r["piyasa"]), str(r["kaynak"]), float(r["agirlik"]), str(r.get("tf", "1D")),
+                  str(r.get("alan", "")), pd.Timestamp(str(r["baslangic"]), tz="UTC") if r.get("baslangic") else None)
+            for r in raw["satirlar"]]
     if not 0 < sum(r.agirlik for r in rows) <= 1.0 + 1e-4:
         raise ValueError("portfoy.yaml: agirliklar 0 ile 1 arasinda toplanmali")
     start = pd.Timestamp(str(raw["baslangic"]), tz="UTC")
@@ -198,6 +202,8 @@ def ilk_bar_bekleniyor(portfoy: Portfoy, veri: Veri) -> list[str]:
     """Rows whose market has no closed daily bar on/after the paper start yet (e.g. Yahoo still serves the day without prices)."""
     bekleyen = []
     for satir in portfoy.satirlar:
+        if satir.kaynak == "tv2":
+            continue  # TV-2 kendi sembolü/zaman dilimiyle kapanmış barı denetler.
         key = "KRIPTO25_4H" if satir.tf == "4H" else satir.piyasa
         frames = [f for f in veri.frames.get(key, {}).values() if len(f)]
         if not frames or max(f.index[-1] for f in frames) < portfoy.baslangic:
@@ -301,6 +307,9 @@ def _card(card_id: str) -> dict[str, Any]:
 def kitap(satir: Satir, veri: Veri, baslangic: pd.Timestamp, sermaye: float, *, maske_tarihi: pd.Timestamp | None = None,
           risk_per_trade: float = .005, max_total_risk: float = .02, tf_override: str | None = None):
     """Run one portfolio row from ``baslangic`` to its last closed bar; entry signals on/after ``maske_tarihi`` are switched off (stop)."""
+    if satir.kaynak == "tv2":
+        from paper import tv2_kitap  # noqa: PLC0415
+        return tv2_kitap.calistir_kitap(satir, baslangic, sermaye, maske_tarihi=maske_tarihi)
     frames = veri.frames["KRIPTO25_4H"] if satir.tf == "4H" else veri.frames[satir.piyasa]
     bitis = max(f.index[-1] for f in frames.values())
     if satir.kaynak == "codex":
@@ -363,6 +372,13 @@ def ekle(directory: Path, name: str, rows: list[dict[str, Any]], stamp: dict[str
     directory.mkdir(parents=True, exist_ok=True)
     path = directory / f"{name}.csv"
     existing = _read(directory, name)
+    # Faz 2'nin BTC mutabakat alanları eski paper-defter şemasında yoktur.
+    # Bir defalık başlık genişletmesi eski değerleri aynen korur; aksi halde
+    # CSV'ye fazla hücre eklenir ve sonraki okumalar kayar.
+    expected = LEDGER_COLUMNS[name] + STAMP
+    if path.exists() and list(existing.columns) != expected:
+        existing = existing.reindex(columns=expected)
+        existing.to_csv(path, index=False, float_format="%.10g")
     known = {_key(r, name) for r in existing.to_dict("records")}
     fresh = []
     for row in rows:
@@ -409,6 +425,7 @@ def calistir(
     """Re-run every row, append what is new to the ledger, evaluate the alarms. ``veri`` must already end at the day being run."""
     stamp = {"git_sha": git_sha or _git_sha(), "data_hash": veri.data_hash}
     sermaye = {r.etiket: portfoy.sermaye * r.agirlik for r in portfoy.satirlar}
+    kitap_baslangic = {r.etiket: r.baslangic or portfoy.baslangic for r in portfoy.satirlar}
     alarms = _read(defter, "alarmlar")
     stop_rows = alarms[alarms["tip"] == "DURDUR"] if not alarms.empty else alarms
 
@@ -424,9 +441,24 @@ def calistir(
         dates = [d for d in (mask, book_stops.get(etiket)) if d is not None]
         return min(dates) if dates else None
 
+    kaynak_hatalari: dict[str, str] = {}
+
     def run_all(mask: pd.Timestamp | None):
-        return {r.etiket: kitap(r, veri, portfoy.baslangic, sermaye[r.etiket], maske_tarihi=_mask(r.etiket, mask),
-                                risk_per_trade=risk_per_trade, max_total_risk=max_total_risk, tf_override=tf_override)[0] for r in portfoy.satirlar}
+        result = {}
+        for r in portfoy.satirlar:
+            try:
+                result[r.etiket] = kitap(r, veri, kitap_baslangic[r.etiket], sermaye[r.etiket], maske_tarihi=_mask(r.etiket, mask),
+                                         risk_per_trade=risk_per_trade, max_total_risk=max_total_risk, tf_override=tf_override)[0]
+            except Exception as exc:  # TV-2 SHA/veri hatası yalnız ilgili kitabı durdurur.
+                if r.kaynak != "tv2":
+                    raise
+                kaynak_hatalari[r.etiket] = str(exc)
+                result[r.etiket] = type("DurdurulmusSonuc", (), {
+                    "equity": pd.Series([sermaye[r.etiket]], index=[kitap_baslangic[r.etiket]]),
+                    "marked_equity": sermaye[r.etiket], "fills": [], "open_positions": [], "next_orders": [],
+                    "trades": pd.DataFrame(columns=["exit_reason", "net_pnl"]), "btc_bakiye": None, "btc_usd_kur": None,
+                })()
+        return result
 
     results = run_all(stop_date)
     new_book_alarms: list[dict[str, Any]] = []
@@ -435,14 +467,14 @@ def calistir(
         for r in portfoy.satirlar:
             if r.etiket in book_stops:
                 continue
-            crossed = ilk_asim(ozkaynak_serisi(results[r.etiket], sermaye[r.etiket]).loc[lambda s: s.index >= portfoy.baslangic], esik)
+            crossed = ilk_asim(ozkaynak_serisi(results[r.etiket], sermaye[r.etiket]).loc[lambda s: s.index >= kitap_baslangic[r.etiket]], esik)
             if crossed is not None:
                 book_stops[r.etiket] = crossed
                 new_book_alarms.append({"tarih": _day(crossed), "tip": "DURDUR", "satir": r.etiket,
                                         "mesaj": f"kitap MDD >= %{esik:.0%}: bu kitapta yeni giris yok"})
         if new_book_alarms:
             results = run_all(stop_date)
-    series = {e: ozkaynak_serisi(res, sermaye[e]).loc[lambda s: s.index >= portfoy.baslangic] for e, res in results.items()}
+    series = {r.etiket: ozkaynak_serisi(results[r.etiket], sermaye[r.etiket]).loc[lambda s: s.index >= kitap_baslangic[r.etiket]] for r in portfoy.satirlar}
     total = portfoy_ozkaynak(series, portfoy.sermaye)
     new_alarms: list[dict[str, Any]] = list(new_book_alarms)
     last_day = total.index[-1]
@@ -453,7 +485,7 @@ def calistir(
             new_alarms.append({"tarih": _day(crossed), "tip": "DURDUR", "satir": PORTFOLIO_ROW,
                                "mesaj": f"portfoy MDD >= %{portfoy.alarm.get('mdd_durdur', 0.15):.0%}: yeni giris yok, devam icin kullanici karari gerekir"})
             results = run_all(stop_date)
-            series = {e: ozkaynak_serisi(res, sermaye[e]).loc[lambda s: s.index >= portfoy.baslangic] for e, res in results.items()}
+            series = {r.etiket: ozkaynak_serisi(results[r.etiket], sermaye[r.etiket]).loc[lambda s: s.index >= kitap_baslangic[r.etiket]] for r in portfoy.satirlar}
             total = portfoy_ozkaynak(series, portfoy.sermaye)
     drawdown = max_dusus(total)
     if drawdown >= portfoy.alarm.get("mdd_uyari", 0.10):
@@ -466,14 +498,14 @@ def calistir(
     for satir in portfoy.satirlar:
         etiket, result = satir.etiket, results[satir.etiket]
         for order in result.next_orders:
-            if pd.Timestamp(order["sinyal_tarihi"]) < portfoy.baslangic:
+            if pd.Timestamp(order["sinyal_tarihi"]) < kitap_baslangic[etiket]:
                 continue
             order_rows.append({
                 "sinyal_tarihi": _defter_tarihi(order["sinyal_tarihi"], zaman_damgali=zaman_damgali), "satir": etiket, "sembol": order["sembol"], "tip": order["tip"],
                 "referans_fiyat": order["referans_fiyat"], "adet_gosterge": order.get("adet"), "stop": order.get("stop"), "hedef": order.get("hedef"),
             })
         for fill in result.fills:
-            if fill.get("neden") == "end_of_test" or pd.Timestamp(fill["tarih"]) < portfoy.baslangic:
+            if fill.get("neden") == "end_of_test" or pd.Timestamp(fill["tarih"]) < kitap_baslangic[etiket]:
                 continue  # the engine closes every position at the end of a run; that is not a trade
             data_key = "KRIPTO25_4H" if satir.tf == "4H" else satir.piyasa
             bars = veri.frames[data_key].get(fill["sembol"])
@@ -490,10 +522,16 @@ def calistir(
                 "giris_fiyati": pos["giris_fiyati"], "adet": pos["adet"], "stop": pos["stop"], "hedef": pos["hedef"], "son_kapanis": pos["son_kapanis"],
                 "acik_kar": (pos["son_kapanis"] - pos["giris_fiyati"]) * pos["adet"],
             })
+        btc_bakiye = getattr(result, "btc_bakiye", None)
+        btc_kur = getattr(result, "btc_usd_kur", None)
         for date, value in series[etiket].items():
-            equity_rows.append({"tarih": _defter_tarihi(date, zaman_damgali=zaman_damgali), "satir": etiket, "ozkaynak": value})
+            btc = float(btc_bakiye.loc[date]) if btc_bakiye is not None and date in btc_bakiye.index else float("nan")
+            kur = float(btc_kur.loc[date]) if btc_kur is not None and date in btc_kur.index else float("nan")
+            equity_rows.append({"tarih": _defter_tarihi(date, zaman_damgali=zaman_damgali), "satir": etiket, "ozkaynak": value,
+                                "btc_bakiye": btc, "btc_usd_kur": kur, "usd_karsiligi": value})
     for date, value in total.items():
-        equity_rows.append({"tarih": _defter_tarihi(date, zaman_damgali=zaman_damgali), "satir": PORTFOLIO_ROW, "ozkaynak": value})
+        equity_rows.append({"tarih": _defter_tarihi(date, zaman_damgali=zaman_damgali), "satir": PORTFOLIO_ROW, "ozkaynak": value,
+                            "btc_bakiye": float("nan"), "btc_usd_kur": float("nan"), "usd_karsiligi": value})
     # profit-factor review: a row with >= N closed trades and PF < 1
     pf_limit = int(portfoy.alarm.get("pf_inceleme_islem", 30))
     summary_rows = {}
@@ -512,6 +550,9 @@ def calistir(
         latest = max(f.index[-1] for f in frames.values())
         if (reference_day - latest).days > limit:
             new_alarms.append({"tarih": _day(reference_day), "tip": "VERI_ESKI", "satir": market, "mesaj": f"son bar {_day(latest)}"})
+    for etiket, message in kaynak_hatalari.items():
+        new_alarms.append({"tarih": _day(reference_day), "tip": "DURDUR", "satir": etiket,
+                           "mesaj": f"TV-2 kitap çalışmadı: {message}"})
     # existing equity rows that the re-run now disagrees with (data revision): keep the row, write an alarm
     known = _read(defter, "ozkaynak")
     if not known.empty:

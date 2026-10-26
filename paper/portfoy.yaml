@@ -19,6 +19,10 @@ satirlar:
   - {id: U4-H2, piyasa: KRIPTO25, tf: 1D, kaynak: kart, alan: Kripto, agirlik: .03}
   - {id: TV-KO7Qe4Xb, piyasa: EMTIA, tf: 1D, kaynak: kart, alan: Emtia, agirlik: .13}
   - {id: U4-H3, piyasa: EMTIA, tf: 1D, kaynak: kart, alan: Emtia, agirlik: .07}
+  # Faz 2 TV-2 kitapları: başlangıç öncesi barlar yalnız Pine gösterge ısınması içindir.
+  - {id: G4RNcGXg, piyasa: ABD25, tf: 60, kaynak: tv2, alan: ABD, agirlik: .05, baslangic: 2026-10-27}
+  - {id: wcegMOXj, piyasa: KRIPTO25, tf: 360, kaynak: tv2, alan: Kripto, agirlik: .05, baslangic: 2026-10-27}
+  - {id: yhoK9cH4, piyasa: ABD25, tf: 15, kaynak: tv2, alan: Keşif, agirlik: .05, baslangic: 2026-10-27}
 alarmlar:
   kitap_mdd_durdur: .10
   mdd_uyari: .05
