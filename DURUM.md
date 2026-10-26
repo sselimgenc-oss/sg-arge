@@ -13,6 +13,8 @@ Son güncelleme: 2026-10-26 (akşam), lider. Faz 1 kapanış: `docs/FAZ1_KAPANIS
 
 **Kullanıcı kararı 2026-10-26 (4 doğrulama):** QCkIgf3z, BR74LOKo, zuEOEYPK, 9u8pzF0I kapıyı geçti ama getiri küçük / kanıt zayıf (`docs/faz2_dogrulama.md`) → paper'a **alınmadı**; konu kapandı.
 
+**Kapı değerlendirmesi (2026-10-26, `docs/kapi_degerlendirme.md`):** 7 yapay zekâ ortak: "net > 0" kapısı geçirgen (beta, çoklu test, kısa sınama). Lider bulgusu: paper'daki 11 U7 kitabından 10'u eski hunideki rastgele giriş testini geçmemişti (yalnız TV-71yKm18B geçti). Paper'a dokunulmaz; Kapı v3 önerisi kullanıcı kararında.
+
 **Faz 2 başı — KAPANDI (2026-10-26):** TV-2 Pine kitapları G4RNcGXg + yhoK9cH4 paper'da (#256; wcegMOXj kullanıcı kararıyla çıktı); 4 doğrulama yapıldı, paper'a alınmadı (#258); 200 günlük kural kullanıcı kararıyla kaldırıldı (test edilmemiş kural paper'ı test edilenden farklılaştırırdı). **Strateji seçimi kapandı; Faz 2 asıl iş: pano + koç (`docs/GOREV_FAZ2_PANO.md`).**
 
 ## Faz 1 NİHAİ KARAR (kullanıcı onayı 2026-10-26)
