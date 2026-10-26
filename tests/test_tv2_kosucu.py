@@ -118,15 +118,13 @@ def test_library_source_uses_inventory_pub_and_version(monkeypatch, tmp_path) ->
 
 
 
-def test_crypto_falls_back_from_spot_to_binance_um(monkeypatch, tmp_path) -> None:
+def test_nvdaxusdt_is_not_substituted_with_binance_nvdausdt(monkeypatch, tmp_path) -> None:
     index = pd.date_range("2024-01-01", periods=3, freq="1h", tz="UTC")
     frame = pd.DataFrame({"open": 1., "high": 1., "low": 1., "close": 1., "volume": 1.}, index=index)
     urls = []
 
     def fetch(_asset, _interval, **kwargs):
         urls.append(kwargs.get("url", "spot"))
-        if kwargs.get("url") is None:
-            raise tv2.requests.HTTPError("spot yok")
         return frame
 
     monkeypatch.setattr(tv2, "CACHE", tmp_path)
@@ -135,8 +133,10 @@ def test_crypto_falls_back_from_spot_to_binance_um(monkeypatch, tmp_path) -> Non
 
     data, note = tv2.veri("BYBIT:NVDAXUSDT.P", "60")
 
-    assert data is not None and note.startswith("binance_um NVDAXUSDT")
-    assert urls == ["spot", tv2.BINANCE_UM_KLINES_URL]
+    assert data is None
+    assert "sembol eşlemesi yanlış" in note
+    assert "NVDAUSDT farklı sözleşmedir" in note
+    assert urls == []
 
 
 def test_unprefixed_btcusd_uses_binance_equivalent(monkeypatch, tmp_path) -> None:
