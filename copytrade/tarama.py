@@ -17,9 +17,10 @@ from copytrade.kopya import simulate
 from copytrade.kurallar import evaluate, load_rules
 from copytrade.olcut import calculate_metrics
 
+MAX_ADDRESSES = 150  # lider kararı 2026-10-26: ilk koşular 150 adres (görevde 300); hız sınırı ölçülünce artırılır
 LEADERBOARD = "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard"
 INFO = "https://api.hyperliquid.xyz/info"
-MAX_WEIGHT_PER_MINUTE = 900
+MAX_WEIGHT_PER_MINUTE = 700  # IP sınırı 1.200; yanıt boyutu ek ağırlığı ve paylaşılan Actions IP'leri için pay
 
 
 class RateLimiter:
@@ -36,19 +37,26 @@ class RateLimiter:
             self.sleep(max(0.01, 60 - (now - self.events[0][0])))
 
 
+class RateLimitError(RuntimeError):
+    """Persistent 429 for one request; the address is skipped, the run continues."""
+
+
 class PublicClient:
     def __init__(self, session: requests.Session | None = None, limiter: RateLimiter | None = None):
         self.session, self.limiter = session or requests.Session(), limiter or RateLimiter()
 
     def _request(self, method: str, url: str, *, payload: dict | None = None, weight: int = 1) -> Any:
-        for attempt in range(5):
+        for attempt in range(6):
             self.limiter.acquire(weight)
             response = self.session.request(method, url, json=payload, timeout=30)
             if response.status_code != 429:
                 response.raise_for_status()
-                return response.json()
-            time.sleep(2 ** attempt)
-        raise RuntimeError("Hyperliquid rate limit exceeded after retries")
+                data = response.json()
+                if isinstance(data, list) and len(data) >= 20:
+                    self.limiter.acquire(len(data) // 20)  # documented extra weight per 20 returned items
+                return data
+            time.sleep(min(60, 5 * 2 ** attempt))
+        raise RateLimitError("Hyperliquid rate limit exceeded after retries")
 
     def leaderboard(self) -> list[dict]:
         data = self._request("GET", LEADERBOARD)
@@ -108,7 +116,7 @@ def prefilter(rows: list[dict], watchlist: list[dict]) -> list[dict]:
         if address and (address.lower() in watch or (account >= 25_000 and month > 0 and all_time > 0)):
             row = dict(row); row["address"] = address; row["accountValue"] = account; accepted.append(row)
     ranked = sorted((x for x in accepted if x["address"].lower() not in watch),
-                    key=lambda x: _window(x, "allTime", "pnl") / max(x["accountValue"], 1), reverse=True)[:300]
+                    key=lambda x: _window(x, "allTime", "pnl") / max(x["accountValue"], 1), reverse=True)[:MAX_ADDRESSES]
     return ranked + [x for x in accepted if x["address"].lower() in watch]
 
 
@@ -155,9 +163,15 @@ def run(root: Path, client: PublicClient, today: str | None = None, version: str
     copies = []
     for leader in leaders:
         address = leader["address"]
-        fills = client.fills(address, start)
-        funding = client.info({"type": "userFunding", "user": address, "startTime": start}, weight=20)
-        state = client.info({"type": "clearinghouseState", "user": address}, weight=2)
+        try:
+            fills = client.fills(address, start)
+            funding = client.info({"type": "userFunding", "user": address, "startTime": start}, weight=20)
+            state = client.info({"type": "clearinghouseState", "user": address}, weight=2)
+        except (RateLimitError, requests.RequestException) as exc:
+            # Missing data is never a pass or a fail: recorded as "veri_yok" and retried tomorrow.
+            rows.append({"address": address, "account_value": leader["accountValue"], "sonuc": "veri_yok",
+                         "neden": type(exc).__name__})
+            continue
         leverage = [float(x.get("position", {}).get("leverage", {}).get("value", 0)) for x in state.get("assetPositions", [])]
         metrics = calculate_metrics(fills, funding=funding, liquid_coins=liquid, leverages=leverage,
                                     account_value=leader["accountValue"],

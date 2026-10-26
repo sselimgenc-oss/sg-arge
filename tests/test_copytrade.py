@@ -85,7 +85,8 @@ def test_prefilter_keeps_watchlist_and_caps_ranked():
     rows = [{"ethAddress": f"0x{i}", "accountValue": 25_000, "monthRoi": 1, "allTimeRoi": 1, "allTimePnl": i}
             for i in range(301)]
     selected = prefilter(rows, [{"address": "0x0"}])
-    assert len(selected) == 301
+    from copytrade.tarama import MAX_ADDRESSES
+    assert len(selected) == MAX_ADDRESSES + 1
     assert selected[-1]["address"] == "0x0"
 
 
@@ -128,3 +129,22 @@ def test_prefilter_accepts_live_pair_shape_of_window_performances():
         ["day", {"pnl": "1", "roi": "0.01", "vlm": "5"}], ["month", {"pnl": "3", "roi": "0.1", "vlm": "9"}],
         ["allTime", {"pnl": "4", "roi": "0.2", "vlm": "9"}]]}
     assert prefilter([row], [])[0]["address"] == "0xA"
+
+
+def test_rate_limited_address_is_recorded_as_no_data_and_run_continues(tmp_path: Path):
+    from copytrade.tarama import RateLimitError
+
+    class Client:
+        def leaderboard(self):
+            return [{"ethAddress": a, "accountValue": "25000", "monthROI": 1, "allTimeROI": 1, "allTimePnL": 1} for a in ("0xA", "0xB")]
+
+        def fills(self, address, start):
+            if address == "0xA":
+                raise RateLimitError("429")
+            return [fill(1_000, "B", 1, 0), fill(7_201_000, "A", 1, 1, pnl=10, fee=1)]
+
+        def info(self, payload, weight=20):
+            return [] if payload["type"] == "userFunding" else {"assetPositions": []}
+
+    table = run(tmp_path, Client(), today="2026-10-27")
+    assert dict(zip(table.address, table.sonuc))["0xA"] == "veri_yok" and len(table) == 2
