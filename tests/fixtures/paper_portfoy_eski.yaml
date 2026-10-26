@@ -1,0 +1,23 @@
+# Paper trade portfoyu (T27). Gercek para ve araci kurum baglantisi YOK: yalniz sanal defter.
+# Satirlar results/SONUC.md ve results/portfoy.md onerisidir; 1/N sermaye, her satir kendi kitabinda
+# EVRENSEL_KURALLAR A6 ile boyutlanir (islem basi %0,5 risk, toplam acik risk %2, kitap brutu %100, ATR14x3 stop kartta yoksa).
+sanal_sermaye: 5000            # USD (kullanicinin paneliyle ayni)
+# Faz 2 paper basladi (kullanici karari 2026-10-23, secenek b: C07 + R01 + A6-010).
+# Kullanici karari 2026-10-24: defter 2026-09-01'den geriye donuk calistirilir (ayni kurallar, gercek veri);
+# canli paper 2026-10-24'ten itibaren. Panoda iki donem ayri etiketlenir.
+baslangic: 2026-09-01
+canli_baslangic: 2026-10-24
+satirlar:
+  - {id: C07, piyasa: ABD25, tf: 1D, kaynak: codex, evren: guncel, agirlik: 0.333333}
+  - {id: R01, piyasa: ABD25, tf: 1D, kaynak: kart, evren: guncel, agirlik: 0.333333}
+  - {id: A6-010, piyasa: EMTIA, tf: 1D, kaynak: kart, evren: guncel, agirlik: 0.333334}
+alarmlar:
+  mdd_uyari: 0.10              # portfoy MDD >= %10: uyari
+  mdd_durdur: 0.15             # portfoy MDD >= %15: DURDUR (yeni giris yok; kullanici karari olmadan devam yok)
+  pf_inceleme_islem: 30        # bir satir bu kadar kapanmis islemden sonra PF < 1 ise inceleme
+  veri_eski_gun: 5             # son bar bundan eski ise veri alarmi
+golge:
+  kitaplar:
+    - {id: U4-H1, piyasa: KRIPTO25, tf: 4H, semboller: [BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, TRXUSDT], risk: 0.0025, sermaye: 5000, baslangic: 2026-09-01, canli_baslangic: 2026-10-24}
+    - {id: T8-07, piyasa: EMTIA, tf: 1H, evren: asama2b_emtia, risk: 0.0025, sermaye: 5000, baslangic: 2026-09-01, canli_baslangic: 2026-10-24}
+    - {id: V2B, piyasa: EMTIA, tf: 1H, evren: asama2b_emtia, risk: 0.0025, sermaye: 5000, baslangic: 2026-09-01, canli_baslangic: 2026-10-24}

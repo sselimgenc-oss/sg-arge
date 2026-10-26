@@ -2,6 +2,12 @@
 
 Tarih: 2026-10-26. Dal: `codex/paper-hazirlik`; taban: `397c107c1120bd521f0627fa6f464e34945ddd97` (`main`).
 
+## Paper kurulumu — Aşama A
+
+- Lider kararıyla portföy tek 5.000 USD sanal sermayedir; 11 U7 ağırlığı %75, kalan %25 nakittir. TV-2'nin %15 payı Aşama B'ye kadar nakit kalır.
+- `TV-71yKm18B` normal portföy satırı olarak 4 saatlik ham veriyi mevcut gölge veri yolu kurallarıyla (kapanmış bar) kullanır; kartın TF'si değiştirilmedi.
+- Eski C07/R01/A6-010 ve gölge yapılandırması yeni portföyden çıkarıldı. Checkout'ta arşivlenecek defter CSV'si yoktu.
+
 ## Tamamlananlar
 
 - 14 kitap için Adım 0 sonucu `results/faz1_paper_denetim.csv` içine tek satırla yazıldı. Başarısız/koşullu kitaplar listeden çıkarılmadı.
