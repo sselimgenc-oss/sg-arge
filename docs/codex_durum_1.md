@@ -7,3 +7,5 @@ Dal: `codex/tv2-son`
 - 15:08 — 1. madde — `40316028018` tamamlandı; `codex/kripto-disi` checkpoint sonuçları birleştirildi. Kripto dışı kuyruğundaki 636 kimliğin 636'sında satır var, ek kuyruk gerekmiyor.
 - 15:12 — 2. madde — Satırlar birleştirildi ve sıralama üretildi; kripto dışı geçenlerin 49'undan 39'u aşırı getiri, `<30` işlem, `lookahead_on` veya `veri_kisa` ölçütleriyle inceleme için işaretlendi. Kararlar değiştirilmedi.
 - 15:12 — 6. madde — 371 `izle` satırı eldeki kısa sınamayla tek kapıdan geçirildi: 64 `gecti`, 246 `kaldi`, 61 `islem_yok`; her satıra `kisa_sinama=true` ve hafta sayısı yazıldı, sıralama yenilendi.
+- 17:30 — 3. madde — 214 `veri_yok` Dukascopy eşlemesi (ABD endeks CFD eşdeğerleri dahil) için yalnız ilgili kimliklerden kuyruk oluşturuldu. Workflow önce 14 sembolün arşivini Actions cache'ine indirir; veri repoya yazılmaz.
+- 17:30 — KOSU_ISTEGI: dal `codex/tv2-son`; iş akışı `TV-2 kripto kuyruğu`; girdiler `kuyruk=results/tv2/kuyruk_dukascopy.txt`, `dukascopy=true`. Sekiz parça birlikte çalıştırılmalı.

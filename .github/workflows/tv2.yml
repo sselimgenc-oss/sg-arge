@@ -20,6 +20,11 @@ on:
         description: "Koşulacak kuyruk dosyası"
         required: false
         default: "results/tv2/kuyruk_kripto_disi.txt"
+      dukascopy:
+        description: "Kuyruktaki Dukascopy eşlemelerini indirip veri_yok satırlarını yeniden koş"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -47,6 +52,31 @@ jobs:
           path: data/tv2
           key: tv2-${{ runner.os }}-${{ matrix.parca }}-${{ github.run_id }}
           restore-keys: tv2-${{ runner.os }}-${{ matrix.parca }}-
+      - name: Resolve Dukascopy archive scope
+        if: inputs.dukascopy == true
+        run: |
+          python - <<'PY'
+          import csv
+          from pathlib import Path
+
+          queue = {line.strip() for line in Path('${{ inputs.kuyruk }}').read_text().splitlines() if line.strip()}
+          with Path('arastirma/tv2_veri_eslesme.csv').open() as handle:
+              mappings = list(csv.DictReader(handle))
+          by_id = {row['id']: row for row in mappings}
+          invalid = sorted(ident for ident in queue if by_id.get(ident, {}).get('kaynak') != 'dukascopy')
+          if invalid:
+              raise SystemExit(f'Dukascopy kuyruğunda eşlemesiz kimlik: {", ".join(invalid)}')
+          symbols = sorted({by_id[ident]['esdeger'] for ident in queue})
+          Path('/tmp/tv2-dukascopy-symbols.txt').write_text('\n'.join(symbols) + '\n')
+          print(f'{len(queue)} kimlik, {len(symbols)} Dukascopy sembolü: {", ".join(symbols)}')
+          PY
+      - name: Download Dukascopy archive to cache
+        if: inputs.dukascopy == true
+        run: |
+          years="$(seq 2010 "$(date -u +%Y)")"
+          while IFS= read -r symbol; do
+            python -m data.dukascopy "$symbol" --yillar $years
+          done < /tmp/tv2-dukascopy-symbols.txt
       - name: Select unfinished slice
         run: |
           python - <<'PY'
@@ -57,6 +87,7 @@ jobs:
           part = int('${{ matrix.parca }}')
           requested = '${{ inputs.parca }}'
           single = '${{ inputs.kimlik }}'
+          rerun_missing_data = '${{ inputs.dukascopy }}' == 'true'
           todo = []
           if requested and requested != str(part):
               Path('/tmp/tv2-queue.txt').write_text('')
@@ -70,7 +101,8 @@ jobs:
               row = Path('results/tv2/satirlar') / f'{ident}.json'
               if row.exists():
                   try:
-                      if json.loads(row.read_text()).get('karar') != 'zaman_asimi':
+                      karar = json.loads(row.read_text()).get('karar')
+                      if karar != 'zaman_asimi' and not (rerun_missing_data and karar == 'veri_yok'):
                           continue
                   except (ValueError, OSError):
                       pass
