@@ -3,8 +3,8 @@ name: Plasebo kalibrasyonu
 on:
   workflow_dispatch:
   push:
-    branches: [codex/kapi-kontrol]
-    paths: [backtests/plasebo.py, results/tv2/**, results/u7/**]
+    branches: [codex/kapi-kontrol, claude/magical-ride-c7apbp]
+    paths: [backtests/plasebo.py, .github/workflows/plasebo.yml]
 
 jobs:
   plasebo:

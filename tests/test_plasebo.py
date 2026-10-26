@@ -35,3 +35,13 @@ def test_neff_correlation_clusters():
     index = pd.date_range("2024-01-01", periods=100, tz="UTC")
     base = pd.Series(np.arange(100, dtype=float), index=index)
     assert neff_clusters({"a": base, "b": base * 2, "c": -base}) == 2
+
+
+def test_placebo_scale_matches_strategy_size():
+    from backtests.plasebo import placebo_distribution
+    idx = pd.date_range("2025-01-01", periods=60, freq="D", tz="UTC")
+    market = pd.Series(0.01, index=idx)
+    exposure = pd.Series([1.0] * 5 + [0.0] * 55, index=idx)
+    full = placebo_distribution(market, exposure, repetitions=20, seed=1, round_trip_cost=0)
+    tenth = placebo_distribution(market, exposure, repetitions=20, seed=1, round_trip_cost=0, scale=0.1)
+    assert abs(tenth.mean()) < abs(full.mean()) / 5  # a 10 % position cannot earn like a 100 % one

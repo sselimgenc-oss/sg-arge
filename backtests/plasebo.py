@@ -70,12 +70,12 @@ def random_exposure(index: pd.Index, blocks: list[int], rng: np.random.Generator
 
 def placebo_distribution(
     market: pd.Series, exposure: pd.Series, *, repetitions: int = REPS, seed: int = 0,
-    round_trip_cost: float = 0.001,
+    round_trip_cost: float = 0.001, scale: float = 1.0,
 ) -> np.ndarray:
     """Net-return distribution for random entries with identical holding blocks.
 
-    ``round_trip_cost`` is charged once for each preserved block.  It is a
-    conservative daily representation of the existing realistic cost model.
+    ``scale`` is the position size relative to full investment (volatility matched to the strategy), so the
+    placebo takes the same risk as the strategy; ``round_trip_cost`` is charged once per block on that size.
     """
     market = pd.to_numeric(market, errors="coerce").fillna(0.0)
     blocks = active_blocks(exposure.reindex(market.index, fill_value=0.0))
@@ -86,11 +86,11 @@ def placebo_distribution(
     for i in range(repetitions):
         w = random_exposure(market.index, blocks, rng)
         starts = int(((w > 0) & (w.shift(fill_value=0) == 0)).sum())
-        totals[i] = float(np.prod(1 + w.to_numpy() * market.to_numpy()) - 1 - starts * round_trip_cost)
+        totals[i] = float(np.prod(1 + scale * w.to_numpy() * market.to_numpy()) - 1 - starts * round_trip_cost * scale)
     return totals
 
 
-def nw_alpha(strategy: pd.Series, benchmark: pd.Series, lags: int = 5) -> dict[str, float]:
+def nw_alpha(strategy: pd.Series, benchmark: pd.Series, lags: int = 5, periods: int = 252) -> dict[str, float]:
     """Annualised OLS alpha/beta and Newey-West t statistic for alpha."""
     frame = pd.concat([strategy.rename("y"), benchmark.rename("x")], axis=1).dropna()
     if len(frame) < 8 or frame.x.var() == 0:
@@ -110,7 +110,7 @@ def nw_alpha(strategy: pd.Series, benchmark: pd.Series, lags: int = 5) -> dict[s
             term = term + term.T
         meat += weight * term
     se = math.sqrt(max(float((inv @ meat @ inv)[0, 0]), 0.0))
-    return {"beta": float(coef[1]), "alfa_yillik": float(coef[0] * 252), "nw_t": float(coef[0] / se) if se else np.nan}
+    return {"beta": float(coef[1]), "alfa_yillik": float(coef[0] * periods), "nw_t": float(coef[0] / se) if se else np.nan}
 
 
 def neff_clusters(series: dict[str, pd.Series], threshold: float = 0.9) -> int:
@@ -140,11 +140,13 @@ def _returns(path: Path) -> pd.Series:
     return out
 
 
-def _market(kind: str, index: pd.Index) -> pd.Series:
-    """Obtain the fixed class benchmark through the existing TV-2 data adapter."""
+def _market(kind: str, index: pd.Index, symbol: str | None = None) -> pd.Series:
+    """Daily market returns: the strategy's own symbol when given (TV-2), else the class benchmark (U7 baskets)."""
     from backtests.tv2 import veri
-    symbol = {"ABD": "AMEX:SPY", "Kripto": "BINANCE:BTCUSDT", "Emtia": "AMEX:GLD"}[kind]
-    data, note = veri(symbol, "1D")
+    data, note = (veri(symbol, "1D") if symbol else (None, ""))
+    if data is None:
+        symbol = {"ABD": "AMEX:SPY", "Kripto": "BINANCE:BTCUSDT", "Emtia": "AMEX:GLD"}[kind]
+        data, note = veri(symbol, "1D")
     # The repository's immutable hourly cache is the offline fallback for the
     # two ETF controls.  It is still the same market-data input, just avoids a
     # transient public-yfinance outage from turning an entire report into NA.
@@ -193,17 +195,22 @@ def evaluate(row: dict[str, object], repetitions: int = REPS) -> tuple[dict[str,
     if row.get("surum"):
         returns = returns.loc[returns.index >= pd.Timestamp(row["surum"], tz="UTC")]
     kind = _kind(row)
-    market = _market(kind, returns.index)
+    # TV-2: plasebo the strategy's own symbol (same instrument, random entries); U7: basket → class benchmark.
+    market = _market(kind, returns.index, str(row["piyasa"]) if row["kaynak"] == "TV-2" else None)
     # Daily zero returns are the persisted observable proxy for flat exposure.
     exposure = (returns != 0).astype(float)
     benchmark = exposure * market
+    active = exposure > 0
+    # Volatility match: strategies trade a fraction of equity; the placebo must take the same risk, not 100 %.
+    m_sd = float(market[active].std()) if active.sum() > 2 else 0.0
+    scale = float(returns[active].std()) / m_sd if m_sd > 0 else 1.0
     null = placebo_distribution(market, exposure, repetitions=repetitions,
                                 seed=zlib.crc32(str(row["id"]).encode()),
-                                round_trip_cost=0.002 if kind == "Kripto" else 0.001)
+                                round_trip_cost=0.002 if kind == "Kripto" else 0.001, scale=scale)
     real = float(np.prod(1 + returns) - 1)
-    alpha = nw_alpha(returns, benchmark)
+    alpha = nw_alpha(returns, benchmark, periods=365 if kind == "Kripto" else 252)
     return ({"kimlik": row["id"], "kaynak": row["kaynak"], "piyasa": row["piyasa"], "tf": row["tf"],
-             "maruziyet": float(exposure.mean()), "gercek_net": real, "kiyas_net": float(np.prod(1 + benchmark) - 1),
+             "maruziyet": float(exposure.mean()), "olcek": scale, "gercek_net": real, "kiyas_net": float(np.prod(1 + benchmark) - 1),
              "fark_yillik": float((returns - benchmark).mean() * 252), **alpha,
              "plasebo_p50": float(np.percentile(null, 50)), "plasebo_p95": float(np.percentile(null, 95)),
              "plasebo_pozitif_oran": float(np.mean(null > 0)), "plasebo_yuzdelik": float(np.mean(null <= real)),
