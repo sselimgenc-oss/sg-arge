@@ -18,7 +18,7 @@ Her çeviride aranır: geleceği gören veri (`request.security` lookahead, `bar
 - Her satıra etiket:
   - `temiz`: sürüm tarihi belli, sonrası en az 1 yıl veri;
   - `tarih_belirsiz`: sürüm geçmişi yok ya da kod sonradan değişmiş ve test edilen sürümün tarihi bilinmiyor; sınama yine yapılır, "temiz OOS" denmez;
-  - `yetersiz_kanit`: sürüm sonrası 1 yıldan az veri. Başarısız sayılmaz.
+  - `yetersiz_kanit`: sürüm sonrası 1 yıldan az veri. Başarısız sayılmaz. **Kullanıcı kararı 2026-10-26:** bekletilmez; eldeki sınama penceresiyle aynı tek kapıdan geçirilir (`kisa_sinama=true`), geçerse paper'a girer.
 - Daha önce test edilen ailelerde (yayın tarihi olmayan kaynaklar) sınama dönemi o ailenin mevcut OOS dönemidir ve etiket `tarih_belirsiz`'dir.
 
 ## Adım 2: tek kapı

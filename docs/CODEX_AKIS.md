@@ -19,7 +19,8 @@
 3. **NVDAXUSDT veri kaynağı:** Binance USD-M'de bu sembol yok (Argon raporu; Binance'te NVDAUSDT). Satırın verisi nereden geldi? Yanlışsa satırı `veri_yok` neden "sembol eşlemesi yanlış" olarak düzelt; doğru eşleme NVDAUSDT ise yeniden koş. Aynı denetimi diğer TradFi perp eşlemeleri için yap.
 4. `zaman_asimi` 13 kimlik: `uzun=true` tekil koşu, aynı anda 1 (`KOSU_ISTEGI`).
 5. `lookahead_baglami.md`'deki 3 riskli kaynak: geçti/izle kararı varsa satıra `lookahead_riskli=true` bilgi sütunu (kapı değişmez) ve kaynak satır numarası.
-6. PR: `[TV-2] kripto dışı sonuçlar + eşleme düzeltmeleri`.
+6. **`izle` → karar (kullanıcı kararı 2026-10-26):** "sürüm sonrası 1 yıldan az veri" ve "< 10 işlem haftası" nedeniyle `izle` kalan satırlara **eldeki sınama penceresiyle** aynı tek kapı uygulanır: uygulanabilir sınama net > 0 → `gecti`, değilse `kaldi`; sınamada hiç işlem yoksa `islem_yok`. Satıra `kisa_sinama=true` bilgi sütunu ve sınama hafta sayısı yazılır; yeniden koşu gerekmez (satırdaki değerler yeterli). `tv2_sirala` bu satırları da sıralar. Kapı eşiği değişmez. Lider ön sayımı: 373 izle → ~66 gecti, ~307 kaldi/islem_yok.
+7. PR: `[TV-2] kripto dışı sonuçlar + eşleme düzeltmeleri + izle kararı`.
 
 ## Oturum 2: U7 kapanış + havuz (dal `codex/u7-son`, `main`'den; durum `docs/codex_durum_2.md`)
 1. **U1 5m:** 14 varyantın 6'sı bitti. `huni.yml` `u1_5m=true` + `--resume` ile kalan 8 (`KOSU_ISTEGI`); bitince `u7_ozet` yenile.
