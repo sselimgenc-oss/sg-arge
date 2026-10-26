@@ -1,7 +1,5 @@
 # U1 huni ozeti
 
-v1 tablo: bilgi, eleme değil; karar: results/u7/huni_ozet.csv karar_adim2.
-
 IS: null testi (havuz, 14 coin); OOS: maliyet, +1 bar gecikme, bootstrap MDD95, DSR, kardes raporu. Kilitli donem acilmadi.
 
 Karar sayilari: Reddedildi: 6
