@@ -16,6 +16,7 @@ TV2 = ROOT / "results" / "tv2"
 U7 = ROOT / "results" / "u7" / "siralama.csv"
 SUPHELI = [ROOT / "docs" / "denetim" / "tv2_supheli.md", ROOT / "docs" / "denetim" / "tv2_kripto_disi_supheli.md"]
 OUT = ROOT / "results" / "faz1_adaylar"
+ELEME = ROOT / "results" / "faz1_kullanici_eleme.csv"  # kullanıcının listeden çıkardıkları
 
 
 def _supheli() -> dict[str, str]:
@@ -64,6 +65,9 @@ def _u7() -> pd.DataFrame:
 
 def main() -> int:
     tablo = pd.concat([_tv2(), _u7().astype({"pf": float, "mdd": float})], ignore_index=True)
+    elenen = set(pd.read_csv(ELEME)["kimlik"]) if ELEME.exists() else set()
+    n_elenen = int(tablo["kimlik"].isin(elenen).sum())
+    tablo = tablo[~tablo["kimlik"].isin(elenen)]
     # Bilgi sütunu (eleme değil): kısa sınama, şüphe işareti ya da < 30 işlem yoksa "güçlü".
     tablo["kanit"] = ["güçlü" if not (k or s or i < 30) else "zayıf"
                       for k, s, i in zip(tablo["kisa_sinama"], tablo["supheli"], tablo["sinama_islem"])]
@@ -78,7 +82,8 @@ def main() -> int:
 
     sayim = tablo["kaynak"].value_counts().to_dict()
     md = ["# Faz 1 aday tablosu", "",
-          f"Küme temsilcileri: **{len(tablo)}** ({', '.join(f'{k} {v}' for k, v in sorted(sayim.items()))}). "
+          f"Küme temsilcileri: **{len(tablo)}** ({', '.join(f'{k} {v}' for k, v in sorted(sayim.items()))}); "
+          f"kullanıcının listeden çıkardığı {n_elenen} aday `{ELEME.name}` dosyasında. "
           "Hepsi tek kapıyı geçti; bu tablo eleme yapmaz, paper seçimi kullanıcınındır.", "",
           "Yıllık % = ortak risk ölçeğinde yıllık getiri. Net % = sınama dönemi (U7: 2023 sonrası) net getiri. "
           "İşaret: K = kısa sınama (sürüm sonrası < 1 yıl ya da < 10 işlem haftası), L = lookahead riski, S = şüphe taraması.", "",
