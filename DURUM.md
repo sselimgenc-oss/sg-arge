@@ -22,7 +22,7 @@ Son güncelleme: 2026-10-26 11:45 UTC, lider (Opus). Son denetim: `docs/denetim/
 **Denetim 2026-10-24** (`docs/denetim/2026-10-24.md`, ek: `docs/denetim/2026-10-24-1846.md`): kendi koyduğumuz sınırlar listesi (K1-K11), yöntem bulguları (MDD95 boyuta bağlı, DSR N tek havuz), kullanıcı kararı bekleyenler.
 
 ## Faz 1 NİHAİ KARAR (kullanıcı onayı 2026-10-26)
-`docs/faz1_son_denetim.md` → ilk dalga 11 risk kitabı + 3 gölge (kripto). Paper öncesi zorunlu kontroller: `docs/GOREV_PAPER_HAZIRLIK.md` (Codex). Sonra: `paper/` uygulaması (kullanıcı onayı), Faz 1 sonuç raporu, repo temizliği.
+`docs/faz1_son_denetim.md` → ilk dalga 11 risk kitabı + 3 gölge (kripto). Paper öncesi kontroller tamam (#246). **Kullanıcı onayı 2026-10-26: paper başlasın; "gölge" yok — 3 kripto kitabı normal kitap.** Kurulum: `docs/GOREV_PAPER_KURULUM.md` (Aşama A 11 U7 kitabı, Aşama B 3 TV-2 kitabı). Eski 6 paper kitabı arşive. Sonra: `paper/` uygulaması (kullanıcı onayı), Faz 1 sonuç raporu, repo temizliği.
 
 ## Faz 1 kapanış ölçütü (kullanıcı hedefi 2026-10-26: "şu faz 1 bitsin")
 Faz 1 şu dört şart sağlanınca kapanır; sonrası Faz 2/3:
