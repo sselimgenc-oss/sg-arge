@@ -23,7 +23,7 @@
 
 ## Lider önerisi (kripto risk bütçesi %30 değişmeden, kitap sayısı artar)
 Kural: kitaplar arası korelasyon < 0,6 (açgözlü seçim, p10 sırasıyla) → **çekirdek**; 0,6–0,8 arası güçlü adaylar → **ikinci kural seti**, bütçeyi çekirdekle paylaşır ama toplam sepet riski tavanı tek.
-1. Çekirdek (6): wcegMOXj, TV-71yKm18B, TV-3BXWqwnF, U4-H2:KRIPTO25:1D, TV-egTb7TgJ (MDD %5, en iyi ay hariç PF 1,88), TV-Q9OQye4C.
+1. Çekirdek (korelasyon < 0,6; 4): wcegMOXj, TV-71yKm18B, TV-3BXWqwnF (0,58), U4-H2:KRIPTO25:1D (≤ 0,54). İkinci kural seti (güçlü ama çekirdeğe 0,6–0,8; 2): TV-egTb7TgJ (MDD %5, en iyi ay hariç PF 1,88), TV-Q9OQye4C (285 işlem). Toplam 6 kitap.
 2. Toplam KRIPTO25 sepet riski tek tavan (kripto bütçesinin %70'i); wcegMOXj ayrı %20; keşif %10 (mutabakat sonrası QCkIgf3z/BR74LOKo).
 3. Yedek: oF6FmwfR, jc2hs2qK, ANmKXWWJ, roaahmoi, HfxNiEab, U4-H2 4H; 3UcIwSrE yalnız maliyet doğrulamasıyla.
 
