@@ -82,9 +82,17 @@ def _address(row: dict) -> str:
 def _window(row: dict, name: str, field: str) -> float:
     """Support both flattened leaderboard rows and ``windowPerformances``."""
     aliases = {"month": ("month", "30d"), "allTime": ("allTime", "all", "all_time")}
+    wanted = {x.lower() for x in aliases.get(name, (name,))}
     for item in row.get("windowPerformances", []):
-        if str(item.get("window", "")).lower() in {x.lower() for x in aliases.get(name, (name,))}:
-            return float(item.get(field, 0) or 0)
+        # Live API shape: ["month", {"pnl": "...", "roi": "...", "vlm": "..."}]; older docs: {"window": ..., ...}
+        if isinstance(item, (list, tuple)) and len(item) == 2 and isinstance(item[1], dict):
+            window, values = item
+        elif isinstance(item, dict):
+            window, values = item.get("window", ""), item
+        else:
+            continue
+        if str(window).lower() in wanted:
+            return float(values.get(field, 0) or 0)
     keys = (f"{name}{field.upper()}", f"{name}{field.capitalize()}", f"{name}_{field}")
     return next((float(row[key] or 0) for key in keys if key in row), 0.0)
 
@@ -135,7 +143,7 @@ def run(root: Path, client: PublicClient, today: str | None = None, version: str
     today = today or datetime.now(UTC).date().isoformat()
     watch_path = root / "izleme.csv"
     watchlist = load_watchlist(watch_path)
-    leaders = prefilter(client.leaderboard()[:2000], watchlist)
+    leaders = prefilter(client.leaderboard(), watchlist)
     if limit is not None:
         leaders = leaders[:limit]
     _write_gzip(leaders, root / "veri" / "lider" / f"{today}.csv.gz")

@@ -121,3 +121,10 @@ def test_daily_run_writes_public_archive_watchlist_and_report(tmp_path: Path):
     assert (tmp_path / "veri/lider/2026-10-27.csv.gz").exists()
     assert (tmp_path / "veri/fills/0xa.csv.gz").exists()
     assert (tmp_path / "RAPOR.md").exists()
+
+
+def test_prefilter_accepts_live_pair_shape_of_window_performances():
+    row = {"ethAddress": "0xA", "accountValue": "30000", "windowPerformances": [
+        ["day", {"pnl": "1", "roi": "0.01", "vlm": "5"}], ["month", {"pnl": "3", "roi": "0.1", "vlm": "9"}],
+        ["allTime", {"pnl": "4", "roi": "0.2", "vlm": "9"}]]}
+    assert prefilter([row], [])[0]["address"] == "0xA"
