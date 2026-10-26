@@ -21,6 +21,12 @@
 5. `lookahead_baglami.md`'deki 3 riskli kaynak: geçti/izle kararı varsa satıra `lookahead_riskli=true` bilgi sütunu (kapı değişmez) ve kaynak satır numarası.
 6. **`izle` → karar (kullanıcı kararı 2026-10-26):** "sürüm sonrası 1 yıldan az veri" ve "< 10 işlem haftası" nedeniyle `izle` kalan satırlara **eldeki sınama penceresiyle** aynı tek kapı uygulanır: uygulanabilir sınama net > 0 → `gecti`, değilse `kaldi`; sınamada hiç işlem yoksa `islem_yok`. Satıra `kisa_sinama=true` bilgi sütunu ve sınama hafta sayısı yazılır; yeniden koşu gerekmez (satırdaki değerler yeterli). `tv2_sirala` bu satırları da sıralar. Kapı eşiği değişmez. Lider ön sayımı: 373 izle → ~66 gecti, ~307 kaldi/islem_yok.
 7. PR: `[TV-2] kripto dışı sonuçlar + eşleme düzeltmeleri + izle kararı`.
+8. **`veri_yok` 401 — tek ikinci kaynak denemesi (Faz 1 kapanış ölçütü 1), ayrı PR `[TV-2] veri_yok ikinci kaynak`:**
+   - **A. Dukascopy önbelleği (214; XAUUSD, EURUSD ve diğer FX, endeks CFD):** yükleyici ve eşleme var (`data/dukascopy.py`, `backtests/tv2.py`), arşiv boş. Bu satırların sembol listesini çıkar; `tv2.yml`'e (ya da ayrı iş akışına) Dukascopy dakikalık indirme adımı ekle, arşiv **Actions cache**'te tutulur, repoya veri yazılmaz (repo herkese açık). Sonra yalnız bu kimliklerle kuyruk → `KOSU_ISTEGI`.
+   - **B. Gün içi / yerel piyasa (151):** VN30/HNX/HOSE → vnstock. NSE (NIFTY, BANKNIFTY, SENSEX), CME/COMEX mikro, BIST gün içi: ücretsiz çok yıllı gün içi kaynak yok (Argon raporu `arastirma/veri/`); Dukascopy'de karşılığı olan endeksler (ör. US30, NAS100, SPX500) A'ya taşınır, kalanlar `veri_yok` nedeni "ücretsiz gün içi kaynak yok" ile **kapanır**.
+   - **C. Binance (30):** listeden kalkmış semboller için `data.binance.vision` aylık arşivi (spot + UM) denenir.
+   - **D. yfinance/eşleme (6):** elle eşleme bir kez; olmazsa kapanır.
+   - Kapı, maliyet, karar kodu değişmez. Ücretli veri yok.
 
 ## Oturum 2: U7 kapanış + havuz (dal `codex/u7-son`, `main`'den; durum `docs/codex_durum_2.md`)
 1. **U1 5m:** 14 varyantın 6'sı bitti. `huni.yml` `u1_5m=true` + `--resume` ile kalan 8 (`KOSU_ISTEGI`); bitince `u7_ozet` yenile.
@@ -30,7 +36,6 @@
 5. PR: `[U7] kapanış + sanal havuz önerisi`.
 
 ## Bekleyen (sırası gelmedi, kullanıcı/Argon girdisi bekliyor)
-- `veri_yok` 77 ve vnstock (BIST): Argon veri kaynakları raporu gelince.
 - Renko (E8): Argon raporu geldi (`arastirma/renko/`). TradingView ATR kutu boyunu **son barın ATR'siyle bütün geçmişe** uygular ve Renko geri testleri sentetik açılış fiyatından dolum yüzünden sistematik olarak sahte kâr üretir (TradingView belgesi). Öneri: Renko stratejileri yorumlanmaz, `desteklenmiyor` nedeni "renko geri testi güvenilmez" ile kapanır **Kullanıcı onayladı (2026-10-26).** Oturum 1, sırası gelince Renko kullanan stratejileri bu nedenle kapatsın.
 - Faz 2 Telegram/Cloudflare: kullanıcı hesap kararı + Argon rehberi.
 - Faz 3 risk kuralları: kullanıcı onayı.
