@@ -1,6 +1,6 @@
 # Faz 1 adaylar — güçlü ve kalan zayıflar
 
-Tarih: 2026-10-26. Toplam **99** aday: güçlü **91**, zayıf (kullanıcı elemesinden sonra kalan) **8**.
+Tarih: 2026-10-26. Toplam **100** aday: güçlü **91**, zayıf (kullanıcı elemesinden sonra kalan) **9**.
 
 **Sütunlar:** TF = zaman dilimi · Hafta = sınamada işlem yapılan hafta · İşlem = sınama işlem sayısı · İşlem/yıl = sınamada yıllık işlem · Yıllık % = ortak risk ölçeğinde yıllık getiri · p10 = temkinli haftalık alt sınır (%) · Net % = sınama dönemi net getirisi (U7: 2023 sonrası) · PF = kâr faktörü · MDD = en büyük düşüş %.
 
@@ -11,7 +11,7 @@ Tarih: 2026-10-26. Toplam **99** aday: güçlü **91**, zayıf (kullanıcı elem
 | Kanıt | ABD hisse / ETF | ABD vadeli | Emtia | Kripto | Toplam |
 |---|---:|---:|---:|---:|---:|
 | güçlü | 36 | 0 | 5 | 50 | 91 |
-| zayıf | 4 | 1 | 0 | 3 | 8 |
+| zayıf | 4 | 2 | 0 | 3 | 9 |
 
 ## Güçlü (91)
 
@@ -19,42 +19,42 @@ Tarih: 2026-10-26. Toplam **99** aday: güçlü **91**, zayıf (kullanıcı elem
 
 | # | TF | Kaynak | Kimlik | Sembol | Hafta | İşlem | İşlem/yıl | Yıllık % | p10 % | Net % | PF | MDD % | Not |
 |---:|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| 1 | 1 saat | TV-2 | [G4RNcGXg](https://www.tradingview.com/script/G4RNcGXg/) | AMEX:SPY | 152 | 89 | 15 | 11.1 | 0.14 | 15.2 | 4.91 | 3.5 | tek enstrüman, yılda <30 işlem |
-| 2 | 1 saat | TV-2 | [PZ5MpxP1](https://www.tradingview.com/script/PZ5MpxP1/) | NASDAQ:AAPL | 152 | 36 | 6 | 8.8 | 0.05 | 7.8 | 3.91 | 3.8 | tek enstrüman, yılda <30 işlem |
-| 3 | 1 saat | TV-2 | [WfaaCqaN](https://www.tradingview.com/script/WfaaCqaN/) | NASDAQ:QQQ | 152 | 35 | 6 | 7.0 | 0.01 | 40.6 | 1.93 | 16.9 | tek enstrüman, yılda <30 işlem |
-| 4 | 1 saat | TV-2 | [hWvuZJN1](https://www.tradingview.com/script/hWvuZJN1/) | AMEX:SPY | 152 | 75 | 12 | 5.7 | 0.02 | 6.3 | 1.94 | 2.6 | tek enstrüman, yılda <30 işlem |
-| 5 | 1 saat | TV-2 | [5jxP6TDu](https://www.tradingview.com/script/5jxP6TDu/) | AMEX:SPY | 152 | 48 | 8 | 5.0 | -0.00 | 2.0 | 2.41 | 1.3 | tek enstrüman, yılda <30 işlem |
-| 6 | 1 saat | TV-2 | [oZYSB6Ui](https://www.tradingview.com/script/oZYSB6Ui/) | AMEX:SPY | 152 | 60 | 10 | 4.6 | 0.01 | 1.3 | 2.26 | 0.7 | tek enstrüman, yılda <30 işlem |
-| 7 | 1 saat | TV-2 | [lGAXIACq](https://www.tradingview.com/script/lGAXIACq/) | NASDAQ:QQQ | 152 | 77 | 13 | 2.1 | -0.03 | 4.5 | 1.60 | 3.5 | tek enstrüman, yılda <30 işlem |
-| 8 | 1 saat | TV-2 | [mUKDFKzn](https://www.tradingview.com/script/mUKDFKzn/) | AMEX:SPY | 152 | 86 | 16 | 1.7 | -0.08 | 4.4 | 1.10 | 18.4 | tek enstrüman, yılda <30 işlem |
-| 9 | Günlük | U7-u6 | TV-zoY9DmsF | ABD25 | 199 | 119 | 31 | 13.2 | 0.16 | 17.8 | 2.39 | 2.0 |  |
-| 10 | Günlük | U7-u6 | TV-70PkIvTL | ABD25 | 199 | 126 | 33 | 10.8 | 0.09 | 21.5 | 1.78 | 6.5 |  |
-| 11 | Günlük | U7-u6 | TV-DUCODGjC | ABD25 | 199 | 295 | 77 | 10.6 | 0.11 | 30.7 | 1.47 | 6.0 |  |
-| 12 | Günlük | U7-u6 | TV-dpkq3n4O | ABD25 | 199 | 150 | 39 | 9.9 | 0.09 | 24.6 | 2.07 | 4.5 |  |
-| 13 | Günlük | U7-u6 | TV-IMKs0OPw | ABD25 | 199 | 211 | 55 | 9.7 | 0.10 | 14.9 | 1.65 | 3.4 |  |
-| 14 | Günlük | U7-u6 | TV-XRZCjbFr | ABD25 | 199 | 245 | 64 | 8.3 | 0.04 | 12.9 | 1.46 | 4.6 |  |
-| 15 | Günlük | U7-u6 | TV-qo43NaGV | ABD25 | 199 | 344 | 90 | 7.6 | 0.05 | 14.4 | 1.37 | 4.4 |  |
-| 16 | Günlük | U7-u6 | TV-97gxVA5b | ABD25 | 199 | 82 | 21 | 7.2 | 0.02 | 12.5 | 1.80 | 3.8 |  |
-| 17 | Günlük | U7-u6 | TV-5EGVP61U | ABD25 | 199 | 108 | 28 | 7.0 | 0.02 | 12.2 | 1.47 | 7.2 |  |
-| 18 | Günlük | U7-u4 | U4-H3:ABD25:1D | ABD25 | 199 | 54 | 14 | 7.0 | 0.03 | 15.5 | 2.48 | 6.9 |  |
-| 19 | Günlük | U7-u6 | TV-AORNVoek | ABD25 | 199 | 212 | 56 | 6.8 | 0.02 | 18.6 | 1.32 | 8.1 |  |
-| 20 | Günlük | U7-u6 | TV-wigMmPHd | ABD25 | 199 | 399 | 105 | 6.7 | 0.05 | 35.7 | 1.39 | 9.3 |  |
-| 21 | Günlük | U7-u6 | TV-eDyfoKkr | ABD25 | 199 | 550 | 144 | 6.6 | 0.02 | 23.6 | 1.19 | 9.6 |  |
-| 22 | Günlük | U7-u6 | TV-rvBgD3aP | ABD25 | 199 | 94 | 25 | 6.2 | 0.00 | 14.8 | 1.47 | 8.1 |  |
-| 23 | Günlük | U7-u6 | TV-KW2v4SNI | ABD25 | 199 | 145 | 38 | 4.9 | -0.00 | 8.2 | 1.44 | 4.7 |  |
-| 24 | Günlük | U7-u6 | TV-PUEDA3c6 | ABD25 | 199 | 480 | 126 | 4.6 | -0.01 | 9.0 | 1.17 | 5.8 |  |
-| 25 | Günlük | U7-u6 | TV-n3eosaZK | ABD25 | 199 | 247 | 65 | 4.6 | -0.01 | 6.6 | 1.27 | 3.5 |  |
-| 26 | Günlük | U7-u6 | TV-vJc6IOTz | ABD25 | 199 | 163 | 43 | 4.4 | -0.03 | 6.2 | 1.33 | 6.0 |  |
-| 27 | Günlük | U7-u6 | TV-cz5KaioF | ABD25 | 199 | 171 | 45 | 4.4 | -0.02 | 7.2 | 1.37 | 6.2 |  |
-| 28 | Günlük | U7-u6 | TV-xYflA6O7 | ABD25 | 199 | 51 | 13 | 4.1 | -0.01 | 2.7 | 1.43 | 2.0 |  |
-| 29 | Günlük | U7-u6 | TV-GP3FEy2z | ABD25 | 199 | 108 | 28 | 4.1 | -0.05 | 6.1 | 1.37 | 6.5 |  |
-| 30 | Günlük | U7-u6 | TV-LBcj22se | ABD25 | 199 | 119 | 31 | 3.9 | -0.03 | 9.6 | 1.32 | 6.3 |  |
-| 31 | Günlük | U7-u4 | U4-H4:ABD25:1D | ABD25 | 199 | 676 | 177 | 3.5 | -0.01 | 6.3 | 1.13 | 6.0 |  |
-| 32 | Günlük | U7-u6 | TV-hezSShJr | ABD25 | 199 | 66 | 17 | 2.4 | -0.06 | 2.4 | 1.19 | 5.6 |  |
-| 33 | Günlük | U7-u6 | TV-BjjAOuub | ABD25 | 199 | 368 | 96 | 2.3 | -0.05 | 7.4 | 1.06 | 12.3 |  |
-| 34 | Günlük | U7-u4 | U4-H1:ABD25:1D | ABD25 | 199 | 132 | 35 | 1.4 | -0.07 | 2.7 | 1.16 | 9.3 |  |
-| 35 | Günlük | U7-u6 | TV-WWuTjyDx | ABD25 | 199 | 151 | 40 | 0.8 | -0.08 | 0.7 | 1.05 | 3.0 |  |
-| 36 | Günlük | U7-u4 | U4-H2:ABD25:1D | ABD25 | 199 | 92 | 24 | 0.3 | -0.09 | 0.3 | 1.01 | 7.5 |  |
+| 1 | 1 saat | TV-2 | [G4RNcGXg](https://www.tradingview.com/script/G4RNcGXg/) | AMEX:SPY | 152 | 89 | 15 | 13.3 | 0.17 | 15.2 | 4.91 | 3.5 | tek enstrüman, yılda <30 işlem |
+| 2 | 1 saat | TV-2 | [PZ5MpxP1](https://www.tradingview.com/script/PZ5MpxP1/) | NASDAQ:AAPL | 152 | 36 | 6 | 10.6 | 0.06 | 7.8 | 3.91 | 3.8 | tek enstrüman, yılda <30 işlem |
+| 3 | 1 saat | TV-2 | [WfaaCqaN](https://www.tradingview.com/script/WfaaCqaN/) | NASDAQ:QQQ | 152 | 35 | 6 | 8.4 | 0.01 | 40.6 | 1.93 | 16.9 | tek enstrüman, yılda <30 işlem |
+| 4 | 1 saat | TV-2 | [hWvuZJN1](https://www.tradingview.com/script/hWvuZJN1/) | AMEX:SPY | 152 | 75 | 12 | 6.8 | 0.03 | 6.3 | 1.94 | 2.6 | tek enstrüman, yılda <30 işlem |
+| 5 | 1 saat | TV-2 | [5jxP6TDu](https://www.tradingview.com/script/5jxP6TDu/) | AMEX:SPY | 152 | 48 | 8 | 6.0 | -0.00 | 2.0 | 2.41 | 1.3 | tek enstrüman, yılda <30 işlem |
+| 6 | 1 saat | TV-2 | [oZYSB6Ui](https://www.tradingview.com/script/oZYSB6Ui/) | AMEX:SPY | 152 | 60 | 10 | 5.5 | 0.02 | 1.3 | 2.26 | 0.7 | tek enstrüman, yılda <30 işlem |
+| 7 | 1 saat | TV-2 | [lGAXIACq](https://www.tradingview.com/script/lGAXIACq/) | NASDAQ:QQQ | 152 | 77 | 13 | 2.5 | -0.04 | 4.5 | 1.60 | 3.5 | tek enstrüman, yılda <30 işlem |
+| 8 | 1 saat | TV-2 | [mUKDFKzn](https://www.tradingview.com/script/mUKDFKzn/) | AMEX:SPY | 152 | 86 | 16 | 2.0 | -0.09 | 4.4 | 1.10 | 18.4 | tek enstrüman, yılda <30 işlem |
+| 9 | Günlük | U7-u6 | TV-zoY9DmsF | ABD25 | 199 | 119 | 31 | 15.9 | 0.19 | 17.8 | 2.39 | 2.0 |  |
+| 10 | Günlük | U7-u6 | TV-70PkIvTL | ABD25 | 199 | 126 | 33 | 12.9 | 0.11 | 21.5 | 1.78 | 6.5 |  |
+| 11 | Günlük | U7-u6 | TV-DUCODGjC | ABD25 | 199 | 295 | 77 | 12.8 | 0.13 | 30.7 | 1.47 | 6.0 |  |
+| 12 | Günlük | U7-u6 | TV-dpkq3n4O | ABD25 | 199 | 150 | 39 | 12.0 | 0.11 | 24.6 | 2.07 | 4.5 |  |
+| 13 | Günlük | U7-u6 | TV-IMKs0OPw | ABD25 | 199 | 211 | 55 | 11.7 | 0.12 | 14.9 | 1.65 | 3.4 |  |
+| 14 | Günlük | U7-u6 | TV-XRZCjbFr | ABD25 | 199 | 245 | 64 | 10.0 | 0.05 | 12.9 | 1.46 | 4.6 |  |
+| 15 | Günlük | U7-u6 | TV-qo43NaGV | ABD25 | 199 | 344 | 90 | 9.2 | 0.06 | 14.4 | 1.37 | 4.4 |  |
+| 16 | Günlük | U7-u6 | TV-97gxVA5b | ABD25 | 199 | 82 | 21 | 8.6 | 0.02 | 12.5 | 1.80 | 3.8 |  |
+| 17 | Günlük | U7-u6 | TV-5EGVP61U | ABD25 | 199 | 108 | 28 | 8.5 | 0.02 | 12.2 | 1.47 | 7.2 |  |
+| 18 | Günlük | U7-u4 | U4-H3:ABD25:1D | ABD25 | 199 | 54 | 14 | 8.4 | 0.03 | 15.5 | 2.48 | 6.9 |  |
+| 19 | Günlük | U7-u6 | TV-AORNVoek | ABD25 | 199 | 212 | 56 | 8.2 | 0.03 | 18.6 | 1.32 | 8.1 |  |
+| 20 | Günlük | U7-u6 | TV-wigMmPHd | ABD25 | 199 | 399 | 105 | 8.1 | 0.06 | 35.7 | 1.39 | 9.3 |  |
+| 21 | Günlük | U7-u6 | TV-eDyfoKkr | ABD25 | 199 | 550 | 144 | 7.9 | 0.03 | 23.6 | 1.19 | 9.6 |  |
+| 22 | Günlük | U7-u6 | TV-rvBgD3aP | ABD25 | 199 | 94 | 25 | 7.5 | 0.00 | 14.8 | 1.47 | 8.1 |  |
+| 23 | Günlük | U7-u6 | TV-KW2v4SNI | ABD25 | 199 | 145 | 38 | 5.8 | -0.00 | 8.2 | 1.44 | 4.7 |  |
+| 24 | Günlük | U7-u6 | TV-PUEDA3c6 | ABD25 | 199 | 480 | 126 | 5.6 | -0.01 | 9.0 | 1.17 | 5.8 |  |
+| 25 | Günlük | U7-u6 | TV-n3eosaZK | ABD25 | 199 | 247 | 65 | 5.5 | -0.01 | 6.6 | 1.27 | 3.5 |  |
+| 26 | Günlük | U7-u6 | TV-vJc6IOTz | ABD25 | 199 | 163 | 43 | 5.4 | -0.04 | 6.2 | 1.33 | 6.0 |  |
+| 27 | Günlük | U7-u6 | TV-cz5KaioF | ABD25 | 199 | 171 | 45 | 5.3 | -0.03 | 7.2 | 1.37 | 6.2 |  |
+| 28 | Günlük | U7-u6 | TV-xYflA6O7 | ABD25 | 199 | 51 | 13 | 5.0 | -0.02 | 2.7 | 1.43 | 2.0 |  |
+| 29 | Günlük | U7-u6 | TV-GP3FEy2z | ABD25 | 199 | 108 | 28 | 4.9 | -0.06 | 6.1 | 1.37 | 6.5 |  |
+| 30 | Günlük | U7-u6 | TV-LBcj22se | ABD25 | 199 | 119 | 31 | 4.7 | -0.03 | 9.6 | 1.32 | 6.3 |  |
+| 31 | Günlük | U7-u4 | U4-H4:ABD25:1D | ABD25 | 199 | 676 | 177 | 4.2 | -0.02 | 6.3 | 1.13 | 6.0 |  |
+| 32 | Günlük | U7-u6 | TV-hezSShJr | ABD25 | 199 | 66 | 17 | 2.8 | -0.08 | 2.4 | 1.19 | 5.6 |  |
+| 33 | Günlük | U7-u6 | TV-BjjAOuub | ABD25 | 199 | 368 | 96 | 2.8 | -0.06 | 7.4 | 1.06 | 12.3 |  |
+| 34 | Günlük | U7-u4 | U4-H1:ABD25:1D | ABD25 | 199 | 132 | 35 | 1.7 | -0.09 | 2.7 | 1.16 | 9.3 |  |
+| 35 | Günlük | U7-u6 | TV-WWuTjyDx | ABD25 | 199 | 151 | 40 | 0.9 | -0.10 | 0.7 | 1.05 | 3.0 |  |
+| 36 | Günlük | U7-u4 | U4-H2:ABD25:1D | ABD25 | 199 | 92 | 24 | 0.4 | -0.11 | 0.3 | 1.01 | 7.5 |  |
 
 ### Kripto (50)
 
@@ -115,28 +115,29 @@ Tarih: 2026-10-26. Toplam **99** aday: güçlü **91**, zayıf (kullanıcı elem
 
 | # | TF | Kaynak | Kimlik | Sembol | Hafta | İşlem | İşlem/yıl | Yıllık % | p10 % | Net % | PF | MDD % | Not |
 |---:|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| 1 | Günlük | U7-u6 | TV-KO7Qe4Xb | EMTIA | 199 | 76 | 20 | 8.1 | 0.07 | 13.9 | 1.70 | 3.4 |  |
-| 2 | Günlük | U7-u4 | U4-H3:EMTIA:1D | EMTIA | 199 | 35 | 9 | 4.7 | 0.00 | 15.6 | 3.40 | 12.0 |  |
-| 3 | Günlük | U7-u4 | U4-H2:EMTIA:1D | EMTIA | 199 | 40 | 10 | 4.5 | -0.02 | 18.2 | 2.37 | 12.4 |  |
-| 4 | Günlük | U7-u6 | TV-zrDoqm9F | EMTIA | 199 | 62 | 16 | 4.0 | -0.02 | 6.4 | 1.31 | 4.3 |  |
-| 5 | Günlük | U7-u4 | U4-H4:EMTIA:1D | EMTIA | 199 | 150 | 39 | 2.2 | -0.04 | 2.0 | 1.17 | 2.5 |  |
+| 1 | Günlük | U7-u6 | TV-KO7Qe4Xb | EMTIA | 199 | 76 | 20 | 9.8 | 0.08 | 13.9 | 1.70 | 3.4 |  |
+| 2 | Günlük | U7-u4 | U4-H3:EMTIA:1D | EMTIA | 199 | 35 | 9 | 5.6 | 0.00 | 15.6 | 3.40 | 12.0 |  |
+| 3 | Günlük | U7-u4 | U4-H2:EMTIA:1D | EMTIA | 199 | 40 | 10 | 5.5 | -0.02 | 18.2 | 2.37 | 12.4 |  |
+| 4 | Günlük | U7-u6 | TV-zrDoqm9F | EMTIA | 199 | 62 | 16 | 4.9 | -0.03 | 6.4 | 1.31 | 4.3 |  |
+| 5 | Günlük | U7-u4 | U4-H4:EMTIA:1D | EMTIA | 199 | 150 | 39 | 2.6 | -0.04 | 2.0 | 1.17 | 2.5 |  |
 
-## Zayıf (kalan) (8)
+## Zayıf (kalan) (9)
 
 ### ABD hisse / ETF (4)
 
 | # | TF | Kaynak | Kimlik | Sembol | Hafta | İşlem | İşlem/yıl | Yıllık % | p10 % | Net % | PF | MDD % | Not |
 |---:|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| 1 | 15 dk | TV-2 | [yhoK9cH4](https://www.tradingview.com/script/yhoK9cH4/) | NASDAQ:META | 12 | 43 | 103 | 36.6 | 0.64 | 35.6 | 2.14 | 6.7 | kısa sınama; veri_kisa |
-| 2 | Günlük | U7-u6 | TV-sPNx5Z74 | ABD25 | 199 | 23 | 6 | 11.0 | 0.12 | 29.0 | 6.29 | 5.5 |  |
-| 3 | Günlük | U7-u6 | TV-bZ815rmw | ABD25 | 199 | 26 | 7 | 9.5 | 0.08 | 24.5 | 5.65 | 6.1 |  |
-| 4 | Günlük | U7-u6 | TV-6ZReHYKn | ABD25 | 199 | 11 | 3 | 7.0 | 0.05 | 35.3 | 9.46 | 11.4 |  |
+| 1 | 15 dk | TV-2 | [yhoK9cH4](https://www.tradingview.com/script/yhoK9cH4/) | NASDAQ:META | 12 | 43 | 103 | 44.1 | 0.77 | 35.6 | 2.14 | 6.7 | kısa sınama; veri_kisa |
+| 2 | Günlük | U7-u6 | TV-sPNx5Z74 | ABD25 | 199 | 23 | 6 | 13.3 | 0.14 | 29.0 | 6.29 | 5.5 |  |
+| 3 | Günlük | U7-u6 | TV-bZ815rmw | ABD25 | 199 | 26 | 7 | 11.4 | 0.10 | 24.5 | 5.65 | 6.1 |  |
+| 4 | Günlük | U7-u6 | TV-6ZReHYKn | ABD25 | 199 | 11 | 3 | 8.4 | 0.06 | 35.3 | 9.46 | 11.4 |  |
 
-### ABD vadeli (1)
+### ABD vadeli (2)
 
 | # | TF | Kaynak | Kimlik | Sembol | Hafta | İşlem | İşlem/yıl | Yıllık % | p10 % | Net % | PF | MDD % | Not |
 |---:|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| 1 | 2 saat | TV-2 | [9u8pzF0I](https://www.tradingview.com/script/9u8pzF0I/) | CME_MINI:MNQ1! | 30 | 84 | 154 | 47.5 | 0.73 | 541.4 | 6.14 | 1.7 | ⚠ hesap hatası şüphesi; kısa sınama; aşırı getiri |
+| 1 | 5 dk | TV-2 | [w8FXpidd](https://www.tradingview.com/script/w8FXpidd/) | CME_MINI:MNQ1! | 11 | 13 | 24 | 17.1 | 0.07 | 44.2 | 3.14 | 21.7 | kısa sınama; <30 işlem, veri_kisa |
+| 2 | 2 saat | TV-2 | [9u8pzF0I](https://www.tradingview.com/script/9u8pzF0I/) | CME_MINI:MNQ1! | 30 | 84 | 154 | 57.2 | 0.87 | 541.4 | 6.14 | 1.7 | ⚠ hesap hatası şüphesi; kısa sınama; aşırı getiri |
 
 ### Kripto (3)
 
