@@ -2,7 +2,8 @@
 
 ## İş 1 — TV-2 Pine paper kitapları
 
-Durum: tamamlandı; PR açılacak.
+Durum: tamamlandı; dal uzak repoya gönderildi. PR oluşturma, geçersiz
+`GH_TOKEN` nedeniyle GitHub API tarafından reddedildi.
 
 ### Yapılanlar
 
@@ -34,5 +35,7 @@ Durum: tamamlandı; PR açılacak.
 
 ### Açık soru
 
-- Yok.
+- PR açma yetkisi: mevcut `GH_TOKEN` geçersiz. Dal:
+  `codex/faz2-basi` (PR oluşturma sayfası:
+  `https://github.com/sselimgenc-oss/sg-arge/pull/new/codex/faz2-basi`).
 
