@@ -41,6 +41,7 @@ class Ayarlar:
     pyramiding: int = 1
     process_orders_on_close: bool = False
     mintick: float = 0.01
+    point_value: float = 1.0                 # vadeli kontratta puan başına parasal değer (MNQ: 2 USD)
     close_entries_rule: str = "FIFO"           # FIFO: çıkış miktarı hedef girişten, uygulama en eski işlemden (Pine varsayılanı)
     calc_on_order_fills: bool = False          # dolum sonrası bar içi ek yürütme (modül `ara(ctx, i)` sağlar)
 
@@ -166,7 +167,7 @@ class Baglam:
         return len(self.kapali)
 
     def _acik_kz(self, fiyat: float) -> float:
-        return float(sum(t.yon * (fiyat - t.fiyat) * t.adet for t in self.acik))
+        return float(sum(t.yon * (fiyat - t.fiyat) * t.adet * self.a.point_value for t in self.acik))
 
     # ---- emirler (Pine strategy.*) ----
     def entry(self, kimlik: str, yon: int, qty: float | None = None, limit: float | None = None,
@@ -233,16 +234,16 @@ class Baglam:
         if tip == "fixed":
             return float(deger)
         if tip == "cash":
-            return float(deger) / fiyat
+            return float(deger) / (fiyat * self.a.point_value)
         if tip == "percent_of_equity":
-            return self.equity * float(deger) / 100.0 / fiyat
+            return self.equity * float(deger) / 100.0 / (fiyat * self.a.point_value)
         raise ValueError(f"default_qty_type bilinmiyor: {tip}")
 
     # ---- dolum ----
     def _komisyon(self, fiyat: float, adet: float) -> float:
         t, v = self.a.commission_type, self.a.commission_value
         if t == "percent":
-            return abs(fiyat * adet) * v / 100.0
+            return abs(fiyat * adet * self.a.point_value) * v / 100.0
         if t == "cash_per_contract":
             return abs(adet) * v
         if t == "cash_per_order":
@@ -303,7 +304,7 @@ class Baglam:
             pay = q / t.adet
             giris_kom = t.komisyon * pay
             cikis_kom = self._komisyon(fiyat, q)
-            brut = t.yon * (fiyat - t.fiyat) * q
+            brut = t.yon * (fiyat - t.fiyat) * q * self.a.point_value
             net = brut - giris_kom - cikis_kom
             self.gerceklesen += net
             self.kapali.append({"entry_id": t.entry_id, "exit_id": exit_id, "yon": t.yon, "adet": q,

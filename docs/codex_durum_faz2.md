@@ -52,3 +52,15 @@ Durum: tamamlandı; dal uzak repoya gönderildi. PR oluşturma, geçersiz
 - **Kullanıcı kararı:** wcegMOXj portföyden çıktı (tek enstrüman ETHBTC). BTC→USD kodu kalır, kullanılmaz.
 - İş 2 (200 günlük kural) bu dalda yok; İş 3 dalı (`codex/faz2-dogrulama`) uzak repoya gönderilmemiş.
 - **Düzeltildi — kaynak hatası alarmı:** SHA/ağ/veri hatası artık kalıcı `DURDUR` değil `KAYNAK_HATASI`; kitap o koşuda çalışmaz, sonraki koşu yeniden dener (tek bir pine-facade hatası yho kitabını kalıcı kapatırdı).
+
+## İş 3 — dört doğrulama (Codex)
+
+- TV-2 Pine yorumlayıcısı ve mevcut gerçekçi maliyet ayarlarıyla çalışacak `backtests/faz2_dogrulama.py` eklendi.
+- Coinbase sayfalama, perp funding işareti ve MNQ back-adjust için ağsız birim testleri eklendi.
+- MNQ doğrulamasında emülatöre kontrat puan değeri tanımı eklendi (`$2`, `0,25` tick); varsayılan değer 1 olduğundan mevcut strateji sonuçlarını değiştirmez.
+- `paper/` dizinine dokunulmadı.
+
+## Açık durum
+
+- Tam ağlı koşu denendi; ortam vekili `api.exchange.coinbase.com` için `403 Forbidden` verdi. Bu nedenle doğrulama verisi indirilemedi ve sayısal sonuç CSV'si üretilmedi; uydurma sonuç yazılmadı. Erişim sağlandığında `python -m backtests.faz2_dogrulama` tüm satırları üretir.
+- Lider: bu ortamda da vekil Coinbase için 403 veriyor; koşu GitHub Actions'a taşındı (`.github/workflows/faz2_dogrulama.yml`).
