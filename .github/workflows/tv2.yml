@@ -34,6 +34,8 @@ jobs:
     if: ${{ inputs.dukascopy }}
     strategy:
       fail-fast: false
+      # Dukascopy eşzamanlı isteklere 429 döndürüyor; az iş, sıralı yıllar.
+      max-parallel: 4
       matrix:
         sembol: [XAUUSD, EURUSD, USDJPY, USATECHIDXUSD, XAGUSD, USA500IDXUSD, NZDUSD, GBPUSD,
                  USA30IDXUSD, AUDUSD, EURGBP, EURAUD, GBPJPY, EURJPY]
@@ -54,10 +56,17 @@ jobs:
           path: data/tv2/dukascopy/${{ matrix.sembol }}
           key: duka-${{ matrix.sembol }}-${{ github.run_id }}
           restore-keys: duka-${{ matrix.sembol }}-
-      - name: Download 1-minute candles (yıllar paralel)
-        # Her yıl ayrı Parquet dosyasıdır; yıllar birbirinden bağımsız indirilir.
+      - name: Download 1-minute candles (yıllar sıralı)
+        # Yıl dosyası her gün kaydedilir; 429 sonrası bekleyip kaldığı yerden sürer.
+        # Bir yıl hiç inmezse iş düşmez; tv2 eldeki veriyle koşar.
         run: |
-          seq 2019 "$(date -u +%Y)" | xargs -P4 -I{} python -m data.dukascopy "${{ matrix.sembol }}" --yillar {}
+          for y in $(seq 2024 "$(date -u +%Y)"); do
+            for a in 1 2 3 4 5 6; do
+              python -m data.dukascopy "${{ matrix.sembol }}" --yillar "$y" && break
+              echo "${{ matrix.sembol }} $y: deneme $a başarısız, bekleniyor"
+              sleep $((a * 60))
+            done
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: duka-${{ matrix.sembol }}-${{ github.run_id }}
