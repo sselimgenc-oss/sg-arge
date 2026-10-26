@@ -43,7 +43,8 @@ def build(results_dir: Path = OUT) -> pd.DataFrame:
     series_by_id: dict[str, pd.Series] = {}
     for _, row in passed.iterrows():
         key = str(row["varyant"])
-        returns = olcekle(_getiri(row)).fillna(0.0)
+        annualization = 365 if row.get("piyasa") == "KRIPTO25" else 252
+        returns = olcekle(_getiri(row), annualization).fillna(0.0)
         series_by_id[key] = returns
         weekly = (1 + returns).resample("W").prod() - 1
         records.append({

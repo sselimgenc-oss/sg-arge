@@ -13,9 +13,20 @@ def _seri(seed: int, n: int = 400, ort: float = 0.0005) -> pd.Series:
     return pd.Series(rng.normal(ort, 0.01, n), index=pd.date_range("2024-01-01", periods=n, freq="D", tz="UTC"))
 
 
-def test_scaling_sets_annual_volatility_to_target() -> None:
-    g = S.olcekle(_seri(1) * 7.3)
+def test_scaling_sets_crypto_annual_volatility_to_target() -> None:
+    g = S.olcekle(_seri(1) * 7.3, annualization=365)
     assert abs(g.std(ddof=1) * np.sqrt(365) - S.HEDEF_OYNAKLIK) < 1e-12
+
+
+def test_scaling_sets_equity_annual_volatility_to_target() -> None:
+    g = S.olcekle(_seri(1) * 7.3, annualization=252)
+    assert abs(g.std(ddof=1) * np.sqrt(252) - S.HEDEF_OYNAKLIK) < 1e-12
+
+
+def test_symbol_annualization_preserves_crypto_and_changes_equity() -> None:
+    assert S.annualization_for_symbol("BINANCE:ETHBTC") == 365
+    assert S.annualization_for_symbol("BINGX:BTCUSDT.P") == 365
+    assert S.annualization_for_symbol("AMEX:SPY") == 252
 
 
 def test_lower_bound_is_below_the_mean_and_positive_for_a_strong_edge() -> None:

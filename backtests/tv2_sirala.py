@@ -34,9 +34,26 @@ def _getiri(kimlik: str, bas: pd.Timestamp) -> pd.Series:
     return s[s.index >= bas]
 
 
-def olcekle(g: pd.Series) -> pd.Series:
-    sd = g.std(ddof=1) * np.sqrt(365)
+def olcekle(g: pd.Series, annualization: int = 365) -> pd.Series:
+    """Scale daily returns to the shared target volatility.
+
+    Crypto trades every calendar day.  Equity and commodity daily series do
+    not, so their annual volatility must use trading days rather than 365.
+    """
+    sd = g.std(ddof=1) * np.sqrt(annualization)
     return g * (HEDEF_OYNAKLIK / sd) if sd and np.isfinite(sd) and sd > 0 else g * np.nan
+
+
+CRYPTO_EXCHANGES = frozenset({
+    "BINANCE", "BINANCEUS", "BINGX", "BITFINEX", "BITGET", "BITSTAMP", "BITTREX", "BLOFIN",
+    "BYBIT", "COINBASE", "CRYPTO", "DELTAIN", "GATE", "KCEX", "KRAKEN", "MEXC", "OKX", "PIONEX", "POLONIEX",
+})
+
+
+def annualization_for_symbol(symbol: object) -> int:
+    """Return the daily annualization convention for a TV-2 symbol."""
+    exchange = str(symbol).upper().split(":", maxsplit=1)[0]
+    return 365 if exchange in CRYPTO_EXCHANGES else 252
 
 
 def alt_sinir(haftalik: pd.Series, rng: np.random.Generator) -> float:
@@ -108,7 +125,7 @@ def main() -> None:
     kayit, seriler = [], {}
     for s in gecen:
         bas = pd.Timestamp(s["surum_tarihi"], tz="UTC")
-        g = olcekle(_getiri(s["id"], bas))
+        g = olcekle(_getiri(s["id"], bas), annualization_for_symbol(s.get("sembol")))
         seriler[s["id"]] = g.fillna(0.0)
         haftalik = (1 + g.fillna(0.0)).resample("W").prod() - 1
         kayit.append({
