@@ -1,6 +1,6 @@
 # Faz 1 adaylar — güçlü ve kalan zayıflar
 
-Tarih: 2026-10-26. Toplam **114** aday: güçlü **91**, zayıf (kullanıcı elemesinden sonra kalan) **23**. Altın/gümüş/ABD endeks Dukascopy koşusu sonuçları henüz dahil değil.
+Tarih: 2026-10-26. Toplam **99** aday: güçlü **91**, zayıf (kullanıcı elemesinden sonra kalan) **8**.
 
 **Sütunlar:** TF = zaman dilimi · Hafta = sınamada işlem yapılan hafta · İşlem = sınama işlem sayısı · İşlem/yıl = sınamada yıllık işlem · Yıllık % = ortak risk ölçeğinde yıllık getiri · p10 = temkinli haftalık alt sınır (%) · Net % = sınama dönemi net getirisi (U7: 2023 sonrası) · PF = kâr faktörü · MDD = en büyük düşüş %.
 
@@ -11,7 +11,7 @@ Tarih: 2026-10-26. Toplam **114** aday: güçlü **91**, zayıf (kullanıcı ele
 | Kanıt | ABD hisse / ETF | ABD vadeli | Emtia | Kripto | Toplam |
 |---|---:|---:|---:|---:|---:|
 | güçlü | 36 | 0 | 5 | 50 | 91 |
-| zayıf | 6 | 1 | 3 | 13 | 23 |
+| zayıf | 4 | 1 | 0 | 3 | 8 |
 
 ## Güçlü (91)
 
@@ -121,18 +121,16 @@ Tarih: 2026-10-26. Toplam **114** aday: güçlü **91**, zayıf (kullanıcı ele
 | 4 | Günlük | U7-u6 | TV-zrDoqm9F | EMTIA | 199 | 62 | 16 | 4.0 | -0.02 | 6.4 |  |  |  |
 | 5 | Günlük | U7-u4 | U4-H4:EMTIA:1D | EMTIA | 199 | 150 | 39 | 2.2 | -0.04 | 2.0 |  |  |  |
 
-## Zayıf (kalan) (23)
+## Zayıf (kalan) (8)
 
-### ABD hisse / ETF (6)
+### ABD hisse / ETF (4)
 
 | # | TF | Kaynak | Kimlik | Sembol | Hafta | İşlem | İşlem/yıl | Yıllık % | p10 % | Net % | PF | MDD % | Not |
 |---:|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | 1 | 15 dk | TV-2 | [yhoK9cH4](https://www.tradingview.com/script/yhoK9cH4/) | NASDAQ:META | 12 | 43 | 103 | 36.6 | 0.64 | 35.6 | 2.14 | 6.7 | kısa sınama; veri_kisa |
-| 2 | 1 saat | TV-2 | [de5JB2fZ](https://www.tradingview.com/script/de5JB2fZ/) | NASDAQ:TSLA | 25 | 15 | 32 | 1.2 | -0.22 | 0.0 | 1.11 | 0.0 | kısa sınama; <30 işlem |
-| 3 | Günlük | U7-u6 | TV-sPNx5Z74 | ABD25 | 199 | 23 | 6 | 11.0 | 0.12 | 29.0 |  |  |  |
-| 4 | Günlük | U7-u6 | TV-bZ815rmw | ABD25 | 199 | 26 | 7 | 9.5 | 0.08 | 24.5 |  |  |  |
-| 5 | Günlük | U7-u6 | TV-6ZReHYKn | ABD25 | 199 | 11 | 3 | 7.0 | 0.05 | 35.3 |  |  |  |
-| 6 | Günlük | U7-u6 | TV-GDcSJIo9 | ABD25 | 199 | 28 | 7 | 4.3 | -0.00 | 3.8 |  |  |  |
+| 2 | Günlük | U7-u6 | TV-sPNx5Z74 | ABD25 | 199 | 23 | 6 | 11.0 | 0.12 | 29.0 |  |  |  |
+| 3 | Günlük | U7-u6 | TV-bZ815rmw | ABD25 | 199 | 26 | 7 | 9.5 | 0.08 | 24.5 |  |  |  |
+| 4 | Günlük | U7-u6 | TV-6ZReHYKn | ABD25 | 199 | 11 | 3 | 7.0 | 0.05 | 35.3 |  |  |  |
 
 ### ABD vadeli (1)
 
@@ -140,28 +138,10 @@ Tarih: 2026-10-26. Toplam **114** aday: güçlü **91**, zayıf (kullanıcı ele
 |---:|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | 1 | 2 saat | TV-2 | [9u8pzF0I](https://www.tradingview.com/script/9u8pzF0I/) | CME_MINI:MNQ1! | 30 | 84 | 154 | 47.5 | 0.73 | 541.4 | 6.14 | 1.7 | ⚠ hesap hatası şüphesi; kısa sınama; aşırı getiri |
 
-### Kripto (13)
+### Kripto (3)
 
 | # | TF | Kaynak | Kimlik | Sembol | Hafta | İşlem | İşlem/yıl | Yıllık % | p10 % | Net % | PF | MDD % | Not |
 |---:|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | 1 | 15 dk | TV-2 | [QCkIgf3z](https://www.tradingview.com/script/QCkIgf3z/) | COINBASE:ETHUSD | 33 | 300 | 481 | 36.2 | 0.41 | 22.6 | 2.96 | 0.2 | kısa sınama |
 | 2 | 15 dk | TV-2 | [BR74LOKo](https://www.tradingview.com/script/BR74LOKo/) | BYBIT:BTCUSDT.P | 21 | 224 | 580 | 22.7 | 0.19 | 1.9 | 1.98 | 2.1 | kısa sınama |
-| 3 | 15 dk | TV-2 | [SiriKvsf](https://www.tradingview.com/script/SiriKvsf/) | BINANCE:XRPUSDT | 26 | 16 | 33 | 7.4 | -0.04 | 8.1 | 1.43 | 18.4 | kısa sınama |
-| 4 | 15 dk | TV-2 | [Zx1H2viP](https://www.tradingview.com/script/Zx1H2viP/) | BINANCE:XRPUSDT.P | 33 | 134 | 216 | 5.7 | -0.28 | 0.9 | 1.05 | 5.9 | kısa sınama |
-| 5 | 15 dk | TV-2 | [pcoISSiu](https://www.tradingview.com/script/pcoISSiu/) | BINANCE:BTCEUR | 31 | 34 | 59 | -8.1 | -0.43 | 57229.1 | 1.32 | 0.0 | ⚠ hesap hatası şüphesi; kısa sınama |
-| 6 | 30 dk | TV-2 | [V3jpZpIs](https://www.tradingview.com/script/V3jpZpIs/) | BINANCE:FILUSDT.P | 28 | 58 | 110 | 14.0 | -0.12 | 65.9 | 1.54 | 17.1 | kısa sınama |
-| 7 | 30 dk | TV-2 | [jTHvkEVo](https://www.tradingview.com/script/jTHvkEVo/) | BLOFIN:SOLUSDT.P | 23 | 85 | 196 | 10.7 | 0.14 | 1136.3 | 1.20 | 6.3 | ⚠ hesap hatası şüphesi; kısa sınama |
-| 8 | 1 saat | TV-2 | [jSNZ1CmV](https://www.tradingview.com/script/jSNZ1CmV/) | COINBASE:ETHUSD | 13 | 11 | 46 | 9.1 | -0.37 | 0.8 | 1.52 | 2.2 | kısa sınama |
-| 9 | 1 saat | TV-2 | [RUbAzilz](https://www.tradingview.com/script/RUbAzilz/) | PIONEX:ZECUSDT.P | 22 | 187 | 444 | 8.1 | -0.22 | 0.3 | 1.09 | 0.7 | kısa sınama |
-| 10 | 1 saat | TV-2 | [i0XSbToM](https://www.tradingview.com/script/i0XSbToM/) | COINBASE:BTCUSD | 31 | 31 | 53 | 4.0 | -0.10 | 1.8 | 1.26 | 2.6 | kısa sınama |
-| 11 | 1 saat | TV-2 | [d117dN6D](https://www.tradingview.com/script/d117dN6D/) | COINBASE:BTCUSD | 24 | 33 | 72 | 2.8 | -0.15 | 0.0 | 1.21 | 0.1 | kısa sınama |
-| 12 | 3 saat | TV-2 | [zuEOEYPK](https://www.tradingview.com/script/zuEOEYPK/) | BINGX:BTCUSDT.P | 30 | 50 | 89 | 28.8 | 0.26 | 1.1 | 2.76 | 0.2 | kısa sınama |
-| 13 | Günlük | U7-u6 | TV-OKxIjdsz | KRIPTO25 | 199 | 27 | 7 | 6.6 | 0.04 | 32.0 |  |  |  |
-
-### Emtia (3)
-
-| # | TF | Kaynak | Kimlik | Sembol | Hafta | İşlem | İşlem/yıl | Yıllık % | p10 % | Net % | PF | MDD % | Not |
-|---:|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| 1 | 1 saat | TV-2 | [E7jfjUgH](https://www.tradingview.com/script/E7jfjUgH/) | TVC:GOLD | 25 | 26 | 57 | 7.2 | -0.15 | 5.1 | 1.37 | 8.4 | kısa sınama; <30 işlem |
-| 2 | 2 saat | TV-2 | [iLXxAcTj](https://www.tradingview.com/script/iLXxAcTj/) | TVC:GOLD | 25 | 83 | 183 | 10.8 | -0.03 | 0.5 | 1.30 | 0.4 | kısa sınama |
-| 3 | 2 saat | TV-2 | [pjUZ1vMs](https://www.tradingview.com/script/pjUZ1vMs/) | TVC:GOLD | 24 | 49 | 107 | 3.9 | -0.06 | 0.6 | 1.26 | 0.6 | kısa sınama |
+| 3 | 3 saat | TV-2 | [zuEOEYPK](https://www.tradingview.com/script/zuEOEYPK/) | BINGX:BTCUSDT.P | 30 | 50 | 89 | 28.8 | 0.26 | 1.1 | 2.76 | 0.2 | kısa sınama |
