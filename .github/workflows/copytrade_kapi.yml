@@ -82,7 +82,9 @@ jobs:
             eksik) extra="--eksikleri-tamamla" ;;
             *) extra="" ;;
           esac
-          timeout 100m python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} $extra || true
+          # Hızlı modda 12 dk sınır: günlük (API'den) iş bitince okunabilsin; kısmi sonuç yine yayımlanır.
+          limit=100m; [ "${{ needs.plan.outputs.mod }}" = hizli ] && limit=12m
+          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} $extra || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
