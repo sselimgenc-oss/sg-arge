@@ -20,7 +20,7 @@ export function orderEvents(trader, fills, account = 0) {
   return [...grouped.entries()].sort(([, a], [, b]) => Number(a[0].time) - Number(b[0].time)).flatMap(([oid, rows]) => {
     const first = rows[0], last = rows.at(-1);
     const before = Number(first.startPosition || 0);
-    const after = Number(last.startPosition || before) + signed(last);
+    const after = before + rows.reduce((sum, fill) => sum + signed(fill), 0);
     const price = rows.reduce((sum, fill) => sum + Number(fill.px) * Math.abs(Number(fill.sz)), 0) /
       rows.reduce((sum, fill) => sum + Math.abs(Number(fill.sz)), 0);
     const kinds = [];

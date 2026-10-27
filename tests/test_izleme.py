@@ -60,6 +60,8 @@ def test_one_trader_error_retains_its_last_successful_payload(tmp_path):
     retained = next(trader for trader in result['traderlar'] if trader['id'] == 'T2')
     assert retained['hesap_degeri'] == old['hesap_degeri']
     assert retained['saglik']['nedenler'][-1] == 'veri hatası: 429 kısa hata'
+    assert retained['gecerli'] is False
+    assert retained['veri_zamani'] == old['veri_zamani']
 
 
 def test_hourly_fallback_marks_virtual_copy_approximate(tmp_path):
@@ -79,9 +81,15 @@ def test_kararlar_merges_last_decision_without_personal_fields(tmp_path):
         {'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:00:00Z', 'karar': 'acti', 'neden': 'diger', 'not': ''},
         {'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:01:00Z', 'karar': 'atladi', 'neden': 'gec_gordum', 'not': ''},
     ])
-    assert rows == [{'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:01:00Z', 'karar': 'atladi', 'neden': 'gec_gordum', 'not': ''}]
+    assert rows == [{'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27', 'karar': 'atladi', 'neden': 'gec_gordum', 'not': ''}]
     with pytest.raises(ValueError):
         merge(path, [{'olay_id': 'x', 'zaman': 'now', 'karar': 'acti', 'neden': 'diger', 'not': '', 'tutar': '1'}])
+    # Altın örnek: eski bakiye_yok kaydı tarihe indirgenir ve gizlilik nedeniyle diger olur.
+    assert merge(tmp_path / 'legacy.jsonl', [
+        {'olay_id': 'T1-2-acilis', 'zaman': '2026-10-27T10:02:03Z', 'karar': 'atladi', 'neden': 'bakiye_yok', 'not': ''},
+    ]) == [{'olay_id': 'T1-2-acilis', 'zaman': '2026-10-27', 'karar': 'atladi', 'neden': 'diger', 'not': ''}]
+    with pytest.raises(ValueError, match='etiketi'):
+        merge(tmp_path / 'etiket.jsonl', [{'olay_id': 'x', 'zaman': '2026-10-27', 'karar': 'acti', 'neden': 'diger', 'not': 'serbest'}])
 
 
 def position(size=1, coin='BTC', value=100):
@@ -173,9 +181,11 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     client = Client()
     one = m.run(root, root / 'out', client, NOW)
     two = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
-    assert one['traderlar'] == two['traderlar']
+    first, second = one['traderlar'][0], two['traderlar'][0]
+    assert {k: v for k, v in first.items() if k != 'veri_zamani'} == {k: v for k, v in second.items() if k != 'veri_zamani'}
+    assert second['veri_zamani'] == '2026-10-27T13:00:00Z'
     assert one['olaylar'] == two['olaylar']
-    assert client.portfolio_reads == 1
+    assert client.portfolio_reads == 2  # sağlık eğrisi saatlik yenilenir
     assert client.candle_reads == 1
     starts = [x['startTime'] for x in client.calls if x['type'] == 'userFillsByTime']
     assert starts[-1] == client.rows[-1]['time']  # inclusive boundary is deduplicated
@@ -191,7 +201,7 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     assert opened['sanal_sonuc']['durum'] == 'kapandi'
     assert opened['sanal_sonuc']['net_yuzde'] == pytest.approx(-.0019)
     m.run(root, root / 'out', client, NOW + pd.Timedelta(days=1))
-    assert client.portfolio_reads == 2
+    assert client.portfolio_reads == 4
 
 
 def test_pinned_scale_does_not_rewrite_prior_copy_pnl(tmp_path):
@@ -269,6 +279,24 @@ def test_partial_close_keeps_open_event_until_final_exit():
     assert events[m.event_id('T1', m.order_id(fills[0]), 'acilis')]['sanal_sonuc']['durum'] == 'kapandi'
 
 
+def test_order_event_aggregates_partial_fills_until_all_order_quantity_closes():
+    """Altın örnek: oid=1 ile 1+1 BTC açılır, 1 BTC kapansa da olay açık; ikinci BTC kapanınca net 9,6105 / 200 = %4,80525."""
+    fills = [fill('2026-10-27T10:00Z', 1, 'B', 1, 0, 100, oid=1),
+             fill('2026-10-27T10:01Z', 2, 'B', 1, 1, 100, oid=1),
+             fill('2026-10-27T11:00Z', 3, 'A', 1, 2, 110, oid=2),
+             fill('2026-10-27T11:01Z', 4, 'A', 1, 1, 100, oid=3)]
+    events = {e['id']: e for e in m.fill_events('T1', fills, 1000, [])}
+    opening = events['T1-1-acilis']
+    assert opening['fiyat'] == pytest.approx(100)
+    assert opening['hesap_payi'] == pytest.approx(.2)
+    candles = {'BTC': [{'t': f['time'] + 30 * m.MINUTE, 'o': [100, 100, 110, 100][i]} for i, f in enumerate(fills)]}
+    m.copy_results(fills[:3], candles, [], 1000, T0, NOW, events)
+    assert opening['sanal_sonuc']['durum'] == 'acik'
+    m.copy_results(fills, candles, [], 1000, T0, NOW, events)
+    assert opening['sanal_sonuc'] == {'durum': 'kapandi', 'net_yuzde': pytest.approx(9.6105 / 200),
+                                      'kapanis': '2026-10-27T11:31:00Z'}
+
+
 def test_midnight_cost_is_booked_on_execution_day():
     f = fill('2026-10-26T23:45Z')
     now = m.timestamp('2026-10-27T01:00Z')
@@ -331,11 +359,19 @@ def test_invalid_perp_dex_response_is_not_silently_ignored():
 
 def test_portfolio_uses_pnl_not_deposits():
     data = portfolio()
-    curve = m.portfolio_curve(data, NOW)
+    denominator = m.health_denominator(data, T0)
+    curve = m.portfolio_curve(data, NOW, denominator)
     data[0][1]['accountValueHistory'][-1][1] = '100000000'
-    changed = m.portfolio_curve(data, NOW)
+    changed = m.portfolio_curve(data, NOW, denominator)
     pd.testing.assert_series_equal(curve, changed)  # robust median ignores one deposit
     assert (curve.diff().dropna() > 0).all()
+
+
+def test_health_denominator_is_the_t0_value_not_a_later_median():
+    data = portfolio()
+    data[0][1]['accountValueHistory'][0][1] = '500'
+    data[0][1]['accountValueHistory'][-1][1] = '9000'
+    assert m.health_denominator(data, T0) == pytest.approx(1000)
 
 
 def history(live=None):
@@ -393,10 +429,11 @@ def check_shape(actual, examples):
     if actual is None:
         assert any(example is None for example in examples)
     elif isinstance(actual, dict):
-        matching = [e for e in examples if isinstance(e, dict) and set(e) == set(actual)]
+        # v1.4 may add contract fields while the static v1.3 example remains a lower bound.
+        matching = [e for e in examples if isinstance(e, dict) and set(e).issubset(actual)]
         assert matching, actual.keys()
-        for key, value in actual.items():
-            check_shape(value, [e[key] for e in matching])
+        for key in set().union(*(set(e) for e in matching)):
+            check_shape(actual[key], [e[key] for e in matching if key in e])
     elif isinstance(actual, list):
         pool = [x for e in examples if isinstance(e, list) for x in e]
         for item in actual:
@@ -413,6 +450,8 @@ def test_nonempty_status_matches_example_keys_types_and_event_variants(tmp_path)
     check_shape(result, [example])
     assert result['traderlar'][0]['pozisyonlar'][0]['binance'] == 'var'
     assert result['traderlar'][0]['kapi']['sinif'] == 'Yetersiz'
+    assert result['traderlar'][0]['gecerli'] is True
+    assert result['traderlar'][0]['veri_zamani'] == '2026-10-27T12:00:00Z'
     assert json.loads((root / 'out/durum.json').read_text()) == result
 
 

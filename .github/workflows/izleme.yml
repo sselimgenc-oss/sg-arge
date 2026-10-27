@@ -49,8 +49,6 @@ jobs:
         run: python -m copytrade.izleme_motoru --root . --output izleme
       - name: Worker kararlarını içe al
         if: ${{ vars.KARAR_URL != '' }}
-        # Karar aktarımı düşerse saatlik durum yine yayımlanır; kararlar bir sonraki saatte gelir.
-        continue-on-error: true
         env:
           KARAR_URL: ${{ vars.KARAR_URL }}
         run: python -m copytrade.kararlar --url "$KARAR_URL" --output izleme/kararlar.jsonl
