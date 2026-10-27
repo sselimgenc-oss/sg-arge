@@ -18,8 +18,10 @@ Eşik değişmez. Kapı dosyalarına (`kapi.py`, `olcut.py`, `kurallar.yaml`) do
    ile yeniden denenir). Test: ilk gönderim ağ hatası → sonraki cron'da gönderilir, iki kez gönderilmez.
 5. **Sorgulara bölünen emir:** Worker aynı `oid`'nin önceki dolumlarını D1'de biriktirir; olay türü motorla aynı çıkar
    (ortak fixture'a "iki sorguya bölünmüş emir" senaryosu).
-6. **Gizlilik:** `kararlar.py` `not` alanı yalnız izinli etiket listesi (boş dahil); serbest metin reddedilir.
-   `/kararlar` ve `kararlar.jsonl` alanları kullanıcı kararına göre (aşağıda) daraltılır.
+6. **Gizlilik (kullanıcı kararı 2026-10-27):** `bakiye_yok` nedeni **kaldırılır** (Telegram: Geç gördüm / Beğenmedim /
+   Diğer; eski kayıtlarda varsa `diger`e çevrilir). `zaman` yayımlanan kayıtlarda yalnız **tarih** (`YYYY-MM-DD`);
+   Worker iç sıralama için tam zamanı D1'de tutabilir, `/kararlar` ve `kararlar.jsonl` tarih verir. `not` yalnız izinli
+   etiket listesi (boş dahil); serbest metin reddedilir. Sözleşme §4 buna göre güncellenir (v1.4).
 7. **Altın örnekler:** her iş için elle hesaplanmış beklenen sayılı test.
 
 ## Kabul
