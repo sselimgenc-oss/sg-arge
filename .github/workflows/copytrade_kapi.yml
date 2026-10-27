@@ -23,8 +23,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: copytrade-kapi
-  cancel-in-progress: true  # GEÇİCİ (takılan test koşusunu iptal etmek için; PR öncesi false)
+  group: copytrade-kapi-v1-1
+  cancel-in-progress: false
 
 jobs:
   plan:
