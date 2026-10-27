@@ -37,11 +37,19 @@ jobs:
             status=$?
             if [ "$status" -ne 2 ]; then exit "$status"; fi
           fi
+      - name: Kapı sonuçlarını (tarz) veri dalından getir
+        shell: bash
+        # Trader'ın tarzı izleme listesinde yoksa en son kapı sonucundan okunur (copytrade-kapi dalı).
+        run: |
+          if git ls-remote --exit-code --heads origin refs/heads/copytrade-kapi >/dev/null 2>&1; then
+            git fetch --depth=1 origin copytrade-kapi
+            git archive FETCH_HEAD copytrade/kapi | tar -x
+          fi
       - name: Halka açık veriyi oku ve sanal defteri güncelle
         run: python -m copytrade.izleme_motoru --root . --output izleme
       - name: Worker kararlarını içe al
         if: ${{ vars.KARAR_URL != '' }}
-        # Karar aktarımı düşerse saatlik durum yine yayımlanır; kararlar bir sonraki saatte gelir.
+        # Karar aktarımı düşerse saatlik durum yine yayımlanır (kararlar bir sonraki saatte gelir); adım günlükte kırmızı görünür.
         continue-on-error: true
         env:
           KARAR_URL: ${{ vars.KARAR_URL }}

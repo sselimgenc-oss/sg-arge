@@ -1,14 +1,61 @@
-# İzleme listesi (veri sözleşmesi §2). Lider/kullanıcı doldurur; motor (GOREV_IZLEME İş A) okur.
-# 2026-10-27: iki TEST trader'ı — panonun canlı veriyle sınanması için. Kopyalama kararı DEĞİLDİR
-# (CT-Kapı v1'de ikisi de adım 3–4'ü geçti, adım 5 plasebo hesaplanamadı). Gerçek liste 3. adımda (trader seçimi).
+# İzleme listesi (veri sözleşmesi §2). Lider/kullanıcı doldurur; motor okur.
+# 2026-10-27: ÖN İZLEME (kullanıcı kararı) — 11 aday: CT-Kapı (eski hesap) + bağımsız seçimlerde en çok anılanlar
+# (arastirma/copytrade/bagimsiz_secim/KARSILASTIRMA.md). Kopyalama kararı DEĞİLDİR; 3 aylık ölçüm başlamadı.
+# Düzeltilmiş kapı koşusu bitince liste ve t0 yeniden belirlenir. T11 (0x1404) sonuç çelişkisini doğrulamak için.
+# 2026-10-27: T3 (69b0) ve T8 (79bf) çıkarıldı — hesap değeri 0 (para çekilmiş), kullanıcı kararı.
+# tarz: medyan elde tutma (≥ 24 sa swing, 1–24 sa intraday). takma_ad = adresin ilk 4 hanesi (Hyperdash'te karşılaştırma için).
 traderlar:
   - id: T1
     adres: "0x8bae3527e5a33fa0cf184f37bc112d071463ab6d"
-    takma_ad: Test-1
+    takma_ad: "8bae"
+    tarz: swing
     durum: izlemede
     t0: "2026-10-28"
   - id: T2
     adres: "0x3f96c4df1e76902985d3dbd979af54b487f29671"
-    takma_ad: Test-2
+    takma_ad: "3f96"
+    tarz: intraday
+    durum: izlemede
+    t0: "2026-10-28"
+  - id: T4
+    adres: "0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9"
+    takma_ad: "3e68"
+    tarz: swing
+    durum: izlemede
+    t0: "2026-10-28"
+  - id: T5
+    adres: "0x29754d7a9f9f344327158e2d01508efa415bd558"
+    takma_ad: "2975"
+    tarz: swing
+    durum: izlemede
+    t0: "2026-10-28"
+  - id: T6
+    adres: "0x9312e0a61f21affbd5be821f436f8fdf6b6f6663"
+    takma_ad: "9312"
+    tarz: swing
+    durum: izlemede
+    t0: "2026-10-28"
+  - id: T7
+    adres: "0x09d70eac3bbebf727218b81b7f6384249826ab24"
+    takma_ad: "09d7"
+    tarz: intraday
+    durum: izlemede
+    t0: "2026-10-28"
+  - id: T9
+    adres: "0xe5731d975d84c7222ebfd0ce8239f04ea3164e55"
+    takma_ad: "e573"
+    tarz: intraday
+    durum: izlemede
+    t0: "2026-10-28"
+  - id: T10
+    adres: "0x4c921317a8301044a2287dfa34b18c37005b42db"
+    takma_ad: "4c92"
+    tarz: intraday
+    durum: izlemede
+    t0: "2026-10-28"
+  - id: T11
+    adres: "0x1404109f8cd4a79a0447365edbb7a13acd0b2f27"
+    takma_ad: "1404"
+    tarz: intraday
     durum: izlemede
     t0: "2026-10-28"

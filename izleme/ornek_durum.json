@@ -9,6 +9,7 @@
    "takma_ad": "Trader-1",
    "durum": "kopyala",
    "t0": "2026-09-01",
+   "tarz": "intraday",
    "kapi": {
     "sinif": "Geçti",
     "tarih": "2026-09-01",
@@ -655,6 +656,7 @@
    "takma_ad": "Trader-2",
    "durum": "kopyala",
    "t0": "2026-09-01",
+   "tarz": "swing",
    "kapi": {
     "sinif": "Geçti",
     "tarih": "2026-09-01",
@@ -1047,7 +1049,7 @@
     "bakiye_usd": 1009,
     "getiri": 0.009,
     "dusus": 0.021,
-    "gecikme_dk": 30,
+    "gecikme_dk": 120,
     "t0": "2026-09-01",
     "egri": [
      [
@@ -1287,6 +1289,7 @@
    "takma_ad": "Trader-3",
    "durum": "kopyala",
    "t0": "2026-09-01",
+   "tarz": "intraday",
    "kapi": {
     "sinif": "Geçti",
     "tarih": "2026-09-01",
@@ -1944,6 +1947,7 @@
    "takma_ad": "Trader-4",
    "durum": "izlemede",
    "t0": "2026-09-01",
+   "tarz": "intraday",
    "kapi": {
     "sinif": "Yetersiz",
     "tarih": "2026-09-01",

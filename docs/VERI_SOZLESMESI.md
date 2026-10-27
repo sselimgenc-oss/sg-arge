@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1.3, 2026-10-27, kullanıcı onayı; v1.2 olay kimliği ve karar akışı; v1.3 tarz)
+# Veri sözleşmesi — copy trade izleme (v1.4, 2026-10-28; v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -26,6 +26,8 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
       "takma_ad": "Trader-1",
       "durum": "kopyala | izlemede | durdu",
       "t0": "2026-10-28",
+      "veri_zamani": "2026-10-28T10:00:00Z",
+      "gecerli": true,
       "kapi": {"sinif": "Geçti | Yetersiz | Kaldı", "tarih": "2026-10-27", "not": "en büyük işlem payı %36"},
       "saglik": {"isik": "yesil | sari | kirmizi", "nedenler": ["konide", "kaldıraç normal"]},
       "form": {"skor": 0.8, "getiri_30g": 0.042, "getiri_90g": 0.11},
@@ -55,8 +57,13 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - **Olay kimliği (v1.2):** `{trader}-{oid}-{tur}` (ör. `T1-123456789-acilis`); ışık olayı `{trader}-{ms}-isik`.
   Olaylar **emir (`oid`) düzeyinde** üretilir: aynı emrin dolumları birleştirilir (tek açılış sahte büyütmeler doğurmaz).
   Saatlik motor ve Cloudflare Worker aynı kuralla aynı kimliği üretir.
-- `traderlar[].tarz` (v1.3): `intraday` | `swing`. Sanal kopya gecikmesi tarza göre (intraday 30 dk, swing 120 dk);
+- `traderlar[].tarz` (v1.3): `intraday` | `swing` (izleme listesinde `tarz` varsa o, yoksa en son kapı sonucundan; ikisi de yoksa
+  `bilinmiyor` ve 30 dk gecikme). Sanal kopya gecikmesi tarza göre (intraday 30 dk, swing 120 dk);
   Telegram mesajında `[Intraday]` / `[Swing]` etiketi.
+- `traderlar[].veri_zamani` ve `gecerli` (v1.4): trader verisinin son başarılı okuma zamanı ve geçerliliği. Bir saatlik
+  okuma hata verirse önceki trader gösterilir, `gecerli: false` olur ve sağlık nedenlerinde `veri hatası` yer alır.
+  Önceki başarılı kayıt hiç yoksa trader yine yayımlanır: `veri_zamani: null`, `gecerli: false`, sarı sağlık ışığı ve
+  boş `pozisyonlar`; böylece eksik trader liste dışına sessizce düşmez.
 - `sanal_kopya.not` (v1.2, isteğe bağlı): ör. `"yaklaşık fiyat"` (1 dk mum kaçınca 1 saatlik mum kullanıldıysa).
 - `saglik.nedenler` `"veri hatası: …"` içerebilir (v1.2): o trader bu saat güncellenemedi, önceki kayıt gösteriliyor.
 - `buyutme`/`azaltma`: aynı yönde pozisyonun **%25'inden fazla** değişimi (lider kararı); daha küçükleri olay sayılmaz.
@@ -80,14 +87,17 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 kopyalama kararını değiştirmez (karar: kapı + ışık).
 
 ## 4. Kararlar (açtım / atladım)
-Kayıt: `{"olay_id", "zaman", "karar": "acti | atladi", "neden": "gec_gordum | begenmedim | bakiye_yok | diger",
-"not": ""}` — `not` serbest metin değil, kısa etiket; tutar/kişisel bilgi yazılmaz. `copytrade-izleme` dalında `izleme/kararlar.jsonl`; v1'de karar yalnız Telegram düğmesiyle verilir.
+Kayıt: `{"olay_id", "zaman", "karar": "acti | atladi", "neden": "gec_gordum | begenmedim | diger",
+"not": ""}` — `zaman` yalnız `YYYY-MM-DD`; `not` izinli etiket listesinden yalnız boş değerdir. Tutar, bakiye,
+hesap, isim ve serbest metin yazılmaz. Eski `bakiye_yok` kayıtları içe aktarmada `diger`e çevrilir.
+`copytrade-izleme` dalında `izleme/kararlar.jsonl`; v1'de karar yalnız Telegram düğmesiyle verilir.
 İstatistik: aynı trader için "tüm olaylar" ile "açtıklarım" sanal sonuçları ayrı hesaplanır.
 
 ## 5. Telegram
 - Gönderen: Cloudflare Worker, 5 dakikada bir (`docs/GOREV_TELEGRAM.md`). Olay türleri: `acilis`, `kapanis`, `buyutme`,
   ışığın `kirmizi`ya dönmesi. Her `olay.id` bir kez bildirilir.
 - Metin: `🟢 Trader-1 · BTC LONG açtı · giriş 68.400 · hesabın %8'i · 2x · Binance: var`
-- Düğmeler (yalnız `acilis`/`buyutme`): **[Açtım] [Atladım]** → Atladım ise neden düğmeleri.
+- Düğmeler (yalnız `acilis`/`buyutme`): **[Açtım] [Atladım]** → Atladım ise neden düğmeleri (Geç gördüm / Beğenmedim / Diğer).
+- Gizlilik (v1.4, kullanıcı kararı): yayımlanan karar kaydında `zaman` yalnız tarih; `bakiye_yok` nedeni yok.
 - Bot anahtarı ve sohbet kimliği yalnız GitHub Secrets'ta (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
   `TELEGRAM_WEBHOOK_SECRET`); dağıtım işi bunları Cloudflare secret'ına aktarır. Repoya, günlüğe, sohbete yazılmaz.

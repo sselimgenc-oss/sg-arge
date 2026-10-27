@@ -60,6 +60,30 @@ def test_one_trader_error_retains_its_last_successful_payload(tmp_path):
     retained = next(trader for trader in result['traderlar'] if trader['id'] == 'T2')
     assert retained['hesap_degeri'] == old['hesap_degeri']
     assert retained['saglik']['nedenler'][-1] == 'veri hatası: 429 kısa hata'
+    assert retained['gecerli'] is False
+    assert retained['veri_zamani'] == old['veri_zamani']
+
+
+def test_first_run_error_is_published_as_invalid_trader(tmp_path, capsys):
+    rows = [
+        {'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Bir', 'durum': 'izlemede', 't0': str(T0.date())},
+        {'id': 'T2', 'adres': '0x' + '2' * 40, 'takma_ad': 'İki', 'tarz': 'swing', 'durum': 'izlemede', 't0': str(T0.date())},
+    ]
+    root = project(tmp_path, rows)
+    class FirstReadBroken(Client):
+        def fills(self, address, start):
+            if address == rows[1]['adres']:
+                raise RuntimeError('ilk yanıt yok')
+            return super().fills(address, start)
+    result = m.run(root, root / 'out', FirstReadBroken(), NOW)
+    broken = next(trader for trader in result['traderlar'] if trader['id'] == 'T2')
+    assert {k: broken[k] for k in ('id', 'adres', 'tarz', 'veri_zamani', 'gecerli', 'saglik', 'pozisyonlar')} == {
+        'id': 'T2', 'adres': rows[1]['adres'], 'tarz': 'swing', 'veri_zamani': None, 'gecerli': False,
+        'saglik': {'isik': 'sari', 'nedenler': ['veri hatası: ilk yanıt yok']}, 'pozisyonlar': []}
+    # Pano bu alanları koşulsuz okur: yer tutucu, sağlam trader ile aynı anahtarları taşımalı.
+    healthy = next(trader for trader in result['traderlar'] if trader['id'] == 'T1')
+    assert set(healthy) - {'kopya_paydasi'} <= set(broken)
+    assert 'T2: veri hatası: ilk yanıt yok' in capsys.readouterr().out
 
 
 def test_hourly_fallback_marks_virtual_copy_approximate(tmp_path):
@@ -79,9 +103,15 @@ def test_kararlar_merges_last_decision_without_personal_fields(tmp_path):
         {'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:00:00Z', 'karar': 'acti', 'neden': 'diger', 'not': ''},
         {'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:01:00Z', 'karar': 'atladi', 'neden': 'gec_gordum', 'not': ''},
     ])
-    assert rows == [{'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:01:00Z', 'karar': 'atladi', 'neden': 'gec_gordum', 'not': ''}]
+    assert rows == [{'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27', 'karar': 'atladi', 'neden': 'gec_gordum', 'not': ''}]
     with pytest.raises(ValueError):
         merge(path, [{'olay_id': 'x', 'zaman': 'now', 'karar': 'acti', 'neden': 'diger', 'not': '', 'tutar': '1'}])
+    # Altın örnek: eski bakiye_yok kaydı tarihe indirgenir ve gizlilik nedeniyle diger olur.
+    assert merge(tmp_path / 'legacy.jsonl', [
+        {'olay_id': 'T1-2-acilis', 'zaman': '2026-10-27T10:02:03Z', 'karar': 'atladi', 'neden': 'bakiye_yok', 'not': ''},
+    ]) == [{'olay_id': 'T1-2-acilis', 'zaman': '2026-10-27', 'karar': 'atladi', 'neden': 'diger', 'not': ''}]
+    with pytest.raises(ValueError, match='etiketi'):
+        merge(tmp_path / 'etiket.jsonl', [{'olay_id': 'x', 'zaman': '2026-10-27', 'karar': 'acti', 'neden': 'diger', 'not': 'serbest'}])
 
 
 def position(size=1, coin='BTC', value=100):
@@ -153,7 +183,8 @@ def test_uses_current_main_list_without_changing_it():
     path = ROOT / 'copytrade/izleme_listesi.yaml'
     before = path.read_bytes()
     rows = m.load_list(path)
-    assert [row['id'] for row in rows] == ['T1', 'T2']
+    ids = [row['id'] for row in rows]
+    assert ids and len(set(ids)) == len(ids)
     assert all(row['durum'] == 'izlemede' for row in rows)
     assert path.read_bytes() == before
 
@@ -173,9 +204,11 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     client = Client()
     one = m.run(root, root / 'out', client, NOW)
     two = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
-    assert one['traderlar'] == two['traderlar']
+    first, second = one['traderlar'][0], two['traderlar'][0]
+    assert {k: v for k, v in first.items() if k != 'veri_zamani'} == {k: v for k, v in second.items() if k != 'veri_zamani'}
+    assert second['veri_zamani'] == '2026-10-27T13:00:00Z'
     assert one['olaylar'] == two['olaylar']
-    assert client.portfolio_reads == 1
+    assert client.portfolio_reads == 2  # sağlık eğrisi saatlik yenilenir
     assert client.candle_reads == 1
     starts = [x['startTime'] for x in client.calls if x['type'] == 'userFillsByTime']
     assert starts[-1] == client.rows[-1]['time']  # inclusive boundary is deduplicated
@@ -191,7 +224,7 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     assert opened['sanal_sonuc']['durum'] == 'kapandi'
     assert opened['sanal_sonuc']['net_yuzde'] == pytest.approx(-.0019)
     m.run(root, root / 'out', client, NOW + pd.Timedelta(days=1))
-    assert client.portfolio_reads == 2
+    assert client.portfolio_reads == 4
 
 
 def test_pinned_scale_does_not_rewrite_prior_copy_pnl(tmp_path):
@@ -269,6 +302,24 @@ def test_partial_close_keeps_open_event_until_final_exit():
     assert events[m.event_id('T1', m.order_id(fills[0]), 'acilis')]['sanal_sonuc']['durum'] == 'kapandi'
 
 
+def test_order_event_aggregates_partial_fills_until_all_order_quantity_closes():
+    """Altın örnek: oid=1 ile 1+1 BTC açılır, 1 BTC kapansa da olay açık; ikinci BTC kapanınca net 9,6105 / 200 = %4,80525."""
+    fills = [fill('2026-10-27T10:00Z', 1, 'B', 1, 0, 100, oid=1),
+             fill('2026-10-27T10:01Z', 2, 'B', 1, 1, 100, oid=1),
+             fill('2026-10-27T11:00Z', 3, 'A', 1, 2, 110, oid=2),
+             fill('2026-10-27T11:01Z', 4, 'A', 1, 1, 100, oid=3)]
+    events = {e['id']: e for e in m.fill_events('T1', fills, 1000, [])}
+    opening = events['T1-1-acilis']
+    assert opening['fiyat'] == pytest.approx(100)
+    assert opening['hesap_payi'] == pytest.approx(.2)
+    candles = {'BTC': [{'t': f['time'] + 30 * m.MINUTE, 'o': [100, 100, 110, 100][i]} for i, f in enumerate(fills)]}
+    m.copy_results(fills[:3], candles, [], 1000, T0, NOW, events)
+    assert opening['sanal_sonuc']['durum'] == 'acik'
+    m.copy_results(fills, candles, [], 1000, T0, NOW, events)
+    assert opening['sanal_sonuc'] == {'durum': 'kapandi', 'net_yuzde': pytest.approx(9.6105 / 200),
+                                      'kapanis': '2026-10-27T11:31:00Z'}
+
+
 def test_midnight_cost_is_booked_on_execution_day():
     f = fill('2026-10-26T23:45Z')
     now = m.timestamp('2026-10-27T01:00Z')
@@ -331,11 +382,19 @@ def test_invalid_perp_dex_response_is_not_silently_ignored():
 
 def test_portfolio_uses_pnl_not_deposits():
     data = portfolio()
-    curve = m.portfolio_curve(data, NOW)
+    denominator = m.health_denominator(data, T0)
+    curve = m.portfolio_curve(data, NOW, denominator)
     data[0][1]['accountValueHistory'][-1][1] = '100000000'
-    changed = m.portfolio_curve(data, NOW)
+    changed = m.portfolio_curve(data, NOW, denominator)
     pd.testing.assert_series_equal(curve, changed)  # robust median ignores one deposit
     assert (curve.diff().dropna() > 0).all()
+
+
+def test_health_denominator_is_the_t0_value_not_a_later_median():
+    data = portfolio()
+    data[0][1]['accountValueHistory'][0][1] = '500'
+    data[0][1]['accountValueHistory'][-1][1] = '9000'
+    assert m.health_denominator(data, T0) == pytest.approx(1000)
 
 
 def history(live=None):
@@ -393,10 +452,11 @@ def check_shape(actual, examples):
     if actual is None:
         assert any(example is None for example in examples)
     elif isinstance(actual, dict):
-        matching = [e for e in examples if isinstance(e, dict) and set(e) == set(actual)]
+        # v1.4 may add contract fields while the static v1.3 example remains a lower bound.
+        matching = [e for e in examples if isinstance(e, dict) and set(e).issubset(actual)]
         assert matching, actual.keys()
-        for key, value in actual.items():
-            check_shape(value, [e[key] for e in matching])
+        for key in set().union(*(set(e) for e in matching)):
+            check_shape(actual[key], [e[key] for e in matching if key in e])
     elif isinstance(actual, list):
         pool = [x for e in examples if isinstance(e, list) for x in e]
         for item in actual:
@@ -413,6 +473,8 @@ def test_nonempty_status_matches_example_keys_types_and_event_variants(tmp_path)
     check_shape(result, [example])
     assert result['traderlar'][0]['pozisyonlar'][0]['binance'] == 'var'
     assert result['traderlar'][0]['kapi']['sinif'] == 'Yetersiz'
+    assert result['traderlar'][0]['gecerli'] is True
+    assert result['traderlar'][0]['veri_zamani'] == '2026-10-27T12:00:00Z'
     assert json.loads((root / 'out/durum.json').read_text()) == result
 
 
@@ -473,7 +535,8 @@ def test_current_two_trader_list_runs_offline(tmp_path):
     (tmp_path / 'copytrade').mkdir()
     (tmp_path / 'copytrade/izleme_listesi.yaml').write_bytes((ROOT / 'copytrade/izleme_listesi.yaml').read_bytes())
     result = m.run(tmp_path, tmp_path / 'out', Client(), NOW)
-    assert [t['id'] for t in result['traderlar']] == ['T1', 'T2']
+    expected = [row['id'] for row in m.load_list(ROOT / 'copytrade/izleme_listesi.yaml')]
+    assert [t['id'] for t in result['traderlar']] == expected
     example = json.loads((ROOT / 'izleme/ornek_durum.json').read_text())
     check_shape(result, [example])
     assert all(t['sanal_kopya']['bakiye_usd'] == 1000 for t in result['traderlar'])
@@ -490,3 +553,52 @@ def test_event_feed_is_recent_200_with_stable_archive(tmp_path):
     assert len(result['olaylar']) == 200
     assert '249' not in {e['id'] for e in result['olaylar']}
     assert len(json.loads((output / 'motor.json').read_text())['olaylar']) == 250
+
+
+# ---------------------------------------------------------------- v1.3: tarza göre gecikme
+def styled_row(**extra):
+    return {'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Test', 'durum': 'izlemede', 't0': str(T0.date()), **extra}
+
+
+@pytest.mark.parametrize('style,delay', [('intraday', 30), ('swing', 120)])
+def test_style_from_list_sets_delay_and_status_label(tmp_path, style, delay):
+    root = project(tmp_path, [styled_row(tarz=style)])
+    trader = m.run(root, root / 'out', Client(), NOW)['traderlar'][0]
+    assert trader['tarz'] == style and trader['sanal_kopya']['gecikme_dk'] == delay
+
+
+def test_style_falls_back_to_gate_result_then_unknown_with_30_minutes(tmp_path):
+    root = project(tmp_path, [styled_row()])
+    unknown = m.run(root, root / 'out', Client(), NOW)['traderlar'][0]
+    assert unknown['tarz'] == 'bilinmiyor' and unknown['sanal_kopya']['gecikme_dk'] == 30
+    day = root / 'copytrade/kapi/2026-10-27'
+    day.mkdir(parents=True)
+    (day / 'sonuc.csv').write_text(f'address,sinif,tarz\n{ADDRESS.upper().replace("0X", "0x")},Yetersiz,swing\n')
+    (root / 'out/motor.json').unlink(); (root / 'out/durum.json').unlink()
+    from_gate = m.run(root, root / 'out', Client(), NOW)['traderlar'][0]
+    assert from_gate['tarz'] == 'swing' and from_gate['sanal_kopya']['gecikme_dk'] == 120
+    # listedeki tarz kapı sonucundan önceliklidir
+    (root / 'out/motor.json').unlink(); (root / 'out/durum.json').unlink()
+    config = root / 'copytrade/izleme_listesi.yaml'
+    config.write_text(yaml.safe_dump({'traderlar': [styled_row(tarz='intraday')]}))
+    assert m.run(root, root / 'out', Client(), NOW)['traderlar'][0]['sanal_kopya']['gecikme_dk'] == 30
+
+
+@pytest.mark.parametrize('change', [dict(tarz='scalp'), dict(tarz='hızlı'), dict(baska='x')])
+def test_invalid_style_or_extra_key_rejected(tmp_path, change):
+    root = project(tmp_path, [styled_row(**change)])
+    with pytest.raises(ValueError):
+        m.load_list(root / 'copytrade/izleme_listesi.yaml')
+
+
+def test_copy_results_delay_parameter_controls_execution_time():
+    """Altın örnek (elle): 1 BTC / 1000 $ hesap, fiyat 100, maliyet %0,095 → bakiye 1000 × (1 − 0,001 × 100 × 0,00095) = 999,905."""
+    opening = fill()                                    # 10:00, long 1 BTC
+    events = {e['id']: e for e in m.fill_events('T1', [opening], 1000, [])}
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100}, {'t': m.millis('2026-10-27T12:00:00Z'), 'o': 100}]}
+    at = lambda hhmm: m.timestamp(f'2026-10-27T{hhmm}:00Z')
+    expected = 1000 * (1 - .001 * 100 * .00095)
+    assert m.copy_results([opening], candles, [], 1000, T0, at('10:45'), events, False, 30)['bakiye_usd'] == pytest.approx(expected)
+    assert m.copy_results([opening], candles, [], 1000, T0, at('10:45'), events, False, 120)['bakiye_usd'] == 1000   # 12:00'den önce işlem yok
+    assert m.copy_results([opening], candles, [], 1000, T0, at('12:00'), events, False, 120)['bakiye_usd'] == pytest.approx(expected)
+    assert m.copy_results([opening], candles, [], 1000, T0, at('12:00'), events, False, 120)['gecikme_dk'] == 120

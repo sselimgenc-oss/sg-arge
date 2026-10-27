@@ -3,12 +3,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from urllib.request import Request, urlopen
 
 FIELDS = ('olay_id', 'zaman', 'karar', 'neden', 'not')
 DECISIONS = {'acti', 'atladi'}
-REASONS = {'gec_gordum', 'begenmedim', 'bakiye_yok', 'diger'}
+REASONS = {'gec_gordum', 'begenmedim', 'diger'}
+LEGACY_REASONS = REASONS | {'bakiye_yok'}
+NOTES = {''}
 
 
 def validate(row: object) -> dict:
@@ -16,9 +19,17 @@ def validate(row: object) -> dict:
         raise ValueError('Geçersiz Worker karar alanları.')
     if not all(isinstance(row[field], str) for field in FIELDS):
         raise ValueError('Karar alanları metin olmalı.')
-    if row['karar'] not in DECISIONS or row['neden'] not in REASONS or not row['olay_id']:
+    if row['karar'] not in DECISIONS or row['neden'] not in LEGACY_REASONS or not row['olay_id']:
         raise ValueError('Geçersiz Worker kararı.')
-    return {field: row[field] for field in FIELDS}
+    if row['not'] not in NOTES:
+        raise ValueError('Geçersiz karar etiketi.')
+    if not re.fullmatch(r'\d{4}-\d{2}-\d{2}(?:T.*Z)?', row['zaman']):
+        raise ValueError('Geçersiz karar zamanı.')
+    result = {field: row[field] for field in FIELDS}
+    result['zaman'] = result['zaman'][:10]
+    if result['neden'] == 'bakiye_yok':
+        result['neden'] = 'diger'
+    return result
 
 
 def merge(path: Path, incoming: list[object]) -> list[dict]:

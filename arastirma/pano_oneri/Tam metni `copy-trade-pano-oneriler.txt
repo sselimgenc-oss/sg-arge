@@ -1,0 +1,87 @@
+Tam metni `copy-trade-pano-onerileri.md` olarak da kaydettim. Özet niteliğinde tam içerik aşağıda.
+
+# Copy trade panosu — emsal taraması ve geliştirme önerileri
+
+**Kapsam.** Yalnız izleme; emir yok, borsa hesabı yok. Pano saatlik `durum.json` okuyor, Telegram `[Açtım]/[Atladım]` ile karar topluyor. Kişisel tutar/bakiye yalnız `localStorage`. Aşağıda kod yok; her emsal iddiası kaynağa bağlı.
+
+**Üç dürüstlük kuralı.** (1) "Açtım" bir niyet kaydıdır, gerçek fill değildir; sistem borsaya bağlanmadığı için fill fiyatını bilemez. (2) Pano senin gerçek defterini görmez; konsantrasyon ancak "model portföy" veya elle girilen (localStorage) pozisyonlar için gösterilir. (3) Veri yoksa veya örnek eşiğin altındaysa ışık yeşil değil **gri** olur.
+
+## 1) Emsal taraması
+
+| Emsal | Bizde işe yarayacak 2–3 özellik |
+|---|---|
+| **Hyperdash** | [Max worse entry](https://docs.hyperdash.com/copy-trade) (%0–50 "daha kötü fiyat" toleransı) → kaçırma ölçütü; [işlem süresine göre tarz](https://docs.hyperdash.com/portfolio-analytics); [atlanan işlemlerin gerekçeli kaydı](https://docs.hyperdash.com/copy-trade). |
+| **HyperTracker** | [Davranış kohortları + 5–8 dk yenileme](https://docs.coinmarketman.com/hypertracker-dashboard); [maruziyet oranı, pozisyon yaşı, likidasyona uzaklık](https://hypertracker.io/); salt-okunur, anahtar istemez. |
+| **Copin.io** | [Etiketle arama](https://blog.copin.io/p/copin-analyzer-monthly-recap-16) ("Giga Whale", "Winning Streak"); [özel grup + grup pozisyonu/uyarısı](https://blog.copin.io/p/copin-analyzer-monthly-recap-16); [Telegram bot](https://docs.copin.io/features). |
+| **CoinGlass** | [Hyperliquid balina pozisyonları](https://www.coinglass.com/hyperliquid); [likidasyon haritası](https://www.coinglass.com/hyperliquid-liquidation-map); long/short oranı. |
+| **Nansen** | [Smart Money metodolojisi](https://docs.nansen.ai/api/overview) (5.000 cüzdan; realize kâr + winrate); [Profiler: PnL, karşı taraf, ilişkili cüzdan](https://academy.nansen.ai/articles/0002013-nansen-profiler-101). |
+| **Arkham** | [Entity etiketleri + Profiler](https://codex.arkm.com/the-intelligence-platform); [eşikli uyarılar (e-posta/Telegram)](https://apps.apple.com/us/app/arkham-crypto-intelligence/id6746058457); dashboard/visualizer. |
+| **Binance** | [ROI, MDD, Sharpe, AUM, win rate; kopyalayanın PnL'i liderinkinden farklı](https://www.binance.com/en/blog/futures/copy-trading-essential-criteria-for-selecting-lead-traders-5061215295703009149); [slippage limiti](https://www.prnewswire.com/apac/news-releases/binance-launches-copy-trading-to-lower-barrier-to-entry-for-beginners-301950438.html). |
+| **Bybit** | [Stability Index, follower vs master PnL, ortalama tutma, ROI volatilitesi, Sharpe/Sortino](https://www.bybit.com/en/help-center/article/How-to-Understand-Master-Trader-Performance). |
+| **OKX** | [Ağırlıklı "Overview" skoru; AUM + copy trader PnL](https://www.okx.com/help/copy-traders-how-to-choose-a-lead-trader); [Smart Sync + trader başına toplam stop-loss](https://www.okx.com/en-us/help/copy-traders-introduction-to-smart-sync). |
+| **eToro** | [Risk skoru](https://help.etoro.com/en-us/s/article/risk-score-explained-US); [Copy Stop-Loss (varsayılan %40, %5–95)](https://www.etoro.com/copytrader/how-it-works/); [Popüler Yatırımcı eşikleri](https://www.etoro.com/copytrader/popular-investor/) (tek pozisyon ≤%50, kârlı ay ≥%30). |
+| **TradesViz** | [600+ istatistik, özelleştirilebilir pano](https://www.tradesviz.com/); [MFE/MAE ve çıkış analizi](https://www.tradesviz.com/blog/charts-statistics-reference/). |
+| **Myfxbook** | [Salt-okunur doğrulama, aylık performans, drawdown ve güncelleme uyarısı](https://www.myfxbook.com/features). |
+| **Tradervue** | [Karşılaştırma raporları](https://www.tradervue.com/site/trading-analysis) (kazanan/kaybeden gün, long/short, tag); [MFE/MAE + "best exit"/çıkış verimliliği](https://www.tradervue.com/help/reports/reports_advanced). |
+| **Edgewonk** | [Hata takibi + report card](https://edgewonk.com/features); [missed trades takibi](https://edgewonk.com/pricing); [MAE/MFE, tiltmeter](https://edgewonk.com/pricing). |
+
+> **Veri notu.** Hyperliquid'in ücretsiz, anahtarsız [`info`](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint) ucu `clearinghouseState`, `userFillsByTime` (son 10.000 fill), `portfolio`, `candleSnapshot`, `fundingHistory`, `l2Book` veriyor. 10k fill sınırı yüksek frekanslı traderlarda 1 yıllık geçmişi kesebilir; "tam geçmiş" varsayımı yapılmamalı. Transfer düzeltmeli ROI için `userNonFundingLedgerUpdates` gerekir. Emsal özellikleri üretici sayfalarına göre; ücretsiz planda erişim ve ekran davranışı denenmedi.
+
+## 2) En önemli sorular ve pano cevabı
+
+| # | Soru | Pano cevabı |
+|---|---|---|
+| **S1** | Şimdi girmeli miyim, fiyat kaçtı mı? | "Giriş penceresi": trader girişi, mark, ATR cinsinden kaçırma, bu gecikmede tarihsel kopya getirisi. Sonuç "gir / bekle / geç" + iki gerekçe; tek skor değil. |
+| **S2** | Bu trader hâlâ iyi mi, bırakmalı mıyım? | Yuvarlanan alfa + güven aralığı, maks. düşüş/ısınma bayrağı, rejim ve tarz kayması; "kanıt zayıf" durumu. |
+| **S3** | Aynı coinde/aynı yönde çok mu yoğunlaştım? | Model portföyde net beta, coin/tema konsantrasyonu, takip edilen traderların pozisyon örtüşmesi. Gerçek defter görünmüyorsa "model" etiketi. |
+| **S4** | Atladığım işlemler kazandırdı mı, kararlarım tutarlı mı? | Atlananların 1s/4s/24s/çıkış karşı-olgu PnL'i (karar anındaki bilgiyle); güven ↔ sonuç kalibrasyonu; "iyi atlama" vs "kaçan fırsat". |
+| **S5** | Hangi uyarıya bakmalıyım? | Maddesellik eşiği + günlük bildirim bütçesi; tek haftalık özet; canlı akış yok. |
+| **S6** | Ekran doğru mu, ne kadarını yakaladım? | Tazelik bandı (son job, eksik mum, gri "veri yok"), sinyal→tap gecikmesi, yakalama oranı. |
+
+## 3) Öneri tablosu
+
+| # | Öneri | Hangi soruyu çözüyor | Emsal (nerede gördün) | Gereken veri | Zorluk | Öncelik |
+|---|---|---|---|---|---|---|
+| 1 | **Giriş penceresi / kaçırma ölçer** | S1 | [Hyperdash max-worse-entry](https://docs.hyperdash.com/copy-trade); [Binance slippage](https://www.prnewswire.com/apac/news-releases/binance-launches-copy-trading-to-lower-barrier-to-entry-for-beginners-301950438.html) | HL API: trader fill, mark, 1m/5m mum, ATR; mevcut eğri | S | 1 |
+| 2 | **Gecikme maliyeti** | S1/S6 | [Binance copy trader PnL](https://www.binance.com/en/blog/futures/copy-trading-essential-criteria-for-selecting-lead-traders-5061215295703009149); [Bybit follower PnL](https://www.bybit.com/en/help-center/article/How-to-Understand-Master-Trader-Performance) | HL API + Telegram tap zamanı; gerçek fill yok, tap-mark proxy | M | 1 |
+| 3 | **Form/decay monitörü** | S2 | [Bybit Stability Index](https://www.bybit.com/en/help-center/article/How-to-Understand-Master-Trader-Performance); [OKX haftalık MDD](https://www.okx.com/help/copy-traders-how-to-choose-a-lead-trader) | Var: 365g istatistik; HL fills; bootstrap CI | M | 1 |
+| 4 | **Konsantrasyon / ortak bahis** | S3 | [HyperTracker maruziyet](https://hypertracker.io/); [eToro tek pozisyon ≤%50](https://www.etoro.com/copytrader/popular-investor/) | HL API: açık pozisyonlar + mumlar; gerçek defter yok | M | 1 |
+| 5 | **Atlanan işlem defteri** | S4 | [Edgewonk missed trades](https://edgewonk.com/pricing); [Hyperdash atlanan gerekçesi](https://docs.hyperdash.com/copy-trade) | Var: karar kaydı; HL mumları | S | 1 |
+| 6 | **Karar kalibrasyonu** | S4 | [Edgewonk hata/checklist](https://edgewonk.com/features); [Tradervue karşılaştırma](https://www.tradervue.com/site/trading-analysis) | Var: karar (tutar yok) + sonuç; localStorage | S | 1 |
+| 7 | **Tazelik / sessiz hata** | S6 | [Myfxbook güncelleme uyarısı](https://www.myfxbook.com/features); [HyperTracker yenileme](https://docs.coinmarketman.com/hypertracker-dashboard) | Var: job metadata, son başarılı fetch | S | 1 |
+| 8 | **Olay maddesellik filtresi** | S5 | [Hyperdash işlem logu](https://docs.hyperdash.com/copy-trade); [Binance başarısız kopya nedenleri](https://www.binance.com/en/support/faq/binance-copy-trading-rules-30f1e3a2835345e0b8ffc87f261a8256) | HL API: fills/pozisyon; notional ve equity % eşiği | S | 2 |
+| 9 | **Kanıt kartı + FDR/holdout** | S2 | [Nansen metodoloji](https://docs.nansen.ai/api/overview); [OKX Overview ağırlıkları](https://www.okx.com/help/copy-traders-how-to-choose-a-lead-trader) | Var: kapı adımları; plasebo/BHY | S | 2 |
+| 10 | **Rejim / tarz etiketi** | S2 | [Hyperdash tarz](https://docs.hyperdash.com/portfolio-analytics); [Bybit ortalama tutma](https://www.bybit.com/en/help-center/article/How-to-Understand-Master-Trader-Performance) | HL API: mum + funding; kendi eşiğin | M | 2 |
+| 11 | **İşlem yaşam döngüsü** | S1/S4 | [Hyperdash per-wallet log](https://docs.hyperdash.com/copy-trade); [Tradervue grafik/çıkış](https://www.tradervue.com/help/reports/reports_advanced) | Var: olaylar; HL mumları | S | 2 |
+| 12 | **Katkı ayrıştırması** | S2/S6 | [Myfxbook portföy](https://www.myfxbook.com/features); [TradesViz pivot](https://www.tradesviz.com/blog/charts-statistics-reference/) | Var: sanal eğri + işlemler | M | 2 |
+| 13 | **Haftalık karar özeti** | S5/S4 | [Edgewonk report card](https://edgewonk.com/features); [Myfxbook aylık](https://www.myfxbook.com/features) | Var: karar, eğri, olaylar | S | 2 |
+| 14 | **Yakalama oranı** | S6 | [Binance copy trader PnL](https://www.binance.com/en/blog/futures/copy-trading-essential-criteria-for-selecting-lead-traders-5061215295703009149); [OKX copy trader PnL](https://www.okx.com/help/copy-traders-how-to-choose-a-lead-trader) | Var: karar kaydı + eğri; gerçek fill yok | M | 3 |
+
+Zorluk: S ≤1 gün, M 2–5 gün, L >1 hafta (tek geliştirici varsayımı). Öncelik: 1 = bir sonraki sürüm, 2 = sonraki çeyrek, 3 = veri olgunlaşınca. Telegram kararları Worker'da yalnız `sinyal_id + karar + neden_kodu` olarak tutulmalı; tutar, fill fiyatı ve bakiye yazılmamalı.
+
+## 4) Mobil değerlendirme
+
+- **Sekmeler:** 5 sekme 360 px'de sıkışıyor; "Keşif" + "Trader seçimi" birleşsin, "CT istatistik" "CT akış" içinde segment olsun. 3–4 sekme kalsın.
+- **Karar alanı:** Detayda en üstte tek satır hüküm; altta sabit `[Açtım] [Atladım] [Not]` çubuğu. 44 px hedef, başparmak bölgesi. Bu bir emir düğmesi değil.
+- **Telegram → detay:** Mesajda tek satır hüküm + `[Detay]`; deep link ilgili işlemin karar kartına gitsin. `[Açtım]/[Atladım]` aynı yerde kalsın.
+- **Tablo yerine kart:** Yatay kaydırma yok; sağlık ışığı renk + ikon + metin (renk körlüğü); sayılar tabular, 2 hane.
+- **Grafik ve ağırlık:** Yalnız sparkline, dokununca büyür; canlı animasyon/ticker yok. `durum.json` <200 KB hedef, geçmiş lazy; son hâl cache'lensin, çevrimdışıda "güncel değil" bandı. 16 px input; 360×640 ve 390×844 test.
+
+## 5) Yapılmaması gerekenler
+
+- Canlı sayaç, animasyonlu PnL, saniyelik yenileme: aciliyet ve pil; saatlik veriyle tutarsız.
+- Tek tık emir / "şimdi kopyala": zaten reddedildi; panoda emir benzeri düğme olmasın.
+- Açıklamasız tek "güven skoru" veya AI sinyali: gizli ağırlık, aşırı kesinlik; ışık nedenini göstermeli.
+- ROI liderlik tablosu / "en iyi 10 trader": seçilim yanlılığı, tek işlem kahramanı.
+- Her büyütme/kısmi kapanış bildirimi: gürültü; maddesellik eşiği yok.
+- Sonsuz keşif/öneri akışı: kapsam kayması; kapı ürünün kendisi.
+- Streak/rozet/konfeti ve "kaçırdın" bildirimi: kumar/pişmanlık motivasyonu; karar kalitesini bozar.
+- Gerçek bakiye/tutarı repoya veya Worker'a yazmak: kural ihlali; yalnız localStorage.
+
+## 6) Kapıyı sertleştirme
+
+- **Plasebo + FDR.** İkisi boşsa "geçti" deme. Aynı coin/holding dağılımıyla rastgele giriş plasebosu; çoklu adayda FDR/BHY. `t=2` tek başına yetmez.
+- **Gecikme dağılımı.** Tek 30 dk/2 sa yerine 5 dk–8 sa; gece, kısmi dolum, min notional. Ücret + funding sonrası net; transfer düzeltmeli ROI.
+- **Belirsizlik ve evren.** Kârlı ay oranına Wilson/bootstrap CI; 12 aydan az veride "yetersiz kanıt". Kapanan/terk edilen cüzdanlar evrene dahil edilmeli (hayatta kalma yanlılığı); MDD, en büyük işlem payı ve martingale bayrağı kapıda kalsın.
+
+**İlk sürüm.** 1–7 (yedi P1) mevcut veriyle veya tek HL API çağrısıyla başlar; yeni sunucu gerektirmez. En büyük kazanç "gir" demek değil, "neden girme"yi görünür kılmak.
