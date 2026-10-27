@@ -78,6 +78,7 @@
     .ks-adim { display: grid; grid-template-columns: auto 1fr; gap: .25rem .6rem; align-items: start; border-top: 1px solid var(--border); padding: .55rem 0; font-size: 12px; }
     .ks-adim:first-child { border-top: 0; }
     .ks-copy-note { min-height: 1.1rem; font-size: 11px; color: var(--muted); }
+    .ks-bilgi { font-size: 11px; color: var(--muted); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -167,11 +168,13 @@
   // Kaynak adresleri yalnız burada değişir (canlı: sg-arge copytrade-izleme dalı; örnek sabit veri: ./izleme/ornek_durum.json).
   const CT_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/durum.json';
   const CT_KARAR = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/kararlar.jsonl'; // dosya yoksa (404) karar kaydı yok sayılır
-  const KESIF_KAYNAK = './kesif/ornek_kesif.json';
+  // Keşif verisinin tek uzak kaynağı: GitHub API tarih klasörünü, ardından API'nin verdiği ham adresi bulur.
+  const KESIF_KAYNAK = 'https://api.github.com/repos/sselimgenc-oss/sg-arge/contents/copytrade/kapi?ref=copytrade-kapi';
+  const KESIF_ORNEK = './kesif/ornek_kesif.json';
   const CT_ESKI_DK = 90, CT_SAYFA = 8, CT_AKIS_ADIM = 50, CT_YETERSIZ = 10; // eşik: sözleşme v1.1 (<10 kapanmış ve kararı verilmiş olay)
   let CT = null, CTK = { durum: 'yok', kayit: {}, bozuk: 0 }, ctHata = null;
   let ctSel = null, ctSayfa = 0, ctFiltre = '', ctAkisN = CT_AKIS_ADIM;
-  let KS = null, ksHata = null, ksSel = null;
+  let KS = null, ksHata = null, ksSel = null, ksKaynak = null;
   let ksFiltre = { tarz: '', katman: '', piyasa: '', gecmis: '', sirala: 'alfa_t' };
 
   const ISIK = { yesil: ['🟢', 'Yeşil'], sari: ['🟡', 'Sarı'], kirmizi: ['🔴', 'Kırmızı'] };
@@ -469,7 +472,8 @@
     msg.classList.toggle('hidden', !ksHata); msg.textContent = ksHata || '';
     if (!KS) { el.innerHTML = '<div class="card empty">Keşif verisi henüz okunamadı.</div>'; return; }
     const adaylar = ksFiltrele(), secili = ksSel && KS.adaylar.find((a) => a.adres === ksSel);
-    el.innerHTML = secili ? ksAyrinti(secili) : `${ksKontrol()}<div class="ct-sub">${adaylar.length} / ${KS.adaylar.length} aday · evren ${fmt(KS.evren, 0)} · işlenen ${fmt(KS.islenen, 0)}</div><div class="ct-grid">${adaylar.map(ksKart).join('') || '<div class="card empty">Bu filtrelerde aday yok.</div>'}</div>`;
+    const bilgi = `<div class="card ct-card ks-bilgi">${ksKaynak?.ornek ? '⚠ Örnek veri gösteriliyor. Canlı Keşif verisi okunamadı.' : `Veri tarihi: ${esc(ksKaynak?.tarih || 'bilinmiyor')}`}${KS.durum === 'eksik' ? '<br><span class="down">⚠ Eksik koşu: aday listesi tam evreni temsil etmeyebilir.</span>' : ''}</div>`;
+    el.innerHTML = secili ? `${bilgi}${ksAyrinti(secili)}` : `${bilgi}${ksKontrol()}<div class="ct-sub">${adaylar.length} / ${KS.adaylar.length} aday · evren ${fmt(KS.evren, 0)} · işlenen ${fmt(KS.islenen, 0)}</div><div class="ct-grid">${adaylar.map(ksKart).join('') || '<div class="card empty">Bu filtrelerde aday yok.</div>'}</div>`;
     if (window.lucide) lucide.createIcons();
   }
   async function ksAdresiKopyala(adres) {
@@ -506,16 +510,40 @@
     if (ikon) setTimeout(() => ikon.classList.remove('animate-spin'), 400);
   }
   async function ksYukle() {
-    try {
-      const r = await fetch(KESIF_KAYNAK + '?t=' + Date.now(), { cache: 'no-store' });
+    const uygunMu = (j) => j && j.surum === 1 && Array.isArray(j.adaylar) && j.adaylar.every((a) => a && typeof a.adres === 'string'
+      && ['intraday', 'swing', 'scalp'].includes(a.tarz) && ['kopyalanabilir', 'izleme_adayi'].includes(a.katman)
+      && a.piyasa_payi && a.kopya && a.adimlar && Array.isArray(a.egri));
+    const jsonOku = async (adres) => {
+      const r = await fetch(adres + (adres.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' });
       if (!r.ok) throw new Error('HTTP ' + r.status);
-      const j = await r.json();
-      const uygun = j && j.surum === 1 && Array.isArray(j.adaylar) && j.adaylar.every((a) => a && typeof a.adres === 'string'
-        && ['intraday', 'swing', 'scalp'].includes(a.tarz) && ['kopyalanabilir', 'izleme_adayi'].includes(a.katman)
-        && a.piyasa_payi && a.kopya && a.adimlar && Array.isArray(a.egri));
-      if (!uygun) throw new Error('v1 şeması beklenen alanları içermiyor');
-      KS = j; ksHata = null;
-    } catch (e) { ksHata = 'Keşif verisi okunamadı (' + e.message + ').'; }
+      return r.json();
+    };
+    try {
+      const kok = await jsonOku(KESIF_KAYNAK);
+      if (!Array.isArray(kok)) throw new Error('tarih klasörü listesi bekleniyordu');
+      const tarihler = kok.filter((x) => x?.type === 'dir' && /^\d{4}-\d{2}-\d{2}$/.test(x.name))
+        .map((x) => x.name).sort().reverse();
+      let bulunan = null;
+      for (const tarih of tarihler) {
+        const klasor = await jsonOku(`${KESIF_KAYNAK.replace('?ref=', `/${tarih}?ref=`)}`);
+        const dosya = Array.isArray(klasor) && klasor.find((x) => x?.type === 'file' && x.name === 'kesif.json');
+        if (dosya?.download_url) { bulunan = { tarih, adres: dosya.download_url }; break; }
+      }
+      if (!bulunan) throw new Error('hiçbir tarih klasöründe kesif.json yok');
+      const j = await jsonOku(bulunan.adres);
+      if (!uygunMu(j)) throw new Error('canlı dosyada v1 şeması beklenen alanları içermiyor');
+      KS = j; ksHata = null; ksKaynak = { tarih: bulunan.tarih, ornek: false };
+    } catch (e) {
+      try {
+        const ornek = await jsonOku(KESIF_ORNEK);
+        if (!uygunMu(ornek)) throw new Error('örnek veri v1 şeması beklenen alanları içermiyor');
+        KS = ornek; ksKaynak = { ornek: true };
+        ksHata = `Canlı Keşif verisi okunamadı (${e.message}).`;
+      } catch (ornekHata) {
+        KS = null; ksKaynak = null;
+        ksHata = `Keşif verisi okunamadı (${e.message}; örnek veri: ${ornekHata.message}).`;
+      }
+    }
     if (!document.querySelector('[data-tab="kesif"]').classList.contains('hidden')) ksRender();
   }
   function ctHash() {
