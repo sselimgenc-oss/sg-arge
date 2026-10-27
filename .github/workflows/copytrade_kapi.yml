@@ -69,7 +69,7 @@ jobs:
       - name: Veri dalından önceki sonuçlar (hızlı ve eksik mod bunlara bakar)
         shell: bash
         run: |
-          if git ls-remote --exit-code --heads origin copytrade-kapi >/dev/null 2>&1; then
+          if git ls-remote --exit-code --heads origin refs/heads/copytrade-kapi >/dev/null 2>&1; then
             git fetch --depth=1 origin copytrade-kapi
             git archive FETCH_HEAD copytrade/kapi | tar -x
           fi
@@ -109,7 +109,7 @@ jobs:
       - name: Veri dalındaki aynı günün sonuçlarını getir
         shell: bash
         run: |
-          if git ls-remote --exit-code --heads origin copytrade-kapi >/dev/null 2>&1; then
+          if git ls-remote --exit-code --heads origin refs/heads/copytrade-kapi >/dev/null 2>&1; then
             git fetch --depth=1 origin copytrade-kapi
             git archive FETCH_HEAD copytrade/kapi kesif | tar -x || git archive FETCH_HEAD copytrade/kapi | tar -x
           fi

@@ -12,7 +12,7 @@ cp -r "copytrade/kapi/$DAY" "$archive/copytrade/kapi/"
 if [ "$MOD" != hizli ] && [ -s kesif/kesif.json ]; then mkdir -p "$archive/kesif"; cp kesif/kesif.json "$archive/kesif/"; fi
 git config user.name 'github-actions[bot]'
 git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-if git ls-remote --exit-code --heads origin copytrade-kapi >/dev/null; then
+if git ls-remote --exit-code --heads origin refs/heads/copytrade-kapi >/dev/null; then
   git fetch origin copytrade-kapi
   git checkout -f -B copytrade-kapi FETCH_HEAD
 else
@@ -27,7 +27,7 @@ git add -f "copytrade/kapi/$DAY"
 if git diff --cached --quiet; then exit 0; fi
 git commit -m "copytrade: CT-Kapı sonuçları $DAY ($MOD)"
 for attempt in 1 2 3; do
-  if git ls-remote --exit-code --heads origin copytrade-kapi >/dev/null; then
+  if git ls-remote --exit-code --heads origin refs/heads/copytrade-kapi >/dev/null; then
     git pull --rebase origin copytrade-kapi
   else
     status=$?
