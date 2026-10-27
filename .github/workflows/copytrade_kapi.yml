@@ -46,7 +46,7 @@ jobs:
             mod=$(grep -oE '^mod=(tam|hizli|eksik)' copytrade/kapi/CALISTIR | head -1 | cut -d= -f2 || true)
           fi
           mod="${mod:-tam}"
-          count=32; [ "$mod" = hizli ] && count=3
+          count=32; [ "$mod" = hizli ] && count=9   # hızlı: adres başına bir parça (ayrı IP)
           echo "mod=$mod" >> "$GITHUB_OUTPUT"
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "shards=$(python3 -c "import json;print(json.dumps(list(range($count))))")" >> "$GITHUB_OUTPUT"
@@ -82,8 +82,9 @@ jobs:
             eksik) extra="--eksikleri-tamamla" ;;
             *) extra="" ;;
           esac
-          # Hızlı modda 25 dk sınır (3 parça): günlük (API'den) iş bitince okunabilsin; kısmi sonuç yine yayımlanır.
+          # Hızlı modda 25 dk sınır (9 parça): günlük (API'den) iş bitince okunabilsin; kısmi sonuç yine yayımlanır.
           limit=100m; [ "${{ needs.plan.outputs.mod }}" = hizli ] && limit=25m
+          export PYTHONWARNINGS=ignore
           timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} $extra || true
       - name: Sonuçları tarih klasörüyle paketle
         if: always()
