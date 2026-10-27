@@ -58,6 +58,11 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
    Sanal kopya gecikmesi tarza göre: intraday 30 dk, swing 120 dk; `sanal_kopya.gecikme_dk` buna göre. Sözleşme v1.3:
    `traderlar[].tarz`.
 
+9. **Binance karşılığı (HIP-3):** `binance_symbol` bugün tüm `xyz:` coinlerine "yok" diyor. Önek atılır; takma ad tablosu
+   `kurallar.yaml`'da (GOLD→XAU, SILVER→XAG, BRENTOIL→BZ; diğerleri aynı ad) + `USDT`; Binance USDⓈ-M sembol listesinde
+   (TradFi perp'ler dahil) varsa "var". Kaynak: `arastirma/copytrade/argon_uygulama_yeri.md`. Test: `xyz:GOLD`,
+   `xyz:NVDA`, listede olmayan bir hisse.
+
 ## `kesif.json` şeması (v1)
 ```json
 {"surum": 1, "uretildi": "…Z", "evren": 12461, "islenen": 12300,
