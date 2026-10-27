@@ -2,6 +2,7 @@
 # 2026-10-27: ÖN İZLEME (kullanıcı kararı) — 11 aday: CT-Kapı (eski hesap) + bağımsız seçimlerde en çok anılanlar
 # (arastirma/copytrade/bagimsiz_secim/KARSILASTIRMA.md). Kopyalama kararı DEĞİLDİR; 3 aylık ölçüm başlamadı.
 # Düzeltilmiş kapı koşusu bitince liste ve t0 yeniden belirlenir. T11 (0x1404) sonuç çelişkisini doğrulamak için.
+# 2026-10-27: T3 (69b0) ve T8 (79bf) çıkarıldı — hesap değeri 0 (para çekilmiş), kullanıcı kararı.
 # tarz: medyan elde tutma (≥ 24 sa swing, 1–24 sa intraday). takma_ad = adresin ilk 4 hanesi (Hyperdash'te karşılaştırma için).
 traderlar:
   - id: T1
@@ -14,12 +15,6 @@ traderlar:
     adres: "0x3f96c4df1e76902985d3dbd979af54b487f29671"
     takma_ad: "3f96"
     tarz: intraday
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T3
-    adres: "0x69b05701f8175c276ecd0138387a197948e240bb"
-    takma_ad: "69b0"
-    tarz: swing
     durum: izlemede
     t0: "2026-10-28"
   - id: T4
@@ -43,12 +38,6 @@ traderlar:
   - id: T7
     adres: "0x09d70eac3bbebf727218b81b7f6384249826ab24"
     takma_ad: "09d7"
-    tarz: intraday
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T8
-    adres: "0x79bf662bb50bea267adf5499f730d2488d85411f"
-    takma_ad: "79bf"
     tarz: intraday
     durum: izlemede
     t0: "2026-10-28"
