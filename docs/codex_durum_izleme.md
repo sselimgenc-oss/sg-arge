@@ -28,4 +28,4 @@ Dal: `codex/izleme-duzeltme`. Başlangıç: `main` `452b70e`.
 - [x] Sorgulara bölünen `oid` için D1 biriktirme ve motorla aynı olay
 - [x] Karar gizliliği: `bakiye_yok` dönüşümü, tarih, izinli `not`
 - [x] Sözleşme v1.4 ve altın örnek kabul testleri
-- [ ] Tam Python ve Worker testleri; PR çıktı özeti
+- [x] Tam Python ve Worker testleri; PR çıktı özeti — Python: 94 başarılı (153 uyarı), Worker: 9 başarılı. Canlı Telegram kabulü kullanıcıda bekliyor; bu PR dağıtım yapmaz.
