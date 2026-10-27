@@ -1,4 +1,4 @@
 # CT-Kapı v1
 
-- Evren: 12461
-- İşlenen: 12461
+- Evren: 5387
+- İşlenen: 5387
