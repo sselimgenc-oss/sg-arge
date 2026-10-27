@@ -483,7 +483,10 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
     saved['son_dolum'] = max([cursor] + [int(f['time']) for f in fills])
     # Health is refreshed hourly. The t0 denominator is persisted once and never recalculated.
     saved['portfolio'] = client.portfolio(address)
-    saved.setdefault('saglik_paydasi', health_denominator(saved['portfolio'], t0))
+    # t0 değişirse (liste yeniden başlatılınca) payda yeni t0'a göre bir kez yeniden sabitlenir.
+    if saved.get('saglik_paydasi_t0') != str(t0.date()):
+        saved['saglik_paydasi'] = health_denominator(saved['portfolio'], t0)
+        saved['saglik_paydasi_t0'] = str(t0.date())
     history = portfolio_curve(saved['portfolio'], now, float(saved['saglik_paydasi']))
     states = clearinghouse_states(client, address, dexes)
     account, positions = positions_from_state(states, fills, symbols, now)
