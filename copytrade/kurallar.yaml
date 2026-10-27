@@ -18,3 +18,36 @@ martingale_min_additions: 5
 martingale_min_adverse: 0.02
 # Ölçüm penceresi: 180 gün geçmiş şartı için fill'ler 365 günden çekilir
 fills_lookback_days: 365
+# CT-Kapı v1.1 — kullanıcı kararları (2026-10-27, Sol 6.1 görüşüyle; docs/GOREV_TRADER_SECIMI.md).
+# Tarz: medyan elde tutma süresine göre. < 1 sa scalp (adım 3 Kaldı); 1–24 sa intraday; ≥ 24 sa swing.
+tarz_scalp_alti_saat: 1.0
+tarz_swing_ustu_saat: 24.0
+# Scalp ayıklama: kısa işlem payı en çok %25 (kısa = tarza göre dakika)
+kisa_islem_payi_max: 0.25
+kisa_islem_dk:
+  intraday: 15
+  swing: 120
+# Adım 3 ve plasebo gecikmesi (giriş ve çıkış dolumlarına; taker + kayma + funding dahil)
+kopya_gecikme_dk:
+  intraday: 30
+  swing: 120
+# Raporlanan stres gecikmesi (zorunlu değil; swing'de negatifse "gece riskli")
+stres_gecikme_dk:
+  intraday: 120
+  swing: 480
+# Kaldıraç kuralları (değişmedi; kapı adım 3)
+kapi_max_medyan_kaldirac: 3.0
+kapi_max_kaldirac: 10.0
+# Geçmiş ≥ 180 gün şartı aynı (min_history_days); ≥ 365 gün sıralamada öne, 180–365 gün genc_aday
+genc_aday_gun: 365
+# Adım 5 plasebo: 1000 tekrar, tek yönlü p ≤ 0,05
+plasebo_tekrar: 1000
+plasebo_p_max: 0.05
+# Adım 6 alfa kıyası: işlem hacminin ≥ bu payı kripto ise BTC; değilse işlem yapılan varlıkların eşit ağırlıklı sepeti
+alfa_kripto_payi_esigi: 0.5
+# HIP-3 coin → Binance USDⓈ-M sembolü (görev 9): `dex:` öneki atılır, ad aynı + USDT; yalnız farklı adlar burada.
+# "var" yalnız Binance sembol listesinde (TradFi perp'ler dahil) bulunuyorsa.
+binance_takma_ad:
+  GOLD: XAU
+  SILVER: XAG
+  BRENTOIL: BZ

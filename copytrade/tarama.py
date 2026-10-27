@@ -40,21 +40,33 @@ class RateLimitError(RuntimeError):
     """Persistent 429 for one request; the address is skipped, the run continues."""
 
 
+SERVER_ERROR_ATTEMPTS = 3          # HTTP 5xx için toplam deneme
+SERVER_ERROR_WAITS = (2, 6)        # denemeler arası artan bekleme (sn)
+
+
 class PublicClient:
-    def __init__(self, session: requests.Session | None = None, limiter: RateLimiter | None = None):
-        self.session, self.limiter = session or requests.Session(), limiter or RateLimiter()
+    def __init__(self, session: requests.Session | None = None, limiter: RateLimiter | None = None, sleep=time.sleep):
+        self.session, self.limiter, self.sleep = session or requests.Session(), limiter or RateLimiter(), sleep
 
     def _request(self, method: str, url: str, *, payload: dict | None = None, weight: int = 1) -> Any:
+        server_errors = 0
         for attempt in range(6):
             self.limiter.acquire(weight)
             response = self.session.request(method, url, json=payload, timeout=30)
+            if response.status_code >= 500:
+                # Geçici sunucu hatası (ör. 500/502/503): 3 deneme, artan bekleme; sonra hata olarak yükselir.
+                server_errors += 1
+                if server_errors >= SERVER_ERROR_ATTEMPTS:
+                    response.raise_for_status()
+                self.sleep(SERVER_ERROR_WAITS[server_errors - 1])
+                continue
             if response.status_code != 429:
                 response.raise_for_status()
                 data = response.json()
                 if isinstance(data, list) and len(data) >= 20:
                     self.limiter.acquire(len(data) // 20)  # documented extra weight per 20 returned items
                 return data
-            time.sleep(min(60, 5 * 2 ** attempt))
+            self.sleep(min(60, 5 * 2 ** attempt))
         raise RateLimitError("Hyperliquid rate limit exceeded after retries")
 
     def leaderboard(self) -> list[dict]:
@@ -86,6 +98,18 @@ class PublicClient:
 
     def non_funding_ledger(self, address: str, start_ms: int) -> list[dict]:
         return self.info({"type": "userNonFundingLedgerUpdates", "user": address, "startTime": start_ms}, weight=20) or []
+
+    def sub_accounts(self, address: str) -> list[dict]:
+        return self.info({"type": "subAccounts", "user": address}, weight=20) or []
+
+    def vault_equities(self, address: str) -> list[dict]:
+        return self.info({"type": "userVaultEquities", "user": address}, weight=20) or []
+
+    def vault_details(self, vault: str) -> dict:
+        return self.info({"type": "vaultDetails", "vaultAddress": vault}, weight=20) or {}
+
+    def extra_agents(self, address: str) -> list[dict]:
+        return self.info({"type": "extraAgents", "user": address}, weight=20) or []
 
     def candles(self, coin: str, start_ms: int, end_ms: int, interval: str = "1m") -> list[dict]:
         return self.info({"type": "candleSnapshot", "req": {"coin": coin, "interval": interval,

@@ -1,28 +1,64 @@
-name: CT-Kapı v1
+name: CT-Kapı v1.1
 
+# Tetik: elle (mod seçilir), copytrade/kapi/CALISTIR yoluna push (main veya geliştirme dalı; dosyada `mod=hizli|eksik`
+# satırı olabilir, yoksa tam), haftalık zamanlama (pazar 22:43 TSİ). Sonuçlar main'e değil `copytrade-kapi` veri dalına yazılır.
 on:
   workflow_dispatch:
+    inputs:
+      mod:
+        description: "tam | hizli (--yalniz-adim5: önceki sonuçta adım 1–4 geçen adresler) | eksik (--eksikleri-tamamla)"
+        type: choice
+        options: [tam, hizli, eksik]
+        default: tam
   push:
     branches:
-      - codex/copytrade-kapi
+      - main
+      - claude/kapi-v1-1
     paths:
       - copytrade/kapi/CALISTIR
+  schedule:
+    - cron: "43 19 * * 0"
 
 permissions:
   contents: write
 
 concurrency:
-  group: copytrade-kapi-${{ github.ref }}
+  group: copytrade-kapi
   cancel-in-progress: false
 
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      mod: ${{ steps.p.outputs.mod }}
+      shards: ${{ steps.p.outputs.shards }}
+      count: ${{ steps.p.outputs.count }}
+      day: ${{ steps.p.outputs.day }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        shell: bash
+        run: |
+          set -euo pipefail
+          mod="${{ inputs.mod }}"
+          if [ -z "$mod" ] && [ "${{ github.event_name }}" = push ]; then
+            mod=$(grep -oE '^mod=(tam|hizli|eksik)' copytrade/kapi/CALISTIR | head -1 | cut -d= -f2 || true)
+          fi
+          mod="${mod:-tam}"
+          count=32; [ "$mod" = hizli ] && count=1
+          echo "mod=$mod" >> "$GITHUB_OUTPUT"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "shards=$(python3 -c "import json;print(json.dumps(list(range($count))))")" >> "$GITHUB_OUTPUT"
+          echo "day=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
   stage1:
+    needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+        shard: ${{ fromJson(needs.plan.outputs.shards) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -30,19 +66,38 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - run: timeout 100m python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count 16 || true
+      - name: Veri dalından önceki sonuçlar (hızlı ve eksik mod bunlara bakar)
+        shell: bash
+        run: |
+          if git ls-remote --exit-code --heads origin copytrade-kapi >/dev/null 2>&1; then
+            git fetch --depth=1 origin copytrade-kapi
+            git archive FETCH_HEAD copytrade/kapi | tar -x
+          fi
+      - name: Kapı koşusu
+        shell: bash
+        run: |
+          case "${{ needs.plan.outputs.mod }}" in
+            hizli) extra="--yalniz-adim5" ;;
+            eksik) extra="--eksikleri-tamamla" ;;
+            *) extra="" ;;
+          esac
+          timeout 100m python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} $extra || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: stage1-${{ matrix.shard }}
-          path: copytrade/kapi/
+          path: copytrade/kapi/${{ needs.plan.outputs.day }}/
+          if-no-files-found: ignore
 
   publish:
-    needs: stage1
-    if: always()
+    needs: [plan, stage1]
+    if: always() && needs.plan.result == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -51,12 +106,22 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: shards
-      - name: Birleştir ve dalda sakla
+      - name: Veri dalındaki aynı günün sonuçlarını getir
+        shell: bash
         run: |
-          python -m copytrade.kapi --root copytrade --birlestir shards
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f copytrade/kapi
-          git commit -m "copytrade: CT-Kapı sonuçları" || exit 0
-          for try in 1 2 3; do git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:${{ github.ref_name }} && exit 0; sleep 5; done
-          exit 1
+          if git ls-remote --exit-code --heads origin copytrade-kapi >/dev/null 2>&1; then
+            git fetch --depth=1 origin copytrade-kapi
+            git archive FETCH_HEAD copytrade/kapi kesif | tar -x || git archive FETCH_HEAD copytrade/kapi | tar -x
+          fi
+      - name: Birleştir
+        run: python -m copytrade.kapi --root copytrade --birlestir shards
+      - name: Keşif verisi ve ilişkili hesap işaretleri
+        if: needs.plan.outputs.mod != 'hizli'
+        # Keşif düşerse kapı sonuçları yine yayımlanır.
+        continue-on-error: true
+        run: python -m copytrade.kesif --root copytrade --output kesif
+      - name: Veri dalına yaz
+        env:
+          DAY: ${{ needs.plan.outputs.day }}
+          MOD: ${{ needs.plan.outputs.mod }}
+        run: bash .github/scripts/kapi_yayimla.sh

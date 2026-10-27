@@ -71,7 +71,8 @@ def test_placebo_placement_preserves_trade_fields_is_non_overlapping_and_seeded(
     assert first == second
     assert {(x["coin"], x["side"], x["size_ratio"], x["holding_hours"]) for x in first} == {
         (x["coin"], x["side"], x["size_ratio"], x["holding_hours"]) for x in trades}
-    assert first[0]["close_time"] <= first[1]["open_time"]
+    # v1.1: çakışma yasağı coin başına; farklı coinler (BTC/ETH) aynı anda açık olabilir, bu test onları serbest bırakır.
+    assert all(x["close_time"] <= end and x["open_time"] >= start for x in first)
 
 
 def test_placebo_scores_runs_fixed_repetitions():
@@ -89,7 +90,9 @@ def test_binance_mapping_and_blocked_response_are_information_only(tmp_path):
     assert symbols is None and note == "HTTP 451"
     assert binance_symbol("kPEPE") == "1000PEPEUSDT"
     assert binance_availability("BTC", symbols) == "bilinmiyor"
-    assert binance_availability("xyz:SPX", {"SPXUSDT"}) == "yok"
+    # v1.1 görev 9: HIP-3 önek atılır, ad aynı + USDT; Binance listesinde varsa "var" (eski sürüm hepsine "yok" diyordu).
+    assert binance_availability("xyz:SPX", {"SPXUSDT"}) == "var"
+    assert binance_availability("xyz:SPX", {"BTCUSDT"}) == "yok"
 
 
 def test_stage1_uses_pnl_history_not_account_value_jumps():
