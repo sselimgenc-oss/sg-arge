@@ -35,5 +35,21 @@
   gerçek liste biçimi/iki trader, boş liste, şema, olay eşiği/kimliği,
   artımlı okuma, günlük önbellek, gecikme/maliyet/funding, sağlık koşulları,
   arşiv güvenliği ve yerel Git deposunda yetim dal/yeni koşuyu kapsar.
-- Canlı API ve push ile Actions doğrulaması devam ediyor; sonuç aşağıya
-  eklenecek. Henüz doğrulanmış canlı pano sonucu iddia edilmiyor.
+- Canlı doğrulama: bulut makinesinde iki gerçek test trader'ı, 11 açık
+  pozisyon ve 2 ışık olayıyla çıktı üretildi. t0 henüz gelmediği için
+  sanal bakiyeler 1.000 USD; gecikmeli işlemler ağsız testlerle doğrulandı.
+- Push tetikli Actions başarılı:
+  https://github.com/sselimgenc-oss/sg-arge/actions/runs/40549490012
+  Kurulum, tam testler, gerçek API koşusu ve veri dalına push başarılı.
+  Yayımlanan `durum.json` ayrıca çekilip örnekle anahtar/tür düzeyinde
+  karşılaştırıldı: 2 trader, 11 pozisyon, 2 olay. Veri dalının yetim kökü
+  ve yalnız `izleme/` dosyaları içerdiği doğrulandı.
+- PR: https://github.com/sselimgenc-oss/sg-arge/pull/277 — CI testi başarılı.
+  Saatlik schedule, lider PR'ı `main`'e birleştirdikten sonra etkinleşir.
+  sg-pano arayüzünün telefonda doğrulanması bu depoda yapılmadı.
+- Ortam taslağı: `install_script`, `start_skill` kaydedildi. Gerekli
+  ek alan adları `api.hyperliquid.xyz`, `fapi.binance.com`, `api.github.com`;
+  mevcut paket yöneticisi preset'i korundu. İlk proxy hatasından sonra
+  gerçek API ve GitHub işlemleri yeniden denenip başarılı oldu.
+  Ortam ayarlarında taslağı inceleyip kaydedin ve ortamı yayımlayın;
+  taslak kaydı yeni görevde geri yükleme/yayımlama doğrulaması değildir.
