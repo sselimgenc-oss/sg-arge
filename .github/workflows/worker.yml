@@ -38,11 +38,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm exec --yes wrangler@4 d1 list --json > /tmp/d1.json
-          db_id=$(jq -r '.[] | select(.name == "sg-arge-telegram") | .uuid' /tmp/d1.json | head -n1)
-          if [ -z "$db_id" ] || [ "$db_id" = null ]; then
-            npm exec --yes wrangler@4 d1 create sg-arge-telegram --json > /tmp/new-d1.json
-            db_id=$(jq -r '.uuid // .result.uuid' /tmp/new-d1.json)
+          # wrangler çıktısının başında JSON olmayan satırlar olabiliyor; doğrudan Cloudflare API'si kullanılır.
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/d1/database"
+          auth=(-H "Authorization: Bearer $CLOUDFLARE_API_TOKEN")
+          db_id=$(curl --fail --silent --show-error "${auth[@]}" "$api?name=sg-arge-telegram" \
+            | jq -r '[.result[]? | select(.name == "sg-arge-telegram") | .uuid][0] // empty')
+          if [ -z "$db_id" ]; then
+            db_id=$(curl --fail --silent --show-error "${auth[@]}" -H "Content-Type: application/json" \
+              --data '{"name":"sg-arge-telegram"}' "$api" | jq -r '.result.uuid // empty')
           fi
           [ -n "$db_id" ] && [ "$db_id" != null ]
           cp worker/wrangler.toml worker/wrangler.generated.toml
