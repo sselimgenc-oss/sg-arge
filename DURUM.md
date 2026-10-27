@@ -34,10 +34,10 @@ bildirim, [Açtım]/[Atladım], `/durum`. Kararlar saatlik işle `copytrade-izle
 Açık kontrol: ilk gerçek bildirimde düğme → karar → panoya akış uçtan uca izlenecek. Not: saatlik zamanlama ilk
 saatlerde tetiklenmedi (GitHub gecikmesi); düzelmezse incelenecek.
 
-**3. Trader seçimi — ŞU AN:** görev `docs/GOREV_TRADER_SECIMI.md` (Codex, dal `codex/kapi-v1-1`).
+**3. Trader seçimi — ŞU AN:** görev `docs/GOREV_TRADER_SECIMI.md` (**Sonnet**, dal `claude/kapi-v1-1`; kullanıcı kararı).
 Kullanıcı kararları (2026-10-27, Sol 6.1 görüşüyle): iki tarz — **Intraday** (medyan tutma 1–24 sa, 30 dk gecikme
 testi) ve **Swing** (≥24 sa, 2 sa gecikme testi); iki katman — `izleme_adayi` (adım 1–3) / `kopyalanabilir` (1–7);
-alfa kıyası kripto→BTC, hisse/emtia→kendi sepeti; pano **Keşif** sekmesi (sonra Sonnet); Telegram her dakika.
+alfa kıyası kripto→BTC, hisse/emtia→kendi sepeti; pano **Keşif** sekmesi (sonra, **Codex**, sg-pano); Telegram her dakika.
 Teşhis: plasebo tüm coinlerde çakışmasız yerleştirme istediği için hiç hesaplanamadı → coin başına.
 Sonra: lider adayları inceler, izleme listesi kullanıcı onayıyla; 3 ay sanal izleme.
 

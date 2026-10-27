@@ -1,6 +1,8 @@
 # Görev: Trader seçimi — CT-Kapı v1.1 + Keşif verisi (3. adım, 2026-10-27, lider; kullanıcı onaylı)
 
-Yapan: **Codex** (PC, yerel mod). Dal: `codex/kapi-v1-1`. Tek PR, `main`'e; lider birleştirir.
+Yapan: **Sonnet** (kullanıcı kararı 2026-10-27). Dal: `claude/kapi-v1-1`. Tek PR, `main`'e; lider birleştirir.
+Ağ: bulut oturumundan Hyperliquid'e erişim yok (proxy 403) → canlı koşular GitHub Actions'ta. İş akışı geliştirme dalından
+da tetiklenebilsin (`copytrade/kapi/CALISTIR` yoluna push); sonuçları veri dalından okuyup kontrol et.
 Kaynak: `docs/GOREV_COPYTRADE_KAPI.md`, `copytrade/kapi.py`, son sonuç `copytrade/kapi/2026-10-27/`.
 Eşikler aşağıdaki **kullanıcı kararlarıdır**; başka eşik değişmez. Eşikler koda gömülmez, `copytrade/kurallar.yaml`'a yazılır.
 
@@ -95,5 +97,5 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
 - `docs/codex_durum_trader_secimi.md`: yapılanlar, seçimler, sınırlar.
 
 ## Sonra
-Sonnet: pano **Keşif** sekmesi (`kesif.json`; ayrı görev). Lider: adayları inceler ve kullanıcıya önerir. İzleme listesi
+Codex: pano **Keşif** sekmesi (sg-pano, `kesif.json`; ayrı görev, kullanıcı kararı). Lider: adayları inceler ve kullanıcıya önerir. İzleme listesi
 **kullanıcı onayıyla** güncellenir; t0 = giriş günü; 3 ay sanal izleme. Gerçek para yok.
