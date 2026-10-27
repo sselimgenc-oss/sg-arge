@@ -75,14 +75,43 @@ def time_weighted_monthly(portfolio: list[dict], ledger: list[dict], days: int =
     return (1 + returns).groupby(returns.index.to_period("M")).prod() - 1
 
 
-def stage1_stats(portfolio: list[dict], ledger: list[dict]) -> dict[str, float] | None:
-    monthly = time_weighted_monthly(portfolio, ledger)
-    if monthly.empty:
+def stage1_stats(portfolio: list[dict], ledger: list[dict] | None = None, days: int = 365) -> dict[str, float] | None:
+    """1. aşama, Hyperliquid'in kendi kümülatif PnL serisinden (``allTime.pnlHistory``; yatırma/çekme içermez).
+
+    Lider denetimi 2 (2026-10-27): hesap değeri serisinden zaman ağırlıklı getiri yatırma/çekme, spot↔perp ve
+    örnekleme sıklığı yüzünden −%100 / +%10^40 gibi sonuçlar verdi; kullanılmaz. Kârlı ay = aylık PnL farkı > 0
+    (payda gerekmez). Getiri ve düşüş, penceredeki pozitif hesap değerlerinin medyanına bölünür. ``ledger``
+    geriye dönük uyumluluk içindir, kullanılmaz.
+    """
+    periods = {name: value for name, value in portfolio if isinstance(value, dict)} if portfolio else {}
+    data = periods.get("allTime") or {}
+    points = data.get("pnlHistory", [])
+    if len(points) < 2:
         return None
-    compounded = (1 + monthly).cumprod()
-    return {"active_months": float(len(monthly)), "profitable_month_ratio": float((monthly > 0).mean()),
-            "max_drawdown": float(abs((compounded / compounded.cummax() - 1).min())),
-            "return_12m": float(compounded.iloc[-1] - 1)}
+    pnl = pd.Series({pd.to_datetime(t, unit="ms", utc=True): float(v) for t, v in points}).sort_index()
+    values = pd.Series({pd.to_datetime(t, unit="ms", utc=True): float(v) for t, v in data.get("accountValueHistory", [])})
+    since = pnl.index[-1] - pd.Timedelta(days=days)
+    before = pnl[pnl.index < since]
+    window = pnl[pnl.index >= since]
+    if len(window) < 2:
+        return None
+    base = float(before.iloc[-1]) if len(before) else float(window.iloc[0])
+    month_end = window.resample("ME").last().dropna()
+    monthly = month_end.diff()
+    if len(before):
+        monthly.iloc[0] = month_end.iloc[0] - base
+    else:
+        monthly = monthly.iloc[1:]  # pencereden önce başlamıyorsa ilk ay kısmi ve tabansız
+    active = monthly[monthly.abs() > 0]
+    positive = values[(values.index >= since) & (values > 0)]
+    if active.empty or positive.empty:
+        return None
+    denominator = float(positive.median())
+    cumulative = window - base
+    drawdown = float((cumulative.cummax() - cumulative).max()) / denominator
+    span = (pnl.index[-1] - max(pnl.index[0], since)).days
+    return {"active_months": float(len(active)), "profitable_month_ratio": float((active > 0).mean()),
+            "max_drawdown": drawdown, "return_12m": float(active.sum()) / denominator, "pnl_history_days": float(span)}
 
 
 def stage1_pass(stats: dict[str, float] | None) -> bool:
@@ -364,12 +393,7 @@ def main(argv: list[str] | None = None) -> None:
         row: dict[str, Any] = {"address": address, "account_value": leader["accountValue"]}
         try:
             portfolio = client.portfolio(address)
-            crude = stage1_stats(portfolio, [])
-            if crude and crude["profitable_month_ratio"] >= .50 and crude["return_12m"] > 0:
-                ledger = client.non_funding_ledger(address, start)
-            else:
-                ledger = []
-            stats = stage1_stats(portfolio, ledger)
+            stats = stage1_stats(portfolio)
             row.update(stats or {})
             row["asama1"] = "Geçti" if stage1_pass(stats) else "Yetersiz"
             if row["asama1"] == "Geçti":
@@ -377,6 +401,7 @@ def main(argv: list[str] | None = None) -> None:
                 funding = client.info({"type": "userFunding", "user": address, "startTime": start}, weight=20) or []
                 metrics, nets = copy_window_metrics(fills, funding, float(leader["accountValue"]), cache,
                                                     int(now.timestamp() * 1000), int(stats["active_months"]))
+                metrics["history_days"] = max(int(metrics.get("history_days", 0)), int(stats["pnl_history_days"]))
                 recent = [x for x in fills if int(x.get("time", 0)) >= start_200]
                 candles = cache.for_fills(recent)
                 actual = nets[30]
@@ -387,7 +412,8 @@ def main(argv: list[str] | None = None) -> None:
                 own, _ = delayed_copy(fills, candles, float(leader["accountValue"]), 0, funding)
                 btc = pd.Series({pd.to_datetime(x.get("t", x.get("time")), unit="ms", utc=True): float(x.get("c", x.get("o"))) for x in cache.get("BTC")}).sort_index()
                 btc = btc.resample("1D").last().pct_change().fillna(0.0)
-                exposure = pd.Series(1.0, index=own.index) if own is not None else pd.Series(dtype=float)
+                # Maruziyet: kopya defterinde PnL/funding hareketi olan gün = pozisyonda (sabit 1 değil).
+                exposure = (own.abs() > 0).astype(float) if own is not None else pd.Series(dtype=float)
                 alpha = matched_btc_alpha(own, btc, exposure) if own is not None else None
                 statuses = gate_status(metrics, nets[30], p_value, alpha)
                 row.update(metrics)
