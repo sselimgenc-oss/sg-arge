@@ -63,6 +63,7 @@ def section(row: dict, fills: list[dict], funding: list[dict], state: dict, rule
                                 martingale_max_ratio=float(rules["martingale_max_ratio"]),
                                 martingale_min_additions=int(rules["martingale_min_additions"]))
     decision, reason = evaluate(metrics, rules)
+    metrics = {k: (float("nan") if v is None else v) for k, v in metrics.items()}  # rapor biçimi için
     by_month = monthly(perp_fills(fills), funding)
     coins = pd.Series([f.get("coin") for f in fills]).value_counts(normalize=True).head(5) if fills else pd.Series(dtype=float)
     volume = pd.Series({}, dtype=float)
