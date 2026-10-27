@@ -79,7 +79,7 @@ def test_report_contains_range_trades_coins_hip3_denominator_and_costs():
                           [["allTime", {"accountValueHistory": [[start, "900"], [NOW_MS, "1100"]]}]], 1000.0, 1010.0)
     window = report["pencereler"]["190"]
     assert report["hip3_dahil"] and report["hip3_dex"] == ["xyz"] and window["kapanmis_dongu"] == 2 and window["coin_sayisi"] == 2
-    assert set(window["secenekler"]) >= {"30dk|kapi|up", "30dk|duzeltilmis|down", "120dk|kapi|up", "480dk|kapi|down", "0dk|kapi|up"}
+    assert set(window["secenekler"]) >= {"30dk|ham|up", "30dk|kapi|down", "120dk|ham|up", "480dk|kapi|down", "0dk|kapi|up"}
     assert report["pencereler"]["200"]["baslangic"] < window["baslangic"]
     text = render(report)
     for needle in ("Son 190 gün", "Son 200 gün", "HIP-3 dahil: evet (xyz)", "Coin dökümü", "xyz:GOLD", "Payda duyarlılığı", "lider_tablosu", "Maliyet"):

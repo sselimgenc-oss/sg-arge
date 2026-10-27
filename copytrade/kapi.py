@@ -419,6 +419,28 @@ def placebo_scores(fills: list[dict], candles: dict[str, list[dict]], account_va
     return scores
 
 
+def copy_actions(fills: list[dict]) -> list[dict]:
+    """Copy post-window changes only; closing inherited exposure must not open an inverse position.
+
+    Kapı (v1.1) ve izleme motoru aynı kuralı kullanır: pencere/t0 öncesinden gelen pozisyonu azaltan dolum, kopyacıda
+    olmayan bir pozisyonu kapatır; yeni ters pozisyon açmış sayılmaz (``delayed_copy`` pozisyonu 0'dan başlatır).
+    """
+    positions, result = {}, []
+    for fill in fills:
+        coin = fill['coin']
+        before = float(fill.get('startPosition', 0))
+        signed = float(fill['sz']) * (-1 if fill['side'] == 'A' else 1)
+        held = positions.get(coin, 0.0)
+        if before * signed < 0:
+            leader_close = min(abs(before), abs(signed))
+            close = min(abs(held), leader_close) if held * before > 0 else 0.0
+            signed = (close + max(0.0, abs(signed) - leader_close)) * (1 if signed > 0 else -1)
+        if abs(signed) > 1e-10:
+            result.append(dict(fill, sz=str(abs(signed)), startPosition=str(held)))
+        positions[coin] = held + signed
+    return result
+
+
 def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: float, cache: CandleCache,
                         now_ms: int, active_months: int) -> tuple[dict[str, Any], dict[int, float | None]]:
     """Prepare documented steps 1--4 and all informational delay results for one trader."""
@@ -431,8 +453,10 @@ def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: f
     metrics["candle_coverage"] = candle_coverage(recent, candles)
     metrics["complete_data"] = metrics["candle_coverage"] >= .90
     nets: dict[int, float | None] = {}
+    # Kopya defteri: pencere öncesinden gelen pozisyonu azaltan dolumlar yeni ters pozisyon sayılmaz (copy_actions).
+    copied = copy_actions(sorted(perp_fills(recent), key=lambda x: int(x.get("time", 0))))
     for delay in (0, 5, 30, 120, 480):
-        ledger, missing = delayed_copy(recent, candles, account_value, delay, recent_funding)
+        ledger, missing = delayed_copy(copied, candles, account_value, delay, recent_funding)
         nets[delay] = None if ledger is None else float(ledger.sum())
         metrics[f"gecikme_{delay}dk_eksik_dolum"] = missing
     return metrics, nets
@@ -673,7 +697,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
             row["plasebo_not"] = "; ".join(notes)[:200]
         shares = market_shares(fills, symbols)
         kind = benchmark_kind(shares["pay_kripto"] or 0.0, rules)
-        own, _ = delayed_copy(fills, candles, account, 0, funding)
+        own, _ = delayed_copy(copy_actions(sorted(perp_fills(fills), key=lambda x: int(x.get("time", 0)))), candles, account, 0, funding)
         bench = (daily_close_returns(cache.get("BTC")) if kind == "BTC"
                  else basket_returns(candles, sorted({str(f.get("coin")) for f in perp_fills(recent)})))
         # Maruziyet: kopya defterinde PnL/funding hareketi olan gün = pozisyonda (sabit 1 değil).

@@ -427,3 +427,23 @@ def test_test_family_is_steps_1_to_4_and_m_in_report(tmp_path: Path):
     assert out.loc["0xd", "adim7"] == "Yetersiz" and pd.isna(out.loc["0xd", "bhy_q"])
     report = funnel_report(out.reset_index(), 5)
     assert "**m = 3**" in report and "tekrar sayısı 10000" in report
+
+
+def test_gate_copy_ignores_inherited_exposure_so_window_start_does_not_flip_the_sign():
+    """0x1404 mutabakatı: pencere öncesinden gelen pozisyonun kapanışı eskiden yeni ters pozisyon sayılıp sonucu −%110'a çeviriyordu."""
+    from copytrade.kapi import CandleCache, copy_window_metrics
+    now_ms = 1_800_000_000_000
+    start = now_ms - 50 * DAY_MS
+    market = {"BTC": [{"t": start - DAY_MS + i * HOUR, "o": str(100 + (i % 3))} for i in range(60 * 24)]}
+
+    class Client:
+        def candles(self, coin, s, e, interval="1h"): return market[coin]
+
+    def run(fills):
+        metrics, nets = copy_window_metrics(fills, [], 1000.0, CandleCache(Client(), start, now_ms), now_ms, 6)
+        return nets[30]
+
+    inherited_close = {"time": start, "coin": "BTC", "side": "A", "sz": "5", "px": "100", "startPosition": "5", "closedPnl": "9", "fee": "0", "tid": 1}
+    later = [{"time": start + 3 * DAY_MS, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0", "closedPnl": "0", "fee": "0", "tid": 2},
+             {"time": start + 4 * DAY_MS, "coin": "BTC", "side": "A", "sz": "1", "px": "100", "startPosition": "1", "closedPnl": "1", "fee": "0", "tid": 3}]
+    assert run([inherited_close] + later) == pytest.approx(run(later))

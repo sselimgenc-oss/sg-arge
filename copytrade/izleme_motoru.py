@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from copytrade.kapi import (SLIPPAGE, TAKER, binance_availability, delay_for_style, delayed_copy,
+from copytrade.kapi import (SLIPPAGE, TAKER, binance_availability, copy_actions, delay_for_style, delayed_copy,
                             write_binance_universe)
 from copytrade.kurallar import load_rules
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
@@ -266,24 +266,6 @@ def execution_candles(client, fills: list[dict], cache: dict, now_ms: int, delay
                 approximate = True
     return ({coin: [{'t': int(t), 'o': cached_candle(value)[0]} for t, value in rows.items()]
              for coin, rows in cache.items()}, approximate)
-
-
-def copy_actions(fills: list[dict]) -> list[dict]:
-    """Copy post-t0 changes only; closing inherited exposure must not open an inverse position."""
-    positions, result = {}, []
-    for fill in fills:
-        coin = fill['coin']
-        before = float(fill.get('startPosition', 0))
-        signed = float(fill['sz']) * (-1 if fill['side'] == 'A' else 1)
-        held = positions.get(coin, 0.0)
-        if before * signed < 0:
-            leader_close = min(abs(before), abs(signed))
-            close = min(abs(held), leader_close) if held * before > 0 else 0.0
-            signed = (close + max(0.0, abs(signed) - leader_close)) * (1 if signed > 0 else -1)
-        if abs(signed) > 1e-10:
-            result.append(dict(fill, sz=str(abs(signed)), startPosition=str(held)))
-        positions[coin] = held + signed
-    return result
 
 
 def copy_results(fills: list[dict], candles: dict, funding: list[dict], account: float,

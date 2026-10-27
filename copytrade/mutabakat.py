@@ -1,8 +1,8 @@
 """Gecikmeli kopya mutabakatı (görev 13): tek adres için sonucun ayrıntılı dökümü.
 
-Yalnız herkese açık Hyperliquid verisi (Actions'ta koşar). Kapıdaki hesabı (``delayed_copy``) olduğu gibi çalıştırır;
+Yalnız herkese açık Hyperliquid verisi (Actions'ta koşar). ``delayed_copy`` hesabını çalıştırır;
 yanında üç şey gösterir: (1) saatlik mum yuvarlama aralığı (hedeften sonraki ilk mum = kapı, hedeften önceki son mum = karşı
-sınır), (2) pencerede önceden açık pozisyonu azaltan dolumları yeni ters pozisyon saymayan düzeltilmiş kopya, (3) payda
+sınır), (2) pencerede önceden açık pozisyonu azaltan dolumları yeni ters pozisyon saymayan güncel kapı hesabı (`kapi`) ile eski ham hesap (`ham`), (3) payda
 seçenekleri. Kapı kuralları ve eşikler değişmez; bu bir tanılama raporudur.
 """
 from __future__ import annotations
@@ -114,7 +114,7 @@ def build_report(address: str, now: datetime, fills: list[dict], funding: list[d
         for delay in DELAYS:
             for corrected in (False, True):
                 for rounding in (("up", "down") if delay else ("up",)):
-                    key = f"{delay}dk|{'duzeltilmis' if corrected else 'kapi'}|{rounding}"
+                    key = f"{delay}dk|{'kapi' if corrected else 'ham'}|{rounding}"
                     entry["secenekler"][key] = breakdown(window, candles, base, delay, funding_w, rounding, corrected)
         out["pencereler"][str(days)] = entry
     return out
@@ -124,7 +124,7 @@ def render(report: dict[str, Any]) -> str:
     lines = [f"# Gecikmeli kopya mutabakatı — `{report['adres']}`", "", f"Üretildi: {report['uretildi']} · kapı paydası (lider tablosu hesap değeri): "
              f"{report['payda_kapi']:,.0f} $".replace(",", "."), "",
              "Net = brüt fiyat PnL − maliyet (taker %0,045 + kayma %0,05, her dolumda) + funding; hepsi **hesap değerine oranla**. "
-             "`kapi` = `delayed_copy` olduğu gibi; `duzeltilmis` = pencere öncesinden gelen pozisyonu azaltan dolum yeni ters pozisyon sayılmaz. "
+             "`ham` = `delayed_copy`'nin pozisyonu pencere başında 0 sayan eski kullanımı; `kapi` = güncel kapı (pencere öncesinden gelen pozisyonu azaltan dolum yeni ters pozisyon sayılmaz, `copy_actions`). "
              "`up` = hedef zamandan sonraki ilk saatlik mum açılışı (kapının kullandığı), `down` = hedeften önceki son mum.", "",
              f"Varlık sınıfı payları (nominal): " + ", ".join(f"{k} {100 * v:.1f}%" for k, v in report["varlik_sinifi_payi"].items()),
              f" · HIP-3 dahil: {'evet (' + ', '.join(report['hip3_dex']) + ')' if report['hip3_dahil'] else 'hayır'}", ""]
@@ -140,12 +140,12 @@ def render(report: dict[str, Any]) -> str:
             lines.append(f"| {key} | {pct(t['brut'])} | {pct(-t['maliyet'])} | {pct(t['funding'])} | **{pct(t['net'])}** | {t['nominal']:.1f}× | {r['eksik_dolum']} |")
         base = report["payda_kapi"]
         lines += ["", "**Payda duyarlılığı** — 30 dk, up (net, hesap değerine oranla; net ∝ 1 / payda)", "",
-                  "| Payda | Değer | Kapı | Düzeltilmiş |", "|---|---:|---:|---:|"]
+                  "| Payda | Değer | Ham (eski) | Kapı (güncel) |", "|---|---:|---:|---:|"]
         for name, value in w["paydalar"].items():
             scale = (base / value) if value else None
-            row = [pct(w["secenekler"][f"30dk|{kind}|up"]["toplam"]["net"] * scale) if scale else "—" for kind in ("kapi", "duzeltilmis")]
+            row = [pct(w["secenekler"][f"30dk|{kind}|up"]["toplam"]["net"] * scale) if scale else "—" for kind in ("ham", "kapi")]
             lines.append(f"| {name} | {'—' if value is None else format(value, ',.0f').replace(',', '.')} | {row[0]} | {row[1]} |")
-        for title, key in (("Coin dökümü — 30 dk, kapı, up", "30dk|kapi|up"), ("Coin dökümü — 30 dk, düzeltilmiş, up", "30dk|duzeltilmis|up")):
+        for title, key in (("Coin dökümü — 30 dk, ham (eski kapı hesabı), up", "30dk|ham|up"), ("Coin dökümü — 30 dk, kapı (güncel), up", "30dk|kapi|up")):
             coins = sorted(w["secenekler"][key]["coinler"].items(), key=lambda kv: -abs(kv[1]["net"]))[:15]
             lines += ["", f"**{title}** (|net|'e göre ilk 15)", "", "| Coin | Dolum | Brüt | Maliyet | Funding | Net |", "|---|---:|---:|---:|---:|---:|"]
             lines += [f"| {c} | {int(v['dolum'])} | {pct(v['brut'])} | {pct(-v['maliyet'])} | {pct(v['funding'])} | {pct(v['net'])} |" for c, v in coins]
