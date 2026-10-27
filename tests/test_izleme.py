@@ -161,7 +161,7 @@ def test_uses_current_main_list_without_changing_it():
     path = ROOT / 'copytrade/izleme_listesi.yaml'
     before = path.read_bytes()
     rows = m.load_list(path)
-    assert [row['id'] for row in rows] == ['T1', 'T2']
+    assert [row['id'] for row in rows] == [f'T{i}' for i in range(1, len(rows) + 1)]
     assert all(row['durum'] == 'izlemede' for row in rows)
     assert path.read_bytes() == before
 
@@ -512,7 +512,8 @@ def test_current_two_trader_list_runs_offline(tmp_path):
     (tmp_path / 'copytrade').mkdir()
     (tmp_path / 'copytrade/izleme_listesi.yaml').write_bytes((ROOT / 'copytrade/izleme_listesi.yaml').read_bytes())
     result = m.run(tmp_path, tmp_path / 'out', Client(), NOW)
-    assert [t['id'] for t in result['traderlar']] == ['T1', 'T2']
+    expected = [row['id'] for row in m.load_list(ROOT / 'copytrade/izleme_listesi.yaml')]
+    assert [t['id'] for t in result['traderlar']] == expected
     example = json.loads((ROOT / 'izleme/ornek_durum.json').read_text())
     check_shape(result, [example])
     assert all(t['sanal_kopya']['bakiye_usd'] == 1000 for t in result['traderlar'])
