@@ -53,6 +53,7 @@
     .ct-pos summary::-webkit-details-marker { display: none; }
     .ct-pos summary .ok { display: inline-block; color: var(--muted); transition: transform .15s; margin-left: 2px; }
     .ct-pos[open] summary .ok { transform: rotate(90deg); }
+    .ct-bn { display: inline-flex; align-items: center; gap: 0.25rem; white-space: nowrap; }
     .ct-pos .ek span { white-space: nowrap; }
     .ct-pos .ek { color: var(--muted); font-size: 11px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 0.75rem; align-items: center; }
     .ct-row { padding: 0.625rem 0; border-top: 1px solid var(--border); font-size: 12px; min-width: 0; overflow-wrap: anywhere; }
@@ -143,12 +144,10 @@
   const base = { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: axes };
 
   // ---------- copy trade izleme (tanım: sg-arge docs/PANO_COPYTRADE.md, veri: docs/VERI_SOZLESMESI.md, surum 1)
-  // Kaynak adresleri yalnız burada değişir. Canlı veri hazır olunca:
-  //   CT_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/durum.json'
-  //   CT_KARAR  = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/kararlar.jsonl'
-  const CT_KAYNAK = './izleme/ornek_durum.json';
-  const CT_KARAR = './izleme/kararlar.jsonl';
-  const CT_ESKI_DK = 30, CT_SAYFA = 8, CT_AKIS_ADIM = 50, CT_YETERSIZ = 10; // eşik: sözleşme v1.1 (<10 kapanmış ve kararı verilmiş olay)
+  // Kaynak adresleri yalnız burada değişir (canlı: sg-arge copytrade-izleme dalı; örnek sabit veri: ./izleme/ornek_durum.json).
+  const CT_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/durum.json';
+  const CT_KARAR = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/kararlar.jsonl'; // dosya yoksa (404) karar kaydı yok sayılır
+  const CT_ESKI_DK = 90, CT_SAYFA = 8, CT_AKIS_ADIM = 50, CT_YETERSIZ = 10; // eşik: sözleşme v1.1 (<10 kapanmış ve kararı verilmiş olay)
   let CT = null, CTK = { durum: 'yok', kayit: {}, bozuk: 0 }, ctHata = null;
   let ctSel = null, ctSayfa = 0, ctFiltre = '', ctAkisN = CT_AKIS_ADIM;
 
@@ -166,18 +165,20 @@
   const ctP = (v, d = 0) => isNum(v) ? '%' + fmt(v * 100, d) : '—';
   const ctPs = (v, d = 1) => isNum(v) ? (v > 0 ? '+' : v < 0 ? '-' : '') + '%' + fmt(Math.abs(v * 100), d) : '—';
   const ctUsd = (v, d = 2) => isNum(v) ? (v < 0 ? '-' : '') + fmt(Math.abs(v), d) + ' $' : '—';
-  const ctUsds = (v, d = 0) => isNum(v) ? (v > 0 ? '+' : '') + ctUsd(v, d) : '—';
+  const ctUsdA = (v) => ctUsd(v, isNum(v) && Math.abs(v) < 100 ? 2 : 0); // küçük tutarlar kuruşlu
+  const ctUsds = (v, d) => isNum(v) ? (v > 0 ? '+' : '') + (d === undefined ? ctUsdA(v) : ctUsd(v, d)) : '—';
   const ctFiyat = (v) => isNum(v) ? v.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: v >= 1000 ? 2 : v >= 1 ? 4 : 6 }) : '—';
   const ctYon = (y) => y ? String(y).toUpperCase() : '';
+  const ctDate = (iso) => new Date(String(iso || '').replace(/(\.\d{3})\d+/, '$1')); // Safari/WebKit için kesir 3 haneye
   const ctTarih = (iso, tamZaman) => {
-    const t = iso ? new Date(iso) : null; if (!t || isNaN(t)) return '—';
+    const t = iso ? ctDate(iso) : null; if (!t || isNaN(t)) return '—';
     return t.toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', day: '2-digit', month: '2-digit', ...(tamZaman === false ? {} : { hour: '2-digit', minute: '2-digit' }) });
   };
   const ctAdr = (a) => { a = String(a || ''); return a.length > 14 ? a.slice(0, 6) + '…' + a.slice(-4) : a; };
   function ctYas(dk) { return dk < 60 ? `${dk} dk önce` : dk < 2880 ? `${Math.round(dk / 60)} sa önce` : `${Math.round(dk / 1440)} gün önce`; }
   function ctBinance(b) {
     const m = b === 'var' ? ['badge-check', 'up', "Binance'te var"] : b === 'yok' ? ['ban', 'down', "Binance'te yok"] : ['circle-help', 'flat', 'Binance durumu bilinmiyor'];
-    return `<span class="inline-flex items-center ${m[1]}" title="${esc(m[2])}" aria-label="${esc(m[2])}"><i data-lucide="${m[0]}" class="w-3.5 h-3.5"></i></span>`;
+    return `<span class="ct-bn ${m[1]}" title="${esc(m[2])}" aria-label="${esc(m[2])}"><i data-lucide="${m[0]}" class="w-3.5 h-3.5"></i></span>`;
   }
 
   // Kapanmış sanal sonucu olan olaylar (acilis/buyutme); sonuç = kopyalanan tutara göre maliyet sonrası net %, ortalaması alınır.
@@ -224,7 +225,7 @@
     return `<details class="ct-pos"${acik ? ' open' : ''}><summary><div class="l1"><span><b class="text-white">${esc(p.coin)}</b> ${ctYonRozet(p.yon)} ${ctKaldirac(p.kaldirac)}</span>
       <span><b class="${cls(p.anlik_kz_usd)}">${ctUsds(p.anlik_kz_usd)}</b> <span class="ok">›</span></span></div>
       <div class="l2">hesabın ${ctP(p.hesap_payi)}</div></summary>
-      <div class="ek"><span>giriş ${ctFiyat(p.giris)}</span><span>${ctUsd(p.buyukluk_usd, 0)}</span><span>açılış ${esc(ctTarih(p.acilis))}</span><span class="inline-flex items-center gap-1">${ctBinance(p.binance)} Binance</span></div></details>`;
+      <div class="ek"><span>giriş ${ctFiyat(p.giris)}</span><span>${ctUsdA(p.buyukluk_usd)}</span><span>açılış ${esc(ctTarih(p.acilis))}</span><span class="ct-bn">${ctBinance(p.binance)} Binance</span></div></details>`;
   }
 
   function ctKart(t) {
@@ -248,7 +249,7 @@
       const tr = CT.traderlar || [], acik = tr.reduce((n, t) => n + (t.pozisyonlar || []).length, 0);
       const sk = tr.map((t) => t.sanal_kopya).filter((k) => k && isNum(k.baslangic_usd) && isNum(k.bakiye_usd));
       const b0 = sk.reduce((n, k) => n + k.baslangic_usd, 0), fark = sk.reduce((n, k) => n + k.bakiye_usd - k.baslangic_usd, 0);
-      const t = new Date(CT.uretildi), gecerli = !isNaN(t), dk = gecerli ? Math.max(0, Math.round((Date.now() - t.getTime()) / 60000)) : null;
+      const t = ctDate(CT.uretildi), gecerli = !isNaN(t), dk = gecerli ? Math.max(0, Math.round((Date.now() - t.getTime()) / 60000)) : null;
       eski = !gecerli || dk > CT_ESKI_DK;
       html = `<div class="ct-stat"><div><div class="k">Trader</div><div class="v">${tr.length}</div></div><div><div class="k">Açık poz.</div><div class="v">${acik}</div></div>
           <div><div class="k">Sanal kopya (hepsi)</div><div class="v ${sk.length ? cls(fark) : ''}">${sk.length ? `${ctUsds(fark)} (${ctPs(b0 ? fark / b0 : null)})` : 'veri yok'}</div></div></div>
@@ -257,7 +258,7 @@
         + (/^ornek/i.test(String(CT.kaynak || '')) ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '') + '</div>';
     } else html = '<span>Veri yok.</span>';
     bar.forEach((el) => { el.classList.toggle('stale', eski); el.innerHTML = html; });
-    const yas = $('dataAge'), t0 = CT && new Date(CT.uretildi);
+    const yas = $('dataAge'), t0 = CT && ctDate(CT.uretildi);
     yas.textContent = t0 && !isNaN(t0) ? ctYas(Math.max(0, Math.round((Date.now() - t0.getTime()) / 60000))) : '—';
     yas.style.color = eski ? '#fcd34d' : '';
   }
@@ -305,7 +306,7 @@
       <div class="space-y-4 ct-detay">
       <div class="card ct-card"><div class="ct-head"><span class="ct-name text-lg">${esc(t.takma_ad)}</span><span aria-label="Sağlık: ${esc(ad)}">${em} ${esc(ad)}</span>${ctKapiRozet(t.kapi)}
           ${ctKirmizi(t) ? ctRozet('izlemede — kopyalama', 'ct-b-bad') : t.durum && t.durum !== 'kopyala' ? ctRozet(t.durum, 'ct-b-mut') : ''}</div>
-        <div class="ct-sub mt-1">${esc(ctAdr(t.adres))} · t0: ${esc(t.t0 || '—')} · hesap değeri ${ctUsd(t.hesap_degeri, 0)}</div>
+        <div class="ct-sub mt-1">${esc(ctAdr(t.adres))} · t0: ${esc(t.t0 || '—')} · hesap değeri ${ctUsdA(t.hesap_degeri)}</div>
         <div class="ct-kv mt-3">${kv('Form skoru', isNum(t.form && t.form.skor) ? fmt(t.form.skor, 1) : '—')}${kv('30 gün', ctPs(t.form && t.form.getiri_30g))}${kv('90 gün', ctPs(t.form && t.form.getiri_90g))}</div></div>
 
       <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Sağlık ışığının nedenleri</h3>

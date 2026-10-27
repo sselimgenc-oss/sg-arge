@@ -10,18 +10,18 @@
 - Paper/strateji araştırması kapandı; ona ait pano, sekmeler ve `data.json` kaldırıldı.
 
 ## Veri kaynağı
-`index.html` içindeki iki sabit:
-- `CT_KAYNAK` = `./izleme/ornek_durum.json` (sg-arge `main`'deki sabit örneğin birebir kopyası; **sahte veri**, sayfada "ÖRNEK VERİ" uyarısı çıkar).
-- `CT_KARAR` = `./izleme/kararlar.jsonl` (şimdilik boş; "henüz karar kaydı yok" sayılır).
+`index.html` içindeki iki sabit, canlı veriyi gösterir (sg-arge `copytrade-izleme` dalı, ham GitHub adresi):
+- `CT_KAYNAK` = `…/copytrade-izleme/izleme/durum.json` (saatte bir güncellenir).
+- `CT_KARAR` = `…/copytrade-izleme/izleme/kararlar.jsonl`. Dosya yoksa (404) "henüz karar kaydı yok" sayılır; tarayıcı bu 404'ü konsola yine de yazar, sayfa hata göstermez.
 
-Canlıya geçiş yalnız bu iki sabittir; adresler `index.html`'de yorum olarak yazılı
-(sg-arge `copytrade-izleme` dalındaki ham `izleme/durum.json` ve `izleme/kararlar.jsonl`). Karar dosyası canlıda henüz yoksa (404) sayfa bunu "karar kaydı yok" sayar.
+Eski veri uyarısı 90 dakikadan sonra çıkar (`CT_ESKI_DK`). "ÖRNEK VERİ" etiketi yalnız `kaynak` alanı `ornek` ile başlıyorsa görünür.
+`izleme/ornek_durum.json`: sg-arge `main`'deki sabit örneğin kopyası (sahte veri); test için `CT_KAYNAK` geçici olarak `./izleme/ornek_durum.json` yapılabilir.
 
 ## Dosyalar
 | Dosya | Görev |
 |---|---|
 | `index.html` | Pano (tek sayfa). |
-| `izleme/` | Örnek durum ve (boş) karar kaydı. |
+| `izleme/` | Test için sabit örnek durum (sahte veri); canlıda kullanılmaz. |
 | `vendor/` | Sabit sürümlü kütüphaneler: Chart.js 4.4.1 (ayrıntı grafikleri, MIT), Lucide 0.460.0 (ikonlar, ISC), Tailwind 3.4.17 ile derlenmiş CSS (MIT). Dış CDN kullanılmaz. |
 
 ## Tailwind CSS'i yeniden derleme (index.html'de yeni sınıf kullanılırsa)
