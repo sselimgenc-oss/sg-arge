@@ -71,8 +71,17 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
     gün sayısı `gecikme_gun` (≈200, mum sınırı).
 13. **Mutabakat:** `0x1404109f8cd4a79a0447365edbb7a13acd0b2f27` için gecikmeli kopya sonucunu ayrıntılı ver (aralık,
     işlem sayısı, coinler, HIP-3 dahil mi, payda, maliyet); bir model aynı adres için 190 günde −%22,6 buldu, bizde +%22.
+14. **Kârlı ay eşiği (kullanıcı kararı 2026-10-27):** 1. aşama ≥ %44, adım 4 ≥ %49 (önce %60/%60). Gerekçe: swing
+    trader'da kâr az sayıda büyük işlemden gelir; şans kontrolünü "en büyük işlem payı" ve "en iyisiz PF" yapar.
+15. **Düşüş ölçümü hatası (hata düzeltmesi):** 2026-10-27 sonucunda 1.308 adreste `max_drawdown` > 1 (imkânsız).
+    PnL / medyan hesap değeri paydası yatırma-çekme ve büyüyen hesapta bozuluyor. Düşüşü sermaye eğrisinden hesapla
+    (zaman ağırlıklı getiri zinciri; yatırma/çekme getiri sayılmaz); 0–1 aralığında olsun; test ekle. Eşik (≤ %30) aynı.
+16. **Dış adaylar:** `arastirma/copytrade/bagimsiz_secim/` dosyalarındaki tüm adresler leaderboard filtresinden
+    bağımsız olarak kapıdan geçirilir; satıra `kaynak = dis_aday`.
+17. **Kurallar donar:** 14–16 ile bu tur kapanır. Tam koşudan sonra eşik değişikliği yok; sonraki karar 3 aylık
+    ileriye dönük sanal izlemenin sonucuyla.
 
-
+## `kesif.json` şeması (v1)
 ```json
 {"surum": 1, "uretildi": "…Z", "evren": 12461, "islenen": 12300,
  "adaylar": [{
