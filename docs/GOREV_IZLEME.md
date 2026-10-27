@@ -22,7 +22,7 @@ Yalnız herkese açık Hyperliquid verisi; emir, cüzdan, gerçek para yok.
    t0 öncesi günlük PnL'den.
 7. `izleme/durum.json` sözleşme şemasına tam uyar (şema testi: `izleme/ornek_durum.json` ile aynı anahtarlar/türler).
 
-## İş B — Telegram (BAŞLAMA: Cloudflare Worker'a taşınıyor; ayrı görev belgesi gelecek)
+## İş B — Telegram (ESKİ PLAN; geçerli görev: `docs/GOREV_TELEGRAM.md`)
 Aşağıdaki maddeler yalnız bilgi içindir. Argon notu: düğme cevapları (`answerCallbackQuery`) birkaç saniyede
 verilmeli; 10 dakikalık `getUpdates` çalışmaz. Hızlı katman (5 dk'da bir pozisyon kontrolü, bildirim, düğmeler,
 karar kaydı) Cloudflare Worker + KV olacak; İş A yalnız saatlik ağır hesap ve `durum.json`.

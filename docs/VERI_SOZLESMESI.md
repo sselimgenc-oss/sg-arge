@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1.1, 2026-10-27, kullanıcı onayı)
+# Veri sözleşmesi — copy trade izleme (v1.2, 2026-10-27, kullanıcı onayı; v1.2 lider: olay kimliği, karar akışı)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -6,9 +6,9 @@ sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `suru
 ## 1. Dosyalar ve yer
 | Dosya | Nerede | Kim yazar | Sıklık |
 |---|---|---|---|
-| `izleme/durum.json` | sg-arge, `copytrade-izleme` dalı (main büyümesin) | Codex işi | 10 dakikada bir |
+| `izleme/durum.json` | sg-arge, `copytrade-izleme` dalı (main büyümesin) | Codex işi (Actions) | saatte bir |
 | `izleme/ornek_durum.json` | sg-arge `main` (sabit örnek, 4 trader) | lider (hazır) | sabit; Sonnet bununla başlar |
-| `izleme/kararlar.jsonl` (açtım/atladım) | sg-arge, `copytrade-izleme` dalı (repolar açık; ikinci repoya yazma anahtarı gerekmesin) | Telegram işi | her karar |
+| `izleme/kararlar.jsonl` (açtım/atladım) | sg-arge, `copytrade-izleme` dalı | saatlik iş, Worker'ın `GET /kararlar`'ından (Cloudflare'de GitHub anahtarı yok) | saatte bir |
 
 Repolar herkese açık (kullanıcı kararı 2026-10-27). Bu yüzden karar kaydında **tutar, bakiye, hesap, isim yoktur**;
 yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zincir verisidir.
@@ -52,6 +52,11 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 ```
 - `egri`: son 90 gün, günlük, t0'dan bağımsız trader'ın kümülatif PnL / hesap değeri (Hyperliquid `portfolio`).
 - `olaylar`: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
+- **Olay kimliği (v1.2):** `{trader}-{oid}-{tur}` (ör. `T1-123456789-acilis`); ışık olayı `{trader}-{ms}-isik`.
+  Olaylar **emir (`oid`) düzeyinde** üretilir: aynı emrin dolumları birleştirilir (tek açılış sahte büyütmeler doğurmaz).
+  Saatlik motor ve Cloudflare Worker aynı kuralla aynı kimliği üretir.
+- `sanal_kopya.not` (v1.2, isteğe bağlı): ör. `"yaklaşık fiyat"` (1 dk mum kaçınca 1 saatlik mum kullanıldıysa).
+- `saglik.nedenler` `"veri hatası: …"` içerebilir (v1.2): o trader bu saat güncellenemedi, önceki kayıt gösteriliyor.
 - `buyutme`/`azaltma`: aynı yönde pozisyonun **%25'inden fazla** değişimi (lider kararı); daha küçükleri olay sayılmaz.
 - `sanal_kopya.egri` (v1.1): t0'dan bugüne günlük sanal bakiye (USD).
 - `olaylar[].sanal_sonuc` (v1.1, yalnız `acilis`/`buyutme`): bu olayın 30 dk gecikmeli kopyasının sonucu; pozisyon
@@ -78,8 +83,9 @@ Kayıt: `{"olay_id", "zaman", "karar": "acti | atladi", "neden": "gec_gordum | b
 İstatistik: aynı trader için "tüm olaylar" ile "açtıklarım" sanal sonuçları ayrı hesaplanır.
 
 ## 5. Telegram
-- Olay türleri: `acilis`, `kapanis`, `buyutme`, ışığın `kirmizi`ya dönmesi. Her `olay.id` bir kez bildirilir.
+- Gönderen: Cloudflare Worker, 5 dakikada bir (`docs/GOREV_TELEGRAM.md`). Olay türleri: `acilis`, `kapanis`, `buyutme`,
+  ışığın `kirmizi`ya dönmesi. Her `olay.id` bir kez bildirilir.
 - Metin: `🟢 Trader-1 · BTC LONG açtı · giriş 68.400 · hesabın %8'i · 2x · Binance: var`
 - Düğmeler (yalnız `acilis`/`buyutme`): **[Açtım] [Atladım]** → Atladım ise neden düğmeleri.
-- Bot anahtarı ve sohbet kimliği yalnız GitHub Secrets'ta (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`); repoya,
-  günlüğe, sohbete yazılmaz.
+- Bot anahtarı ve sohbet kimliği yalnız GitHub Secrets'ta (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
+  `TELEGRAM_WEBHOOK_SECRET`); dağıtım işi bunları Cloudflare secret'ına aktarır. Repoya, günlüğe, sohbete yazılmaz.

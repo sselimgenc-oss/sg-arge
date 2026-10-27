@@ -29,7 +29,8 @@ paper'daki 13 kitaptan yalnız 2'sinde zayıf alfa izi vardı (`docs/kapi_kontro
 | Lider | denetim, birleştirme | bitti |
 Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama kararı değil).
 
-**2. Telegram — SIRADAKİ:** kendi botumuz, Cloudflare Worker + KV (Argon notu: hazır servislerde
+**2. Telegram — ŞU AN:** görev `docs/GOREV_TELEGRAM.md` (Codex, dal `codex/telegram`; önce motor düzeltmeleri).
+Kullanıcı: Cloudflare hesabı ✅, BotFather botu ✅; sırada GitHub Secrets (Codex PR'ındaki adımlar). kendi botumuz, Cloudflare Worker + KV (Argon notu: hazır servislerde
 [Açtım]/[Atladım] düğmesi ve veri aktarımı yok). Codex İş B; kullanıcı: Cloudflare ücretsiz hesap, BotFather.
 
 **3. Trader seçimi** (Telegram bitince): CT-Kapı tam sonucu incelenir (`copytrade/kapi/2026-10-27/`). Bilinen
