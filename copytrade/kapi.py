@@ -164,6 +164,34 @@ def stage1_pass(stats: dict[str, float] | None, rules: dict | None = None) -> bo
                 and stats["max_drawdown"] <= rules["asama1_max_dusus"] and stats["return_12m"] > 0)
 
 
+def hip3_dex_names(client: Any) -> list[str]:
+    """HIP-3 dex adları (``perpDexs``; ilk öğe ana piyasa/null). Hesap değeri tabanı için toplamda kullanılır."""
+    names = []
+    for item in client.info({"type": "perpDexs"}, weight=2) or []:
+        name = item.get("name") if isinstance(item, dict) else item
+        if name:
+            names.append(str(name))
+    return names
+
+
+def total_account_value(client: Any, address: str, dexes: list[str]) -> float:
+    """Bugünkü hesap değeri = ana piyasa + tüm HIP-3 dex'lerin ``clearinghouseState`` ``marginSummary.accountValue`` toplamı.
+    Ana piyasa okunamazsa hata fırlar (satır veri hatası olur, yeniden denenir); bir dex okunamazsa o dex 0 sayılır."""
+    total = float(client.info({"type": "clearinghouseState", "user": address}, weight=2)["marginSummary"]["accountValue"])
+    for dex in dexes:
+        try:
+            total += float(client.info({"type": "clearinghouseState", "user": address, "dex": dex}, weight=2)["marginSummary"]["accountValue"])
+        except (KeyError, TypeError, ValueError, requests.RequestException):
+            continue
+    return total
+
+
+def account_floor_pass(total: float, rules: dict | None = None) -> bool:
+    """Görev 27: bugünkü hesap değeri ``hesap_degeri_min_usd`` ve üstüyse geçer (eşik dahil)."""
+    rules = rules or load_rules()
+    return total >= float(rules["hesap_degeri_min_usd"])
+
+
 def bhy(p_values: dict[str, float]) -> dict[str, float]:
     """Benjamini--Hochberg--Yekutieli adjusted q values."""
     keys = sorted(p_values, key=p_values.__getitem__)
@@ -753,7 +781,7 @@ def build_universe(board: list[dict], external: list[str], client: PublicClient 
 
 
 def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now: datetime, start: int, start_200: int,
-                     symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None) -> dict[str, Any]:
+                     symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None, dexes: list[str] | None = None) -> dict[str, Any]:
     """Tek adres için 1. aşama + adım 1–6 (adım 7 ve katman birleştirmede). ``yalniz_adim5``: plaseboyu adım 3–4'e
     bakmadan hesaplar (hızlı koşu; satırın adım değerleri yine kurallara göre kalır). Her aşamanın süresi günlüğe yazılır."""
     address = leader["address"]
@@ -769,6 +797,15 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         progress.stage("portfolio", f"1. aşama: {row['asama1']}")
         if row["asama1"] != "Geçti":
             outcome = "1. aşama geçmedi"
+            return row
+        if dexes is None:
+            dexes = hip3_dex_names(client)
+        total = total_account_value(client, address, dexes)
+        row["hesap_degeri_bugun"] = total
+        progress.stage("hesap", f"bugünkü hesap değeri {total:,.0f} $ ({1 + len(dexes)} piyasa)")
+        if not account_floor_pass(total, rules):
+            row.update({"asama1": "Kaldı", "neden": "hesap değeri tabanı"})
+            outcome = row["neden"]
             return row
         account, now_ms = float(leader["accountValue"]), int(now.timestamp() * 1000)
         fills = client.fills(address, start)
@@ -910,11 +947,12 @@ def main(argv: list[str] | None = None) -> None:
     done = {str(row["address"]) for row in previous_rows}
     rows = previous_rows
     print(f"Koşu: evren {evren}, bu parçada {len(leaders)} adres (parça {args.shard_index}/{args.shard_count})", flush=True)
+    dexes = hip3_dex_names(client)       # hesap değeri tabanı için bir kez (görev 27)
     for number, leader in enumerate(leaders, 1):
         if leader["address"] in done:
             continue
         print(f"[{number}/{len(leaders)}] {leader['address']}", flush=True)
-        rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5 and leader.get("kaynak") != "dis_aday"))
+        rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5 and leader.get("kaynak") != "dis_aday", dexes=dexes))
         pd.DataFrame(rows).to_csv(out / "sonuc.csv", index=False)  # partial results survive a time limit
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
     passed = sum(r.get("asama1") == "Geçti" for r in rows)
@@ -959,6 +997,8 @@ def finalize(table: pd.DataFrame, rules: dict | None = None) -> pd.DataFrame:
     table["adim7"] = np.where(table["bhy_q"].notna(), np.where(table["bhy_q"] <= rules["bhy_q_max"], "Geçti", "Kaldı"), "Yetersiz")
 
     def klass(row) -> str:
+        if row.get("asama1") == "Kaldı":      # hesap değeri tabanı (görev 27)
+            return "Kaldı"
         if row.get("asama1") != "Geçti":
             return "Yetersiz"
         values = [row.get(f"adim{i}") for i in range(1, 8)]
@@ -1022,7 +1062,7 @@ def freeze_report(table: pd.DataFrame) -> str:
 
 # Hesap sürümü: satırın hangi hesap koduyla üretildiğini gösterir. Veri dalındaki eski sonuç dosyasında bu sütun yoksa ya da farklıysa
 # satır "eski_hesap"tır: yeni sonuca karışmaz, akıl sağlığı kapısına girmez, ayrı dosyaya yazılır (sonuc_eski_hesap.csv.gz).
-HESAP_SURUMU = "v1.1-2026-10-27b"
+HESAP_SURUMU = "v1.1-2026-10-27c"
 
 RATIO_COLUMNS = ("profitable_month_ratio", "max_drawdown", "largest_trade_share", "kisa_islem_payi", "gece_payi", "pay_kripto", "pay_hisse",
                  "pay_endeks", "pay_emtia", "binance_payi", "candle_coverage", "plasebo_p", "bhy_q", "kopya_eksik_orani")

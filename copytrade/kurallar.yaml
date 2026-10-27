@@ -88,6 +88,8 @@ mum_uzaklik_max_aralik: 1
 rapor_gecikmeleri_dk: [0, 5, 30, 120, 480]
 # Evren (lider tablosu ön süzgeci)
 evren_min_hesap_degeri: 25000
+# 1. aşama hesap değeri tabanı (görev 27; kullanıcı kararı 2026-10-27): bugünkü hesap değeri (ana piyasa + tüm HIP-3 dex toplamı) bunun altındaysa Kaldı
+hesap_degeri_min_usd: 10000
 # Kapsam hedefi: işlenen / evren (tam koşu; altındaysa koşu 'eksik' sayılır, görev 24)
 kapsam_hedefi: 0.98
 # Kopya hesabında eksik dolum (görev 18a): tarzın gecikmesinde herhangi bir dolum için mum bulunamazsa satır `kopya_eksik` ve adım 3 Yetersiz.

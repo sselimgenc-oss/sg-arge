@@ -75,3 +75,37 @@ def test_scenario_gives_the_hand_computed_number_in_both_engines(name):
 
 def test_there_are_at_least_six_golden_scenarios():
     assert len(SCENARIOS) >= 6
+
+
+def test_golden_8_account_value_floor_sums_main_and_hip3_dexes_and_stops_at_kaldi():
+    """Görev 27. Bugünkü hesap değeri = ana piyasa + tüm HIP-3 dex toplamı; tabanın (10.000 $) altı 1. aşamada Kaldı, neden "hesap değeri tabanı".
+    El hesabı: ana 6.000 + xyz 3.000 + flx 999 = 9.999 $ → Kaldı; ana 6.000 + xyz 3.000 + flx 1.000 = 10.000 $ → geçer (eşik dahil); 0 $ → Kaldı."""
+    from datetime import datetime, timezone
+    from test_asama1_payda import portfolio
+    import copytrade.kapi as kapi
+
+    def client(values):
+        class Client:
+            requests = 0
+            def info(self, body, weight=1):
+                if body["type"] == "perpDexs":
+                    return [None, {"name": "xyz"}, {"name": "flx"}]
+                return {"marginSummary": {"accountValue": str(values.get(body.get("dex", ""), 0))}}
+            def portfolio(self, address):
+                return portfolio([i * 100 for i in range(14)], [1000 + i * 100 for i in range(14)])   # 1. aşamayı geçen eğri
+        return Client()
+
+    assert kapi.hip3_dex_names(client({})) == ["xyz", "flx"]
+    assert kapi.total_account_value(client({"": 6000, "xyz": 3000, "flx": 999}), "0xa", ["xyz", "flx"]) == 9999.0
+    assert kapi.total_account_value(client({"": 6000, "xyz": 3000, "flx": 1000}), "0xa", ["xyz", "flx"]) == 10000.0
+    rules = kapi.load_rules()
+    for values, passes in (({}, False), ({"": 6000, "xyz": 3000, "flx": 999}, False), ({"": 6000, "xyz": 3000, "flx": 1000}, True)):
+        row = kapi.evaluate_address({"address": "0xa", "accountValue": 50000.0}, client(values), type("C", (), {"requests": 0})(),
+                                    datetime.now(timezone.utc), 0, 0, None, rules, dexes=["xyz", "flx"])
+        if not passes:
+            assert row["asama1"] == "Kaldı" and row["neden"] == "hesap değeri tabanı" and row["hesap_degeri_bugun"] < 10000
+        else:
+            # Taban geçildi: satır tabanda kesilmedi (sonraki aşamada bu sahte istemci dolum veremediğinden veri hatası olması beklenir).
+            assert row.get("neden") != "hesap değeri tabanı" and row["asama1"] != "Kaldı" and row["hesap_degeri_bugun"] == 10000.0
+    table = kapi.finalize(pd.DataFrame([{"address": "0xa", "asama1": "Kaldı", "neden": "hesap değeri tabanı"}]), rules)
+    assert table.loc[0, "sinif"] == "Kaldı"

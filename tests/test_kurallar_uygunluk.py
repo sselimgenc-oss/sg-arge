@@ -47,6 +47,16 @@ def test_numbered_user_decisions_10_11_14():
     assert RULES["asama1_min_karli_ay_orani"] == int(first) / 100 and RULES["adim4_min_karli_ay_orani"] == int(fourth) / 100
 
 
+def test_numbered_user_decision_27_account_floor():
+    shown, key, literal = grab(r"\*\*≥ ([\d.]+) \$\*\* değilse Kaldı.*?`(hesap_degeri_min_usd): (\d+)`")
+    assert RULES[key] == int(literal) == int(shown.replace(".", ""))
+
+
+def test_account_floor_boundary_0_9999_fail_10000_pass():
+    from copytrade.kapi import account_floor_pass
+    assert not account_floor_pass(0.0, RULES) and not account_floor_pass(9999.0, RULES) and account_floor_pass(10000.0, RULES)
+
+
 def test_gate_functions_use_the_yaml_thresholds_at_the_boundary():
     from copytrade.kapi import gate_status, stage1_pass
     stats = {"active_months": 6, "profitable_month_ratio": 0.44, "max_drawdown": 0.30, "return_12m": 0.01}
