@@ -34,7 +34,9 @@ bildirim, [Açtım]/[Atladım], `/durum`. Kararlar saatlik işle `copytrade-izle
 Açık kontrol: ilk gerçek bildirimde düğme → karar → panoya akış uçtan uca izlenecek. Not: saatlik zamanlama ilk
 saatlerde tetiklenmedi (GitHub gecikmesi); düzelmezse incelenecek.
 
-**3. Trader seçimi — SIRADAKİ (kullanıcı başlatınca):** CT-Kapı tam sonucu incelenir (`copytrade/kapi/2026-10-27/`). Bilinen
+**3. Trader seçimi — ŞU AN:** görev `docs/GOREV_TRADER_SECIMI.md` (Codex, dal `codex/kapi-v1-1`). Teşhis: adım 3+4'ü
+9 adres geçti; plasebo tüm coinlerde çakışmasız yerleştirme istediği için hepsinde hesaplanamadı (tasarım hatası).
+Eski not: CT-Kapı tam sonucu incelenir (`copytrade/kapi/2026-10-27/`). Bilinen
 sorunlar: 12.461 adresin 8.196'sı işlendi; adım 5 plasebo hiçbir adreste hesaplanmadı (p boş) → düzeltilecek.
 "İlişkili hesaplar" kontrolü eklenecek (alt hesap, vault, iç transfer, ortak agent — Argon notu). Sonra gerçek
 izleme listesi ve 3 aylık sanal izleme.
