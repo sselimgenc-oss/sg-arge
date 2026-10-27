@@ -86,12 +86,23 @@ class FundingRates:
 
     def __init__(self, rows: list[dict] | None = None):
         self.by_coin: dict[str, dict[int, float]] = {}
+        folded: list[tuple[str, int, float]] = []
         for row in rows or []:
             delta = row.get("delta", row)
             if not isinstance(delta, dict) or delta.get("fundingRate") is None or delta.get("coin") is None:
                 continue
             hour = int(row["time"]) // HOUR * HOUR
+            if delta.get("nSamples") is not None:
+                # Eski kayıtlar günde tek satıra katlanır (zaman = günün 00:00 UTC'si, ``usdc`` günün toplamı, ``nSamples`` toplanan saat).
+                # ``fundingRate`` toplam DEĞİL, saatlik ölçekte ortalamadır (gerçek veriyle doğrulandı: günün saatlik min–max aralığında,
+                # nSamples=24'te saatlik ortalamaya eşit, medyan oran/günlük toplam = 1/24) → ``nSamples``'a bölünmez; günün 24 saatine yayılır.
+                folded.append((str(delta["coin"]), hour, float(delta["fundingRate"])))
+                continue
             self.by_coin.setdefault(str(delta["coin"]), {})[hour] = float(delta["fundingRate"])
+        for coin, day_start, rate in folded:
+            table = self.by_coin.setdefault(coin, {})
+            for hour in range(day_start, day_start + 24 * HOUR, HOUR):
+                table.setdefault(hour, rate)       # gerçek saatlik satır varsa o kalır
         self._cache: dict[str, tuple[np.ndarray, np.ndarray, float]] = {}
 
     def _table(self, coin: str) -> tuple[np.ndarray, np.ndarray, float]:

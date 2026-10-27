@@ -9,6 +9,13 @@
 - [x] 6. **24 + 16** — `|| true` kalktı (parça hatası/zaman aşımı adımı kırmızı yapar); parça sonunda `bitti.json`, birleştirme `durum.json` + RAPOR'da `DURUM: EKSİK` (parça eksik veya kapsam < hedef), eksik koşuda `kesif.json` üretilmez, yayımdan sonra iş kırmızı; dış adaylar (`arastirma/copytrade/bagimsiz_secim/*` + `ekle=`/`--adres`) süzgeçsiz kapıya girer, `kaynak = dis_aday` (`tests/test_eksik_koşu_dis_aday.py`)
 - [ ] 7. Hızlı koşu (9 aday + 0x1404 + dış adaylar) + sütun özeti raporu (tam koşu başlatılmaz; lider onaylar). 1. deneme (run 40589255174) 24 parçanın 18'inde `effective_leverage` IndexError ile çöktü → düzeltildi (sırasız/aynı milisaniyeli dolum, NaN/sıfır ağırlık; altın regresyon `tests/test_olcut_olculer.py`) ve adres başı hata yalıtımı eklendi (`hata` sütunu, sınıf Yetersiz, RAPOR'da hatalı adres sayısı, oran > %5 `saglik_max_hata_orani` ise kapı kırmızı). 2. deneme çalışıyor.
 
+## Bulgu — funding günlük katlama (gerçek `userFunding`/`fundingHistory` ile doğrulandı)
+- 0x1404… için son 60 günlük `userFunding`: 500 satırın 148'i katlanmış (`nSamples` 1–24, zaman = günün 00:00 UTC'si), 352'si saatlik (`nSamples` null). Saatlik satırlar `fundingHistory` ile birebir aynı.
+- Katlanmış satırdaki `fundingRate` **toplam değil, saatlik ölçekli ortalama**: 141 satırın (nSamples ≥ 2) hepsinde oran, o günün herkese açık saatlik oranlarının min–max aralığında; `nSamples = 24` olan 65 satırda saatlik ortalamaya eşit (TSLA/PONS/ETH birebir); |satır oranı| / |günlük toplam| medyanı 1/24 (0,041667). `nSamples<24` satırlarda oran, trader'ın pozisyonlu saatlerinin (usdc ağırlıklı) ortalaması olduğundan günün ortalamasından biraz sapar.
+- **Karar: `fundingRate` `nSamples`'a bölünmez** (bölmek funding'i ~24 kat küçültürdü). Düzeltilen tek şey kapsam: katlanmış satır günün 24 saatine yayılır (eskiden yalnız 00:00'a konup ±24 sa en yakın aramasıyla ertesi günün 12 saatini de kaplıyordu); aynı saatte gerçek saatlik satır varsa o kalır.
+- Altın örnek: `tests/test_defter.py::test_golden_8_…` (1 katlanmış gün + 3 saatlik satır, elle hesap: funding −0,0024, net −0,0043; eski davranış −0,0028 verirdi).
+- Not: çalışan hızlı koşu (2. deneme) bu düzeltmeden önceki koddadır; funding payı küçük. Bir sonraki hızlı koşuda etkisi ölçülür.
+
 SORU: (yok)
 
 Yapan: Sonnet. Dal: `claude/kapi-v1-1`. Görev: `docs/GOREV_TRADER_SECIMI.md` (iş 1–9). Kullanıcı kararlarına ve eşiklere

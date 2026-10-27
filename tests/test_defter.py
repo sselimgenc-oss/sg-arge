@@ -109,3 +109,18 @@ def test_daily_curve_drawdown_includes_unrealized_losses():
     out = run([fill(600, "B", 10, 0, 100)], candles(prices), end_hours=48, daily=True)
     assert out["max_drawdown"] == pytest.approx(0.10095, abs=1e-9)
     assert out["net"] == pytest.approx(-0.00095)
+
+
+def test_golden_8_folded_day_rate_is_hourly_scale_and_covers_its_24_hours():
+    """Hyperliquid eski funding kayıtlarını günde tek satıra katlar (00:00 UTC, nSamples=24); ``fundingRate`` toplam değil saatlik ölçekli ortalamadır
+    (gerçek veriyle doğrulandı), yani nSamples'a BÖLÜNMEZ. Katlanmış gün (0. gün, oran 0,0002) + 3 saatlik satır (24., 25., 26. saat: 0,0004; 0,0006; 0,0010).
+    22. saatte 10 BTC alınır (açılış 100), 27. saatte satılır; pozisyonlu saatler 22–26, saat başı funding = −10·100·oran/1000 = −oran.
+    22. ve 23. saat katlanmış günden (0,0002 ×2); 24–26. saat saatlik satırlardan: −(0,0002+0,0002+0,0004+0,0006+0,0010) = −0,0024.
+    Maliyet 2·1000·0,00095 = 1,9 $ → −0,0019; net −0,0043. (Eski davranış: 22–23. saat için en yakın satır 24. saatin 0,0004'ü → −0,0028; oran 24'e bölünseydi −0,0020'ye yakın.)"""
+    rows = [{"time": T0, "delta": {"coin": "BTC", "usdc": "-0.5", "szi": "10", "fundingRate": "0.0002", "nSamples": 24}}]
+    rows += [{"time": T0 + h * HOUR + 20, "delta": {"coin": "BTC", "usdc": "0", "szi": "10", "fundingRate": str(r), "nSamples": None}}
+             for h, r in ((24, 0.0004), (25, 0.0006), (26, 0.0010))]
+    out = run([fill(22 * 60, "B", 10, 0, 100), fill(27 * 60, "A", 10, 10, 100)], candles({h: 100 for h in range(0, 30)}), end_hours=29, funding=FundingRates(rows))
+    assert out["funding"] == pytest.approx(-0.0024) and out["net"] == pytest.approx(-0.0043)
+    rates = FundingRates(rows)
+    assert rates.array("BTC", np.array([T0 + 5 * HOUR, T0 + 23 * HOUR, T0 + 24 * HOUR], dtype=np.int64)).tolist() == [0.0002, 0.0002, 0.0004]
