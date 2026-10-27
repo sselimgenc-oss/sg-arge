@@ -405,9 +405,17 @@ def main(argv: list[str] | None = None) -> None:
                 recent = [x for x in fills if int(x.get("time", 0)) >= start_200]
                 candles = cache.for_fills(recent)
                 actual = nets[30]
-                scores = placebo_scores(recent, candles, float(leader["accountValue"]),
-                                        pd.to_datetime(start_200, unit="ms", utc=True), pd.to_datetime(int(now.timestamp() * 1000), unit="ms", utc=True))
-                p_value = placebo_pvalue(actual, scores) if actual is not None and len(scores) == 1000 else None
+                # Lider denetimi 3: plasebo (pahalı) yalnız adım 1–4'ü geçene; yerleştirilemeyen işlem satırı düşürmez.
+                pre = gate_status(metrics, nets[30], None, None)
+                p_value = None
+                if all(pre[f"adim{i}"] == "Geçti" for i in range(1, 5)) and actual is not None:
+                    try:
+                        scores = placebo_scores(recent, candles, float(leader["accountValue"]),
+                                                pd.to_datetime(start_200, unit="ms", utc=True),
+                                                pd.to_datetime(int(now.timestamp() * 1000), unit="ms", utc=True))
+                        p_value = placebo_pvalue(actual, scores) if len(scores) == 1000 else None
+                    except ValueError as exc:
+                        row["plasebo_hata"] = str(exc)[:80]
                 # Daily 0-delay copy is the trader series; public BTC hourly closes build the matched comparator.
                 own, _ = delayed_copy(fills, candles, float(leader["accountValue"]), 0, funding)
                 btc = pd.Series({pd.to_datetime(x.get("t", x.get("time")), unit="ms", utc=True): float(x.get("c", x.get("o"))) for x in cache.get("BTC")}).sort_index()
@@ -421,7 +429,8 @@ def main(argv: list[str] | None = None) -> None:
                 row.update({f"gecikme_{delay}dk_net": value for delay, value in nets.items()})
                 row.update(statuses)
         except (RateLimitError, requests.RequestException, ValueError, TypeError, KeyError) as exc:
-            row.update({"asama1": "Yetersiz", "sinif": "Yetersiz", "neden": "veri hatası: " + type(exc).__name__})
+            row.setdefault("asama1", "Yetersiz")  # 1. aşama sonucu hesaplandıysa korunur
+            row.update({"sinif": "Yetersiz", "neden": "veri hatası: " + type(exc).__name__ + ": " + str(exc)[:60]})
         rows.append(row)
         pd.DataFrame(rows).to_csv(out / "sonuc.csv", index=False)  # partial results survive a time limit
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
@@ -430,6 +439,40 @@ def main(argv: list[str] | None = None) -> None:
         f"# CT-Kapı v1\n\n- Evren: {len(leaders)}\n- İşlenen: {len(rows)}\n- 1. aşamayı geçen: {passed}\n"
         f"- Binance listesi: {binance_note}\n- Gecikme saat başına yuvarlandı (üst sınır).\n- Karar önerisi yok.\n",
         encoding="utf-8")
+
+
+def _md(frame: pd.DataFrame) -> str:
+    """Bağımlılıksız Markdown tablo (tabulate yok)."""
+    cells = lambda v: f"{v:.3g}" if isinstance(v, float) else str(v)
+    lines = ["| " + " | ".join(frame.columns) + " |", "|" + "---|" * len(frame.columns)]
+    lines += ["| " + " | ".join(cells(v) for v in row) + " |" for row in frame.itertuples(index=False)]
+    return "\n".join(lines)
+
+
+def finalize(table: pd.DataFrame) -> pd.DataFrame:
+    """Parçalar birleştikten sonra adım 7 (BHY, plaseboya ulaşan herkes) ve nihai sınıf."""
+    table = table.copy()
+    steps = [f"adim{i}" for i in range(1, 7)]
+    for col in steps + ["plasebo_p"]:
+        if col not in table:
+            table[col] = np.nan
+    reached = table["plasebo_p"].notna()
+    q = bhy({a: float(p) for a, p in zip(table.loc[reached, "address"], table.loc[reached, "plasebo_p"])})
+    table["bhy_q"] = table["address"].map(q)
+    all_pass = (table[steps] == "Geçti").all(axis=1)
+    table["adim7"] = np.where(table["bhy_q"].notna(), np.where(table["bhy_q"] <= .10, "Geçti", "Kaldı"), "Yetersiz")
+
+    def klass(row) -> str:
+        if row.get("asama1") != "Geçti":
+            return "Yetersiz"
+        values = [row.get(f"adim{i}") for i in range(1, 8)]
+        if "Kaldı" in values:
+            return "Kaldı"
+        return "Geçti" if all(v == "Geçti" for v in values) else "Yetersiz"
+
+    table["sinif"] = table.apply(klass, axis=1)
+    table.loc[~all_pass & (table["sinif"] == "Geçti"), "sinif"] = "Yetersiz"
+    return table
 
 
 def merge_shards(shards: Path, root: Path) -> None:
@@ -441,9 +484,19 @@ def merge_shards(shards: Path, root: Path) -> None:
         output = root / "kapi" / date
         output.mkdir(parents=True, exist_ok=True)
         table = pd.concat(frames, ignore_index=True).drop_duplicates("address", keep="last")
+        table = finalize(table)
         table.to_csv(output / "sonuc.csv", index=False)
         pd.DataFrame({"address": table.address}).to_csv(output / "asama1.csv.gz", index=False, compression="gzip")
-        (output / "RAPOR.md").write_text(f"# CT-Kapı v1\n\n- Evren: {len(table)}\n- İşlenen: {len(table)}\n", encoding="utf-8")
+        funnel = [f"- 1. aşama (kâr eğrisi) geçti: {(table.asama1 == 'Geçti').sum()}"]
+        funnel += [f"- Adım {i} geçti: {(table.get(f'adim{i}') == 'Geçti').sum()}" for i in range(1, 8)]
+        funnel += [f"- Sınıf: " + ", ".join(f"{k} {v}" for k, v in table.sinif.value_counts().items())]
+        cols = [c for c in ["address", "profitable_month_ratio", "max_drawdown", "return_12m", "closed_trades",
+                            "median_holding_hours", "median_leverage", "gecikme_30dk_net", "plasebo_p", "nw_t", "bhy_q",
+                            "adim3", "adim4", "adim5", "adim6", "adim7", "sinif"] if c in table]
+        near = table[table.get("adim2") == "Geçti"].sort_values("nw_t", ascending=False)[cols].head(15)
+        (output / "RAPOR.md").write_text("# CT-Kapı v1\n\n" + f"- İşlenen adres: {len(table)}\n" + "\n".join(funnel)
+                                         + "\n\n## Adım 2'yi geçenler (alfa t'ye göre ilk 15)\n\n" + _md(near)
+                                         + "\n\nGecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
