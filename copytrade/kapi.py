@@ -321,12 +321,14 @@ def randomize_trades(trades: list[dict], start: pd.Timestamp, end: pd.Timestamp,
 
 def _trade_templates(fills: list[dict], account_value: float) -> list[dict]:
     """Closed fills -> placebo templates; incomplete openings are deliberately excluded."""
+    first: dict[tuple[str, int], dict] = {}
+    for fill in fills:  # (coin, ms) -> o saniyedeki ilk dolum (eski kod her işlem için tüm dolumları tarıyordu: O(n²))
+        first.setdefault((str(fill.get("coin")), int(fill["time"])), fill)
     templates = []
     for trip in closed_round_trips(perp_fills(fills)):
         if trip["open_time"] is None or trip["holding_hours"] is None:
             continue
-        opening = next((f for f in fills if str(f.get("coin")) == trip["coin"] and
-                        pd.to_datetime(f["time"], unit="ms", utc=True) == trip["open_time"]), None)
+        opening = first.get((trip["coin"], int(trip["open_time"].value // 1_000_000)))
         if opening:
             templates.append({"coin": trip["coin"], "side": opening.get("side", "B"),
                               "size_ratio": abs(float(opening.get("sz", 0))) / account_value,
@@ -617,10 +619,14 @@ def main(argv: list[str] | None = None) -> None:
     previous_rows = pd.read_csv(previous_path).to_dict("records") if args.devam and previous_path.exists() else []
     done = {str(row["address"]) for row in previous_rows}
     rows = previous_rows
-    for leader in leaders:
+    for number, leader in enumerate(leaders, 1):
         if leader["address"] in done:
             continue
         rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5))
+        if number % 10 == 0 or len(leaders) <= 20:  # Actions günlüğünde ilerleme
+            last = rows[-1]
+            print(f"{number}/{len(leaders)} {leader['address']} asama1={last.get('asama1')} plasebo_p={last.get('plasebo_p')} "
+                  f"hata={last.get('plasebo_hata') or last.get('neden') or ''}", flush=True)
         pd.DataFrame(rows).to_csv(out / "sonuc.csv", index=False)  # partial results survive a time limit
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
     passed = sum(r.get("asama1") == "Geçti" for r in rows)
