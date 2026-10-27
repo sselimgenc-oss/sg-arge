@@ -19,6 +19,8 @@ import numpy as np
 import pandas as pd
 import requests
 
+from copytrade.defter import DAY as DAY_MS
+from copytrade.defter import FundingRates, Market, copy_ledger
 from copytrade.kurallar import load_rules
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
 from copytrade.tarama import PublicClient, RateLimitError, RateLimiter, prefilter
@@ -108,17 +110,46 @@ def stage1_stats(portfolio: list[dict], ledger: list[dict] | None = None, days: 
     else:
         monthly = monthly.iloc[1:]  # pencereden önce başlamıyorsa ilk ay kısmi ve tabansız
     active = monthly[monthly.abs() > 0]
-    positive = values[(values.index >= since) & (values > 0)]
-    if active.empty or positive.empty:
+    if active.empty or not (values > 0).any():
         return None
-    denominator = float(positive.median())
-    cumulative = window - base
-    drawdown = float((cumulative.cummax() - cumulative).max()) / denominator
+    chain = twr_chain(pnl, values, since)
+    if chain is None:
+        return None
+    equity = chain["equity"]
+    drawdown = float((1.0 - equity / equity.cummax()).max())
+    total = float(equity.iloc[-1] - 1.0)
+    years = (equity.index[-1] - equity.index[0]).days / 365.25
+    calmar = None
+    if years > 0 and drawdown > 0 and equity.iloc[-1] > 0:
+        calmar = float((equity.iloc[-1] ** (1 / years) - 1) / drawdown)
     span = (pnl.index[-1] - max(pnl.index[0], since)).days
     return {"active_months": float(len(active)), "profitable_month_ratio": float((active > 0).mean()),
-            "max_drawdown": drawdown, "return_12m": float(active.sum()) / denominator, "pnl_history_days": float(span),
+            "max_drawdown": drawdown, "return_12m": total, "calmar": calmar, "pnl_history_days": float(span),
             # Hesabın tüm geçmişi (365 gün pencereyle kırpılmaz): genç aday ayrımı için.
             "account_age_days": float((pnl.index[-1] - pnl.index[0]).days)}
+
+
+def twr_chain(pnl: pd.Series, values: pd.Series, since: pd.Timestamp) -> dict[str, pd.Series] | None:
+    """Zaman ağırlıklı getiri zinciri (görev 15): her alt dönemin getirisi = PnL farkı / dönem sermayesi.
+
+    Yatırma/çekme getiri sayılmaz: dönem içi net akış = Δhesap değeri − ΔPnL; sermaye = dönem başı değer + akışın yarısı
+    (Modified Dietz). Sermaye ≤ 0 olan dönem 0 getiri sayılır; getiri −1'in altına inmez. Düşüş (0–1) ve getiri bu zincirden çıkar;
+    eski sürümdeki "PnL / pencere medyan hesap değeri" paydası yatırma-çekmede 10^12 gibi imkânsız değerler üretiyordu.
+    """
+    frame = pd.merge_asof(pnl.rename("pnl").to_frame(), values.sort_index().rename("av").to_frame(),
+                          left_index=True, right_index=True, direction="backward").dropna()
+    inside = frame[frame.index >= since]
+    reference = frame[frame.index < since].iloc[-1:]
+    frame = pd.concat([reference, inside])
+    if len(frame) < 2:
+        return None
+    delta = frame["pnl"].diff()
+    previous = frame["av"].shift(1)
+    flow = (frame["av"] - previous) - delta
+    capital = previous + 0.5 * flow
+    returns = (delta / capital.where(capital > 0)).fillna(0.0).clip(lower=-1.0).iloc[1:]
+    equity = pd.concat([pd.Series([1.0], index=[frame.index[0]]), (1.0 + returns).cumprod()])
+    return {"returns": returns, "equity": equity}
 
 
 def stage1_pass(stats: dict[str, float] | None) -> bool:
@@ -441,24 +472,48 @@ def copy_actions(fills: list[dict]) -> list[dict]:
     return result
 
 
+DELAYS = (0, 5, 30, 120, 480)
+
+
+def funding_all(client: Any, address: str, start_ms: int, end_ms: int) -> list[dict]:
+    """Tüm funding kayıtları: API sayfa başına en çok 500 döndürür; imleç son kayıttan ilerler (tek sayfa okumak oranları kırpıyordu)."""
+    rows, cursor, seen = [], start_ms, set()
+    while True:
+        page = client.info({"type": "userFunding", "user": address, "startTime": cursor, "endTime": end_ms}, weight=20) or []
+        fresh = [x for x in page if (x.get("time"), str(x.get("delta", {}).get("coin"))) not in seen]
+        for item in fresh:
+            seen.add((item.get("time"), str(item.get("delta", {}).get("coin"))))
+        rows.extend(fresh)
+        if len(page) < 500 or not fresh:
+            return rows
+        cursor = max(int(x["time"]) for x in page) + 1
+
+
 def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: float, cache: CandleCache,
-                        now_ms: int, active_months: int) -> tuple[dict[str, Any], dict[int, float | None]]:
-    """Prepare documented steps 1--4 and all informational delay results for one trader."""
-    start_200 = now_ms - 200 * 86_400_000
+                        now_ms: int, active_months: int, ledgers: dict | None = None,
+                        rules: dict | None = None) -> tuple[dict[str, Any], dict[int, float | None]]:
+    """Prepare documented steps 1--4 and all informational delay results for one trader.
+
+    Kopya sonuçları ``defter.copy_ledger``'dan gelir (mum zaman sınırı, miras pozisyon, açık pozisyon fiyatlaması, kopyanın kendi
+    funding'i); ``ledgers`` verilirse gecikme → tam defter sonucu içine konur.
+    """
+    rules = rules or load_rules()
+    start_200 = now_ms - 200 * DAY_MS
     recent = [row for row in fills if int(row.get("time", 0)) >= start_200]
-    recent_funding = [row for row in funding if int(row.get("time", 0)) >= start_200]
     candles = cache.for_fills(recent)
     metrics = calculate_metrics(fills, funding=funding, account_value=account_value)
     metrics["active_months"] = active_months
     metrics["candle_coverage"] = candle_coverage(recent, candles)
     metrics["complete_data"] = metrics["candle_coverage"] >= .90
     nets: dict[int, float | None] = {}
-    # Kopya defteri: pencere öncesinden gelen pozisyonu azaltan dolumlar yeni ters pozisyon sayılmaz (copy_actions).
-    copied = copy_actions(sorted(perp_fills(recent), key=lambda x: int(x.get("time", 0))))
-    for delay in (0, 5, 30, 120, 480):
-        ledger, missing = delayed_copy(copied, candles, account_value, delay, recent_funding)
-        nets[delay] = None if ledger is None else float(ledger.sum())
-        metrics[f"gecikme_{delay}dk_eksik_dolum"] = missing
+    market, rates, source = Market(candles), FundingRates(funding), perp_fills(recent)
+    for delay in DELAYS:
+        out = copy_ledger(source, market, account_value, delay, start_200, now_ms, rates, rules)
+        nets[delay] = out["net"]
+        metrics[f"gecikme_{delay}dk_eksik_dolum"] = out["missing"]
+        metrics[f"gecikme_{delay}dk_dolum"] = out["executed"]
+        if ledgers is not None:
+            ledgers[delay] = out
     return metrics, nets
 
 
@@ -662,14 +717,16 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         fills = client.fills(address, start)
         row["sure_dolum_sayisi"] = len(fills)
         progress.stage("fills", f"{len(fills)} dolum")
-        funding = client.info({"type": "userFunding", "user": address, "startTime": start}, weight=20) or []
+        funding = funding_all(client, address, start, now_ms)
         progress.stage("funding", f"{len(funding)} kayıt")
         recent = [x for x in fills if int(x.get("time", 0)) >= start_200]
         # Mumlar: her coin için koşu boyunca tek istek (CandleCache); gecikme hesapları, plasebo ve sepet kıyası aynı mumları kullanır.
         before = cache.requests
         candles = cache.for_fills(recent)
         progress.stage("mumlar", f"{len(candles)} coin, {cache.requests - before} yeni istek, {len(candles) - (cache.requests - before)} önbellekten")
-        metrics, nets = copy_window_metrics(fills, funding, account, cache, now_ms, int(stats["active_months"]))
+        ledgers: dict[int, dict] = {}
+        metrics, nets = copy_window_metrics(fills, funding, account, cache, now_ms, int(stats["active_months"]), ledgers, rules)
+        metrics["calmar"] = stats.get("calmar")          # 1. aşama zincirinden (olcut'taki hesap değeri paydalı calmar ölüydü)
         metrics["history_days"] = max(int(metrics.get("history_days", 0)), int(stats["pnl_history_days"]))
         tarz = classify_style(metrics.get("median_holding_hours"), rules)
         metrics["tarz"], metrics["kisa_islem_payi"] = tarz, short_trade_share(fills, tarz, rules)
@@ -698,11 +755,11 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
             row["plasebo_not"] = "; ".join(notes)[:200]
         shares = market_shares(fills, symbols)
         kind = benchmark_kind(shares["pay_kripto"] or 0.0, rules)
-        own, _ = delayed_copy(copy_actions(sorted(perp_fills(fills), key=lambda x: int(x.get("time", 0)))), candles, account, 0, funding)
+        # Alfa: kopya defteri (gecikmesiz), gün başına net getiri; maruziyet = gün içinde açık pozisyonlu saat oranı (gerçek zaman çizelgesi).
+        own_ledger = copy_ledger(perp_fills(recent), Market(candles), account, 0, start_200, now_ms, FundingRates(funding), rules, daily=True)
+        own, exposure = own_ledger.get("daily"), own_ledger.get("exposure")
         bench = (daily_close_returns(cache.get("BTC")) if kind == "BTC"
                  else basket_returns(candles, sorted({str(f.get("coin")) for f in perp_fills(recent)})))
-        # Maruziyet: kopya defterinde PnL/funding hareketi olan gün = pozisyonda (sabit 1 değil).
-        exposure = (own.abs() > 0).astype(float) if own is not None else pd.Series(dtype=float)
         alpha = matched_btc_alpha(own, bench, exposure) if own is not None and len(bench) else None
         statuses = gate_status(metrics, actual, p_value, alpha, rules)
         progress.stage("alfa", f"kıyas {kind}, t={alpha['nw_t'] if alpha else None}")

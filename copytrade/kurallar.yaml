@@ -61,3 +61,6 @@ aktif_son90_dongu:
 aktif_son_islem_max_gun: 30
 # Yalnız rapor (görev 12; kapı ölçütü değil): gece payı = TSİ bu saat aralığında (ilk ≤ saat < ikinci) açılan işlemlerin payı
 gece_saatleri_tsi: [1, 9]
+# Kopya maliyeti (her dolumda, notional'a oranla): taker %0,045 + kayma %0,05 (kullanıcı kararı; docs/KAPI_V3, görev 19)
+maliyet_taker: 0.00045
+maliyet_kayma: 0.0005

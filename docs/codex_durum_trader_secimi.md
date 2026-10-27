@@ -2,7 +2,7 @@
 
 ## Adımlar (her commit'te güncellenir)
 - [x] 1. **26** — küçük PR: izleme/Worker değişiklikleri ayrı dalda → [sg-arge#299](https://github.com/sselimgenc-oss/sg-arge/pull/299); bu dal yalnız kapı/ölçü dosyalarında
-- [ ] 2. **15 + 19** — payda hatası (düşüş/getiri/calmar); kopya defteri (mum zaman sınırı, miras pozisyon, açık pozisyon fiyatlama, funding)
+- [x] 2. **15 + 19** — payda hatası (düşüş/getiri/calmar → `twr_chain`); kopya defteri `copytrade/defter.py` (mum zaman sınırı ≤ 1 mum, miras pozisyon, günlük fiyatlama, kopyanın kendi funding'i); altın örnekler `tests/test_defter.py`, `tests/test_asama1_payda.py`
 - [ ] 3. **20 + 21 + 22** — plasebo aynı motor; alfa maruziyeti pozisyon çizelgesinden; kaldıraç/ücret/en iyisiz PF/martingale
 - [ ] 4. **14 + 23** — %44/%49; tüm eşikler yalnız kurallar.yaml; karar–kod uygunluk testi; dondurma özetleri
 - [ ] 5. **25 + 18** — ≥6 altın örnek; akıl sağlığı kapısı; ölü sütunlar; `kopya_eksik`, `dolum_siniri`
