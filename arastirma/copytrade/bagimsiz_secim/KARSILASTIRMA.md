@@ -15,9 +15,10 @@ adreslerde birleşmeleri bağımsız doğrulama değildir. Kendi verisiyle çal�
 \* 0x1404 adım 4'te Kaldı; deepseek kendi 190 günlük hesabında gecikmeli kopyayı **−%22,6** buldu (bizde +%22) → doğrulanacak.
 
 ## Bizim görmediğimiz, doğru bulunan kör noktalar
-1. **Adım 7 (BHY) ulaşılamaz — DOĞRULANDI.** 1000 tekrarla en küçük p ≈ 0,001; BHY'de en iyi aday q = p·m·c(m):
-   m=30 → 0,12, m=60 → 0,28 (> 0,10). Yani 30+ aday teste girerse kimse "kopyalanabilir" olamaz.
-   Çözüm: 10.000 tekrar (m=60 → 0,028). Maliyet küçük (yerleştirme 20 tekrar 0,06 sn).
+1. **Adım 7 (BHY) çözünürlüğü yetersiz.** 1000 tekrarla en küçük p ≈ 0,001; tek başına en güçlü aday için BHY tabanı
+   p·m·c(m): m=30 → 0,12, m=60 → 0,28. (Düzeltme, Sol 6.1: BHY sıralı bir yöntemdir; birden çok küçük p birlikte
+   geçebilir; "kimse geçemez" ifadesi yanlıştı.) Çözüm: 10.000 tekrar — çözünürlüğü iyileştirir, anlamlılık üretmez.
+   Test ailesi önceden tanımlı: adım 1–4'ü geçen herkes (`m`); "geçene kadar tekrar artırma" yok.
 2. **Gece penceresi.** Intraday trader TSİ 01–08 arasında açıp kapatıyorsa sabit 30 dk testi kârlı gösterir ama
    kullanıcı uyurken kopyalanamaz. Ölçüt: "TSİ gece açılıp sabah 09'dan önce kapanan işlem payı".
 3. **Son 90 gün aktiflik/form yok.** Durmuş hesaplar (ör. 0x19e9… 90 günde 0 işlem) listeye girebiliyor. İzleme
@@ -32,6 +33,14 @@ adreslerde birleşmeleri bağımsız doğrulama değildir. Kendi verisiyle çal�
 ## Kapsam
 deepseek kapının hiç bakmadığı 54 adresten 4'ünü listesine aldı → kapsam eksikliği (%66) gerçek; Sonnet'in işinde.
 
-## Lider önerisi (kullanıcı kararı gerekir)
+## Kararlar (2026-10-27, kullanıcı + Sol 6.1)
+- 10.000 tekrar; test ailesi = adım 1–4'ü geçen herkes; tekrar sayısı bir daha değişmez.
+- **Aktiflik eklenir:** son 90 günde kapanmış döngü intraday ≥ 20, swing ≥ 5; son işlem ≤ 30 gün önce. Kâr şartı yok.
+- **Gece penceresi: kapı ölçütü değil** (kullanıcı: "kasma"); yalnız raporda gece açılan işlem payı bilgi olarak.
+- 0x1404 farkı aynı aralık/maliyet/payda ile mutabık kılınır; modellerin kayıtsız "canlı API" beyanları doğrulanmış sayılmaz.
+- Kurallar bu turdan sonra **dondurulur**; asıl kanıt sonraki 3 ay ileriye dönük sanal izleme.
+- Bilinen sınır: coin başına plasebo, coinler arası eşzamanlılığı ve toplam kaldıracı tam korumaz.
+
+## İlk lider önerisi (tarihçe)
 1 → Sonnet'e eklenir (hata düzeltmesi, eşik değil). 2, 3 → yeni ölçüt; 6 → yalnız raporla (eşik değil). 4 → raporda not.
 5 → ölçülür, sonra karar.

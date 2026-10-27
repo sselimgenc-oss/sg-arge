@@ -63,7 +63,16 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
    (TradFi perp'ler dahil) varsa "var". Kaynak: `arastirma/copytrade/argon_uygulama_yeri.md`. Test: `xyz:GOLD`,
    `xyz:NVDA`, listede olmayan bir hisse.
 
-## `kesif.json` şeması (v1)
+10. **Plasebo 10.000 tekrar** (kullanıcı + Sol 6.1, 2026-10-27). Test ailesi = adım 1–4'ü geçen tüm adresler; `m`
+    RAPOR'a yazılır. Tekrar sayısı sonuçlara göre değiştirilmez.
+11. **Aktiflik (adım 2'ye ek, kullanıcı kararı):** son 90 günde kapanmış düz-düz döngü (dolum değil) intraday ≥ 20,
+    swing ≥ 5; son işlem ≤ 30 gün önce. Kâr şartı yok. Sütunlar `son90_dongu`, `son_islem_gun`; eşikler `kurallar.yaml`.
+12. **Yalnız rapor:** gece (TSİ 01–09) açılan işlem payı `gece_payi` (kapı ölçütü değil); gecikme testinin kapsadığı
+    gün sayısı `gecikme_gun` (≈200, mum sınırı).
+13. **Mutabakat:** `0x1404109f8cd4a79a0447365edbb7a13acd0b2f27` için gecikmeli kopya sonucunu ayrıntılı ver (aralık,
+    işlem sayısı, coinler, HIP-3 dahil mi, payda, maliyet); bir model aynı adres için 190 günde −%22,6 buldu, bizde +%22.
+
+
 ```json
 {"surum": 1, "uretildi": "…Z", "evren": 12461, "islenen": 12300,
  "adaylar": [{
