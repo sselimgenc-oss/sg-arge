@@ -153,7 +153,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/kararlar") {
-      const rows = await env.DB.prepare("SELECT olay_id, zaman, karar, neden, etiket AS "not" FROM kararlar ORDER BY zaman").all();
+      const rows = await env.DB.prepare("SELECT olay_id, zaman, karar, neden, etiket AS \"not\" FROM kararlar ORDER BY zaman").all();
       return json(rows.results || []);
     }
     if (request.method === "POST" && url.pathname === "/telegram") return handleTelegram(request, env);
