@@ -96,7 +96,7 @@ def test_stage1_uses_pnl_history_not_account_value_jumps():
     from copytrade.kapi import stage1_stats
     day = 86_400_000
     t0 = 1_700_000_000_000
-    pnl = [[t0 + i * 30 * day, str(1000 * i - (500 if i == 4 else 0))] for i in range(13)]
+    pnl = [[t0 + i * 30 * day, str(1000 * i - (2000 if i == 4 else 0))] for i in range(13)]
     # Büyük yatırma ve çekme hesap değerini sıçratır; PnL serisi etkilenmez, sonuç da etkilenmemeli.
     values = [[t0 + i * 30 * day, "1000000" if i == 6 else ("100" if i == 7 else "50000")] for i in range(13)]
     stats = stage1_stats([["allTime", {"pnlHistory": pnl, "accountValueHistory": values}]])
