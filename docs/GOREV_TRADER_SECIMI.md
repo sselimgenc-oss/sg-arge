@@ -86,6 +86,31 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
     dayanan hesap `dolum_siniri` işaretli; (d) **akıl sağlığı kapısı**: birleştirmede oran/düşüş 0–1, kaldıraç 0–200, sabit
     ya da tamamen boş sütun yok, adım 1–4'ü geçende `plasebo_p` dolu; biri tutmazsa yayın yok ve iş kırmızı; testle sınansın.
 
+### Sol 6.1 bağımsız denetimi (2026-10-27, `main` 82a8a74) — tam koşudan önce zorunlu
+19. **Kopya defteri** (`kapi.py` `delayed_copy` ve çevresi): (a) mum araması en fazla 1 mum aralığı uzaklıkta; daha
+    uzaksa o dolum "eksik" (iş 18a); (b) pencere başında açık olan pozisyon ayrı yönetilir — onu azaltan/kapatan dolum yeni
+    ters pozisyon açmaz (dalda 05154c5 ile başlandı; teste bağla); (c) açık pozisyonlar her gün fiyatlanır (gerçekleşmemiş
+    K/Z eğriye ve düşüşe girer); (d) funding trader'dan aktarılmaz, kopyanın kendi pozisyonu × funding oranıyla hesaplanır.
+20. **Plasebo aynı motorla:** rastgele yerleştirilen işlemler gerçek kopyayla **aynı** hesaptan geçer — aynı
+    ekleme/kısmi kapanış dizisi (yalnız ilk açılış miktarı değil), aynı tarz gecikmesi, funding dahil. Gerçek skor ile
+    plasebo skoru aynı fonksiyondan çıkar.
+21. **Alfa maruziyeti:** "o gün K/Z var mı" değil, gerçek pozisyon zaman çizelgesi (gün içinde açık pozisyon = maruz);
+    kıyas belgeye göre BTC/sepet (iş 2) — kodda gerçekten uygulanmış olsun.
+22. **Ölçüler** (`olcut.py`): kaldıraç = o andaki pozisyon değeri / o anki hesap değeri (zaman eşleşmiş), medyan zamana
+    ağırlıklı; tersine dönen emrin ücreti kapanan ve açılan kısma miktarla bölünür; "en iyisiz PF" yalnız **bir** en iyi
+    işlemi çıkarır; martingale emirleri gerçek sırayla işler.
+23. **Tek kural kaynağı + uygunluk testi:** tüm eşikler yalnız `kurallar.yaml`'da (kodda sayı yok); bir test, görev
+    belgesindeki kullanıcı kararlarını (`%44/%49`, 10.000, aktiflik, tarz eşikleri) yaml ile karşılaştırır. Dondurma:
+    RAPOR'a `kurallar.yaml` + `kapi.py` + `olcut.py` SHA-256 özetleri ve aday listesinin özeti yazılır.
+24. **Koşu dürüstlüğü:** iş akışında hatayı örten `|| true` kalkar; zaman aşımı/eksik parça varsa sonuç
+    `durum: eksik` olarak yayımlanır, RAPOR'da kapsam yazılır, `kesif.json` eksik koşudan üretilmez.
+25. **Altın örnekler (kabul):** elle hesaplanmış en az 6 küçük senaryo testi, her biri beklenen sayıyla:
+    miras pozisyonun kapanışı; parçalı açılış/kısmi kapanış; tersine dönüş; gecikmede mum boşluğu; açık pozisyonun
+    fiyatlanması; funding. Her senaryo hem kopya defteri hem plasebo motoru için aynı sonucu vermeli.
+26. **Kapsam ayrımı:** bu daldaki `worker/` ve `izleme_motoru.py` değişikliklerini (cron, tarz etiketi, tarza göre
+    gecikme) **ayrı küçük bir PR** yap; lider birleştirir. Bu dal yalnız kapı/ölçü dosyalarında kalır; izleme ve Worker
+    düzeltmeleri Codex'te (`docs/GOREV_IZLEME_DUZELTME.md`).
+
 ## `kesif.json` şeması (v1)
 ```json
 {"surum": 1, "uretildi": "…Z", "evren": 12461, "islenen": 12300,
