@@ -1,0 +1,14 @@
+# İzleme listesi (veri sözleşmesi §2). Lider/kullanıcı doldurur; motor (GOREV_IZLEME İş A) okur.
+# 2026-10-27: iki TEST trader'ı — panonun canlı veriyle sınanması için. Kopyalama kararı DEĞİLDİR
+# (CT-Kapı v1'de ikisi de adım 3–4'ü geçti, adım 5 plasebo hesaplanamadı). Gerçek liste 3. adımda (trader seçimi).
+traderlar:
+  - id: T1
+    adres: "0x8bae3527e5a33fa0cf184f37bc112d071463ab6d"
+    takma_ad: Test-1
+    durum: izlemede
+    t0: "2026-10-28"
+  - id: T2
+    adres: "0x3f96c4df1e76902985d3dbd979af54b487f29671"
+    takma_ad: Test-2
+    durum: izlemede
+    t0: "2026-10-28"
