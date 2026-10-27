@@ -23,7 +23,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: copytrade-kapi-v1-1
+  # Haftalık koşular birbirini beklesin; elle/push koşuları (hızlı, eksik) takılan bir koşuya takılmasın.
+  group: copytrade-kapi-${{ github.event_name == 'schedule' && 'haftalik' || github.run_id }}
   cancel-in-progress: false
 
 jobs:

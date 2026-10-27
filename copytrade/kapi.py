@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import time
 from bisect import bisect_left
 from functools import lru_cache
 from datetime import UTC, datetime, timedelta
@@ -256,9 +257,11 @@ class CandleCache:
     """One 1-hour `candleSnapshot` request per coin, shared by all addresses in a run."""
     def __init__(self, client: PublicClient, start_ms: int, end_ms: int):
         self.client, self.start_ms, self.end_ms, self.items = client, start_ms, end_ms, {}
+        self.requests = 0  # bu koşuda gerçekten çekilen coin sayısı (önbellek isabeti sayılmaz)
 
     def get(self, coin: str) -> list[dict]:
         if coin not in self.items:
+            self.requests += 1
             self.items[coin] = self.client.candles(coin, self.start_ms, self.end_ms, interval="1h")
         return self.items[coin]
 
@@ -509,31 +512,69 @@ def gate_status(metrics: dict[str, Any], copy_net: float | None, placebo_p: floa
     return out
 
 
+class Progress:
+    """Adres başına aşama süreleri ve istek sayaçları; ``print(..., flush=True)`` ile Actions günlüğünde canlı görünür."""
+
+    def __init__(self, label: str, client: PublicClient, cache: CandleCache, log=lambda text: print(text, flush=True)):
+        self.label, self.client, self.cache, self.log = label, client, cache, log
+        self.begin = self.mark = time.perf_counter()
+        self.snap = self._snapshot()
+        self.stages: dict[str, float] = {}
+
+    def _snapshot(self) -> tuple:
+        limiter = getattr(self.client, "limiter", None)
+        stats = getattr(self.client, "stats", {})
+        return (self.cache.requests, stats.get("istek", 0), stats.get("429", 0), stats.get("5xx", 0), getattr(limiter, "waited", 0.0))
+
+    def stage(self, name: str, detail: str = "") -> None:
+        now = time.perf_counter()
+        elapsed, self.mark = now - self.mark, now
+        self.stages[name] = self.stages.get(name, 0.0) + elapsed
+        self.log(f"  {self.label} {name:<9} {elapsed:6.1f} s  {detail}".rstrip())
+
+    def done(self, outcome: str) -> None:
+        coin, requests_, e429, e5xx, wait = (a - b for a, b in zip(self._snapshot(), self.snap))
+        total = time.perf_counter() - self.begin
+        self.log(f"{self.label} TOPLAM {total:.1f} s ({outcome}) | yeni mum isteği {coin} coin, toplam istek {requests_}, "
+                 f"hız sınırı beklemesi {wait:.1f} s, 429: {e429}, 5xx: {e5xx} | "
+                 + ", ".join(f"{k} {v:.1f}" for k, v in self.stages.items()))
+
+
 def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now: datetime, start: int, start_200: int,
-                     symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False) -> dict[str, Any]:
+                     symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None) -> dict[str, Any]:
     """Tek adres için 1. aşama + adım 1–6 (adım 7 ve katman birleştirmede). ``yalniz_adim5``: plaseboyu adım 3–4'e
-    bakmadan hesaplar (hızlı koşu; satırın adım değerleri yine kurallara göre kalır)."""
+    bakmadan hesaplar (hızlı koşu; satırın adım değerleri yine kurallara göre kalır). Her aşamanın süresi günlüğe yazılır."""
     address = leader["address"]
     row: dict[str, Any] = {"address": address, "account_value": leader["accountValue"]}
+    progress = Progress(address[:10] + "…" + address[-4:], client, cache, *([log] if log else []))
+    outcome = "tamam"
     try:
         portfolio = client.portfolio(address)
         stats = stage1_stats(portfolio)
         row.update(stats or {})
         row["asama1"] = "Geçti" if stage1_pass(stats) else "Yetersiz"
+        progress.stage("portfolio", f"1. aşama: {row['asama1']}")
         if row["asama1"] != "Geçti":
+            outcome = "1. aşama geçmedi"
             return row
         account, now_ms = float(leader["accountValue"]), int(now.timestamp() * 1000)
         fills = client.fills(address, start)
+        progress.stage("fills", f"{len(fills)} dolum")
         funding = client.info({"type": "userFunding", "user": address, "startTime": start}, weight=20) or []
+        progress.stage("funding", f"{len(funding)} kayıt")
+        recent = [x for x in fills if int(x.get("time", 0)) >= start_200]
+        # Mumlar: her coin için koşu boyunca tek istek (CandleCache); gecikme hesapları, plasebo ve sepet kıyası aynı mumları kullanır.
+        before = cache.requests
+        candles = cache.for_fills(recent)
+        progress.stage("mumlar", f"{len(candles)} coin, {cache.requests - before} yeni istek, {len(candles) - (cache.requests - before)} önbellekten")
         metrics, nets = copy_window_metrics(fills, funding, account, cache, now_ms, int(stats["active_months"]))
         metrics["history_days"] = max(int(metrics.get("history_days", 0)), int(stats["pnl_history_days"]))
-        recent = [x for x in fills if int(x.get("time", 0)) >= start_200]
-        candles = cache.for_fills(recent)
         tarz = classify_style(metrics.get("median_holding_hours"), rules)
         metrics["tarz"], metrics["kisa_islem_payi"] = tarz, short_trade_share(fills, tarz, rules)
         delay = delay_for_style(tarz, rules)
         actual = nets.get(delay)
         pre = gate_status(metrics, actual, None, None, rules)
+        progress.stage("metrik", f"tarz {tarz}, gecikme {delay} dk, 5 gecikme hesabı")
         p_value, notes = None, []
         if actual is not None and (yalniz_adim5 or all(pre[f"adim{i}"] == "Geçti" for i in range(1, 5))):
             repetitions = int(rules["plasebo_tekrar"])
@@ -546,6 +587,9 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
                     row["plasebo_hata"] = "yerleştirilecek kapanmış işlem yok"
             except ValueError as exc:
                 row["plasebo_hata"] = str(exc)[:80]
+            progress.stage("plasebo", f"p={p_value} {row.get('plasebo_hata', '')}".rstrip())
+        else:
+            progress.stage("plasebo", "atlandı (adım 3–4 geçmedi)")
         if notes:
             row["plasebo_not"] = "; ".join(notes)[:200]
         shares = market_shares(fills, symbols)
@@ -557,6 +601,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         exposure = (own.abs() > 0).astype(float) if own is not None else pd.Series(dtype=float)
         alpha = matched_btc_alpha(own, bench, exposure) if own is not None and len(bench) else None
         statuses = gate_status(metrics, actual, p_value, alpha, rules)
+        progress.stage("alfa", f"kıyas {kind}, t={alpha['nw_t'] if alpha else None}")
         row.update(metrics)
         row.update(shares)
         row.update({"plasebo_p": p_value, "alfa_kiyas": kind, "kapi_gecikme_dk": delay,
@@ -568,6 +613,9 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
     except (RateLimitError, requests.RequestException, ValueError, TypeError, KeyError) as exc:
         row.setdefault("asama1", "Yetersiz")  # 1. aşama sonucu hesaplandıysa korunur
         row.update({"sinif": "Yetersiz", "neden": "veri hatası: " + type(exc).__name__ + ": " + str(exc)[:60]})
+        outcome = row["neden"]
+    finally:
+        progress.done(outcome)
     return row
 
 
@@ -619,14 +667,12 @@ def main(argv: list[str] | None = None) -> None:
     previous_rows = pd.read_csv(previous_path).to_dict("records") if args.devam and previous_path.exists() else []
     done = {str(row["address"]) for row in previous_rows}
     rows = previous_rows
+    print(f"Koşu: evren {evren}, bu parçada {len(leaders)} adres (parça {args.shard_index}/{args.shard_count})", flush=True)
     for number, leader in enumerate(leaders, 1):
         if leader["address"] in done:
             continue
+        print(f"[{number}/{len(leaders)}] {leader['address']}", flush=True)
         rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5))
-        if number % 10 == 0 or len(leaders) <= 20:  # Actions günlüğünde ilerleme
-            last = rows[-1]
-            print(f"{number}/{len(leaders)} {leader['address']} asama1={last.get('asama1')} plasebo_p={last.get('plasebo_p')} "
-                  f"hata={last.get('plasebo_hata') or last.get('neden') or ''}", flush=True)
         pd.DataFrame(rows).to_csv(out / "sonuc.csv", index=False)  # partial results survive a time limit
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
     passed = sum(r.get("asama1") == "Geçti" for r in rows)
@@ -716,9 +762,7 @@ def merge_shards(shards: Path, root: Path) -> None:
         output.mkdir(parents=True, exist_ok=True)
         existing = output / "sonuc.csv"
         if existing.exists():
-            old = pd.read_csv(existing)
-            if "katman" in old:  # v1.1 öncesi (katman sütunu yok) sonuç yeni kurallarla karıştırılmaz
-                frames = [old] + frames
+            frames = [pd.read_csv(existing)] + frames
         if not evren.get(date) and (output / "evren.json").exists():
             evren[date] = int(json.loads((output / "evren.json").read_text(encoding="utf-8"))["evren"])
         table = pd.concat(frames, ignore_index=True).drop_duplicates("address", keep="last")

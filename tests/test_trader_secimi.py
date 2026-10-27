@@ -313,12 +313,48 @@ def test_none_metrics_fail_the_step_instead_of_raising():
     assert status["adim3"] == "Kaldı" and status["adim4"] == "Kaldı"
 
 
-def test_legacy_same_day_results_are_not_mixed_into_v11_merge(tmp_path: Path):
+def test_quick_run_rows_overlay_older_same_day_results_even_in_legacy_format(tmp_path: Path):
     day = tmp_path / "root" / "kapi" / "2026-10-28"
     day.mkdir(parents=True)
-    pd.DataFrame([{"address": "0xold", "asama1": "Geçti", "adim1": "Geçti", "adim2": "Geçti", "adim3": "Geçti"}]).to_csv(day / "sonuc.csv", index=False)  # v1: katman yok
+    # v1 (katman/tarz sütunu yok) eski sonuç: hızlı koşunun satırı onu geçersiz kılar, diğer satırlar korunur.
+    pd.DataFrame([{"address": "0xold", "asama1": "Yetersiz"}, {"address": "0xnew", "asama1": "Yetersiz", "adim5": "Kaldı"}]).to_csv(day / "sonuc.csv", index=False)
     shard = tmp_path / "shards" / "stage1-0" / "2026-10-28"
     shard.mkdir(parents=True)
-    pd.DataFrame([result_row("0xnew")]).to_csv(shard / "sonuc.csv", index=False)
+    pd.DataFrame([result_row("0xnew", plasebo_p=.04)]).to_csv(shard / "sonuc.csv", index=False)
     merge_shards(tmp_path / "shards", tmp_path / "root")
-    assert list(pd.read_csv(day / "sonuc.csv").address) == ["0xnew"]
+    table = pd.read_csv(day / "sonuc.csv").set_index("address")
+    assert sorted(table.index) == ["0xnew", "0xold"] and table.loc["0xnew", "plasebo_p"] == .04 and table.loc["0xnew", "tarz"] == "swing"
+
+
+def test_progress_log_reports_stage_times_and_candle_requests():
+    from copytrade.kapi import CandleCache, Progress
+    lines: list[str] = []
+
+    class Quiet:
+        stats = {"istek": 0, "429": 0, "5xx": 0}
+        limiter = type("L", (), {"waited": 0.0})()
+        def candles(self, *a, **k): self.stats["istek"] += 1; return [{"t": 0, "o": "1"}]
+
+    client = Quiet()
+    cache = CandleCache(client, 0, 1)
+    progress = Progress("0xabc…1234", client, cache, lines.append)
+    cache.get("BTC"); cache.get("BTC"); cache.get("ETH")
+    progress.stage("mumlar", "2 coin")
+    progress.done("tamam")
+    assert "mumlar" in lines[0] and "2 coin" in lines[0]
+    assert "yeni mum isteği 2 coin, toplam istek 2" in lines[1] and "TOPLAM" in lines[1] and "mumlar" in lines[1]
+
+
+def test_response_size_weight_candles_per_60_other_lists_per_20_and_stats_counted():
+    class Limiter:
+        def __init__(self): self.weights = []
+        def acquire(self, weight): self.weights.append(weight)
+
+    class Session:
+        def request(self, *_a, **_k): return FakeResponse(200, [{}] * 120)
+
+    limiter = Limiter()
+    client = PublicClient(Session(), limiter, lambda _s: None)
+    client.info({"type": "candleSnapshot"}, weight=20)
+    client.info({"type": "userFills"}, weight=20)
+    assert limiter.weights == [20, 2, 20, 6] and client.stats["istek"] == 2
