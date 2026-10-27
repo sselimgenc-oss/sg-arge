@@ -22,13 +22,8 @@
     .nav-btn.active { background-color: #1c2a47; color: #fff; box-shadow: inset 3px 0 0 var(--accent); }
     .nav-btn.active i { color: var(--accent); }
     .up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--muted); }
-    .tbl th { padding: 0.5rem 0.5rem; font-weight: 600; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
-    .tbl td { padding: 0.5rem 0.5rem; white-space: nowrap; }
-    .tbl tbody tr { border-top: 1px solid var(--border); }
-    .tbl tbody tr:hover { background: var(--hover); }
     .empty { padding: 1.25rem; text-align: center; color: var(--muted); font-size: 12px; }
     .badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 0.25rem; font-size: 10px; font-weight: 600; }
-    .cal-cell { min-height: 54px; border-radius: 0.375rem; border: 1px solid var(--border); padding: 4px 6px; text-align: left; }
     /* copy trade sekmeleri (telefon öncelikli: tek sütun, tablo yok, yatay kaydırma yok) */
     .ct-grid { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
     .ct-card { display: block; min-width: 0; padding: 0.875rem; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
@@ -62,6 +57,8 @@
     .ct-pos .ek { color: var(--muted); font-size: 11px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 0.75rem; align-items: center; }
     .ct-row { padding: 0.625rem 0; border-top: 1px solid var(--border); font-size: 12px; min-width: 0; overflow-wrap: anywhere; }
     .ct-row:first-child { border-top: 0; }
+    @media (max-width: 359px) { .yenile-yazi { display: none; } }
+    .ct-detay { max-width: 760px; }
     .ct-btn { background: #1c2a47; border: 1px solid var(--border); border-radius: 0.375rem; padding: 0.5rem 0.875rem; font-size: 12px; color: var(--text); min-height: 40px; }
     .ct-btn[disabled] { opacity: 0.4; }
     .ct-kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.5rem; }
@@ -72,36 +69,13 @@
 <body class="min-h-screen flex flex-col">
 
   <!-- ÜST BAŞLIK -->
-  <header class="bg-[#101a30] border-b border-[#243555] px-4 py-3">
-    <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
-      <div class="min-w-0">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#f5cb5c]"></span>
-          <h1 class="text-lg font-bold text-white" id="metaTitle">SG Pano</h1>
-          <span class="badge bg-[#1c2a47] text-[#f5cb5c] border border-[#f5cb5c]/40">Paper · sanal para</span>
-        </div>
-        <div class="text-xs text-slate-400 mt-0.5" id="metaSubtitle">Veri yükleniyor…</div>
-      </div>
-
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 text-xs flex-1 xl:max-w-4xl">
-        <div class="card p-2"><div class="text-slate-400 text-[10px] uppercase font-semibold">Toplam değer</div>
-          <div class="text-base font-bold text-white" id="kpiTotal">—</div><div class="text-[10px] text-slate-400" id="kpiTotalSub">—</div></div>
-        <div class="card p-2"><div class="text-slate-400 text-[10px] uppercase font-semibold">Toplam getiri</div>
-          <div class="text-base font-bold" id="kpiReturn">—</div><div class="text-[10px] text-slate-400" id="kpiReturnSub">—</div></div>
-        <div class="card p-2"><div class="text-slate-400 text-[10px] uppercase font-semibold">Son gün</div>
-          <div class="text-base font-bold" id="kpiDay">—</div><div class="text-[10px] text-slate-400" id="kpiDaySub">—</div></div>
-        <div class="card p-2"><div class="text-slate-400 text-[10px] uppercase font-semibold">Açık pozisyon</div>
-          <div class="text-base font-bold text-amber-400" id="kpiOpen">—</div><div class="text-[10px] text-slate-400" id="kpiOpenSub">—</div></div>
-        <div class="card p-2 col-span-2 sm:col-span-1"><div class="text-slate-400 text-[10px] uppercase font-semibold">Kapanan / kazanma</div>
-          <div class="text-base font-bold text-slate-200" id="kpiClosed">—</div><div class="text-[10px] text-slate-400">kapanmış işlemler</div></div>
-      </div>
-
-      <div class="flex flex-col items-stretch xl:items-end gap-1">
-        <button onclick="loadData(true)" class="flex items-center justify-center gap-1.5 px-3 py-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-[#243555]">
-          <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-[#f5cb5c]"></i><span>Yenile</span>
-        </button>
-        <div class="text-[10px] text-slate-400 text-center xl:text-right" id="dataAge">—</div>
-      </div>
+  <header class="bg-[#101a30] border-b border-[#243555] px-4 py-2.5 flex items-center justify-between gap-3">
+    <h1 class="text-base font-bold text-white min-w-0 truncate">SG Pano · Copy trade</h1>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <span class="text-[11px] text-slate-400 whitespace-nowrap" id="dataAge">—</span>
+      <button onclick="ctYukle(true)" class="ct-btn flex items-center justify-center gap-1.5" style="padding:0.375rem 0.75rem;min-height:36px" aria-label="Yenile">
+        <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-[#f5cb5c]"></i><span class="yenile-yazi">Yenile</span>
+      </button>
     </div>
   </header>
 
@@ -109,138 +83,9 @@
     <!-- MENÜ: geniş ekranda sol sütun, dar ekranda yatay şerit -->
     <aside class="lg:w-60 bg-[#101a30] border-b lg:border-b-0 lg:border-r border-[#243555] flex lg:flex-col justify-between flex-shrink-0">
       <nav id="nav" class="flex lg:flex-col overflow-x-auto lg:overflow-visible py-1 lg:py-2 text-xs w-full"></nav>
-      <div class="hidden lg:block p-3 border-t border-[#243555] text-[11px] text-slate-400 space-y-1 bg-[#0b1222]">
-        <div class="flex justify-between"><span>Son güncelleme</span><span class="font-mono text-slate-200" id="sbUpdate">—</span></div>
-        <div class="flex justify-between"><span>Fiyat zamanı</span><span class="font-mono text-slate-200" id="sbPriceTime">—</span></div>
-        <div class="text-[10px] leading-snug" id="sbPeriod"></div>
-        <div class="text-[10px] leading-snug text-slate-500" id="sbNote"></div>
-      </div>
     </aside>
 
     <main class="flex-1 overflow-y-auto p-4 md:p-6" id="main">
-      <div id="loadError" class="hidden mb-4 p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
-
-      <!-- ÖZET -->
-      <section data-tab="ozet" class="tab space-y-5">
-        <div id="alerts" class="space-y-2"></div>
-        <div class="card p-3.5 space-y-2">
-          <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Son işlem günü</div>
-          <div id="last24" class="text-xs text-slate-200"></div>
-          <div id="last24Chips" class="flex flex-wrap gap-2"></div>
-        </div>
-        <div id="accounts" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-        <div id="footerNote" class="p-3 bg-[#101a30] rounded border border-[#243555] text-[11px] text-slate-400 leading-relaxed"></div>
-      </section>
-
-      <!-- AÇIK POZİSYONLAR -->
-      <section data-tab="acik" class="tab hidden space-y-5">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="card p-4"><h3 class="text-xs font-semibold text-slate-300 mb-2">Hesaplara göre açık maruziyet ($)</h3><div class="relative h-56"><canvas id="chExposure"></canvas></div></div>
-          <div class="card p-4"><h3 class="text-xs font-semibold text-slate-300 mb-2">Açık pozisyonların kâr/zararı ($)</h3><div class="relative h-56"><canvas id="chOpenPnl"></canvas></div></div>
-        </div>
-        <div class="card p-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 pb-2">
-            <h3 class="text-sm font-bold text-white">Açık pozisyonlar <span id="openCount" class="text-slate-400 font-normal"></span></h3>
-            <div class="text-[11px] text-slate-400" id="openNote"></div>
-          </div>
-          <div class="overflow-x-auto"><table class="tbl w-full text-left text-xs">
-            <thead><tr><th>Hesap</th><th>Varlık</th><th>Yön</th><th>Giriş</th><th>Süre</th><th class="text-right">Giriş fiyatı</th><th class="text-right">Stop</th><th class="text-right">Tutar</th><th class="text-right">K/Z ($)</th><th class="text-right">R</th></tr></thead>
-            <tbody id="openBody"></tbody></table></div>
-        </div>
-        <div class="card p-4">
-          <h3 class="text-xs font-semibold text-slate-300 mb-2">Bekleyen emirler (sonraki açılışta)</h3>
-          <div class="overflow-x-auto"><table class="tbl w-full text-left text-xs">
-            <thead><tr><th>Hesap</th><th>Varlık</th><th>Sinyal tarihi</th><th>Emir</th><th class="text-right">Stop</th><th class="text-right">Stop mesafesi</th></tr></thead>
-            <tbody id="pendingBody"></tbody></table></div>
-        </div>
-      </section>
-
-      <!-- İŞLEM GEÇMİŞİ -->
-      <section data-tab="gecmis" class="tab hidden space-y-4">
-        <div class="card p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div><h2 class="text-sm font-bold text-white">Kapanmış işlemler</h2><div class="text-xs text-slate-400" id="histSummary"></div></div>
-          <div class="flex flex-wrap gap-2 text-xs">
-            <select id="histAccount" class="bg-[#1c2a47] border border-[#243555] px-2.5 py-1.5 rounded text-slate-200"></select>
-            <select id="histResult" class="bg-[#1c2a47] border border-[#243555] px-2.5 py-1.5 rounded text-slate-200">
-              <option value="all">Tüm sonuçlar</option><option value="win">Kazananlar</option><option value="loss">Kaybedenler</option></select>
-            <input id="histSearch" type="text" placeholder="Varlık ara…" class="bg-[#1c2a47] border border-[#243555] px-2.5 py-1.5 rounded text-slate-200 placeholder-slate-400">
-          </div>
-        </div>
-        <div class="card p-4 overflow-x-auto"><table class="tbl w-full text-left text-xs">
-          <thead><tr><th>Hesap</th><th>Varlık</th><th>Yön</th><th>Giriş</th><th>Çıkış</th><th class="text-right">Giriş fiyatı</th><th class="text-right">Çıkış fiyatı</th><th class="text-right">R</th><th class="text-right">K/Z ($)</th><th>Neden</th></tr></thead>
-          <tbody id="histBody"></tbody></table></div>
-      </section>
-
-      <!-- İSTATİSTİK -->
-      <section data-tab="istatistik" class="tab hidden space-y-5">
-        <div id="statGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
-        <div class="text-[11px] text-slate-400" id="statNote"></div>
-      </section>
-
-      <!-- GRAFİKLER -->
-      <section data-tab="grafik" class="tab hidden space-y-5">
-        <div class="card p-4"><h3 class="text-sm font-bold text-white">Portföy kümülatif getiri (%)</h3>
-          <p class="text-[11px] text-slate-400 mb-2" id="eqNote"></p><div class="relative h-72"><canvas id="chEquity"></canvas></div></div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div class="card p-4"><h3 class="text-xs font-semibold text-slate-300 mb-2">Zirveden düşüş (%)</h3><div class="relative h-56"><canvas id="chDD"></canvas></div></div>
-          <div class="card p-4"><h3 class="text-xs font-semibold text-slate-300 mb-2">Günlük getiri (%)</h3><div class="relative h-56"><canvas id="chDaily"></canvas></div></div>
-        </div>
-      </section>
-
-      <!-- TAKVİM -->
-      <section data-tab="takvim" class="tab hidden space-y-5">
-        <div class="card p-4"><h2 class="text-sm font-bold text-white" id="calTitle">Takvim</h2><div class="text-xs text-slate-400" id="calSummary"></div></div>
-        <div class="card p-4 overflow-x-auto">
-          <div class="grid grid-cols-7 gap-2 min-w-[560px] text-xs" id="calGrid"></div>
-        </div>
-        <div class="card p-4 space-y-3">
-          <div class="flex items-center justify-between border-b border-[#243555] pb-2">
-            <div><span class="text-sm font-bold text-white" id="dayTitle"></span><span class="text-xs text-slate-400 ml-2" id="daySub"></span></div>
-            <div class="text-sm font-bold" id="dayPnl"></div>
-          </div>
-          <div id="dayBreakdown" class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs"></div>
-        </div>
-      </section>
-
-      <!-- DÖNEMSEL GETİRİ -->
-      <section data-tab="donemsel" class="tab hidden space-y-4">
-        <div class="card p-4 overflow-x-auto">
-          <h3 class="text-sm font-bold text-white mb-2">Günlük portföy getirisi (%)</h3>
-          <table class="tbl w-full text-left text-xs"><thead><tr><th>Gün</th><th class="text-right">Getiri (%)</th></tr></thead><tbody id="perBody"></tbody></table>
-        </div>
-      </section>
-
-      <!-- STRATEJİLER -->
-      <section data-tab="strateji" class="tab hidden space-y-4">
-        <div class="card p-4"><h2 class="text-sm font-bold text-white">Paper'daki stratejiler</h2>
-          <div class="text-xs text-slate-400 mt-1">Her satır kendi kitabında, eşit sermayeyle çalışır. Backtest sonucu, sg-arge eleme hunisinin (rastgele giriş testi, OOS, 2x/3x maliyet, bootstrap MDD95) çıktısıdır.</div></div>
-        <div id="strategies" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
-      </section>
-
-      <!-- RİSK -->
-      <section data-tab="risk" class="tab hidden space-y-4">
-        <div class="card p-4 space-y-2">
-          <h2 class="text-sm font-bold text-white">Risk kuralları (sg-arge EVRENSEL_KURALLAR)</h2>
-          <ul class="text-xs text-slate-300 space-y-1 list-disc pl-5">
-            <li>İşlem başına risk: sermayenin %0,5'i. Toplam açık risk en çok %2.</li>
-            <li>Kaldıraç yok; kitap brütü en çok %100.</li>
-            <li>Portföy düşüşü %10'a ulaşırsa uyarı, %15'e ulaşırsa yeni giriş durur (devam kullanıcı kararı).</li>
-            <li>Bir satır 30 kapanmış işlemden sonra PF &lt; 1 ise incelemeye alınır; son bar 5 günden eskiyse veri alarmı.</li>
-          </ul>
-        </div>
-        <div class="card p-4 space-y-2"><h3 class="text-xs font-semibold text-slate-300">Şu anki durum</h3><div class="text-xs text-slate-200" id="riskNote"></div><div id="riskConc"></div></div>
-      </section>
-
-      <!-- GÖLGE KİTAP -->
-      <section data-tab="golge" class="tab hidden space-y-5">
-        <div class="card p-4 space-y-1">
-          <h2 class="text-sm font-bold text-white">Gölge kitap</h2>
-          <div class="text-xs text-slate-400">Ana portföyden ayrı deneme kitapları: her biri 5.000 $ sanal sermaye, işlem başı risk %0,25. Ana portföyün özetini ve alarmlarını etkilemez. 24.10.2026 öncesi geriye dönük (aynı kurallar, gerçek veri); değerlendirmede yalnız canlı dönem sayılır.</div>
-          <div class="text-xs text-slate-500" id="glNote"></div>
-        </div>
-        <div id="glBooks" class="space-y-5"></div>
-      </section>
-
       <!-- COPY TRADE: ana ekran (kartlar) + ayrıntı -->
       <section data-tab="ct" class="tab hidden space-y-4">
         <div class="ct-msg hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
@@ -262,31 +107,13 @@
         <div id="ctIstat"></div>
       </section>
 
-      <!-- YOL HARİTASI -->
-      <section data-tab="yol" class="tab hidden space-y-4">
-        <div class="card p-4 space-y-3">
-          <h2 class="text-sm font-bold text-white">Yakında (Faz 2)</h2>
-          <p class="text-xs text-slate-400">Bu modüllerin henüz gerçek verisi yok. Sahte rakam göstermemek için bilerek boş bırakıldı.</p>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-            <div class="p-3 rounded border border-[#243555] bg-[#101a30]"><div class="font-semibold text-white mb-1">Koç bulguları</div><div class="text-slate-400">Defter ve backtest kayıtlarından kurallı bulgular: hangi strateji zararda, hangi çıkış nedeni baskın.</div><div class="mt-2" id="coachState"></div></div>
-            <div class="p-3 rounded border border-[#243555] bg-[#101a30]"><div class="font-semibold text-white mb-1">Öğrenen koç (gölge mod)</div><div class="text-slate-400">Önerilen filtreler önce gölgede 3-6 ay koşar; gerçek defter etkilenmez.</div><div class="mt-2" id="shadowState"></div></div>
-            <div class="p-3 rounded border border-[#243555] bg-[#101a30]"><div class="font-semibold text-white mb-1">Strateji radarı</div><div class="text-slate-400">Haftalık yeni strateji taraması; adaylar aynı eleme hunisinden geçer.</div></div>
-          </div>
-        </div>
-      </section>
     </main>
   </div>
 
 <script>
   const TABS = [
-    ['ozet', 'Özet', 'layout-dashboard'], ['acik', 'Açık pozisyonlar', 'pie-chart'], ['gecmis', 'İşlem geçmişi', 'history'],
-    ['istatistik', 'İstatistik', 'bar-chart-2'], ['grafik', 'Grafikler', 'line-chart'], ['takvim', 'Takvim', 'calendar'],
-    ['donemsel', 'Dönemsel getiri', 'trending-up'], ['strateji', 'Stratejiler', 'layers'], ['risk', 'Risk', 'shield-check'],
-    ['golge', 'Gölge kitap', 'moon'], ['ct', 'Copy trade', 'users'], ['ctakis', 'CT akış', 'activity'], ['ctistat', 'CT istatistik', 'bar-chart-3'],
-    ['yol', 'Yakında', 'compass'],
+    ['ct', 'Copy trade', 'users'], ['ctakis', 'CT akış', 'activity'], ['ctistat', 'CT istatistik', 'bar-chart-3'],
   ];
-  const GOLGE_SERMAYE = 5000;
-  let D = null;
   const charts = {};
 
   // ---------- yardımcılar
@@ -294,14 +121,7 @@
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const isNum = (v) => typeof v === 'number' && isFinite(v);
   const fmt = (v, d = 2) => isNum(v) ? v.toLocaleString('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—';
-  const usd = (v, d = 2) => isNum(v) ? (v < 0 ? '-' : '') + '$' + fmt(Math.abs(v), d) : '—';
-  const sgn = (v, d = 2) => isNum(v) ? (v > 0 ? '+' : '') + fmt(v, d) : '—';
-  const pct = (v, d = 2) => isNum(v) ? (v > 0 ? '+%' : v < 0 ? '-%' : '%') + fmt(Math.abs(v), d) : '—';
   const cls = (v) => !isNum(v) ? 'flat' : v > 0 ? 'up' : v < 0 ? 'down' : 'flat';
-  const empty = (cols, msg) => `<tr><td colspan="${cols}" class="empty">${esc(msg)}</td></tr>`;
-  const setText = (id, v) => { const el = $(id); if (el) el.textContent = v ?? '—'; };
-  const setCls = (id, text, value) => { const el = $(id); el.textContent = text; el.className = el.className.replace(/\b(up|down|flat)\b/g, '') + ' ' + cls(value); };
-
   function buildNav() {
     $('nav').innerHTML = TABS.map(([id, label, icon]) =>
       `<button data-nav="${id}" onclick="showTab('${id}')" class="nav-btn flex items-center gap-2.5 px-4 py-2.5 text-slate-300 hover:bg-[#1a2438] whitespace-nowrap lg:w-full">
@@ -310,128 +130,8 @@
   function showTab(id) {
     document.querySelectorAll('.tab').forEach((s) => s.classList.toggle('hidden', s.dataset.tab !== id));
     document.querySelectorAll('.nav-btn').forEach((b) => b.classList.toggle('active', b.dataset.nav === id));
-    try { localStorage.setItem('sgpano_tab', id); } catch (e) { /* özel pencere */ }
-    if (id === 'grafik' || id === 'acik') drawCharts();
     document.body.classList.toggle('ct-aktif', id.startsWith('ct'));
     if (id === 'ct') ctCizim();
-  }
-
-  // ---------- bölümler
-  function renderHeader() {
-    const m = D.meta || {}, k = D.kpis || {};
-    setText('metaTitle', m.title || 'SG Pano');
-    setText('metaSubtitle', m.subtitle || '');
-    setText('kpiTotal', usd(k.total_value));
-    setText('kpiTotalSub', isNum(k.initial_total_capital) ? 'başlangıç ' + usd(k.initial_total_capital, 0) : '—');
-    setCls('kpiReturn', pct(k.total_return_pct), k.total_return_pct);
-    setText('kpiReturnSub', isNum(k.net_pnl) ? 'net ' + (k.net_pnl > 0 ? '+' : '') + usd(k.net_pnl) : '—');
-    setCls('kpiDay', pct(k.last_day_pct), k.last_day_pct);
-    setText('kpiDaySub', (D.calendar && D.calendar.selected_day && D.calendar.selected_day.date) || '—');
-    setText('kpiOpen', isNum(k.open_positions_count) ? String(k.open_positions_count) : '—');
-    setText('kpiOpenSub', (D.pending_orders || []).length + ' bekleyen emir');
-    setText('kpiClosed', isNum(k.closed_trades_count) ? `${k.closed_trades_count} • %${fmt(k.win_rate_pct, 1)}` : '—');
-    setText('sbUpdate', m.updated_at || m.last_update || '—');
-    $('dataAge').textContent = veriYasi(m.updated_at);
-    setText('sbPriceTime', m.fiyat_zamani ? m.fiyat_zamani + (m.fiyat_kaynagi === 'son_kapanis' ? ' (son kapanış)' : '') : 'son kapanış');
-    setText('sbPeriod', m.test_period || '');
-    setText('sbNote', m.anlik_not || '');
-    setText('navc-acik', isNum(k.open_positions_count) ? String(k.open_positions_count) : '');
-    setText('navc-gecmis', (D.closed_trades_list || []).length ? String(D.closed_trades_list.length) : '');
-  }
-
-  function renderOzet() {
-    const typeCls = { danger: 'border-red-800 bg-red-950/40 text-red-200', warning: 'border-amber-700 bg-amber-950/30 text-amber-200', info: 'border-blue-800 bg-blue-950/30 text-blue-200' };
-    $('alerts').innerHTML = (D.alerts || []).map((a) =>
-      `<div class="p-3 rounded border text-xs ${typeCls[a.type] || typeCls.info}">${esc(a.title)}${a.desc ? ' <span class="opacity-80">' + esc(a.desc) + '</span>' : ''}</div>`).join('');
-    const l = D.last_24h || {};
-    $('last24').textContent = l.summary || 'Henüz işlem günü yok.';
-    $('last24Chips').innerHTML = (l.chips || []).map((c) =>
-      `<span class="badge bg-[#1c2a47] border border-[#243555] text-slate-200">${esc(c.label)}</span>`).join('');
-    const acc = D.accounts || [];
-    $('accounts').innerHTML = acc.length ? acc.map((a) => `
-      <div class="card p-4 space-y-3">
-        <div class="flex items-start justify-between gap-2">
-          <div class="min-w-0"><div class="text-sm font-bold text-white">${esc(a.name)}</div><div class="text-[11px] text-slate-400 truncate">${esc(a.strategies_label)}</div></div>
-          <span class="badge bg-[#101a30] border border-[#243555] text-slate-300">${esc(a.status)}</span>
-        </div>
-        <div class="flex items-end justify-between">
-          <div class="text-xl font-bold text-white">${usd(a.current_value)}</div>
-          <div class="text-right"><div class="text-xs font-bold ${cls(a.total_return_pct)}">${pct(a.total_return_pct)}</div><div class="text-[10px] text-slate-400">son gün ${pct(a.last_day_pct)}</div></div>
-        </div>
-        <div class="h-12 rounded bg-[#0d1527] border border-[#243555] overflow-hidden">${spark(a.sparkline)}</div>
-        <dl class="grid grid-cols-2 gap-y-1 text-[11px]">
-          <dt class="text-slate-400">Maks. düşüş</dt><dd class="text-right">${isNum(a.max_drawdown_pct) ? '%' + fmt(a.max_drawdown_pct) : '—'}</dd>
-          <dt class="text-slate-400">Kazanma</dt><dd class="text-right">${a.closed_trades ? '%' + fmt(a.win_rate_pct, 1) : '—'}</dd>
-          <dt class="text-slate-400">Kâr faktörü</dt><dd class="text-right">${a.closed_trades ? fmt(a.profit_factor) : '—'}</dd>
-          <dt class="text-slate-400">Kapanan / açık</dt><dd class="text-right">${esc(a.closed_trades)} / ${esc(a.open_trades)}</dd>
-          <dt class="text-slate-400">Ort. tutma</dt><dd class="text-right">${esc(a.avg_holding_time || '—')}</dd>
-          <dt class="text-slate-400">Son çalışma</dt><dd class="text-right">${esc(a.last_run || '—')}</dd>
-        </dl>
-        <div class="p-2 rounded bg-[#101a30] border border-[#243555] text-[10px] text-slate-400 leading-snug">${esc(a.expectation_desc || '')}</div>
-      </div>`).join('') : '<div class="card empty md:col-span-3">Hesap verisi yok.</div>';
-    $('footerNote').textContent = (D.meta && D.meta.footer_note) || '';
-  }
-
-  function spark(arr) {
-    const v = (arr || []).filter(isNum);
-    if (v.length < 2) return '<div class="empty" style="padding:0.9rem">henüz eğri yok</div>';
-    const lo = Math.min(...v), hi = Math.max(...v), r = hi - lo || 1, w = 300, h = 48;
-    const pts = v.map((y, i) => `${(i / (v.length - 1) * w).toFixed(1)},${(h - 6 - (y - lo) / r * (h - 12)).toFixed(1)}`).join(' ');
-    const col = v[v.length - 1] >= v[0] ? '#10b981' : '#ef4444';
-    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="w-full h-full"><polyline fill="none" stroke="${col}" stroke-width="2" points="${pts}"/></svg>`;
-  }
-
-  function renderAcik() {
-    const op = D.open_positions || [];
-    $('openCount').textContent = `(${op.length})`;
-    $('openNote').textContent = (D.meta && D.meta.anlik_not) || 'Değerleme son günlük kapanışla.';
-    $('openBody').innerHTML = op.length ? op.map((p) => `<tr>
-      <td>${esc(p.account)}</td><td class="font-semibold text-white">${esc(p.asset)}</td><td>${esc(p.type)}</td><td>${esc(p.entry_date)}</td><td>${esc(p.duration)}</td>
-      <td class="text-right">${fmt(p.entry_price)}</td><td class="text-right">${fmt(p.stop_price)}</td><td class="text-right">${usd(p.size_usd)}</td>
-      <td class="text-right ${cls(p.unrealized_pnl)}">${sgn(p.unrealized_pnl)}</td><td class="text-right ${cls(p.r)}">${sgn(p.r)}</td></tr>`).join('') : empty(10, 'Açık pozisyon yok.');
-    const po = D.pending_orders || [];
-    $('pendingBody').innerHTML = po.length ? po.map((o) => `<tr>
-      <td>${esc(o.account)}</td><td class="font-semibold text-white">${esc(o.asset)}</td><td>${esc(o.signal_date)}</td><td>${esc(o.order)}</td>
-      <td class="text-right">${fmt(o.stop)}</td><td class="text-right">${fmt(o.stop_distance)}</td></tr>`).join('') : empty(6, 'Bekleyen emir yok.');
-  }
-
-  function renderGecmis() {
-    const all = D.closed_trades_list || [];
-    const sel = $('histAccount'), prev = sel.value;
-    sel.innerHTML = '<option value="all">Tüm hesaplar</option>' + [...new Set(all.map((t) => t.account))].map((a) => `<option>${esc(a)}</option>`).join('');
-    if ([...sel.options].some((o) => o.value === prev)) sel.value = prev;
-    const acc = sel.value, res = $('histResult').value, q = $('histSearch').value.trim().toLowerCase();
-    const rows = all.filter((t) => (acc === 'all' || t.account === acc)
-      && (res === 'all' || (res === 'win' ? t.pnl > 0 : t.pnl <= 0))
-      && (!q || String(t.asset).toLowerCase().includes(q)));
-    const s = D.stats || {};
-    $('histSummary').textContent = all.length ? `Toplam ${all.length} işlem • kazanma %${fmt(s.win_rate, 1)} • kâr faktörü ${fmt(s.profit_factor)}` : 'Henüz kapanmış işlem yok.';
-    $('histBody').innerHTML = rows.length ? rows.map((t) => `<tr>
-      <td>${esc(t.account)}</td><td class="font-semibold text-white">${esc(t.asset)}</td><td>${esc(t.type)}</td><td>${esc(t.entry_date)}</td><td>${esc(t.exit_date)}</td>
-      <td class="text-right">${fmt(t.entry_price)}</td><td class="text-right">${fmt(t.exit_price)}</td>
-      <td class="text-right ${cls(t.r)}">${sgn(t.r)}</td><td class="text-right ${cls(t.pnl)}">${sgn(t.pnl)}</td><td>${esc(t.reason)}</td></tr>`).join('') : empty(10, all.length ? 'Filtreye uyan işlem yok.' : 'Henüz kapanmış işlem yok.');
-  }
-
-  function renderIstatistik() {
-    const s = D.stats || {}, n = s.total_trades || 0;
-    const items = [
-      ['Net K/Z', usd(s.net_pnl), cls(s.net_pnl)], ['Toplam işlem', n ? String(n) : '—', ''], ['Kazanma oranı', n ? '%' + fmt(s.win_rate, 1) : '—', ''],
-      ['Kâr faktörü', n ? fmt(s.profit_factor) : '—', ''], ['Ort. kazanç / kayıp', n ? `${usd(s.avg_win)} / ${usd(s.avg_loss)}` : '—', ''],
-      ['İşlem başı beklenti', n ? usd(s.expectancy_per_trade) : '—', cls(s.expectancy_per_trade)], ['SQN', n ? fmt(s.sqn) : '—', ''],
-      ['En büyük kazanç / kayıp', n ? `${usd(s.max_win)} / ${usd(s.max_loss)}` : '—', ''], ['Maks. ardışık kayıp', n ? esc(s.max_consecutive_losses) : '—', ''],
-      ['Ort. tutma süresi', isNum(s.avg_holding_time_hours) && n ? fmt(s.avg_holding_time_hours / 24, 1) + ' gün' : '—', ''],
-      ['Yeşil gün oranı', isNum(s.green_days_pct) ? '%' + fmt(s.green_days_pct, 1) : '—', ''], ['Sharpe (yıllık)', isNum(s.sharpe_annual) ? fmt(s.sharpe_annual) : '—', ''],
-    ];
-    $('statGrid').innerHTML = items.map(([l, v, c]) => `<div class="card p-3"><div class="text-[10px] text-slate-400 uppercase font-semibold">${l}</div><div class="text-base font-bold ${c || 'text-white'}">${v}</div></div>`).join('');
-    $('statNote').textContent = n < 30 ? `Örneklem küçük (${n} işlem): bu oranlar henüz anlamlı değil. Strateji incelemesi 30 kapanmış işlemden sonra yapılır.` : '';
-  }
-
-  function series() {
-    // periodic_returns: en yeni önde; grafik için eskiden yeniye çevrilir
-    const pr = (D.periodic_returns || []).filter((r) => isNum(r.swing)).slice().reverse();
-    let eq = 1, peak = 1; const lab = [], cum = [], dd = [], daily = [];
-    pr.forEach((r) => { eq *= 1 + r.swing / 100; peak = Math.max(peak, eq); lab.push(r.day); daily.push(r.swing); cum.push((eq - 1) * 100); dd.push((eq / peak - 1) * 100); });
-    return { lab, cum, dd, daily };
   }
 
   function chart(id, cfg) {
@@ -441,172 +141,6 @@
   }
   const axes = { x: { ticks: { color: '#94a3b8', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: '#1f2b42' } }, y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#1f2b42' } } };
   const base = { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: axes };
-
-  function drawCharts() {
-    if (!D) return;
-    const s = series();
-    $('eqNote').textContent = s.lab.length ? `${s.lab[0]} → ${s.lab[s.lab.length - 1]} (${s.lab.length} işlem günü; panoya gelen son 30 gün).` : 'Henüz işlem günü yok.';
-    chart('chEquity', { type: 'line', data: { labels: s.lab, datasets: [{ data: s.cum, borderColor: '#f5cb5c', borderWidth: 2, pointRadius: 0, tension: 0.15 }] }, options: base });
-    chart('chDD', { type: 'line', data: { labels: s.lab, datasets: [{ data: s.dd, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.15)', fill: true, borderWidth: 1.5, pointRadius: 0 }] }, options: base });
-    chart('chDaily', { type: 'bar', data: { labels: s.lab, datasets: [{ data: s.daily, backgroundColor: s.daily.map((v) => v >= 0 ? '#10b981' : '#ef4444') }] }, options: base });
-    const acc = D.accounts || [], op = D.open_positions || [];
-    const expo = acc.map((a) => op.filter((p) => p.account === a.name).reduce((t, p) => t + (p.size_usd || 0), 0));
-    chart('chExposure', { type: 'bar', data: { labels: acc.map((a) => a.name), datasets: [{ data: expo, backgroundColor: '#3b82f6' }] }, options: base });
-    chart('chOpenPnl', { type: 'bar', data: { labels: op.map((p) => p.asset), datasets: [{ data: op.map((p) => p.unrealized_pnl), backgroundColor: op.map((p) => (p.unrealized_pnl || 0) >= 0 ? '#10b981' : '#ef4444') }] }, options: { ...base, indexAxis: 'y' } });
-  }
-
-  const AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-  function renderTakvim() {
-    const c = D.calendar || {};
-    $('calTitle').textContent = c.month ? c.month + ' takvimi' : 'Takvim';
-    $('calSummary').textContent = c.month_summary || '';
-    const [ay, yil] = String(c.month || '').split(' ');
-    const mi = AYLAR.indexOf(ay), y = parseInt(yil, 10);
-    const head = ['PZT', 'SAL', 'ÇAR', 'PER', 'CUM', 'CMT', 'PAZ'].map((d) => `<div class="py-1 font-semibold text-slate-400 text-center">${d}</div>`).join('');
-    if (mi < 0 || !y) { $('calGrid').innerHTML = head + '<div class="col-span-7 empty">Takvim verisi yok.</div>'; }
-    else {
-      const offset = (new Date(y, mi, 1).getDay() + 6) % 7, ndays = new Date(y, mi + 1, 0).getDate();
-      const byDay = Object.fromEntries((c.days || []).map((d) => [d.day, d]));
-      let cells = '<div></div>'.repeat(offset);
-      for (let d = 1; d <= ndays; d++) {
-        const v = byDay[d], p = v ? v.pnl : null;
-        const bg = !isNum(p) ? '' : p > 0 ? 'background:rgba(16,185,129,0.12)' : p < 0 ? 'background:rgba(239,68,68,0.12)' : '';
-        cells += `<div class="cal-cell" style="${bg}"><div class="text-[10px] text-slate-400">${d}</div><div class="text-xs font-semibold ${cls(p)}">${isNum(p) ? sgn(p) + ' $' : ''}</div>${v && v.closed ? `<div class="text-[9px] text-slate-400">${v.closed} kapanan</div>` : ''}</div>`;
-      }
-      $('calGrid').innerHTML = head + cells;
-    }
-    const sd = c.selected_day || {};
-    $('dayTitle').textContent = sd.date || '';
-    $('daySub').textContent = sd.date ? `Kapanan: ${sgn(sd.closed_pnl)} $ · açık pozisyon değişimi: ${sgn(sd.open_pnl_change)} $` : '';
-    setCls('dayPnl', isNum(sd.pnl) ? sgn(sd.pnl) + ' $' : '', sd.pnl);
-    $('dayBreakdown').innerHTML = (sd.account_breakdown || []).map((b) =>
-      `<div class="p-2 rounded border border-[#243555] bg-[#101a30]"><div class="text-slate-400">${esc(b.account)}</div><div class="font-semibold ${cls(b.total)}">${sgn(b.total)} $</div></div>`).join('');
-  }
-
-  function renderDonemsel() {
-    const pr = (D.periodic_returns || []).filter((r) => isNum(r.swing));
-    $('perBody').innerHTML = pr.length ? pr.map((r) => `<tr><td>${esc(r.day)}</td><td class="text-right ${cls(r.swing)}">${sgn(r.swing)}</td></tr>`).join('') : empty(2, 'Henüz işlem günü yok.');
-  }
-
-  function renderStrateji() {
-    const st = D.strategies_27 || [];
-    const badge = (s) => s === 'Gecti' ? 'bg-emerald-950 text-emerald-300 border border-emerald-700' : s === 'Kosullu' ? 'bg-amber-950 text-amber-300 border border-amber-700' : 'bg-slate-800 text-slate-300';
-    $('strategies').innerHTML = st.length ? st.map((s) => `
-      <div class="card p-4 space-y-2">
-        <div class="flex items-center justify-between gap-2"><div class="text-sm font-bold text-white">${esc(s.display_title || s.code)}</div><span class="badge ${badge(s.status)}">${esc(s.status_badge || s.status)}</span></div>
-        <div class="text-[11px] text-slate-400">${esc(s.subtitle || s.name)}</div>
-        <dl class="grid grid-cols-2 gap-y-1 text-[11px]">
-          <dt class="text-slate-400">Zaman dilimi</dt><dd class="text-right">${esc(s.mtf)}</dd>
-          <dt class="text-slate-400">Ağırlık</dt><dd class="text-right">${esc(s.allocation)}</dd>
-          <dt class="text-slate-400">Bootstrap MDD95</dt><dd class="text-right">${esc(s.dd_pct || '—')}</dd>
-          <dt class="text-slate-400">Bakiye</dt><dd class="text-right">${usd(s.balance_usd)}</dd>
-          <dt class="text-slate-400">Getiri</dt><dd class="text-right ${cls(s.total_return_pct)}">${pct(s.total_return_pct)}</dd>
-          <dt class="text-slate-400">Açık işlem</dt><dd class="text-right">${esc(s.active_trade_detail || '—')}</dd>
-        </dl>
-        ${s.active_trade_symbol ? `<div class="text-[10px] text-slate-400">Pozisyonlar: ${esc(s.active_trade_symbol)}</div>` : ''}
-        <div class="text-[10px] text-slate-500">${esc(s.desc || '')}</div>
-      </div>`).join('') : '<div class="card empty md:col-span-3">Strateji verisi yok.</div>';
-  }
-
-  function renderRisk() {
-    const r = D.risk || {};
-    $('riskNote').textContent = r.correlation_note || 'Risk verisi yok.';
-    const cc = r.concentrations || [];
-    $('riskConc').innerHTML = cc.length ? '<ul class="text-xs list-disc pl-5 text-slate-300">' + cc.map((c) => `<li>${esc(typeof c === 'string' ? c : (c.label || c.asset || JSON.stringify(c)))}</li>`).join('') + '</ul>' : '';
-    const co = D.coach || {}, sh = D.shadow_mode || {};
-    $('coachState').innerHTML = (co.findings || []).length ? '<ul class="list-disc pl-4 text-slate-300">' + co.findings.map((f) => `<li>${esc(f.title || f)}</li>`).join('') + '</ul>' : '<span class="badge bg-slate-800 text-slate-400">henüz veri yok</span>';
-    $('shadowState').innerHTML = isNum(sh.closed_count) ? `<span class="text-slate-300">${sh.closed_count} işlem gölgede</span>` : '<span class="badge bg-slate-800 text-slate-400">henüz veri yok</span>';
-  }
-
-  const GOLGE_ACIKLAMA = {
-    'U4-H1': 'Kripto 4H trend · BTC, ETH, SOL, BNB, XRP, TRX',
-    'T8-07': 'StackLight MTF momentum · emtia 1H',
-    'V2B': 'VOLTRAN-2B saatlik momentum · emtia 1H',
-  };
-  function glGun(v) {
-    const m = String(v || '').match(/^(\d{2})\.(\d{2})\.(\d{4})/);
-    if (m) return `${m[3]}-${m[2]}-${m[1]}`;
-    return String(v || '').slice(0, 10);
-  }
-  function renderGolge() {
-    const g = D.golge;
-    const books = !g ? [] : Array.isArray(g.kitaplar) ? g.kitaplar
-      : [{ id: 'U4-H1', tf: '4H', baslangic: g.baslangic, canli_baslangic: g.baslangic, ozkaynak: g.ozkaynak, mdd: g.mdd,
-           acik_pozisyonlar: g.acik_pozisyonlar, kapanmis_islemler: g.kapanmis_islemler }];
-    if (!books.length) {
-      $('glNote').textContent = 'Henüz gölge kitap verisi gelmedi; saatlik iş çalışınca dolar.';
-      $('glBooks').innerHTML = '';
-      return;
-    }
-    $('glNote').textContent = g.not || '';
-    $('glBooks').innerHTML = books.map((b) => {
-      const canli = b.canli_baslangic || b.baslangic || '';
-      const closed = b.kapanmis_islemler || [], open = b.acik_pozisyonlar || [];
-      const live = closed.filter((t) => glGun(t.exit_date) >= canli);
-      const livePnl = live.reduce((a, t) => a + (isNum(t.pnl) ? t.pnl : 0), 0);
-      const wins = closed.filter((t) => t.pnl > 0).length;
-      const ret = isNum(b.ozkaynak) ? (b.ozkaynak / GOLGE_SERMAYE - 1) * 100 : null;
-      const uyari = isNum(b.mdd) && isNum(b.mdd_uyari) && Math.abs(b.mdd) >= b.mdd_uyari * 100
-        ? '<span class="badge ml-2" style="background:#7f1d1d;color:#fecaca">MDD uyarısı ≥ %15</span>' : '';
-      const kpi = [['Özkaynak', usd(b.ozkaynak), ''], ['Getiri (tümü)', pct(ret), cls(ret)],
-        ['Canlı K/Z', live.length ? sgn(livePnl) + ' $' : '0', live.length ? cls(livePnl) : ''],
-        ['Maks. düşüş', isNum(b.mdd) ? '%' + fmt(Math.abs(b.mdd)) : '—', ''],
-        ['Kapanan / kazanan', closed.length ? `${closed.length} / ${wins}` : '0', ''], ['Canlı işlem', String(live.length), '']];
-      const tag = (d) => glGun(d) < canli ? ' <span class="badge bg-slate-800 text-slate-400">geriye dönük</span>' : '';
-      const openRows = open.length ? open.map((p) => `<tr><td class="font-semibold text-white">${esc(p.asset)}</td><td>${esc(p.entry_date)}${tag(p.entry_date)}</td><td>${esc(p.duration)}</td>
-        <td class="text-right">${fmt(p.entry_price)}</td><td class="text-right">${fmt(p.stop_price)}</td><td class="text-right">${usd(p.size_usd)}</td>
-        <td class="text-right ${cls(p.unrealized_pnl)}">${sgn(p.unrealized_pnl)}</td><td class="text-right ${cls(p.r)}">${sgn(p.r)}</td></tr>`).join('') : empty(8, 'Açık pozisyon yok.');
-      const closedRows = closed.length ? closed.slice().reverse().map((t) => `<tr><td class="font-semibold text-white">${esc(t.asset)}</td><td>${esc(t.entry_date)}</td><td>${esc(t.exit_date)}${tag(t.exit_date)}</td>
-        <td class="text-right">${fmt(t.entry_price)}</td><td class="text-right">${fmt(t.exit_price)}</td><td class="text-right ${cls(t.r)}">${sgn(t.r)}</td>
-        <td class="text-right ${cls(t.pnl)}">${sgn(t.pnl)}</td><td>${esc(t.reason)}</td></tr>`).join('') : empty(8, 'Henüz kapanmış işlem yok.');
-      return `<div class="card p-4 space-y-3">
-        <div><h3 class="text-sm font-bold text-white inline">${esc(b.id)}</h3>${uyari}
-          <div class="text-xs text-slate-400">${esc(GOLGE_ACIKLAMA[b.id] || ((b.piyasa || '') + ' ' + (b.tf || '')))} · başlangıç ${esc(b.baslangic || '—')} · canlı ${esc(canli || '—')}</div></div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">${kpi.map(([l, v, c]) => `<div class="p-3 rounded border border-[#243555] bg-[#101a30]"><div class="text-[10px] text-slate-400 uppercase font-semibold">${l}</div><div class="text-base font-bold ${c || 'text-white'}">${v}</div></div>`).join('')}</div>
-        <div><h4 class="text-xs font-semibold text-slate-300 mb-2">Açık pozisyonlar</h4>
-          <div class="overflow-x-auto"><table class="tbl w-full text-left text-xs">
-          <thead><tr><th>Varlık</th><th>Giriş</th><th>Süre</th><th class="text-right">Giriş fiyatı</th><th class="text-right">Stop</th><th class="text-right">Tutar</th><th class="text-right">K/Z ($)</th><th class="text-right">R</th></tr></thead>
-          <tbody>${openRows}</tbody></table></div></div>
-        <details><summary class="text-xs font-semibold text-slate-300 cursor-pointer">Kapanmış işlemler (${closed.length})</summary>
-          <div class="overflow-x-auto mt-2"><table class="tbl w-full text-left text-xs">
-          <thead><tr><th>Varlık</th><th>Giriş</th><th>Çıkış</th><th class="text-right">Giriş fiyatı</th><th class="text-right">Çıkış fiyatı</th><th class="text-right">R</th><th class="text-right">K/Z ($)</th><th>Neden</th></tr></thead>
-          <tbody>${closedRows}</tbody></table></div></details>
-      </div>`;
-    }).join('');
-  }
-
-
-  function renderAll() {
-    renderHeader(); renderOzet(); renderAcik(); renderGecmis(); renderIstatistik();
-    renderTakvim(); renderDonemsel(); renderStrateji(); renderRisk(); renderGolge();
-    const active = document.querySelector('.nav-btn.active');
-    if (active && (active.dataset.nav === 'grafik' || active.dataset.nav === 'acik')) drawCharts();
-    if (window.lucide) lucide.createIcons();
-  }
-
-  // "Yenile" yalnız data.json'u yeniden okur; veri, sg-arge paper iş akışı çalışınca değişir. Ne kadar eski olduğu görünsün.
-  function veriYasi(iso) {
-    const t = iso ? new Date(iso) : null;
-    if (!t || isNaN(t)) return 'veri saati bilinmiyor';
-    const dk = Math.max(0, Math.round((Date.now() - t.getTime()) / 60000));
-    const ne = dk < 60 ? `${dk} dk önce` : dk < 2880 ? `${Math.round(dk / 60)} sa önce` : `${Math.round(dk / 1440)} gün önce`;
-    const saat = t.toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-    return `veri: ${saat} (${ne})`;
-  }
-
-  async function loadData(manual) {
-    const icon = $('refreshIcon'); if (manual && icon) icon.classList.add('animate-spin');
-    try {
-      const r = await fetch('./data.json?t=' + Date.now(), { cache: 'no-store' });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const j = await r.json();
-      if (!j || !j.kpis) throw new Error('beklenen alanlar yok');
-      D = j; $('loadError').classList.add('hidden'); renderAll();
-    } catch (e) {
-      const el = $('loadError'); el.classList.remove('hidden');
-      el.textContent = 'data.json okunamadı (' + e.message + '). ' + (D ? 'Son başarılı veri gösteriliyor.' : 'Gösterilecek veri yok; sahte veri kullanılmaz.');
-    } finally { if (icon) setTimeout(() => icon.classList.remove('animate-spin'), 400); }
-  }
 
   // ---------- copy trade izleme (tanım: sg-arge docs/PANO_COPYTRADE.md, veri: docs/VERI_SOZLESMESI.md, surum 1)
   // Kaynak adresleri yalnız burada değişir. Canlı veri hazır olunca:
@@ -723,6 +257,9 @@
         + (/^ornek/i.test(String(CT.kaynak || '')) ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '') + '</div>';
     } else html = '<span>Veri yok.</span>';
     bar.forEach((el) => { el.classList.toggle('stale', eski); el.innerHTML = html; });
+    const yas = $('dataAge'), t0 = CT && new Date(CT.uretildi);
+    yas.textContent = t0 && !isNaN(t0) ? ctYas(Math.max(0, Math.round((Date.now() - t0.getTime()) / 60000))) : '—';
+    yas.style.color = eski ? '#fcd34d' : '';
   }
 
   // ---------- ana ekran / ayrıntı
@@ -765,7 +302,7 @@
     const cevapsiz = olay.filter((o) => o.tur === 'acilis' && !CTK.kayit[o.id]).length;
     const kv = (k, v) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
     return `<a href="#" class="ct-btn inline-flex items-center gap-1 mb-3">← Kartlar</a>
-      <div class="space-y-4">
+      <div class="space-y-4 ct-detay">
       <div class="card ct-card"><div class="ct-head"><span class="ct-name text-lg">${esc(t.takma_ad)}</span><span aria-label="Sağlık: ${esc(ad)}">${em} ${esc(ad)}</span>${ctKapiRozet(t.kapi)}
           ${ctKirmizi(t) ? ctRozet('izlemede — kopyalama', 'ct-b-bad') : t.durum && t.durum !== 'kopyala' ? ctRozet(t.durum, 'ct-b-mut') : ''}</div>
         <div class="ct-sub mt-1">${esc(ctAdr(t.adres))} · t0: ${esc(t.t0 || '—')} · hesap değeri ${ctUsd(t.hesap_degeri, 0)}</div>
@@ -856,7 +393,8 @@
   function ctRender() { ctSerit(); ctRenderAna(); ctRenderAkis(); ctRenderIstat(); if (window.lucide) lucide.createIcons(); ctCizim(); }
 
   // ---------- yükleme
-  async function ctYukle() {
+  async function ctYukle(elle) {
+    const ikon = $('refreshIcon'); if (elle && ikon) ikon.classList.add('animate-spin');
     try {
       const r = await fetch(CT_KAYNAK + '?t=' + Date.now(), { cache: 'no-store' });
       if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -874,10 +412,11 @@
         (await r.text()).split('\n').filter((l) => l.trim()).forEach((l) => {
           try { const k = JSON.parse(l); if (k && k.olay_id && (k.karar === 'acti' || k.karar === 'atladi')) kayit[k.olay_id] = k; else bozuk++; } catch (e) { bozuk++; }
         });
-        CTK = { durum: 'ok', kayit, bozuk };
+        CTK = { durum: Object.keys(kayit).length ? 'ok' : 'yok', kayit, bozuk };
       }
     } catch (e) { CTK = { durum: 'hata', kayit: {}, bozuk: 0 }; }
     ctRender();
+    if (ikon) setTimeout(() => ikon.classList.remove('animate-spin'), 400);
   }
   function ctHash() {
     const m = /^#ct\/(.+)$/.exec(location.hash);
@@ -887,15 +426,9 @@
   }
   window.addEventListener('hashchange', ctHash);
 
-  ['histAccount', 'histResult'].forEach((id) => $(id).addEventListener('change', () => D && renderGecmis()));
-  $('histSearch').addEventListener('input', () => D && renderGecmis());
-
   buildNav();
-  let start = 'ozet'; try { const t = localStorage.getItem('sgpano_tab'); if (TABS.some(([id]) => id === t)) start = t; } catch (e) { /* yok */ }
-  showTab(start);
+  showTab('ct');
   if (window.lucide) lucide.createIcons();
-  loadData(false);
-  setInterval(() => loadData(false), 5 * 60 * 1000);
   ctHash(); ctYukle();
   setInterval(ctYukle, 5 * 60 * 1000);
   setInterval(ctSerit, 60 * 1000);
