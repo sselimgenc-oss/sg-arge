@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import math
+import re
 import time
 from bisect import bisect_left, bisect_right
 from functools import lru_cache
@@ -24,7 +25,7 @@ from copytrade.defter import DAY as DAY_MS
 from copytrade.defter import FundingRates, Market, copy_ledger
 from copytrade.kurallar import load_rules
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
-from copytrade.tarama import PublicClient, RateLimitError, RateLimiter, prefilter
+from copytrade.tarama import PublicClient, RateLimitError, RateLimiter, _address, prefilter
 from kapi.istatistik import deflated_sharpe_ratio, nw_alpha
 
 # Maliyet parametreleri kurallar.yaml'dan (izleme motoru bu adlarla içe aktarır)
@@ -717,12 +718,46 @@ class Progress:
                  + ", ".join(f"{k} {v:.1f}" for k, v in self.stages.items()))
 
 
+EXTERNAL_DIR = Path(__file__).resolve().parents[1] / "arastirma" / "copytrade" / "bagimsiz_secim"
+ADDRESS_PATTERN = re.compile(r"0x[0-9a-fA-F]{40}")
+
+
+def external_candidates(directory: Path = EXTERNAL_DIR) -> list[str]:
+    """Bağımsız seçim notlarında geçen tüm adresler (görev 16): lider tablosu süzgecinden bağımsız kapıya girer."""
+    found: set[str] = set()
+    for path in sorted(directory.glob("*")) if directory.is_dir() else []:
+        if path.is_file():
+            found.update(a.lower() for a in ADDRESS_PATTERN.findall(path.read_text(encoding="utf-8", errors="ignore")))
+    return sorted(found)
+
+
+def build_universe(board: list[dict], external: list[str], client: PublicClient | None = None) -> list[dict]:
+    """Kapı evreni: süzgeçten geçen lider tablosu satırları (``kaynak = leaderboard``) + dış adaylar (``kaynak = dis_aday``, süzgeç yok).
+
+    Dış adayın hesap değeri önce lider tablosundan (süzgeçsiz), yoksa ``clearinghouseState``'ten alınır; hiçbiri yoksa 0 (gate satırı Yetersiz kalır)."""
+    universe = {row["address"].lower(): {**row, "kaynak": "leaderboard"} for row in prefilter(board)}
+    raw = {_address(row).lower(): row for row in board if _address(row)}
+    for address in sorted({a.lower() for a in external}):
+        if address in universe:
+            universe[address]["kaynak"] = "dis_aday"
+            continue
+        value = float(raw[address].get("accountValue", raw[address].get("account_value", 0)) or 0) if address in raw else 0.0
+        if not value and client is not None:
+            try:
+                state = client.info({"type": "clearinghouseState", "user": address}, weight=2)
+                value = float(state["marginSummary"]["accountValue"])
+            except (KeyError, TypeError, ValueError, requests.RequestException):
+                value = 0.0
+        universe[address] = {"address": address, "accountValue": value, "kaynak": "dis_aday"}
+    return sorted(universe.values(), key=lambda row: row["address"])
+
+
 def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now: datetime, start: int, start_200: int,
                      symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None) -> dict[str, Any]:
     """Tek adres için 1. aşama + adım 1–6 (adım 7 ve katman birleştirmede). ``yalniz_adim5``: plaseboyu adım 3–4'e
     bakmadan hesaplar (hızlı koşu; satırın adım değerleri yine kurallara göre kalır). Her aşamanın süresi günlüğe yazılır."""
     address = leader["address"]
-    row: dict[str, Any] = {"address": address, "account_value": leader["accountValue"]}
+    row: dict[str, Any] = {"address": address, "account_value": leader["accountValue"], "kaynak": leader.get("kaynak", "leaderboard")}
     progress = Progress(address[:10] + "…" + address[-4:], client, cache, *([log] if log else []))
     outcome = "tamam"
     try:
@@ -834,9 +869,12 @@ def main(argv: list[str] | None = None) -> None:
                         help="aynı günün sonuc.csv'sinde olmayan veya 'veri hatası' olan adresleri işle")
     parser.add_argument("--devam", action="store_true")
     parser.add_argument("--birlestir", type=Path)
+    parser.add_argument("--beklenen-parca", type=int, help="birleştirme: beklenen parça sayısı (eksik parça → durum: eksik)")
+    parser.add_argument("--mod", default="tam", help="birleştirme: tam | hizli | eksik")
+    parser.add_argument("--adres", action="append", default=[], help="kapıya zorla eklenen adres (dis_aday); tekrarlanabilir")
     args = parser.parse_args(argv)
     if args.birlestir:
-        merge_shards(args.birlestir, args.root)
+        merge_shards(args.birlestir, args.root, args.beklenen_parca, args.mod)
         return
     if args.shard_count < 1 or not 0 <= args.shard_index < args.shard_count:
         parser.error("shard index/count geçersiz")
@@ -845,14 +883,16 @@ def main(argv: list[str] | None = None) -> None:
     out = args.root / "kapi" / today
     out.mkdir(parents=True, exist_ok=True)
     client = PublicClient(limiter=RateLimiter(1000))
-    leaders = prefilter(client.leaderboard())
+    external = sorted(set(external_candidates()) | {a.lower() for a in args.adres})
+    leaders = build_universe(client.leaderboard(), external, client)
     evren = len(leaders)
     (out / "evren.json").write_text(json.dumps({"evren": evren}), encoding="utf-8")
+    (out / "bitti.json").unlink(missing_ok=True)      # parça bitişi yalnız bu koşunun sonunda yazılır; zaman aşımında yok = eksik
     previous_path = out / "sonuc.csv"
     if args.yalniz_adim5:
         previous = sorted((args.root / "kapi").glob("*/sonuc.csv"))
         eligible = set(pd.read_csv(previous[-1]).query("adim1 == 'Geçti' and adim2 == 'Geçti' and adim3 == 'Geçti' and adim4 == 'Geçti'").address) if previous else set()
-        leaders = [row for row in leaders if row["address"] in eligible]
+        leaders = [row for row in leaders if row["address"] in eligible or row["kaynak"] == "dis_aday"]
     if args.eksikleri_tamamla:
         leaders = missing_addresses(leaders, pd.read_csv(previous_path) if previous_path.exists() else None)
     leaders = leaders[args.shard_index::args.shard_count]
@@ -871,7 +911,7 @@ def main(argv: list[str] | None = None) -> None:
         if leader["address"] in done:
             continue
         print(f"[{number}/{len(leaders)}] {leader['address']}", flush=True)
-        rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5))
+        rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5 and leader.get("kaynak") != "dis_aday"))
         pd.DataFrame(rows).to_csv(out / "sonuc.csv", index=False)  # partial results survive a time limit
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
     passed = sum(r.get("asama1") == "Geçti" for r in rows)
@@ -879,6 +919,7 @@ def main(argv: list[str] | None = None) -> None:
         f"# CT-Kapı v1.1\n\n- Evren: {evren}\n- Bu parçada işlenen: {len(rows)}\n- 1. aşamayı geçen: {passed}\n"
         f"- Binance listesi: {binance_note}\n- Gecikme saat başına yuvarlandı (üst sınır).\n- Karar önerisi yok.\n",
         encoding="utf-8")
+    (out / "bitti.json").write_text(json.dumps({"parca": args.shard_index, "sayi": args.shard_count, "islenen": len(rows)}), encoding="utf-8")
 
 
 def _md(frame: pd.DataFrame) -> str:
@@ -1023,7 +1064,19 @@ def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
     return problems
 
 
-def merge_shards(shards: Path, root: Path) -> None:
+def run_status(finished: int, expected: int | None, processed: int, universe: int | None, mod: str, rules: dict) -> dict:
+    """Koşu durumu (görev 24): beklenen parçalardan biri bitmediyse veya (hızlı dışı) kapsam hedefin altındaysa ``eksik``."""
+    reasons = []
+    if expected is not None and finished < expected:
+        reasons.append(f"{expected} parçanın yalnız {finished} tanesi bitti (zaman aşımı / hata)")
+    coverage = processed / universe if universe else None
+    if mod != "hizli" and coverage is not None and coverage < float(rules["kapsam_hedefi"]):
+        reasons.append(f"kapsam %{100 * coverage:.1f} < hedef %{100 * float(rules['kapsam_hedefi']):.0f}")
+    return {"durum": "eksik" if reasons else "tamam", "parca_beklenen": expected, "parca_biten": finished,
+            "islenen": processed, "evren": universe, "kapsam": round(coverage, 4) if coverage is not None else None, "neden": "; ".join(reasons)}
+
+
+def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str = "tam") -> dict[str, dict]:
     """Merge partial artifacts even if some timeout jobs produced no CSV.
 
     Aynı günün mevcut ``sonuc.csv``'si (ör. veri dalından) önce okunur; parçalardaki satırlar onu geçersiz kılar
@@ -1031,6 +1084,7 @@ def merge_shards(shards: Path, root: Path) -> None:
     """
     groups: dict[str, list[pd.DataFrame]] = {}
     evren: dict[str, int] = {}
+    statuses: dict[str, dict] = {}
     for path in sorted(shards.rglob("sonuc.csv")):
         groups.setdefault(path.parent.name, []).append(pd.read_csv(path))
     for path in shards.rglob("evren.json"):
@@ -1048,6 +1102,9 @@ def merge_shards(shards: Path, root: Path) -> None:
         problems = sanity_check(table)
         if problems:
             raise SanityError(f"{date}: akıl sağlığı kapısı tutmadı, yayımlanmaz:\n- " + "\n- ".join(problems))
+        status = run_status(len(list(shards.rglob(f"{date}/bitti.json"))), expected, len(table), evren.get(date), mod, load_rules())
+        statuses[date] = status
+        (output / "durum.json").write_text(json.dumps(status, ensure_ascii=False, indent=1), encoding="utf-8")
         table.to_csv(output / "sonuc.csv", index=False)
         pd.DataFrame({"address": table.address}).to_csv(output / "asama1.csv.gz", index=False, compression="gzip")
         if evren.get(date):
@@ -1056,9 +1113,12 @@ def merge_shards(shards: Path, root: Path) -> None:
                             "median_holding_hours", "median_leverage", "kisa_islem_payi", "son90_dongu", "son_islem_gun", "gece_payi", "gecikme_gun", "gecikme_30dk_net", "gecikme_120dk_net",
                             "gecikme_480dk_net", "plasebo_p", "nw_t", "alfa_kiyas", "bhy_q", "adim3", "adim4", "adim5", "adim6", "adim7", "sinif"] if c in table]
         near = table[table.get("adim2") == "Geçti"].sort_values("nw_t", ascending=False)[cols].head(15)
-        (output / "RAPOR.md").write_text("# CT-Kapı v1.1\n\n" + funnel_report(table, evren.get(date))
+        banner = (f"> **DURUM: EKSİK** — {status['neden']}. Bu sonuç eksik koşudur; karar için kullanılmaz.\n\n" if status["durum"] == "eksik"
+                  else f"Durum: tamam (parça {status['parca_biten']}/{status['parca_beklenen']}).\n\n" if expected is not None else "")
+        (output / "RAPOR.md").write_text("# CT-Kapı v1.1\n\n" + banner + funnel_report(table, evren.get(date))
                                          + "\n\n" + freeze_report(table) + "\n\n## Adım 2'yi geçenler (alfa t'ye göre ilk 15)\n\n" + _md(near)
                                          + "\n\nGecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.\n", encoding="utf-8")
+    return statuses
 
 
 if __name__ == "__main__":

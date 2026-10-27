@@ -6,10 +6,14 @@ on:
   workflow_dispatch:
     inputs:
       mod:
-        description: "tam | hizli (--yalniz-adim5: önceki sonuçta adım 1–4 geçen adresler) | eksik (--eksikleri-tamamla)"
+        description: "tam | hizli (--yalniz-adim5: önceki sonuçta adım 1–4 geçen adresler + dış adaylar) | eksik (--eksikleri-tamamla)"
         type: choice
         options: [tam, hizli, eksik]
         default: tam
+      ekle:
+        description: "Kapıya zorla eklenecek adres(ler), boşlukla ayrılmış (kaynak = dis_aday)"
+        type: string
+        default: ""
   push:
     branches:
       - main
@@ -35,6 +39,7 @@ jobs:
       shards: ${{ steps.p.outputs.shards }}
       count: ${{ steps.p.outputs.count }}
       day: ${{ steps.p.outputs.day }}
+      ekle: ${{ steps.p.outputs.ekle }}
     steps:
       - uses: actions/checkout@v4
       - id: p
@@ -46,7 +51,14 @@ jobs:
             mod=$(grep -oE '^mod=(tam|hizli|eksik)' copytrade/kapi/CALISTIR | head -1 | cut -d= -f2 || true)
           fi
           mod="${mod:-tam}"
-          count=32; [ "$mod" = hizli ] && count=9   # hızlı: adres başına bir parça (ayrı IP)
+          ekle="${{ inputs.ekle }}"
+          if [ -z "$ekle" ] && [ "${{ github.event_name }}" = push ]; then
+            ekle=$(grep -oE '^ekle=.*' copytrade/kapi/CALISTIR | head -1 | cut -d= -f2- || true)
+          fi
+          # Yalnız 0x + 40 onaltılık hane kabul edilir (komut satırına başka bir şey geçmesin).
+          ekle=$(echo "$ekle" | grep -oE '0x[0-9a-fA-F]{40}' | tr '\n' ' ' || true)
+          echo "ekle=$ekle" >> "$GITHUB_OUTPUT"
+          count=32; [ "$mod" = hizli ] && count=24   # hızlı: 9 aday + dış adaylar; kısa parçalar, ayrı IP'ler
           echo "mod=$mod" >> "$GITHUB_OUTPUT"
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "shards=$(python3 -c "import json;print(json.dumps(list(range($count))))")" >> "$GITHUB_OUTPUT"
@@ -82,16 +94,18 @@ jobs:
             eksik) extra="--eksikleri-tamamla" ;;
             *) extra="" ;;
           esac
-          # Hızlı modda 25 dk sınır (9 parça): günlük (API'den) iş bitince okunabilsin; kısmi sonuç yine yayımlanır.
-          limit=100m; [ "${{ needs.plan.outputs.mod }}" = hizli ] && limit=25m
+          for a in ${{ needs.plan.outputs.ekle }}; do extra="$extra --adres $a"; done
+          # Hızlı modda 45 dk sınır: günlük (API'den) iş bitince okunabilsin. Hata gizlenmez: parça hata verirse veya zaman aşımına
+          # uğrarsa adım (ve iş) kırmızı olur; bitmeyen parça `bitti.json` bırakmaz, birleştirme sonucu `durum: eksik` yayımlar.
+          limit=100m; [ "${{ needs.plan.outputs.mod }}" = hizli ] && limit=45m
           export PYTHONWARNINGS=ignore
-          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} $extra || true
+          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} $extra
       - name: Sonuçları tarih klasörüyle paketle
         if: always()
         shell: bash
         run: |
           mkdir -p artifact/${{ needs.plan.outputs.day }}
-          cp -r copytrade/kapi/${{ needs.plan.outputs.day }}/. artifact/${{ needs.plan.outputs.day }}/ || true
+          if [ -d copytrade/kapi/${{ needs.plan.outputs.day }} ]; then cp -r copytrade/kapi/${{ needs.plan.outputs.day }}/. artifact/${{ needs.plan.outputs.day }}/; fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -124,17 +138,25 @@ jobs:
             git archive FETCH_HEAD copytrade/kapi kesif | tar -x || git archive FETCH_HEAD copytrade/kapi | tar -x
           fi
       - name: Birleştir
+        id: birlestir
         run: |
           # Hiçbir parça sonuç üretmediyse eski (main'deki) dosyalar yayımlanmasın.
           find shards -name sonuc.csv | grep -q . || { echo "Parçalardan sonuc.csv gelmedi; yayımlanacak yeni sonuç yok." >&2; exit 1; }
-          python -m copytrade.kapi --root copytrade --birlestir shards
+          python -m copytrade.kapi --root copytrade --birlestir shards --beklenen-parca ${{ needs.plan.outputs.count }} --mod ${{ needs.plan.outputs.mod }}
+          echo "durum=$(python3 -c "import json;print(json.load(open('copytrade/kapi/${{ needs.plan.outputs.day }}/durum.json'))['durum'])")" >> "$GITHUB_OUTPUT"
       - name: Keşif verisi ve ilişkili hesap işaretleri
-        if: needs.plan.outputs.mod != 'hizli'
-        # Keşif düşerse kapı sonuçları yine yayımlanır.
-        continue-on-error: true
+        # Eksik koşudan kesif.json üretilmez. Keşif düşerse iş kırmızı olur (sonuçlar yine yayımlanır: sonraki adımlar `!cancelled()`).
+        if: steps.birlestir.outputs.durum == 'tamam' && needs.plan.outputs.mod != 'hizli'
         run: python -m copytrade.kesif --root copytrade --output kesif
       - name: Veri dalına yaz
+        if: ${{ !cancelled() && steps.birlestir.outcome == 'success' }}
         env:
           DAY: ${{ needs.plan.outputs.day }}
           MOD: ${{ needs.plan.outputs.mod }}
         run: bash .github/scripts/kapi_yayimla.sh
+      - name: Eksik koşu işi kırmızı yapar
+        if: ${{ !cancelled() && steps.birlestir.outputs.durum == 'eksik' }}
+        run: |
+          echo "Koşu eksik (durum: eksik):" >&2
+          cat "copytrade/kapi/${{ needs.plan.outputs.day }}/durum.json" >&2
+          exit 1
