@@ -13,3 +13,4 @@
 - Teknik not: 1 saatlik mumun en çok 5.000 kayıt sınırı 200 günlük pencereyi kapsadığından mum çağrısı sayfalanmaz; her coin yanıtı bellek önbelleğinde paylaşılır.
 - Lider denetimi 1 (2026-10-27): adım 5 için 1.000 sabit tohumlu plasebo ve tek yönlü p; adım 6 için 365 günlük BTC eşleşmiş NW alfa; adım 7 BHY, adım 8 günlük PnL kümelemesi uygulanacak. Nakit akışları sonraki portfolio örneğine atanır; `accountClassTransfer` dış akış değildir.
 - Son doğrulama: `python -m pytest -q` — 36 geçti (2026-10-27).
+- Koşu 3 düzeltmesi: publish bağımlılık kurulumu ve modül birleştirme komutu eklendi; 16 parça, kaba portfolio ön süzgeci ve `--devam` kullanılacak.

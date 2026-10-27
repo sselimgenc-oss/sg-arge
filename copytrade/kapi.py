@@ -16,7 +16,7 @@ import pandas as pd
 import requests
 
 from copytrade.olcut import _funding_amount, calculate_metrics, closed_round_trips, perp_fills
-from copytrade.tarama import PublicClient, RateLimitError, prefilter
+from copytrade.tarama import PublicClient, RateLimitError, RateLimiter, prefilter
 from kapi.istatistik import deflated_sharpe_ratio, nw_alpha
 
 TAKER = 0.00045
@@ -331,13 +331,18 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--shard-count", type=int, default=1)
     parser.add_argument("--yalniz-adim5", action="store_true")
+    parser.add_argument("--devam", action="store_true")
+    parser.add_argument("--birlestir", type=Path)
     args = parser.parse_args(argv)
+    if args.birlestir:
+        merge_shards(args.birlestir, args.root)
+        return
     if args.shard_count < 1 or not 0 <= args.shard_index < args.shard_count:
         parser.error("shard index/count geçersiz")
     now, today = datetime.now(UTC), datetime.now(UTC).date().isoformat()
     out = args.root / "kapi" / today
     out.mkdir(parents=True, exist_ok=True)
-    client, rows = PublicClient(), []
+    client, rows = PublicClient(limiter=RateLimiter(1000)), []
     leaders = prefilter(client.leaderboard())
     if args.yalniz_adim5:
         previous = sorted((args.root / "kapi").glob("*/sonuc.csv"))
@@ -348,11 +353,22 @@ def main(argv: list[str] | None = None) -> None:
     start = int((now - timedelta(days=365)).timestamp() * 1000)
     start_200 = int((now - timedelta(days=200)).timestamp() * 1000)
     cache = CandleCache(client, start_200, int(now.timestamp() * 1000))
+    previous_path = out / "sonuc.csv"
+    previous_rows = pd.read_csv(previous_path).to_dict("records") if args.devam and previous_path.exists() else []
+    done = {str(row["address"]) for row in previous_rows}
+    rows = previous_rows
     for leader in leaders:
         address = leader["address"]
+        if address in done:
+            continue
         row: dict[str, Any] = {"address": address, "account_value": leader["accountValue"]}
         try:
-            portfolio, ledger = client.portfolio(address), client.non_funding_ledger(address, start)
+            portfolio = client.portfolio(address)
+            crude = stage1_stats(portfolio, [])
+            if crude and crude["profitable_month_ratio"] >= .50 and crude["return_12m"] > 0:
+                ledger = client.non_funding_ledger(address, start)
+            else:
+                ledger = []
             stats = stage1_stats(portfolio, ledger)
             row.update(stats or {})
             row["asama1"] = "Geçti" if stage1_pass(stats) else "Yetersiz"
@@ -385,9 +401,23 @@ def main(argv: list[str] | None = None) -> None:
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
     passed = sum(r.get("asama1") == "Geçti" for r in rows)
     (out / "RAPOR.md").write_text(
-        f"# CT-Kapı v1\n\n- Ham N: {len(leaders)}\n- 1. aşamayı geçen: {passed}\n"
+        f"# CT-Kapı v1\n\n- Evren: {len(leaders)}\n- İşlenen: {len(rows)}\n- 1. aşamayı geçen: {passed}\n"
         f"- Binance listesi: {binance_note}\n- Gecikme saat başına yuvarlandı (üst sınır).\n- Karar önerisi yok.\n",
         encoding="utf-8")
+
+
+def merge_shards(shards: Path, root: Path) -> None:
+    """Merge partial artifacts even if some timeout jobs produced no CSV."""
+    groups: dict[str, list[pd.DataFrame]] = {}
+    for path in shards.rglob("sonuc.csv"):
+        groups.setdefault(path.parent.name, []).append(pd.read_csv(path))
+    for date, frames in groups.items():
+        output = root / "kapi" / date
+        output.mkdir(parents=True, exist_ok=True)
+        table = pd.concat(frames, ignore_index=True).drop_duplicates("address", keep="last")
+        table.to_csv(output / "sonuc.csv", index=False)
+        pd.DataFrame({"address": table.address}).to_csv(output / "asama1.csv.gz", index=False, compression="gzip")
+        (output / "RAPOR.md").write_text(f"# CT-Kapı v1\n\n- Evren: {len(table)}\n- İşlenen: {len(table)}\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -30,7 +30,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - run: timeout 100m python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count 8 || true
+      - run: timeout 100m python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count 16 --devam || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -43,24 +43,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
       - uses: actions/download-artifact@v4
         with:
           path: shards
       - name: Birleştir ve dalda sakla
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          import pandas as pd
-          groups = {}
-          for path in Path("shards").rglob("sonuc.csv"):
-              groups.setdefault(path.parent.name, []).append(pd.read_csv(path))
-          for date, frames in groups.items():
-              root = Path("copytrade/kapi") / date
-              root.mkdir(parents=True, exist_ok=True)
-              pd.concat(frames, ignore_index=True).to_csv(root / "sonuc.csv", index=False)
-          PY
+          python -m copytrade.kapi --root copytrade --birlestir shards
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f copytrade/kapi
           git commit -m "copytrade: CT-Kapı sonuçları" || exit 0
-          git push origin HEAD:${{ github.ref_name }}
+          for try in 1 2 3; do git pull --rebase origin "${{ github.ref_name }}" && git push origin HEAD:${{ github.ref_name }} && exit 0; sleep 5; done
+          exit 1
