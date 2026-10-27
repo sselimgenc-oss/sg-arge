@@ -17,7 +17,6 @@ from copytrade.kopya import simulate
 from copytrade.kurallar import evaluate, load_rules
 from copytrade.olcut import calculate_metrics
 
-MAX_ADDRESSES = 150  # lider kararı 2026-10-26: ilk koşular 150 adres (görevde 300); hız sınırı ölçülünce artırılır
 LEADERBOARD = "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard"
 INFO = "https://api.hyperliquid.xyz/info"
 MAX_WEIGHT_PER_MINUTE = 700  # IP sınırı 1.200; yanıt boyutu ek ağırlığı ve paylaşılan Actions IP'leri için pay
@@ -82,6 +81,16 @@ class PublicClient:
             cursor = newest + 1
         return result
 
+    def portfolio(self, address: str) -> list[dict]:
+        return self.info({"type": "portfolio", "user": address}, weight=20) or []
+
+    def non_funding_ledger(self, address: str, start_ms: int) -> list[dict]:
+        return self.info({"type": "userNonFundingLedgerUpdates", "user": address, "startTime": start_ms}, weight=20) or []
+
+    def candles(self, coin: str, start_ms: int, end_ms: int, interval: str = "1m") -> list[dict]:
+        return self.info({"type": "candleSnapshot", "req": {"coin": coin, "interval": interval,
+                          "startTime": start_ms, "endTime": end_ms}}, weight=20) or []
+
 
 def _address(row: dict) -> str:
     return str(row.get("ethAddress", row.get("address", row.get("user", ""))))
@@ -102,22 +111,29 @@ def _window(row: dict, name: str, field: str) -> float:
         if str(window).lower() in wanted:
             return float(values.get(field, 0) or 0)
     keys = (f"{name}{field.upper()}", f"{name}{field.capitalize()}", f"{name}_{field}")
-    return next((float(row[key] or 0) for key in keys if key in row), 0.0)
+    direct = next((float(row[key] or 0) for key in keys if key in row), None)
+    if direct is not None:
+        return direct
+    # Flattened leaderboard names use mixed case (for example ``allTimePnl``).
+    wanted_key = f"{name}{field}".lower().replace("_", "")
+    return next((float(value or 0) for key, value in row.items()
+                 if str(key).lower().replace("_", "") == wanted_key), 0.0)
 
 
-def prefilter(rows: list[dict], watchlist: list[dict]) -> list[dict]:
-    watch = {x["address"].lower() for x in watchlist}
+def prefilter(rows: list[dict], watchlist: list[dict] | None = None) -> list[dict]:
+    """CT-Kapı evreni: lider tablosundaki tüm yeterli büyüklükte, pozitif PnL'li hesaplar.
+
+    ``watchlist`` eski günlük tarayıcı çağrılarıyla uyumluluk içindir; kapı evrenini genişletmez veya daraltmaz.
+    """
+    watch = {x["address"].lower() for x in watchlist or []}
     accepted = []
     for row in rows:
         address = _address(row)
         account = float(row.get("accountValue", row.get("account_value", 0)) or 0)
-        month = _window(row, "month", "roi")
-        all_time = _window(row, "allTime", "roi")
-        if address and (address.lower() in watch or (account >= 25_000 and month > 0 and all_time > 0)):
+        all_time_pnl = _window(row, "allTime", "pnl")
+        if address and account >= 25_000 and all_time_pnl > 0:
             row = dict(row); row["address"] = address; row["accountValue"] = account; accepted.append(row)
-    ranked = sorted((x for x in accepted if x["address"].lower() not in watch),
-                    key=lambda x: _window(x, "allTime", "pnl") / max(x["accountValue"], 1), reverse=True)[:MAX_ADDRESSES]
-    return ranked + [x for x in accepted if x["address"].lower() in watch]
+    return sorted(accepted, key=lambda x: x["address"].lower())
 
 
 def _write_gzip(rows: list[dict], path: Path, append: bool = False) -> None:
