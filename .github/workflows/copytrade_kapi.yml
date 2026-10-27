@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - codex/copytrade-kapi
+    paths:
+      - copytrade/kapi/CALISTIR
 
 permissions:
   contents: write
