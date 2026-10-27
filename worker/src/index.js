@@ -31,12 +31,20 @@ function number(value, digits = 2) {
   return new Intl.NumberFormat("tr-TR", { maximumFractionDigits: digits }).format(value);
 }
 
+// durum.json'daki traderlar[].tarz (v1.3): yalnız intraday ve swing etiketlenir
+const STYLE_LABEL = { intraday: "[Intraday]", swing: "[Swing]" };
+
+function nameWithStyle(trader) {
+  const label = STYLE_LABEL[trader.tarz];
+  return label ? `${trader.takma_ad} ${label}` : trader.takma_ad;
+}
+
 function formatEvent(event, trader) {
-  if (event.tur === "isik") return `🔴 ${trader.takma_ad} · sağlık ışığı kırmızı`;
+  if (event.tur === "isik") return `🔴 ${nameWithStyle(trader)} · sağlık ışığı kırmızı`;
   const icon = { acilis: "🟢", kapanis: "🔴", buyutme: "🔵" }[event.tur] || "⚪";
   const action = { acilis: "açtı", kapanis: "kapattı", buyutme: "büyüttü" }[event.tur];
   const pct = event.hesap_payi == null ? "" : ` · hesabın %${number(event.hesap_payi * 100, 1)}'i`;
-  return `${icon} ${trader.takma_ad} · ${event.coin} ${event.yon.toUpperCase()} ${action} · giriş ${number(event.fiyat)}${pct}`;
+  return `${icon} ${nameWithStyle(trader)} · ${event.coin} ${event.yon.toUpperCase()} ${action} · giriş ${number(event.fiyat)}${pct}`;
 }
 
 function callbackData(event, decision, reason) {
@@ -104,14 +112,20 @@ async function runCron(env, fetcher = fetch) {
         if (["acilis", "kapanis", "buyutme"].includes(event.tur)) await sendOnce(env, event, trader, fetcher);
       }
       const newest = Math.max(Number(stored.son_dolum), ...rows.map(row => Number(row.time)));
-      await env.DB.prepare("UPDATE imlec SET son_dolum = ? WHERE trader = ?").bind(newest, trader.id).run();
+      // Her dakika çalıştığı için yalnız değişince yazılır (D1 ücretsiz yazma kotası).
+      if (newest !== Number(stored.son_dolum)) {
+        await env.DB.prepare("UPDATE imlec SET son_dolum = ? WHERE trader = ?").bind(newest, trader.id).run();
+      }
     } catch { /* the cursor intentionally remains unchanged */ }
     const previous = await env.DB.prepare("SELECT isik FROM isik WHERE trader = ?").bind(trader.id).first();
     if (trader.saglik?.isik === "kirmizi" && previous?.isik !== "kirmizi") {
       await sendOnce(env, { id: `${trader.id}-${status.uretildi}-isik`, tur: "isik", coin: "", yon: "", fiyat: null, hesap_payi: null }, trader, fetcher);
     }
-    await env.DB.prepare("INSERT INTO isik(trader, isik) VALUES (?, ?) ON CONFLICT(trader) DO UPDATE SET isik=excluded.isik")
-      .bind(trader.id, trader.saglik?.isik || "yesil").run();
+    const current = trader.saglik?.isik || "yesil";
+    if (previous?.isik !== current) {
+      await env.DB.prepare("INSERT INTO isik(trader, isik) VALUES (?, ?) ON CONFLICT(trader) DO UPDATE SET isik=excluded.isik")
+        .bind(trader.id, current).run();
+    }
   }
 }
 
