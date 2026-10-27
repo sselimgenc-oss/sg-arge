@@ -182,22 +182,40 @@ def test_position_open_before_window_has_unknown_holding_and_spot_is_excluded():
 def test_inceleme_stability_report_runs_offline(tmp_path: Path, monkeypatch):
     import copytrade.inceleme as inc
 
+    day = 86_400_000
+    t0 = 1_700_000_000_000
+    pnl = [[t0 + i * 30 * day, str(1000 * i)] for i in range(10)]          # her ay +1000: kârlı ay %100
+    value = [[t0 + i * 30 * day, "60000"] for i in range(10)]
+
     class Fake:
         def leaderboard(self):
             return [{"ethAddress": "0xa", "accountValue": "60000", "windowPerformances": [
                 ["week", {"roi": "0.01"}], ["month", {"roi": "0.05", "vlm": "120000"}], ["allTime", {"roi": "0.5", "pnl": "30000"}]]}]
 
         def fills(self, address, start, max_rows=None):
-            return [{"time": 1_700_000_000_000, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0",
-                     "closedPnl": "0", "fee": "0"},
-                    {"time": 1_700_036_000_000, "coin": "BTC", "side": "A", "sz": "1", "px": "110", "startPosition": "1",
-                     "closedPnl": "10", "fee": "0"}]
+            return [{"time": t0, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0",
+                     "closedPnl": "0", "fee": "0", "oid": 1},
+                    {"time": t0 + 36_000_000, "coin": "BTC", "side": "A", "sz": "1", "px": "110", "startPosition": "1",
+                     "closedPnl": "10", "fee": "0", "oid": 2}]
 
         def info(self, payload, weight=20):
+            if payload["type"] == "portfolio":
+                return [["allTime", {"pnlHistory": pnl, "accountValueHistory": value}]]
             return [] if payload["type"] == "userFunding" else {"assetPositions": []}
 
     monkeypatch.setattr(inc, "PublicClient", Fake)
     out = tmp_path / "r.md"
     inc.main(["--mod", "istikrar", "--cikti", str(out)])
     text = out.read_text()
-    assert "Swing: medyan tutma ≥ 4 saat | 1" in text and "Veri okundu | 1" in text
+    assert "1. aşamadan geçti | 1" in text and "| `0xa…` | 100% |" in text
+
+
+def test_martingale_ignores_laddered_entry_and_leverage_uses_position_value():
+    from copytrade.olcut import effective_leverage, martingale_ratio
+    fills = [{"time": 1, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0", "oid": 1},
+             {"time": 2, "coin": "BTC", "side": "B", "sz": "1", "px": "99.5", "startPosition": "1", "oid": 2},   # -%0,5: kademeli
+             {"time": 3, "coin": "BTC", "side": "B", "sz": "1", "px": "90", "startPosition": "2", "oid": 3}]     # -%10: zarara ekleme
+    ratio, additions = martingale_ratio(fills)
+    assert additions == 2 and ratio == 0.5
+    median, top = effective_leverage(fills, 1000)
+    assert round(top, 2) == 0.27   # 3 BTC × 90 / 1000

@@ -82,17 +82,34 @@ def closed_round_trips(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return rows
 
 
-def martingale_ratio(fills: list[dict[str, Any]]) -> tuple[float, int]:
-    """Share of same-direction additions made while the open position is under water.
+def _orders(data: pd.DataFrame) -> list[dict[str, Any]]:
+    """Fill'leri emir (``oid``) düzeyinde birleştirir: tek emrin parçalı dolumları tek ekleme sayılır."""
+    if "oid" not in data:
+        return data.to_dict("records")
+    rows = []
+    for _, group in data.groupby("oid", sort=False):
+        first = group.iloc[0].to_dict()
+        size = float(group["sz"].sum())
+        first["px"] = float((group["px"] * group["sz"]).sum() / size) if size else float(group["px"].iloc[0])
+        first["sz"] = size
+        rows.append(first)
+    return sorted(rows, key=lambda r: r["time"])
 
-    An addition never closes PnL, so ``closedPnl`` cannot show it; instead the running average entry price per coin
-    is rebuilt from the fills and the addition's price is compared with it. Returns (ratio, number of additions).
+
+def martingale_ratio(fills: list[dict[str, Any]], min_adverse: float = 0.02) -> tuple[float, int]:
+    """Share of same-direction additions made while the open position is under water by more than ``min_adverse``.
+
+    Measured per order (``oid``), so a laddered entry is not many additions. An addition never closes PnL, so
+    ``closedPnl`` cannot show it; the running average entry per coin is rebuilt from the orders instead.
+    Returns (ratio, number of additions).
     """
     data = _frame(fills)
+    if data.empty:
+        return 0.0, 0
     position: defaultdict[str, float] = defaultdict(float)
     entry: dict[str, float] = {}
     additions = losing = 0
-    for row in data.to_dict("records"):
+    for row in _orders(data):
         coin = str(row.get("coin", ""))
         before = float(row.get("startPosition", position[coin]))
         signed = float(row.get("sz", 0)) * (-1 if str(row.get("side", "")) in {"A", "Sell", "sell"} else 1)
@@ -101,7 +118,7 @@ def martingale_ratio(fills: list[dict[str, Any]]) -> tuple[float, int]:
         if abs(before) > 1e-12 and before * signed > 0:
             if coin in entry:  # opening fill seen: we know the average entry
                 additions += 1
-                if (px - entry[coin]) * (1 if before > 0 else -1) < 0:
+                if (px / entry[coin] - 1) * (1 if before > 0 else -1) < -min_adverse:
                     losing += 1
                 entry[coin] = (entry[coin] * abs(before) + px * abs(signed)) / abs(after)
         elif abs(before) < 1e-12 or before * after < 0:
@@ -112,10 +129,33 @@ def martingale_ratio(fills: list[dict[str, Any]]) -> tuple[float, int]:
     return (losing / additions if additions else 0.0), additions
 
 
+def effective_leverage(fills: list[dict[str, Any]], account_value: float) -> tuple[float | None, float | None]:
+    """(medyan, en yüksek) gerçek kaldıraç: dolumlardan kurulan toplam pozisyon değeri / hesap değeri.
+
+    Hesap ayarındaki kaldıraç (ör. 20x) değil; açık pozisyonların nominal büyüklüğü. Her dolumdan sonra örneklenir.
+    """
+    data = _frame(fills)
+    if data.empty or not account_value or account_value <= 0:
+        return None, None
+    position: defaultdict[str, float] = defaultdict(float)
+    price: dict[str, float] = {}
+    samples = []
+    for row in data.to_dict("records"):
+        coin = str(row.get("coin", ""))
+        before = float(row.get("startPosition", position[coin]))
+        signed = float(row.get("sz", 0)) * (-1 if str(row.get("side", "")) in {"A", "Sell", "sell"} else 1)
+        position[coin], price[coin] = before + signed, float(row.get("px", 0))
+        samples.append(sum(abs(q) * price.get(c, 0) for c, q in position.items()) / account_value)
+    series = pd.Series(samples)
+    active = series[series > 0]
+    return (float(active.median()) if len(active) else 0.0), float(series.max())
+
+
 def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]] | None = None,
                       portfolio: list[dict[str, Any]] | None = None, liquid_coins: set[str] | None = None,
                       leverages: list[float] | None = None, account_value: float | None = None,
-                      martingale_max_ratio: float = 0.25, martingale_min_additions: int = 5) -> dict[str, Any]:
+                      martingale_max_ratio: float = 0.25, martingale_min_additions: int = 5,
+                      martingale_min_adverse: float = 0.02) -> dict[str, Any]:
     """``account_value`` is the return denominator when no ``portfolio`` history is given (never 1 USD)."""
     fills = perp_fills(fills)
     data = _frame(fills)
@@ -154,7 +194,8 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
     volumes = (data["px"].abs() * data["sz"].abs()).groupby(data.get("coin", "")).sum()
     total_volume = float(volumes.sum())
     liquid_share = (float(volumes[volumes.index.isin(liquid_coins or set())].sum()) / total_volume if total_volume else 0.0)
-    ratio, additions = martingale_ratio(fills)
+    ratio, additions = martingale_ratio(fills, martingale_min_adverse)
+    lev_median, lev_max = effective_leverage(fills, denominator)
     return {
         "history_days": int((data.time.iloc[-1] - data.time.iloc[0]).total_seconds() // 86400),
         "closed_trades": len(rounds), "profitable_month_ratio": float((daily.resample("MS").sum() > 0).mean()),
@@ -164,8 +205,8 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
         "profit_factor_without_best": (sum(x for x in without_best if x > 0) / gross_loss if gross_loss else None),
         "median_holding_hours": (float(pd.Series(held).median()) if (held := [x["holding_hours"] for x in rounds
                                   if x["holding_hours"] is not None]) else None),
-        "median_leverage": float(pd.Series(leverages or []).median()) if leverages else None,
-        "max_leverage": max(leverages) if leverages else None, "liquid_coin_share": liquid_share,
+        "median_leverage": lev_median, "max_leverage": lev_max,
+        "setting_leverage": max(leverages) if leverages else None, "liquid_coin_share": liquid_share,
         "martingale_ratio": ratio, "martingale_additions": additions,
         "martingale_signal": additions >= martingale_min_additions and ratio > martingale_max_ratio,
     }
