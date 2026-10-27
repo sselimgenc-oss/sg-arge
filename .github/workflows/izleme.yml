@@ -1,0 +1,53 @@
+name: Copy trade saatlik izleme
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+  # Görev gereği ilk doğrulama dalın push olayıyla yapılır.
+  push:
+    branches: [codex/izleme]
+    paths:
+      - copytrade/izleme_motoru.py
+      - copytrade/izleme_listesi.yaml
+      - tests/test_izleme.py
+      - pano/saglik.py
+      - .github/workflows/izleme.yml
+      - .github/scripts/izleme_yayimla.sh
+
+permissions:
+  contents: write
+
+concurrency:
+  group: copytrade-izleme
+  cancel-in-progress: false
+
+jobs:
+  izleme:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - name: Durum arşivini geri yükle
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --heads origin copytrade-izleme >/dev/null; then
+            git fetch origin copytrade-izleme
+            git archive FETCH_HEAD izleme | tar -x
+          else
+            status=$?
+            if [ "$status" -ne 2 ]; then exit "$status"; fi
+          fi
+      - name: Halka açık veriyi oku ve sanal defteri güncelle
+        run: python -m copytrade.izleme_motoru --root . --output izleme
+      - name: Arşivi ayrı veri dalına yaz
+        run: bash .github/scripts/izleme_yayimla.sh

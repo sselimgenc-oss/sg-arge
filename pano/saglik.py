@@ -99,7 +99,9 @@ def backtest_islem_sayisi(kitap_id: str, piyasa: str, root: Path = ROOT, tf: str
     return None, None
 
 
-def blok_bootstrap(returns: pd.Series, weeks: int, *, seed: int = 0) -> dict[str, list[float]] | None:
+def blok_bootstrap(returns: pd.Series, weeks: int, *, seed: int = 0,
+                   quantiles: tuple[int, ...] = (1, 5, 50, 95, 99),
+                   block_size: int = BLOCK_WEEKS) -> dict[str, list[float]] | None:
     if weeks <= 0 or returns.empty:
         return None
     values = returns.to_numpy(dtype=float)
@@ -109,10 +111,10 @@ def blok_bootstrap(returns: pd.Series, weeks: int, *, seed: int = 0) -> dict[str
         out: list[float] = []
         while len(out) < weeks:
             start = int(rng.integers(0, len(values)))
-            out.extend(values[(start + np.arange(BLOCK_WEEKS)) % len(values)].tolist())
+            out.extend(values[(start + np.arange(block_size)) % len(values)].tolist())
         paths[row] = out[:weeks]
     equity = np.cumprod(1 + paths, axis=1) - 1
-    return {f"p{q}": [float(v) for v in np.quantile(equity, q / 100, axis=0)] for q in (1, 5, 50, 95, 99)}
+    return {f"p{q}": [float(v) for v in np.quantile(equity, q / 100, axis=0)] for q in quantiles}
 
 
 def _mdd(returns: pd.Series) -> float:
