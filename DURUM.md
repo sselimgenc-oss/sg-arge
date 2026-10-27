@@ -23,23 +23,21 @@ paper'daki 13 kitaptan yalnız 2'sinde zayıf alfa izi vardı (`docs/kapi_kontro
 **1. Pano — BİTTİ (2026-10-27):** sg-pano gerçek veriyi gösteriyor (sg-pano #9; motor sg-arge #277).
 | Kim | İş | Durum |
 |---|---|---|
-| Codex | İzleme motoru, İş A (#277, HIP-3 dahil) | bitti; saatlik (:23) `copytrade-izleme` dalına yazıyor |
+| Codex | İzleme motoru (#277) + Telegram Worker (#283) | bitti |
 | Sonnet | sg-pano: v1.1 + mobil (#6, #7), paper kaldırıldı (#8), canlı veri (#9) | bitti |
 | Argon | Telegram ön araştırması (`arastirma/copytrade/argon_worker_teknik.md`) | bitti; sırası gelene kadar boşta |
 | Lider | denetim, birleştirme | bitti |
 Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama kararı değil).
 
-**2. Telegram — ŞU AN:** görev `docs/GOREV_TELEGRAM.md` (Codex, dal `codex/telegram`; önce motor düzeltmeleri).
-Kullanıcı: Cloudflare hesabı ✅, BotFather botu ✅; sırada GitHub Secrets (Codex PR'ındaki adımlar). kendi botumuz, Cloudflare Worker + KV (Argon notu: hazır servislerde
-[Açtım]/[Atladım] düğmesi ve veri aktarımı yok). Codex İş B; kullanıcı: Cloudflare ücretsiz hesap, BotFather.
+**2. Telegram — BİTTİ (2026-10-27):** Cloudflare Worker `sg-arge-telegram` yayında (sg-arge #283–#286): 5 dk'da bir
+bildirim, [Açtım]/[Atladım], `/durum`. Kararlar saatlik işle `copytrade-izleme/izleme/kararlar.jsonl`'a (`KARAR_URL`).
+Açık kontrol: ilk gerçek bildirimde düğme → karar → panoya akış uçtan uca izlenecek. Not: saatlik zamanlama ilk
+saatlerde tetiklenmedi (GitHub gecikmesi); düzelmezse incelenecek.
 
-**3. Trader seçimi** (Telegram bitince): CT-Kapı tam sonucu incelenir (`copytrade/kapi/2026-10-27/`). Bilinen
+**3. Trader seçimi — SIRADAKİ (kullanıcı başlatınca):** CT-Kapı tam sonucu incelenir (`copytrade/kapi/2026-10-27/`). Bilinen
 sorunlar: 12.461 adresin 8.196'sı işlendi; adım 5 plasebo hiçbir adreste hesaplanmadı (p boş) → düzeltilecek.
 "İlişkili hesaplar" kontrolü eklenecek (alt hesap, vault, iç transfer, ortak agent — Argon notu). Sonra gerçek
 izleme listesi ve 3 aylık sanal izleme.
-
-**İzleme motoru için sonraya (Codex, Telegram'dan önce):** tek trader'ın hatası tüm koşuyu durduruyor; iş akışı 3,5 günden
-uzun durursa 1 dk mum penceresi kaçar ve motor kalıcı hata verir; ışık değişimi ilk koşuda da olay yazıyor; `codex/izleme` push tetiği silinecek.
 
 **Sonraya notlar:** Telegram mini uygulama; HIP-3 hafta sonu boşluğu uyarısı; mali müşavir soru listesi
 (`arastirma/copytrade/argon_kalicilik_cloudflare_turkiye.md`); gerçek para yok (en erken sanal izleme + ölçütler sonrası).
