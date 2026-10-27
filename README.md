@@ -26,4 +26,4 @@ npx tailwindcss -c tailwind.config.js -i in.css -o vendor/tailwind.3.4.17.css --
 ## Copy trade sekmeleri (Copy trade · CT akış · CT istatistik)
 Tanım: `sg-arge/docs/PANO_COPYTRADE.md`; veri biçimi: `sg-arge/docs/VERI_SOZLESMESI.md` (sürüm 1; başka sürüm reddedilir). Salt okunur: emir ve para hareketi yok.
 Kaynak adresleri `index.html` içinde `CT_KAYNAK` / `CT_KARAR` sabitleridir. Canlı veriye geçmek için yalnız bu ikisi, sg-arge `copytrade-izleme` dalındaki ham `izleme/durum.json` ve `izleme/kararlar.jsonl` adreslerine çevrilir (yorum satırında yazılı). Karar dosyası yoksa (404) "henüz karar kaydı yok" sayılır; okunamazsa sayfa bunu belirtir.
-Sözleşmede olmayan veriler (sanal kopya eğrisi; açtıklarımın olay başına sanal sonucu) uydurulmaz, ekranda "veri yok" yazar.
+Sözleşme v1.1 alanları (`sanal_kopya.egri`, `olaylar[].sanal_sonuc`) kullanılır; "açtıklarım ↔ tümü" kapanmış olayların ortalama net %'sidir, kapanmış ve karar verilmiş olay < 10 ise "yetersiz veri" yazar. Veride olmayan şey ekranda "veri yok" der, uydurulmaz.
