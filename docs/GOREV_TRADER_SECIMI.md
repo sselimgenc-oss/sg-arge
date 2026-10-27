@@ -97,5 +97,5 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
 - `docs/codex_durum_trader_secimi.md`: yapılanlar, seçimler, sınırlar.
 
 ## Sonra
-Sonnet: pano **Keşif** sekmesi (`kesif.json`; ayrı görev). Lider: adayları inceler ve kullanıcıya önerir. İzleme listesi
+Codex: pano **Keşif** sekmesi (sg-pano, `kesif.json`; ayrı görev, kullanıcı kararı). Lider: adayları inceler ve kullanıcıya önerir. İzleme listesi
 **kullanıcı onayıyla** güncellenir; t0 = giriş günü; 3 ay sanal izleme. Gerçek para yok.
