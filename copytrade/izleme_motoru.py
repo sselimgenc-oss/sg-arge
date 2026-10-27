@@ -472,9 +472,16 @@ def data_error_reason(error: Exception) -> str:
 
 def unavailable_trader(root: Path, row: dict, error: Exception) -> dict:
     """Publish an explicit placeholder when a trader has never completed a read."""
-    return {**row, 'tarz': resolve_style(root, row), 'veri_zamani': None, 'gecerli': False,
+    # Pano bu alanları koşulsuz okur; eksik alan sayfanın tamamını bozar.
+    style = resolve_style(root, row)
+    return {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': None, 'gecerli': False,
+            'kapi': gate_result(root, row['adres']),
             'saglik': {'isik': 'sari', 'nedenler': [f'veri hatası: {data_error_reason(error)}']},
-            'pozisyonlar': []}
+            'form': {'skor': 0.0, 'getiri_30g': 0.0, 'getiri_90g': 0.0},
+            'hesap_degeri': 0.0, 'pozisyonlar': [], 'egri': [],
+            'son_islem': {'coin': '', 'yon': '', 'acilis': '', 'kapanis': '', 'net_yuzde': 0.0},
+            'sanal_kopya': {'baslangic_usd': 1000, 'bakiye_usd': 1000.0, 'getiri': 0.0, 'dusus': 0.0,
+                            'gecikme_dk': delay_for_style(style), 't0': str(timestamp(row['t0']).date()), 'egri': []}}
 
 
 def update_trader(root: Path, client, dexes: list[str], state: dict, all_events: dict,

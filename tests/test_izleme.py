@@ -77,8 +77,12 @@ def test_first_run_error_is_published_as_invalid_trader(tmp_path, capsys):
             return super().fills(address, start)
     result = m.run(root, root / 'out', FirstReadBroken(), NOW)
     broken = next(trader for trader in result['traderlar'] if trader['id'] == 'T2')
-    assert broken == {**rows[1], 'veri_zamani': None, 'gecerli': False,
-                      'saglik': {'isik': 'sari', 'nedenler': ['veri hatası: ilk yanıt yok']}, 'pozisyonlar': []}
+    assert {k: broken[k] for k in ('id', 'adres', 'tarz', 'veri_zamani', 'gecerli', 'saglik', 'pozisyonlar')} == {
+        'id': 'T2', 'adres': rows[1]['adres'], 'tarz': 'swing', 'veri_zamani': None, 'gecerli': False,
+        'saglik': {'isik': 'sari', 'nedenler': ['veri hatası: ilk yanıt yok']}, 'pozisyonlar': []}
+    # Pano bu alanları koşulsuz okur: yer tutucu, sağlam trader ile aynı anahtarları taşımalı.
+    healthy = next(trader for trader in result['traderlar'] if trader['id'] == 'T1')
+    assert set(healthy) - {'kopya_paydasi'} <= set(broken)
     assert 'T2: veri hatası: ilk yanıt yok' in capsys.readouterr().out
 
 
