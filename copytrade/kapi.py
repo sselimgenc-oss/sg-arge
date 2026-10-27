@@ -199,13 +199,22 @@ def binance_availability(coin: str, symbols: set[str] | None) -> str:
     return "bilinmiyor" if symbols is None else ("var" if binance_symbol(coin) in symbols else "yok")
 
 
+_OPEN_LOOKUPS: dict[int, tuple[list, "_Opens"]] = {}
+
+
 def next_candle_open(candles: list[dict], event_ms: int, delay_minutes: int) -> float | None:
-    """Use the first candle opening at/after the requested delay; never its close."""
-    target = event_ms + delay_minutes * 60_000
-    for candle in sorted(candles, key=lambda x: int(x.get("t", x.get("time", 0)))):
-        if int(candle.get("t", candle.get("time", 0))) >= target:
-            return float(candle.get("o", candle.get("open")))
-    return None
+    """Use the first candle opening at/after the requested delay; never its close.
+
+    Mum listesi başına sıralı arama tablosu bir kez kurulur (eskiden her çağrıda yeniden sıralanıyordu: bir adreste
+    ~60 sn). Aynı liste nesnesi + aynı uzunluk = aynı tablo.
+    """
+    if not candles:
+        return None
+    held = _OPEN_LOOKUPS.get(id(candles))
+    if held is None or held[0] is not candles or held[1].count != len(candles):
+        held = (candles, _Opens(candles))
+        _OPEN_LOOKUPS[id(candles)] = held
+    return held[1].at(event_ms + delay_minutes * 60_000)
 
 
 def delayed_copy(fills: list[dict], candles: dict[str, list[dict]], account_value: float, delay_minutes: int,
@@ -345,6 +354,7 @@ class _Opens:
     def __init__(self, candles: list[dict]):
         rows = sorted((int(x.get("t", x.get("time", 0))), float(x.get("o", x.get("open")))) for x in candles)
         self.times, self.opens = [t for t, _ in rows], [o for _, o in rows]
+        self.count = len(candles)
 
     def at(self, ms: int) -> float | None:
         index = bisect_left(self.times, ms)
@@ -665,6 +675,9 @@ def main(argv: list[str] | None = None) -> None:
     start_200 = int((now - timedelta(days=200)).timestamp() * 1000)
     cache = CandleCache(client, start_200, int(now.timestamp() * 1000))
     previous_rows = pd.read_csv(previous_path).to_dict("records") if args.devam and previous_path.exists() else []
+    if previous_path.exists() and not args.devam:
+        # Veri dalından getirilen eski sonuç yalnız referanstı (yukarıda okundu); parça çıktısı ona karışmasın.
+        previous_path.unlink()
     done = {str(row["address"]) for row in previous_rows}
     rows = previous_rows
     print(f"Koşu: evren {evren}, bu parçada {len(leaders)} adres (parça {args.shard_index}/{args.shard_count})", flush=True)
