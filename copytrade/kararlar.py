@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 FIELDS = ('olay_id', 'zaman', 'karar', 'neden', 'not')
 DECISIONS = {'acti', 'atladi'}
@@ -37,7 +37,9 @@ def merge(path: Path, incoming: list[object]) -> list[dict]:
 
 
 def fetch(url: str) -> list[object]:
-    with urlopen(url, timeout=20) as response:  # nosec B310: URL is a reviewed GitHub variable.
+    # Cloudflare varsayılan Python-urllib kimliğini 403 ile reddediyor; açık bir User-Agent gerekir.
+    request = Request(url, headers={'User-Agent': 'sg-arge-izleme/1.0', 'Accept': 'application/json'})
+    with urlopen(request, timeout=20) as response:  # nosec B310: URL is a reviewed GitHub variable.
         data = json.load(response)
     if not isinstance(data, list):
         raise ValueError('Worker karar yanıtı liste olmalı.')
