@@ -148,3 +148,13 @@ def test_rate_limited_address_is_recorded_as_no_data_and_run_continues(tmp_path:
 
     table = run(tmp_path, Client(), today="2026-10-27")
     assert dict(zip(table.address, table.sonuc))["0xA"] == "veri_yok" and len(table) == 2
+
+
+def test_inceleme_pick_and_monthly():
+    from copytrade.inceleme import monthly, pick
+    rows = [{"ethAddress": "0xa", "accountValue": "200000", "windowPerformances": [["month", {"roi": "0.1"}], ["allTime", {"roi": "1", "pnl": "400000"}]]},
+            {"ethAddress": "0xb", "accountValue": "50000", "windowPerformances": [["month", {"roi": "0.1"}], ["allTime", {"roi": "1", "pnl": "900000"}]]},
+            {"ethAddress": "0xc", "accountValue": "300000", "windowPerformances": [["month", {"roi": "-0.1"}], ["allTime", {"roi": "1", "pnl": "1"}]]}]
+    assert [r["address"] for r in pick(rows, 5)] == ["0xa"]
+    fills = [{"time": 1704067200000, "closedPnl": "10", "fee": "1"}, {"time": 1706745600000, "closedPnl": "-5", "fee": "1"}]
+    assert monthly(fills, []).round(6).to_dict() == {"2024-01": 9.0, "2024-02": -6.0}
