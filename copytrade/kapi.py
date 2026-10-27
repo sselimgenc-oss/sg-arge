@@ -660,6 +660,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
             return row
         account, now_ms = float(leader["accountValue"]), int(now.timestamp() * 1000)
         fills = client.fills(address, start)
+        row["sure_dolum_sayisi"] = len(fills)
         progress.stage("fills", f"{len(fills)} dolum")
         funding = client.info({"type": "userFunding", "user": address, "startTime": start}, weight=20) or []
         progress.stage("funding", f"{len(funding)} kayıt")
@@ -719,6 +720,10 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         outcome = row["neden"]
     finally:
         progress.done(outcome)
+        # Süreler sonuc.csv'ye de yazılır (Actions günlüğüne bakmadan okunabilsin).
+        row.update({f"sure_{name}_sn": round(value, 1) for name, value in progress.stages.items()})
+        row["sure_toplam_sn"] = round(time.perf_counter() - progress.begin, 1)
+        row["sure_yeni_mum_istegi"] = progress.cache.requests - progress.snap[0]
     return row
 
 
