@@ -71,8 +71,47 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
     gün sayısı `gecikme_gun` (≈200, mum sınırı).
 13. **Mutabakat:** `0x1404109f8cd4a79a0447365edbb7a13acd0b2f27` için gecikmeli kopya sonucunu ayrıntılı ver (aralık,
     işlem sayısı, coinler, HIP-3 dahil mi, payda, maliyet); bir model aynı adres için 190 günde −%22,6 buldu, bizde +%22.
+14. **Kârlı ay eşiği (kullanıcı kararı 2026-10-27):** 1. aşama ≥ %44, adım 4 ≥ %49 (önce %60/%60). Gerekçe: swing
+    trader'da kâr az sayıda büyük işlemden gelir; şans kontrolünü "en büyük işlem payı" ve "en iyisiz PF" yapar.
+15. **Düşüş ölçümü hatası (hata düzeltmesi):** 2026-10-27 sonucunda 1.308 adreste `max_drawdown` > 1 (imkânsız).
+    PnL / medyan hesap değeri paydası yatırma-çekme ve büyüyen hesapta bozuluyor. Düşüşü sermaye eğrisinden hesapla
+    (zaman ağırlıklı getiri zinciri; yatırma/çekme getiri sayılmaz); 0–1 aralığında olsun; test ekle. Eşik (≤ %30) aynı.
+16. **Dış adaylar:** `arastirma/copytrade/bagimsiz_secim/` dosyalarındaki tüm adresler leaderboard filtresinden
+    bağımsız olarak kapıdan geçirilir; satıra `kaynak = dis_aday`.
+17. **Kurallar donar:** 14–16 ile bu tur kapanır. Tam koşudan sonra eşik değişikliği yok; sonraki karar 3 aylık
+    ileriye dönük sanal izlemenin sonucuyla.
+18. **Lider denetimi (`docs/DENETIM_2026-10-27.md`) ekleri:** (a) mum eksik dolum varsa kopya getirisi o dolumları
+    atlamasın — eksik oran > %0 ise satır `kopya_eksik` işaretli ve adım 3 `Yetersiz`; (b) ölü sütunlar
+    (`liquid_coin_share`, `setting_leverage`) ya düzeltilsin ya kaldırılsın; (c) `userFillsByTime` geçmiş sınırına
+    dayanan hesap `dolum_siniri` işaretli; (d) **akıl sağlığı kapısı**: birleştirmede oran/düşüş 0–1, kaldıraç 0–200, sabit
+    ya da tamamen boş sütun yok, adım 1–4'ü geçende `plasebo_p` dolu; biri tutmazsa yayın yok ve iş kırmızı; testle sınansın.
 
+### Sol 6.1 bağımsız denetimi (2026-10-27, `main` 82a8a74) — tam koşudan önce zorunlu
+19. **Kopya defteri** (`kapi.py` `delayed_copy` ve çevresi): (a) mum araması en fazla 1 mum aralığı uzaklıkta; daha
+    uzaksa o dolum "eksik" (iş 18a); (b) pencere başında açık olan pozisyon ayrı yönetilir — onu azaltan/kapatan dolum yeni
+    ters pozisyon açmaz (dalda 05154c5 ile başlandı; teste bağla); (c) açık pozisyonlar her gün fiyatlanır (gerçekleşmemiş
+    K/Z eğriye ve düşüşe girer); (d) funding trader'dan aktarılmaz, kopyanın kendi pozisyonu × funding oranıyla hesaplanır.
+20. **Plasebo aynı motorla:** rastgele yerleştirilen işlemler gerçek kopyayla **aynı** hesaptan geçer — aynı
+    ekleme/kısmi kapanış dizisi (yalnız ilk açılış miktarı değil), aynı tarz gecikmesi, funding dahil. Gerçek skor ile
+    plasebo skoru aynı fonksiyondan çıkar.
+21. **Alfa maruziyeti:** "o gün K/Z var mı" değil, gerçek pozisyon zaman çizelgesi (gün içinde açık pozisyon = maruz);
+    kıyas belgeye göre BTC/sepet (iş 2) — kodda gerçekten uygulanmış olsun.
+22. **Ölçüler** (`olcut.py`): kaldıraç = o andaki pozisyon değeri / o anki hesap değeri (zaman eşleşmiş), medyan zamana
+    ağırlıklı; tersine dönen emrin ücreti kapanan ve açılan kısma miktarla bölünür; "en iyisiz PF" yalnız **bir** en iyi
+    işlemi çıkarır; martingale emirleri gerçek sırayla işler.
+23. **Tek kural kaynağı + uygunluk testi:** tüm eşikler yalnız `kurallar.yaml`'da (kodda sayı yok); bir test, görev
+    belgesindeki kullanıcı kararlarını (`%44/%49`, 10.000, aktiflik, tarz eşikleri) yaml ile karşılaştırır. Dondurma:
+    RAPOR'a `kurallar.yaml` + `kapi.py` + `olcut.py` SHA-256 özetleri ve aday listesinin özeti yazılır.
+24. **Koşu dürüstlüğü:** iş akışında hatayı örten `|| true` kalkar; zaman aşımı/eksik parça varsa sonuç
+    `durum: eksik` olarak yayımlanır, RAPOR'da kapsam yazılır, `kesif.json` eksik koşudan üretilmez.
+25. **Altın örnekler (kabul):** elle hesaplanmış en az 6 küçük senaryo testi, her biri beklenen sayıyla:
+    miras pozisyonun kapanışı; parçalı açılış/kısmi kapanış; tersine dönüş; gecikmede mum boşluğu; açık pozisyonun
+    fiyatlanması; funding. Her senaryo hem kopya defteri hem plasebo motoru için aynı sonucu vermeli.
+26. **Kapsam ayrımı:** bu daldaki `worker/` ve `izleme_motoru.py` değişikliklerini (cron, tarz etiketi, tarza göre
+    gecikme) **ayrı küçük bir PR** yap; lider birleştirir. Bu dal yalnız kapı/ölçü dosyalarında kalır; izleme ve Worker
+    düzeltmeleri Codex'te (`docs/GOREV_IZLEME_DUZELTME.md`).
 
+## `kesif.json` şeması (v1)
 ```json
 {"surum": 1, "uretildi": "…Z", "evren": 12461, "islenen": 12300,
  "adaylar": [{
