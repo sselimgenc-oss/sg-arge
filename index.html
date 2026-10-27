@@ -44,8 +44,22 @@
     .ct-sec { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); font-size: 12px; }
     .ct-b-ok { background: rgba(16,185,129,.18); color: #34d399; } .ct-b-warn { background: rgba(245,203,92,.18); color: #f5cb5c; }
     .ct-b-bad { background: rgba(239,68,68,.18); color: #f87171; } .ct-b-mut { background: rgba(148,163,184,.18); color: #cbd5e1; }
-    .ct-strip { padding: 0.5rem 0.75rem; font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; }
-    .ct-strip.stale { border-color: #b45309; background: rgba(245,158,11,.12); color: #fcd34d; }
+    /* sabit üst şerit: sticky'nin çalışması için CT sekmesi açıkken main/kap taşma kırpmasını bırakır (belge kayar) */
+    body.ct-aktif #layoutWrap, body.ct-aktif #main { overflow: visible; }
+    .ct-sticky { position: sticky; top: 0; z-index: 30; background: var(--bg); padding: 0.375rem 0; margin-top: -0.375rem; }
+    .ct-strip { padding: 0.375rem 0.625rem; font-size: 11px; color: var(--muted); }
+    .ct-strip.stale { border-color: #b45309; background: #2a2012; color: #fcd34d; }
+    .ct-stat { display: grid; grid-template-columns: 1fr 1fr 1.6fr; gap: 0.5rem; }
+    .ct-stat .k { font-size: 9px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
+    .ct-stat .v { font-size: 13px; font-weight: 700; color: #fff; overflow-wrap: anywhere; }
+    .ct-age { margin-top: 2px; display: flex; flex-wrap: wrap; gap: 0 0.5rem; font-size: 10px; }
+    .ct-card.tik { cursor: pointer; }
+    .ct-pos summary { list-style: none; cursor: pointer; }
+    .ct-pos summary::-webkit-details-marker { display: none; }
+    .ct-pos summary .ok { display: inline-block; color: var(--muted); transition: transform .15s; margin-left: 2px; }
+    .ct-pos[open] summary .ok { transform: rotate(90deg); }
+    .ct-pos .ek span { white-space: nowrap; }
+    .ct-pos .ek { color: var(--muted); font-size: 11px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 0.75rem; align-items: center; }
     .ct-row { padding: 0.625rem 0; border-top: 1px solid var(--border); font-size: 12px; min-width: 0; overflow-wrap: anywhere; }
     .ct-row:first-child { border-top: 0; }
     .ct-btn { background: #1c2a47; border: 1px solid var(--border); border-radius: 0.375rem; padding: 0.5rem 0.875rem; font-size: 12px; color: var(--text); min-height: 40px; }
@@ -91,7 +105,7 @@
     </div>
   </header>
 
-  <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+  <div id="layoutWrap" class="flex-1 flex flex-col lg:flex-row overflow-hidden">
     <!-- MENÜ: geniş ekranda sol sütun, dar ekranda yatay şerit -->
     <aside class="lg:w-60 bg-[#101a30] border-b lg:border-b-0 lg:border-r border-[#243555] flex lg:flex-col justify-between flex-shrink-0">
       <nav id="nav" class="flex lg:flex-col overflow-x-auto lg:overflow-visible py-1 lg:py-2 text-xs w-full"></nav>
@@ -230,21 +244,21 @@
       <!-- COPY TRADE: ana ekran (kartlar) + ayrıntı -->
       <section data-tab="ct" class="tab hidden space-y-4">
         <div class="ct-msg hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
-        <div class="ct-strip card"></div>
+        <div class="ct-sticky"><div class="ct-strip card"></div></div>
         <div id="ctMain"></div>
       </section>
 
       <!-- COPY TRADE: akış -->
       <section data-tab="ctakis" class="tab hidden space-y-4">
         <div class="ct-msg hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
-        <div class="ct-strip card"></div>
+        <div class="ct-sticky"><div class="ct-strip card"></div></div>
         <div id="ctAkis"></div>
       </section>
 
       <!-- COPY TRADE: istatistik -->
       <section data-tab="ctistat" class="tab hidden space-y-4">
         <div class="ct-msg hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
-        <div class="ct-strip card"></div>
+        <div class="ct-sticky"><div class="ct-strip card"></div></div>
         <div id="ctIstat"></div>
       </section>
 
@@ -298,6 +312,7 @@
     document.querySelectorAll('.nav-btn').forEach((b) => b.classList.toggle('active', b.dataset.nav === id));
     try { localStorage.setItem('sgpano_tab', id); } catch (e) { /* özel pencere */ }
     if (id === 'grafik' || id === 'acik') drawCharts();
+    document.body.classList.toggle('ct-aktif', id.startsWith('ct'));
     if (id === 'ct') ctCizim();
   }
 
@@ -609,6 +624,8 @@
   const ctIsik = (t) => (ISIK[t.saglik && t.saglik.isik] || ['⚪', 'Bilinmiyor']);
   const ctKirmizi = (t) => !!t.saglik && t.saglik.isik === 'kirmizi';
   const ctYonCls = (y) => y === 'long' ? 'up' : y === 'short' ? 'down' : 'flat';
+  const ctYonRozet = (y) => ctRozet(ctYon(y) || '?', y === 'long' ? 'ct-b-ok' : y === 'short' ? 'ct-b-bad' : 'ct-b-mut');
+  const ctKaldirac = (v) => isNum(v) ? ctRozet(fmt(v, 1).replace(',0', '') + 'x', 'ct-b-mut') : '';
   const ctRozet = (txt, c) => `<span class="badge ${c}">${esc(txt)}</span>`;
   const ctKapiRozet = (k) => { const s = k && k.sinif; return ctRozet(s || 'kapı yok', s === 'Geçti' ? 'ct-b-ok' : s === 'Yetersiz' ? 'ct-b-warn' : s === 'Kaldı' ? 'ct-b-bad' : 'ct-b-mut'); };
   // oranlar (0,08) → %8 ; sayılar Türkçe biçim, para "1.043,20 $"
@@ -668,22 +685,24 @@
       <span class="ct-sub">(t0'dan beri, ${isNum(sk.gecikme_dk) ? fmt(sk.gecikme_dk, 0) : '?'} dk gecikmeli)</span></div>`;
   }
 
-  function ctPozisyon(p) {
-    return `<div class="ct-pos"><div class="l1"><span><b class="text-white">${esc(p.coin)}</b> <b class="${ctYonCls(p.yon)}">${esc(ctYon(p.yon))}</b> ${ctBinance(p.binance)}</span>
-      <b class="${cls(p.anlik_kz_usd)}">${ctUsds(p.anlik_kz_usd)}</b></div>
-      <div class="l2">giriş ${ctFiyat(p.giris)} · ${ctUsd(p.buyukluk_usd, 0)} · hesabın ${ctP(p.hesap_payi)} · ${isNum(p.kaldirac) ? fmt(p.kaldirac, 1).replace(',0', '') + 'x' : '—'}</div></div>`;
+  // Kart özeti: coin, yön, kaldıraç, hesap payı, anlık K/Z. Giriş, büyüklük, açılış saati, Binance dokununca açılır (ayrıntı sayfasında açık gelir).
+  function ctPozisyon(p, acik) {
+    return `<details class="ct-pos"${acik ? ' open' : ''}><summary><div class="l1"><span><b class="text-white">${esc(p.coin)}</b> ${ctYonRozet(p.yon)} ${ctKaldirac(p.kaldirac)}</span>
+      <span><b class="${cls(p.anlik_kz_usd)}">${ctUsds(p.anlik_kz_usd)}</b> <span class="ok">›</span></span></div>
+      <div class="l2">hesabın ${ctP(p.hesap_payi)}</div></summary>
+      <div class="ek"><span>giriş ${ctFiyat(p.giris)}</span><span>${ctUsd(p.buyukluk_usd, 0)}</span><span>açılış ${esc(ctTarih(p.acilis))}</span><span class="inline-flex items-center gap-1">${ctBinance(p.binance)} Binance</span></div></details>`;
   }
 
   function ctKart(t) {
     const [em, ad] = ctIsik(t), kir = ctKirmizi(t), poz = t.pozisyonlar || [], si = t.son_islem;
-    return `<a href="#ct/${encodeURIComponent(t.id)}" class="card ct-card${kir ? ' kirmizi' : ''}" aria-label="${esc(t.takma_ad)} ayrıntısı">
-      <div class="ct-head"><span class="ct-name">${esc(t.takma_ad)}</span><span title="Sağlık: ${esc(ad)}" aria-label="Sağlık: ${esc(ad)}">${em}</span>${ctKapiRozet(t.kapi)}
+    return `<div class="card ct-card tik${kir ? ' kirmizi' : ''}" onclick="if(!event.target.closest('details,a'))location.hash='ct/${encodeURIComponent(t.id)}'">
+      <div class="ct-head"><a href="#ct/${encodeURIComponent(t.id)}" class="ct-name" style="color:#fff;text-decoration:none" aria-label="${esc(t.takma_ad)} ayrıntısı">${esc(t.takma_ad)}</a><span title="Sağlık: ${esc(ad)}" aria-label="Sağlık: ${esc(ad)}">${em}</span>${ctKapiRozet(t.kapi)}
         ${kir ? ctRozet('izlemede — kopyalama', 'ct-b-bad') : t.durum && t.durum !== 'kopyala' ? ctRozet(t.durum, 'ct-b-mut') : ''}</div>
       <div class="ct-sub mt-1">form ${isNum(t.form && t.form.skor) ? fmt(t.form.skor, 1) : '—'} · 30 g ${ctPs(t.form && t.form.getiri_30g)}</div>
-      <div class="mt-2">${poz.length ? poz.map(ctPozisyon).join('') : '<div class="ct-pos ct-sub">pozisyon yok</div>'}</div>
-      <div class="ct-sec">${si ? `son işlem: <b class="text-white">${esc(si.coin)}</b> <b class="${ctYonCls(si.yon)}">${esc(ctYon(si.yon))}</b> · <b class="${cls(si.net_yuzde)}">${ctPs(si.net_yuzde)}</b>` : '<span class="ct-sub">son işlem yok</span>'}</div>
+      <div class="mt-2">${poz.length ? poz.map((p) => ctPozisyon(p)).join('') : '<div class="ct-pos ct-sub">pozisyon yok</div>'}</div>
+      <div class="ct-sec">${si ? `son işlem: <b class="text-white">${esc(si.coin)}</b> ${ctYonRozet(si.yon)} · <b class="${cls(si.net_yuzde)}">${ctPs(si.net_yuzde)}</b>` : '<span class="ct-sub">son işlem yok</span>'}</div>
       <div class="ct-sec">${ctSparkline(t.egri)}<div class="ct-sub">son 90 gün kâr eğrisi</div></div>
-      <div class="ct-sec">${ctSanalKopya(t.sanal_kopya)}</div></a>`;
+      <div class="ct-sec">${ctSanalKopya(t.sanal_kopya)}</div></div>`;
   }
 
   // ---------- üst şerit (güncelleme zamanı + veri yaşı) ve hata mesajı
@@ -692,11 +711,16 @@
     msg.forEach((el) => { el.classList.toggle('hidden', !ctHata); el.textContent = ctHata ? ctHata + (CT ? ' Son başarılı veri gösteriliyor.' : ' Gösterilecek veri yok; sahte veri kullanılmaz.') : ''; });
     let html = '', eski = false;
     if (CT) {
+      const tr = CT.traderlar || [], acik = tr.reduce((n, t) => n + (t.pozisyonlar || []).length, 0);
+      const sk = tr.map((t) => t.sanal_kopya).filter((k) => k && isNum(k.baslangic_usd) && isNum(k.bakiye_usd));
+      const b0 = sk.reduce((n, k) => n + k.baslangic_usd, 0), fark = sk.reduce((n, k) => n + k.bakiye_usd - k.baslangic_usd, 0);
       const t = new Date(CT.uretildi), gecerli = !isNaN(t), dk = gecerli ? Math.max(0, Math.round((Date.now() - t.getTime()) / 60000)) : null;
       eski = !gecerli || dk > CT_ESKI_DK;
-      html = `<span>Güncelleme: <b class="text-slate-200">${gecerli ? esc(ctTarih(CT.uretildi)) : 'bilinmiyor'}</b> (${gecerli ? esc(ctYas(dk)) : 'yaş bilinmiyor'})</span>`
-        + (eski ? `<span>⚠ Veri ${CT_ESKI_DK} dakikadan eski — üretici iş durmuş olabilir.</span>` : '')
-        + (/^ornek/i.test(String(CT.kaynak || '')) ? '<span class="text-amber-300">ÖRNEK VERİ — gerçek trader değil.</span>' : '');
+      html = `<div class="ct-stat"><div><div class="k">Trader</div><div class="v">${tr.length}</div></div><div><div class="k">Açık poz.</div><div class="v">${acik}</div></div>
+          <div><div class="k">Sanal kopya (hepsi)</div><div class="v ${sk.length ? cls(fark) : ''}">${sk.length ? `${ctUsds(fark)} (${ctPs(b0 ? fark / b0 : null)})` : 'veri yok'}</div></div></div>
+        <div class="ct-age"><span>${eski ? '⚠ ' : ''}veri: ${gecerli ? esc(ctTarih(CT.uretildi)) + ' (' + esc(ctYas(dk)) + ')' : 'saati bilinmiyor'}</span>`
+        + (eski ? `<span>${CT_ESKI_DK} dk'dan eski!</span>` : '')
+        + (/^ornek/i.test(String(CT.kaynak || '')) ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '') + '</div>';
     } else html = '<span>Veri yok.</span>';
     bar.forEach((el) => { el.classList.toggle('stale', eski); el.innerHTML = html; });
   }
@@ -722,8 +746,8 @@
   }
   function ctOlayMetin(o) {
     if (o.tur === 'isik') { const i = ISIK[o.not]; return i ? `ışık → ${i[0]} ${esc(i[1].toLowerCase())}` : 'ışık değişti'; }
-    return `<b class="text-white">${esc(o.coin)}</b> <b class="${ctYonCls(o.yon)}">${esc(ctYon(o.yon))}</b>`
-      + (isNum(o.fiyat) ? ` · fiyat ${ctFiyat(o.fiyat)}` : '') + (isNum(o.hesap_payi) ? ` · hesabın ${ctP(o.hesap_payi)}` : '') + (isNum(o.kaldirac) ? ` · ${fmt(o.kaldirac, 1).replace(',0', '')}x` : '');
+    return `<b class="text-white">${esc(o.coin)}</b> ${ctYonRozet(o.yon)} ${ctKaldirac(o.kaldirac)}`
+      + (isNum(o.fiyat) ? ` · fiyat ${ctFiyat(o.fiyat)}` : '') + (isNum(o.hesap_payi) ? ` · hesabın ${ctP(o.hesap_payi)}` : '');
   }
   function ctOlayYuvarlak(o, adGoster) {
     const t = (CT.traderlar || []).find((x) => x.id === o.trader);
@@ -753,7 +777,7 @@
         <div class="text-xs">${ctKapiRozet(t.kapi)} <span class="ct-sub">${esc((t.kapi && t.kapi.tarih) || '')}${t.kapi && t.kapi.not ? ' · ' + esc(t.kapi.not) : ''}</span></div></div>
 
       <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Açık pozisyonlar</h3>
-        ${poz.length ? poz.map(ctPozisyon).join('') : '<div class="ct-sub">pozisyon yok</div>'}</div>
+        ${poz.length ? poz.map((p) => ctPozisyon(p, true)).join('') : '<div class="ct-sub">pozisyon yok</div>'}</div>
 
       <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Kâr eğrisi (son 90 gün)</h3>
         ${(t.egri || []).some((p) => p && isNum(p[1])) ? '<div class="relative h-56"><canvas id="ctChEgri"></canvas></div>' : '<div class="ct-sub">kâr eğrisi yok</div>'}</div>
