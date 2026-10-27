@@ -1,6 +1,6 @@
 # Ajan kuralları (Codex ve diğer ajanlar her oturumda okur)
 
-Bu repo bir sistematik işlem araştırma projesidir. Lider: Claude (denetler, birleştirir). Karar: kullanıcı.
+Bu repo bir copy trade araştırma projesidir (Hyperliquid; 2026-10-27 itibarıyla strateji araştırması kapandı ve silindi). Lider: Claude (denetler, birleştirir). Karar: kullanıcı.
 
 ## Başlarken
 1. `main`'i çek; işe `main`'den yeni bir dal aç: `codex/<iş-adı>`.
@@ -11,11 +11,11 @@ Bu repo bir sistematik işlem araştırma projesidir. Lider: Claude (denetler, b
 - **Repo herkese açık:** API anahtarı, şifre, token, kişisel veri asla commit edilmez. Anahtarlar yalnız GitHub
   Secrets'ta; para çekme yetkisi kapalı.
 - **Gerçek para, aracı kurum bağlantısı, emir yok.** Paper yalnız sanaldır.
-- **Yöntem, kapı, eşik ve karar kodu değişmez** (`docs/TEST_YAPISI.md`, `paper/portfoy.yaml` ağırlık/risk kuralları,
-  `results/` karar tabloları) — görev belgesi açıkça istemedikçe. Yeni ölçümler bilgi amaçlıdır.
+- **Yöntem, kapı, eşik ve karar kodu değişmez** (`docs/KAPI_V3.md`, `copytrade/kurallar.yaml`) — görev belgesi
+  açıkça istemedikçe. Yeni ölçümler bilgi amaçlıdır.
 - **Testler zayıflatılmaz, atlanmaz, silinmez.** Yeni kod test ile gelir.
 - **`main`'e doğrudan push yok.** PR açılır; birleştirmeyi lider yapar.
-- Mevcut motoru kullan (`engine/`, `backtests/tv2.py`, `backtests/tarama.py`); yeni backtest yöntemi icat etme.
+- Kapı istatistikleri `kapi/istatistik.py`'de, pano sağlık ölçümleri `pano/`'da; yeniden yazma, kullan.
 
 ## PR'dan önce
 - Tam test paketi: `python -m pytest -q` — sonucu PR açıklamasına yaz.
