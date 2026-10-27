@@ -11,3 +11,4 @@
 - Gecikme: 0 dk liderin dolum fiyatıdır; 5/30/120 dk, gecikme anından sonra açılan ilk saatlik mumun açılışıdır. Rapor gecikmenin saat başına yuvarlanmış muhafazakâr üst sınır olduğunu yazar.
 - Veri bütünlüğü: bir trader'ın 200 günlük hacminin %10'undan fazlasında mum yoksa adım 1 `Yetersiz` olur.
 - Teknik not: 1 saatlik mumun en çok 5.000 kayıt sınırı 200 günlük pencereyi kapsadığından mum çağrısı sayfalanmaz; her coin yanıtı bellek önbelleğinde paylaşılır.
+- Lider denetimi 1 (2026-10-27): adım 5 için 1.000 sabit tohumlu plasebo ve tek yönlü p; adım 6 için 365 günlük BTC eşleşmiş NW alfa; adım 7 BHY, adım 8 günlük PnL kümelemesi uygulanacak. Nakit akışları sonraki portfolio örneğine atanır; `accountClassTransfer` dış akış değildir.

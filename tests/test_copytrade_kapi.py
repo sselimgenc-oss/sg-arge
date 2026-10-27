@@ -6,7 +6,7 @@ import pandas as pd
 
 from copytrade.kapi import (CandleCache, bhy, binance_availability, binance_symbol, candle_coverage, delayed_copy,
                              evidence_status, gate_status, next_candle_open,
-                             randomize_trades, time_weighted_monthly, write_binance_universe)
+                             placebo_pvalue, randomize_trades, time_weighted_monthly, write_binance_universe)
 
 
 def portfolio(values):
@@ -20,21 +20,25 @@ def test_time_weighted_return_removes_deposit_and_keeps_no_flow_series():
     flow = time_weighted_monthly(portfolio(values), [{"time": 2 * day, "delta": {"type": "deposit", "usdc": "100"}}])
     assert round(no_flow.iloc[0], 3) == 1.2
     assert round(flow.iloc[0], 3) == 0.2
+    withdrawn = time_weighted_monthly(portfolio([[0, "100"], [day, "110"], [2 * day, "20"]]),
+                                      [{"time": 2 * day, "delta": {"type": "withdraw", "usdc": "100"}}])
+    assert round(withdrawn.iloc[0], 3) == .2
 
 
 def test_delayed_copy_uses_next_candle_open_not_fill_price():
     fills = [{"time": 0, "coin": "BTC", "side": "B", "sz": "1", "px": "1", "startPosition": "0"},
              {"time": 60_000, "coin": "BTC", "side": "A", "sz": "1", "px": "1", "startPosition": "1"}]
     candles = {"BTC": [{"t": 30 * 60_000, "o": "100"}, {"t": 31 * 60_000, "o": "110"}]}
-    pnl = delayed_copy(fills, candles, 1_000, 30)
+    pnl, missing = delayed_copy(fills, candles, 1_000, 30)
     assert round(pnl.iloc[0], 5) == .0098  # 1% account return, less 0.045% + 0.05% on each side
     assert next_candle_open(candles["BTC"], 0, 30) == 100
+    assert missing == 0
 
 
 def test_zero_delay_uses_leader_fill_and_cache_requests_each_coin_once():
     fills = [{"time": 0, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0"},
              {"time": 60_000, "coin": "BTC", "side": "A", "sz": "1", "px": "110", "startPosition": "1"}]
-    assert delayed_copy(fills, {}, 1_000, 0).iloc[0] > 0
+    assert delayed_copy(fills, {}, 1_000, 0)[0].iloc[0] > 0
 
     class Client:
         def __init__(self): self.calls = 0
@@ -56,6 +60,7 @@ def test_bhy_and_three_outcome_step_classes():
     assert gate_status(base, 1, .05, {"alfa_yillik": 1, "nw_t": 2})["adim6"] == "Geçti"
     assert gate_status(base, 1, .05, {"alfa_yillik": 1, "nw_t": 1.9})["adim6"] == "Yetersiz"
     assert gate_status(base, 1, .05, {"alfa_yillik": 0, "nw_t": 9})["adim6"] == "Kaldı"
+    assert placebo_pvalue(2, [1, 2, 3]) == .75
 
 
 def test_placebo_placement_preserves_trade_fields_is_non_overlapping_and_seeded():

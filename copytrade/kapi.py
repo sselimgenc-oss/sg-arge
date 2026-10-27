@@ -36,10 +36,14 @@ def external_cashflows(ledger: list[dict]) -> pd.Series:
     for row in ledger:
         delta = row.get("delta", {})
         kind = str(delta.get("type", row.get("type", ""))).lower() if isinstance(delta, dict) else ""
-        if kind not in {"deposit", "withdraw"}:
+        if kind not in {"deposit", "withdraw", "internaltransfer", "subaccounttransfer", "vaultdeposit", "vaultwithdraw", "spottransfer", "send"}:
             continue
         raw = delta.get("usdc", row.get("usdc", 0)) if isinstance(delta, dict) else row.get("usdc", 0)
-        items.append((pd.to_datetime(row.get("time"), unit="ms", utc=True), float(raw)))
+        amount = abs(float(raw))
+        sender, user = str(row.get("from", row.get("sender", ""))).lower(), str(row.get("user", "")).lower()
+        if kind == "withdraw" or (sender and user and sender == user):
+            amount = -amount
+        items.append((pd.to_datetime(row.get("time"), unit="ms", utc=True), amount))
     if not items:
         return pd.Series(dtype=float, index=pd.DatetimeIndex([], tz="UTC"))
     return pd.Series(dict(items), dtype=float).groupby(level=0).sum().sort_index()
@@ -57,9 +61,12 @@ def time_weighted_monthly(portfolio: list[dict], ledger: list[dict], days: int =
     since = values.index[-1] - pd.Timedelta(days=days)
     values = values[values.index >= since]
     flows = external_cashflows(ledger)
-    points = values.index.union(flows.index[(flows.index >= values.index[0]) & (flows.index <= values.index[-1])]).sort_values()
-    values = values.reindex(points).ffill()
-    flows = flows.reindex(points, fill_value=0.0)
+    # A cash flow belongs to the first observed portfolio value after it; never invent a value point.
+    assigned = pd.Series(0.0, index=values.index)
+    for at, amount in flows.items():
+        later = values.index[values.index >= at]
+        if len(later): assigned.loc[later[0]] += amount
+    flows = assigned
     prior = values.shift(1)
     returns = (values - flows) / prior - 1
     returns = returns.iloc[1:].replace([np.inf, -np.inf], np.nan).dropna()
@@ -96,6 +103,18 @@ def bhy(p_values: dict[str, float]) -> dict[str, float]:
         q = min(q, p_values[key] * n * harmonic / rank)
         out[key] = min(1.0, q)
     return out
+
+
+def placebo_pvalue(actual: float, placebo: list[float]) -> float:
+    """Frozen one-sided CT-Kapı p value (1,000 repetitions in the runner)."""
+    return (1 + sum(value >= actual for value in placebo)) / (len(placebo) + 1)
+
+
+def matched_btc_alpha(strategy: pd.Series, btc: pd.Series, exposure: pd.Series) -> dict[str, float]:
+    """365-day exposure-matched BTC benchmark for CT-Kapı adım 6."""
+    index = strategy.index.union(btc.index).sort_values()[-365:]
+    return nw_alpha(strategy.reindex(index, fill_value=0.0),
+                    btc.reindex(index, fill_value=0.0) * exposure.reindex(index, fill_value=0.0), periods=365)
 
 
 def binance_symbol(coin: str) -> str:
@@ -142,11 +161,11 @@ def next_candle_open(candles: list[dict], event_ms: int, delay_minutes: int) -> 
 
 
 def delayed_copy(fills: list[dict], candles: dict[str, list[dict]], account_value: float, delay_minutes: int,
-                 funding: list[dict] | None = None) -> pd.Series | None:
+                 funding: list[dict] | None = None) -> tuple[pd.Series | None, int]:
     """Net daily virtual-copy PnL, using delayed candle opens and exact stated friction."""
     if account_value <= 0:
         return None
-    position: dict[str, float] = {}
+    position: dict[str, float] = {}; missing = 0
     entry: dict[str, float] = {}
     rows: list[tuple[pd.Timestamp, float]] = []
     for fill in sorted(perp_fills(fills), key=lambda x: int(x.get("time", 0))):
@@ -154,7 +173,7 @@ def delayed_copy(fills: list[dict], candles: dict[str, list[dict]], account_valu
         signed = -size if str(fill.get("side")) in {"A", "Sell", "sell"} else size
         price = float(fill.get("px", 0)) if delay_minutes == 0 else next_candle_open(candles.get(coin, []), int(fill["time"]), delay_minutes)
         if price is None:
-            return None
+            missing += 1; continue
         before = position.get(coin, 0.0)
         close = min(abs(before), abs(signed)) if before and before * signed < 0 else 0.0
         pnl = close * (price - entry.get(coin, price)) * (1 if before > 0 else -1)
@@ -168,9 +187,9 @@ def delayed_copy(fills: list[dict], candles: dict[str, list[dict]], account_valu
     for item in funding or []:
         rows.append((pd.to_datetime(item["time"], unit="ms", utc=True), _funding_amount(item) / account_value))
     if not rows:
-        return None
+        return None, missing
     frame = pd.DataFrame(rows, columns=["time", "pnl"]).set_index("time")
-    return frame.pnl.resample("1D").sum()
+    return frame.pnl.resample("1D").sum(), missing
 
 
 def candle_coverage(fills: list[dict], candles: dict[str, list[dict]]) -> float:
@@ -239,8 +258,9 @@ def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: f
     metrics["complete_data"] = metrics["candle_coverage"] >= .90
     nets: dict[int, float | None] = {}
     for delay in (0, 5, 30, 120):
-        ledger = delayed_copy(recent, candles, account_value, delay, recent_funding)
+        ledger, missing = delayed_copy(recent, candles, account_value, delay, recent_funding)
         nets[delay] = None if ledger is None else float(ledger.sum())
+        metrics[f"gecikme_{delay}dk_eksik_dolum"] = missing
     return metrics, nets
 
 
@@ -302,8 +322,8 @@ def main(argv: list[str] | None = None) -> None:
                 row.update(metrics)
                 row.update({f"gecikme_{delay}dk_net": value for delay, value in nets.items()})
                 row.update(statuses)
-        except (RateLimitError, requests.RequestException, ValueError, TypeError) as exc:
-            row.update({"asama1": "Yetersiz", "neden": type(exc).__name__})
+        except (RateLimitError, requests.RequestException, ValueError, TypeError, KeyError) as exc:
+            row.update({"asama1": "Yetersiz", "sinif": "Yetersiz", "neden": "veri hatası: " + type(exc).__name__})
         rows.append(row)
         pd.DataFrame(rows).to_csv(out / "sonuc.csv", index=False)  # partial results survive a time limit
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
