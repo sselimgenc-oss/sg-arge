@@ -41,7 +41,7 @@ bildirim; oyunlaştırma ve "kaçırdın" baskısı; bakiye/tutarı sunucuya ta�
 - **Faz 3:** 10 tarz kayması · 11 likidasyon/TP-SL · 12 saat haritası.
 - Mobil (hepsinde): kart düzeni, ≥44 px dokunma, yatay kaydırma yok, renk + metin, ayrıntı açılır bölümde.
 
-## Kullanıcı kararı gerekenler
-1. Kayma rozeti eşikleri: öneri — yalnız % ve renk; "geç" sınırı tarzın kapı gecikme testindeki ortalama hareket (ör. intraday %0,5, swing %1,5).
-2. Hesaplayıcı istensin mi (bütçe yalnız tarayıcıda)?
-3. Faz 1'in başlama zamanı.
+## Kararlar (2026-10-27)
+1. Kayma rozeti "geç" sınırı: intraday %0,5, swing %1,5 (kullanıcı).
+2. Tutar hesaplayıcı: var, **varsayılan kapalı**; bütçe yalnız tarayıcıda (localStorage), hiçbir isteğe eklenmez (lider; kullanıcı lidere bıraktı).
+3. Faz 1 hemen başlar (Codex, sg-pano).
