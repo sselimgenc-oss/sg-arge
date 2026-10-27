@@ -124,3 +124,17 @@ def test_golden_8_folded_day_rate_is_hourly_scale_and_covers_its_24_hours():
     assert out["funding"] == pytest.approx(-0.0024) and out["net"] == pytest.approx(-0.0043)
     rates = FundingRates(rows)
     assert rates.array("BTC", np.array([T0 + 5 * HOUR, T0 + 23 * HOUR, T0 + 24 * HOUR], dtype=np.int64)).tolist() == [0.0002, 0.0002, 0.0004]
+
+
+def test_golden_9_copy_capital_is_time_matched_not_todays_account_value():
+    """Getiri paydası bugünkü hesap değeri değil, dolum anındaki hesap değeri (çekilmiş hesapta −2,7e6 gibi sayılar çıkmasın). Trader hesabı T0'da 1000 $,
+    5. saatten sonra 0,01 $ (para çekilmiş). 1. saatte 10 BTC @100 alır (ölçek 1/1000 → kopya 0,01 birim), 5. saatte @110 satar (kopya pozisyonunun tamamını kapatır).
+    Kâr 0,01·10 = 0,1; maliyet 0,01·100·0,00095 + 0,01·110·0,00095 = 0,001995 → net 0,098005 (kopya sermayesinin %9,8'i).
+    Bugünkü değer (0,01 $) paydaysa net 100/0,01 − … = ~10.000 olurdu."""
+    import pandas as pd
+    history = pd.Series([1000.0, 0.01], index=pd.to_datetime([T0, T0 + 5 * HOUR + 1], unit="ms", utc=True))
+    fills = [fill(60, "B", 10, 0, 100), fill(300, "A", 10, 10, 110)]
+    out = copy_ledger(fills, Market(candles({h: 100 for h in range(0, 8)})), history, 0, T0 - DAY, T0 + 7 * HOUR, None, RULES)
+    assert out["net"] == pytest.approx(0.098005)
+    today = copy_ledger(fills, Market(candles({h: 100 for h in range(0, 8)})), 0.01, 0, T0 - DAY, T0 + 7 * HOUR, None, RULES)
+    assert today["net"] == pytest.approx(10_000 - 199.5)       # eski davranış: bugünkü 0,01 $ paydası

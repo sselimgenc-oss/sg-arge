@@ -121,3 +121,51 @@ def test_single_address_error_does_not_kill_the_shard(monkeypatch):
 def test_ratio_float_noise_within_tolerance_passes_but_real_excess_fails():
     assert sanity_check(table(good_row(pay_kripto=1.0000000000000002)), RULES) == []
     assert sanity_check(table(good_row(pay_kripto=1.0000001)), RULES) != []
+
+
+def test_net_return_outside_minus1_to_100_fails_the_gate():
+    for column, value in (("gecikme_30dk_net", -2.7e6), ("gecikme_120dk_net", 101.0), ("alfa_yillik", -3.3e6)):
+        assert any(p.startswith(column) for p in sanity_check(table(good_row(**{column: value})), RULES)), column
+    assert sanity_check(table(good_row(gecikme_30dk_net=-1.0, gecikme_120dk_net=100.0)), RULES) == []     # sınırlar dahil
+
+
+def test_check_net_range_turns_an_implausible_copy_into_a_row_error():
+    from copytrade.kapi import check_net_range
+    check_net_range({30: 0.2, 120: None}, RULES)
+    with pytest.raises(ValueError, match="makul aralık"):
+        check_net_range({30: -2.7e6}, RULES)
+
+
+def test_any_fully_empty_column_fails_unless_listed_as_optional():
+    """Eski kapı yalnız EXPECTED_FILLED listesindeki sütunlara bakıyordu; binance_payi / setting_leverage / liquid_coin_share listede olmadığı için
+    tamamen boş kalıp yayımlandı. Şimdi listede olmayan her boş sütun kapıyı kırar; isteğe bağlılar `saglik_bos_olabilir`."""
+    for column in ("binance_payi", "setting_leverage", "liquid_coin_share"):
+        problems = sanity_check(table(good_row(**{column: None}), good_row("0xb", **{column: None})), RULES)
+        assert any(p.startswith(column) and "tamamen boş" in p for p in problems), column
+    assert sanity_check(table(good_row(plasebo_hata=None), good_row("0xb", plasebo_hata=None)), RULES) == []
+
+
+def test_every_non_passing_row_must_have_a_reason():
+    rows = [good_row("0xa", sinif="Kaldı", neden="adım 3 Kaldı: x"), good_row("0xb", sinif="Yetersiz", neden=None), good_row("0xc", sinif="Geçti", neden=None)]
+    assert any(p.startswith("neden:") and "1 satırda" in p for p in sanity_check(table(*rows), RULES))
+
+
+def test_fail_reason_names_the_first_failing_step_golden():
+    """Run 21'de neden 92 satırda boştu. 8bae: adım 1–2 geçti, adım 3 Yetersiz — statik şartlar tutuyor (swing, medyan kaldıraç 1,2x, en yüksek 4x),
+    ama tarzın gecikmesinde mum bulunamayan dolum var (kopya_eksik) → "adım 3 Yetersiz: kopya eksik dolum (mum yok)". Diğer adımlar için de ilk düşen adım."""
+    from copytrade.kapi import fail_reason, finalize
+    base = good_row("0x8bae", adim3="Yetersiz", kopya_eksik=True, tarz="swing", median_leverage=1.2, max_leverage=4.0, kisa_islem_payi=0.05, sinif=None)
+    rows = [base,
+            good_row("0xb", adim3="Kaldı", tarz="swing", median_leverage=4.5, max_leverage=4.0, kisa_islem_payi=0.05),
+            good_row("0xc", adim3="Kaldı", tarz="swing", median_leverage=1.0, max_leverage=4.0, kisa_islem_payi=0.05, kapi_gecikme_dk=120, gecikme_120dk_net=-0.02),
+            good_row("0xd", adim4="Kaldı", profitable_month_ratio=0.40, largest_trade_share=0.1, profit_factor_without_best=2.0),
+            good_row("0xe", asama1="Yetersiz", max_drawdown=0.45, profitable_month_ratio=0.6, active_months=12, return_12m=0.5),
+            good_row("0xf", adim5="Kaldı", plasebo_p=0.2)]
+    out = finalize(pd.DataFrame(rows), RULES).set_index("address")
+    assert out.loc["0x8bae", "neden"] == "adım 3 Yetersiz: kopya eksik dolum (mum yok)"
+    assert out.loc["0xb", "neden"] == "adım 3 Kaldı: medyan kaldıraç 4.5 > 3.0"
+    assert out.loc["0xc", "neden"] == "adım 3 Kaldı: kopya neti 120 dk gecikmede -0.02 ≤ 0"
+    assert out.loc["0xd", "neden"] == "adım 4 Kaldı: kârlı ay %40 < %49"
+    assert out.loc["0xe", "neden"] == "1. aşama Yetersiz: düşüş %45 > %30"
+    assert out.loc["0xf", "neden"] == "adım 5 Kaldı: plasebo p 0.2 > 0.05"
+    assert fail_reason(good_row("0xg", adim5="Geçti", adim6="Geçti", adim7="Geçti"), RULES) == ""      # her şeyi geçen satır için neden yok

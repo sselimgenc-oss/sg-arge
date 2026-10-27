@@ -174,16 +174,33 @@ def hip3_dex_names(client: Any) -> list[str]:
     return names
 
 
-def total_account_value(client: Any, address: str, dexes: list[str]) -> float:
-    """Bugünkü hesap değeri = ana piyasa + tüm HIP-3 dex'lerin ``clearinghouseState`` ``marginSummary.accountValue`` toplamı.
-    Ana piyasa okunamazsa hata fırlar (satır veri hatası olur, yeniden denenir); bir dex okunamazsa o dex 0 sayılır."""
-    total = float(client.info({"type": "clearinghouseState", "user": address}, weight=2)["marginSummary"]["accountValue"])
+def account_value_parts(client: Any, address: str, dexes: list[str]) -> dict[str, float]:
+    """Bugünkü hesap değerinin parçaları: ana piyasa, HIP-3 dex toplamı ve spot USDC (``spotClearinghouseState``; birleşik hesapta bakiye
+    burada durur: 0x69b0 ana + HIP-3 = 0 $, spot USDC 602.437 $). Ana piyasa/spot okunamazsa hata fırlar (satır veri hatası olur);
+    bir dex okunamazsa o dex 0 sayılır."""
+    ana = float(client.info({"type": "clearinghouseState", "user": address}, weight=2)["marginSummary"]["accountValue"])
+    hip3 = 0.0
     for dex in dexes:
         try:
-            total += float(client.info({"type": "clearinghouseState", "user": address, "dex": dex}, weight=2)["marginSummary"]["accountValue"])
+            hip3 += float(client.info({"type": "clearinghouseState", "user": address, "dex": dex}, weight=2)["marginSummary"]["accountValue"])
         except (KeyError, TypeError, ValueError, requests.RequestException):
             continue
-    return total
+    spot_state = client.info({"type": "spotClearinghouseState", "user": address}, weight=2) or {}
+    spot = sum(float(b.get("total", 0) or 0) for b in spot_state.get("balances", []) if str(b.get("coin")) == "USDC")
+    return {"ana": ana, "hip3": hip3, "spot_usdc": spot}
+
+
+def total_account_value(client: Any, address: str, dexes: list[str]) -> float:
+    """Bugünkü hesap değeri = ana piyasa + tüm HIP-3 dex + spot USDC (görev 27)."""
+    return sum(account_value_parts(client, address, dexes).values())
+
+
+def check_net_range(nets: dict, rules: dict) -> None:
+    """Kopya net getirisi makul aralıkta olmalı (``saglik_net_min`` .. ``saglik_net_max``); değilse satır ``hata`` olur (ValueError)."""
+    low, high = float(rules["saglik_net_min"]), float(rules["saglik_net_max"])
+    for delay, value in nets.items():
+        if value is not None and not (low <= value <= high):
+            raise ValueError(f"net getiri makul aralık dışı: gecikme {delay} dk = {value:.4g}")
 
 
 def account_floor_pass(total: float, rules: dict | None = None) -> bool:
@@ -537,8 +554,9 @@ def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: f
     metrics["complete_data"] = metrics["candle_coverage"] >= rules["mum_kapsami_min"]
     nets: dict[int, float | None] = {}
     market, rates, source = Market(candles, max_intervals=int(rules["mum_uzaklik_max_aralik"])), FundingRates(funding), perp_fills(recent)
+    capital = history if history is not None and len(history) else account_value     # zamana eşlenmiş sermaye ölçeği (bugünkü değer geçmişe uygulanmaz)
     for delay in rules["rapor_gecikmeleri_dk"]:
-        out = copy_ledger(source, market, account_value, delay, start_200, now_ms, rates, rules)
+        out = copy_ledger(source, market, capital, delay, start_200, now_ms, rates, rules)
         nets[delay] = out["net"]
         metrics[f"gecikme_{delay}dk_eksik_dolum"] = out["missing"]
         metrics[f"gecikme_{delay}dk_dolum"] = out["executed"]
@@ -586,6 +604,8 @@ def market_shares(fills: list[dict], symbols: set[str] | None = None) -> dict[st
         out[f"pay_{asset_class(coin)}"] = (out.get(f"pay_{asset_class(coin)}") or 0.0) + value / total
     if symbols is not None:
         out["binance_payi"] = sum(v for c, v in volume.items() if binance_availability(c, symbols) == "var") / total
+    else:
+        out.pop("binance_payi", None)      # Binance sembol listesi alınamadıysa (HTTP 451 vb.) sütun hiç yazılmaz; sessiz boş sütun bırakılmaz
     return out
 
 
@@ -800,9 +820,10 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
             return row
         if dexes is None:
             dexes = hip3_dex_names(client)
-        total = total_account_value(client, address, dexes)
-        row["hesap_degeri_bugun"] = total
-        progress.stage("hesap", f"bugünkü hesap değeri {total:,.0f} $ ({1 + len(dexes)} piyasa)")
+        parts = account_value_parts(client, address, dexes)
+        total = sum(parts.values())
+        row.update({"hesap_degeri_bugun": total, "hesap_ana": parts["ana"], "hesap_hip3": parts["hip3"], "hesap_spot_usdc": parts["spot_usdc"]})
+        progress.stage("hesap", f"bugünkü hesap değeri {total:,.0f} $ (ana {parts['ana']:,.0f} + HIP-3 {parts['hip3']:,.0f} + spot USDC {parts['spot_usdc']:,.0f})")
         if not account_floor_pass(total, rules):
             row.update({"asama1": "Kaldı", "neden": "hesap değeri tabanı"})
             outcome = row["neden"]
@@ -819,7 +840,10 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         candles = cache.for_fills(recent)
         progress.stage("mumlar", f"{len(candles)} coin, {cache.requests - before} yeni istek, {len(candles) - (cache.requests - before)} önbellekten")
         ledgers: dict[int, dict] = {}
-        metrics, nets = copy_window_metrics(fills, funding, account, cache, now_ms, int(stats["active_months"]), ledgers, rules, account_history(portfolio))
+        history = account_history(portfolio)
+        capital = history if history is not None and len(history) else account
+        metrics, nets = copy_window_metrics(fills, funding, account, cache, now_ms, int(stats["active_months"]), ledgers, rules, history)
+        check_net_range(nets, rules)
         metrics["calmar"] = stats.get("calmar")          # 1. aşama zincirinden (olcut'taki hesap değeri paydalı calmar ölüydü)
         metrics["history_days"] = max(int(metrics.get("history_days", 0)), int(stats["pnl_history_days"]))
         tarz = classify_style(metrics.get("median_holding_hours"), rules)
@@ -843,7 +867,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
                 # Gerçek skor ve plasebo skorları AYNI defterden çıkar (görev 20): şablonların özgün zamanlarıyla gerçek, rastgele
                 # yerleştirmelerle plasebo. Pencere, tarz gecikmesi, funding ve maliyet ortak.
                 scores, plasebo_actual = placebo_scores(
-                    recent, candles, account, pd.to_datetime(start_200, unit="ms", utc=True), pd.to_datetime(now_ms, unit="ms", utc=True),
+                    recent, candles, capital, pd.to_datetime(start_200, unit="ms", utc=True), pd.to_datetime(now_ms, unit="ms", utc=True),
                     repetitions, delay, notes, FundingRates(funding), rules, return_actual=True)
                 if len(scores) == repetitions:
                     p_value = placebo_pvalue(plasebo_actual, scores)
@@ -860,7 +884,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         shares = market_shares(fills, symbols)
         kind = benchmark_kind(shares["pay_kripto"] or 0.0, rules)
         # Alfa: kopya defteri (gecikmesiz), gün başına net getiri; maruziyet = gün içinde açık pozisyonlu saat oranı (gerçek zaman çizelgesi).
-        own_ledger = copy_ledger(perp_fills(recent), Market(candles, max_intervals=int(rules["mum_uzaklik_max_aralik"])), account, 0, start_200, now_ms, FundingRates(funding), rules, daily=True)
+        own_ledger = copy_ledger(perp_fills(recent), Market(candles, max_intervals=int(rules["mum_uzaklik_max_aralik"])), capital, 0, start_200, now_ms, FundingRates(funding), rules, daily=True)
         own, exposure = own_ledger.get("daily"), own_ledger.get("exposure")
         bench = (daily_close_returns(cache.get("BTC")) if kind == "BTC"
                  else basket_returns(candles, sorted({str(f.get("coin")) for f in perp_fills(recent)})))
@@ -979,6 +1003,83 @@ def family_mask(table: pd.DataFrame) -> pd.Series:
     return (table[cols] == "Geçti").all(axis=1)
 
 
+def _num(row: Any, name: str) -> float | None:
+    value = row.get(name)
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if np.isfinite(number) else None
+
+
+def fail_reason(row: Any, rules: dict) -> str:
+    """Kaldı / Yetersiz bir satırda ilk düşen adımın kısa nedeni ("adım 3 Yetersiz: kopya eksik dolum"). Geçen satır için boş."""
+    pct = lambda v: f"%{100 * v:.0f}"      # noqa: E731
+    if row.get("asama1") != "Geçti":
+        reasons = []
+        if (v := _num(row, "active_months")) is not None and v < rules["asama1_min_aktif_ay"]:
+            reasons.append(f"aktif ay {v:.0f} < {rules['asama1_min_aktif_ay']}")
+        if (v := _num(row, "profitable_month_ratio")) is not None and v < rules["asama1_min_karli_ay_orani"]:
+            reasons.append(f"kârlı ay {pct(v)} < {pct(rules['asama1_min_karli_ay_orani'])}")
+        if (v := _num(row, "max_drawdown")) is not None and v > rules["asama1_max_dusus"]:
+            reasons.append(f"düşüş {pct(v)} > {pct(rules['asama1_max_dusus'])}")
+        if (v := _num(row, "return_12m")) is not None and v <= 0:
+            reasons.append(f"12 ay getiri {pct(v)} ≤ 0")
+        return f"1. aşama {row.get('asama1')}: " + ("; ".join(reasons) or "kâr eğrisi verisi yok/yetersiz")
+    step = next((i for i in range(1, 8) if row.get(f"adim{i}") != "Geçti"), None)
+    if step is None:
+        return ""
+    state, reasons = row.get(f"adim{step}"), []
+    match step:
+        case 1:
+            reasons.append(f"mum kapsamı {pct(_num(row, 'candle_coverage') or 0)} < {pct(rules['mum_kapsami_min'])}")
+        case 2:
+            if (_num(row, "history_days") or 0) < rules["min_history_days"]:
+                reasons.append(f"geçmiş {(_num(row, 'history_days') or 0):.0f} gün < {rules['min_history_days']}")
+            if (_num(row, "closed_trades") or 0) < rules["min_closed_trades"]:
+                reasons.append(f"kapanmış işlem {(_num(row, 'closed_trades') or 0):.0f} < {rules['min_closed_trades']}")
+            if (_num(row, "active_months") or 0) < rules["min_active_months"]:
+                reasons.append(f"aktif ay {(_num(row, 'active_months') or 0):.0f} < {rules['min_active_months']}")
+            if row.get("aktif") is False or str(row.get("aktif")) == "False":
+                reasons.append("aktiflik (son 90 gün döngü / son işlem) sağlanmadı")
+        case 3:
+            if row.get("tarz") not in ("intraday", "swing"):
+                reasons.append(f"tarz {row.get('tarz')}")
+            if (v := _num(row, "kisa_islem_payi")) is not None and v > rules["kisa_islem_payi_max"]:
+                reasons.append(f"kısa işlem payı {pct(v)} > {pct(rules['kisa_islem_payi_max'])}")
+            if (v := _num(row, "median_leverage")) is None or v > rules["kapi_max_medyan_kaldirac"]:
+                reasons.append(f"medyan kaldıraç {v if v is None else round(v, 2)} > {rules['kapi_max_medyan_kaldirac']}")
+            if (v := _num(row, "max_leverage")) is None or v > rules["kapi_max_kaldirac"]:
+                reasons.append(f"en yüksek kaldıraç {v if v is None else round(v, 1)} > {rules['kapi_max_kaldirac']}")
+            if not reasons and str(row.get("kopya_eksik")) == "True":
+                reasons.append("kopya eksik dolum (mum yok)")
+            if not reasons:
+                delay = _num(row, "kapi_gecikme_dk")
+                delay = int(delay) if delay is not None else None
+                net = _num(row, f"gecikme_{delay}dk_net") if delay is not None else None
+                reasons.append(f"kopya neti {delay} dk gecikmede {'yok' if net is None else f'{net:.3g}'} ≤ 0")
+        case 4:
+            if (v := _num(row, "profitable_month_ratio")) is not None and v < rules["adim4_min_karli_ay_orani"]:
+                reasons.append(f"kârlı ay {pct(v)} < {pct(rules['adim4_min_karli_ay_orani'])}")
+            if (v := _num(row, "largest_trade_share")) is None or v >= rules["max_largest_trade_share"]:
+                reasons.append(f"en büyük işlem payı {'yok' if v is None else pct(v)} ≥ {pct(rules['max_largest_trade_share'])}")
+            if (v := _num(row, "profit_factor_without_best")) is None or v <= rules["min_profit_factor_without_best"]:
+                reasons.append(f"en iyisiz PF {'yok' if v is None else round(v, 2)} ≤ {rules['min_profit_factor_without_best']}")
+            if str(row.get("martingale_signal")) == "True":
+                reasons.append("martingale işareti")
+        case 5:
+            p = _num(row, "plasebo_p")
+            reasons.append("plasebo p üretilemedi" + (f" ({row.get('plasebo_hata')})" if isinstance(row.get("plasebo_hata"), str) else "") if p is None
+                           else f"plasebo p {p:.3g} > {rules['plasebo_p_max']}")
+        case 6:
+            alpha, t = _num(row, "alfa_yillik"), _num(row, "nw_t")
+            reasons.append("alfa hesaplanamadı" if alpha is None else f"alfa yıllık {alpha:.3g} ≤ 0" if alpha <= 0 else f"alfa t {t:.2f} < {rules['alfa_t_min']}")
+        case 7:
+            q = _num(row, "bhy_q")
+            reasons.append("BHY q hesaplanamadı (plasebo p yok)" if q is None else f"BHY q {q:.3g} > {rules['bhy_q_max']}")
+    return f"adım {step} {state}: " + ("; ".join(reasons) or "ayrıntı yok")
+
+
 def finalize(table: pd.DataFrame, rules: dict | None = None) -> pd.DataFrame:
     """Parçalar birleştikten sonra adım 7 (BHY, plaseboya ulaşan herkes), nihai sınıf, katman ve genç aday."""
     rules = rules or load_rules()
@@ -1008,6 +1109,12 @@ def finalize(table: pd.DataFrame, rules: dict | None = None) -> pd.DataFrame:
 
     table["sinif"] = table.apply(klass, axis=1)
     table.loc[~all_pass & (table["sinif"] == "Geçti"), "sinif"] = "Yetersiz"
+    if "neden" not in table:
+        table["neden"] = np.nan
+    table["neden"] = table["neden"].astype(object)
+    missing_reason = table["neden"].isna() | (table["neden"].astype(str).str.strip() == "")
+    needs = missing_reason & (table["sinif"] != "Geçti")
+    table.loc[needs, "neden"] = table[needs].apply(lambda row: fail_reason(row, rules), axis=1)
     table["katman"] = table.apply(lambda row: katman({f"adim{i}": row.get(f"adim{i}") for i in range(1, 8)}), axis=1)
     for col in ("history_days", "account_age_days"):
         if col not in table:
@@ -1062,7 +1169,7 @@ def freeze_report(table: pd.DataFrame) -> str:
 
 # Hesap sürümü: satırın hangi hesap koduyla üretildiğini gösterir. Veri dalındaki eski sonuç dosyasında bu sütun yoksa ya da farklıysa
 # satır "eski_hesap"tır: yeni sonuca karışmaz, akıl sağlığı kapısına girmez, ayrı dosyaya yazılır (sonuc_eski_hesap.csv.gz).
-HESAP_SURUMU = "v1.1-2026-10-27c"
+HESAP_SURUMU = "v1.1-2026-10-27d"
 
 RATIO_COLUMNS = ("profitable_month_ratio", "max_drawdown", "largest_trade_share", "kisa_islem_payi", "gece_payi", "pay_kripto", "pay_hisse",
                  "pay_endeks", "pay_emtia", "binance_payi", "candle_coverage", "plasebo_p", "bhy_q", "kopya_eksik_orani")
@@ -1104,6 +1211,21 @@ def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
                 problems.append(f"{name}: metrik üreten {len(metric_rows)} satırda tamamen boş")
             elif len(metric_rows) >= int(rules["saglik_min_satir_sabit_kontrolu"]) and metric_rows[name].nunique() <= 1:
                 problems.append(f"{name}: {len(metric_rows)} satırda sabit değer ({metric_rows[name].iloc[0]!r})")
+    low, high = float(rules["saglik_net_min"]), float(rules["saglik_net_max"])
+    for name in [c for c in table.columns if re.fullmatch(r"gecikme_\d+dk_net", c)] + (["alfa_yillik"] if "alfa_yillik" in table else []):
+        values = pd.to_numeric(table[name], errors="coerce").dropna()
+        bad = values[(values < low) | (values > high)]
+        if len(bad):
+            problems.append(f"{name}: {len(bad)} satırda net getiri {low:g}..{high:g} dışı (min {values.min():.4g}, max {values.max():.4g})")
+    if len(metric_rows):
+        allowed = set(rules["saglik_bos_olabilir"])
+        for name in table.columns:
+            if name not in allowed and table[name].isna().all():
+                problems.append(f"{name}: tabloda tamamen boş sütun (doldurulmalı ya da kaldırılmalı)")
+    if "neden" in table and "sinif" in table:
+        silent = table[(table["sinif"] != "Geçti") & table["neden"].fillna("").astype(str).str.strip().eq("")]
+        if len(silent):
+            problems.append(f"neden: Kaldı/Yetersiz {len(silent)} satırda neden boş")
     if "hata" in table and len(table):
         failed = int(table["hata"].notna().sum())
         limit = float(rules["saglik_max_hata_orani"])
@@ -1172,7 +1294,8 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
             previous = pd.read_csv(existing, low_memory=False)
             same = previous["hesap"].eq(HESAP_SURUMU) if "hesap" in previous else pd.Series(False, index=previous.index)
             legacy = previous[~same].assign(durum="eski_hesap")
-            fresh = [previous[same].assign(satir_kaynagi="onceki_dosya_ayni_hesap")] + fresh
+            if same.any():       # boş çerçeve eski sütunları (ör. ölü sütunlar) yeni tabloya taşımasın
+                fresh = [previous[same].assign(satir_kaynagi="onceki_dosya_ayni_hesap")] + fresh
         if not evren.get(date) and (output / "evren.json").exists():
             evren[date] = int(json.loads((output / "evren.json").read_text(encoding="utf-8"))["evren"])
         table = pd.concat(fresh, ignore_index=True).drop_duplicates("address", keep="last")

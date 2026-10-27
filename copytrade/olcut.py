@@ -292,6 +292,8 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
                                   if x["holding_hours"] is not None]) else None),
         "median_leverage": lev_median, "max_leverage": lev_max, "kaldirac_supheli_ornek": lev_dropped,
         "setting_leverage": max(leverages) if leverages else None, "liquid_coin_share": liquid_share,
-        "martingale_ratio": ratio, "martingale_additions": additions,
+        "martingale_ratio": ratio,
+        # TÜM aynı yönlü eklemeler (her emir bir kez); zararda olanlar ayrı sütunda: oran = aleyhe / tüm (görev: sütun adı yanıltıyordu)
+        "martingale_additions": additions, "martingale_aleyhe_ekleme": int(round(ratio * additions)),
         "martingale_signal": additions >= martingale_min_additions and ratio > martingale_max_ratio,
     }

@@ -135,7 +135,7 @@ def test_alpha_benchmark_choice_and_basket():
     fills = [{"coin": "BTC", "px": "100", "sz": "1"}, {"coin": "xyz:NVDA", "px": "100", "sz": "1"}, {"coin": "xyz:GOLD", "px": "100", "sz": "2"}]
     shares = market_shares(fills, {"BTCUSDT", "NVDAUSDT", "XAUUSDT"})
     assert shares["pay_kripto"] == .25 and shares["pay_hisse"] == .25 and shares["pay_emtia"] == .5 and shares["binance_payi"] == 1
-    assert market_shares(fills, None)["binance_payi"] is None
+    assert "binance_payi" not in market_shares(fills, None)     # liste alınamadıysa sütun hiç yazılmaz (sessiz boş sütun yok)
     day = 86_400_000
     up = [{"t": i * day, "c": str(100 * 1.1 ** i)} for i in range(3)]
     flat = [{"t": i * day, "c": "50"} for i in range(3)]
@@ -206,7 +206,7 @@ def result_row(address, **over):
            # akıl sağlığı kapısı (18d) metrik üreten satırda bu sütunların dolu olmasını ister
            "closed_trades": 80, "median_holding_hours": 30, "median_leverage": 2.0, "max_leverage": 8.0, "candle_coverage": 1.0,
            "profitable_month_ratio": .6, "max_drawdown": .2, "gecikme_30dk_net": .1, "gecikme_120dk_net": .05, "kisa_islem_payi": .1,
-           "pay_kripto": 1.0}
+           "pay_kripto": 1.0, "nw_t": 1.0}
     return {**row, **over}
 
 

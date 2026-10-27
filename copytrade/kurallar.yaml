@@ -104,3 +104,8 @@ saglik_min_satir_sabit_kontrolu: 50
 saglik_max_hata_orani: 0.05
 # Oran sütunlarında kayan nokta farkı için tolerans (ör. paylar toplamı 1,0000000000000002)
 saglik_oran_toleransi: 1.0e-9
+# Kopya net getirisi (kopya sermayesine oran) makul aralığı: −1 (tüm sermaye) .. +100 (yüz katı); dışı satırda `hata`, sütunda kapı kırmızı
+saglik_net_min: -1.0
+saglik_net_max: 100.0
+# Tamamen boş olmasına izin verilen (isteğe bağlı / yalnız sorun varsa dolan) sütunlar; bunların DIŞINDA tamamen boş sütun kapıyı kırar (görev: ölü sütunlar sessiz kalmasın)
+saglik_bos_olabilir: [plasebo_hata, plasebo_not, hata, not, plasebo_gercek_skor, neden, bhy_q]

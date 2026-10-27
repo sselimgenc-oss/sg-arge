@@ -59,6 +59,8 @@ def test_golden_martingale_counts_orders_in_real_sequence_and_measures_against_r
     Ekleme 3 tek emir iki dolumla (90 ve 92 → ağırlıklı 91 → %−7,46: zararda). 3 ekleme, 2 zararda → 2/3."""
     ratio, additions = martingale_ratio(martingale_fills(), 0.02)
     assert additions == 3 and ratio == pytest.approx(2 / 3)
+    metrics = calculate_metrics(martingale_fills() + [fill(9, "A", 3.5, 4, 95, pnl=-5, oid=9, tid=9)], account_value=1000.0)
+    assert metrics["martingale_additions"] == 3 and metrics["martingale_aleyhe_ekleme"] == 2   # sütun TÜM eklemeleri sayar; aleyhe olanlar ayrı
     shuffled = list(reversed(martingale_fills()))
     assert martingale_ratio(shuffled, 0.02) == (ratio, additions)     # girdi sırası sonucu değiştirmez: zaman/tid sırası
 

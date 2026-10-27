@@ -126,7 +126,30 @@ class FundingRates:
         return np.where(distance <= max_gap_ms, rates[pick], median)
 
 
-def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: int, start_ms: int, end_ms: int,
+def capital_scale(account: Any):
+    """Kopya sermayesi 1 birimdir; trader'ın dolumu ``1 / hesap değeri`` ile ölçeklenir (kopyalayan, trader'ın hesabına oranla aynı
+    maruziyeti taşır). ``account``: sabit sayı ya da zaman indeksli hesap değeri serisi; seri verilirse dolumun anındaki (o ana kadarki
+    son) değer kullanılır, ilk noktadan önce ilk değer. Bugünkü değer geçmişe uygulanmaz (çekilmiş hesapta getiri patlamasın).
+    Geçerli değer yoksa ``None``."""
+    import pandas as pd
+    if isinstance(account, pd.Series):
+        series = account[account > 0].sort_index()
+        if series.empty:
+            return None
+        times = np.array([int(t.value // 1_000_000) for t in series.index], dtype=np.int64)
+        inverse = 1.0 / series.to_numpy(dtype=float)
+
+        def scale(moment: int) -> float:
+            index = int(np.searchsorted(times, moment, side="right")) - 1
+            return float(inverse[max(index, 0)])
+        return scale
+    if account is None or float(account) <= 0:
+        return None
+    constant = 1.0 / float(account)
+    return lambda moment: constant
+
+
+def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int, start_ms: int, end_ms: int,
                 rates: FundingRates | None = None, rules: dict | None = None, daily: bool = False) -> dict[str, Any]:
     """Tek kopya defteri. ``fills``: kaynak dolumlar (coin, side A/B, sz, startPosition, time, px), zamana göre sıralı olmak zorunda değil.
 
@@ -134,7 +157,8 @@ def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: in
     ``executed``, ``costs``, ``funding``, ``realized``, ``unrealized_end``; ``daily=True`` ise ``daily`` (UTC gün → net, açık pozisyon
     fiyatlaması dahil), ``exposure`` (gün → açık pozisyonlu saat oranı) ve ``max_drawdown`` (kopya eğrisinin zirveden düşüşü, kesir).
     """
-    if account <= 0:
+    scale = capital_scale(account)
+    if scale is None:
         return {"net": None, "missing": 0, "executed": 0}
     rate = cost_rate(rules)
     held: dict[str, float] = {}       # kopya pozisyonu (coin birimi)
@@ -151,12 +175,18 @@ def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: in
         size = float(fill["sz"])
         before_leader = float(fill.get("startPosition", 0))
         signed = sign * size
+        if abs(signed) < 1e-12:
+            continue
         own = held.get(coin, 0.0)
+        factor = scale(int(fill["time"]))     # kopya sermayesi 1 / trader'ın o andaki hesap değeri
         if before_leader * signed < 0:    # trader'ın pozisyonunu azaltıyor / kapatıyor / ters çeviriyor
             leader_close = min(abs(before_leader), abs(signed))
-            close = min(abs(own), leader_close) if own * before_leader > 0 else 0.0
-            signed = sign * (close + max(0.0, abs(signed) - leader_close))
-        if abs(signed) < 1e-12:
+            # kopya, kendi pozisyonunun trader'ın kapattığı oranı kadarını kapatır (ölçek zamanla değişse de artık pozisyon kalmaz)
+            close = abs(own) * leader_close / abs(before_leader) if own * before_leader > 0 else 0.0
+            signed = sign * (close + max(0.0, abs(signed) - leader_close) * factor)
+        else:
+            signed = signed * factor
+        if abs(signed) < 1e-15:
             continue
         if delay_min == 0:
             when, price = int(fill["time"]), float(fill.get("px", 0))
@@ -176,15 +206,15 @@ def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: in
             pnl = closing * (price - entry[coin]) * (1.0 if own > 0 else -1.0)
             after = own + signed
             new_entry = price if abs(signed) > abs(own) else entry[coin]
-            if abs(after) < 1e-12:
+            if abs(after) < 1e-15:
                 after = 0.0
         else:                              # açma / ekleme
             after = own + signed
             new_entry = (entry.get(coin, price) * abs(own) + price * abs(signed)) / abs(after)
         cost = abs(signed) * price * rate
-        realized += (pnl - cost) / account
-        costs += cost / account
-        flow[when // DAY] = flow.get(when // DAY, 0.0) + (pnl - cost) / account
+        realized += pnl - cost
+        costs += cost
+        flow[when // DAY] = flow.get(when // DAY, 0.0) + (pnl - cost)
         held[coin], entry[coin] = after, new_entry
         timeline.setdefault(coin, []).append((when, after, new_entry))
         if after == 0.0:
@@ -204,12 +234,12 @@ def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: in
                 first, last = bisect_left(times, when), bisect_left(times, until)
                 if last <= first:
                     continue
-                funding_total += -after * (cum[last] - cum[first]) / account
+                funding_total += -after * (cum[last] - cum[first])
                 if daily:
                     _, opens, _ = market.lists(coin)
                     grid_rates = rates.array(coin, np.array(times[first:last], dtype=np.int64))
                     for hour, price, rate_h in zip(times[first:last], opens[first:last], grid_rates.tolist()):
-                        funding_by_day[hour // DAY] = funding_by_day.get(hour // DAY, 0.0) - after * price * rate_h / account
+                        funding_by_day[hour // DAY] = funding_by_day.get(hour // DAY, 0.0) - after * price * rate_h
     boundaries = [end_ms]
     if daily and timeline:
         first_day = min(flow) if flow else start_ms // DAY
@@ -227,7 +257,7 @@ def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: in
             if mark is None:
                 unknown += 1
                 continue
-            total += events[index][1] * (mark - events[index][2]) / account
+            total += events[index][1] * (mark - events[index][2])
         return total, unknown
 
     unrealized_end, unknown_end = unrealized_at(end_ms)
