@@ -65,6 +65,19 @@
     .ct-kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.5rem; }
     .ct-kv > div { background: #101a30; border: 1px solid var(--border); border-radius: 0.375rem; padding: 0.375rem 0.5rem; min-width: 0; }
     .ct-kv .k { font-size: 10px; color: var(--muted); } .ct-kv .v { font-size: 13px; font-weight: 600; }
+    /* Keşif: kartlar tek sütunda da okunur; filtreler asla yatay kaydırma oluşturmaz. */
+    .ks-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: .5rem; }
+    .ks-select { width: 100%; min-width: 0; background: #1c2a47; border: 1px solid var(--border); border-radius: .375rem; color: var(--text); padding: .6rem .5rem; font-size: 12px; }
+    .ks-card { cursor: pointer; }
+    .ks-card:hover, .ks-card:focus-visible { background: var(--hover); outline: none; }
+    .ks-card-head { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem; }
+    .ks-address { font-weight: 700; color: #fff; font-size: 14px; }
+    .ks-egr i { display: block; height: 42px; }
+    .ks-share { display: flex; height: 7px; overflow: hidden; border-radius: 99px; background: #0f172a; margin-top: .3rem; }
+    .ks-share > span { min-width: 0; }
+    .ks-adim { display: grid; grid-template-columns: auto 1fr; gap: .25rem .6rem; align-items: start; border-top: 1px solid var(--border); padding: .55rem 0; font-size: 12px; }
+    .ks-adim:first-child { border-top: 0; }
+    .ks-copy-note { min-height: 1.1rem; font-size: 11px; color: var(--muted); }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -108,12 +121,18 @@
         <div id="ctIstat"></div>
       </section>
 
+      <!-- KEŞİF: kapı adayları, yalnız okunur; kopyalama düğmesi adresi panoya alır. -->
+      <section data-tab="kesif" class="tab hidden space-y-4">
+        <div id="ksMsg" class="hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
+        <div id="ksMain"></div>
+      </section>
+
     </main>
   </div>
 
 <script>
   const TABS = [
-    ['ct', 'Copy trade', 'users'], ['ctakis', 'CT akış', 'activity'], ['ctistat', 'CT istatistik', 'bar-chart-3'],
+    ['ct', 'Copy trade', 'users'], ['kesif', 'Keşif', 'compass'], ['ctakis', 'CT akış', 'activity'], ['ctistat', 'CT istatistik', 'bar-chart-3'],
   ];
   const charts = {};
 
@@ -133,6 +152,7 @@
     document.querySelectorAll('.nav-btn').forEach((b) => b.classList.toggle('active', b.dataset.nav === id));
     document.body.classList.toggle('ct-aktif', id.startsWith('ct'));
     if (id === 'ct') ctCizim();
+    if (id === 'kesif') ksRender();
   }
 
   function chart(id, cfg) {
@@ -147,9 +167,12 @@
   // Kaynak adresleri yalnız burada değişir (canlı: sg-arge copytrade-izleme dalı; örnek sabit veri: ./izleme/ornek_durum.json).
   const CT_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/durum.json';
   const CT_KARAR = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/kararlar.jsonl'; // dosya yoksa (404) karar kaydı yok sayılır
+  const KESIF_KAYNAK = './kesif/ornek_kesif.json';
   const CT_ESKI_DK = 90, CT_SAYFA = 8, CT_AKIS_ADIM = 50, CT_YETERSIZ = 10; // eşik: sözleşme v1.1 (<10 kapanmış ve kararı verilmiş olay)
   let CT = null, CTK = { durum: 'yok', kayit: {}, bozuk: 0 }, ctHata = null;
   let ctSel = null, ctSayfa = 0, ctFiltre = '', ctAkisN = CT_AKIS_ADIM;
+  let KS = null, ksHata = null, ksSel = null;
+  let ksFiltre = { tarz: '', katman: '', piyasa: '', gecmis: '', sirala: 'alfa_t' };
 
   const ISIK = { yesil: ['🟢', 'Yeşil'], sari: ['🟡', 'Sarı'], kirmizi: ['🔴', 'Kırmızı'] };
   const TUR = { acilis: 'Açılış', kapanis: 'Kapanış', buyutme: 'Büyütme', azaltma: 'Azaltma', isik: 'Işık' };
@@ -393,9 +416,72 @@
 
   function ctRender() { ctSerit(); ctRenderAna(); ctRenderAkis(); ctRenderIstat(); if (window.lucide) lucide.createIcons(); ctCizim(); }
 
+  // ---------- keşif (sg-arge docs/GOREV_TRADER_SECIMI.md, kesif.json v1)
+  const ksRozet = (metin, sinif) => ctRozet(metin, sinif);
+  const ksTarz = (a) => a.tarz === 'swing' ? 'Swing' : a.tarz === 'intraday' ? 'Intraday' : 'Scalp';
+  const ksKatman = (a) => a.katman === 'kopyalanabilir' ? ['Kopyalanabilir', 'ct-b-ok'] : ['İzleme adayı', 'ct-b-warn'];
+  const ksDurum = (d) => d === 'Geçti' ? 'ct-b-ok' : d === 'Kaldı' ? 'ct-b-bad' : 'ct-b-warn';
+  const ksPiyasa = (a) => Object.entries(a.piyasa_payi || {}).sort((x, y) => y[1] - x[1])[0]?.[0] || '';
+  const ksPay = (a) => {
+    const p = a.piyasa_payi || {}, renk = { kripto: '#38bdf8', hisse: '#a78bfa', emtia: '#f5cb5c' };
+    return `<div class="ks-share" aria-label="Piyasa payları">${['kripto', 'hisse', 'emtia'].map((k) => `<span style="width:${Math.max(0, p[k] || 0) * 100}%;background:${renk[k]}"></span>`).join('')}</div><div class="ct-sub mt-1">Kripto ${ctP(p.kripto)} · Hisse ${ctP(p.hisse)} · Emtia ${ctP(p.emtia)}</div>`;
+  };
+  function ksFiltrele() {
+    let l = (KS?.adaylar || []).filter((a) => (!ksFiltre.tarz || a.tarz === ksFiltre.tarz)
+      && (!ksFiltre.katman || a.katman === ksFiltre.katman)
+      && (!ksFiltre.piyasa || ksPiyasa(a) === ksFiltre.piyasa)
+      && (!ksFiltre.gecmis || a.gecmis_gun >= 365));
+    const deger = (a) => ksFiltre.sirala === 'g30' ? a.kopya?.g30 : ksFiltre.sirala === 'g120' ? a.kopya?.g120 : ksFiltre.sirala === 'tutma' ? a.medyan_tutma_sa : a.alfa_t;
+    return l.sort((a, b) => ((a.katman === 'kopyalanabilir') - (b.katman === 'kopyalanabilir')) * -1
+      || (a.genc_aday - b.genc_aday) || ((deger(b) ?? -Infinity) - (deger(a) ?? -Infinity)));
+  }
+  function ksEgrisi(egri) {
+    const y = (egri || []).map((p) => p?.[1]).filter(isNum);
+    if (y.length < 2) return '<div class="ct-sub">kâr eğrisi yok</div>';
+    const mn = Math.min(...y), mx = Math.max(...y), aralik = mx - mn || 1;
+    const pts = y.map((v, i) => `${(i * 100 / (y.length - 1)).toFixed(2)},${(30 - ((v - mn) / aralik * 27)).toFixed(2)}`).join(' ');
+    const renk = y[y.length - 1] >= y[0] ? '#10b981' : '#ef4444';
+    return `<svg viewBox="0 0 100 32" preserveAspectRatio="none" class="w-full" role="img" aria-label="Haftalık kâr eğrisi"><polyline points="${pts}" fill="none" stroke="${renk}" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>`;
+  }
+  function ksKart(a) {
+    const [katman, renk] = ksKatman(a), once = a.tarz === 'swing' ? ['2 sa kopya', a.kopya?.g120] : ['30 dk kopya', a.kopya?.g30];
+    return `<article class="card ct-card ks-card" tabindex="0" role="link" onclick="location.hash='kesif/${encodeURIComponent(a.adres)}'" onkeydown="if(event.key==='Enter')location.hash='kesif/${encodeURIComponent(a.adres)}'">
+      <div class="ks-card-head"><span class="ks-address">${esc(ctAdr(a.adres))}</span>${ksRozet(ksTarz(a), 'ct-b-mut')}${ksRozet(katman, renk)}${a.genc_aday ? ksRozet('Genç aday', 'ct-b-warn') : ''}</div>
+      <div class="ks-egr mt-2">${ksEgrisi(a.egri)}</div>
+      <div class="ct-kv mt-2"><div><div class="k">Medyan tutma</div><div class="v">${fmt(a.medyan_tutma_sa, 1)} sa</div></div><div><div class="k">Medyan kaldıraç</div><div class="v">${fmt(a.medyan_kaldirac, 1)}x</div></div><div><div class="k">${once[0]}</div><div class="v ${cls(once[1])}">${ctPs(once[1])}</div></div><div><div class="k">Diğer gecikme</div><div class="v ${cls(a.tarz === 'swing' ? a.kopya?.g30 : a.kopya?.g120)}">${ctPs(a.tarz === 'swing' ? a.kopya?.g30 : a.kopya?.g120)}</div></div><div><div class="k">Kârlı ay</div><div class="v">${ctP(a.karli_ay_orani)}</div></div><div><div class="k">Binance payı</div><div class="v">${ctP(a.binance_payi)}</div></div></div>
+      <div class="ct-sec">${ksPay(a)}</div></article>`;
+  }
+  function ksKontrol() {
+    const f = ksFiltre;
+    return `<div class="card ct-card"><div class="ks-controls"><label class="ct-sub">Tarz<select class="ks-select mt-1" onchange="ksFiltre.tarz=this.value;ksRender()"><option value="">Tümü</option><option value="intraday"${f.tarz === 'intraday' ? ' selected' : ''}>Intraday</option><option value="swing"${f.tarz === 'swing' ? ' selected' : ''}>Swing</option></select></label><label class="ct-sub">Katman<select class="ks-select mt-1" onchange="ksFiltre.katman=this.value;ksRender()"><option value="">Tümü</option><option value="kopyalanabilir"${f.katman === 'kopyalanabilir' ? ' selected' : ''}>Kopyalanabilir</option><option value="izleme_adayi"${f.katman === 'izleme_adayi' ? ' selected' : ''}>İzleme adayı</option></select></label><label class="ct-sub">Piyasa (ağırlık)<select class="ks-select mt-1" onchange="ksFiltre.piyasa=this.value;ksRender()"><option value="">Tümü</option><option value="kripto"${f.piyasa === 'kripto' ? ' selected' : ''}>Kripto</option><option value="hisse"${f.piyasa === 'hisse' ? ' selected' : ''}>Hisse</option><option value="emtia"${f.piyasa === 'emtia' ? ' selected' : ''}>Emtia</option></select></label><label class="ct-sub">Geçmiş<select class="ks-select mt-1" onchange="ksFiltre.gecmis=this.value;ksRender()"><option value="">Tümü</option><option value="12"${f.gecmis ? ' selected' : ''}>≥12 ay</option></select></label><label class="ct-sub">Sıralama<select class="ks-select mt-1" onchange="ksFiltre.sirala=this.value;ksRender()"><option value="alfa_t"${f.sirala === 'alfa_t' ? ' selected' : ''}>Alfa t</option><option value="g30"${f.sirala === 'g30' ? ' selected' : ''}>30 dk kopya</option><option value="g120"${f.sirala === 'g120' ? ' selected' : ''}>2 sa kopya</option><option value="tutma"${f.sirala === 'tutma' ? ' selected' : ''}>Tutma süresi</option></select></label></div></div>`;
+  }
+  function ksAyrinti(a) {
+    const [katman, renk] = ksKatman(a), adimlar = Array.from({ length: 8 }, (_, i) => a.adimlar?.[String(i + 1)] || { durum: 'Yetersiz', neden: 'Veri yok.' });
+    const kv = (k, v) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
+    return `<a href="#kesif" class="ct-btn inline-flex mb-3">← Adaylar</a><div class="space-y-4 ct-detay"><div class="card ct-card"><div class="ks-card-head"><span class="ct-name text-lg">${esc(ctAdr(a.adres))}</span>${ksRozet(ksTarz(a), 'ct-b-mut')}${ksRozet(katman, renk)}${a.genc_aday ? ksRozet('Genç aday', 'ct-b-warn') : ''}</div><div class="ct-sub mt-2 break-all">${esc(a.adres)}</div><div class="flex flex-wrap gap-2 mt-3"><button class="ct-btn" onclick="ksAdresiKopyala('${esc(a.adres)}')"><i data-lucide="copy" class="w-3.5 h-3.5 inline"></i> Adresi kopyala</button><span id="ksCopyNote" class="ks-copy-note self-center"></span></div></div>
+      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-2">Kapı adımları</h3>${adimlar.map((x, i) => `<div class="ks-adim"><div>${ksRozet(`${i + 1}. ${x.durum}`, ksDurum(x.durum))}</div><div>${esc(x.neden || 'Neden belirtilmemiş.')}</div></div>`).join('')}</div>
+      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-2">Ölçüler</h3><div class="ct-kv">${kv('Geçmiş', `${fmt(a.gecmis_gun, 0)} gün`)}${kv('Kapanan işlem', fmt(a.kapanan_islem, 0))}${kv('Aktif ay', fmt(a.aktif_ay, 0))}${kv('Hesap değeri', ctUsd(a.hesap_degeri, 0))}${kv('Medyan tutma', `${fmt(a.medyan_tutma_sa, 1)} sa`)}${kv('Medyan kaldıraç', `${fmt(a.medyan_kaldirac, 1)}x`)}${kv('30 dk kopya', `<span class="${cls(a.kopya?.g30)}">${ctPs(a.kopya?.g30)}</span>`)}${kv('2 sa kopya', `<span class="${cls(a.kopya?.g120)}">${ctPs(a.kopya?.g120)}</span>`)}${kv('8 sa kopya', `<span class="${cls(a.kopya?.g480)}">${ctPs(a.kopya?.g480)}</span>`)}${kv('Kârlı ay', ctP(a.karli_ay_orani))}${kv('Plasebo p', fmt(a.plasebo_p, 3))}${kv('Alfa t', `${fmt(a.alfa_t, 1)} · ${esc(a.alfa_kiyas)}`)}</div></div>
+      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-2">Piyasa payları</h3>${ksPay(a)}<div class="ct-sub mt-2">Binance payı: ${ctP(a.binance_payi)}</div></div>
+      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-2">İlişkili hesap notu</h3><div class="text-xs">${esc(a.iliskili_not || 'İlişkili hesap notu yok.')}</div></div></div>`;
+  }
+  function ksRender() {
+    const el = $('ksMain'), msg = $('ksMsg');
+    msg.classList.toggle('hidden', !ksHata); msg.textContent = ksHata || '';
+    if (!KS) { el.innerHTML = '<div class="card empty">Keşif verisi henüz okunamadı.</div>'; return; }
+    const adaylar = ksFiltrele(), secili = ksSel && KS.adaylar.find((a) => a.adres === ksSel);
+    el.innerHTML = secili ? ksAyrinti(secili) : `${ksKontrol()}<div class="ct-sub">${adaylar.length} / ${KS.adaylar.length} aday · evren ${fmt(KS.evren, 0)} · işlenen ${fmt(KS.islenen, 0)}</div><div class="ct-grid">${adaylar.map(ksKart).join('') || '<div class="card empty">Bu filtrelerde aday yok.</div>'}</div>`;
+    if (window.lucide) lucide.createIcons();
+  }
+  async function ksAdresiKopyala(adres) {
+    const not = $('ksCopyNote');
+    try { await navigator.clipboard.writeText(adres); not.textContent = 'Adres panoya kopyalandı.'; }
+    catch (e) { not.textContent = 'Panoya kopyalanamadı.'; }
+  }
+
   // ---------- yükleme
   async function ctYukle(elle) {
     const ikon = $('refreshIcon'); if (elle && ikon) ikon.classList.add('animate-spin');
+    ksYukle();
     try {
       const r = await fetch(CT_KAYNAK + '?t=' + Date.now(), { cache: 'no-store' });
       if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -419,11 +505,27 @@
     ctRender();
     if (ikon) setTimeout(() => ikon.classList.remove('animate-spin'), 400);
   }
+  async function ksYukle() {
+    try {
+      const r = await fetch(KESIF_KAYNAK + '?t=' + Date.now(), { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      const uygun = j && j.surum === 1 && Array.isArray(j.adaylar) && j.adaylar.every((a) => a && typeof a.adres === 'string'
+        && ['intraday', 'swing', 'scalp'].includes(a.tarz) && ['kopyalanabilir', 'izleme_adayi'].includes(a.katman)
+        && a.piyasa_payi && a.kopya && a.adimlar && Array.isArray(a.egri));
+      if (!uygun) throw new Error('v1 şeması beklenen alanları içermiyor');
+      KS = j; ksHata = null;
+    } catch (e) { ksHata = 'Keşif verisi okunamadı (' + e.message + ').'; }
+    if (!document.querySelector('[data-tab="kesif"]').classList.contains('hidden')) ksRender();
+  }
   function ctHash() {
     const m = /^#ct\/(.+)$/.exec(location.hash);
     ctSel = m ? decodeURIComponent(m[1]) : null; ctSayfa = 0;
-    if (m) showTab('ct');
+    const km = /^#kesif\/(.+)$/.exec(location.hash);
+    ksSel = km ? decodeURIComponent(km[1]) : null;
+    if (m) showTab('ct'); else if (km || location.hash === '#kesif') showTab('kesif');
     if (CT !== null || ctHata) ctRender();
+    if (KS !== null || ksHata) ksRender();
   }
   window.addEventListener('hashchange', ctHash);
 
