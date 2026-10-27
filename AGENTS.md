@@ -17,6 +17,12 @@ Bu repo bir copy trade araştırma projesidir (Hyperliquid; 2026-10-27 itibarıy
 - **`main`'e doğrudan push yok.** PR açılır; birleştirmeyi lider yapar.
 - Kapı istatistikleri `kapi/istatistik.py`'de, pano sağlık ölçümleri `pano/`'da; yeniden yazma, kullan.
 
+## Kabul kanıtı (2026-10-27, Sol 6.1 denetimi sonrası)
+- Hesap değiştiren her PR, elle hesaplanmış **altın örnek** testleriyle gelir (girdi + beklenen sayı).
+- Veri üreten işlerde PR açıklamasına çıktı özeti eklenir: satır sayısı, kapsam, her sütunun min/medyan/max'ı.
+- "Bitti" yalnız kabul kanıtı ve (varsa) canlı koşu sonucuyla söylenir; hata `|| true` ile örtülmez.
+- Lider bu üçü olmadan birleştirmez.
+
 ## PR'dan önce
 - Tam test paketi: `python -m pytest -q` — sonucu PR açıklamasına yaz.
 - PR açılamazsa (yetki/ağ) dalı push etmek yeterli; durum dosyasına not düş.

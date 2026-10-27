@@ -41,6 +41,10 @@ alfa kıyası kripto→BTC, hisse/emtia→kendi sepeti; pano **Keşif** sekmesi 
 Teşhis: plasebo tüm coinlerde çakışmasız yerleştirme istediği için hiç hesaplanamadı → coin başına.
 Sonra: lider adayları inceler, izleme listesi kullanıcı onayıyla; 3 ay sanal izleme.
 
+**Sol 6.1 denetimi (2026-10-27):** 3 aylık ölçüm henüz başlamaz. Kapı/ölçü düzeltmeleri Sonnet
+(`GOREV_TRADER_SECIMI.md` 19–26), izleme+Worker düzeltmeleri Codex (`GOREV_IZLEME_DUZELTME.md`), kabul kanıtı kuralı
+`AGENTS.md`. Ayrıntı `docs/DENETIM_2026-10-27.md`.
+
 **Telegram v2 (sonra):** bildirimde trader girişine göre fiyat kayması ve tolerans aşılınca "atla"; spread; HIP-3
 için "dayanak piyasa kapalı" uyarısı (Sol 6.1 önerisi).
 
