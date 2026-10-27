@@ -6,7 +6,7 @@ gerekirse dur ve durum dosyasına yaz. Sonucu değiştirmeyen teknik ayrıntıy�
 Yalnız herkese açık Hyperliquid verisi; emir, cüzdan, gerçek para yok.
 
 ## İş A — izleme motoru (önce bu)
-1. **İzleme listesi:** `copytrade/izleme_listesi.yaml` — `id, adres, takma_ad, durum (kopyala|izlemede|durdu), t0`.
+1. **İzleme listesi:** `copytrade/izleme_listesi.yaml` (main'de MEVCUT, 2 test trader; biçimi koru) — `id, adres, takma_ad, durum (kopyala|izlemede|durdu), t0`.
    Listeyi lider/kullanıcı doldurur; başlangıçta boş olabilir (motor boş listede de çalışır ve geçerli dosya yazar).
 2. **İş akışı** `.github/workflows/izleme.yml`: `schedule` **saatte bir** + `workflow_dispatch` (lider kararı
    2026-10-27, Argon notu: Actions zamanlaması 10–60 dk gecikebilir; hızlı bildirim İş B'de Cloudflare'de olacak). Sonuç ve durum
