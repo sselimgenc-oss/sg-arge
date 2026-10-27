@@ -4,16 +4,6 @@ on:
   schedule:
     - cron: "23 * * * *"
   workflow_dispatch:
-  # Görev gereği ilk doğrulama dalın push olayıyla yapılır.
-  push:
-    branches: [codex/izleme]
-    paths:
-      - copytrade/izleme_motoru.py
-      - copytrade/izleme_listesi.yaml
-      - tests/test_izleme.py
-      - pano/saglik.py
-      - .github/workflows/izleme.yml
-      - .github/scripts/izleme_yayimla.sh
 
 permissions:
   contents: write
@@ -49,5 +39,10 @@ jobs:
           fi
       - name: Halka açık veriyi oku ve sanal defteri güncelle
         run: python -m copytrade.izleme_motoru --root . --output izleme
+      - name: Worker kararlarını içe al
+        if: ${{ vars.KARAR_URL != '' }}
+        env:
+          KARAR_URL: ${{ vars.KARAR_URL }}
+        run: python -m copytrade.kararlar --url "$KARAR_URL" --output izleme/kararlar.jsonl
       - name: Arşivi ayrı veri dalına yaz
         run: bash .github/scripts/izleme_yayimla.sh

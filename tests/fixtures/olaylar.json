@@ -1,0 +1,16 @@
+{
+  "trader": "T1",
+  "account": 1000,
+  "fills": [
+    {"time": 1761568800000, "tid": 1, "oid": 101, "coin": "BTC", "side": "B", "sz": "0.4", "startPosition": "0", "px": "100"},
+    {"time": 1761568801000, "tid": 2, "oid": 101, "coin": "BTC", "side": "B", "sz": "0.6", "startPosition": "0.4", "px": "101"},
+    {"time": 1761569400000, "tid": 3, "oid": 102, "coin": "BTC", "side": "B", "sz": "0.4", "startPosition": "1", "px": "102"},
+    {"time": 1761570000000, "tid": 4, "oid": 103, "coin": "BTC", "side": "A", "sz": "1.4", "startPosition": "1.4", "px": "103"},
+    {"time": 1761570600000, "tid": 5, "oid": 104, "coin": "@1", "side": "B", "sz": "1", "startPosition": "0", "px": "1"}
+  ],
+  "expected": [
+    {"id": "T1-101-acilis", "tur": "acilis", "coin": "BTC", "yon": "long"},
+    {"id": "T1-102-buyutme", "tur": "buyutme", "coin": "BTC", "yon": "long"},
+    {"id": "T1-103-kapanis", "tur": "kapanis", "coin": "BTC", "yon": "long"}
+  ]
+}

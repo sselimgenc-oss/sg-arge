@@ -11,6 +11,7 @@ import pytest
 import yaml
 
 from copytrade import izleme_motoru as m
+from copytrade.kararlar import merge
 from copytrade.kapi import delayed_copy
 from pano.saglik import blok_bootstrap
 
@@ -20,9 +21,67 @@ NOW = m.timestamp('2026-10-27T12:00:00Z')
 T0 = m.timestamp('2026-10-27')
 
 
-def fill(t='2026-10-27T10:00:00Z', tid=1, side='B', size=1, before=0, price=100, coin='BTC'):
-    return {'time': m.millis(t), 'tid': tid, 'coin': coin, 'side': side, 'sz': str(size),
+def fill(t='2026-10-27T10:00:00Z', tid=1, side='B', size=1, before=0, price=100, coin='BTC', oid=None):
+    return {'time': m.millis(t), 'tid': tid, 'oid': str(tid if oid is None else oid), 'coin': coin, 'side': side, 'sz': str(size),
             'startPosition': str(before), 'px': str(price), 'closedPnl': '0', 'fee': '0'}
+
+
+def test_shared_order_fixture_has_one_event_for_multi_fill_order():
+    fixture = json.loads((ROOT / 'tests/fixtures/olaylar.json').read_text())
+    events = m.fill_events(fixture['trader'], fixture['fills'], fixture['account'], [])
+    actual = [{key: event[key] for key in ('id', 'tur', 'coin', 'yon')} for event in events]
+    assert actual == fixture['expected']
+    assert all(event['coin'] != '@1' for event in events)
+
+
+def test_first_health_value_does_not_emit_light_event(tmp_path):
+    root, client = project(tmp_path), Client()
+    result = m.run(root, root / 'out', client, NOW)
+    assert all(event['tur'] != 'isik' for event in result['olaylar'])
+
+
+def test_one_trader_error_retains_its_last_successful_payload(tmp_path):
+    rows = [
+        {'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Bir', 'durum': 'izlemede', 't0': str(T0.date())},
+        {'id': 'T2', 'adres': '0x' + '2' * 40, 'takma_ad': 'İki', 'durum': 'izlemede', 't0': str(T0.date())},
+    ]
+    root = project(tmp_path, rows)
+    class SometimesBroken(Client):
+        broken = False
+        def fills(self, address, start):
+            if self.broken and address == rows[1]['adres']:
+                raise RuntimeError('429 kısa hata')
+            return super().fills(address, start)
+    client = SometimesBroken()
+    first = m.run(root, root / 'out', client, NOW)
+    client.broken = True
+    result = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
+    old = next(trader for trader in first['traderlar'] if trader['id'] == 'T2')
+    retained = next(trader for trader in result['traderlar'] if trader['id'] == 'T2')
+    assert retained['hesap_degeri'] == old['hesap_degeri']
+    assert retained['saglik']['nedenler'][-1] == 'veri hatası: 429 kısa hata'
+
+
+def test_hourly_fallback_marks_virtual_copy_approximate(tmp_path):
+    root, client = project(tmp_path), Client()
+    config = root / 'copytrade/izleme_listesi.yaml'
+    config.write_text(config.read_text().replace('2026-10-27', '2026-10-01'))
+    old = fill('2026-10-01T10:00Z')
+    client.rows = [old]
+    now = m.timestamp('2026-10-27T12:00Z')
+    result = m.run(root, root / 'out', client, now)
+    assert result['traderlar'][0]['sanal_kopya']['not'] == 'yaklaşık fiyat'
+
+
+def test_kararlar_merges_last_decision_without_personal_fields(tmp_path):
+    path = tmp_path / 'kararlar.jsonl'
+    rows = merge(path, [
+        {'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:00:00Z', 'karar': 'acti', 'neden': 'diger', 'not': ''},
+        {'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:01:00Z', 'karar': 'atladi', 'neden': 'gec_gordum', 'not': ''},
+    ])
+    assert rows == [{'olay_id': 'T1-1-acilis', 'zaman': '2026-10-27T10:01:00Z', 'karar': 'atladi', 'neden': 'gec_gordum', 'not': ''}]
+    with pytest.raises(ValueError):
+        merge(path, [{'olay_id': 'x', 'zaman': 'now', 'karar': 'acti', 'neden': 'diger', 'not': '', 'tutar': '1'}])
 
 
 def position(size=1, coin='BTC', value=100):
@@ -67,7 +126,7 @@ class Client:
         return portfolio()
 
     def candles(self, coin, start, end, interval='1m'):
-        assert interval == '1m'
+        assert interval in {'1m', '1h'}
         self.candle_reads += 1
         return [{'t': t, 'o': '102'} for t in range(start, end + 1, m.MINUTE)]
 
@@ -205,9 +264,9 @@ def test_partial_close_keeps_open_event_until_final_exit():
     events = {e['id']: e for e in m.fill_events('T1', fills, 1000, [])}
     candles = {'BTC': [{'t': f['time'] + 30 * m.MINUTE, 'o': 100} for f in fills]}
     m.copy_results(fills[:2], candles, [], 1000, T0, NOW, events)
-    assert events[m.event_id('T1', fills[0], 'acilis')]['sanal_sonuc']['durum'] == 'acik'
+    assert events[m.event_id('T1', m.order_id(fills[0]), 'acilis')]['sanal_sonuc']['durum'] == 'acik'
     m.copy_results(fills, candles, [], 1000, T0, NOW, events)
-    assert events[m.event_id('T1', fills[0], 'acilis')]['sanal_sonuc']['durum'] == 'kapandi'
+    assert events[m.event_id('T1', m.order_id(fills[0]), 'acilis')]['sanal_sonuc']['durum'] == 'kapandi'
 
 
 def test_midnight_cost_is_booked_on_execution_day():
@@ -222,12 +281,13 @@ def test_midnight_cost_is_booked_on_execution_day():
 def test_exact_candle_required_and_cache_survives_window_rollover():
     client, cache = Client(), {}
     f = fill()
-    candles = m.execution_candles(client, [f], cache, m.millis(NOW))
+    candles, approximate = m.execution_candles(client, [f], cache, m.millis(NOW))
     assert candles['BTC'][0]['o'] == 102
+    assert not approximate
     m.execution_candles(client, [f], cache, m.millis(NOW) + 10 * m.DAY)
     assert client.candle_reads == 1
-    with pytest.raises(ValueError, match='arşiv gerekli'):
-        m.execution_candles(client, [f], {}, m.millis(NOW) + 10 * m.DAY)
+    candles, approximate = m.execution_candles(client, [f], {}, m.millis(NOW) + 10 * m.DAY)
+    assert approximate and candles['BTC'][0]['o'] == 102
     client.candles = lambda *args, **kwargs: [{'t': f['time'] + 31 * m.MINUTE, 'o': 999}]
     with pytest.raises(ValueError, match='mum eksik'):
         m.execution_candles(client, [f], {}, m.millis(NOW))
@@ -239,7 +299,7 @@ def test_failure_preserves_last_successful_payloads(tmp_path):
     previous = {p.name: p.read_bytes() for p in (root / 'out').iterdir()}
     client.rows.append(fill('2026-10-27T12:00Z', 2, 'B', 1, 1))
     client.candles = lambda *args, **kwargs: []
-    with pytest.raises(ValueError, match='mum eksik'):
+    with pytest.raises(RuntimeError, match='Tüm trader'):
         m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
     assert previous == {p.name: p.read_bytes() for p in (root / 'out').iterdir()}
 
@@ -429,4 +489,4 @@ def test_event_feed_is_recent_200_with_stable_archive(tmp_path):
     result = m.run(root, output, client, NOW)
     assert len(result['olaylar']) == 200
     assert '249' not in {e['id'] for e in result['olaylar']}
-    assert len(json.loads((output / 'motor.json').read_text())['olaylar']) == 251
+    assert len(json.loads((output / 'motor.json').read_text())['olaylar']) == 250
