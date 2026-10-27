@@ -23,8 +23,8 @@ paper'daki 13 kitaptan yalnız 2'sinde zayıf alfa izi vardı (`docs/kapi_kontro
 **1. Pano — ŞU AN** (bitti sayılır: telefondaki pano, saatlik motorun ürettiği gerçek veriyi gösteriyor)
 | Kim | İş | Durum |
 |---|---|---|
-| Codex | İzleme motoru, İş A (`docs/GOREV_IZLEME.md`, dal `codex/izleme`) | çalışıyor |
-| Sonnet | sg-pano: v1.1 + mobil (#6, #7) ve paper kısmı kaldırıldı (#8) | bitti; canlı veri bağlantısını bekliyor |
+| Codex | İzleme motoru, İş A (#277, HIP-3 dahil) | bitti; saatlik (:23) `copytrade-izleme` dalına yazıyor |
+| Sonnet | sg-pano: v1.1 + mobil (#6, #7), paper kaldırıldı (#8); **son iş: canlı veriye bağla** | gönderilecek |
 | Argon | Telegram ön araştırması (`arastirma/copytrade/argon_worker_teknik.md`) | bitti; sırası gelene kadar boşta |
 | Lider | İş A'yı denetle, birleştir | bekliyor |
 Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama kararı değil).
@@ -36,6 +36,9 @@ Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama karar
 sorunlar: 12.461 adresin 8.196'sı işlendi; adım 5 plasebo hiçbir adreste hesaplanmadı (p boş) → düzeltilecek.
 "İlişkili hesaplar" kontrolü eklenecek (alt hesap, vault, iç transfer, ortak agent — Argon notu). Sonra gerçek
 izleme listesi ve 3 aylık sanal izleme.
+
+**İzleme motoru için sonraya (Codex, Telegram'dan önce):** tek trader'ın hatası tüm koşuyu durduruyor; iş akışı 3,5 günden
+uzun durursa 1 dk mum penceresi kaçar ve motor kalıcı hata verir; ışık değişimi ilk koşuda da olay yazıyor; `codex/izleme` push tetiği silinecek.
 
 **Sonraya notlar:** Telegram mini uygulama; HIP-3 hafta sonu boşluğu uyarısı; mali müşavir soru listesi
 (`arastirma/copytrade/argon_kalicilik_cloudflare_turkiye.md`); gerçek para yok (en erken sanal izleme + ölçütler sonrası).
