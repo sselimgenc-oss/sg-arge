@@ -51,15 +51,15 @@ jobs:
           cp worker/wrangler.toml worker/wrangler.generated.toml
           printf '\n[[d1_databases]]\nbinding = "DB"\ndatabase_name = "sg-arge-telegram"\ndatabase_id = "%s"\n' "$db_id" >> worker/wrangler.generated.toml
       - name: D1 şemasını uygula
-        run: npm exec --yes wrangler@4 d1 execute sg-arge-telegram --remote --file=worker/schema.sql --config=worker/wrangler.generated.toml
+        run: npm exec --yes -- wrangler@4 d1 execute sg-arge-telegram --remote --file=worker/schema.sql --config=worker/wrangler.generated.toml
       - name: Worker secret'larını aktar ve dağıt
         shell: bash
         run: |
           set -euo pipefail
           # Önce dağıt: ilk koşuda Worker yokken secret put etkileşimli soru sorabilir.
-          npm exec --yes wrangler@4 deploy --config=worker/wrangler.generated.toml
+          npm exec --yes -- wrangler@4 deploy --config=worker/wrangler.generated.toml
           for name in TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID TELEGRAM_WEBHOOK_SECRET; do
-            printf '%s' "${!name}" | npm exec --yes wrangler@4 secret put "$name" --config=worker/wrangler.generated.toml
+            printf '%s' "${!name}" | npm exec --yes -- wrangler@4 secret put "$name" --config=worker/wrangler.generated.toml
           done
       - name: Telegram webhook'unu ayarla
         shell: bash
