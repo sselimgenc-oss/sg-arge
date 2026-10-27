@@ -1,0 +1,61 @@
+**Öncelik yeni grafikler değil, kopyalanabilirliği görünür kılmak:** “Veri ne kadar eski, fiyat ne kadar uzaklaştı, trader neyi değiştirdi, benim kararlarım ne sonuç verdi?” Mevcut istatistiksel kapıyı koruyup geliştirmeleri bu sorular çevresinde kurardım.
+
+**1. Emsal taraması — 28 Ekim 2026**
+
+Bağlantılar resmî ürün, yardım veya ekran sayfalarıdır. Aşağıdakiler tasarım emsalidir; bu servislerin API’lerini kullanma önerisi değildir.
+
+| Emsal | Bizim işimize yarayan 2–3 özellik |
+|---|---|
+| **Hyperdash** | Trader tarzı tahmini; elde tutma süresi ve tercih edilen coinler; coin bazında long/short trader keşfi. [Ekranlı rehber](https://docs.hyperdash.info/strategic-copytrading-hyperdash/recommendations-for-choosing-traders/using-hyperdash-to-find-traders) |
+| **HyperTracker** | Pozisyon yaşı ve “yeni” işareti; coin × cüzdan grubu yön haritası. [Pozisyon ekranı rehberi](https://coinmarketman.com/blog/whos-holding-the-biggest-positions-on-hyperliquid-right-now--en/), [ısı haritası](https://app.coinmarketman.com/hypertracker/heatmap) |
+| **Copin.io** | Çok ölçütlü trader filtresi; ortalama tutma süresi; maksimum düşüş. [Explorer](https://app.copin.io/explorer?protocol=all). Alanlar arama indeksinde görüldü; canlı filtre sonuçları **doğrulanamadı**. |
+| **CoinGlass** | Coin bazında cüzdan pozisyonları; açılış/kapanış ayrımlı büyük pozisyon bildirimleri. [Pozisyon sayfası](https://docs.coinglass.com/reference/hyperliquid-position), [bildirim sayfası](https://docs.coinglass.com/reference/hyperliquid-whale-alert) |
+| **Nansen** | Cüzdan/token odaklı uyarı; tutar eşiğiyle gürültü süzme; Telegram’a iletim. [Smart Alerts rehberi](https://academy.nansen.ai/help/articles/2912237-monitor-onchain-moves-with-smart-alerts) |
+| **Arkham** | Özel cüzdan grupları ve etiketler; koşullu uyarılar; filtrelenebilir işlem bağlantıları. [Ürün rehberi](https://info.arkm.com/research/how-to-use-arkham-intel-guide-explained) |
+| **Binance** | Azami giriş fiyatı sapması; coin tercihi; yeni kopyaları duraklatma. [Futures rehberi](https://www.binance.com/en/support/faq/detail/0b3a91eea664402f812fe41358c8a206), [coin tercihi](https://www.binance.com/en/support/faq/detail/abc27f5949cf46d9801d31b5e33d0b38) |
+| **Bybit** | Olumsuz giriş farkını engelleyen Copy Guard; fiyat sapması sınırı; trader–kopyacı ortalama giriş farkının açıklanması. [Karşılaştırmalı rehber](https://www.bybit.com/en/help-center/article/Understanding-Discrepancies-in-Copy-Trading-Positions-between-Master-Trader-s-and-Follower-s) |
+| **OKX** | Çok ölçütlü sıralama; tarihsel/haftalık maksimum düşüş; lider getirisi yanında kopyacıların kâr/zararı. [Ekranlı SSS](https://www.okx.com/en-us/help/copy-traders-faqs) |
+| **eToro** | Kopyalanan varlıkları da açan portföy dağılımı; riskin zaman içindeki değişimi; farklı dönemlerde maksimum düşüş. [İstatistik ekranları](https://help.etoro.com/s/article/What-statistics-does-eToro-track-and-where-can-I-find-them?language=en_GB) |
+| **TradesViz** | Filtrelenebilir neden etiketleri; işlem boyunca en iyi/en kötü fiyat hareketi (MFE/MAE); brüt/net sonuç ayrımı. [İstatistik ve ekran rehberi](https://www.tradesviz.com/blog/general-statistics-reference/) |
+| **Myfxbook** | Ortalama kazanç/kayıp; kâr faktörü; ölçütlerin üzerinde açıklayıcı ipuçları. [Advanced Statistics](https://www.myfxbook.com/help/knowledge-base/advanced-statistics/) |
+| **Tradervue** | İki işlem grubunu karşılaştırma; etiket bazlı analiz; intraday/çok günlük ayrımı. [Compare rehberi](https://help.tradervue.com/article/3457-winning-vs-losing-trades), [etiket raporları](https://www.tradervue.com/site/edgewonk-alternative) |
+| **Edgewonk** | Atlanan işlem günlüğü; işlem öncesi plan; neden/koşul bazlı özel istatistikler. [Planlama ekranları](https://edgewonk.com/blog/more-custom-statistics-trading-plans-may-2022-update), [atlanan işlem değerlendirmesi](https://edgewonk.com/blog/how-to-review-your-trading-journal) |
+
+**2. En önemli sorular ve öneriler**
+
+Aşağıdaki özellikler emsallerden uyarlama önerileridir; birebir mevcut oldukları iddiası değildir. **S:** küçük arayüz/türetim, **M:** ek veri ve hesaplama, **L:** geçmiş veri/model doğrulaması. **1:** önce, **2:** sonra, **3:** isteğe bağlı. “Var”, bağlamda belirtilen veriyi ifade eder; alan ayrıntıları incelenmedi.
+
+| Öneri | Hangi soruyu çözüyor / pano nasıl cevaplamalı? | Emsal¹ | Gereken veri | Zorluk | Öncelik |
+|---|---|---|---|---|---|
+| Veri yaşı ve kapsamı | **“Bu bilgiye güvenebilir miyim?”** Olay, ilk görülme ve son başarılı güncelleme zamanlarını ayır; eksik veriyi belirt. | HyperTracker → uyarlama | Olaylar var; toplama zamanları eklenmeli | S | 1 |
+| Giriş farkı kartı | **“Fiyat kaçtı mı?”** Son açılış/büyütme fiyatına göre yönü dikkate alan olumsuz farkı ve gözlem yaşını göster. | Binance, Bybit | Olay fiyatı varsa var; güncel fiyat HL API | M | 1 |
+| Gecikmeye dayanıklılık | **“Bu tarzı elle yetiştirebilir miyim?”** 15/30/60 dakika gecikmeli net sanal sonuçları, örnek sayısıyla karşılaştır. | Bybit → uyarlama | Gecikmeli sonuç kısmen var; fill ve mum geçmişi HL API | L | 1 |
+| Açıklamalı sağlık ışığı | **“Trader hâlâ iyi mi?”** Son dönem düşüşü, kopya getirisi ve kapı ölçütlerindeki bozulmayı nedenleriyle göster; veri sağlığını ayrı tut. | OKX, eToro | Sağlık/kapı var; dönemsel geçmiş saklanmalı | M | 1 |
+| Coin × yön yoğunlaşması | **“Aynı bahsi tekrar mı alıyorum?”** BTC long taşıyan trader sayısını göster; kişisel ağırlık girilmişse toplam payı hesapla. | HyperTracker, eToro | Açık pozisyonlar var; kişisel ağırlık yok, yalnız yerel giriş | M | 1 |
+| Pozisyon değişim zinciri | **“Büyüttü mü, azalttı mı, tersine mi döndü?”** Tek pozisyon altında zaman çizgisi; kısmi kapanışları da ayır. | Bybit, TradesViz | Olaylar var; azaltma/ters dönüş için fill geçmişi gerekebilir | M | 1 |
+| Karar bekleyenler kuyruğu | **“Şimdi neyi incelemeliyim?”** Yanıtsızları sırala; kapanmış veya eskimiş olayları işaretle; tekrarları birleştir. | Nansen → uyarlama | Olay/karar var; kararlı olay kimliği gerekli | M | 1 |
+| Neden bazlı atlama analizi | **“Atladıklarım kazandırdı mı?”** “Fiyat kaçtı / yoğunluk / müsait değildim” gruplarını aynı sanal giriş-çıkış kuralıyla karşılaştır. | Edgewonk, Tradervue | Karar/neden var; tamamlanan sanal işlem sonuçları gerekli | M | 1 |
+| Kendi giriş/çıkış günlüğüm | **“Ben ne kadar farklı sonuç aldım?”** İsteğe bağlı gerçek giriş, çıkış ve maliyet; trader/sanal eğriyle karşılaştırma. | TradesViz, Bybit | Yok; yalnız localStorage’da elle giriş | M | 2 |
+| Tarz ve davranış değişimi | **“Trader alıştığım tarzdan çıktı mı?”** Tutma süresi, büyütme sıklığı ve coin dağılımının geçmişten sapmasını göster. | Hyperdash, Copin | Tarz var; geçmiş fill/pozisyon serisi gerekli | M | 2 |
+| Net sanal eğri açıklaması | **“1000 $ eğrisi neyi varsayıyor?”** Gecikme, ücret, funding, büyüklük ve kapanış kurallarını görünür kıl. | TradesViz, OKX | Eğri var; maliyet girdileri kısmen HL API, kısmen varsayım | M | 1 |
+| Haftalık karar özeti | **“Gelecek hafta neyi değiştirmeliyim?”** Alınan/atlanan işlem sayısı, neden bazlı sonuç ve tek değerlendirme notu. | Edgewonk, Tradervue | Yukarıdaki kayıtlar; kişisel not yalnız yerel | S | 2 |
+
+¹ Emsal bağlantıları ilk tablodadır.
+
+**Ölçüm sınırı:** “Açtım” kaydı gerçekleşen fiyatı, büyüklüğü veya kapanışı kanıtlamaz; kişisel kâr hesaplanamaz. Atlanan işlem sonucu da varsayımsaldır; karar anından başlayan, önceden sabitlenmiş kuralla ve örnek sayısıyla sunulmalı.
+
+Saatlik pozisyon fotoğrafları, arada açılıp kapanan işlemleri kaçırabilir; olayları fill geçmişinden tamamlamak gerekir. Hyperliquid geçmişi sınırsız değildir: zamanlı sorguda son 10.000 fill, mumlarda son 5.000 mum sınırı bulunur. Bu yüzden ileriye dönük arşivleme gerekir. [Resmî API](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint)
+
+**Mobil değerlendirme:** İlk ekranda veri yaşı, coin/yön, giriş farkı, pozisyon değişimi ve karar durumu yeterli. Geniş tabloları kartlara dönüştür; ayrıntıları açılır bölümlere koy. Renge ek olarak metin/simge kullan; hover gerektirme; dokunma hedeflerini yaklaşık 44 px tut. Telegram bağlantısı doğrudan ilgili olayı açmalı.
+
+**Mahremiyet:** Kişisel tutar, giriş/çıkış, not ve kimlikle ilişkilendirilen kararlar public `durum.json` içine girmemeli. Bunlar tarayıcıda kalmalı; cihazlar arası ihtiyaç için elle dışa/içe aktarma yeterli. Telegram düğmesine hassas tutar veya not taşınmamalı.
+
+**3. Yapılmaması gerekenler**
+
+- Saatlik verinin yanında saniyelik sayaç ve “canlı” rozeti: yanlış güncellik hissi verir.
+- Yeşil sağlık ışığını “şimdi al” sinyaline çevirmek; trader uygunluğu ile giriş zamanlaması farklı sorulardır.
+- Kazanma oranı, mutlak kâr veya takipçi sayısıyla tek puanlı liderlik yarışı.
+- Her küçük büyütmeye ayrı bildirim; kapanış ve önemli değişiklikleri kalabalıkta kaybettirir.
+- Atlanan kazançları “kaçırdığın para” diye sunmak; geriye bakış yanlılığı ve işlem baskısı üretir.
+- Stop seviyesi bilinmeden risk/getiri oranı; maliyetler eksikken kesin net getiri göstermek.
+- Tek tıkla emir, hesap bağlantısı ve kişisel veriyi sunucuya taşıyan eşitleme.

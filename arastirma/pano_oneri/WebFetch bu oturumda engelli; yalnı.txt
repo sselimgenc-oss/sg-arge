@@ -1,0 +1,34 @@
+WebFetch bu oturumda engelli; yalnız arama sonuçlarıyla devam ediyorum.
+
+Rapor hazır: `/home/user/copytrade-pano-oneriler.md` (Türkçe Markdown, yaklaşık 2 sayfa). Emsallerle ilgili her iddianın yanında bağlantı var.
+
+**Doğrulama sınırı:** Bu oturumda sayfa açma engelliydi; docs.copin.io, docs.coinmarketman.com ve bankless.com ağ kuralına takıldı. Emsal iddiaları bu yüzden yalnız arama sonuçlarındaki özetlere dayanıyor ve hiçbir sayfadan ekran görüntüsü alınamadı. Özetten emin olamadığım yerleri raporda **doğrulanamadı** diye işaretledim:
+- Copin'deki elde tutma simülasyonu
+- Arkham'ın HyperCore perp uyarıları
+- eToro'nun risk skoru eşiği
+- TradesViz'in simülasyon ayrıntıları
+- Edgewonk'un duygusal hataların dolar maliyeti
+
+Bu sitelere erişim açılırsa iddiaları sayfanın kendisinden tek tek kontrol edebilirim.
+
+**1. önceliğe koyduğum öneriler:**
+1. **Kayma göstergesi:** Trader'ın giriş fiyatıyla şu anki fiyat arasındaki fark, coinin oynaklığına göre ölçülür. Kapıdaki gecikmeli kopya testinden alınan eşikle karşılaştırılıp "uygun / sınırda / geç" diye tek renkle gösterilir. Aynı bilgi Telegram mesajında da Açtım/Atladım'a basmadan önce görünür.
+2. **Kapı öncesi ve sonrası yan yana:** Trader'ın kapıyı geçtikten sonraki performansı, kapı dönemiyle birlikte gösterilir. Sağlık ışığının neden sarı ya da kırmızı yandığı da yazılı olur.
+3. **Yoğunlaşma paneli:** Coin ve yön bazında toplam gösterilir. Senin tutarların yalnız localStorage'dan okunur.
+4. **Atladıklarının sonucu:** Atlanan işlemlerin "girseydim ne olurdu" sonucu hesaplanır ve atlama nedenine göre ayrılır. Bunun için nedenler serbest metin yerine sabit bir listeden seçilir.
+5. **Likidasyon fiyatı ve kaldıraç:** Trader'ın bu değerleri pozisyon kartında görünür.
+6. **Veri tazeliği damgası:** "Son güncelleme ne zaman" bilgisi gösterilir; saatlik iş başarısız olursa görünür bir uyarı çıkar.
+
+**Mobil için:** Telegram'daki bağlantı doğrudan ilgili pozisyon kartını açmalı. Kayma, likidasyon ve tazelik bilgisi kaydırmadan görünmeli. Telefonda tablolar yerine açılıp kapanan kartlar kullanılmalı. Isı haritası gibi grafikler masaüstünde kalmalı, telefonda tek cümlelik özete inmeli.
+
+**Yapılmaması gerekenler:** Raporda canlı sayaçların ve tek tıkla emirin yanında şunlar da var:
+- 7 günlük ROI'ye göre sıralama
+- Kazanma oranını öne çıkarmak
+- Açıklaması olmayan tek bir puan
+- Takipçi sayısı gibi sosyal kanıt
+- Ters işlem modu
+- Her büyütmede bildirim
+- Oyunlaştırma
+- Cihazlar arası eşitleme cazibesiyle bakiyeyi sunucuya göndermek
+
+İstersen raporu paylaşılabilir bir sayfa olarak da yayımlayabilirim.
