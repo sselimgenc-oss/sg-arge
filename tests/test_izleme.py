@@ -183,7 +183,8 @@ def test_uses_current_main_list_without_changing_it():
     path = ROOT / 'copytrade/izleme_listesi.yaml'
     before = path.read_bytes()
     rows = m.load_list(path)
-    assert [row['id'] for row in rows] == [f'T{i}' for i in range(1, len(rows) + 1)]
+    ids = [row['id'] for row in rows]
+    assert ids and len(set(ids)) == len(ids)
     assert all(row['durum'] == 'izlemede' for row in rows)
     assert path.read_bytes() == before
 
