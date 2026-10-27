@@ -4,7 +4,7 @@ set -euo pipefail
 [ "${GITHUB_ACTIONS:-}" = true ] || { echo 'Yalnız GitHub Actions için.' >&2; exit 1; }
 archive=$(mktemp -d)
 trap 'rm -rf "$archive"' EXIT
-for path in durum.json motor.json binance_vadeli.txt; do
+for path in durum.json motor.json binance_vadeli.txt kararlar.jsonl; do
   if [ -f "izleme/$path" ]; then cp "izleme/$path" "$archive/"; fi
 done
 [ -s "$archive/durum.json" ] && [ -s "$archive/motor.json" ]
@@ -22,7 +22,7 @@ fi
 mkdir -p izleme
 cp -r "$archive"/. izleme/
 # Worker'ın kararlar.jsonl dosyası ve diğer arşivleri korunur.
-for path in durum.json motor.json binance_vadeli.txt; do
+for path in durum.json motor.json binance_vadeli.txt kararlar.jsonl; do
   if [ -f "$archive/$path" ]; then git add -f "izleme/$path"; fi
 done
 if git diff --cached --quiet; then exit 0; fi
