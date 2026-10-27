@@ -339,7 +339,7 @@
       const baslat = (yon, f, miktar, bilinmiyor = false) => ({ coin, yon: yon > 0 ? 'long' : 'short', acilis: bilinmiyor ? null : f.time, son: f.time, girisToplam: miktar * f.pxToplam / f.miktar, girisMiktar: miktar, kapanisToplam: 0, kapanisMiktar: 0, pnl: 0, fee: 0, bilinmiyor });
       const bitir = (f) => { acik.kapanis = f.time; acik.son = f.time; acik.giris = acik.girisMiktar ? acik.girisToplam / acik.girisMiktar : null; acik.kapanisFiyat = acik.kapanisMiktar ? acik.kapanisToplam / acik.kapanisMiktar : null; acik.sonuc = acik.bilinmiyor || !acik.girisToplam ? null : (acik.pnl - acik.fee) / acik.girisToplam; sonuc.push(acik); acik = null; };
       for (const f of fills) {
-        const after = f.before + f.signed, fiyat = f.pxToplam / f.miktar, eski = Math.abs(f.before), yeni = Math.abs(after);
+        const ham = f.before + f.signed, after = Math.abs(ham) < 1e-9 * Math.max(1, Math.abs(f.before)) ? 0 : ham, fiyat = f.pxToplam / f.miktar, eski = Math.abs(f.before), yeni = Math.abs(after);
         if (!acik) acik = baslat(Math.sign(f.before || after), f, 0, !!f.before);
         if (f.before && Math.sign(f.before) !== Math.sign(after) && after) {
           const kapanan = eski, acilan = yeni, oran = kapanan / (kapanan + acilan);
@@ -507,7 +507,7 @@
     const kv = (k, v) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
     return `<a href="#" class="ct-btn inline-flex items-center gap-1 mb-3">← Kartlar</a>
       <div class="space-y-4 ct-detay">
-      <div class="card ct-card"><div class="ct-head"><span class="ct-name text-lg">${esc(t.takma_ad)}</span><span aria-label="Sağlık: ${esc(ad)}">${em} ${esc(ad)}</span>${ctEskiVeri(t) ? ctRozet('eski veri', 'ct-b-warn') : ''}${ctKapiRozet(t.kapi)}
+      <div class="card ct-card"><div class="ct-head"><span class="ct-name text-lg">${esc(t.takma_ad)}</span><span aria-label="Sağlık: ${esc(ad)}">${em} ${esc(ad)}</span>${ctEskiVeri(t) ? ctRozet('eski / eksik veri', 'ct-b-warn') : ''}${ctKapiRozet(t.kapi)}
           ${ctKirmizi(t) ? ctRozet('izlemede — kopyalama', 'ct-b-bad') : t.durum && t.durum !== 'kopyala' ? ctRozet(t.durum, 'ct-b-mut') : ''}</div>
         <div class="ct-sub mt-1">${esc(ctAdr(t.adres))} · t0: ${esc(t.t0 || '—')} · hesap değeri ${ctUsdA(t.hesap_degeri)}</div>
         <div class="ct-kv mt-3">${kv('Form skoru', isNum(t.form && t.form.skor) ? fmt(t.form.skor, 1) : '—')}${kv('30 gün', ctPs(t.form && t.form.getiri_30g))}${kv('90 gün', ctPs(t.form && t.form.getiri_90g))}</div></div>
