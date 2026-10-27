@@ -4,7 +4,7 @@
 - [x] 1. **26** — küçük PR: izleme/Worker değişiklikleri ayrı dalda → [sg-arge#299](https://github.com/sselimgenc-oss/sg-arge/pull/299); bu dal yalnız kapı/ölçü dosyalarında
 - [x] 2. **15 + 19** — payda hatası (düşüş/getiri/calmar → `twr_chain`); kopya defteri `copytrade/defter.py` (mum zaman sınırı ≤ 1 mum, miras pozisyon, günlük fiyatlama, kopyanın kendi funding'i); altın örnekler `tests/test_defter.py`, `tests/test_asama1_payda.py`
 - [x] 3. **20 + 21 + 22** — plasebo ve gerçek kopya aynı `copy_ledger`'dan (tüm ekleme/kısmi kapanış dizisi, tarz gecikmesi, funding, pencere sonu fiyatlaması; `tests/test_altin_ornekler.py`); alfa maruziyeti = gün içinde açık pozisyonlu saat oranı; kaldıraç zamana eşleşmiş + zaman ağırlıklı medyan, ters dönüşte ücret miktarla bölünür, en iyisiz PF yalnız bir işlemi çıkarır, martingale gerçek sırayla (`tests/test_olcut_olculer.py`)
-- [ ] 4. **14 + 23** — %44/%49; tüm eşikler yalnız kurallar.yaml; karar–kod uygunluk testi; dondurma özetleri
+- [x] 4. **14 + 23** — 1. aşama ≥ %44, adım 4 ≥ %49; tüm karar eşikleri yalnız `kurallar.yaml` (AST taramalı test: karşılaştırmada sayı sabiti yok); görev belgesi ↔ yaml uygunluk testi (`tests/test_kurallar_uygunluk.py`); RAPOR'da `kurallar.yaml`/`kapi.py`/`olcut.py`/`defter.py` SHA-256 + aday listesi özeti
 - [ ] 5. **25 + 18** — ≥6 altın örnek; akıl sağlığı kapısı; ölü sütunlar; `kopya_eksik`, `dolum_siniri`
 - [ ] 6. **24 + 16** — `|| true` kalktı, eksik koşu `durum: eksik`; dış adaylar (`kaynak = dis_aday`)
 - [ ] 7. Hızlı koşu (9 aday + 0x1404 + dış adaylar) + sütun özeti raporu (tam koşu başlatılmaz; lider onaylar)

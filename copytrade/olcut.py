@@ -112,7 +112,7 @@ def closed_round_trips(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return rows
 
 
-def martingale_ratio(fills: list[dict[str, Any]], min_adverse: float = 0.02) -> tuple[float, int]:
+def martingale_ratio(fills: list[dict[str, Any]], min_adverse: float | None = None) -> tuple[float, int]:
     """Share of same-direction additions made while the open position is under water by more than ``min_adverse``.
 
     Dolumlar **gerçek sırayla** (zaman, sonra tid) işlenir; ortalama giriş her dolumda güncellenir. Bir emir (``oid``) birden çok
@@ -120,6 +120,9 @@ def martingale_ratio(fills: list[dict[str, Any]], min_adverse: float = 0.02) -> 
     ölçülür (merdiven girişi çok ekleme değildir). Ekleme zararda mı: (emir fiyatı / o anki ortalama giriş − 1) yön ile çarpılmış
     < −``min_adverse``. Returns (ratio, number of additions).
     """
+    if min_adverse is None:
+        from copytrade.kurallar import load_rules
+        min_adverse = float(load_rules()["martingale_min_adverse"])
     data = _frame(fills)
     if data.empty:
         return 0.0, 0
@@ -205,9 +208,14 @@ def effective_leverage(fills: list[dict[str, Any]], account_value: Any) -> tuple
 def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]] | None = None,
                       portfolio: list[dict[str, Any]] | None = None, liquid_coins: set[str] | None = None,
                       leverages: list[float] | None = None, account_value: float | None = None,
-                      martingale_max_ratio: float = 0.25, martingale_min_additions: int = 5,
-                      martingale_min_adverse: float = 0.02, account_history: pd.Series | None = None) -> dict[str, Any]:
+                      martingale_max_ratio: float | None = None, martingale_min_additions: int | None = None,
+                      martingale_min_adverse: float | None = None, account_history: pd.Series | None = None) -> dict[str, Any]:
     """``account_value`` is the return denominator when no ``portfolio`` history is given (never 1 USD)."""
+    from copytrade.kurallar import load_rules   # martingale eşikleri yalnız kurallar.yaml'da (görev 23)
+    rules = load_rules()
+    martingale_max_ratio = rules["martingale_max_ratio"] if martingale_max_ratio is None else martingale_max_ratio
+    martingale_min_additions = rules["martingale_min_additions"] if martingale_min_additions is None else martingale_min_additions
+    martingale_min_adverse = rules["martingale_min_adverse"] if martingale_min_adverse is None else martingale_min_adverse
     fills = perp_fills(fills)
     data = _frame(fills)
     funding_frame = pd.DataFrame({"time": pd.to_datetime([x.get("time") for x in funding or []], unit="ms", utc=True),

@@ -40,8 +40,11 @@ def cost_rate(rules: dict | None = None) -> float:
 class Market:
     """Coin başına saatlik mum açılış/kapanış dizileri; yürütme ve işaretleme fiyatları (bisect: dolum başına mikrosaniye)."""
 
-    def __init__(self, candles: dict[str, list[dict]], interval_ms: int = HOUR):
-        self.interval, self._raw, self._lists, self._cum = interval_ms, candles, {}, {}
+    def __init__(self, candles: dict[str, list[dict]], interval_ms: int = HOUR, max_intervals: int | None = None):
+        # Yürütme mumu hedeften en çok ``mum_uzaklik_max_aralik`` (kurallar.yaml; kullanıcı kararı: 1) mum aralığı uzakta olabilir.
+        limit = max_intervals if max_intervals is not None else int(load_rules()["mum_uzaklik_max_aralik"])
+        self.interval, self.max_distance = interval_ms, interval_ms * limit
+        self._raw, self._lists, self._cum = candles, {}, {}
 
     def lists(self, coin: str) -> tuple[list[int], list[float], list[float]]:
         if coin not in self._lists:
@@ -58,7 +61,7 @@ class Market:
         """Hedeften sonraki ilk mum (zaman, açılış); en çok 1 mum aralığı uzaktaysa ya da yoksa ``None`` (eksik dolum)."""
         times, opens, _ = self.lists(coin)
         index = bisect_left(times, target_ms)
-        if index >= len(times) or times[index] - target_ms > self.interval:
+        if index >= len(times) or times[index] - target_ms > self.max_distance:
             return None
         return times[index], opens[index]
 

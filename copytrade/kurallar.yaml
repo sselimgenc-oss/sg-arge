@@ -1,5 +1,6 @@
 min_history_days: 180
 min_closed_trades: 50
+# (eski günlük tarayıcı `tarama.py`/`kurallar.evaluate` için; CT-Kapı asama1_*/adim4_* anahtarlarını kullanır)
 min_profitable_month_ratio: 0.70
 max_largest_trade_share: 0.30
 min_profit_factor_without_best: 1.20
@@ -64,3 +65,28 @@ gece_saatleri_tsi: [1, 9]
 # Kopya maliyeti (her dolumda, notional'a oranla): taker %0,045 + kayma %0,05 (kullanıcı kararı; docs/KAPI_V3, görev 19)
 maliyet_taker: 0.00045
 maliyet_kayma: 0.0005
+
+# ---- Karar eşikleri (kodda sayı yok; görev 14 ve 23). Kullanıcı kararları: docs/GOREV_TRADER_SECIMI.md.
+# 1. aşama (kâr eğrisi; PnL / zaman ağırlıklı getiri zinciri). Kârlı ay eşiği kullanıcı kararı 2026-10-27: %44 (önce %60).
+asama1_pencere_gun: 365
+asama1_min_aktif_ay: 6
+asama1_min_karli_ay_orani: 0.44
+asama1_max_dusus: 0.30
+# Adım 1: mum kapsamı (nominal ağırlıklı); adım 2: asgari kanıt (min_history_days, min_closed_trades yukarıda)
+mum_kapsami_min: 0.90
+min_active_months: 6
+# Adım 4: kârlı ay eşiği kullanıcı kararı %49 (önce %60); en büyük işlem payı (max_largest_trade_share) ve en iyisiz PF
+# (min_profit_factor_without_best) yukarıdaki anahtarlardır.
+adim4_min_karli_ay_orani: 0.49
+# Adım 6: alfa t ve BHY (adım 7)
+alfa_t_min: 2.0
+alfa_pencere_gun: 365
+bhy_q_max: 0.10
+# Kopya defteri / mum penceresi: 1 saatlik mum tek istekte ≤ 5000 mum → ~200 gün; yürütme mumu hedeften en çok 1 aralık uzakta
+mum_pencere_gun: 200
+mum_uzaklik_max_aralik: 1
+rapor_gecikmeleri_dk: [0, 5, 30, 120, 480]
+# Evren (lider tablosu ön süzgeci)
+evren_min_hesap_degeri: 25000
+# Kapsam hedefi: işlenen / evren (tam koşu; altındaysa koşu 'eksik' sayılır, görev 24)
+kapsam_hedefi: 0.98

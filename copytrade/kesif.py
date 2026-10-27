@@ -156,10 +156,11 @@ def step_reasons(row: dict[str, Any], rules: dict | None = None) -> dict[str, di
         status, reason = str(row.get(f"adim{i}") or "Yetersiz"), ""
         if status != "Geçti":
             if i == 1:
-                reason = f"mum kapsamı %{100 * (num('candle_coverage') or 0):.0f} (< %90)"
+                reason = f"mum kapsamı %{100 * (num('candle_coverage') or 0):.0f} (< %{100 * rules['mum_kapsami_min']:.0f})"
             elif i == 2:
-                parts = [f"{n} {v}" for n, v, lim in (("geçmiş gün", num("history_days"), 180), ("kapanan işlem", num("closed_trades"), 50),
-                                                       ("aktif ay", num("active_months"), 6)) if v is None or v < lim]
+                parts = [f"{n} {v}" for n, v, lim in (("geçmiş gün", num("history_days"), rules["min_history_days"]),
+                                                       ("kapanan işlem", num("closed_trades"), rules["min_closed_trades"]),
+                                                       ("aktif ay", num("active_months"), rules["min_active_months"])) if v is None or v < lim]
                 if row.get("aktif") in (False, "False", "false"):
                     need = rules["aktif_son90_dongu"]["swing" if _str(row.get("tarz")) == "swing" else "intraday"]
                     parts.append(f"aktiflik: son 90 g {num('son90_dongu')} döngü (≥ {need}), son işlem {num('son_islem_gun')} gün (≤ {rules['aktif_son_islem_max_gun']})")
@@ -169,20 +170,23 @@ def step_reasons(row: dict[str, Any], rules: dict | None = None) -> dict[str, di
                 if tarz not in ("intraday", "swing"):
                     parts.append("tarz scalp/belirsiz (medyan tutma < 1 sa)")
                 if (num("kisa_islem_payi") or 0) > float(rules["kisa_islem_payi_max"]):
-                    parts.append("kısa işlem payı > %25")
+                    parts.append(f"kısa işlem payı > %{100 * rules['kisa_islem_payi_max']:.0f}")
                 if (num("median_leverage") or math.inf) > float(rules["kapi_max_medyan_kaldirac"]):
-                    parts.append("medyan kaldıraç > 3x")
+                    parts.append(f"medyan kaldıraç > {rules['kapi_max_medyan_kaldirac']:g}x")
                 if (num("max_leverage") or math.inf) > float(rules["kapi_max_kaldirac"]):
-                    parts.append("en yüksek kaldıraç > 10x")
+                    parts.append(f"en yüksek kaldıraç > {rules['kapi_max_kaldirac']:g}x")
                 delay = int(_num(row.get("kapi_gecikme_dk")) or rules["kopya_gecikme_dk"]["intraday"])
                 if (num(f"gecikme_{delay}dk_net") or 0) <= 0:
                     parts.append(f"{delay} dk gecikmeli kopya net ≤ 0")
                 reason = "; ".join(parts)
             elif i == 4:
                 parts = []
-                if (num("profitable_month_ratio") or 0) < .60: parts.append("kârlı ay < %60")
-                if (num("largest_trade_share") if num("largest_trade_share") is not None else 1) >= .30: parts.append("en büyük işlem ≥ %30")
-                if (num("profit_factor_without_best") or 0) <= 1.2: parts.append("PF (en iyisiz) ≤ 1,2")
+                if (num("profitable_month_ratio") or 0) < rules["adim4_min_karli_ay_orani"]:
+                    parts.append(f"kârlı ay < %{100 * rules['adim4_min_karli_ay_orani']:.0f}")
+                if (num("largest_trade_share") if num("largest_trade_share") is not None else 1) >= rules["max_largest_trade_share"]:
+                    parts.append(f"en büyük işlem ≥ %{100 * rules['max_largest_trade_share']:.0f}")
+                if (num("profit_factor_without_best") or 0) <= rules["min_profit_factor_without_best"]:
+                    parts.append(f"PF (en iyisiz) ≤ {rules['min_profit_factor_without_best']:g}")
                 if row.get("martingale_signal") in (True, "True", "true"): parts.append("martingale işareti")
                 reason = "; ".join(parts)
             elif i == 5:
@@ -192,10 +196,10 @@ def step_reasons(row: dict[str, Any], rules: dict | None = None) -> dict[str, di
             elif i == 6:
                 alpha, t = num("alfa_yillik"), num("nw_t")
                 reason = ("alfa hesaplanamadı" if alpha is None else f"alfa ≤ 0 ({_str(row.get('alfa_kiyas'))})" if alpha <= 0
-                          else f"NW t = {t:.2f} < 2")
+                          else f"NW t = {t:.2f} < {rules['alfa_t_min']:g}")
             elif i == 7:
                 q = num("bhy_q")
-                reason = f"BHY q = {q:.3f} > 0,10" if q is not None else "plaseboya ulaşmadı"
+                reason = f"BHY q = {q:.3f} > {rules['bhy_q_max']:g}" if q is not None else "plaseboya ulaşmadı"
         out[str(i)] = {"durum": status, "neden": reason}
     return out
 

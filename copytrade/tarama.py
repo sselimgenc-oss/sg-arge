@@ -167,7 +167,7 @@ def prefilter(rows: list[dict], watchlist: list[dict] | None = None) -> list[dic
         address = _address(row)
         account = float(row.get("accountValue", row.get("account_value", 0)) or 0)
         all_time_pnl = _window(row, "allTime", "pnl")
-        if address and account >= 25_000 and all_time_pnl > 0:
+        if address and account >= float(load_rules()["evren_min_hesap_degeri"]) and all_time_pnl > 0:
             row = dict(row); row["address"] = address; row["accountValue"] = account; accepted.append(row)
     return sorted(accepted, key=lambda x: x["address"].lower())
 

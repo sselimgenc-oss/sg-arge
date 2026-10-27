@@ -6,6 +6,7 @@ keeps every unavailable public input as ``Yetersiz`` rather than estimating it.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import time
@@ -26,8 +27,9 @@ from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, clo
 from copytrade.tarama import PublicClient, RateLimitError, RateLimiter, prefilter
 from kapi.istatistik import deflated_sharpe_ratio, nw_alpha
 
-TAKER = 0.00045
-SLIPPAGE = 0.0005
+# Maliyet parametreleri kurallar.yaml'dan (izleme motoru bu adlarla içe aktarır)
+TAKER = float(load_rules()["maliyet_taker"])
+SLIPPAGE = float(load_rules()["maliyet_kayma"])
 
 
 def _portfolio_history(portfolio: list[dict]) -> pd.Series:
@@ -82,7 +84,7 @@ def time_weighted_monthly(portfolio: list[dict], ledger: list[dict], days: int =
     return (1 + returns).groupby(returns.index.to_period("M")).prod() - 1
 
 
-def stage1_stats(portfolio: list[dict], ledger: list[dict] | None = None, days: int = 365) -> dict[str, float] | None:
+def stage1_stats(portfolio: list[dict], ledger: list[dict] | None = None, days: int | None = None) -> dict[str, float] | None:
     """1. aşama, Hyperliquid'in kendi kümülatif PnL serisinden (``allTime.pnlHistory``; yatırma/çekme içermez).
 
     Lider denetimi 2 (2026-10-27): hesap değeri serisinden zaman ağırlıklı getiri yatırma/çekme, spot↔perp ve
@@ -90,6 +92,7 @@ def stage1_stats(portfolio: list[dict], ledger: list[dict] | None = None, days: 
     (payda gerekmez). Getiri ve düşüş, penceredeki pozitif hesap değerlerinin medyanına bölünür. ``ledger``
     geriye dönük uyumluluk içindir, kullanılmaz.
     """
+    days = int(days if days is not None else load_rules()["asama1_pencere_gun"])
     periods = {name: value for name, value in portfolio if isinstance(value, dict)} if portfolio else {}
     data = periods.get("allTime") or {}
     points = data.get("pnlHistory", [])
@@ -152,9 +155,12 @@ def twr_chain(pnl: pd.Series, values: pd.Series, since: pd.Timestamp) -> dict[st
     return {"returns": returns, "equity": equity}
 
 
-def stage1_pass(stats: dict[str, float] | None) -> bool:
-    return bool(stats and stats["active_months"] >= 6 and stats["profitable_month_ratio"] >= .60
-                and stats["max_drawdown"] <= .30 and stats["return_12m"] > 0)
+def stage1_pass(stats: dict[str, float] | None, rules: dict | None = None) -> bool:
+    """1. aşama: en az 6 aktif ay, kârlı ay oranı ≥ %44, zirveden düşüş ≤ %30, 12 ay getiri > 0 (eşikler kurallar.yaml)."""
+    rules = rules or load_rules()
+    return bool(stats and stats["active_months"] >= rules["asama1_min_aktif_ay"]
+                and stats["profitable_month_ratio"] >= rules["asama1_min_karli_ay_orani"]
+                and stats["max_drawdown"] <= rules["asama1_max_dusus"] and stats["return_12m"] > 0)
 
 
 def bhy(p_values: dict[str, float]) -> dict[str, float]:
@@ -177,11 +183,12 @@ def placebo_pvalue(actual: float, placebo: list[float]) -> float:
     return (1 + sum(value >= actual for value in placebo)) / (len(placebo) + 1)
 
 
-def matched_btc_alpha(strategy: pd.Series, btc: pd.Series, exposure: pd.Series) -> dict[str, float]:
-    """365-day exposure-matched BTC benchmark for CT-Kapı adım 6."""
-    index = strategy.index.union(btc.index).sort_values()[-365:]
+def matched_btc_alpha(strategy: pd.Series, btc: pd.Series, exposure: pd.Series, days: int | None = None) -> dict[str, float]:
+    """Maruziyet eşleşmiş kıyas (BTC ya da sepet) alfası, CT-Kapı adım 6; pencere ``alfa_pencere_gun`` (kurallar.yaml)."""
+    days = int(days if days is not None else load_rules()["alfa_pencere_gun"])
+    index = strategy.index.union(btc.index).sort_values()[-days:]
     return nw_alpha(strategy.reindex(index, fill_value=0.0),
-                    btc.reindex(index, fill_value=0.0) * exposure.reindex(index, fill_value=0.0), periods=365)
+                    btc.reindex(index, fill_value=0.0) * exposure.reindex(index, fill_value=0.0), periods=days)
 
 
 @lru_cache(maxsize=1)
@@ -454,7 +461,7 @@ def placebo_scores(fills: list[dict], candles: dict[str, list[dict]], account_va
     return (scores, actual) if return_actual else scores
 
 
-DELAYS = (0, 5, 30, 120, 480)
+FUNDING_PAGE_SIZE = 500   # userFunding sayfa başına en çok bu kadar kayıt döndürür (API sınırı; eşik değil)
 
 
 def funding_all(client: Any, address: str, start_ms: int, end_ms: int) -> list[dict]:
@@ -466,7 +473,7 @@ def funding_all(client: Any, address: str, start_ms: int, end_ms: int) -> list[d
         for item in fresh:
             seen.add((item.get("time"), str(item.get("delta", {}).get("coin"))))
         rows.extend(fresh)
-        if len(page) < 500 or not fresh:
+        if len(page) < FUNDING_PAGE_SIZE or not fresh:
             return rows
         cursor = max(int(x["time"]) for x in page) + 1
 
@@ -489,16 +496,19 @@ def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: f
     funding'i); ``ledgers`` verilirse gecikme → tam defter sonucu içine konur.
     """
     rules = rules or load_rules()
-    start_200 = now_ms - 200 * DAY_MS
+    start_200 = now_ms - int(rules["mum_pencere_gun"]) * DAY_MS
     recent = [row for row in fills if int(row.get("time", 0)) >= start_200]
     candles = cache.for_fills(recent)
-    metrics = calculate_metrics(fills, funding=funding, account_value=account_value, account_history=history)
+    metrics = calculate_metrics(fills, funding=funding, account_value=account_value, account_history=history,
+                                martingale_max_ratio=float(rules["martingale_max_ratio"]),
+                                martingale_min_additions=int(rules["martingale_min_additions"]),
+                                martingale_min_adverse=float(rules["martingale_min_adverse"]))
     metrics["active_months"] = active_months
     metrics["candle_coverage"] = candle_coverage(recent, candles)
-    metrics["complete_data"] = metrics["candle_coverage"] >= .90
+    metrics["complete_data"] = metrics["candle_coverage"] >= rules["mum_kapsami_min"]
     nets: dict[int, float | None] = {}
-    market, rates, source = Market(candles), FundingRates(funding), perp_fills(recent)
-    for delay in DELAYS:
+    market, rates, source = Market(candles, max_intervals=int(rules["mum_uzaklik_max_aralik"])), FundingRates(funding), perp_fills(recent)
+    for delay in rules["rapor_gecikmeleri_dk"]:
         out = copy_ledger(source, market, account_value, delay, start_200, now_ms, rates, rules)
         nets[delay] = out["net"]
         metrics[f"gecikme_{delay}dk_eksik_dolum"] = out["missing"]
@@ -616,8 +626,10 @@ def delay_test_days(recent: list[dict], now_ms: int, start_200: int) -> float | 
     return round((now_ms - max(start_200, min(times))) / 86_400_000, 1) if times else None
 
 
-def evidence_status(history_days: int, trades: int, active_months: int) -> str:
-    return "Geçti" if history_days >= 180 and trades >= 50 and active_months >= 6 else "Yetersiz"
+def evidence_status(history_days: int, trades: int, active_months: int, rules: dict | None = None) -> str:
+    rules = rules or load_rules()
+    return "Geçti" if (history_days >= rules["min_history_days"] and trades >= rules["min_closed_trades"]
+                       and active_months >= rules["min_active_months"]) else "Yetersiz"
 
 
 def gate_status(metrics: dict[str, Any], copy_net: float | None, placebo_p: float | None,
@@ -629,7 +641,7 @@ def gate_status(metrics: dict[str, Any], copy_net: float | None, placebo_p: floa
     """
     rules = rules or load_rules()
     out = {"adim1": "Geçti" if metrics.get("complete_data") else "Yetersiz"}
-    out["adim2"] = evidence_status(int(metrics.get("history_days", 0)), int(metrics.get("closed_trades", 0)), int(metrics.get("active_months", 0)))
+    out["adim2"] = evidence_status(int(metrics.get("history_days", 0)), int(metrics.get("closed_trades", 0)), int(metrics.get("active_months", 0)), rules)
     if out["adim2"] == "Geçti" and metrics.get("aktif") is False:
         out["adim2"] = "Yetersiz"  # aktiflik şartı (görev 11): asgari kanıtın parçası
     if out["adim1"] != "Geçti" or out["adim2"] != "Geçti":
@@ -647,15 +659,17 @@ def gate_status(metrics: dict[str, Any], copy_net: float | None, placebo_p: floa
                                and value("median_leverage", math.inf) <= float(rules["kapi_max_medyan_kaldirac"])
                                and value("max_leverage", math.inf) <= float(rules["kapi_max_kaldirac"])
                                and copy_net is not None and copy_net > 0) else "Kaldı"
-    out["adim4"] = "Geçti" if (value("profitable_month_ratio", 0) >= .60 and value("largest_trade_share", 1) < .30
-                               and value("profit_factor_without_best", 0) > 1.2 and not metrics.get("martingale_signal")) else "Kaldı"
+    out["adim4"] = "Geçti" if (value("profitable_month_ratio", 0) >= rules["adim4_min_karli_ay_orani"]
+                               and value("largest_trade_share", 1) < rules["max_largest_trade_share"]
+                               and value("profit_factor_without_best", 0) > rules["min_profit_factor_without_best"]
+                               and not metrics.get("martingale_signal")) else "Kaldı"
     out["adim5"] = "Geçti" if placebo_p is not None and placebo_p <= float(rules["plasebo_p_max"]) else "Kaldı"
     if alpha is None or not np.isfinite(alpha.get("alfa_yillik", np.nan)):
         out["adim6"] = "Yetersiz"
     elif alpha["alfa_yillik"] <= 0:
         out["adim6"] = "Kaldı"
     else:
-        out["adim6"] = "Geçti" if alpha["nw_t"] >= 2 else "Yetersiz"
+        out["adim6"] = "Geçti" if alpha["nw_t"] >= rules["alfa_t_min"] else "Yetersiz"
     return out
 
 
@@ -699,7 +713,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         portfolio = client.portfolio(address)
         stats = stage1_stats(portfolio)
         row.update(stats or {})
-        row["asama1"] = "Geçti" if stage1_pass(stats) else "Yetersiz"
+        row["asama1"] = "Geçti" if stage1_pass(stats, rules) else "Yetersiz"
         progress.stage("portfolio", f"1. aşama: {row['asama1']}")
         if row["asama1"] != "Geçti":
             outcome = "1. aşama geçmedi"
@@ -751,7 +765,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         shares = market_shares(fills, symbols)
         kind = benchmark_kind(shares["pay_kripto"] or 0.0, rules)
         # Alfa: kopya defteri (gecikmesiz), gün başına net getiri; maruziyet = gün içinde açık pozisyonlu saat oranı (gerçek zaman çizelgesi).
-        own_ledger = copy_ledger(perp_fills(recent), Market(candles), account, 0, start_200, now_ms, FundingRates(funding), rules, daily=True)
+        own_ledger = copy_ledger(perp_fills(recent), Market(candles, max_intervals=int(rules["mum_uzaklik_max_aralik"])), account, 0, start_200, now_ms, FundingRates(funding), rules, daily=True)
         own, exposure = own_ledger.get("daily"), own_ledger.get("exposure")
         bench = (daily_close_returns(cache.get("BTC")) if kind == "BTC"
                  else basket_returns(candles, sorted({str(f.get("coin")) for f in perp_fills(recent)})))
@@ -821,8 +835,8 @@ def main(argv: list[str] | None = None) -> None:
         leaders = missing_addresses(leaders, pd.read_csv(previous_path) if previous_path.exists() else None)
     leaders = leaders[args.shard_index::args.shard_count]
     symbols, binance_note = write_binance_universe(out, now)
-    start = int((now - timedelta(days=365)).timestamp() * 1000)
-    start_200 = int((now - timedelta(days=200)).timestamp() * 1000)
+    start = int((now - timedelta(days=int(rules["fills_lookback_days"]))).timestamp() * 1000)
+    start_200 = int((now - timedelta(days=int(rules["mum_pencere_gun"]))).timestamp() * 1000)
     cache = CandleCache(client, start_200, int(now.timestamp() * 1000))
     previous_rows = pd.read_csv(previous_path).to_dict("records") if args.devam and previous_path.exists() else []
     if previous_path.exists() and not args.devam:
@@ -876,7 +890,7 @@ def finalize(table: pd.DataFrame, rules: dict | None = None) -> pd.DataFrame:
     q = bhy({a: (float(p) if pd.notna(p) else 1.0) for a, p, f in zip(table["address"], table["plasebo_p"], family) if f})
     table["bhy_q"] = table["address"].map(q).where(has_p & family)
     all_pass = (table[steps] == "Geçti").all(axis=1)
-    table["adim7"] = np.where(table["bhy_q"].notna(), np.where(table["bhy_q"] <= .10, "Geçti", "Kaldı"), "Yetersiz")
+    table["adim7"] = np.where(table["bhy_q"].notna(), np.where(table["bhy_q"] <= rules["bhy_q_max"], "Geçti", "Kaldı"), "Yetersiz")
 
     def klass(row) -> str:
         if row.get("asama1") != "Geçti":
@@ -905,7 +919,7 @@ def funnel_report(table: pd.DataFrame, evren: int | None) -> str:
     lines = [f"- Plasebo test ailesi **m = {int(family.sum())}** (adım 1–4'ü geçen adresler; BHY bu aile üzerinde, p'si olmayan üye p = 1 sayılır); "
              f"tekrar sayısı {int(load_rules()['plasebo_tekrar'])}",
              f"- İşlenen / evren: {total} / {evren if evren else '?'}"
-             + (f" (%{100 * total / evren:.1f}; hedef ≥ %98: {'✓' if total / evren >= .98 else '✗'})" if evren else ""),
+             + (f" (%{100 * total / evren:.1f}; hedef ≥ %{100 * load_rules()['kapsam_hedefi']:.0f}: {'✓' if total / evren >= load_rules()['kapsam_hedefi'] else '✗'})" if evren else ""),
              f"- 1. aşama (kâr eğrisi) geçti: {(table.asama1 == 'Geçti').sum()}",
              f"- Veri hatası: {table.get('neden', pd.Series(dtype=str)).fillna('').astype(str).str.startswith('veri hatası').sum()}",
              "- Sınıf: " + ", ".join(f"{k} {v}" for k, v in table.sinif.value_counts().items())]
@@ -920,6 +934,24 @@ def funnel_report(table: pd.DataFrame, evren: int | None) -> str:
                      "kopyalanabilir": int((part.katman == "kopyalanabilir").sum())})
     return ("\n".join(lines) + "\n\n## Huni — tarza göre (geçen sayısı)\n\n" + (_md(pd.DataFrame(rows)) if rows else "_Veri yok._")
             + "\n\n## Katman\n\n" + "\n".join(f"- {k}: {v}" for k, v in table.katman.value_counts().items()))
+
+
+FREEZE_FILES = ("kurallar.yaml", "kapi.py", "olcut.py", "defter.py")   # koşuyu belirleyen kural ve hesap dosyaları (görev 23)
+
+
+def freeze_summary(table: pd.DataFrame) -> dict[str, Any]:
+    """Dondurma özeti: kural/hesap dosyalarının SHA-256'sı ve aday listesinin (katman ≠ yok) adres özeti. RAPOR'a yazılır; kurallar
+    veya hesap koşudan sonra değişirse özet değişir, sonuç artık aynı kuralların ürünü sayılmaz."""
+    base = Path(__file__).resolve().parent
+    files = {name: hashlib.sha256((base / name).read_bytes()).hexdigest() for name in FREEZE_FILES}
+    candidates = sorted(str(a).lower() for a in table.loc[table["katman"].isin(["kopyalanabilir", "izleme_adayi"]), "address"]) if "katman" in table else []
+    return {"dosyalar": files, "aday_sayisi": len(candidates), "aday_ozeti": hashlib.sha256("\n".join(candidates).encode()).hexdigest()}
+
+
+def freeze_report(table: pd.DataFrame) -> str:
+    summary = freeze_summary(table)
+    lines = ["## Dondurma (kurallar ve kod özeti)", ""] + [f"- `{name}` SHA-256: `{digest}`" for name, digest in summary["dosyalar"].items()]
+    return "\n".join(lines + [f"- Aday listesi ({summary['aday_sayisi']} adres: kopyalanabilir + izleme_adayi) özeti: `{summary['aday_ozeti']}`"])
 
 
 def merge_shards(shards: Path, root: Path) -> None:
@@ -953,7 +985,7 @@ def merge_shards(shards: Path, root: Path) -> None:
                             "gecikme_480dk_net", "plasebo_p", "nw_t", "alfa_kiyas", "bhy_q", "adim3", "adim4", "adim5", "adim6", "adim7", "sinif"] if c in table]
         near = table[table.get("adim2") == "Geçti"].sort_values("nw_t", ascending=False)[cols].head(15)
         (output / "RAPOR.md").write_text("# CT-Kapı v1.1\n\n" + funnel_report(table, evren.get(date))
-                                         + "\n\n## Adım 2'yi geçenler (alfa t'ye göre ilk 15)\n\n" + _md(near)
+                                         + "\n\n" + freeze_report(table) + "\n\n## Adım 2'yi geçenler (alfa t'ye göre ilk 15)\n\n" + _md(near)
                                          + "\n\nGecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.\n", encoding="utf-8")
 
 
