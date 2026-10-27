@@ -19,10 +19,25 @@ paper'daki 13 kitaptan yalnız 2'sinde zayıf alfa izi vardı (`docs/kapi_kontro
   Copy trade yönetim panosuna çevrilecek; `pano/saglik.py`'deki strateji sonuçlarını okuyan yardımcılar o işte temizlenir.
   Arayüz ayrı repoda: `sg-pano` (GitHub Pages).
 
-## Sıradaki iş
-**Copy trade fazları ve yeni plan** (kullanıcıyla birlikte çizilecek; gerçek para yok, hemen başlanmıyor).
-Taslak başlıklar: veri ve copy trade kapısı → sanal kopya + pano → karar ve pilot hazırlığı (mali müşavir görüşü) →
-küçük canlı pilot. Eşikler kullanıcı onayıyla dondurulur.
+## SIRA (kullanıcı kararı 2026-10-27: kaos yok — bir adım bitmeden sıradakine geçilmez; her ajan tek iş)
+**1. Pano — ŞU AN** (bitti sayılır: telefondaki pano, saatlik motorun ürettiği gerçek veriyi gösteriyor)
+| Kim | İş | Durum |
+|---|---|---|
+| Codex | İzleme motoru, İş A (`docs/GOREV_IZLEME.md`, dal `codex/izleme`) | çalışıyor |
+| Sonnet | sg-pano 2. tur: sözleşme v1.1 + mobil iyileştirmeler | gönderilecek |
+| Lider | ikisini denetle, birleştir | bekliyor |
+Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama kararı değil).
+
+**2. Telegram** (pano bitince): kendi botumuz, Cloudflare Worker + KV (Argon notu: hazır servislerde
+[Açtım]/[Atladım] düğmesi ve veri aktarımı yok). Codex İş B; kullanıcı: Cloudflare ücretsiz hesap, BotFather.
+
+**3. Trader seçimi** (Telegram bitince): CT-Kapı tam sonucu incelenir (`copytrade/kapi/2026-10-27/`). Bilinen
+sorunlar: 12.461 adresin 8.196'sı işlendi; adım 5 plasebo hiçbir adreste hesaplanmadı (p boş) → düzeltilecek.
+"İlişkili hesaplar" kontrolü eklenecek (alt hesap, vault, iç transfer, ortak agent — Argon notu). Sonra gerçek
+izleme listesi ve 3 aylık sanal izleme.
+
+**Sonraya notlar:** Telegram mini uygulama; HIP-3 hafta sonu boşluğu uyarısı; mali müşavir soru listesi
+(`arastirma/copytrade/argon_kalicilik_cloudflare_turkiye.md`); gerçek para yok (en erken sanal izleme + ölçütler sonrası).
 
 ## Değişmez kurallar
 `AGENTS.md`. Repo herkese açık: anahtar ve kişisel veri yok. Gerçek para ve emir yok. `main`'e PR ile; lider birleştirir.
