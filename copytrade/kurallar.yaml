@@ -13,5 +13,8 @@ max_watchlist: 50
 # Martingale işareti (lider kararı 2026-10-26): en az 5 ekleme ve eklemelerin > %25'i zarardaki pozisyona
 martingale_max_ratio: 0.25
 martingale_min_additions: 5
+# Lider kararı 2026-10-27 (ölçüm düzeltmesi): emir düzeyinde ve ortalama girişten > %2 aleyhte ekleme; kaldıraç = gerçek
+# pozisyon değeri / hesap değeri (hesap ayarı değil)
+martingale_min_adverse: 0.02
 # Ölçüm penceresi: 180 gün geçmiş şartı için fill'ler 365 günden çekilir
 fills_lookback_days: 365

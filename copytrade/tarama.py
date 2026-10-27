@@ -65,7 +65,7 @@ class PublicClient:
     def info(self, payload: dict, weight: int = 20) -> Any:
         return self._request("POST", INFO, payload=payload, weight=weight)
 
-    def fills(self, address: str, start_ms: int) -> list[dict]:
+    def fills(self, address: str, start_ms: int, max_rows: int | None = None) -> list[dict]:
         # Official endpoint pages with the cursor timestamp; dedupe by tid.
         result, cursor, seen = [], start_ms, set()
         while True:
@@ -77,7 +77,7 @@ class PublicClient:
                 if key not in seen:
                     seen.add(key); result.append(fill)
             newest = max(int(x.get("time", 0)) for x in page)
-            if len(page) < 2000 or newest <= cursor:
+            if len(page) < 2000 or newest <= cursor or (max_rows is not None and len(result) >= max_rows):
                 break
             cursor = newest + 1
         return result
