@@ -6,6 +6,8 @@
 - Eşleme: `X` → `XUSDT`; `kX` → `1000XUSDT`; HIP-3 (`xyz:` vb.) ve spot (`@…`) → `yok`.
 - Erişim 451/403 ise sütun `bilinmiyor` olur; rapora yazılır, koşu durmaz ve liste uydurulmaz.
 
-- Durum: durdu — karar bekliyor.
-- Engel: `candleSnapshot` için mum çözünürlüğü tanımlı değil. 0/5/30/120 dakika gecikmede "sonraki mum açılışı" 1 dakika, 5 dakika veya 30 dakika mum kullanıldığında farklı gerçekleşir; bu sanal kopya netini ve CT-Kapı adım 3 sonucunu değiştirir.
-- Gerekli karar: Gecikmeli kopya ve plasebo için kullanılacak `candleSnapshot` aralığını belirtin. Aynı zamanda uzun dönem mum verisinin sayfalanmasında kabul edilecek kaynak sınırı varsa belirtin.
+- Durum: devam ediyor.
+- Lider kararı (2026-10-27): adım 3 ve 5 için pencere son 200 gün, `candleSnapshot` aralığı `1h`; coin başına tek istek ve koşu içi ortak önbellek kullanılır. Bir saatten kısa işlem plaseboda bir bardır.
+- Gecikme: 0 dk liderin dolum fiyatıdır; 5/30/120 dk, gecikme anından sonra açılan ilk saatlik mumun açılışıdır. Rapor gecikmenin saat başına yuvarlanmış muhafazakâr üst sınır olduğunu yazar.
+- Veri bütünlüğü: bir trader'ın 200 günlük hacminin %10'undan fazlasında mum yoksa adım 1 `Yetersiz` olur.
+- Teknik not: 1 saatlik mumun en çok 5.000 kayıt sınırı 200 günlük pencereyi kapsadığından mum çağrısı sayfalanmaz; her coin yanıtı bellek önbelleğinde paylaşılır.

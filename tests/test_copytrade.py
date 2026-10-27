@@ -81,13 +81,12 @@ def test_copy_reads_documented_funding_shape_and_does_not_double_charge_fees():
     assert round(ledger.net_pnl.iloc[0], 3) == 7.955  # 10 − our taker 0.045 − funding 2; leader fee not charged
 
 
-def test_prefilter_keeps_watchlist_and_caps_ranked():
+def test_prefilter_keeps_every_eligible_leader_without_a_cap():
     rows = [{"ethAddress": f"0x{i}", "accountValue": 25_000, "monthRoi": 1, "allTimeRoi": 1, "allTimePnl": i}
             for i in range(301)]
     selected = prefilter(rows, [{"address": "0x0"}])
-    from copytrade.tarama import MAX_ADDRESSES
-    assert len(selected) == MAX_ADDRESSES + 1
-    assert selected[-1]["address"] == "0x0"
+    assert len(selected) == 300  # 0 has non-positive all-time PnL
+    assert {row["address"] for row in selected} == {f"0x{i}" for i in range(1, 301)}
 
 
 def test_prefilter_accepts_documented_window_performances_shape():
