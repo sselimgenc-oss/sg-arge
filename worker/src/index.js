@@ -129,7 +129,7 @@ async function handleTelegram(request, env, fetcher = fetch) {
         reply_markup: skipKeyboard({ id: value.olay_id }) }, fetcher);
       return new Response("ok");
     }
-    await env.DB.prepare("INSERT INTO kararlar(olay_id, zaman, karar, neden, not) VALUES (?, ?, ?, ?, '') ON CONFLICT(olay_id) DO UPDATE SET zaman=excluded.zaman, karar=excluded.karar, neden=excluded.neden, not='' ")
+    await env.DB.prepare("INSERT INTO kararlar(olay_id, zaman, karar, neden, etiket) VALUES (?, ?, ?, ?, '') ON CONFLICT(olay_id) DO UPDATE SET zaman=excluded.zaman, karar=excluded.karar, neden=excluded.neden, etiket=''")
       .bind(value.olay_id, nowIso(), value.karar, value.neden).run();
     const label = value.karar === "acti" ? "✅ Açtım" : `⏭ Atladım — ${value.neden.replaceAll("_", " ")}`;
     await telegram(env, "editMessageReplyMarkup", { chat_id: callback.message.chat.id, message_id: callback.message.message_id,
@@ -153,7 +153,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/kararlar") {
-      const rows = await env.DB.prepare("SELECT olay_id, zaman, karar, neden, not FROM kararlar ORDER BY zaman").all();
+      const rows = await env.DB.prepare("SELECT olay_id, zaman, karar, neden, etiket AS "not" FROM kararlar ORDER BY zaman").all();
       return json(rows.results || []);
     }
     if (request.method === "POST" && url.pathname === "/telegram") return handleTelegram(request, env);

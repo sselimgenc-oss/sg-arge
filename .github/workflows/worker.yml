@@ -53,10 +53,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Önce dağıt: ilk koşuda Worker yokken secret put etkileşimli soru sorabilir.
+          npm exec --yes wrangler@4 deploy --config=worker/wrangler.generated.toml
           for name in TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID TELEGRAM_WEBHOOK_SECRET; do
             printf '%s' "${!name}" | npm exec --yes wrangler@4 secret put "$name" --config=worker/wrangler.generated.toml
           done
-          npm exec --yes wrangler@4 deploy --config=worker/wrangler.generated.toml
       - name: Telegram webhook'unu ayarla
         shell: bash
         run: |

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS kararlar (
   zaman TEXT NOT NULL,
   karar TEXT NOT NULL CHECK(karar IN ('acti', 'atladi')),
   neden TEXT NOT NULL CHECK(neden IN ('gec_gordum', 'begenmedim', 'bakiye_yok', 'diger')),
-  not TEXT NOT NULL DEFAULT ''
+  etiket TEXT NOT NULL DEFAULT ''  -- sözleşmedeki "not" alanı; NOT SQL'de ayrılmış kelime
 );
 CREATE TABLE IF NOT EXISTS isik (
   trader TEXT PRIMARY KEY,
