@@ -90,3 +90,11 @@ rapor_gecikmeleri_dk: [0, 5, 30, 120, 480]
 evren_min_hesap_degeri: 25000
 # Kapsam hedefi: işlenen / evren (tam koşu; altındaysa koşu 'eksik' sayılır, görev 24)
 kapsam_hedefi: 0.98
+# Kopya hesabında eksik dolum (görev 18a): tarzın gecikmesinde herhangi bir dolum için mum bulunamazsa satır `kopya_eksik` ve adım 3 Yetersiz.
+# Dolum geçmişi sınırı (18c): userFillsByTime ~10.000 dolumda kesilebilir; bu kadar dolum dönmüş ve ilk dolum, hesabın/pencerenin izin verdiğinden
+# bu kadar gün geç başlıyorsa satır `dolum_siniri` işaretlenir.
+dolum_siniri: 10000
+dolum_siniri_bosluk_gun: 30
+# Akıl sağlığı kapısı (18d): oran/düşüş sütunları 0–1, kaldıraç 0–saglik_max_kaldirac; sabit sütun kontrolü en az bu kadar satırda
+saglik_max_kaldirac: 200
+saglik_min_satir_sabit_kontrolu: 50

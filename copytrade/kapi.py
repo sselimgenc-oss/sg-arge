@@ -626,6 +626,17 @@ def delay_test_days(recent: list[dict], now_ms: int, start_200: int) -> float | 
     return round((now_ms - max(start_200, min(times))) / 86_400_000, 1) if times else None
 
 
+def fill_limit_reached(fills: list[dict], now_ms: int, start_ms: int, stats: dict | None, rules: dict | None = None) -> bool:
+    """Dolum geçmişi sınırı (görev 18c): API en son ~``dolum_siniri`` dolumu verebilir. Bu kadar dolum dönmüş ve ilk dolum, hesabın
+    (ve 365 günlük pencerenin) izin verdiğinden ``dolum_siniri_bosluk_gun`` günden fazla geç başlıyorsa eski işlemler kaybolmuş olabilir."""
+    rules = rules or load_rules()
+    if len(fills) < int(rules["dolum_siniri"]):
+        return False
+    first = min(int(f["time"]) for f in fills)
+    available_days = min((now_ms - start_ms) / DAY_MS, float((stats or {}).get("account_age_days", (now_ms - start_ms) / DAY_MS)))
+    return bool((now_ms - first) / DAY_MS < available_days - float(rules["dolum_siniri_bosluk_gun"]))
+
+
 def evidence_status(history_days: int, trades: int, active_months: int, rules: dict | None = None) -> str:
     rules = rules or load_rules()
     return "Geçti" if (history_days >= rules["min_history_days"] and trades >= rules["min_closed_trades"]
@@ -654,11 +665,16 @@ def gate_status(metrics: dict[str, Any], copy_net: float | None, placebo_p: floa
 
     tarz = metrics.get("tarz") or classify_style(metrics.get("median_holding_hours"), rules)
     short = metrics.get("kisa_islem_payi")
-    out["adim3"] = "Geçti" if (tarz in {"intraday", "swing"}
-                               and (short is None or short <= float(rules["kisa_islem_payi_max"]))
-                               and value("median_leverage", math.inf) <= float(rules["kapi_max_medyan_kaldirac"])
-                               and value("max_leverage", math.inf) <= float(rules["kapi_max_kaldirac"])
-                               and copy_net is not None and copy_net > 0) else "Kaldı"
+    failed_static = not (tarz in {"intraday", "swing"}
+                         and (short is None or short <= float(rules["kisa_islem_payi_max"]))
+                         and value("median_leverage", math.inf) <= float(rules["kapi_max_medyan_kaldirac"])
+                         and value("max_leverage", math.inf) <= float(rules["kapi_max_kaldirac"]))
+    if failed_static:
+        out["adim3"] = "Kaldı"                    # tarz/kaldıraç kopya sonucundan bağımsız kesin başarısızlık
+    elif metrics.get("kopya_eksik"):
+        out["adim3"] = "Yetersiz"                 # eksik dolumlu kopya getirisi güvenilmez (görev 18a)
+    else:
+        out["adim3"] = "Geçti" if copy_net is not None and copy_net > 0 else "Kaldı"
     out["adim4"] = "Geçti" if (value("profitable_month_ratio", 0) >= rules["adim4_min_karli_ay_orani"]
                                and value("largest_trade_share", 1) < rules["max_largest_trade_share"]
                                and value("profit_factor_without_best", 0) > rules["min_profit_factor_without_best"]
@@ -739,6 +755,12 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         metrics["gece_payi"], metrics["gecikme_gun"] = night_share(fills, rules), delay_test_days(recent, now_ms, start_200)
         delay = delay_for_style(tarz, rules)
         actual = nets.get(delay)
+        for dead in ("liquid_coin_share", "setting_leverage"):    # ölü sütunlar (hep 0 / hep boş) kapı satırına yazılmaz (görev 18b)
+            metrics.pop(dead, None)
+        missing_fills, executed_fills = metrics.get(f"gecikme_{delay}dk_eksik_dolum", 0), metrics.get(f"gecikme_{delay}dk_dolum", 0)
+        metrics["kopya_eksik"] = bool(missing_fills > 0)
+        metrics["kopya_eksik_orani"] = missing_fills / (missing_fills + executed_fills) if missing_fills + executed_fills else 0.0
+        metrics["dolum_siniri"] = fill_limit_reached(fills, now_ms, start, stats, rules)
         pre = gate_status(metrics, actual, None, None, rules)
         progress.stage("metrik", f"tarz {tarz}, gecikme {delay} dk, 5 gecikme hesabı")
         p_value, notes = None, []
@@ -954,6 +976,53 @@ def freeze_report(table: pd.DataFrame) -> str:
     return "\n".join(lines + [f"- Aday listesi ({summary['aday_sayisi']} adres: kopyalanabilir + izleme_adayi) özeti: `{summary['aday_ozeti']}`"])
 
 
+RATIO_COLUMNS = ("profitable_month_ratio", "max_drawdown", "largest_trade_share", "kisa_islem_payi", "gece_payi", "pay_kripto", "pay_hisse",
+                 "pay_endeks", "pay_emtia", "binance_payi", "candle_coverage", "plasebo_p", "bhy_q", "kopya_eksik_orani")
+LEVERAGE_COLUMNS = ("median_leverage", "max_leverage")
+EXPECTED_FILLED = ("closed_trades", "history_days", "median_holding_hours", "median_leverage", "max_leverage", "candle_coverage",
+                   "profitable_month_ratio", "max_drawdown", "gecikme_30dk_net", "gecikme_120dk_net", "kisa_islem_payi", "pay_kripto", "tarz")
+
+
+class SanityError(RuntimeError):
+    """Akıl sağlığı kapısı tutmadı: sonuç yayımlanmaz, iş kırmızı olur."""
+
+
+def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
+    """Çıktı akıl sağlığı kapısı (görev 18d; denetim bulgusu: testler yeşilken 1,5e12 düşüş gibi sayılar yayımlandı).
+
+    Kurallar: oran ve düşüş sütunları 0–1; kaldıraç 0–``saglik_max_kaldirac``; metrik üreten satırlarda beklenen sütun tamamen boş değil, yeterli
+    satırda (``saglik_min_satir_sabit_kontrolu``) sabit değil; adım 1–4'ü geçen her satırda ``plasebo_p`` dolu. Döner: ihlal listesi (boş = geçti)."""
+    rules = rules or load_rules()
+    problems: list[str] = []
+    for name in RATIO_COLUMNS:
+        if name in table:
+            values = pd.to_numeric(table[name], errors="coerce").dropna()
+            bad = values[(values < 0) | (values > 1)]
+            if len(bad):
+                problems.append(f"{name}: {len(bad)} satırda 0–1 dışı (min {values.min():.4g}, max {values.max():.4g})")
+    for name in LEVERAGE_COLUMNS:
+        if name in table:
+            values = pd.to_numeric(table[name], errors="coerce").dropna()
+            bad = values[(values < 0) | (values > float(rules["saglik_max_kaldirac"]))]
+            if len(bad):
+                problems.append(f"{name}: {len(bad)} satırda 0–{rules['saglik_max_kaldirac']} dışı (max {values.max():.4g})")
+    if "asama1" not in table:
+        return problems + ["asama1 sütunu yok"]
+    metric_rows = table[(table["asama1"] == "Geçti") & ~table.get("neden", pd.Series("", index=table.index)).fillna("").astype(str).str.startswith("veri hatası")]
+    if len(metric_rows):
+        for name in EXPECTED_FILLED:
+            if name not in metric_rows or metric_rows[name].isna().all():
+                problems.append(f"{name}: metrik üreten {len(metric_rows)} satırda tamamen boş")
+            elif len(metric_rows) >= int(rules["saglik_min_satir_sabit_kontrolu"]) and metric_rows[name].nunique() <= 1:
+                problems.append(f"{name}: {len(metric_rows)} satırda sabit değer ({metric_rows[name].iloc[0]!r})")
+    family = family_mask(table)
+    if family.any():
+        empty = int(table.loc[family, "plasebo_p"].isna().sum()) if "plasebo_p" in table else int(family.sum())
+        if empty:
+            problems.append(f"plasebo_p: adım 1–4'ü geçen {int(family.sum())} adresin {empty} tanesinde boş")
+    return problems
+
+
 def merge_shards(shards: Path, root: Path) -> None:
     """Merge partial artifacts even if some timeout jobs produced no CSV.
 
@@ -976,6 +1045,9 @@ def merge_shards(shards: Path, root: Path) -> None:
             evren[date] = int(json.loads((output / "evren.json").read_text(encoding="utf-8"))["evren"])
         table = pd.concat(frames, ignore_index=True).drop_duplicates("address", keep="last")
         table = finalize(table)
+        problems = sanity_check(table)
+        if problems:
+            raise SanityError(f"{date}: akıl sağlığı kapısı tutmadı, yayımlanmaz:\n- " + "\n- ".join(problems))
         table.to_csv(output / "sonuc.csv", index=False)
         pd.DataFrame({"address": table.address}).to_csv(output / "asama1.csv.gz", index=False, compression="gzip")
         if evren.get(date):

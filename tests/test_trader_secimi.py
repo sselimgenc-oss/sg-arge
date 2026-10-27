@@ -202,18 +202,22 @@ def test_missing_addresses_selects_absent_and_data_error_rows():
 
 def result_row(address, **over):
     row = {"address": address, "asama1": "Geçti", "complete_data": True, "history_days": 400, "account_age_days": 500, "tarz": "swing",
-           "adim1": "Geçti", "adim2": "Geçti", "adim3": "Geçti", "adim4": "Geçti", "adim5": "Kaldı", "adim6": "Geçti"}
+           "adim1": "Geçti", "adim2": "Geçti", "adim3": "Geçti", "adim4": "Geçti", "adim5": "Kaldı", "adim6": "Geçti",
+           # akıl sağlığı kapısı (18d) metrik üreten satırda bu sütunların dolu olmasını ister
+           "closed_trades": 80, "median_holding_hours": 30, "median_leverage": 2.0, "max_leverage": 8.0, "candle_coverage": 1.0,
+           "profitable_month_ratio": .6, "max_drawdown": .2, "gecikme_30dk_net": .1, "gecikme_120dk_net": .05, "kisa_islem_payi": .1,
+           "pay_kripto": 1.0}
     return {**row, **over}
 
 
 def test_merge_completes_existing_day_without_duplicate_rows(tmp_path: Path):
     day = tmp_path / "root" / "kapi" / "2026-10-28"
     day.mkdir(parents=True)
-    pd.DataFrame([result_row("0xa", katman="izleme_adayi"), {"address": "0xb", "asama1": "Yetersiz", "neden": "veri hatası: HTTPError: 500", "katman": "yok"}]).to_csv(day / "sonuc.csv", index=False)
+    pd.DataFrame([result_row("0xa", katman="izleme_adayi", plasebo_p=.01), {"address": "0xb", "asama1": "Yetersiz", "neden": "veri hatası: HTTPError: 500", "katman": "yok"}]).to_csv(day / "sonuc.csv", index=False)
     (day / "evren.json").write_text('{"evren": 3}')
     shard = tmp_path / "shards" / "stage1-0" / "2026-10-28"
     shard.mkdir(parents=True)
-    pd.DataFrame([{"address": "0xb", "asama1": "Yetersiz"}, result_row("0xc", closed_trades=60)]).to_csv(shard / "sonuc.csv", index=False)
+    pd.DataFrame([{"address": "0xb", "asama1": "Yetersiz"}, result_row("0xc", closed_trades=60, plasebo_p=.02)]).to_csv(shard / "sonuc.csv", index=False)
     (shard / "evren.json").write_text('{"evren": 3}')
     merge_shards(tmp_path / "shards", tmp_path / "root")
     table = pd.read_csv(day / "sonuc.csv")

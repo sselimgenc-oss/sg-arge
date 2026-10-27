@@ -1,0 +1,93 @@
+"""Akıl sağlığı kapısı (görev 18d), kopya_eksik (18a), dolum_siniri (18c) ve ölü sütunlar (18b). Ağsız."""
+from __future__ import annotations
+
+import pandas as pd
+import pytest
+
+from copytrade.kapi import SanityError, fill_limit_reached, gate_status, load_rules, merge_shards, sanity_check
+
+RULES = load_rules()
+DAY_MS = 86_400_000
+
+
+def good_row(address="0xa", **over):
+    row = {"address": address, "asama1": "Geçti", "adim1": "Geçti", "adim2": "Geçti", "adim3": "Geçti", "adim4": "Geçti",
+           "profitable_month_ratio": .6, "max_drawdown": .2, "largest_trade_share": .1, "kisa_islem_payi": .1, "gece_payi": .3,
+           "pay_kripto": 1.0, "candle_coverage": 1.0, "plasebo_p": .01, "closed_trades": 80, "history_days": 200,
+           "median_holding_hours": 5, "median_leverage": 2.0, "max_leverage": 8.0, "gecikme_30dk_net": .1, "gecikme_120dk_net": .05, "tarz": "intraday"}
+    return {**row, **over}
+
+
+def table(*rows):
+    return pd.DataFrame(list(rows))
+
+
+def test_good_table_passes():
+    assert sanity_check(table(good_row("0xa"), good_row("0xb")), RULES) == []
+
+
+@pytest.mark.parametrize("column,value", [("max_drawdown", 1.5e12), ("max_drawdown", -0.1), ("profitable_month_ratio", 1.2), ("plasebo_p", 2)])
+def test_ratio_outside_0_1_fails(column, value):
+    problems = sanity_check(table(good_row(**{column: value})), RULES)
+    assert any(p.startswith(column) for p in problems)
+
+
+@pytest.mark.parametrize("value", [201, -1])
+def test_leverage_outside_range_fails(value):
+    assert any(p.startswith("max_leverage") for p in sanity_check(table(good_row(max_leverage=value)), RULES))
+
+
+def test_empty_column_fails():
+    assert any(p.startswith("median_leverage") and "boş" in p for p in sanity_check(table(good_row(median_leverage=None)), RULES))
+
+
+def test_constant_column_fails_only_with_enough_rows():
+    rows = [good_row(f"0x{i}", max_leverage=5.0) for i in range(int(RULES["saglik_min_satir_sabit_kontrolu"]))]
+    assert any(p.startswith("max_leverage") and "sabit" in p for p in sanity_check(table(*rows), RULES))
+    assert sanity_check(table(*rows[:3]), RULES) == []      # az satırda sabitlik kontrol edilmez
+
+
+def test_family_member_without_placebo_fails():
+    problems = sanity_check(table(good_row(plasebo_p=None)), RULES)
+    assert any(p.startswith("plasebo_p") for p in problems)
+    # adım 4'ü geçemeyen satırda plasebo_p boş olabilir
+    assert not any(p.startswith("plasebo_p") for p in sanity_check(table(good_row(), good_row("0xb", adim4="Kaldı", plasebo_p=None)), RULES))
+
+
+def test_merge_refuses_to_publish_on_sanity_failure(tmp_path):
+    shard = tmp_path / "shards" / "2026-10-20"
+    shard.mkdir(parents=True)
+    pd.DataFrame([good_row(max_drawdown=3.0)]).to_csv(shard / "sonuc.csv", index=False)
+    root = tmp_path / "out"
+    with pytest.raises(SanityError, match="max_drawdown"):
+        merge_shards(tmp_path / "shards", root)
+    assert not (root / "kapi" / "2026-10-20" / "sonuc.csv").exists()
+
+
+def base_metrics(**over):
+    return {"complete_data": True, "history_days": 200, "closed_trades": 80, "active_months": 8, "median_holding_hours": 3,
+            "median_leverage": 2, "max_leverage": 8, "kisa_islem_payi": .25, "profitable_month_ratio": .7, "largest_trade_share": .2,
+            "profit_factor_without_best": 1.5, "martingale_signal": False, **over}
+
+
+def test_missing_copy_fills_make_step3_insufficient_but_static_failure_stays_failed():
+    assert gate_status(base_metrics(), .1, None, None, RULES)["adim3"] == "Geçti"
+    assert gate_status(base_metrics(kopya_eksik=True), .1, None, None, RULES)["adim3"] == "Yetersiz"
+    assert gate_status(base_metrics(kopya_eksik=True, median_leverage=9), .1, None, None, RULES)["adim3"] == "Kaldı"
+
+
+def test_fill_limit_flag():
+    now, start = 400 * DAY_MS, 35 * DAY_MS
+    limit = int(RULES["dolum_siniri"])
+    make = lambda first_day: [{"time": first_day * DAY_MS + i} for i in range(limit)]
+    assert not fill_limit_reached(make(100)[:-1], now, start, None, RULES)                     # sınıra ulaşmadı
+    assert fill_limit_reached(make(300), now, start, {"account_age_days": 500}, RULES)         # 365 günlük pencerenin çok gerisinde başlıyor
+    assert not fill_limit_reached(make(40), now, start, {"account_age_days": 500}, RULES)      # pencerenin başına yakın: kayıp yok
+    assert not fill_limit_reached(make(300), now, start, {"account_age_days": 100}, RULES)     # hesap zaten genç
+
+
+def test_dead_columns_not_in_evaluated_row():
+    import inspect
+    from copytrade import kapi
+    source = inspect.getsource(kapi.evaluate_address)
+    assert "liquid_coin_share" in source and "pop" in source      # satırdan atılıyor
