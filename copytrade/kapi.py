@@ -483,14 +483,20 @@ def gate_status(metrics: dict[str, Any], copy_net: float | None, placebo_p: floa
     if out["adim1"] != "Geçti" or out["adim2"] != "Geçti":
         out.update({f"adim{i}": "Yetersiz" for i in range(3, 8)})
         return out
+    def value(name: str, missing: float) -> float:
+        """Eksik ya da hesaplanamayan (None/NaN) ölçüt şartı sağlamaz; TypeError'a (veri hatası) düşmez."""
+        number = metrics.get(name)
+        return missing if number is None or not np.isfinite(number) else float(number)
+
     tarz = metrics.get("tarz") or classify_style(metrics.get("median_holding_hours"), rules)
     short = metrics.get("kisa_islem_payi")
     out["adim3"] = "Geçti" if (tarz in {"intraday", "swing"}
                                and (short is None or short <= float(rules["kisa_islem_payi_max"]))
-                               and metrics.get("median_leverage", math.inf) <= float(rules["kapi_max_medyan_kaldirac"])
-                               and metrics.get("max_leverage", math.inf) <= float(rules["kapi_max_kaldirac"])
+                               and value("median_leverage", math.inf) <= float(rules["kapi_max_medyan_kaldirac"])
+                               and value("max_leverage", math.inf) <= float(rules["kapi_max_kaldirac"])
                                and copy_net is not None and copy_net > 0) else "Kaldı"
-    out["adim4"] = "Geçti" if metrics.get("profitable_month_ratio", 0) >= .60 and metrics.get("largest_trade_share", 1) < .30 and metrics.get("profit_factor_without_best", 0) > 1.2 and not metrics.get("martingale_signal") else "Kaldı"
+    out["adim4"] = "Geçti" if (value("profitable_month_ratio", 0) >= .60 and value("largest_trade_share", 1) < .30
+                               and value("profit_factor_without_best", 0) > 1.2 and not metrics.get("martingale_signal")) else "Kaldı"
     out["adim5"] = "Geçti" if placebo_p is not None and placebo_p <= float(rules["plasebo_p_max"]) else "Kaldı"
     if alpha is None or not np.isfinite(alpha.get("alfa_yillik", np.nan)):
         out["adim6"] = "Yetersiz"

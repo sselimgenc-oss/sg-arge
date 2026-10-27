@@ -304,3 +304,10 @@ def test_kesif_schema_filtering_and_order():
     assert out["adaylar"][3]["piyasa_payi"] == {"kripto": .7, "hisse": .3} and out["adaylar"][3]["alfa_kiyas"] == "BTC"
     json.dumps(out, allow_nan=False)                      # NaN/sonsuz yok
     assert first["adimlar"]["5"]["durum"] == "Kaldı" and "plasebo" in first["adimlar"]["5"]["neden"]
+
+
+def test_none_metrics_fail_the_step_instead_of_raising():
+    # Hesaplanamayan ölçüt (None) eskiden TypeError → satır "veri hatası" oluyordu; şimdi adım Kaldı.
+    metrics = base_metrics(profit_factor_without_best=None, largest_trade_share=None, median_leverage=None, max_leverage=float("nan"))
+    status = gate_status(metrics, .1, None, None, RULES)
+    assert status["adim3"] == "Kaldı" and status["adim4"] == "Kaldı"
