@@ -185,7 +185,7 @@ def test_inceleme_stability_report_runs_offline(tmp_path: Path, monkeypatch):
     class Fake:
         def leaderboard(self):
             return [{"ethAddress": "0xa", "accountValue": "60000", "windowPerformances": [
-                ["week", {"roi": "0.01"}], ["month", {"roi": "0.05", "vlm": "1"}], ["allTime", {"roi": "0.5", "pnl": "30000"}]]}]
+                ["week", {"roi": "0.01"}], ["month", {"roi": "0.05", "vlm": "120000"}], ["allTime", {"roi": "0.5", "pnl": "30000"}]]}]
 
         def fills(self, address, start, max_rows=None):
             return [{"time": 1_700_000_000_000, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0",

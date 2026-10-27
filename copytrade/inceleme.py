@@ -32,15 +32,16 @@ def pick(rows: list[dict], count: int, min_account: float = 100_000) -> list[dic
 
 def stable_pool(rows: list[dict], count: int) -> list[dict]:
     """İstikrar havuzu: hesap ≥ 50.000 USD; hafta, ay ve tüm zaman ROI > 0; tüm zaman ROI %20–%500 (piyango
-    kazananlarını dışarıda bırakır); aylık hacme göre en aktif ``count`` adres."""
+    kazananlarını dışarıda bırakır); aylık hacim / hesap 0,5–20 kat (swing devir hızı; botlar ve scalp dışarıda);
+    tüm zaman PnL'e göre ilk ``count`` adres."""
     pool = []
     for row in rows:
         account = float(row.get("accountValue", 0) or 0)
         roi_all = _window(row, "allTime", "roi")
         if (account >= 50_000 and _window(row, "week", "roi") > 0 and _window(row, "month", "roi") > 0
-                and 0.2 <= roi_all <= 5):
+                and 0.2 <= roi_all <= 5 and 0.5 <= _window(row, "month", "vlm") / account <= 20):
             pool.append(dict(row, address=str(row.get("ethAddress", "")), accountValue=account))
-    return sorted(pool, key=lambda r: _window(r, "month", "vlm"), reverse=True)[:count]
+    return sorted(pool, key=lambda r: _window(r, "allTime", "pnl"), reverse=True)[:count]
 
 
 def monthly(fills: list[dict], funding: list[dict]) -> pd.Series:
@@ -139,16 +140,16 @@ def write_report(args, board, leaders, loaded, errors, scalp, rules, done: int) 
         swing = [x for x in loaded if (x[4].get("median_holding_hours") or 0) >= 4]
         calm = [x for x in swing if not x[4].get("martingale_signal") and (x[4].get("median_leverage") or 0) <= 5]
         enough = [x for x in calm if x[4].get("history_days", 0) >= 180 and x[4].get("closed_trades", 0) >= 20]
-        shown = sorted(enough, key=lambda x: (x[4].get("profitable_month_ratio") or 0, x[4].get("sortino") or 0),
+        shown = sorted(enough or calm, key=lambda x: (x[4].get("profitable_month_ratio") or 0, x[4].get("sortino") or 0),
                        reverse=True)[:args.adet]
         parts += [f"Lider tablosunda {len(board)} adres. **İstikrar havuzu:** hesap ≥ 50.000 USD; hafta, ay ve tüm zaman "
-                  f"ROI > 0; tüm zaman ROI %20–%500; aylık hacme göre en aktif {len(leaders)} adres.", "",
+                  f"ROI > 0; tüm zaman ROI %20–%500; aylık hacim / hesap 0,5–20 kat; tüm zaman PnL'e göre ilk {len(leaders)} adres.", "",
                   "| Süzgeç | Kalan |", "|---|---:|", f"| Havuz | {len(leaders)} |", f"| Çok sık işlem (≥ {args.en_cok_dolum} dolum/yıl, scalp; ayrıntı çekilmedi) | {len(scalp)} |",
                   f"| Veri okundu | {len(loaded)} |",
                   f"| Swing: medyan tutma ≥ 4 saat | {len(swing)} |",
                   f"| Martingale yok, açık pozisyon kaldıracı ≤ 5x | {len(calm)} |",
                   f"| ≥ 180 gün, ≥ 20 kapanmış işlem | {len(enough)} |", "",
-                  f"Aşağıda kalanların kârlı ay oranı ve Sortino'ya göre ilk {len(shown)}'i (kural motoru sonucu ayrıca yazılı)."]
+                  ("Son süzgeçten kimse geçmedi; aşağıda bir önceki adımda kalanlar. " if not enough else "") + f"Aşağıda kalanların kârlı ay oranı ve Sortino'ya göre ilk {len(shown)}'i (kural motoru sonucu ayrıca yazılı)."]
     parts += ["Son 365 günün gerçekleşmiş net PnL'i (açık pozisyon kârı hariç; spot işlemler hariç). Adresi Hyperdash'te "
               "arama kutusuna yapıştırıp gözle de bakabilirsin. **Bu bir seçim değil, örnektir.**", ""]
     parts += [section(row, fills, funding, state, rules, metrics) for row, fills, funding, state, metrics in shown]
