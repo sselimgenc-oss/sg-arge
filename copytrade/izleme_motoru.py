@@ -459,11 +459,22 @@ def clearinghouse_states(client: PublicClient, address: str, dexes: list[str]) -
 
 def with_data_error(trader: dict, error: Exception) -> dict:
     previous = copy.deepcopy(trader)
-    short = str(error).splitlines()[0][:120] or type(error).__name__
+    short = data_error_reason(error)
     reasons = [reason for reason in previous['saglik']['nedenler'] if not reason.startswith('veri hatası:')]
     previous['saglik']['nedenler'] = reasons + [f'veri hatası: {short}']
     previous['gecerli'] = False
     return previous
+
+
+def data_error_reason(error: Exception) -> str:
+    return str(error).splitlines()[0][:120] or type(error).__name__
+
+
+def unavailable_trader(root: Path, row: dict, error: Exception) -> dict:
+    """Publish an explicit placeholder when a trader has never completed a read."""
+    return {**row, 'tarz': resolve_style(root, row), 'veri_zamani': None, 'gecerli': False,
+            'saglik': {'isik': 'sari', 'nedenler': [f'veri hatası: {data_error_reason(error)}']},
+            'pozisyonlar': []}
 
 
 def update_trader(root: Path, client, dexes: list[str], state: dict, all_events: dict,
@@ -567,12 +578,15 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
             traders.append(update_trader(root, client, dexes, state, all_events, row, now, symbols))
         except Exception as error:
             failed += 1
+            print(f"{row['id']}: veri hatası: {data_error_reason(error)}")
             retained = state['traderlar'].get(row['id'], {})
             previous = retained.get('son_trader')
             if previous:
                 traders.append(with_data_error(previous, error))
                 for event in retained.get('son_olaylar', []):
                     all_events[event['id']] = event
+            else:
+                traders.append(unavailable_trader(root, row, error))
     if watchlist and failed == len(watchlist):
         raise RuntimeError('Tüm trader verileri hatalı; önceki durum yayımlanmadı.')
     result = {'surum': 1, 'uretildi': iso(now), 'kaynak': 'hyperliquid', 'traderlar': traders,
