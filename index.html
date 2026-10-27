@@ -599,7 +599,7 @@
   //   CT_KARAR  = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/kararlar.jsonl'
   const CT_KAYNAK = './izleme/ornek_durum.json';
   const CT_KARAR = './izleme/kararlar.jsonl';
-  const CT_ESKI_DK = 30, CT_SAYFA = 8, CT_AKIS_ADIM = 50;
+  const CT_ESKI_DK = 30, CT_SAYFA = 8, CT_AKIS_ADIM = 50, CT_YETERSIZ = 10; // eşik: sözleşme v1.1 (<10 kapanmış ve kararı verilmiş olay)
   let CT = null, CTK = { durum: 'yok', kayit: {}, bozuk: 0 }, ctHata = null;
   let ctSel = null, ctSayfa = 0, ctFiltre = '', ctAkisN = CT_AKIS_ADIM;
 
@@ -628,6 +628,24 @@
     const m = b === 'var' ? ['badge-check', 'up', "Binance'te var"] : b === 'yok' ? ['ban', 'down', "Binance'te yok"] : ['circle-help', 'flat', 'Binance durumu bilinmiyor'];
     return `<span class="inline-flex items-center ${m[1]}" title="${esc(m[2])}" aria-label="${esc(m[2])}"><i data-lucide="${m[0]}" class="w-3.5 h-3.5"></i></span>`;
   }
+
+  // Kapanmış sanal sonucu olan olaylar (acilis/buyutme); sonuç = kopyalanan tutara göre maliyet sonrası net %, ortalaması alınır.
+  const ctKapali = (o) => o.sanal_sonuc && o.sanal_sonuc.durum === 'kapandi' && isNum(o.sanal_sonuc.net_yuzde);
+  const ctOrt = (l) => l.length ? l.reduce((t, o) => t + o.sanal_sonuc.net_yuzde, 0) / l.length : null;
+  function ctKarsilastir(olay) {
+    const kapali = olay.filter(ctKapali), karar = (o) => CTK.kayit[o.id] && CTK.kayit[o.id].karar;
+    const acti = kapali.filter((o) => karar(o) === 'acti'), atladi = kapali.filter((o) => karar(o) === 'atladi');
+    const n = acti.length + atladi.length, oa = ctOrt(acti), ot = ctOrt(kapali);
+    return { n, yeterli: n >= CT_YETERSIZ, tum: { n: kapali.length, ort: ot }, acti: { n: acti.length, ort: oa }, atladi: { n: atladi.length, ort: ctOrt(atladi) },
+      fark: isNum(oa) && isNum(ot) ? oa - ot : null };
+  }
+  function ctKarsilastirHtml(k) {
+    const kv = (a, v) => `<div><div class="k">${esc(a)}</div><div class="v">${v}</div></div>`;
+    if (!k.yeterli) return `<div class="ct-kv">${kv('Durum', '<span class="text-amber-300">yetersiz veri</span>')}${kv('Kapanmış + karar verilmiş', `${k.n} / ${CT_YETERSIZ}`)}${kv('Tüm olaylar', `${ctPs(k.tum.ort)} <span class="ct-sub">(${k.tum.n})</span>`)}</div>`;
+    return `<div class="ct-kv">${kv('Tüm olaylar (ort.)', `<span class="${cls(k.tum.ort)}">${ctPs(k.tum.ort)}</span> <span class="ct-sub">(${k.tum.n})</span>`)}${kv('Açtıklarım (ort.)', `<span class="${cls(k.acti.ort)}">${ctPs(k.acti.ort)}</span> <span class="ct-sub">(${k.acti.n})</span>`)}${kv('Fark', `<b class="${cls(k.fark)}">${ctPs(k.fark)}</b>`)}</div>`;
+  }
+  const ctSanalRozet = (o) => !o.sanal_sonuc ? '' : o.sanal_sonuc.durum === 'kapandi' && isNum(o.sanal_sonuc.net_yuzde)
+    ? ctRozet('sanal ' + ctPs(o.sanal_sonuc.net_yuzde), o.sanal_sonuc.net_yuzde >= 0 ? 'ct-b-ok' : 'ct-b-bad') : o.sanal_sonuc.durum === 'acik' ? ctRozet('sanal: açık', 'ct-b-mut') : '';
 
   // Sıralama yalnız görünüm içindir: kırmızı en alta, kalanlar form skoruna göre (skoru olmayan sona).
   function ctSirala(list) {
@@ -710,7 +728,7 @@
   function ctOlayYuvarlak(o, adGoster) {
     const t = (CT.traderlar || []).find((x) => x.id === o.trader);
     return `<div class="ct-row"><div class="flex flex-wrap items-center gap-x-2 gap-y-1"><span class="ct-sub">${esc(ctTarih(o.zaman))}</span>
-      ${adGoster ? `<b class="text-white">${esc(t ? t.takma_ad : o.trader)}</b>` : ''}${ctRozet(TUR[o.tur] || o.tur, 'ct-b-mut')}${ctKararRozet(o)}</div>
+      ${adGoster ? `<b class="text-white">${esc(t ? t.takma_ad : o.trader)}</b>` : ''}${ctRozet(TUR[o.tur] || o.tur, 'ct-b-mut')}${ctKararRozet(o)}${ctSanalRozet(o)}</div>
       <div class="mt-1">${ctOlayMetin(o)}${o.not && o.tur !== 'isik' ? ` <span class="ct-sub">· ${esc(o.not)}</span>` : ''}</div></div>`;
   }
   const ctOlaylar = () => ((CT && CT.olaylar) || []).slice().sort((a, b) => String(b.zaman).localeCompare(String(a.zaman)));
@@ -742,11 +760,12 @@
 
       <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Sanal kopya</h3>
         ${sk ? `<div class="ct-kv">${kv('Başlangıç', ctUsd(sk.baslangic_usd, 0))}${kv('Bakiye', `<span class="${cls(sk.getiri)}">${ctUsd(sk.bakiye_usd)}</span>`)}${kv('Getiri', `<span class="${cls(sk.getiri)}">${ctPs(sk.getiri)}</span>`)}${kv('Düşüş', ctP(sk.dusus, 1))}${kv('Gecikme', isNum(sk.gecikme_dk) ? fmt(sk.gecikme_dk, 0) + ' dk' : '—')}${kv('t0', esc(sk.t0 || '—'))}</div>` : '<div class="ct-sub">henüz veri yok</div>'}
-        <div class="ct-sub mt-2">Sanal kopya eğrisi: veri sözleşmesinde (sürüm 1) seri yok; sözleşme genişleyince eklenecek.</div></div>
+        ${ctSkEgri(sk) ? '<div class="relative h-48 mt-3"><canvas id="ctChSanal"></canvas></div><div class="ct-sub">günlük sanal bakiye (t0\'dan beri)</div>' : '<div class="ct-sub mt-2">sanal kopya eğrisi: henüz veri yok</div>'}</div>
 
       <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Açtıklarım ↔ tümü</h3>
         <div class="ct-kv">${kv('Açtım', acti)}${kv('Atladım', atladi)}${kv('Cevapsız', cevapsiz)}</div>
-        <div class="ct-sub mt-2">${CTK.durum === 'hata' ? 'Karar kaydı okunamadı. ' : CTK.durum === 'yok' ? 'Henüz karar kaydı yok. ' : ''}Tümü: sanal kopya ${ctPs(sk && sk.getiri)}. Açtıklarımın sanal sonucu: veri yok (sözleşmede olay başına sanal sonuç alanı yok).</div></div>
+        <div class="mt-2">${ctKarsilastirHtml(ctKarsilastir(olay))}</div>
+        <div class="ct-sub mt-2">${CTK.durum === 'hata' ? 'Karar kaydı okunamadı. ' : CTK.durum === 'yok' ? 'Henüz karar kaydı yok. ' : ''}Sonuç: kapanmış olayların kopyalanan tutara göre maliyet sonrası net getirisinin ortalaması.</div></div>
 
       <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">İşlem geçmişi <span class="ct-sub font-normal">(${olay.length} olay; veride son 200 olay var)</span></h3>
         ${dilim.length ? dilim.map((o) => ctOlayYuvarlak(o, false)).join('') : '<div class="ct-sub">bu trader için olay yok</div>'}
@@ -754,11 +773,16 @@
           <span class="ct-sub">${ctSayfa + 1} / ${sayfaSay}</span><button class="ct-btn" onclick="ctSayfaGit(1)" ${ctSayfa + 1 >= sayfaSay ? 'disabled' : ''}>Sonraki →</button></div></div>
       </div>`;
   }
+  const ctSkEgri = (sk) => { const e = ((sk && sk.egri) || []).filter((p) => p && isNum(p[1])); return e.length >= 2 ? e : null; };
   function ctSayfaGit(d) { ctSayfa = Math.max(0, ctSayfa + d); ctRender(); }
 
   function ctCizim() {
-    if (!CT || !ctSel) { if (charts.ctChEgri) { charts.ctChEgri.destroy(); delete charts.ctChEgri; } return; }
+    if (!CT || !ctSel) { ['ctChEgri', 'ctChSanal'].forEach((k) => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } }); return; }
     const t = (CT.traderlar || []).find((x) => x.id === ctSel); if (!t || !$('ctChEgri')) return;
+    const sg = ctSkEgri(t.sanal_kopya);
+    if (sg && $('ctChSanal')) chart('ctChSanal', { type: 'line', data: { labels: sg.map((p) => p[0]), datasets: [{ data: sg.map((p) => p[1]), borderColor: '#10b981', borderWidth: 2, pointRadius: 0, tension: 0.15 }] },
+      options: { ...base, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ctUsd(c.parsed.y) } } } } });
+    if (!$('ctChEgri')) return;
     const pts = (t.egri || []).filter((p) => p && isNum(p[1]));
     const opt = { ...base, scales: { ...axes, y: { ...axes.y, ticks: { ...axes.y.ticks, callback: (v) => '%' + fmt(v * 100, 0) } } },
       plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ctPs(c.parsed.y, 2) } } } };
@@ -791,13 +815,15 @@
     const kartlar = ctSirala(CT.traderlar || []).map((t) => {
       const o = olay.filter((x) => x.trader === t.id), kr = o.filter((x) => CTK.kayit[x.id]).map((x) => CTK.kayit[x.id]);
       const acti = kr.filter((k) => k.karar === 'acti').length, cevapsiz = o.filter((x) => x.tur === 'acilis' && !CTK.kayit[x.id]).length;
+      const ks = ctKarsilastir(o);
       return `<div class="card ct-card"><div class="ct-head"><span class="ct-name">${esc(t.takma_ad)}</span>${ctIsik(t)[0]}</div>
-        <div class="ct-kv mt-2">${kv('Tüm olaylar (sanal kopya)', `<span class="${cls(t.sanal_kopya && t.sanal_kopya.getiri)}">${ctPs(t.sanal_kopya && t.sanal_kopya.getiri)}</span>`)}${kv('Açtıklarım (sanal)', '<span class="ct-sub">veri yok</span>')}${kv('Olay', o.length)}${kv('Açtım', acti)}${kv('Atladım', kr.length - acti)}${kv('Cevapsız', cevapsiz)}</div>
+        <div class="ct-kv mt-2">${kv('Sanal kopya getirisi', `<span class="${cls(t.sanal_kopya && t.sanal_kopya.getiri)}">${ctPs(t.sanal_kopya && t.sanal_kopya.getiri)}</span>`)}${kv('Olay', o.length)}${kv('Açtım', acti)}${kv('Atladım', kr.length - acti)}${kv('Cevapsız', cevapsiz)}</div>
+        <div class="ct-sec"><span class="ct-sub">Açtıklarım ↔ tümü:</span><div class="mt-1">${ctKarsilastirHtml(ks)}</div></div>
         <div class="ct-sec"><span class="ct-sub">Atlama nedenleri:</span> ${nedenHtml(kr)}</div></div>`;
     }).join('');
     el.innerHTML = `<div class="card ct-card"><h2 class="text-sm font-bold text-white mb-2">Kararlarım değer kattı mı?</h2>
         <div class="ct-kv">${kv('Toplam karar', kayitlar.length)}${kv('Açtım', toplamActi)}${kv('Atladım', toplamAtladi)}</div>
-        <div class="ct-sec"><b class="text-amber-300">Sonuç hesaplanamıyor.</b> <span class="ct-sub">Farkı bulmak için açtıklarımın ve tüm olayların olay başına sanal sonucu gerekir; veri sözleşmesinde (sürüm 1) bu alan yok.${kayitlar.length ? ' Karar sayısı: ' + kayitlar.length + '.' : ' Henüz karar kaydı yok.'}${CTK.durum === 'hata' ? ' Karar kaydı okunamadı.' : ''}</span></div>
+        <div class="ct-sec">${ctKarsilastirHtml(ctKarsilastir(olay))}<div class="ct-sub mt-1">Fark = açtıklarımın ortalama sanal sonucu − tüm olayların. ${kayitlar.length ? '' : 'Henüz karar kaydı yok. '}${CTK.durum === 'hata' ? 'Karar kaydı okunamadı. ' : ''}Eşik: ${CT_YETERSIZ} kapanmış ve karar verilmiş olay.</div></div>
         <div class="ct-sec"><span class="ct-sub">Atlama nedenleri (toplam):</span> ${nedenHtml(kayitlar)}</div>
         ${disarida ? `<div class="ct-sub mt-1">${disarida} karar, veride artık bulunmayan eski olaylara ait (trader dağılımına girmez).</div>` : ''}</div>
       <div class="ct-grid mt-3">${kartlar || '<div class="card empty">Henüz izlenen trader yok.</div>'}</div>`;
