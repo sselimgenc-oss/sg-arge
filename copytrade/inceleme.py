@@ -11,7 +11,9 @@ from pathlib import Path
 import pandas as pd
 
 from copytrade.kurallar import evaluate, load_rules
-from copytrade.olcut import _funding_amount, calculate_metrics
+import traceback
+
+from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, perp_fills
 from copytrade.tarama import PublicClient, _window
 
 LIQUID = {"BTC", "ETH", "SOL", "HYPE", "XRP", "DOGE", "ADA", "AVAX", "LINK", "SUI", "LTC", "BCH", "PEPE", "WIF", "AAVE",
@@ -28,6 +30,19 @@ def pick(rows: list[dict], count: int, min_account: float = 100_000) -> list[dic
     return sorted(chosen, key=lambda r: _window(r, "allTime", "pnl") / r["accountValue"], reverse=True)[:count]
 
 
+def stable_pool(rows: list[dict], count: int) -> list[dict]:
+    """İstikrar havuzu: hesap ≥ 50.000 USD; hafta, ay ve tüm zaman ROI > 0; tüm zaman ROI %20–%500 (piyango
+    kazananlarını dışarıda bırakır); aylık hacme göre en aktif ``count`` adres."""
+    pool = []
+    for row in rows:
+        account = float(row.get("accountValue", 0) or 0)
+        roi_all = _window(row, "allTime", "roi")
+        if (account >= 50_000 and _window(row, "week", "roi") > 0 and _window(row, "month", "roi") > 0
+                and 0.2 <= roi_all <= 5):
+            pool.append(dict(row, address=str(row.get("ethAddress", "")), accountValue=account))
+    return sorted(pool, key=lambda r: _window(r, "month", "vlm"), reverse=True)[:count]
+
+
 def monthly(fills: list[dict], funding: list[dict]) -> pd.Series:
     """Ay ay gerçekleşmiş net PnL (closedPnl − fee + funding), USD."""
     rows = [(int(f["time"]), float(f.get("closedPnl", 0)) - float(f.get("fee", 0))) for f in fills]
@@ -39,16 +54,21 @@ def monthly(fills: list[dict], funding: list[dict]) -> pd.Series:
     return frame.groupby("ay").pnl.sum()
 
 
-def section(row: dict, fills: list[dict], funding: list[dict], state: dict, rules: dict) -> str:
+def section(row: dict, fills: list[dict], funding: list[dict], state: dict, rules: dict, metrics: dict | None = None) -> str:
     address, account = row["address"], row["accountValue"]
     positions = [x.get("position", {}) for x in state.get("assetPositions", [])]
     leverage = [float(p.get("leverage", {}).get("value", 0)) for p in positions]
-    metrics = calculate_metrics(fills, funding=funding, liquid_coins=LIQUID, leverages=leverage, account_value=account,
+    metrics = metrics or calculate_metrics(fills, funding=funding, liquid_coins=LIQUID, leverages=leverage, account_value=account,
                                 martingale_max_ratio=float(rules["martingale_max_ratio"]),
                                 martingale_min_additions=int(rules["martingale_min_additions"]))
     decision, reason = evaluate(metrics, rules)
-    by_month = monthly(fills, funding)
+    by_month = monthly(perp_fills(fills), funding)
     coins = pd.Series([f.get("coin") for f in fills]).value_counts(normalize=True).head(5) if fills else pd.Series(dtype=float)
+    volume = pd.Series({}, dtype=float)
+    if fills:
+        frame = pd.DataFrame({"sinif": [asset_class(f.get("coin", "")) for f in fills],
+                              "hacim": [abs(float(f.get("px", 0)) * float(f.get("sz", 0))) for f in fills]})
+        volume = frame.groupby("sinif").hacim.sum() / max(frame.hacim.sum(), 1e-9)
     first = pd.to_datetime(min(int(f["time"]) for f in fills), unit="ms", utc=True).date() if fills else "—"
     lines = [f"## `{address}`",
              f"- Hesap değeri: {account:,.0f} USD · lider tablosu tüm zaman PnL {_window(row, 'allTime', 'pnl'):,.0f} USD, "
@@ -63,6 +83,7 @@ def section(row: dict, fills: list[dict], funding: list[dict], state: dict, rule
              f"- Martingale işareti: {'VAR' if metrics.get('martingale_signal') else 'yok'} "
              f"(zarara ekleme oranı {metrics.get('martingale_ratio', float('nan')):.0%}, {metrics.get('martingale_additions', 0)} ekleme)",
              f"- Coin dağılımı (fill sayısıyla): " + ", ".join(f"{c} %{v * 100:.0f}" for c, v in coins.items()),
+             f"- Varlık sınıfı (hacim): " + ", ".join(f"{k} %{v * 100:.0f}" for k, v in volume.sort_values(ascending=False).items()),
              f"- Açık pozisyon: {len(positions)}",
              f"- **Kural sonucu: {decision}**" + (f" — {reason}" if reason else ""),
              "", "| Ay | Gerçekleşmiş net PnL (USD) |", "|---|---:|"]
@@ -70,27 +91,57 @@ def section(row: dict, fills: list[dict], funding: list[dict], state: dict, rule
     return "\n".join(lines) + "\n"
 
 
+def metrics_for(row: dict, fills: list[dict], funding: list[dict], state: dict, rules: dict) -> dict:
+    positions = [x.get("position", {}) for x in state.get("assetPositions", [])]
+    leverage = [float(p.get("leverage", {}).get("value", 0)) for p in positions]
+    return calculate_metrics(fills, funding=funding, liquid_coins=LIQUID, leverages=leverage, account_value=row["accountValue"],
+                             martingale_max_ratio=float(rules["martingale_max_ratio"]),
+                             martingale_min_additions=int(rules["martingale_min_additions"]))
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--adet", type=int, default=8)
+    parser.add_argument("--mod", choices=["kar", "istikrar"], default="kar")
+    parser.add_argument("--havuz", type=int, default=60)
     parser.add_argument("--cikti", default="copytrade/inceleme/RAPOR.md")
     args = parser.parse_args(argv)
     client, rules = PublicClient(), load_rules()
     board = client.leaderboard()
-    leaders = pick(board, args.adet)
+    leaders = pick(board, args.adet) if args.mod == "kar" else stable_pool(board, args.havuz)
     start = int((datetime.now(UTC) - timedelta(days=365)).timestamp() * 1000)
-    parts = [f"# Örnek trader incelemesi ({datetime.now(UTC).date()})", "",
-             f"Lider tablosunda {len(board)} adres. Seçim: hesap ≥ 100.000 USD, aylık ve tüm zaman ROI > 0; tüm zaman "
-             f"PnL / hesap değerine göre ilk {len(leaders)}. Son 365 günün gerçekleşmiş net PnL'i (açık pozisyon kârı hariç). "
-             "Adresi Hyperdash'te arama kutusuna yapıştırıp gözle de bakabilirsin. **Bu bir seçim değil, örnektir.**", ""]
+    loaded, errors = [], []
     for row in leaders:
         try:
             fills = client.fills(row["address"], start)
-            funding = client.info({"type": "userFunding", "user": row["address"], "startTime": start})
-            state = client.info({"type": "clearinghouseState", "user": row["address"]}, weight=2)
-            parts.append(section(row, fills, funding, state, rules))
-        except Exception as exc:  # tek adresin hatası raporu durdurmaz
-            parts.append(f"## `{row['address']}`\n- Veri okunamadı: {type(exc).__name__}\n")
+            funding = client.info({"type": "userFunding", "user": row["address"], "startTime": start}) or []
+            state = client.info({"type": "clearinghouseState", "user": row["address"]}, weight=2) or {}
+            loaded.append((row, fills, funding, state, metrics_for(row, fills, funding, state, rules)))
+        except Exception:  # tek adresin hatası raporu durdurmaz
+            errors.append(f"- `{row['address']}`: {traceback.format_exc().strip().splitlines()[-1]}")
+    parts = [f"# Örnek trader incelemesi — {args.mod} ({datetime.now(UTC).date()})", ""]
+    if args.mod == "kar":
+        parts.append(f"Lider tablosunda {len(board)} adres. Seçim: hesap ≥ 100.000 USD, aylık ve tüm zaman ROI > 0; "
+                     f"tüm zaman PnL / hesap değerine göre ilk {len(leaders)}.")
+        shown = loaded
+    else:
+        swing = [x for x in loaded if (x[4].get("median_holding_hours") or 0) >= 4]
+        calm = [x for x in swing if not x[4].get("martingale_signal") and (x[4].get("median_leverage") or 0) <= 5]
+        enough = [x for x in calm if x[4].get("history_days", 0) >= 180 and x[4].get("closed_trades", 0) >= 20]
+        shown = sorted(enough, key=lambda x: (x[4].get("profitable_month_ratio") or 0, x[4].get("sortino") or 0),
+                       reverse=True)[:args.adet]
+        parts += [f"Lider tablosunda {len(board)} adres. **İstikrar havuzu:** hesap ≥ 50.000 USD; hafta, ay ve tüm zaman "
+                  f"ROI > 0; tüm zaman ROI %20–%500; aylık hacme göre en aktif {len(leaders)} adres.", "",
+                  "| Süzgeç | Kalan |", "|---|---:|", f"| Havuz | {len(leaders)} |", f"| Veri okundu | {len(loaded)} |",
+                  f"| Swing: medyan tutma ≥ 4 saat | {len(swing)} |",
+                  f"| Martingale yok, açık pozisyon kaldıracı ≤ 5x | {len(calm)} |",
+                  f"| ≥ 180 gün, ≥ 20 kapanmış işlem | {len(enough)} |", "",
+                  f"Aşağıda kalanların kârlı ay oranı ve Sortino'ya göre ilk {len(shown)}'i (kural motoru sonucu ayrıca yazılı)."]
+    parts += ["Son 365 günün gerçekleşmiş net PnL'i (açık pozisyon kârı hariç; spot işlemler hariç). Adresi Hyperdash'te "
+              "arama kutusuna yapıştırıp gözle de bakabilirsin. **Bu bir seçim değil, örnektir.**", ""]
+    parts += [section(row, fills, funding, state, rules, metrics) for row, fills, funding, state, metrics in shown]
+    if errors:
+        parts += ["## Okunamayan adresler", *errors, ""]
     out = Path(args.cikti)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("\n".join(parts), encoding="utf-8")

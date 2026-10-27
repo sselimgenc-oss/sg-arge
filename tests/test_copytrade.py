@@ -158,3 +158,46 @@ def test_inceleme_pick_and_monthly():
     assert [r["address"] for r in pick(rows, 5)] == ["0xa"]
     fills = [{"time": 1704067200000, "closedPnl": "10", "fee": "1"}, {"time": 1706745600000, "closedPnl": "-5", "fee": "1"}]
     assert monthly(fills, []).round(6).to_dict() == {"2024-01": 9.0, "2024-02": -6.0}
+
+
+def test_round_trip_pnl_accumulates_partial_closes_and_flip():
+    fills = [{"time": 1, "coin": "BTC", "side": "B", "sz": "2", "px": "100", "startPosition": "0", "closedPnl": "0", "fee": "0"},
+             {"time": 3600001, "coin": "BTC", "side": "A", "sz": "1", "px": "110", "startPosition": "2", "closedPnl": "10", "fee": "0"},
+             {"time": 7200001, "coin": "BTC", "side": "A", "sz": "2", "px": "120", "startPosition": "1", "closedPnl": "20", "fee": "0"},
+             {"time": 10800001, "coin": "BTC", "side": "B", "sz": "1", "px": "110", "startPosition": "-1", "closedPnl": "10", "fee": "0"}]
+    trips = closed_round_trips(fills)
+    assert [t["net_pnl"] for t in trips] == [30.0, 10.0]
+    assert trips[0]["holding_hours"] == 2.0 and trips[1]["holding_hours"] == 1.0
+
+
+def test_position_open_before_window_has_unknown_holding_and_spot_is_excluded():
+    from copytrade.olcut import asset_class, perp_fills
+    fills = [{"time": 1, "coin": "ETH", "side": "A", "sz": "1", "px": "10", "startPosition": "1", "closedPnl": "5", "fee": "0"},
+             {"time": 2, "coin": "@107", "side": "B", "sz": "1", "px": "10", "closedPnl": "0", "fee": "0"}]
+    assert closed_round_trips(perp_fills(fills))[0]["holding_hours"] is None
+    assert [asset_class(c) for c in ("BTC", "@107", "PURR/USDC", "xyz:CL", "xyz:XYZ100", "xyz:SKHX")] == [
+        "kripto", "spot", "spot", "emtia", "endeks", "hisse"]
+
+
+def test_inceleme_stability_report_runs_offline(tmp_path: Path, monkeypatch):
+    import copytrade.inceleme as inc
+
+    class Fake:
+        def leaderboard(self):
+            return [{"ethAddress": "0xa", "accountValue": "60000", "windowPerformances": [
+                ["week", {"roi": "0.01"}], ["month", {"roi": "0.05", "vlm": "1"}], ["allTime", {"roi": "0.5", "pnl": "30000"}]]}]
+
+        def fills(self, address, start):
+            return [{"time": 1_700_000_000_000, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0",
+                     "closedPnl": "0", "fee": "0"},
+                    {"time": 1_700_036_000_000, "coin": "BTC", "side": "A", "sz": "1", "px": "110", "startPosition": "1",
+                     "closedPnl": "10", "fee": "0"}]
+
+        def info(self, payload, weight=20):
+            return [] if payload["type"] == "userFunding" else {"assetPositions": []}
+
+    monkeypatch.setattr(inc, "PublicClient", Fake)
+    out = tmp_path / "r.md"
+    inc.main(["--mod", "istikrar", "--cikti", str(out)])
+    text = out.read_text()
+    assert "Swing: medyan tutma ≥ 4 saat | 1" in text and "Veri okundu | 1" in text

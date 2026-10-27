@@ -27,15 +27,37 @@ def _funding_amount(item: dict[str, Any]) -> float:
     return float(value or 0)
 
 
-def closed_round_trips(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Identify a transaction when signed position returns to zero.
+COMMODITIES = {"CL", "BRENTOIL", "OIL", "GOLD", "SILVER", "XAU", "XAG", "NATGAS", "NG", "COPPER", "HG", "PLATINUM"}
+INDICES = {"XYZ100", "SPX", "US500", "NDX", "NAS100", "US30", "DJI", "RUT", "SP500", "USA500", "USTECH"}
 
-    Hyperliquid's ``startPosition`` makes this robust to a partial close; if it
-    is absent we reconstruct signed position from side and size.
+
+def asset_class(coin: str) -> str:
+    """Hyperliquid coin -> kripto / hisse / endeks / emtia / spot. HIP-3 markets carry a ``dex:`` prefix."""
+    coin = str(coin)
+    if coin.startswith("@") or "/" in coin:
+        return "spot"
+    if ":" not in coin:
+        return "kripto"
+    name = coin.split(":", 1)[1].upper()
+    return "emtia" if name in COMMODITIES else "endeks" if name in INDICES else "hisse"
+
+
+def perp_fills(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Spot fills have no position/closedPnl semantics; metrics use perpetual fills only."""
+    return [f for f in fills if asset_class(f.get("coin", "")) != "spot"]
+
+
+def closed_round_trips(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Identify a transaction when signed position returns to zero (or flips sign).
+
+    PnL accumulates over every partial close of the transaction, not only the last fill. A position already open
+    when the window starts has unknown opening time: its PnL counts, its holding time is ``None``.
     """
     data = _frame(fills)
-    open_time: dict[str, pd.Timestamp] = {}
+    open_time: dict[str, pd.Timestamp | None] = {}
+    pnl: defaultdict[str, float] = defaultdict(float)
     position: defaultdict[str, float] = defaultdict(float)
+    seen: set[str] = set()
     rows: list[dict[str, Any]] = []
     for row in data.to_dict("records"):
         coin = str(row.get("coin", ""))
@@ -43,13 +65,19 @@ def closed_round_trips(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
         side = str(row.get("side", ""))
         signed = float(row.get("sz", 0.0)) * (-1 if side in {"A", "Sell", "sell"} else 1)
         after = before + signed
-        if abs(before) < 1e-12 and abs(after) > 1e-12:
-            open_time[coin] = row["time"]
-        if abs(before) > 1e-12 and abs(after) < 1e-12:
-            start = open_time.pop(coin, row["time"])
+        if coin not in seen:
+            seen.add(coin)
+            if abs(before) > 1e-12:
+                open_time[coin] = None  # opened before the window
+        pnl[coin] += float(row.get("closedPnl", 0)) - float(row.get("fee", 0))
+        closes = abs(before) > 1e-12 and (abs(after) < 1e-12 or before * after < 0)
+        if closes:
+            start = open_time.pop(coin, None)
             rows.append({"coin": coin, "open_time": start, "close_time": row["time"],
-                         "holding_hours": (row["time"] - start).total_seconds() / 3600,
-                         "net_pnl": float(row.get("closedPnl", 0)) - float(row.get("fee", 0))})
+                         "holding_hours": (row["time"] - start).total_seconds() / 3600 if start is not None else None,
+                         "net_pnl": pnl.pop(coin, 0.0)})
+        if abs(after) > 1e-12 and (abs(before) < 1e-12 or before * after < 0):
+            open_time[coin] = row["time"]
         position[coin] = after
     return rows
 
@@ -89,6 +117,7 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
                       leverages: list[float] | None = None, account_value: float | None = None,
                       martingale_max_ratio: float = 0.25, martingale_min_additions: int = 5) -> dict[str, Any]:
     """``account_value`` is the return denominator when no ``portfolio`` history is given (never 1 USD)."""
+    fills = perp_fills(fills)
     data = _frame(fills)
     funding_frame = pd.DataFrame({"time": pd.to_datetime([x.get("time") for x in funding or []], unit="ms", utc=True),
                                   "net_pnl": [_funding_amount(x) for x in funding or []]})
@@ -133,7 +162,8 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
         "ulcer_index": float(math.sqrt((drawdown.pow(2)).mean())),
         "largest_trade_share": (max(wins) / sum(wins) if sum(wins) else None),
         "profit_factor_without_best": (sum(x for x in without_best if x > 0) / gross_loss if gross_loss else None),
-        "median_holding_hours": float(pd.Series([x["holding_hours"] for x in rounds]).median()) if rounds else None,
+        "median_holding_hours": (float(pd.Series(held).median()) if (held := [x["holding_hours"] for x in rounds
+                                  if x["holding_hours"] is not None]) else None),
         "median_leverage": float(pd.Series(leverages or []).median()) if leverages else None,
         "max_leverage": max(leverages) if leverages else None, "liquid_coin_share": liquid_share,
         "martingale_ratio": ratio, "martingale_additions": additions,
