@@ -333,75 +333,75 @@ class CandleCache:
         return {coin: self.get(coin) for coin in {str(row.get("coin")) for row in perp_fills(fills)}}
 
 
-def _circular_shift(items: list[dict], start: pd.Timestamp, end: pd.Timestamp, rng: np.random.Generator) -> list[dict]:
-    """Bir coinin işlem dizisini bütün olarak rastgele dairesel kaydırır (sıra ve aralıklar korunur).
+def place_ms(templates: list[dict], start_ms: int, end_ms: int, seed: int = 0, notes: list[str] | None = None) -> list[tuple[dict, int]]:
+    """Plasebo yerleştirmesi (görev 1 ve 10; milisaniye, vektörel): çakışma yasağı **coin başına**; farklı coinler aynı anda açık olabilir.
 
-    Pencerenin sonunu aşan işlem pencerenin başına sarılır. Yalnız coin başına çakışmasız yerleşemeyen coin için kullanılır.
+    Her işlem bir bütün olarak (ekleme/kısmi kapanış dizisiyle) taşınır; süre = açılıştan kapanışa (en az 1 sa). Bir coinin işlemleri rastgele
+    sırayla, sıralı tekdüze boşluklarla birbirine değmeden yerleştirilir (ret örneklemesi yok). Süreleri toplamı pencereye sığmayan coin için
+    işlem dizisi bütün olarak dairesel kaydırılır (sarma: pencere sonunu aşan işlem başa taşınır) ve ``notes``'a yazılır.
+    Döner: [(şablon, yeni açılış ms)].
     """
-    length = (end - start).total_seconds()
-    shift = float(rng.uniform(0, length))
-    moved = []
-    for item in sorted(items, key=lambda x: x["open_time"]):
-        duration = pd.Timedelta(hours=max(1.0, float(item["holding_hours"])))
-        offset = ((item["open_time"] - start).total_seconds() + shift) % length
-        opened = start + pd.Timedelta(seconds=offset)
-        if opened + duration > end:
-            opened = start  # sarma: pencere sonunu aşan işlem başa taşınır
-        moved.append({**item, "open_time": opened, "close_time": opened + duration})
-    return moved
+    rng = np.random.default_rng(seed)
+    length = float(end_ms - start_ms)
+    by_coin: dict[str, list[int]] = {}
+    for index, trade in enumerate(templates):
+        by_coin.setdefault(str(trade["coin"]), []).append(index)
+    placed: list[tuple[dict, int]] = []
+    for coin in sorted(by_coin):
+        indices = by_coin[coin]
+        durations = np.maximum(1.0, np.array([templates[i]["holding_hours"] for i in indices], dtype=float)) * 3_600_000.0
+        if durations.max() > length:
+            raise ValueError("trade does not fit placebo window")
+        if durations.sum() > length:
+            if any("open_time" not in templates[i] for i in indices):
+                raise ValueError("non-overlapping placebo placement unavailable")
+            shift = float(rng.uniform(0, length))
+            for i, duration in sorted(((i, d) for i, d in zip(indices, durations)), key=lambda x: templates[x[0]]["open_time"]):
+                opened = start_ms + ((int(templates[i]["open_time"].value // 1_000_000) - start_ms) + shift) % length
+                placed.append((templates[i], int(start_ms if opened + duration > end_ms else opened)))
+            if notes is not None and f"{coin}: dairesel kaydırma" not in notes:
+                notes.append(f"{coin}: dairesel kaydırma")
+            continue
+        order = rng.permutation(len(indices))
+        gaps = np.sort(rng.uniform(0, length - durations.sum(), len(indices)))
+        ordered = durations[order]
+        starts = start_ms + gaps + (np.cumsum(ordered) - ordered)
+        placed.extend((templates[indices[o]], int(s)) for o, s in zip(order.tolist(), starts.tolist()))
+    return placed
 
 
 def randomize_trades(trades: list[dict], start: pd.Timestamp, end: pd.Timestamp, seed: int = 0,
                      notes: list[str] | None = None) -> list[dict]:
-    """Plasebo yerleştirmesi (v1.1): çakışma yasağı **coin başına**; farklı coinler aynı anda açık olabilir.
-
-    Coin, yön, büyüklük ve süre korunur. Bir coinin işlemleri tekdüze rastgele, birbirine değmeden yerleştirilir
-    (rastgele sıra + sıralı rastgele boşluklar; ret örneklemesi yok). Süreler toplamı pencereye sığmayan coin için
-    işlem dizisi bütün olarak dairesel kaydırılır ve ``notes``'a yazılır (özgün açılış/kapanış saatleri gerekir).
-    """
-    rng, placed = np.random.default_rng(seed), []
-    length = (end - start).total_seconds()
-    by_coin: dict[str, list[dict]] = {}
-    for trade in trades:
-        by_coin.setdefault(str(trade["coin"]), []).append(trade)
-    for coin in sorted(by_coin):
-        items = by_coin[coin]
-        durations = [max(1.0, float(x["holding_hours"])) * 3600 for x in items]
-        if max(durations) > length:
-            raise ValueError("trade does not fit placebo window")
-        if sum(durations) > length:
-            if any("open_time" not in x for x in items):
-                raise ValueError("non-overlapping placebo placement unavailable")
-            placed.extend(_circular_shift(items, start, end, rng))
-            if notes is not None and f"{coin}: dairesel kaydırma" not in notes:
-                notes.append(f"{coin}: dairesel kaydırma")
-            continue
-        order = rng.permutation(len(items))
-        gaps = np.sort(rng.uniform(0, length - sum(durations), len(items)))
-        used = 0.0
-        for gap, index in zip(gaps, order):
-            opened = start + pd.Timedelta(seconds=float(gap + used))
-            placed.append({**items[index], "open_time": opened, "close_time": opened + pd.Timedelta(seconds=durations[index])})
-            used += durations[index]
-    return sorted(placed, key=lambda x: x["open_time"])
+    """``place_ms``'in Timestamp'li sarmalayıcısı (testler ve geriye dönük API): ``open_time``/``close_time`` yeni zamanlarla döner."""
+    placed = place_ms(trades, int(start.value // 1_000_000), int(end.value // 1_000_000), seed, notes)
+    result = []
+    for trade, opened_ms in placed:
+        duration = pd.Timedelta(hours=max(1.0, float(trade["holding_hours"])))
+        opened = pd.Timestamp(opened_ms, unit="ms", tz="UTC")
+        result.append({**trade, "open_time": opened, "close_time": opened + duration})
+    return sorted(result, key=lambda x: x["open_time"])
 
 
-def _trade_templates(fills: list[dict], account_value: float) -> list[dict]:
-    """Closed fills -> placebo templates; incomplete openings are deliberately excluded."""
-    first: dict[tuple[str, int], dict] = {}
-    for fill in fills:  # (coin, ms) -> o saniyedeki ilk dolum (eski kod her işlem için tüm dolumları tarıyordu: O(n²))
-        first.setdefault((str(fill.get("coin")), int(fill["time"])), fill)
+def _trade_templates(fills: list[dict], account_value: float | None = None) -> list[dict]:
+    """Kapanmış, açılışı bilinen işlemler → plasebo şablonları: işlemi oluşturan **tüm** dolum parçaları (ekleme/kısmi kapanış dizisi),
+    işlem açılışına göreli zamanlarıyla. Plasebo bunları bir bütün olarak yeniden yerleştirir; gerçek kopyayla aynı defterden geçer."""
     templates = []
     for trip in closed_round_trips(perp_fills(fills)):
-        if trip["open_time"] is None or trip["holding_hours"] is None:
+        if trip["open_time"] is None or trip["holding_hours"] is None or not trip["fills"]:
             continue
-        opening = first.get((trip["coin"], int(trip["open_time"].value // 1_000_000)))
-        if opening:
-            templates.append({"coin": trip["coin"], "side": opening.get("side", "B"),
-                              "size_ratio": abs(float(opening.get("sz", 0))) / account_value,
-                              "holding_hours": trip["holding_hours"],
-                              "open_time": trip["open_time"], "close_time": trip["close_time"]})
+        origin = int(trip["open_time"].value // 1_000_000)
+        templates.append({"coin": trip["coin"], "holding_hours": trip["holding_hours"],
+                          "open_time": trip["open_time"], "close_time": trip["close_time"],
+                          "fills": [(f["time"] - origin, f["side"], f["sz"], f["startPosition"], f["px"]) for f in trip["fills"]]})
     return templates
+
+
+def expand_template(trade: dict, opened_ms: int | None = None) -> list[dict]:
+    """Yerleştirilmiş şablon → ``copy_ledger`` dolumları (dolum zamanları = yeni açılış + göreli ofset)."""
+    origin = opened_ms if opened_ms is not None else int(trade["open_time"].value // 1_000_000)
+    coin = trade["coin"]
+    return [{"time": origin + offset, "coin": coin, "side": side, "sz": size, "startPosition": before, "px": px}
+            for offset, side, size, before, px in trade["fills"]]
 
 
 class _Opens:
@@ -423,53 +423,35 @@ class _Opens:
 
 def placebo_scores(fills: list[dict], candles: dict[str, list[dict]], account_value: float,
                    start: pd.Timestamp, end: pd.Timestamp, repetitions: int | None = None, delay_minutes: int = 0,
-                   notes: list[str] | None = None) -> list[float]:
-    """Plasebo skorları: coin başına çakışmasız saatlik-mum yerleştirmeleri, aynı coin/yön/büyüklük/süre/maliyet.
-
-    ``delay_minutes``: giriş ve çıkışa gerçek kopyadakiyle aynı gecikme (intraday 30, swing 120 dk).
+                   notes: list[str] | None = None, rates: FundingRates | None = None, rules: dict | None = None,
+                   place=None, return_actual: bool = False):
+    """Plasebo skorları (görev 20): trader'ın kapanmış işlemleri (tüm ekleme/kısmi kapanış dizisiyle) rastgele başlangıçlara, coin başına
+    çakışmasız yerleştirilir ve **gerçek kopyayla aynı** ``copy_ledger``'dan geçer: aynı tarz gecikmesi, mum zaman sınırı, maliyet, funding,
+    pencere sonu fiyatlaması. ``return_actual``: şablonların özgün zamanlarıyla (kimlik yerleştirmesi) aynı defterden çıkan gerçek skor da döner.
+    ``place``: yerleştirme işlevi (varsayılan ``randomize_trades``; testler kimlik yerleştirmesi verir).
     """
-    repetitions = int(repetitions if repetitions is not None else load_rules()["plasebo_tekrar"])
-    templates = _trade_templates(fills, account_value)
+    rules = rules or load_rules()
+    repetitions = int(repetitions if repetitions is not None else rules["plasebo_tekrar"])
+    templates = _trade_templates(fills)
     if not templates:
-        return []
-    lookup = {coin: _Opens(candles.get(coin, [])) for coin in {t["coin"] for t in templates}}
-    delay_ms = delay_minutes * 60_000
-    scores = []
-    for seed in range(repetitions):
-        total = 0.0
-        for trade in randomize_trades(templates, start, end, seed, notes if seed == 0 else None):
-            begin = int(trade["open_time"].timestamp() * 1000) + delay_ms
-            finish = int(trade["close_time"].timestamp() * 1000) + delay_ms
-            entry, exit_ = lookup[trade["coin"]].at(begin), lookup[trade["coin"]].at(finish)
-            if entry is None or exit_ is None:
-                continue
-            direction = -1 if str(trade["side"]) in {"A", "Sell", "sell"} else 1
-            size = trade["size_ratio"]
-            total += direction * size * (exit_ - entry) - size * (entry + exit_) * (TAKER + SLIPPAGE)
-        scores.append(total)
-    return scores
+        return ([], None) if return_actual else []
+    market, funding_rates = Market(candles), rates or FundingRates([])
+    start_ms, end_ms = int(start.value // 1_000_000), int(end.value // 1_000_000)
+    def score(placed: list[tuple[dict, int]]) -> float:
+        rows = [fill for trade, opened in placed for fill in expand_template(trade, opened)]
+        out = copy_ledger(rows, market, account_value, delay_minutes, start_ms, end_ms, funding_rates, rules)
+        return float(out["net"] or 0.0)
 
+    def originals() -> list[tuple[dict, int]]:
+        return [(trade, int(trade["open_time"].value // 1_000_000)) for trade in templates]
 
-def copy_actions(fills: list[dict]) -> list[dict]:
-    """Copy post-window changes only; closing inherited exposure must not open an inverse position.
+    def injected(seed: int, sink: list[str] | None) -> list[tuple[dict, int]]:
+        return [(trade, int(trade["open_time"].value // 1_000_000)) for trade in place(templates, start, end, seed, sink)]
 
-    Kapı (v1.1) ve izleme motoru aynı kuralı kullanır: pencere/t0 öncesinden gelen pozisyonu azaltan dolum, kopyacıda
-    olmayan bir pozisyonu kapatır; yeni ters pozisyon açmış sayılmaz (``delayed_copy`` pozisyonu 0'dan başlatır).
-    """
-    positions, result = {}, []
-    for fill in fills:
-        coin = fill['coin']
-        before = float(fill.get('startPosition', 0))
-        signed = float(fill['sz']) * (-1 if fill['side'] == 'A' else 1)
-        held = positions.get(coin, 0.0)
-        if before * signed < 0:
-            leader_close = min(abs(before), abs(signed))
-            close = min(abs(held), leader_close) if held * before > 0 else 0.0
-            signed = (close + max(0.0, abs(signed) - leader_close)) * (1 if signed > 0 else -1)
-        if abs(signed) > 1e-10:
-            result.append(dict(fill, sz=str(abs(signed)), startPosition=str(held)))
-        positions[coin] = held + signed
-    return result
+    actual = score(originals())
+    scores = [score(place_ms(templates, start_ms, end_ms, seed, notes if seed == 0 else None) if place is None else
+                    injected(seed, notes if seed == 0 else None)) for seed in range(repetitions)]
+    return (scores, actual) if return_actual else scores
 
 
 DELAYS = (0, 5, 30, 120, 480)
@@ -489,9 +471,18 @@ def funding_all(client: Any, address: str, start_ms: int, end_ms: int) -> list[d
         cursor = max(int(x["time"]) for x in page) + 1
 
 
+def account_history(portfolio: list) -> pd.Series | None:
+    """Portfolio ``allTime.accountValueHistory`` → zaman indeksli seri (kaldıraç hesabın o anki değerine bölünür)."""
+    periods = {name: value for name, value in portfolio if isinstance(value, dict)} if portfolio else {}
+    points = (periods.get("allTime") or {}).get("accountValueHistory", [])
+    if not points:
+        return None
+    return pd.Series({pd.to_datetime(t, unit="ms", utc=True): float(v) for t, v in points}).sort_index()
+
+
 def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: float, cache: CandleCache,
                         now_ms: int, active_months: int, ledgers: dict | None = None,
-                        rules: dict | None = None) -> tuple[dict[str, Any], dict[int, float | None]]:
+                        rules: dict | None = None, history: pd.Series | None = None) -> tuple[dict[str, Any], dict[int, float | None]]:
     """Prepare documented steps 1--4 and all informational delay results for one trader.
 
     Kopya sonuçları ``defter.copy_ledger``'dan gelir (mum zaman sınırı, miras pozisyon, açık pozisyon fiyatlaması, kopyanın kendi
@@ -501,7 +492,7 @@ def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: f
     start_200 = now_ms - 200 * DAY_MS
     recent = [row for row in fills if int(row.get("time", 0)) >= start_200]
     candles = cache.for_fills(recent)
-    metrics = calculate_metrics(fills, funding=funding, account_value=account_value)
+    metrics = calculate_metrics(fills, funding=funding, account_value=account_value, account_history=history)
     metrics["active_months"] = active_months
     metrics["candle_coverage"] = candle_coverage(recent, candles)
     metrics["complete_data"] = metrics["candle_coverage"] >= .90
@@ -725,7 +716,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         candles = cache.for_fills(recent)
         progress.stage("mumlar", f"{len(candles)} coin, {cache.requests - before} yeni istek, {len(candles) - (cache.requests - before)} önbellekten")
         ledgers: dict[int, dict] = {}
-        metrics, nets = copy_window_metrics(fills, funding, account, cache, now_ms, int(stats["active_months"]), ledgers, rules)
+        metrics, nets = copy_window_metrics(fills, funding, account, cache, now_ms, int(stats["active_months"]), ledgers, rules, account_history(portfolio))
         metrics["calmar"] = stats.get("calmar")          # 1. aşama zincirinden (olcut'taki hesap değeri paydalı calmar ölüydü)
         metrics["history_days"] = max(int(metrics.get("history_days", 0)), int(stats["pnl_history_days"]))
         tarz = classify_style(metrics.get("median_holding_hours"), rules)
@@ -740,10 +731,14 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         if actual is not None and (yalniz_adim5 or all(pre[f"adim{i}"] == "Geçti" for i in range(1, 5))):
             repetitions = int(rules["plasebo_tekrar"])
             try:
-                scores = placebo_scores(recent, candles, account, pd.to_datetime(start_200, unit="ms", utc=True),
-                                        pd.to_datetime(now_ms, unit="ms", utc=True), repetitions, delay, notes)
+                # Gerçek skor ve plasebo skorları AYNI defterden çıkar (görev 20): şablonların özgün zamanlarıyla gerçek, rastgele
+                # yerleştirmelerle plasebo. Pencere, tarz gecikmesi, funding ve maliyet ortak.
+                scores, plasebo_actual = placebo_scores(
+                    recent, candles, account, pd.to_datetime(start_200, unit="ms", utc=True), pd.to_datetime(now_ms, unit="ms", utc=True),
+                    repetitions, delay, notes, FundingRates(funding), rules, return_actual=True)
                 if len(scores) == repetitions:
-                    p_value = placebo_pvalue(actual, scores)
+                    p_value = placebo_pvalue(plasebo_actual, scores)
+                    row["plasebo_gercek_skor"] = plasebo_actual
                 else:
                     row["plasebo_hata"] = "yerleştirilecek kapanmış işlem yok"
             except ValueError as exc:

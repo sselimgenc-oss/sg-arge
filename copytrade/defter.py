@@ -16,7 +16,7 @@ Tutarlar hesap değerine oranla (kesir) döner. Hiçbir eşik burada değildir; 
 """
 from __future__ import annotations
 
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 from typing import Any
 
 import numpy as np
@@ -25,6 +25,11 @@ from copytrade.kurallar import load_rules
 
 HOUR = 3_600_000
 DAY = 86_400_000
+_SELL = frozenset({"A", "Sell", "sell"})
+
+
+def _by_time(fill: dict) -> int:
+    return int(fill["time"])
 
 
 def cost_rate(rules: dict | None = None) -> float:
@@ -33,31 +38,44 @@ def cost_rate(rules: dict | None = None) -> float:
 
 
 class Market:
-    """Coin başına saatlik mum açılış/kapanış dizileri; yürütme ve işaretleme fiyatları."""
+    """Coin başına saatlik mum açılış/kapanış dizileri; yürütme ve işaretleme fiyatları (bisect: dolum başına mikrosaniye)."""
 
     def __init__(self, candles: dict[str, list[dict]], interval_ms: int = HOUR):
-        self.interval, self._raw, self._arrays = interval_ms, candles, {}
+        self.interval, self._raw, self._lists, self._cum = interval_ms, candles, {}, {}
 
-    def arrays(self, coin: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        if coin not in self._arrays:
+    def lists(self, coin: str) -> tuple[list[int], list[float], list[float]]:
+        if coin not in self._lists:
             rows = sorted((int(c.get("t", c.get("time", 0))), float(c.get("o", c.get("open"))),
                            float(c.get("c", c.get("close", c.get("o", c.get("open")))))) for c in self._raw.get(coin, []))
-            self._arrays[coin] = (np.array([r[0] for r in rows], dtype=np.int64), np.array([r[1] for r in rows]), np.array([r[2] for r in rows]))
-        return self._arrays[coin]
+            self._lists[coin] = ([r[0] for r in rows], [r[1] for r in rows], [r[2] for r in rows])
+        return self._lists[coin]
+
+    def arrays(self, coin: str) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        times, opens, closes = self.lists(coin)
+        return np.array(times, dtype=np.int64), np.array(opens), np.array(closes)
 
     def execution(self, coin: str, target_ms: int) -> tuple[int, float] | None:
         """Hedeften sonraki ilk mum (zaman, açılış); en çok 1 mum aralığı uzaktaysa ya da yoksa ``None`` (eksik dolum)."""
-        times, opens, _ = self.arrays(coin)
-        index = int(np.searchsorted(times, target_ms, side="left"))
-        if index >= len(times) or int(times[index]) - target_ms > self.interval:
+        times, opens, _ = self.lists(coin)
+        index = bisect_left(times, target_ms)
+        if index >= len(times) or times[index] - target_ms > self.interval:
             return None
-        return int(times[index]), float(opens[index])
+        return times[index], opens[index]
 
     def mark(self, coin: str, at_ms: int) -> float | None:
         """``at_ms``'de veya önce açılan son mumun açılışı (gün sonu / pencere sonu işaretlemesi)."""
-        times, opens, _ = self.arrays(coin)
-        index = int(np.searchsorted(times, at_ms, side="right")) - 1
-        return float(opens[index]) if index >= 0 else None
+        times, opens, _ = self.lists(coin)
+        index = bisect_right(times, at_ms) - 1
+        return opens[index] if index >= 0 else None
+
+    def funding_cum(self, coin: str, rates: FundingRates) -> tuple[list[int], list[float]]:
+        """Saat başına (açılış fiyatı × funding oranı) kümülatif toplamı: bir pozisyonun funding'i = −adet × (cum[j] − cum[i])."""
+        key = (coin, id(rates))
+        if key not in self._cum:
+            times, opens, _ = self.arrays(coin)
+            per_hour = opens * rates.array(coin, times) if len(times) else np.zeros(0)
+            self._cum[key] = (times.tolist(), np.concatenate([[0.0], np.cumsum(per_hour)]).tolist())
+        return self._cum[key]
 
 
 class FundingRates:
@@ -111,9 +129,11 @@ def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: in
     realized = costs = 0.0
     flow: dict[int, float] = {}
     missing = executed = 0
-    for fill in sorted(fills, key=lambda f: int(f["time"])):   # kararlı sıralama: aynı ms'deki dolumlar API sırasını korur
-        coin = str(fill["coin"])
-        sign = -1.0 if str(fill.get("side")) in {"A", "Sell", "sell"} else 1.0
+    sells = _SELL
+    execution = market.execution
+    for fill in sorted(fills, key=_by_time):   # kararlı sıralama: aynı ms'deki dolumlar API sırasını korur
+        coin = fill["coin"]
+        sign = -1.0 if fill["side"] in sells else 1.0
         size = float(fill["sz"])
         before_leader = float(fill.get("startPosition", 0))
         signed = sign * size
@@ -127,7 +147,7 @@ def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: in
         if delay_min == 0:
             when, price = int(fill["time"]), float(fill.get("px", 0))
         else:
-            found = market.execution(coin, int(fill["time"]) + delay_min * 60_000)
+            found = execution(coin, int(fill["time"]) + delay_min * 60_000)
             if found is None:
                 missing += 1
                 continue
@@ -155,25 +175,27 @@ def copy_ledger(fills: list[dict], market: Market, account: float, delay_min: in
         timeline.setdefault(coin, []).append((when, after, new_entry))
         if after == 0.0:
             entry.pop(coin, None)
-    # Pencere sonu / gün sonu işaretlemesi ve funding
+    # Funding: kopyanın pozisyonu × saatlik açılış × oran; pozisyonun bulunduğu saat aralığı [dolum saati, sonraki olay saati)
     funding_total = 0.0
     funding_by_day: dict[int, float] = {}
-    for coin, events in timeline.items():
-        times, opens, _ = market.arrays(coin)
-        if not len(times):
-            continue
-        et = np.array([e[0] for e in events], dtype=np.int64)
-        ep = np.array([e[1] for e in events])
-        lo, hi = int(np.searchsorted(times, events[0][0], side="left")), int(np.searchsorted(times, end_ms, side="right"))
-        grid, px = times[lo:hi], opens[lo:hi]
-        if len(grid) and rates is not None:
-            idx = np.searchsorted(et, grid, side="right") - 1
-            position = np.where(idx >= 0, ep[np.clip(idx, 0, None)], 0.0)
-            payments = -position * px * rates.array(coin, grid) / account
-            funding_total += float(payments.sum())
-            if daily:
-                for day, value in zip((grid // DAY).tolist(), payments.tolist()):
-                    funding_by_day[day] = funding_by_day.get(day, 0.0) + value
+    if rates is not None:
+        for coin, events in timeline.items():
+            times, cum = market.funding_cum(coin, rates)
+            if not times:
+                continue
+            for k, (when, after, _) in enumerate(events):
+                if after == 0.0:
+                    continue
+                until = events[k + 1][0] if k + 1 < len(events) else end_ms
+                first, last = bisect_left(times, when), bisect_left(times, until)
+                if last <= first:
+                    continue
+                funding_total += -after * (cum[last] - cum[first]) / account
+                if daily:
+                    _, opens, _ = market.lists(coin)
+                    grid_rates = rates.array(coin, np.array(times[first:last], dtype=np.int64))
+                    for hour, price, rate_h in zip(times[first:last], opens[first:last], grid_rates.tolist()):
+                        funding_by_day[hour // DAY] = funding_by_day.get(hour // DAY, 0.0) - after * price * rate_h / account
     boundaries = [end_ms]
     if daily and timeline:
         first_day = min(flow) if flow else start_ms // DAY

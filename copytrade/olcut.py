@@ -5,6 +5,7 @@ import math
 from collections import defaultdict
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 
@@ -16,7 +17,7 @@ def _frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
     for col in ("closedPnl", "fee", "px", "sz", "startPosition"):
         if col in frame:
             frame[col] = pd.to_numeric(frame[col], errors="coerce").fillna(0.0)
-    return frame.dropna(subset=["time"]).sort_values("time").reset_index(drop=True)
+    return frame.dropna(subset=["time"]).sort_values("time", kind="stable").reset_index(drop=True)
 
 
 def _funding_amount(item: dict[str, Any]) -> float:
@@ -52,75 +53,103 @@ def closed_round_trips(fills: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
     PnL accumulates over every partial close of the transaction, not only the last fill. A position already open
     when the window starts has unknown opening time: its PnL counts, its holding time is ``None``.
+
+    Tersine dönen dolum (ör. +10 pozisyonda 15 satış): ``closedPnl`` kapanan işleme yazılır; ücret **miktarla bölünerek** kapanan
+    (10/15) ve açılan (5/15) işleme dağıtılır. Her işlem ``fills`` ile döner: işlemi oluşturan dolum parçaları (``time``, ``side``,
+    ``sz`` = o işleme düşen miktar, ``startPosition`` = işlem içi göreli pozisyon, ``px``, ``tid``); plasebo bunları aynı sırayla yeniden
+    yerleştirir.
     """
     data = _frame(fills)
     open_time: dict[str, pd.Timestamp | None] = {}
     pnl: defaultdict[str, float] = defaultdict(float)
     position: defaultdict[str, float] = defaultdict(float)
+    relative: defaultdict[str, float] = defaultdict(float)
+    parts: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
     seen: set[str] = set()
     rows: list[dict[str, Any]] = []
+
+    def part(row: dict[str, Any], coin: str, units: float, sign: float) -> dict[str, Any]:
+        item = {"time": int(row["time"].value // 1_000_000), "coin": coin, "side": "A" if sign < 0 else "B", "sz": units,
+                "startPosition": relative[coin], "px": float(row.get("px", 0)), "tid": row.get("tid", 0)}
+        relative[coin] += sign * units
+        return item
+
     for row in data.to_dict("records"):
         coin = str(row.get("coin", ""))
         before = float(row.get("startPosition", position[coin]))
         side = str(row.get("side", ""))
-        signed = float(row.get("sz", 0.0)) * (-1 if side in {"A", "Sell", "sell"} else 1)
-        after = before + signed
+        size = float(row.get("sz", 0.0))
+        sign = -1.0 if side in {"A", "Sell", "sell"} else 1.0
+        after = before + sign * size
         if coin not in seen:
             seen.add(coin)
             if abs(before) > 1e-12:
                 open_time[coin] = None  # opened before the window
-        pnl[coin] += float(row.get("closedPnl", 0)) - float(row.get("fee", 0))
+                relative[coin] = before
+        fee, closed = float(row.get("fee", 0)), float(row.get("closedPnl", 0))
         closes = abs(before) > 1e-12 and (abs(after) < 1e-12 or before * after < 0)
         if closes:
+            closing = min(abs(before), size)
+            opening = max(0.0, size - closing)
+            share = closing / size if size else 1.0
+            pnl[coin] += closed - fee * share
+            parts[coin].append(part(row, coin, closing, sign))
             start = open_time.pop(coin, None)
             rows.append({"coin": coin, "open_time": start, "close_time": row["time"],
                          "holding_hours": (row["time"] - start).total_seconds() / 3600 if start is not None else None,
-                         "net_pnl": pnl.pop(coin, 0.0)})
-        if abs(after) > 1e-12 and (abs(before) < 1e-12 or before * after < 0):
-            open_time[coin] = row["time"]
+                         "net_pnl": pnl.pop(coin, 0.0), "fills": parts.pop(coin, [])})
+            relative[coin] = 0.0
+            if opening > 1e-12:           # tersine dönüş: kalan miktar yeni işlemi açar
+                open_time[coin] = row["time"]
+                pnl[coin] = -fee * (1.0 - share)
+                parts[coin] = [part(row, coin, opening, sign)]
+        else:
+            pnl[coin] += closed - fee
+            parts[coin].append(part(row, coin, size, sign))
+            if abs(after) > 1e-12 and abs(before) < 1e-12:
+                open_time[coin] = row["time"]
         position[coin] = after
     return rows
-
-
-def _orders(data: pd.DataFrame) -> list[dict[str, Any]]:
-    """Fill'leri emir (``oid``) düzeyinde birleştirir: tek emrin parçalı dolumları tek ekleme sayılır."""
-    if "oid" not in data:
-        return data.to_dict("records")
-    rows = []
-    for _, group in data.groupby("oid", sort=False):
-        first = group.iloc[0].to_dict()
-        size = float(group["sz"].sum())
-        first["px"] = float((group["px"] * group["sz"]).sum() / size) if size else float(group["px"].iloc[0])
-        first["sz"] = size
-        rows.append(first)
-    return sorted(rows, key=lambda r: r["time"])
 
 
 def martingale_ratio(fills: list[dict[str, Any]], min_adverse: float = 0.02) -> tuple[float, int]:
     """Share of same-direction additions made while the open position is under water by more than ``min_adverse``.
 
-    Measured per order (``oid``), so a laddered entry is not many additions. An addition never closes PnL, so
-    ``closedPnl`` cannot show it; the running average entry per coin is rebuilt from the orders instead.
-    Returns (ratio, number of additions).
+    Dolumlar **gerçek sırayla** (zaman, sonra tid) işlenir; ortalama giriş her dolumda güncellenir. Bir emir (``oid``) birden çok
+    dolumla gelse de **tek ekleme** sayılır: ilk dolumunda sayılır, zararda olup olmadığı emrin ağırlıklı ortalama fiyatına göre
+    ölçülür (merdiven girişi çok ekleme değildir). Ekleme zararda mı: (emir fiyatı / o anki ortalama giriş − 1) yön ile çarpılmış
+    < −``min_adverse``. Returns (ratio, number of additions).
     """
     data = _frame(fills)
     if data.empty:
         return 0.0, 0
+    sort_keys = ["time"] + (["tid"] if "tid" in data else [])
+    data = data.sort_values(sort_keys, kind="stable").reset_index(drop=True)
+    order_price: dict[str, float] = {}
+    if "oid" in data:
+        grouped = data.assign(_n=data["px"] * data["sz"]).groupby("oid")
+        order_price = {str(k): float(v) for k, v in (grouped["_n"].sum() / grouped["sz"].sum()).items()}
     position: defaultdict[str, float] = defaultdict(float)
     entry: dict[str, float] = {}
+    counted: set[tuple[str, str]] = set()
     additions = losing = 0
-    for row in _orders(data):
+    for row in data.to_dict("records"):
         coin = str(row.get("coin", ""))
         before = float(row.get("startPosition", position[coin]))
-        signed = float(row.get("sz", 0)) * (-1 if str(row.get("side", "")) in {"A", "Sell", "sell"} else 1)
-        px = float(row.get("px", 0))
+        sign = -1.0 if str(row.get("side", "")) in {"A", "Sell", "sell"} else 1.0
+        size, px = float(row.get("sz", 0)), float(row.get("px", 0))
+        signed = sign * size
         after = before + signed
         if abs(before) > 1e-12 and before * signed > 0:
             if coin in entry:  # opening fill seen: we know the average entry
-                additions += 1
-                if (px / entry[coin] - 1) * (1 if before > 0 else -1) < -min_adverse:
-                    losing += 1
-                entry[coin] = (entry[coin] * abs(before) + px * abs(signed)) / abs(after)
+                key = (coin, str(row.get("oid", row.get("tid", id(row)))))
+                if key not in counted:
+                    counted.add(key)
+                    additions += 1
+                    ref = order_price.get(str(row.get("oid")), px)
+                    if (ref / entry[coin] - 1) * (1 if before > 0 else -1) < -min_adverse:
+                        losing += 1
+                entry[coin] = (entry[coin] * abs(before) + px * size) / abs(after)
         elif abs(before) < 1e-12 or before * after < 0:
             entry[coin] = px  # new position (or flip): fresh average
         if abs(after) < 1e-12:
@@ -129,33 +158,55 @@ def martingale_ratio(fills: list[dict[str, Any]], min_adverse: float = 0.02) -> 
     return (losing / additions if additions else 0.0), additions
 
 
-def effective_leverage(fills: list[dict[str, Any]], account_value: float) -> tuple[float | None, float | None]:
-    """(medyan, en yüksek) gerçek kaldıraç: dolumlardan kurulan toplam pozisyon değeri / hesap değeri.
+def effective_leverage(fills: list[dict[str, Any]], account_value: Any) -> tuple[float | None, float | None]:
+    """(zaman ağırlıklı medyan, en yüksek) gerçek kaldıraç = o anki toplam pozisyon değeri / **o anki** hesap değeri.
 
-    Hesap ayarındaki kaldıraç (ör. 20x) değil; açık pozisyonların nominal büyüklüğü. Her dolumdan sonra örneklenir.
+    ``account_value``: sabit sayı ya da zaman indeksli hesap değeri serisi (portfolio ``accountValueHistory``); seri verilirse her
+    dolumdan sonraki kaldıraç, o dolumdan önceki en son hesap değerine bölünür (bugünkü değere değil). Medyan, pozisyon açıkken geçen
+    süreyle ağırlıklıdır (bir sonraki doluma kadar); en yüksek tüm örneklerden. Hesap değeri bilinmeyen/≤ 0 örnek atlanır.
     """
     data = _frame(fills)
-    if data.empty or not account_value or account_value <= 0:
+    if data.empty:
         return None, None
+    series = account_value if isinstance(account_value, pd.Series) else None
+    if series is None and (not account_value or account_value <= 0):
+        return None, None
+    if series is not None:
+        series = series[series > 0].sort_index()
+        if series.empty:
+            return None, None
     position: defaultdict[str, float] = defaultdict(float)
     price: dict[str, float] = {}
-    samples = []
+    samples: list[tuple[pd.Timestamp, float]] = []
     for row in data.to_dict("records"):
         coin = str(row.get("coin", ""))
         before = float(row.get("startPosition", position[coin]))
         signed = float(row.get("sz", 0)) * (-1 if str(row.get("side", "")) in {"A", "Sell", "sell"} else 1)
         position[coin], price[coin] = before + signed, float(row.get("px", 0))
-        samples.append(sum(abs(q) * price.get(c, 0) for c, q in position.items()) / account_value)
-    series = pd.Series(samples)
-    active = series[series > 0]
-    return (float(active.median()) if len(active) else 0.0), float(series.max())
+        value = sum(abs(q) * price.get(c, 0) for c, q in position.items())
+        if series is None:
+            account = float(account_value)
+        else:
+            index = series.index.searchsorted(row["time"], side="right") - 1
+            account = float(series.iloc[index]) if index >= 0 else float(series.iloc[0])
+        samples.append((row["time"], value / account))
+    leverage = pd.Series([v for _, v in samples], index=[t for t, _ in samples])
+    duration = pd.Series(leverage.index[1:] - leverage.index[:-1], index=leverage.index[:-1]).dt.total_seconds()
+    active = leverage.iloc[:-1][(leverage.iloc[:-1] > 0).to_numpy()]
+    if active.empty or duration.loc[active.index].sum() <= 0:
+        median = float(leverage[leverage > 0].median()) if (leverage > 0).any() else 0.0
+    else:
+        order = active.sort_values()
+        weights = duration.loc[order.index].to_numpy()
+        median = float(order.iloc[int(np.searchsorted(np.cumsum(weights), weights.sum() / 2.0))])
+    return median, float(leverage.max())
 
 
 def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]] | None = None,
                       portfolio: list[dict[str, Any]] | None = None, liquid_coins: set[str] | None = None,
                       leverages: list[float] | None = None, account_value: float | None = None,
                       martingale_max_ratio: float = 0.25, martingale_min_additions: int = 5,
-                      martingale_min_adverse: float = 0.02) -> dict[str, Any]:
+                      martingale_min_adverse: float = 0.02, account_history: pd.Series | None = None) -> dict[str, Any]:
     """``account_value`` is the return denominator when no ``portfolio`` history is given (never 1 USD)."""
     fills = perp_fills(fills)
     data = _frame(fills)
@@ -189,13 +240,15 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
     trade_pnl = [x["net_pnl"] for x in rounds]
     wins = [x for x in trade_pnl if x > 0]
     losses = [x for x in trade_pnl if x < 0]
-    without_best = [x for x in trade_pnl if x != max(trade_pnl, default=0)]
+    without_best = list(trade_pnl)
+    if without_best:
+        without_best.remove(max(without_best))   # yalnız BİR en iyi işlem çıkarılır (eşit kârlı diğerleri kalır)
     gross_loss = abs(sum(x for x in without_best if x < 0))
     volumes = (data["px"].abs() * data["sz"].abs()).groupby(data.get("coin", "")).sum()
     total_volume = float(volumes.sum())
     liquid_share = (float(volumes[volumes.index.isin(liquid_coins or set())].sum()) / total_volume if total_volume else 0.0)
     ratio, additions = martingale_ratio(fills, martingale_min_adverse)
-    lev_median, lev_max = effective_leverage(fills, denominator)
+    lev_median, lev_max = effective_leverage(fills, account_history if account_history is not None else denominator)
     return {
         "history_days": int((data.time.iloc[-1] - data.time.iloc[0]).total_seconds() // 86400),
         "closed_trades": len(rounds), "profitable_month_ratio": float((daily.resample("MS").sum() > 0).mean()),
