@@ -20,16 +20,16 @@ paper'daki 13 kitaptan yalnız 2'sinde zayıf alfa izi vardı (`docs/kapi_kontro
   Arayüz ayrı repoda: `sg-pano` (GitHub Pages).
 
 ## SIRA (kullanıcı kararı 2026-10-27: kaos yok — bir adım bitmeden sıradakine geçilmez; her ajan tek iş)
-**1. Pano — ŞU AN** (bitti sayılır: telefondaki pano, saatlik motorun ürettiği gerçek veriyi gösteriyor)
+**1. Pano — BİTTİ (2026-10-27):** sg-pano gerçek veriyi gösteriyor (sg-pano #9; motor sg-arge #277).
 | Kim | İş | Durum |
 |---|---|---|
 | Codex | İzleme motoru, İş A (#277, HIP-3 dahil) | bitti; saatlik (:23) `copytrade-izleme` dalına yazıyor |
-| Sonnet | sg-pano: v1.1 + mobil (#6, #7), paper kaldırıldı (#8); **son iş: canlı veriye bağla** | gönderilecek |
+| Sonnet | sg-pano: v1.1 + mobil (#6, #7), paper kaldırıldı (#8), canlı veri (#9) | bitti |
 | Argon | Telegram ön araştırması (`arastirma/copytrade/argon_worker_teknik.md`) | bitti; sırası gelene kadar boşta |
-| Lider | İş A'yı denetle, birleştir | bekliyor |
+| Lider | denetim, birleştirme | bitti |
 Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama kararı değil).
 
-**2. Telegram** (pano bitince): kendi botumuz, Cloudflare Worker + KV (Argon notu: hazır servislerde
+**2. Telegram — SIRADAKİ:** kendi botumuz, Cloudflare Worker + KV (Argon notu: hazır servislerde
 [Açtım]/[Atladım] düğmesi ve veri aktarımı yok). Codex İş B; kullanıcı: Cloudflare ücretsiz hesap, BotFather.
 
 **3. Trader seçimi** (Telegram bitince): CT-Kapı tam sonucu incelenir (`copytrade/kapi/2026-10-27/`). Bilinen
