@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 import requests
 
-from copytrade.olcut import _funding_amount, calculate_metrics, perp_fills
+from copytrade.olcut import _funding_amount, calculate_metrics, closed_round_trips, perp_fills
 from copytrade.tarama import PublicClient, RateLimitError, prefilter
 from kapi.istatistik import deflated_sharpe_ratio, nw_alpha
 
@@ -245,6 +245,43 @@ def randomize_trades(trades: list[dict], start: pd.Timestamp, end: pd.Timestamp,
     return sorted(placed, key=lambda x: x["open_time"])
 
 
+def _trade_templates(fills: list[dict], account_value: float) -> list[dict]:
+    """Closed fills -> placebo templates; incomplete openings are deliberately excluded."""
+    templates = []
+    for trip in closed_round_trips(perp_fills(fills)):
+        if trip["open_time"] is None or trip["holding_hours"] is None:
+            continue
+        opening = next((f for f in fills if str(f.get("coin")) == trip["coin"] and
+                        pd.to_datetime(f["time"], unit="ms", utc=True) == trip["open_time"]), None)
+        if opening:
+            templates.append({"coin": trip["coin"], "side": opening.get("side", "B"),
+                              "size_ratio": abs(float(opening.get("sz", 0))) / account_value,
+                              "holding_hours": trip["holding_hours"]})
+    return templates
+
+
+def placebo_scores(fills: list[dict], candles: dict[str, list[dict]], account_value: float,
+                   start: pd.Timestamp, end: pd.Timestamp, repetitions: int = 1000) -> list[float]:
+    """1,000 non-overlapping hourly-candle placements using identical coin/direction/size/duration/cost."""
+    templates = _trade_templates(fills, account_value)
+    if not templates:
+        return []
+    scores = []
+    for seed in range(repetitions):
+        total = 0.0
+        for trade in randomize_trades(templates, start, end, seed):
+            begin = int(trade["open_time"].timestamp() * 1000)
+            finish = int(trade["close_time"].timestamp() * 1000)
+            entry, exit_ = next_candle_open(candles.get(trade["coin"], []), begin, 0), next_candle_open(candles.get(trade["coin"], []), finish, 0)
+            if entry is None or exit_ is None:
+                continue
+            direction = -1 if str(trade["side"]) in {"A", "Sell", "sell"} else 1
+            size = trade["size_ratio"]
+            total += direction * size * (exit_ - entry) - size * (entry + exit_) * (TAKER + SLIPPAGE)
+        scores.append(total)
+    return scores
+
+
 def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: float, cache: CandleCache,
                         now_ms: int, active_months: int) -> tuple[dict[str, Any], dict[int, float | None]]:
     """Prepare documented steps 1--4 and all informational delay results for one trader."""
@@ -293,6 +330,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--root", type=Path, default=Path("copytrade"))
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--shard-count", type=int, default=1)
+    parser.add_argument("--yalniz-adim5", action="store_true")
     args = parser.parse_args(argv)
     if args.shard_count < 1 or not 0 <= args.shard_index < args.shard_count:
         parser.error("shard index/count geçersiz")
@@ -300,7 +338,12 @@ def main(argv: list[str] | None = None) -> None:
     out = args.root / "kapi" / today
     out.mkdir(parents=True, exist_ok=True)
     client, rows = PublicClient(), []
-    leaders = prefilter(client.leaderboard())[args.shard_index::args.shard_count]
+    leaders = prefilter(client.leaderboard())
+    if args.yalniz_adim5:
+        previous = sorted((args.root / "kapi").glob("*/sonuc.csv"))
+        eligible = set(pd.read_csv(previous[-1]).query("adim1 == 'Geçti' and adim2 == 'Geçti' and adim3 == 'Geçti' and adim4 == 'Geçti'").address) if previous else set()
+        leaders = [row for row in leaders if row["address"] in eligible]
+    leaders = leaders[args.shard_index::args.shard_count]
     symbols, binance_note = write_binance_universe(out, now)
     start = int((now - timedelta(days=365)).timestamp() * 1000)
     start_200 = int((now - timedelta(days=200)).timestamp() * 1000)
@@ -318,8 +361,21 @@ def main(argv: list[str] | None = None) -> None:
                 funding = client.info({"type": "userFunding", "user": address, "startTime": start}, weight=20) or []
                 metrics, nets = copy_window_metrics(fills, funding, float(leader["accountValue"]), cache,
                                                     int(now.timestamp() * 1000), int(stats["active_months"]))
-                statuses = gate_status(metrics, nets[30], None, None)
+                recent = [x for x in fills if int(x.get("time", 0)) >= start_200]
+                candles = cache.for_fills(recent)
+                actual = nets[30]
+                scores = placebo_scores(recent, candles, float(leader["accountValue"]),
+                                        pd.to_datetime(start_200, unit="ms", utc=True), pd.to_datetime(int(now.timestamp() * 1000), unit="ms", utc=True))
+                p_value = placebo_pvalue(actual, scores) if actual is not None and len(scores) == 1000 else None
+                # Daily 0-delay copy is the trader series; public BTC hourly closes build the matched comparator.
+                own, _ = delayed_copy(fills, candles, float(leader["accountValue"]), 0, funding)
+                btc = pd.Series({pd.to_datetime(x.get("t", x.get("time")), unit="ms", utc=True): float(x.get("c", x.get("o"))) for x in cache.get("BTC")}).sort_index()
+                btc = btc.resample("1D").last().pct_change().fillna(0.0)
+                exposure = pd.Series(1.0, index=own.index) if own is not None else pd.Series(dtype=float)
+                alpha = matched_btc_alpha(own, btc, exposure) if own is not None else None
+                statuses = gate_status(metrics, nets[30], p_value, alpha)
                 row.update(metrics)
+                row.update({"plasebo_p": p_value, **({"alfa_yillik": alpha["alfa_yillik"], "nw_t": alpha["nw_t"]} if alpha else {})})
                 row.update({f"gecikme_{delay}dk_net": value for delay, value in nets.items()})
                 row.update(statuses)
         except (RateLimitError, requests.RequestException, ValueError, TypeError, KeyError) as exc:

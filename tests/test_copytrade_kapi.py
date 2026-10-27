@@ -6,7 +6,7 @@ import pandas as pd
 
 from copytrade.kapi import (CandleCache, bhy, binance_availability, binance_symbol, candle_coverage, delayed_copy,
                              evidence_status, gate_status, next_candle_open,
-                             placebo_pvalue, randomize_trades, time_weighted_monthly, write_binance_universe)
+                             placebo_pvalue, placebo_scores, randomize_trades, time_weighted_monthly, write_binance_universe)
 
 
 def portfolio(values):
@@ -72,6 +72,14 @@ def test_placebo_placement_preserves_trade_fields_is_non_overlapping_and_seeded(
     assert {(x["coin"], x["side"], x["size_ratio"], x["holding_hours"]) for x in first} == {
         (x["coin"], x["side"], x["size_ratio"], x["holding_hours"]) for x in trades}
     assert first[0]["close_time"] <= first[1]["open_time"]
+
+
+def test_placebo_scores_runs_fixed_repetitions():
+    fills = [{"time": 0, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0"},
+             {"time": 3_600_000, "coin": "BTC", "side": "A", "sz": "1", "px": "101", "startPosition": "1"}]
+    candles = {"BTC": [{"t": i * 3_600_000, "o": "100"} for i in range(30)]}
+    assert len(placebo_scores(fills, candles, 1_000, pd.Timestamp(0, unit="ms", tz="UTC"),
+                              pd.Timestamp(20 * 3_600_000, unit="ms", tz="UTC"), repetitions=3)) == 3
 
 
 def test_binance_mapping_and_blocked_response_are_information_only(tmp_path):
