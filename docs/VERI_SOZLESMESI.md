@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1, 2026-10-27, kullanıcı onayı)
+# Veri sözleşmesi — copy trade izleme (v1.1, 2026-10-27, kullanıcı onayı)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -38,19 +38,27 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
       "son_islem": {"coin": "ETH", "yon": "short", "acilis": "…", "kapanis": "…", "net_yuzde": 0.012},
       "egri": [["2026-08-01", 0.0], ["2026-08-02", 0.004]],
       "sanal_kopya": {"baslangic_usd": 1000, "bakiye_usd": 1043, "getiri": 0.043, "dusus": 0.021,
-                      "gecikme_dk": 30, "t0": "2026-10-28"}
+                      "gecikme_dk": 30, "t0": "2026-10-28",
+                      "egri": [["2026-10-28", 1000.0], ["2026-10-29", 1004.2]]}
     }
   ],
   "olaylar": [
     {"id": "T1-20261027T091200-BTC-acilis", "zaman": "2026-10-27T09:12:00Z", "trader": "T1",
      "tur": "acilis | kapanis | buyutme | azaltma | isik", "coin": "BTC", "yon": "long", "fiyat": 68400.0,
-     "hesap_payi": 0.08, "kaldirac": 2.0, "not": ""}
+     "hesap_payi": 0.08, "kaldirac": 2.0, "not": "",
+     "sanal_sonuc": {"durum": "acik | kapandi", "net_yuzde": null, "kapanis": null}}
   ]
 }
 ```
 - `egri`: son 90 gün, günlük, t0'dan bağımsız trader'ın kümülatif PnL / hesap değeri (Hyperliquid `portfolio`).
 - `olaylar`: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
 - `buyutme`/`azaltma`: aynı yönde pozisyonun **%25'inden fazla** değişimi (lider kararı); daha küçükleri olay sayılmaz.
+- `sanal_kopya.egri` (v1.1): t0'dan bugüne günlük sanal bakiye (USD).
+- `olaylar[].sanal_sonuc` (v1.1, yalnız `acilis`/`buyutme`): bu olayın 30 dk gecikmeli kopyasının sonucu; pozisyon
+  kapanınca `kapandi` ve maliyet sonrası `net_yuzde` (kopyalanan tutara göre). "Açtıklarım" istatistiği bununla
+  hesaplanır: kararı `acti` olan olayların `sanal_sonuc`'u ↔ tüm olaylarınki.
+- **Yetersiz veri eşiği** (v1.1): bir trader için kapanmış ve kararı verilmiş olay sayısı < 10 ise istatistik
+  sekmesi "yetersiz veri" yazar.
 - `sanal_kopya`: t0 sonrası, 30 dk gecikmeli, maliyetli (taker %0,045 + kayma %0,05 + funding) — CT-Kapı
   `delayed_copy` ile aynı hesap.
 
