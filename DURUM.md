@@ -34,12 +34,15 @@ bildirim, [Açtım]/[Atladım], `/durum`. Kararlar saatlik işle `copytrade-izle
 Açık kontrol: ilk gerçek bildirimde düğme → karar → panoya akış uçtan uca izlenecek. Not: saatlik zamanlama ilk
 saatlerde tetiklenmedi (GitHub gecikmesi); düzelmezse incelenecek.
 
-**3. Trader seçimi — ŞU AN:** görev `docs/GOREV_TRADER_SECIMI.md` (Codex, dal `codex/kapi-v1-1`). Teşhis: adım 3+4'ü
-9 adres geçti; plasebo tüm coinlerde çakışmasız yerleştirme istediği için hepsinde hesaplanamadı (tasarım hatası).
-Eski not: CT-Kapı tam sonucu incelenir (`copytrade/kapi/2026-10-27/`). Bilinen
-sorunlar: 12.461 adresin 8.196'sı işlendi; adım 5 plasebo hiçbir adreste hesaplanmadı (p boş) → düzeltilecek.
-"İlişkili hesaplar" kontrolü eklenecek (alt hesap, vault, iç transfer, ortak agent — Argon notu). Sonra gerçek
-izleme listesi ve 3 aylık sanal izleme.
+**3. Trader seçimi — ŞU AN:** görev `docs/GOREV_TRADER_SECIMI.md` (Codex, dal `codex/kapi-v1-1`).
+Kullanıcı kararları (2026-10-27, Sol 6.1 görüşüyle): iki tarz — **Intraday** (medyan tutma 1–24 sa, 30 dk gecikme
+testi) ve **Swing** (≥24 sa, 2 sa gecikme testi); iki katman — `izleme_adayi` (adım 1–3) / `kopyalanabilir` (1–7);
+alfa kıyası kripto→BTC, hisse/emtia→kendi sepeti; pano **Keşif** sekmesi (sonra Sonnet); Telegram her dakika.
+Teşhis: plasebo tüm coinlerde çakışmasız yerleştirme istediği için hiç hesaplanamadı → coin başına.
+Sonra: lider adayları inceler, izleme listesi kullanıcı onayıyla; 3 ay sanal izleme.
+
+**Telegram v2 (sonra):** bildirimde trader girişine göre fiyat kayması ve tolerans aşılınca "atla"; spread; HIP-3
+için "dayanak piyasa kapalı" uyarısı (Sol 6.1 önerisi).
 
 **Sonraya notlar:** Telegram mini uygulama; HIP-3 hafta sonu boşluğu uyarısı; mali müşavir soru listesi
 (`arastirma/copytrade/argon_kalicilik_cloudflare_turkiye.md`); gerçek para yok (en erken sanal izleme + ölçütler sonrası).

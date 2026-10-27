@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1.2, 2026-10-27, kullanıcı onayı; v1.2 lider: olay kimliği, karar akışı)
+# Veri sözleşmesi — copy trade izleme (v1.3, 2026-10-27, kullanıcı onayı; v1.2 olay kimliği ve karar akışı; v1.3 tarz)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -55,6 +55,8 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - **Olay kimliği (v1.2):** `{trader}-{oid}-{tur}` (ör. `T1-123456789-acilis`); ışık olayı `{trader}-{ms}-isik`.
   Olaylar **emir (`oid`) düzeyinde** üretilir: aynı emrin dolumları birleştirilir (tek açılış sahte büyütmeler doğurmaz).
   Saatlik motor ve Cloudflare Worker aynı kuralla aynı kimliği üretir.
+- `traderlar[].tarz` (v1.3): `intraday` | `swing`. Sanal kopya gecikmesi tarza göre (intraday 30 dk, swing 120 dk);
+  Telegram mesajında `[Intraday]` / `[Swing]` etiketi.
 - `sanal_kopya.not` (v1.2, isteğe bağlı): ör. `"yaklaşık fiyat"` (1 dk mum kaçınca 1 saatlik mum kullanıldıysa).
 - `saglik.nedenler` `"veri hatası: …"` içerebilir (v1.2): o trader bu saat güncellenemedi, önceki kayıt gösteriliyor.
 - `buyutme`/`azaltma`: aynı yönde pozisyonun **%25'inden fazla** değişimi (lider kararı); daha küçükleri olay sayılmaz.
