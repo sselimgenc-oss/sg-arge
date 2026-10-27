@@ -18,3 +18,7 @@ martingale_min_additions: 5
 martingale_min_adverse: 0.02
 # Ölçüm penceresi: 180 gün geçmiş şartı için fill'ler 365 günden çekilir
 fills_lookback_days: 365
+# Sanal kopya gecikmesi (dk), tarza göre (kullanıcı kararı 2026-10-27; görev 8): izleme motoru bunu okur.
+kopya_gecikme_dk:
+  intraday: 30
+  swing: 120
