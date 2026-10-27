@@ -716,7 +716,9 @@ def merge_shards(shards: Path, root: Path) -> None:
         output.mkdir(parents=True, exist_ok=True)
         existing = output / "sonuc.csv"
         if existing.exists():
-            frames = [pd.read_csv(existing)] + frames
+            old = pd.read_csv(existing)
+            if "katman" in old:  # v1.1 öncesi (katman sütunu yok) sonuç yeni kurallarla karıştırılmaz
+                frames = [old] + frames
         if not evren.get(date) and (output / "evren.json").exists():
             evren[date] = int(json.loads((output / "evren.json").read_text(encoding="utf-8"))["evren"])
         table = pd.concat(frames, ignore_index=True).drop_duplicates("address", keep="last")

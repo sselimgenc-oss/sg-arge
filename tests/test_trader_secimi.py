@@ -209,7 +209,7 @@ def result_row(address, **over):
 def test_merge_completes_existing_day_without_duplicate_rows(tmp_path: Path):
     day = tmp_path / "root" / "kapi" / "2026-10-28"
     day.mkdir(parents=True)
-    pd.DataFrame([result_row("0xa"), {"address": "0xb", "asama1": "Yetersiz", "neden": "veri hatası: HTTPError: 500"}]).to_csv(day / "sonuc.csv", index=False)
+    pd.DataFrame([result_row("0xa", katman="izleme_adayi"), {"address": "0xb", "asama1": "Yetersiz", "neden": "veri hatası: HTTPError: 500", "katman": "yok"}]).to_csv(day / "sonuc.csv", index=False)
     (day / "evren.json").write_text('{"evren": 3}')
     shard = tmp_path / "shards" / "stage1-0" / "2026-10-28"
     shard.mkdir(parents=True)
@@ -311,3 +311,14 @@ def test_none_metrics_fail_the_step_instead_of_raising():
     metrics = base_metrics(profit_factor_without_best=None, largest_trade_share=None, median_leverage=None, max_leverage=float("nan"))
     status = gate_status(metrics, .1, None, None, RULES)
     assert status["adim3"] == "Kaldı" and status["adim4"] == "Kaldı"
+
+
+def test_legacy_same_day_results_are_not_mixed_into_v11_merge(tmp_path: Path):
+    day = tmp_path / "root" / "kapi" / "2026-10-28"
+    day.mkdir(parents=True)
+    pd.DataFrame([{"address": "0xold", "asama1": "Geçti", "adim1": "Geçti", "adim2": "Geçti", "adim3": "Geçti"}]).to_csv(day / "sonuc.csv", index=False)  # v1: katman yok
+    shard = tmp_path / "shards" / "stage1-0" / "2026-10-28"
+    shard.mkdir(parents=True)
+    pd.DataFrame([result_row("0xnew")]).to_csv(shard / "sonuc.csv", index=False)
+    merge_shards(tmp_path / "shards", tmp_path / "root")
+    assert list(pd.read_csv(day / "sonuc.csv").address) == ["0xnew"]

@@ -114,7 +114,10 @@ jobs:
             git archive FETCH_HEAD copytrade/kapi kesif | tar -x || git archive FETCH_HEAD copytrade/kapi | tar -x
           fi
       - name: Birleştir
-        run: python -m copytrade.kapi --root copytrade --birlestir shards
+        run: |
+          # Hiçbir parça sonuç üretmediyse eski (main'deki) dosyalar yayımlanmasın.
+          find shards -name sonuc.csv | grep -q . || { echo "Parçalardan sonuc.csv gelmedi; yayımlanacak yeni sonuç yok." >&2; exit 1; }
+          python -m copytrade.kapi --root copytrade --birlestir shards
       - name: Keşif verisi ve ilişkili hesap işaretleri
         if: needs.plan.outputs.mod != 'hizli'
         # Keşif düşerse kapı sonuçları yine yayımlanır.
