@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import fixture from "../../tests/fixtures/olaylar.json" with { type: "json" };
-import { callbackData, decision, formatEvent, handleTelegram, runCron, sendOnce } from "../src/index.js";
+import { accumulatedOrderEvents, callbackData, decision, formatEvent, handleTelegram, mergeFills, runCron, sendOnce } from "../src/index.js";
 import { orderEvents } from "../src/events.js";
 
 test("ortak oid fixture Python ile aynı olayları üretir", () => {
@@ -14,6 +14,8 @@ test("callback en çok 64 bayt ve yalnız geçerli kararlar", () => {
   const data = callbackData({ id: "T1-123-acilis" }, "s", "g");
   assert.ok(new TextEncoder().encode(data).byteLength <= 64);
   assert.deepEqual(decision(data), { olay_id: "T1-123-acilis", karar: "atladi", neden: "gec_gordum" });
+  assert.deepEqual(decision("k|T1-123-acilis|s"), { olay_id: "T1-123-acilis", menu: true });
+  assert.equal(decision("k|T1-123-acilis|s|v"), null);
   assert.equal(decision("bad"), null);
 });
 
@@ -35,11 +37,48 @@ test("ilk cron imleci şimdiye koyar, geçmiş bildirimi göndermez", async () =
   assert.match(writes[0][0], /INSERT INTO imlec/);
 });
 
-test("bildirilmiş olay yeniden Telegram'a gitmez", async () => {
-  const env = { DB: { prepare() { return { bind() { return { run: async () => ({ meta: { changes: 0 } }) }; } }; } } };
-  let calls = 0;
-  assert.equal(await sendOnce(env, { id: "T1-1-acilis", tur: "acilis", coin: "BTC", yon: "long", fiyat: 1, hesap_payi: 0 }, { takma_ad: "Test" }, async () => { calls += 1; }), false);
-  assert.equal(calls, 0);
+test("ilk Telegram ağ hatası sonraki cron denemesinde gönderilir, başarılı olay yinelenmez", async () => {
+  const sent = new Set(); let attempts = 0;
+  const env = { TELEGRAM_CHAT_ID: "1", TELEGRAM_BOT_TOKEN: "x", DB: { prepare(sql) { return { bind(...args) { return {
+    first: async () => sent.has(args[0]) ? { olay_id: args[0] } : undefined,
+    run: async () => { if (/INSERT OR IGNORE INTO bildirilen/.test(sql)) sent.add(args[0]); return { meta: { changes: 1 } }; },
+  }; } }; } } };
+  const event = { id: "T1-1-acilis", tur: "acilis", coin: "BTC", yon: "long", fiyat: 1, hesap_payi: 0 };
+  await assert.rejects(sendOnce(env, event, { takma_ad: "Test" }, async () => { attempts += 1; throw new Error("ağ"); }));
+  assert.equal(sent.size, 0);
+  assert.equal(await sendOnce(env, event, { takma_ad: "Test" }, async () => { attempts += 1; return new Response(JSON.stringify({ ok: true })); }), true);
+  assert.equal(await sendOnce(env, event, { takma_ad: "Test" }, async () => { attempts += 1; return new Response(JSON.stringify({ ok: true })); }), false);
+  assert.equal(attempts, 2);
+});
+
+test("Atladım neden menüsü açılır, neden kaydolur ve yeniden basma aynı kaydı günceller", async () => {
+  const writes = [], methods = [];
+  const env = { TELEGRAM_CHAT_ID: "1", TELEGRAM_BOT_TOKEN: "x", TELEGRAM_WEBHOOK_SECRET: "secret", DB: { prepare(sql) { return { bind(...args) { return {
+    run: async () => { writes.push([sql, args]); return { meta: { changes: 1 } }; },
+  }; } }; } } };
+  const update = (data) => new Request("https://worker/telegram", { method: "POST", headers: { "X-Telegram-Bot-Api-Secret-Token": "secret" }, body: JSON.stringify({ callback_query: { id: "q", data, from: { id: "1" }, message: { chat: { id: "1" }, message_id: 2, text: "olay" } } }) });
+  const fetcher = async (url) => { methods.push(String(url).split("/").at(-1)); return new Response(JSON.stringify({ ok: true })); };
+  await handleTelegram(update("k|T1-1-acilis|s"), env, fetcher);
+  assert.deepEqual(methods, ["answerCallbackQuery", "editMessageReplyMarkup"]);
+  assert.equal(writes.length, 0);
+  await handleTelegram(update("k|T1-1-acilis|s|g"), env, fetcher);
+  await handleTelegram(update("k|T1-1-acilis|s|g"), env, fetcher);
+  assert.equal(writes.filter(([sql]) => /INSERT INTO kararlar/.test(sql)).length, 2);
+  assert.ok(methods.includes("editMessageText"));
+});
+
+test("sorgulara bölünen oid, D1 birikiminden sonra motorla aynı olayı verir", async () => {
+  const orders = new Map();
+  const env = { DB: { prepare(sql) { return { bind(...args) { return {
+    first: async () => orders.has(`${args[0]}:${args[1]}`) ? { dolumlar: orders.get(`${args[0]}:${args[1]}`) } : undefined,
+    run: async () => { orders.set(`${args[0]}:${args[1]}`, args[2]); return { meta: { changes: 1 } }; },
+  }; } }; } } };
+  const first = { coin: "BTC", side: "B", sz: "1", px: "100", time: 1, oid: 7, tid: 1, startPosition: "0" };
+  const second = { coin: "BTC", side: "B", sz: "1", px: "110", time: 2, oid: 7, tid: 2, startPosition: "1" };
+  await accumulatedOrderEvents(env, "T1", [first], 1000);
+  const actual = await accumulatedOrderEvents(env, "T1", [second], 1000);
+  assert.deepEqual(actual, orderEvents("T1", mergeFills([first], [second]), 1000));
+  assert.equal(actual[0].hesap_payi, .21);
 });
 
 test("mesaja tarz etiketi: [Intraday] / [Swing]; tarz yoksa etiket yok", () => {

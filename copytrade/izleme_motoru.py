@@ -152,11 +152,10 @@ def fill_events(trader: str, fills: list[dict], account: float, positions: list[
         fill = rows[-1]
         oid = order_id(fill)
         before = float(rows[0].get('startPosition', 0))
-        signed = float(fill['sz']) * (-1 if fill['side'] == 'A' else 1)
-        after = float(fill.get('startPosition', before)) + signed
+        signed = sum(float(item['sz']) * (-1 if item['side'] == 'A' else 1) for item in rows)
+        after = before + signed
         if abs(after) < 1e-10:
             after = 0.0
-        volume = sum(abs(float(item['px']) * float(item['sz'])) for item in rows)
         price = sum(float(item['px']) * abs(float(item['sz'])) for item in rows) / sum(abs(float(item['sz'])) for item in rows)
         kinds = []
         if before and (not after or before * after < 0):
@@ -170,7 +169,7 @@ def fill_events(trader: str, fills: list[dict], account: float, positions: list[
             event = {'id': event_id(trader, oid, kind), 'zaman': at_ms(int(fill['time'])),
                      'trader': trader, 'tur': kind, 'coin': fill['coin'],
                      'yon': 'long' if size > 0 else 'short', 'fiyat': price,
-                     'hesap_payi': abs(after * float(fill['px'])) / account if account > 0 else 0.0,
+                     'hesap_payi': abs(after * price) / account if account > 0 else 0.0,
                      'kaldirac': position.get('kaldirac', abs(size * float(fill['px'])) / account if account > 0 else 0.0), 'not': ''}
             if kind in {'acilis', 'buyutme'}:
                 event['sanal_sonuc'] = {'durum': 'acik', 'net_yuzde': None, 'kapanis': None}
@@ -178,17 +177,26 @@ def fill_events(trader: str, fills: list[dict], account: float, positions: list[
     return result
 
 
-def portfolio_curve(portfolio: list, now: pd.Timestamp) -> pd.Series:
+def health_denominator(portfolio: list, t0: pd.Timestamp) -> float:
+    """Freeze the health denominator at t0 so later account-value changes cannot rewrite history."""
+    data = dict(portfolio).get('perpAllTime') or dict(portfolio).get('allTime') or {}
+    values = pd.Series({pd.to_datetime(t, unit='ms', utc=True): float(v)
+                        for t, v in data.get('accountValueHistory', [])}, dtype=float).sort_index()
+    positive = values[values > 0]
+    at_or_before = positive[positive.index <= t0]
+    selected = at_or_before.iloc[-1] if len(at_or_before) else (positive[positive.index >= t0].iloc[0] if len(positive[positive.index >= t0]) else None)
+    if selected is None:
+        raise ValueError('t0 için pozitif hesap değeri yok; sağlık hesaplanamaz.')
+    return float(selected)
+
+
+def portfolio_curve(portfolio: list, now: pd.Timestamp, denominator: float) -> pd.Series:
     periods = dict(portfolio)
     data = periods.get('perpAllTime') or periods.get('allTime') or {}
     pnl = pd.Series({pd.to_datetime(t, unit='ms', utc=True): float(v)
                      for t, v in data.get('pnlHistory', [])}, dtype=float).sort_index()
-    values = pd.Series({pd.to_datetime(t, unit='ms', utc=True): float(v)
-                        for t, v in data.get('accountValueHistory', [])}, dtype=float)
-    if pnl.empty or values[values > 0].empty:
-        raise ValueError('Portfolio PnL/pozitif hesap geçmişi eksik; sağlık hesaplanamaz.')
-    # Same stable normalization as CT-Kapı; cash deposits are never counted as PnL.
-    denominator = float(values[values > 0].median())
+    if pnl.empty or denominator <= 0:
+        raise ValueError('Portfolio PnL/pozitif t0 hesap değeri eksik; sağlık hesaplanamaz.')
     pnl = pnl[pnl.index <= now].resample('1D').last().ffill()
     return pnl / denominator
 
@@ -309,8 +317,10 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
         net = shifted.reindex(days, fill_value=0.0)
     equity = 1000 * (1 + net.cumsum())
     # FIFO lots allocate realized return and exact friction/funding to the event
-    # that opened/increased that lot. Partial closes do not finish an event early.
+    # that opened/increased them. An event may contain many partial fills/lots;
+    # it closes only after every lot belonging to that event closes.
     lots = {}
+    event_totals: dict[str, dict[str, float]] = {}
     event_by_order = {(e['trader'], event_oid(e)): e['id'] for e in events.values()
                       if e['tur'] in {'acilis', 'buyutme'}}
     trader_id = next((e['trader'] for e in events.values()), '')
@@ -322,7 +332,10 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
         if kind == 1:
             total = sum(lot['remaining'] for lot in active)
             for lot in active:
-                lot['pnl'] += _funding_amount(row) * lot['remaining'] / total if total else 0.0
+                amount = _funding_amount(row) * lot['remaining'] / total if total else 0.0
+                lot['pnl'] += amount
+                if lot['event']:
+                    event_totals[lot['event']]['pnl'] += amount
             continue
         execution = math.ceil(time_ms / MINUTE) * MINUTE
         price = prices[coin][execution]
@@ -332,19 +345,30 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
         while remaining > 1e-10 and active and active[0]['direction'] != direction:
             lot = active[0]
             closed = min(lot['remaining'], remaining)
-            lot['pnl'] += closed * ((price - lot['price']) * lot['direction'] - price * (TAKER + SLIPPAGE))
+            realized = closed * ((price - lot['price']) * lot['direction'] - price * (TAKER + SLIPPAGE))
+            lot['pnl'] += realized
+            if lot['event']:
+                event_totals[lot['event']]['pnl'] += realized
             lot['remaining'] -= closed; remaining -= closed
-            if lot['remaining'] < 1e-10:
-                if lot['event'] in events:
+            if lot['event']:
+                total_event = event_totals[lot['event']]
+                total_event['remaining'] -= closed
+                if total_event['remaining'] < 1e-10 and lot['event'] in events:
                     events[lot['event']]['sanal_sonuc'] = {
-                        'durum': 'kapandi', 'net_yuzde': lot['pnl'] / lot['notional'],
+                        'durum': 'kapandi', 'net_yuzde': total_event['pnl'] / total_event['notional'],
                         'kapanis': at_ms(execution)}
+            if lot['remaining'] < 1e-10:
                 active.pop(0)
         if remaining > 1e-10:
             ident = event_by_order.get((trader_id, order_id(row)), '')
+            notional, entry_cost = remaining * price, -remaining * price * (TAKER + SLIPPAGE)
             active.append({'remaining': remaining, 'direction': direction, 'price': price,
-                           'notional': remaining * price, 'pnl': -remaining * price * (TAKER + SLIPPAGE),
-                           'event': ident})
+                           'notional': notional, 'pnl': entry_cost, 'event': ident})
+            if ident:
+                total_event = event_totals.setdefault(ident, {'remaining': 0.0, 'notional': 0.0, 'pnl': 0.0})
+                total_event['remaining'] += remaining
+                total_event['notional'] += notional
+                total_event['pnl'] += entry_cost
     peak = np.maximum.accumulate(np.r_[1000.0, equity.to_numpy()])
     drawdown = float(np.max(1 - np.r_[1000.0, equity.to_numpy()] / peak)) if len(equity) else 0.0
     balance = float(equity.iloc[-1]) if len(equity) else 1000.0
@@ -438,6 +462,7 @@ def with_data_error(trader: dict, error: Exception) -> dict:
     short = str(error).splitlines()[0][:120] or type(error).__name__
     reasons = [reason for reason in previous['saglik']['nedenler'] if not reason.startswith('veri hatası:')]
     previous['saglik']['nedenler'] = reasons + [f'veri hatası: {short}']
+    previous['gecerli'] = False
     return previous
 
 
@@ -456,10 +481,10 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
     fills = merge_rows(saved['fills'], [f for f in fresh if int(f['time']) <= millis(now)])
     saved['fills'] = fills
     saved['son_dolum'] = max([cursor] + [int(f['time']) for f in fills])
-    if saved.get('portfolio_gunu') != str(now.date()):
-        saved['portfolio'] = client.portfolio(address)
-        saved['portfolio_gunu'] = str(now.date())
-    history = portfolio_curve(saved['portfolio'], now)
+    # Health is refreshed hourly. The t0 denominator is persisted once and never recalculated.
+    saved['portfolio'] = client.portfolio(address)
+    saved.setdefault('saglik_paydasi', health_denominator(saved['portfolio'], t0))
+    history = portfolio_curve(saved['portfolio'], now, float(saved['saglik_paydasi']))
     states = clearinghouse_states(client, address, dexes)
     account, positions = positions_from_state(states, fills, symbols, now)
     if account <= 0:
@@ -505,7 +530,8 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
         last_trade = {'coin': last['coin'], 'yon': 'long' if float(ending.get('startPosition', 0)) > 0 else 'short',
                       'acilis': iso(last['open_time']) if last['open_time'] is not None else '',
                       'kapanis': iso(last['close_time']), 'net_yuzde': last['net_pnl'] / notional if notional else 0.0}
-    trader = {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'kapi': gate_result(root, address), 'saglik': light,
+    trader = {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': iso(now), 'gecerli': True,
+              'kapi': gate_result(root, address), 'saglik': light,
               'form': {'skor': ret30 / volatility if volatility > 0 and math.isfinite(volatility) else 0.0,
                        'getiri_30g': ret30, 'getiri_90g': float(recent.iloc[-1] - recent.iloc[0]) if len(recent) else 0.0},
               'hesap_degeri': account, 'pozisyonlar': positions, 'son_islem': last_trade,
