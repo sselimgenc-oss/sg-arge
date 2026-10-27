@@ -1,6 +1,6 @@
 {
  "adres": "0x1404109f8cd4a79a0447365edbb7a13acd0b2f27",
- "uretildi": "2026-10-27T20:52:12Z",
+ "uretildi": "2026-10-27T20:57:17Z",
  "payda_kapi": 93789.07618,
  "pencereler": {
   "200": {
@@ -18,12 +18,12 @@
    },
    "paydalar": {
     "lider_tablosu": 93789.07618,
-    "clearinghouse_guncel": 23356.464602,
+    "clearinghouse_guncel": 23235.637605,
     "pencere_medyan": 43247.6760575,
     "pencere_basi": 51609.791611
    },
    "secenekler": {
-    "0dk|kapi|up": {
+    "0dk|ham|up": {
      "toplam": {
       "dolum": 5637,
       "nominal": 79.51643446074716,
@@ -230,7 +230,7 @@
      "net_seri": 0.33319040172806247,
      "kopyalanan_dolum": 5637
     },
-    "0dk|duzeltilmis|up": {
+    "0dk|kapi|up": {
      "toplam": {
       "dolum": 5622,
       "nominal": 78.56302522672948,
@@ -437,7 +437,7 @@
      "net_seri": 0.5587894963843498,
      "kopyalanan_dolum": 5622
     },
-    "30dk|kapi|up": {
+    "30dk|ham|up": {
      "toplam": {
       "dolum": 5637,
       "nominal": 79.60777386899085,
@@ -644,7 +644,7 @@
      "net_seri": 0.21054694682615893,
      "kopyalanan_dolum": 5637
     },
-    "30dk|kapi|down": {
+    "30dk|ham|down": {
      "toplam": {
       "dolum": 5637,
       "nominal": 79.59117073202204,
@@ -851,7 +851,7 @@
      "net_seri": 0.10691077981249646,
      "kopyalanan_dolum": 5637
     },
-    "30dk|duzeltilmis|up": {
+    "30dk|kapi|up": {
      "toplam": {
       "dolum": 5622,
       "nominal": 78.65462449551335,
@@ -1058,7 +1058,7 @@
      "net_seri": 0.44114005451244975,
      "kopyalanan_dolum": 5622
     },
-    "30dk|duzeltilmis|down": {
+    "30dk|kapi|down": {
      "toplam": {
       "dolum": 5622,
       "nominal": 78.63552057850114,
@@ -1265,7 +1265,7 @@
      "net_seri": 0.33188380664684164,
      "kopyalanan_dolum": 5622
     },
-    "120dk|kapi|up": {
+    "120dk|ham|up": {
      "toplam": {
       "dolum": 5637,
       "nominal": 79.64072190727912,
@@ -1472,7 +1472,7 @@
      "net_seri": 0.14335706672724574,
      "kopyalanan_dolum": 5637
     },
-    "120dk|kapi|down": {
+    "120dk|ham|down": {
      "toplam": {
       "dolum": 5637,
       "nominal": 79.66065392876973,
@@ -1679,7 +1679,7 @@
      "net_seri": 0.20848520742280155,
      "kopyalanan_dolum": 5637
     },
-    "120dk|duzeltilmis|up": {
+    "120dk|kapi|up": {
      "toplam": {
       "dolum": 5622,
       "nominal": 78.68475772358329,
@@ -1886,7 +1886,7 @@
      "net_seri": 0.3767601857028505,
      "kopyalanan_dolum": 5622
     },
-    "120dk|duzeltilmis|down": {
+    "120dk|kapi|down": {
      "toplam": {
       "dolum": 5622,
       "nominal": 78.70734059899127,
@@ -2093,7 +2093,7 @@
      "net_seri": 0.43986157108136564,
      "kopyalanan_dolum": 5622
     },
-    "480dk|kapi|up": {
+    "480dk|ham|up": {
      "toplam": {
       "dolum": 5613,
       "nominal": 79.55678410691225,
@@ -2300,7 +2300,7 @@
      "net_seri": 0.19160600369691239,
      "kopyalanan_dolum": 5637
     },
-    "480dk|kapi|down": {
+    "480dk|ham|down": {
      "toplam": {
       "dolum": 5637,
       "nominal": 79.62040233432225,
@@ -2507,7 +2507,7 @@
      "net_seri": 0.10340911731648031,
      "kopyalanan_dolum": 5637
     },
-    "480dk|duzeltilmis|up": {
+    "480dk|kapi|up": {
      "toplam": {
       "dolum": 5598,
       "nominal": 78.61436937622052,
@@ -2714,7 +2714,7 @@
      "net_seri": 0.406562120960267,
      "kopyalanan_dolum": 5622
     },
-    "480dk|duzeltilmis|down": {
+    "480dk|kapi|down": {
      "toplam": {
       "dolum": 5622,
       "nominal": 78.66379574255019,
@@ -2938,12 +2938,12 @@
    },
    "paydalar": {
     "lider_tablosu": 93789.07618,
-    "clearinghouse_guncel": 23356.464602,
+    "clearinghouse_guncel": 23235.637605,
     "pencere_medyan": 42826.029368,
     "pencere_basi": 60966.579261
    },
    "secenekler": {
-    "0dk|kapi|up": {
+    "0dk|ham|up": {
      "toplam": {
       "dolum": 5224,
       "nominal": 75.80860861392264,
@@ -3150,7 +3150,7 @@
      "net_seri": -0.9816144387089971,
      "kopyalanan_dolum": 5224
     },
-    "0dk|duzeltilmis|up": {
+    "0dk|kapi|up": {
      "toplam": {
       "dolum": 5132,
       "nominal": 74.19657315299291,
@@ -3357,7 +3357,7 @@
      "net_seri": 0.5425930153547869,
      "kopyalanan_dolum": 5132
     },
-    "30dk|kapi|up": {
+    "30dk|ham|up": {
      "toplam": {
       "dolum": 5224,
       "nominal": 75.90214592503945,
@@ -3564,7 +3564,7 @@
      "net_seri": -1.1035500211862095,
      "kopyalanan_dolum": 5224
     },
-    "30dk|kapi|down": {
+    "30dk|ham|down": {
      "toplam": {
       "dolum": 5224,
       "nominal": 75.88144596010673,
@@ -3771,7 +3771,7 @@
      "net_seri": -1.1887657438540313,
      "kopyalanan_dolum": 5224
     },
-    "30dk|duzeltilmis|up": {
+    "30dk|kapi|up": {
      "toplam": {
       "dolum": 5132,
       "nominal": 74.28762406708462,
@@ -3978,7 +3978,7 @@
      "net_seri": 0.42220662998947484,
      "kopyalanan_dolum": 5132
     },
-    "30dk|duzeltilmis|down": {
+    "30dk|kapi|down": {
      "toplam": {
       "dolum": 5132,
       "nominal": 74.25921879606047,
@@ -4185,7 +4185,7 @@
      "net_seri": 0.31654016401364504,
      "kopyalanan_dolum": 5132
     },
-    "120dk|kapi|up": {
+    "120dk|ham|up": {
      "toplam": {
       "dolum": 5224,
       "nominal": 75.95001797918327,
@@ -4392,7 +4392,7 @@
      "net_seri": -1.1809730827231806,
      "kopyalanan_dolum": 5224
     },
-    "120dk|kapi|down": {
+    "120dk|ham|down": {
      "toplam": {
       "dolum": 5224,
       "nominal": 75.96152692581097,
@@ -4599,7 +4599,7 @@
      "net_seri": -1.102787088589793,
      "kopyalanan_dolum": 5224
     },
-    "120dk|duzeltilmis|up": {
+    "120dk|kapi|up": {
      "toplam": {
       "dolum": 5132,
       "nominal": 74.33240368997937,
@@ -4806,7 +4806,7 @@
      "net_seri": 0.3437699302359629,
      "kopyalanan_dolum": 5132
     },
-    "120dk|duzeltilmis|down": {
+    "120dk|kapi|down": {
      "toplam": {
       "dolum": 5132,
       "nominal": 74.34290602822746,
@@ -5013,7 +5013,7 @@
      "net_seri": 0.4171568291368372,
      "kopyalanan_dolum": 5132
     },
-    "480dk|kapi|up": {
+    "480dk|ham|up": {
      "toplam": {
       "dolum": 5200,
       "nominal": 75.8998087077544,
@@ -5220,7 +5220,7 @@
      "net_seri": -1.1461599477920612,
      "kopyalanan_dolum": 5224
     },
-    "480dk|kapi|down": {
+    "480dk|ham|down": {
      "toplam": {
       "dolum": 5224,
       "nominal": 75.97626519969418,
@@ -5427,7 +5427,7 @@
      "net_seri": -1.2104013975449548,
      "kopyalanan_dolum": 5224
     },
-    "480dk|duzeltilmis|up": {
+    "480dk|kapi|up": {
      "toplam": {
       "dolum": 5108,
       "nominal": 74.31374915840445,
@@ -5634,7 +5634,7 @@
      "net_seri": 0.3870519388456649,
      "kopyalanan_dolum": 5132
     },
-    "480dk|duzeltilmis|down": {
+    "480dk|kapi|down": {
      "toplam": {
       "dolum": 5132,
       "nominal": 74.37335505500445,
