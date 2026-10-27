@@ -80,6 +80,11 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
     bağımsız olarak kapıdan geçirilir; satıra `kaynak = dis_aday`.
 17. **Kurallar donar:** 14–16 ile bu tur kapanır. Tam koşudan sonra eşik değişikliği yok; sonraki karar 3 aylık
     ileriye dönük sanal izlemenin sonucuyla.
+18. **Lider denetimi (`docs/DENETIM_2026-10-27.md`) ekleri:** (a) mum eksik dolum varsa kopya getirisi o dolumları
+    atlamasın — eksik oran > %0 ise satır `kopya_eksik` işaretli ve adım 3 `Yetersiz`; (b) ölü sütunlar
+    (`liquid_coin_share`, `setting_leverage`) ya düzeltilsin ya kaldırılsın; (c) `userFillsByTime` geçmiş sınırına
+    dayanan hesap `dolum_siniri` işaretli; (d) **akıl sağlığı kapısı**: birleştirmede oran/düşüş 0–1, kaldıraç 0–200, sabit
+    ya da tamamen boş sütun yok, adım 1–4'ü geçende `plasebo_p` dolu; biri tutmazsa yayın yok ve iş kırmızı; testle sınansın.
 
 ## `kesif.json` şeması (v1)
 ```json
