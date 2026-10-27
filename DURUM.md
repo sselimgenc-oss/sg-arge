@@ -25,7 +25,7 @@ paper'daki 13 kitaptan yalnız 2'sinde zayıf alfa izi vardı (`docs/kapi_kontro
 |---|---|---|
 | Codex | İzleme motoru, İş A (`docs/GOREV_IZLEME.md`, dal `codex/izleme`) | çalışıyor |
 | Sonnet | sg-pano: v1.1 + mobil (#6, #7) ve paper kısmı kaldırıldı (#8) | bitti; canlı veri bağlantısını bekliyor |
-| Argon | Worker alt istek bütçesi + HIP-3 dex listesi (Telegram ön araştırması) | çalışıyor |
+| Argon | Telegram ön araştırması (`arastirma/copytrade/argon_worker_teknik.md`) | bitti; sırası gelene kadar boşta |
 | Lider | İş A'yı denetle, birleştir | bekliyor |
 Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama kararı değil).
 
