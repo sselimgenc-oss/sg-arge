@@ -91,3 +91,28 @@ def test_dead_columns_not_in_evaluated_row():
     from copytrade import kapi
     source = inspect.getsource(kapi.evaluate_address)
     assert "liquid_coin_share" in source and "pop" in source      # satırdan atılıyor
+
+
+def test_error_rate_over_limit_turns_gate_red():
+    rows = [good_row(f"0x{i}") for i in range(19)] + [good_row("0xbad", hata="IndexError: x", asama1="Yetersiz")]
+    assert sanity_check(table(*rows), RULES) == []            # 1/20 = %5 sınırda geçer
+    rows += [good_row("0xbad2", hata="KeyError: y", asama1="Yetersiz")]
+    assert any(p.startswith("hata:") for p in sanity_check(table(*rows), RULES))
+
+
+def test_single_address_error_does_not_kill_the_shard(monkeypatch):
+    import copytrade.kapi as kapi
+
+    def boom(*a, **k):
+        raise IndexError("single positional indexer is out-of-bounds")
+
+    class Client:
+        requests = 0
+        def portfolio(self, address): return boom()
+
+    class Cache:
+        requests = 0
+
+    from datetime import datetime, timezone
+    row = kapi.evaluate_address({"address": "0xabc", "accountValue": 1000.0}, Client(), Cache(), datetime.now(timezone.utc), 0, 0, None, RULES)
+    assert row["sinif"] == "Yetersiz" and row["hata"].startswith("IndexError") and row["neden"].startswith("veri hatası")

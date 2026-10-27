@@ -61,3 +61,21 @@ def test_golden_martingale_counts_orders_in_real_sequence_and_measures_against_r
     assert additions == 3 and ratio == pytest.approx(2 / 3)
     shuffled = list(reversed(martingale_fills()))
     assert martingale_ratio(shuffled, 0.02) == (ratio, additions)     # girdi sırası sonucu değiştirmez: zaman/tid sırası
+
+
+def test_golden_leverage_unsorted_same_timestamp_fills_regression_for_indexerror():
+    """Canlı koşuda 18 parçayı çökerten hata (0x67870e07…cb04, 16 coin, 13.978 dolum): sırasız ve aynı milisaniyeli dolumlar süre dizisini
+    bozup searchsorted'ı sona taşıyordu (IndexError). Küçültülmüş hali (eski kodda çöker): girdi sırası 2. saat, 1. saat, 1. saat.
+    Zamana göre sıralı: 1. saat A2 satış (miras pozisyon 2 → 0, 0x), 1. saat B1 (0,1x), 2. saat B2 (pozisyon 2 → 0,2x), hesap 1000.
+    Süreler: 0 sn ve 1 sa (son örnek dışlanır) → yalnız 0,1x ağırlık taşır: medyan 0,1x, en yüksek 0,2x."""
+    fills = [fill(2, "B", 2, 0, 100, tid=1), fill(1, "A", 2, 2, 100, tid=2), fill(1, "B", 1, 0, 100, tid=3)]
+    median, top = effective_leverage(fills, 1000.0)
+    assert (round(median, 6), round(top, 6)) == (0.1, 0.2)
+
+
+def test_leverage_survives_nan_price_and_all_zero_weights():
+    fills = [fill(1, "B", 5, 0, "nan", tid=1), fill(2, "A", 5, 5, 100, tid=2)]
+    median, top = effective_leverage(fills, 1000.0)
+    assert median is not None and top is not None
+    same_instant = [fill(1, "B", 5, 0, 100, tid=1), fill(1, "A", 5, 5, 100, tid=2)]
+    assert effective_leverage(same_instant, 1000.0)[0] is not None

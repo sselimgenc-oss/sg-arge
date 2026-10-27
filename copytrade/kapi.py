@@ -837,9 +837,11 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         if tarz == "swing" and (nets.get(delay_for_style(tarz, rules, "stres_gecikme_dk")) or 0) < 0:
             row["not"] = "gece riskli"
         row.update(statuses)
-    except (RateLimitError, requests.RequestException, ValueError, TypeError, KeyError) as exc:
+    except Exception as exc:  # noqa: BLE001 - tek adresin hatası parçayı öldürmesin (görev: adres başı hata yalıtımı)
         row.setdefault("asama1", "Yetersiz")  # 1. aşama sonucu hesaplandıysa korunur
-        row.update({"sinif": "Yetersiz", "neden": "veri hatası: " + type(exc).__name__ + ": " + str(exc)[:60]})
+        reason = type(exc).__name__ + ": " + str(exc)[:60]
+        row.update({"sinif": "Yetersiz", "hata": reason, "neden": "veri hatası: " + reason})
+        print(f"HATA {address}: {reason}", flush=True)
         outcome = row["neden"]
     finally:
         progress.done(outcome)
@@ -1056,6 +1058,11 @@ def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
                 problems.append(f"{name}: metrik üreten {len(metric_rows)} satırda tamamen boş")
             elif len(metric_rows) >= int(rules["saglik_min_satir_sabit_kontrolu"]) and metric_rows[name].nunique() <= 1:
                 problems.append(f"{name}: {len(metric_rows)} satırda sabit değer ({metric_rows[name].iloc[0]!r})")
+    if "hata" in table and len(table):
+        failed = int(table["hata"].notna().sum())
+        limit = float(rules["saglik_max_hata_orani"])
+        if failed / len(table) > limit:
+            problems.append(f"hata: {failed}/{len(table)} adres hatalı (%{100 * failed / len(table):.1f} > %{100 * limit:.0f})")
     family = family_mask(table)
     if family.any():
         empty = int(table.loc[family, "plasebo_p"].isna().sum()) if "plasebo_p" in table else int(family.sum())
@@ -1115,6 +1122,8 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
         near = table[table.get("adim2") == "Geçti"].sort_values("nw_t", ascending=False)[cols].head(15)
         banner = (f"> **DURUM: EKSİK** — {status['neden']}. Bu sonuç eksik koşudur; karar için kullanılmaz.\n\n" if status["durum"] == "eksik"
                   else f"Durum: tamam (parça {status['parca_biten']}/{status['parca_beklenen']}).\n\n" if expected is not None else "")
+        failed = int(table["hata"].notna().sum()) if "hata" in table else 0
+        banner += f"Hatalı adres: {failed}/{len(table)} (hata sütunu; sınıf Yetersiz).\n\n"
         (output / "RAPOR.md").write_text("# CT-Kapı v1.1\n\n" + banner + funnel_report(table, evren.get(date))
                                          + "\n\n" + freeze_report(table) + "\n\n## Adım 2'yi geçenler (alfa t'ye göre ilk 15)\n\n" + _md(near)
                                          + "\n\nGecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.\n", encoding="utf-8")

@@ -178,6 +178,7 @@ def effective_leverage(fills: list[dict[str, Any]], account_value: Any) -> tuple
         series = series[series > 0].sort_index()
         if series.empty:
             return None, None
+    data = data.sort_values("time", kind="stable")   # API sırası zamana göre garanti değil (sırasız dolum süreyi negatif yapıp çöküyordu)
     position: defaultdict[str, float] = defaultdict(float)
     price: dict[str, float] = {}
     samples: list[tuple[pd.Timestamp, float]] = []
@@ -193,16 +194,25 @@ def effective_leverage(fills: list[dict[str, Any]], account_value: Any) -> tuple
             index = series.index.searchsorted(row["time"], side="right") - 1
             account = float(series.iloc[index]) if index >= 0 else float(series.iloc[0])
         samples.append((row["time"], value / account))
-    leverage = pd.Series([v for _, v in samples], index=[t for t, _ in samples])
-    duration = pd.Series(leverage.index[1:] - leverage.index[:-1], index=leverage.index[:-1]).dt.total_seconds()
-    active = leverage.iloc[:-1][(leverage.iloc[:-1] > 0).to_numpy()]
-    if active.empty or duration.loc[active.index].sum() <= 0:
-        median = float(leverage[leverage > 0].median()) if (leverage > 0).any() else 0.0
+    times = pd.DatetimeIndex([t for t, _ in samples]).asi8
+    values = np.array([v for _, v in samples], dtype=float)
+    values = np.where(np.isfinite(values), values, 0.0)
+    if len(values) == 0:
+        return None, None
+    # Konumsal hesap: aynı zaman damgalı dolumlar (indeks tekrarı) ağırlık dizisini kaydırmasın.
+    durations = np.diff(times).astype(float) / 1e9
+    durations = np.where(np.isfinite(durations) & (durations > 0), durations, 0.0)
+    held, spans = values[:-1], durations
+    mask = held > 0
+    if not mask.any() or spans[mask].sum() <= 0:
+        positive = values[values > 0]
+        median = float(np.median(positive)) if positive.size else 0.0
     else:
-        order = active.sort_values()
-        weights = duration.loc[order.index].to_numpy()
-        median = float(order.iloc[int(np.searchsorted(np.cumsum(weights), weights.sum() / 2.0))])
-    return median, float(leverage.max())
+        order = np.argsort(held[mask], kind="stable")
+        sorted_values, weights = held[mask][order], spans[mask][order]
+        cut = int(np.searchsorted(np.cumsum(weights), weights.sum() / 2.0))
+        median = float(sorted_values[min(max(cut, 0), len(sorted_values) - 1)])
+    return median, float(values.max())
 
 
 def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]] | None = None,

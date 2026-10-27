@@ -98,3 +98,5 @@ dolum_siniri_bosluk_gun: 30
 # Akıl sağlığı kapısı (18d): oran/düşüş sütunları 0–1, kaldıraç 0–saglik_max_kaldirac; sabit sütun kontrolü en az bu kadar satırda
 saglik_max_kaldirac: 200
 saglik_min_satir_sabit_kontrolu: 50
+# Adres başı hata (hata sütunu dolu) oranı bunu aşarsa kapı kırmızı
+saglik_max_hata_orani: 0.05
