@@ -372,14 +372,11 @@
       const b0 = sk.reduce((n, k) => n + k.baslangic_usd, 0), fark = sk.reduce((n, k) => n + k.bakiye_usd - k.baslangic_usd, 0);
       const t = ctDate(CT.uretildi), gecerli = !isNaN(t), dk = gecerli ? Math.max(0, Math.round((Date.now() - t.getTime()) / 60000)) : null;
       eski = !gecerli || dk > CT_ESKI_DK;
-      const yogun = {};
-      tr.forEach((x) => (x.pozisyonlar || []).forEach((p) => { const k = `${p.coin} ${p.yon}`; yogun[k] = (yogun[k] || 0) + 1; }));
-      const yogunHtml = Object.entries(yogun).sort((a, b) => b[1] - a[1]).map(([k, n]) => ctRozet(`${k}: ${n} trader`, n >= 3 ? 'ct-b-warn' : 'ct-b-mut')).join(' ') || '<span class="ct-sub">Açık pozisyon yok.</span>';
       html = `<div class="ct-stat"><div><div class="k">Trader</div><div class="v">${tr.length}</div></div><div><div class="k">Açık poz.</div><div class="v">${acik}</div></div>
           <div><div class="k">Sanal kopya (hepsi)</div><div class="v ${sk.length ? cls(fark) : ''}">${sk.length ? `${ctUsds(fark)} (${ctPs(b0 ? fark / b0 : null)})` : 'veri yok'}</div></div></div>
         <div class="ct-age"><span>${eski ? '⚠ ' : ''}veri: ${gecerli ? esc(ctTarih(CT.uretildi)) + ' (' + esc(ctYas(dk)) + ')' : 'saati bilinmiyor'}</span>`
         + (eski ? `<span>${CT_ESKI_DK} dk'dan eski!</span>` : '')
-        + (/^ornek/i.test(String(CT.kaynak || '')) ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '') + `</div><div class="ct-sec"><span class="ct-sub">Yoğunlaşma:</span> ${yogunHtml}</div>`;
+        + (/^ornek/i.test(String(CT.kaynak || '')) ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '') + `</div>`;
     } else html = '<span>Veri yok.</span>';
     bar.forEach((el) => { el.classList.toggle('stale', eski); el.innerHTML = html; });
     const yas = $('dataAge'), t0 = CT && ctDate(CT.uretildi);
