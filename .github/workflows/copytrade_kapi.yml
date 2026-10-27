@@ -30,6 +30,22 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Koşu 3 parça sonuçlarını geri yükle
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 40456157533
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: stage1-*
+          path: onceki-shards
+          merge-multiple: true
+      - name: Önceki sonuçları devam dosyasına al
+        run: |
+          latest=$(find onceki-shards -name sonuc.csv -print -quit)
+          if [ -n "$latest" ]; then
+            date=$(basename "$(dirname "$latest")")
+            mkdir -p "copytrade/kapi/$date"
+            cp "$latest" "copytrade/kapi/$date/sonuc.csv"
+          fi
       - run: timeout 100m python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count 16 --devam || true
       - uses: actions/upload-artifact@v4
         if: always()
@@ -51,6 +67,14 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: shards
+      - name: Koşu 3 artifact'larını da birleştir
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 40456157533
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: stage1-*
+          path: shards/onceki
+          merge-multiple: true
       - name: Birleştir ve dalda sakla
         run: |
           python -m copytrade.kapi --root copytrade --birlestir shards
