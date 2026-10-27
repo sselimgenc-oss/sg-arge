@@ -331,6 +331,29 @@ def gate_result(root: Path, address: str) -> dict:
     return {'sinif': 'Yetersiz', 'tarih': '', 'not': 'Kapı sonucu bulunamadı'}
 
 
+def perp_dex_names(response: object) -> list[str]:
+    """Return every public HIP-3 dex name exactly once, in API order."""
+    if not isinstance(response, list):
+        raise ValueError('Geçersiz perpDexs yanıtı.')
+    names: list[str] = []
+    for dex in response:
+        if dex is None:
+            continue
+        if not isinstance(dex, dict) or not isinstance(dex.get('name'), str) or not dex['name']:
+            raise ValueError('Geçersiz perpDexs dex adı.')
+        if dex['name'] not in names:
+            names.append(dex['name'])
+    return names
+
+
+def clearinghouse_states(client: PublicClient, address: str, dexes: list[str]) -> list[dict]:
+    """Read main perpetuals plus each HIP-3 dex; state responses are not interchangeable."""
+    states = [client.info({'type': 'clearinghouseState', 'user': address}, weight=2)]
+    for dex in dexes:
+        states.append(client.info({'type': 'clearinghouseState', 'user': address, 'dex': dex}, weight=2))
+    return states
+
+
 def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     now = timestamp(now or datetime.now(UTC))
     client = client or PublicClient(limiter=RateLimiter())
@@ -339,9 +362,9 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     if state.get('surum') != 1:
         raise ValueError('Desteklenmeyen motor arşivi sürümü.')
     traders, all_events = [], state['olaylar']
-    dexes = ['']
+    dexes: list[str] = []
     if watchlist:
-        dexes += [d['name'] for d in client.info({'type': 'perpDexs'}) if d and d.get('name')]
+        dexes = perp_dex_names(client.info({'type': 'perpDexs'}))
     for row in watchlist:
         ident, address, t0 = row['id'], row['adres'], timestamp(row['t0'])
         saved = state['traderlar'].setdefault(ident, {'adres': address.lower(), 't0': iso(t0),
@@ -360,8 +383,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
             saved['portfolio'] = client.portfolio(address)
             saved['portfolio_gunu'] = str(now.date())
         history = portfolio_curve(saved['portfolio'], now)
-        states = [client.info(dict({'type': 'clearinghouseState', 'user': address}, **({'dex': dex} if dex else {})), weight=2)
-                  for dex in dexes]
+        states = clearinghouse_states(client, address, dexes)
         account, positions = positions_from_state(states, fills, symbols, now)
         if account <= 0:
             raise ValueError(f'{ident}: pozitif hesap değeri gerekli; sanal defter hesaplanamadı.')

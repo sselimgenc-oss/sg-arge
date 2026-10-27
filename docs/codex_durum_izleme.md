@@ -11,7 +11,11 @@
   `main` içine canlı çıktı yazılmaz.
 - Motor: kalıcı trader imleciyle artımlı dolumlar, aynı milisaniyede sınır
   tekrarını tekilleştirme, günlük portfolio önbelleği, ana/HIP-3 hesap
-  pozisyonları, kalıcı olay kimlikleri ve son 200 olay.
+  pozisyonları, kalıcı olay kimlikleri ve son 200 olay. Ana hesap için
+  `clearinghouseState` ayrı okunur; sonra `perpDexs` listesindeki her
+  benzersiz dex, `dex` parametresiyle ayrı sorgulanır ve pozisyonlar
+  `xyz:CL` gibi coin adları değiştirilmeden birleştirilir. Geçersiz dex
+  yanıtı sessizce atlanmaz.
 - Sanal defter: 1.000 USD, 30 dk, `delayed_copy` maliyeti ve funding;
   geçmiş yürütme mumları arşivlenir. Gecikmesi dolmayan işlem ücretlenmez.
   Tam yürütme mumu yoksa veya arşivsiz geçmiş 5.000 dakika dışındaysa
@@ -31,13 +35,15 @@
 - İş akışı: saatlik `23 * * * *`, elle tetikleme ve dalda push denemesi;
   eşzamanlılık grubu, ilk koşuda yetim veri dalı, rebase ile 3 push denemesi.
   Mevcut `kararlar.jsonl` korunur; bu iş karar dosyası üretmez.
-- Test: `python -m pytest -q` — **79 başarılı, 112 uyarı**. Ağsız testler
+- Test: `python -m pytest -q` — **80 başarılı, 112 uyarı**. Ağsız testler
   gerçek liste biçimi/iki trader, boş liste, şema, olay eşiği/kimliği,
   artımlı okuma, günlük önbellek, gecikme/maliyet/funding, sağlık koşulları,
   arşiv güvenliği ve yerel Git deposunda yetim dal/yeni koşuyu kapsar.
 - Canlı doğrulama: bulut makinesinde iki gerçek test trader'ı, 11 açık
   pozisyon ve 2 ışık olayıyla çıktı üretildi. t0 henüz gelmediği için
   sanal bakiyeler 1.000 USD; gecikmeli işlemler ağsız testlerle doğrulandı.
+  HIP-3 doğrulamasında T1'de `xyz:GOOGL`, `xyz:SKHX`, `xyz:SKHY`; T2'de
+  `xyz:SPCX` pozisyonları bulundu.
 - Push tetikli Actions başarılı:
   https://github.com/sselimgenc-oss/sg-arge/actions/runs/40549490012
   Kurulum, tam testler, gerçek API koşusu ve veri dalına push başarılı.

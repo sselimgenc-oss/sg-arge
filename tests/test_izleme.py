@@ -246,7 +246,7 @@ def test_failure_preserves_last_successful_payloads(tmp_path):
 
 def test_hip3_positions_and_actual_account_leverage(tmp_path):
     root, client = project(tmp_path), Client()
-    client.dexes += [{'name': 'xyz'}]
+    client.dexes = [{'name': 'xyz'}, {'name': 'flx'}, {'name': 'xyz'}]
     client.positions = [position(value=4000)]
     result = m.run(root, root / 'out', client, NOW)
     trader = result['traderlar'][0]
@@ -254,6 +254,19 @@ def test_hip3_positions_and_actual_account_leverage(tmp_path):
     assert trader['saglik']['isik'] == 'sari'  # gross notional / account, not the 2x setting
     assert {p['coin'] for p in trader['pozisyonlar']} == {'BTC', 'xyz:CL'}
     assert next(p for p in trader['pozisyonlar'] if p['coin'] == 'xyz:CL')['sinif'] == 'emtia'
+    states = [call for call in client.calls if call['type'] == 'clearinghouseState']
+    assert states == [
+        {'type': 'clearinghouseState', 'user': ADDRESS},
+        {'type': 'clearinghouseState', 'user': ADDRESS, 'dex': 'xyz'},
+        {'type': 'clearinghouseState', 'user': ADDRESS, 'dex': 'flx'},
+    ]
+
+
+def test_invalid_perp_dex_response_is_not_silently_ignored():
+    with pytest.raises(ValueError, match='perpDexs'):
+        m.perp_dex_names({'name': 'xyz'})
+    with pytest.raises(ValueError, match='dex adı'):
+        m.perp_dex_names([{'name': ''}])
 
 
 def test_portfolio_uses_pnl_not_deposits():
