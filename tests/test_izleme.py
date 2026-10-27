@@ -64,6 +64,28 @@ def test_one_trader_error_retains_its_last_successful_payload(tmp_path):
     assert retained['veri_zamani'] == old['veri_zamani']
 
 
+def test_first_run_error_is_published_as_invalid_trader(tmp_path, capsys):
+    rows = [
+        {'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Bir', 'durum': 'izlemede', 't0': str(T0.date())},
+        {'id': 'T2', 'adres': '0x' + '2' * 40, 'takma_ad': 'İki', 'tarz': 'swing', 'durum': 'izlemede', 't0': str(T0.date())},
+    ]
+    root = project(tmp_path, rows)
+    class FirstReadBroken(Client):
+        def fills(self, address, start):
+            if address == rows[1]['adres']:
+                raise RuntimeError('ilk yanıt yok')
+            return super().fills(address, start)
+    result = m.run(root, root / 'out', FirstReadBroken(), NOW)
+    broken = next(trader for trader in result['traderlar'] if trader['id'] == 'T2')
+    assert {k: broken[k] for k in ('id', 'adres', 'tarz', 'veri_zamani', 'gecerli', 'saglik', 'pozisyonlar')} == {
+        'id': 'T2', 'adres': rows[1]['adres'], 'tarz': 'swing', 'veri_zamani': None, 'gecerli': False,
+        'saglik': {'isik': 'sari', 'nedenler': ['veri hatası: ilk yanıt yok']}, 'pozisyonlar': []}
+    # Pano bu alanları koşulsuz okur: yer tutucu, sağlam trader ile aynı anahtarları taşımalı.
+    healthy = next(trader for trader in result['traderlar'] if trader['id'] == 'T1')
+    assert set(healthy) - {'kopya_paydasi'} <= set(broken)
+    assert 'T2: veri hatası: ilk yanıt yok' in capsys.readouterr().out
+
+
 def test_hourly_fallback_marks_virtual_copy_approximate(tmp_path):
     root, client = project(tmp_path), Client()
     config = root / 'copytrade/izleme_listesi.yaml'

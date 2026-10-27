@@ -140,7 +140,8 @@ async function runCron(env, fetcher = fetch) {
       }
     } catch { /* the cursor intentionally remains unchanged */ }
     const previous = await env.DB.prepare("SELECT isik FROM isik WHERE trader = ?").bind(trader.id).first();
-    if (trader.saglik?.isik === "kirmizi" && previous?.isik !== "kirmizi") {
+    // The first observed colour is a baseline, not an alert. Alert only on a known non-red → red transition.
+    if (previous && trader.saglik?.isik === "kirmizi" && previous.isik !== "kirmizi") {
       await sendOnce(env, { id: `${trader.id}-${status.uretildi}-isik`, tur: "isik", coin: "", yon: "", fiyat: null, hesap_payi: null }, trader, fetcher);
     }
     const current = trader.saglik?.isik || "yesil";

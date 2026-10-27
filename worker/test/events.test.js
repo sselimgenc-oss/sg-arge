@@ -37,6 +37,27 @@ test("ilk cron imleci şimdiye koyar, geçmiş bildirimi göndermez", async () =
   assert.match(writes[0][0], /INSERT INTO imlec/);
 });
 
+test("ilk görülen kırmızı ışık bildirim üretmez; yeşilden kırmızıya geçiş üretir", async () => {
+  const lights = new Map(), notified = new Set(), sent = [];
+  const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB: { prepare(sql) { return { bind(...args) { return {
+    first: async () => /FROM imlec/.test(sql) ? { son_dolum: 0 } : /FROM isik/.test(sql) ? (lights.has(args[0]) ? { isik: lights.get(args[0]) } : undefined) : /FROM bildirilen/.test(sql) ? (notified.has(args[0]) ? { olay_id: args[0] } : undefined) : undefined,
+    run: async () => { if (/INSERT INTO isik/.test(sql)) lights.set(args[0], args[1]); if (/INSERT OR IGNORE INTO bildirilen/.test(sql)) notified.add(args[0]); return { meta: { changes: 1 } }; },
+  }; } }; } } };
+  let colour = "kirmizi", n = 0;
+  const fetcher = async (url, init) => {
+    if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: `2026-10-27T12:0${n++}:00Z`, traderlar: [{ id: "T1", adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, saglik: { isik: colour } }] }));
+    if (String(url).includes("api.hyperliquid.xyz")) return new Response(JSON.stringify([]));
+    sent.push(JSON.parse(init.body)); return new Response(JSON.stringify({ ok: true }));
+  };
+  await runCron(env, fetcher);
+  assert.equal(lights.get("T1"), "kirmizi");
+  assert.equal(sent.length, 0);
+  colour = "yesil"; await runCron(env, fetcher);
+  colour = "kirmizi"; await runCron(env, fetcher);
+  assert.equal(sent.length, 1);
+  assert.match(sent[0].text, /sağlık ışığı kırmızı/);
+});
+
 test("ilk Telegram ağ hatası sonraki cron denemesinde gönderilir, başarılı olay yinelenmez", async () => {
   const sent = new Set(); let attempts = 0;
   const env = { TELEGRAM_CHAT_ID: "1", TELEGRAM_BOT_TOKEN: "x", DB: { prepare(sql) { return { bind(...args) { return {
