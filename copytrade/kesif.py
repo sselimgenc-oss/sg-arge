@@ -160,6 +160,9 @@ def step_reasons(row: dict[str, Any], rules: dict | None = None) -> dict[str, di
             elif i == 2:
                 parts = [f"{n} {v}" for n, v, lim in (("geçmiş gün", num("history_days"), 180), ("kapanan işlem", num("closed_trades"), 50),
                                                        ("aktif ay", num("active_months"), 6)) if v is None or v < lim]
+                if row.get("aktif") in (False, "False", "false"):
+                    need = rules["aktif_son90_dongu"]["swing" if _str(row.get("tarz")) == "swing" else "intraday"]
+                    parts.append(f"aktiflik: son 90 g {num('son90_dongu')} döngü (≥ {need}), son işlem {num('son_islem_gun')} gün (≤ {rules['aktif_son_islem_max_gun']})")
                 reason = "yetersiz kanıt: " + ", ".join(parts)
             elif i == 3:
                 tarz, parts = _str(row.get("tarz")), []

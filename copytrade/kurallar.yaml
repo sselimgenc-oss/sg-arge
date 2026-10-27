@@ -40,8 +40,9 @@ kapi_max_medyan_kaldirac: 3.0
 kapi_max_kaldirac: 10.0
 # Geçmiş ≥ 180 gün şartı aynı (min_history_days); ≥ 365 gün sıralamada öne, 180–365 gün genc_aday
 genc_aday_gun: 365
-# Adım 5 plasebo: 1000 tekrar, tek yönlü p ≤ 0,05
-plasebo_tekrar: 1000
+# Adım 5 plasebo: 10.000 tekrar (kullanıcı + Sol 6.1, görev 10; sonuçlara göre değiştirilmez), tek yönlü p ≤ 0,05.
+# Çoklu test (adım 7) ailesi = adım 1–4'ü geçen tüm adresler; m RAPOR'a yazılır.
+plasebo_tekrar: 10000
 plasebo_p_max: 0.05
 # Adım 6 alfa kıyası: işlem hacminin ≥ bu payı kripto ise BTC; değilse işlem yapılan varlıkların eşit ağırlıklı sepeti
 alfa_kripto_payi_esigi: 0.5
@@ -51,3 +52,12 @@ binance_takma_ad:
   GOLD: XAU
   SILVER: XAG
   BRENTOIL: BZ
+# Aktiflik (adım 2'ye ek; kullanıcı kararı, görev 11): son 90 günde kapanmış düz-düz döngü (dolum değil) sayısı
+# tarza göre en az; son işlem (son perp dolumu) en çok 30 gün önce. Kâr şartı yok. Sağlanmazsa adım 2 Yetersiz.
+aktif_pencere_gun: 90
+aktif_son90_dongu:
+  intraday: 20
+  swing: 5
+aktif_son_islem_max_gun: 30
+# Yalnız rapor (görev 12; kapı ölçütü değil): gece payı = TSİ bu saat aralığında (ilk ≤ saat < ikinci) açılan işlemlerin payı
+gece_saatleri_tsi: [1, 9]

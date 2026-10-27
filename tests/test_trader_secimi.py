@@ -10,7 +10,7 @@ import pytest
 import requests
 
 from copytrade import kesif
-from copytrade.kapi import (basket_returns, benchmark_kind, binance_availability, binance_symbol, classify_style,
+from copytrade.kapi import (activity_metrics, basket_returns, delay_test_days, family_mask, night_share, benchmark_kind, binance_availability, binance_symbol, classify_style,
                             delay_for_style, finalize, gate_status, katman, market_shares, merge_shards,
                             missing_addresses, placebo_scores, randomize_trades, short_trade_share)
 from copytrade.kurallar import load_rules
@@ -67,7 +67,7 @@ def test_coin_that_does_not_fit_even_alone_is_circularly_shifted_with_a_note():
         randomize_trades([trade("BTC", 200)], START, END, 3)
 
 
-def test_placebo_scores_1000_for_overlapping_two_coin_trader_with_delay():
+def test_placebo_scores_10000_for_overlapping_two_coin_trader_with_delay():
     fills = [{"time": 0, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0"},
              {"time": HOUR, "coin": "ETH", "side": "B", "sz": "1", "px": "100", "startPosition": "0"},
              {"time": 3 * HOUR, "coin": "BTC", "side": "A", "sz": "1", "px": "101", "startPosition": "1"},
@@ -76,7 +76,7 @@ def test_placebo_scores_1000_for_overlapping_two_coin_trader_with_delay():
     notes: list[str] = []
     scores = placebo_scores(fills, candles, 1_000, pd.Timestamp(0, unit="ms", tz="UTC"),
                             pd.Timestamp(100 * HOUR, unit="ms", tz="UTC"), delay_minutes=120, notes=notes)
-    assert len(scores) == 1000 and notes == []
+    assert len(scores) == RULES["plasebo_tekrar"] == 10_000 and notes == []
     assert placebo_scores([], candles, 1_000, START, END) == []
 
 
@@ -358,3 +358,72 @@ def test_response_size_weight_candles_per_60_other_lists_per_20_and_stats_counte
     client.info({"type": "candleSnapshot"}, weight=20)
     client.info({"type": "userFills"}, weight=20)
     assert limiter.weights == [20, 2, 20, 6] and client.stats["istek"] == 2
+
+
+# ---------------------------------------------------------------- görev 10–12: tekrar, aktiflik, rapor ölçütleri
+DAY_MS = 86_400_000
+NOW_MS = 1_800_000_000_000
+
+
+def cycles(days_ago_list, coin="BTC"):
+    """Her biri 2 saat süren kapanmış düz-düz döngüler; her giriş NOW'dan ``days_ago`` gün önce."""
+    fills = []
+    for index, ago in enumerate(days_ago_list):
+        at = NOW_MS - int(ago * DAY_MS)
+        fills.append({"time": at, "coin": coin, "side": "B", "sz": "1", "px": "100", "startPosition": "0", "closedPnl": "0", "fee": "0", "tid": 2 * index})
+        fills.append({"time": at + 2 * HOUR, "coin": coin, "side": "A", "sz": "1", "px": "101", "startPosition": "1", "closedPnl": "1", "fee": "0", "tid": 2 * index + 1})
+    return fills
+
+
+def test_activity_thresholds_by_style_and_last_trade_age():
+    twenty = cycles([1 + i for i in range(20)])
+    assert activity_metrics(twenty, "intraday", NOW_MS, RULES) == {"son90_dongu": 20, "son_islem_gun": 0.9, "aktif": True}
+    assert not activity_metrics(cycles([1 + i for i in range(19)]), "intraday", NOW_MS, RULES)["aktif"]       # 19 < 20
+    assert activity_metrics(cycles([1, 2, 3, 4, 5]), "swing", NOW_MS, RULES)["aktif"]                          # swing ≥ 5
+    assert not activity_metrics(cycles([1, 2, 3, 4]), "swing", NOW_MS, RULES)["aktif"]
+    old_last = activity_metrics(cycles([31, 32, 33, 34, 35]), "swing", NOW_MS, RULES)
+    assert old_last["son90_dongu"] == 5 and not old_last["aktif"]                                              # son işlem 31 gün önce
+    assert activity_metrics(cycles([30.0 - 2 / 24 + 0.01, 40, 50, 60, 70]), "swing", NOW_MS, RULES)["aktif"]   # 30 gün sınırı içinde
+    outside = activity_metrics(cycles([1, 2, 3, 4, 95]), "swing", NOW_MS, RULES)
+    assert outside["son90_dongu"] == 4 and not outside["aktif"]                                                # 90 gün penceresi dışındaki sayılmaz
+    assert activity_metrics([], "swing", NOW_MS, RULES) == {"son90_dongu": 0, "son_islem_gun": None, "aktif": False}
+
+
+def test_inactivity_makes_step2_insufficient_and_blocks_later_steps():
+    status = gate_status(base_metrics(aktif=False), .1, .01, {"alfa_yillik": 1, "nw_t": 3}, RULES)
+    assert status["adim2"] == "Yetersiz" and {status[f"adim{i}"] for i in range(3, 8)} == {"Yetersiz"}
+    assert gate_status(base_metrics(aktif=True), .1, None, None, RULES)["adim2"] == "Geçti"
+    assert gate_status(base_metrics(), .1, None, None, RULES)["adim2"] == "Geçti"      # alan yoksa eski davranış
+
+
+def test_night_share_is_report_only_tsi_0100_to_0900():
+    istanbul = lambda hour: int(pd.Timestamp(f"2026-10-20 {hour:02d}:30", tz="Europe/Istanbul").timestamp() * 1000)
+    fills = []
+    for index, hour in enumerate([0, 1, 8, 9, 14]):    # gece: 01 ve 08 (00 ve 09 dışarıda)
+        fills += [{"time": istanbul(hour) + index * DAY_MS, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0", "closedPnl": "0", "fee": "0"},
+                  {"time": istanbul(hour) + index * DAY_MS + HOUR // 2, "coin": "BTC", "side": "A", "sz": "1", "px": "100", "startPosition": "1", "closedPnl": "0", "fee": "0"}]
+    assert night_share(fills, RULES) == 2 / 5 and night_share([], RULES) is None
+    assert "gece_payi" not in gate_status(base_metrics(gece_payi=1.0), .1, None, None, RULES)     # ölçüt değil
+
+
+def test_delay_test_days_is_about_200_and_capped_by_first_fill():
+    start_200 = NOW_MS - 200 * DAY_MS
+    assert delay_test_days([{"time": NOW_MS - 300 * DAY_MS}], NOW_MS, start_200) == 200.0
+    assert delay_test_days([{"time": NOW_MS - 50 * DAY_MS}, {"time": NOW_MS}], NOW_MS, start_200) == 50.0
+    assert delay_test_days([], NOW_MS, start_200) is None
+
+
+def test_test_family_is_steps_1_to_4_and_m_in_report(tmp_path: Path):
+    from copytrade.kapi import funnel_report
+    table = pd.DataFrame([result_row("0xa", plasebo_p=.001), result_row("0xb", plasebo_p=.2), result_row("0xc"),          # üçü de ailede (0xc'nin p'si yok)
+                          result_row("0xd", adim4="Kaldı", plasebo_p=.0001),                                             # aile dışı: p hesaplanmış olsa da teste girmez
+                          result_row("0xe", adim2="Yetersiz")])
+    table["asama1"] = "Geçti"
+    assert list(family_mask(table)) == [True, True, True, False, False]
+    out = finalize(table, RULES).set_index("address")
+    assert out.loc["0xa", "bhy_q"] == pytest.approx(.001 * 3 * (1 + 1 / 2 + 1 / 3))        # m = 3
+    assert out.loc["0xa", "adim7"] == "Geçti" and out.loc["0xb", "adim7"] == "Kaldı"
+    assert out.loc["0xc", "adim7"] == "Yetersiz" and pd.isna(out.loc["0xc", "bhy_q"])      # p yok → Yetersiz, ama m'ye sayıldı
+    assert out.loc["0xd", "adim7"] == "Yetersiz" and pd.isna(out.loc["0xd", "bhy_q"])
+    report = funnel_report(out.reset_index(), 5)
+    assert "**m = 3**" in report and "tekrar sayısı 10000" in report

@@ -9,7 +9,7 @@ import argparse
 import json
 import math
 import time
-from bisect import bisect_left
+from bisect import bisect_left, bisect_right
 from functools import lru_cache
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -217,18 +217,35 @@ def next_candle_open(candles: list[dict], event_ms: int, delay_minutes: int) -> 
     return held[1].at(event_ms + delay_minutes * 60_000)
 
 
-def delayed_copy(fills: list[dict], candles: dict[str, list[dict]], account_value: float, delay_minutes: int,
-                 funding: list[dict] | None = None) -> tuple[pd.Series | None, int]:
-    """Net daily virtual-copy PnL, using delayed candle opens and exact stated friction."""
-    if account_value <= 0:
+def prev_candle_open(candles: list[dict], event_ms: int, delay_minutes: int) -> float | None:
+    """Mutabakat alt/üst sınırı: hedef zamanda veya ondan ÖNCE açılan son mum (saatlik mumda en çok 1 sa erken)."""
+    if not candles:
         return None
+    held = _OPEN_LOOKUPS.get(id(candles))
+    if held is None or held[0] is not candles or held[1].count != len(candles):
+        held = (candles, _Opens(candles))
+        _OPEN_LOOKUPS[id(candles)] = held
+    return held[1].before(event_ms + delay_minutes * 60_000)
+
+
+def delayed_copy(fills: list[dict], candles: dict[str, list[dict]], account_value: float, delay_minutes: int,
+                 funding: list[dict] | None = None, *, rounding: str = "up", trace: list[dict] | None = None
+                 ) -> tuple[pd.Series | None, int]:
+    """Net daily virtual-copy PnL, using delayed candle opens and exact stated friction.
+
+    ``rounding``: ``up`` (varsayılan, kapı) hedeften sonraki ilk mum açılışı; ``down`` hedeften önceki son mum
+    (mutabakat için karşı sınır). ``trace``: verilirse her dolum/funding satırı (coin, brüt, maliyet, nominal) eklenir.
+    """
+    if account_value <= 0:
+        return None, 0
     position: dict[str, float] = {}; missing = 0
     entry: dict[str, float] = {}
     rows: list[tuple[pd.Timestamp, float]] = []
     for fill in sorted(perp_fills(fills), key=lambda x: int(x.get("time", 0))):
         coin, size = str(fill.get("coin")), float(fill.get("sz", 0)) / account_value
         signed = -size if str(fill.get("side")) in {"A", "Sell", "sell"} else size
-        price = float(fill.get("px", 0)) if delay_minutes == 0 else next_candle_open(candles.get(coin, []), int(fill["time"]), delay_minutes)
+        lookup = next_candle_open if rounding == "up" else prev_candle_open
+        price = float(fill.get("px", 0)) if delay_minutes == 0 else lookup(candles.get(coin, []), int(fill["time"]), delay_minutes)
         if price is None:
             missing += 1; continue
         before = position.get(coin, 0.0)
@@ -240,9 +257,16 @@ def delayed_copy(fills: list[dict], candles: dict[str, list[dict]], account_valu
         elif after == 0 or before * after < 0:
             entry[coin] = price
         position[coin] = after
-        rows.append((pd.to_datetime(fill["time"], unit="ms", utc=True), pnl - abs(signed * price) * (TAKER + SLIPPAGE)))
+        cost = abs(signed * price) * (TAKER + SLIPPAGE)
+        rows.append((pd.to_datetime(fill["time"], unit="ms", utc=True), pnl - cost))
+        if trace is not None:
+            trace.append({"coin": coin, "time": int(fill["time"]), "gross": pnl, "cost": cost, "notional": abs(signed * price), "funding": 0.0})
     for item in funding or []:
         rows.append((pd.to_datetime(item["time"], unit="ms", utc=True), _funding_amount(item) / account_value))
+        if trace is not None:
+            delta = item.get("delta", {})
+            trace.append({"coin": str(delta.get("coin", "?")) if isinstance(delta, dict) else "?", "time": int(item["time"]),
+                          "gross": 0.0, "cost": 0.0, "notional": 0.0, "funding": _funding_amount(item) / account_value})
     if not rows:
         return None, missing
     frame = pd.DataFrame(rows, columns=["time", "pnl"]).set_index("time")
@@ -360,14 +384,20 @@ class _Opens:
         index = bisect_left(self.times, ms)
         return self.opens[index] if index < len(self.times) else None
 
+    def before(self, ms: int) -> float | None:
+        """ms'de veya önce açılan son mumun açılışı (mutabakat alt sınırı)."""
+        index = bisect_right(self.times, ms)
+        return self.opens[index - 1] if index else None
+
 
 def placebo_scores(fills: list[dict], candles: dict[str, list[dict]], account_value: float,
-                   start: pd.Timestamp, end: pd.Timestamp, repetitions: int = 1000, delay_minutes: int = 0,
+                   start: pd.Timestamp, end: pd.Timestamp, repetitions: int | None = None, delay_minutes: int = 0,
                    notes: list[str] | None = None) -> list[float]:
     """Plasebo skorları: coin başına çakışmasız saatlik-mum yerleştirmeleri, aynı coin/yön/büyüklük/süre/maliyet.
 
     ``delay_minutes``: giriş ve çıkışa gerçek kopyadakiyle aynı gecikme (intraday 30, swing 120 dk).
     """
+    repetitions = int(repetitions if repetitions is not None else load_rules()["plasebo_tekrar"])
     templates = _trade_templates(fills, account_value)
     if not templates:
         return []
@@ -481,6 +511,41 @@ def katman(statuses: dict[str, str]) -> str:
 
 
 
+def activity_metrics(fills: list[dict], tarz: str | None, now_ms: int, rules: dict | None = None) -> dict[str, Any]:
+    """Aktiflik (adım 2'ye ek): son 90 günde kapanmış düz-düz döngü sayısı ve son işlemden bu yana gün.
+
+    Döngü = pozisyonun sıfıra dönmesi/ters dönmesi (``closed_round_trips``), dolum değil. Son işlem = son perp dolumu.
+    ``aktif``: döngü sayısı tarza göre eşiği (intraday 20, swing 5) ve son işlem ≤ 30 gün. Kâr şartı yok.
+    """
+    rules = rules or load_rules()
+    day = 86_400_000
+    window = int(rules["aktif_pencere_gun"]) * day
+    perp = perp_fills(fills)
+    cycles = sum(1 for t in closed_round_trips(perp)
+                 if t["close_time"] is not None and int(t["close_time"].value // 1_000_000) >= now_ms - window)
+    last = max((int(f.get("time", 0)) for f in perp), default=None)
+    days = None if last is None else round((now_ms - last) / day, 1)
+    need = int(rules["aktif_son90_dongu"]["swing" if tarz == "swing" else "intraday"])
+    return {"son90_dongu": cycles, "son_islem_gun": days,
+            "aktif": bool(cycles >= need and days is not None and days <= float(rules["aktif_son_islem_max_gun"]))}
+
+
+def night_share(fills: list[dict], rules: dict | None = None) -> float | None:
+    """Yalnız rapor: TSİ gece saatlerinde (varsayılan 01–09) açılan kapanmış işlemlerin payı. Kapı ölçütü değil."""
+    rules = rules or load_rules()
+    first, last = rules["gece_saatleri_tsi"]
+    opened = [t["open_time"] for t in closed_round_trips(perp_fills(fills)) if t["open_time"] is not None]
+    if not opened:
+        return None
+    return float(sum(first <= t.tz_convert("Europe/Istanbul").hour < last for t in opened) / len(opened))
+
+
+def delay_test_days(recent: list[dict], now_ms: int, start_200: int) -> float | None:
+    """Yalnız rapor: gecikme testinin kapsadığı gün (≈200; mum penceresi ve ilk dolum sınırlar)."""
+    times = [int(f["time"]) for f in recent if f.get("time") is not None]
+    return round((now_ms - max(start_200, min(times))) / 86_400_000, 1) if times else None
+
+
 def evidence_status(history_days: int, trades: int, active_months: int) -> str:
     return "Geçti" if history_days >= 180 and trades >= 50 and active_months >= 6 else "Yetersiz"
 
@@ -495,6 +560,8 @@ def gate_status(metrics: dict[str, Any], copy_net: float | None, placebo_p: floa
     rules = rules or load_rules()
     out = {"adim1": "Geçti" if metrics.get("complete_data") else "Yetersiz"}
     out["adim2"] = evidence_status(int(metrics.get("history_days", 0)), int(metrics.get("closed_trades", 0)), int(metrics.get("active_months", 0)))
+    if out["adim2"] == "Geçti" and metrics.get("aktif") is False:
+        out["adim2"] = "Yetersiz"  # aktiflik şartı (görev 11): asgari kanıtın parçası
     if out["adim1"] != "Geçti" or out["adim2"] != "Geçti":
         out.update({f"adim{i}": "Yetersiz" for i in range(3, 8)})
         return out
@@ -581,6 +648,8 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         metrics["history_days"] = max(int(metrics.get("history_days", 0)), int(stats["pnl_history_days"]))
         tarz = classify_style(metrics.get("median_holding_hours"), rules)
         metrics["tarz"], metrics["kisa_islem_payi"] = tarz, short_trade_share(fills, tarz, rules)
+        metrics.update(activity_metrics(fills, tarz, now_ms, rules))
+        metrics["gece_payi"], metrics["gecikme_gun"] = night_share(fills, rules), delay_test_days(recent, now_ms, start_200)
         delay = delay_for_style(tarz, rules)
         actual = nets.get(delay)
         pre = gate_status(metrics, actual, None, None, rules)
@@ -703,6 +772,14 @@ def _md(frame: pd.DataFrame) -> str:
     return "\n".join(lines)
 
 
+def family_mask(table: pd.DataFrame) -> pd.Series:
+    """Plasebo/BHY test ailesi: adım 1, 2, 3 ve 4'ü Geçti olanlar."""
+    cols = [f"adim{i}" for i in range(1, 5)]
+    if not all(c in table for c in cols):
+        return pd.Series(False, index=table.index)
+    return (table[cols] == "Geçti").all(axis=1)
+
+
 def finalize(table: pd.DataFrame, rules: dict | None = None) -> pd.DataFrame:
     """Parçalar birleştikten sonra adım 7 (BHY, plaseboya ulaşan herkes), nihai sınıf, katman ve genç aday."""
     rules = rules or load_rules()
@@ -711,9 +788,12 @@ def finalize(table: pd.DataFrame, rules: dict | None = None) -> pd.DataFrame:
     for col in steps + ["plasebo_p", "nw_t", "asama1", "sinif"]:
         if col not in table:
             table[col] = np.nan
-    reached = table["plasebo_p"].notna()
-    q = bhy({a: float(p) for a, p in zip(table.loc[reached, "address"], table.loc[reached, "plasebo_p"])})
-    table["bhy_q"] = table["address"].map(q)
+    # Çoklu test ailesi (görev 10): adım 1–4'ü geçen tüm adresler, m = aile büyüklüğü. Plasebo p'si üretilemeyen aile üyesi
+    # düzeltmede p = 1 sayılır (m'yi küçültmez); adım 7'si Yetersiz kalır. Aile dışında hesaplanmış p (hızlı koşu) teste girmez.
+    family = family_mask(table)
+    has_p = table["plasebo_p"].notna()
+    q = bhy({a: (float(p) if pd.notna(p) else 1.0) for a, p, f in zip(table["address"], table["plasebo_p"], family) if f})
+    table["bhy_q"] = table["address"].map(q).where(has_p & family)
     all_pass = (table[steps] == "Geçti").all(axis=1)
     table["adim7"] = np.where(table["bhy_q"].notna(), np.where(table["bhy_q"] <= .10, "Geçti", "Kaldı"), "Yetersiz")
 
@@ -740,7 +820,10 @@ def finalize(table: pd.DataFrame, rules: dict | None = None) -> pd.DataFrame:
 def funnel_report(table: pd.DataFrame, evren: int | None) -> str:
     """RAPOR.md gövdesi: işlenen / evren, huni tarza ve katmana göre ayrı."""
     total = len(table)
-    lines = [f"- İşlenen / evren: {total} / {evren if evren else '?'}"
+    family = family_mask(table)
+    lines = [f"- Plasebo test ailesi **m = {int(family.sum())}** (adım 1–4'ü geçen adresler; BHY bu aile üzerinde, p'si olmayan üye p = 1 sayılır); "
+             f"tekrar sayısı {int(load_rules()['plasebo_tekrar'])}",
+             f"- İşlenen / evren: {total} / {evren if evren else '?'}"
              + (f" (%{100 * total / evren:.1f}; hedef ≥ %98: {'✓' if total / evren >= .98 else '✗'})" if evren else ""),
              f"- 1. aşama (kâr eğrisi) geçti: {(table.asama1 == 'Geçti').sum()}",
              f"- Veri hatası: {table.get('neden', pd.Series(dtype=str)).fillna('').astype(str).str.startswith('veri hatası').sum()}",
@@ -785,7 +868,7 @@ def merge_shards(shards: Path, root: Path) -> None:
         if evren.get(date):
             (output / "evren.json").write_text(json.dumps({"evren": evren[date]}), encoding="utf-8")
         cols = [c for c in ["address", "tarz", "katman", "genc_aday", "profitable_month_ratio", "max_drawdown", "return_12m", "closed_trades",
-                            "median_holding_hours", "median_leverage", "kisa_islem_payi", "gecikme_30dk_net", "gecikme_120dk_net",
+                            "median_holding_hours", "median_leverage", "kisa_islem_payi", "son90_dongu", "son_islem_gun", "gece_payi", "gecikme_gun", "gecikme_30dk_net", "gecikme_120dk_net",
                             "gecikme_480dk_net", "plasebo_p", "nw_t", "alfa_kiyas", "bhy_q", "adim3", "adim4", "adim5", "adim6", "adim7", "sinif"] if c in table]
         near = table[table.get("adim2") == "Geçti"].sort_values("nw_t", ascending=False)[cols].head(15)
         (output / "RAPOR.md").write_text("# CT-Kapı v1.1\n\n" + funnel_report(table, evren.get(date))
