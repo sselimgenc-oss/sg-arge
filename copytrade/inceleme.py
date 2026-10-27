@@ -104,22 +104,33 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--adet", type=int, default=8)
     parser.add_argument("--mod", choices=["kar", "istikrar"], default="kar")
     parser.add_argument("--havuz", type=int, default=60)
+    parser.add_argument("--en-cok-dolum", type=int, default=6000)
     parser.add_argument("--cikti", default="copytrade/inceleme/RAPOR.md")
     args = parser.parse_args(argv)
     client, rules = PublicClient(), load_rules()
     board = client.leaderboard()
     leaders = pick(board, args.adet) if args.mod == "kar" else stable_pool(board, args.havuz)
     start = int((datetime.now(UTC) - timedelta(days=365)).timestamp() * 1000)
-    loaded, errors = [], []
-    for row in leaders:
+    loaded, errors, scalp = [], [], []
+    for number, row in enumerate(leaders, 1):
         try:
-            fills = client.fills(row["address"], start)
+            fills = client.fills(row["address"], start, max_rows=args.en_cok_dolum) if args.mod == "istikrar" else client.fills(row["address"], start)
+            if args.mod == "istikrar" and len(fills) >= args.en_cok_dolum:
+                scalp.append(row["address"])  # yılda bu kadar dolum swing değil; ayrıntı çekilmez
+                continue
             funding = client.info({"type": "userFunding", "user": row["address"], "startTime": start}) or []
             state = client.info({"type": "clearinghouseState", "user": row["address"]}, weight=2) or {}
             loaded.append((row, fills, funding, state, metrics_for(row, fills, funding, state, rules)))
         except Exception:  # tek adresin hatası raporu durdurmaz
             errors.append(f"- `{row['address']}`: {traceback.format_exc().strip().splitlines()[-1]}")
-    parts = [f"# Örnek trader incelemesi — {args.mod} ({datetime.now(UTC).date()})", ""]
+        finally:
+            write_report(args, board, leaders, loaded, errors, scalp, rules, number)
+
+
+def write_report(args, board, leaders, loaded, errors, scalp, rules, done: int) -> None:
+    """Her adresten sonra yeniden yazılır: koşu süre sınırına takılsa da o ana kadarki sonuç kalır."""
+    parts = [f"# Örnek trader incelemesi — {args.mod} ({datetime.now(UTC).date()})", "",
+             f"İşlenen adres: {done}/{len(leaders)}" + (" (tamamlandı)" if done == len(leaders) else " (koşu sürüyor ya da kesildi)"), ""]
     if args.mod == "kar":
         parts.append(f"Lider tablosunda {len(board)} adres. Seçim: hesap ≥ 100.000 USD, aylık ve tüm zaman ROI > 0; "
                      f"tüm zaman PnL / hesap değerine göre ilk {len(leaders)}.")
@@ -132,7 +143,8 @@ def main(argv: list[str] | None = None) -> None:
                        reverse=True)[:args.adet]
         parts += [f"Lider tablosunda {len(board)} adres. **İstikrar havuzu:** hesap ≥ 50.000 USD; hafta, ay ve tüm zaman "
                   f"ROI > 0; tüm zaman ROI %20–%500; aylık hacme göre en aktif {len(leaders)} adres.", "",
-                  "| Süzgeç | Kalan |", "|---|---:|", f"| Havuz | {len(leaders)} |", f"| Veri okundu | {len(loaded)} |",
+                  "| Süzgeç | Kalan |", "|---|---:|", f"| Havuz | {len(leaders)} |", f"| Çok sık işlem (≥ {args.en_cok_dolum} dolum/yıl, scalp; ayrıntı çekilmedi) | {len(scalp)} |",
+                  f"| Veri okundu | {len(loaded)} |",
                   f"| Swing: medyan tutma ≥ 4 saat | {len(swing)} |",
                   f"| Martingale yok, açık pozisyon kaldıracı ≤ 5x | {len(calm)} |",
                   f"| ≥ 180 gün, ≥ 20 kapanmış işlem | {len(enough)} |", "",
