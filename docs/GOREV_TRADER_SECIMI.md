@@ -1,51 +1,99 @@
-# Görev: Trader seçimi — CT-Kapı düzeltmeleri (3. adım, 2026-10-27, lider)
+# Görev: Trader seçimi — CT-Kapı v1.1 + Keşif verisi (3. adım, 2026-10-27, lider; kullanıcı onaylı)
 
 Yapan: **Codex** (PC, yerel mod). Dal: `codex/kapi-v1-1`. Tek PR, `main`'e; lider birleştirir.
 Kaynak: `docs/GOREV_COPYTRADE_KAPI.md`, `copytrade/kapi.py`, son sonuç `copytrade/kapi/2026-10-27/`.
-**Eşikler değişmez** (kullanıcı kararı). Bu iş yalnız hataları ve kapsamı düzeltir.
+Eşikler aşağıdaki **kullanıcı kararlarıdır**; başka eşik değişmez. Eşikler koda gömülmez, `copytrade/kurallar.yaml`'a yazılır.
+
+## Kullanıcı kararları (2026-10-27; Sol 6.1 görüşüyle)
+Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medyan elde tutma süresine göre birine girer:
+
+| | Intraday | Swing |
+|---|---|---|
+| Medyan elde tutma | 1–24 saat | ≥ 24 saat |
+| Scalp ayıklama: kısa işlem payı ≤ %25 | < 15 dk süren işlemler | < 2 saat süren işlemler |
+| Adım 3 gecikme testi (zorunlu, net > 0) | 30 dk | 2 saat |
+| Raporlanan stres gecikmesi (zorunlu değil) | 2 saat | 8 saat (negatifse `not: gece riskli`) |
+
+- Gecikme giriş **ve** çıkış dolumlarına uygulanır; taker + kayma + funding dahil (`delayed_copy` bugün böyle; 480 dk eklenir).
+- Medyan < 1 saat: tarz `scalp` → adım 3 Kaldı.
+- Kaldıraç kuralları aynı (medyan ≤ 3x, en fazla ≤ 10x).
+- Geçmiş ≥ 180 gün aynı; ≥ 365 gün olanlar sıralamada öne, 180–365 gün olanlar `genc_aday` etiketi.
+- **Adım 6 alfa kıyası:** işlem hacminin ≥ %50'si kripto ise BTC (bugünkü gibi); değilse trader'ın işlem yaptığı
+  varlıkların eşit ağırlıklı, maruziyet eşleşmiş al-tut sepeti (HIP-3 coinlerin 1 saatlik mumlarından).
+- **Katman** (her satıra `katman`):
+  - `kopyalanabilir` = adım 1–7'nin hepsi Geçti.
+  - `izleme_adayi` = adım 1, 2, 3 Geçti (tarz + kaldıraç + gecikmeli kopya kârlı); 4–7 ne olursa olsun.
+  - `yok` = diğer.
 
 ## Lider teşhisi (2026-10-27 sonucundan)
-- Adım 1–2'yi 189 adres geçti; adım 3 **ve** 4'ü birlikte geçen **9** adres var (raporun "adım 5: 0" satırı plasebonun
-  hiç hesaplanamamasından). 9'unun da `plasebo_hata` = `non-overlapping placebo placement unavailable`.
-- **Neden:** `randomize_trades` bir trader'ın **tüm** işlemlerini (tüm coinler) birbirine hiç değmeyecek şekilde
-  yerleştirmeye çalışıyor. Gerçek trader'lar aynı anda birden çok coinde pozisyon tutuyor; toplam elde tutma süresi
-  pencereyi aşınca yerleştirme imkânsız. Yani hata veri yetersizliği değil, plasebo tasarımı.
-- Kapsam: 12.461 adresin 8.196'sı işlendi (shard'lar 100 dk'da bitmedi); 66 adres HTTP 500 ile düştü.
+- **Plasebo hiç hesaplanamadı.** Adım 3+4'ü geçen 9 adresin hepsinde
+  `plasebo_hata = non-overlapping placebo placement unavailable`. Nedeni `randomize_trades`: bir trader'ın **tüm** coinlerdeki
+  işlemlerini birbirine hiç değmeyecek şekilde yerleştirmeye çalışıyor; aynı anda birçok coinde pozisyon tutan trader'da
+  bu imkânsız.
+- **Kapsam eksik:** 12.461 adresin 8.196'sı işlendi; 66 adres HTTP 500 ile düştü.
+- Yeni eşiklerle kaba tahmin (eldeki %66 veriyle): swing adım 3 ≈ 22, adım 4 ≈ 4. Intraday ayrıca gelecek.
 
 ## İşler
-1. **Plasebo (adım 5) düzeltmesi:** çakışma yasağı **coin başına** olsun (aynı coinde aynı anda tek pozisyon; farklı
-   coinler çakışabilir — gerçekteki gibi). Coin, yön, büyüklük, süre, maliyet aynı kalır; 1000 tekrar; p ≤ 0,05.
-   Bir coinin işlemleri coin başına da yerleşemiyorsa o coin için işlem dizisini bütün olarak **rastgele dairesel
-   kaydır** (aralıklar korunur) ve satıra `plasebo_not = "dairesel kaydırma: <coin listesi>"` yaz. Plasebo artık
-   yerleştirme yüzünden NaN olmamalı; olursa `plasebo_hata` dolu ve sınıf `Yetersiz`.
-2. **Kapsam:**
-   - Shard sayısı 16 → 32.
-   - `--eksikleri-tamamla`: aynı günün `sonuc.csv`'sinde olmayan veya `neden` alanı "veri hatası" olan adresleri işler
-     ve birleştirir. HTTP 5xx için adres başına 3 deneme (artan bekleme).
-   - RAPOR'a "işlenen / evren" oranı yazılır. Hedef ≥ %98.
-3. **Yalnız adım 5–8'i yeniden koş** modu (`--yalniz-adim5` var; son `sonuc.csv`'den 1–4'ü geçenleri alır): önce
-   bununla 9 adres için hızlı sonuç, sonra tam koşu.
-4. **İlişkili hesap kontrolü** (yalnız adım 6'yı geçenler; puanı değiştirmez, işaret koyar). Kaynak:
-   `arastirma/copytrade/argon_hazir_servis_iliskili_hesap.md`. İstekler `subAccounts`, `userVaultEquities` (vault
-   lideri mi; `vaultDetails.leader`), `extraAgents`, `userNonFundingLedgerUpdates` (iç transfer karşı adresleri). Yeni
-   sütunlar `iliskili_adresler` (`;` ile) ve `iliskili_not`; ilişkili adres de leaderboard'daysa ve ters yönde açık
-   pozisyonu varsa `iliskili_not = "ters pozisyonlu ilişkili hesap"`.
-5. **Rapor:** `copytrade/kapi/<tarih>/RAPOR.md`'de huni; adım 1–2'yi geçenler için tablo (her adımın sonucu ve
-   nedeni); "Geçti" listesi ayrı; ilişkili hesap işaretleri.
-6. İş akışı `main`'den tetiklensin (`copytrade/kapi/CALISTIR` yolu; dal kısıtı kalksın). Sonuçlar `main`'e
-   yazılmaz; `copytrade-kapi` veri dalına (yoksa yetim) yazılır.
+1. **Plasebo düzeltmesi.** Çakışma yasağı **coin başına** olsun: aynı coinde aynı anda tek pozisyon, farklı coinler
+   çakışabilir. Coin, yön, büyüklük, süre ve maliyet aynı kalır; 1000 tekrar; p ≤ 0,05. Bir coin coin başına da
+   yerleşemiyorsa o coinin işlem dizisi bütün olarak rastgele **dairesel kaydırılır** ve `plasebo_not`'a yazılır. Gecikme
+   tarza göredir: intraday 30 dk, swing 2 saat.
+2. **Tarz ve eşikler** (yukarıdaki tablo); yeni sütunlar `tarz`, `kisa_islem_payi`, `gecikme_480dk_net`, `katman`,
+   `genc_aday`, `alfa_kiyas` (`BTC` | `sepet`).
+3. **Kapsam:** shard 16 → 32; `--eksikleri-tamamla` (aynı günün `sonuc.csv`'sinde olmayan veya `neden` alanı
+   "veri hatası" olan adresler); HTTP 5xx için 3 deneme (artan bekleme); RAPOR'a "işlenen / evren" yazılır, hedef ≥ %98.
+4. **İlişkili hesap kontrolü** (katmanı `yok` olmayanlara; puanı değiştirmez, işaret koyar). Kaynak:
+   `arastirma/copytrade/argon_hazir_servis_iliskili_hesap.md`. İstekler: `subAccounts`, `userVaultEquities` +
+   `vaultDetails.leader`, `extraAgents`, `userNonFundingLedgerUpdates` (iç transfer karşı adresleri). Sütunlar
+   `iliskili_adresler` (`;` ile ayrılmış) ve `iliskili_not`.
+5. **Keşif verisi** (pano Keşif sekmesi için; şema aşağıda): `kesif/kesif.json`, `copytrade-kapi` veri dalında
+   (yoksa yetim dal). Kapı sonuçları da bu dala yazılır, `main`'e yazılmaz.
+6. **İş akışı:** `main`'den tetiklenir (`copytrade/kapi/CALISTIR` yolu ve elle); **haftalık zamanlama** (pazar, TSİ
+   gece). `--yalniz-adim5` modu korunur: önce 9 adres için hızlı koşu, sonra tam koşu.
+7. **Telegram Worker:** cron `*/5` → `* * * * *` (her dakika; ücretsiz plan yeter). Mesaja tarz etiketi
+   `[Intraday]` / `[Swing]` eklenir; `durum.json`'daki `tarz` alanından okunur.
+8. **İzleme motoru:** `durum.json`'da trader başına `tarz` (izleme listesinde yeni alan `tarz`; yoksa kapı sonucundan).
+   Sanal kopya gecikmesi tarza göre: intraday 30 dk, swing 120 dk; `sanal_kopya.gecikme_dk` buna göre. Sözleşme v1.3:
+   `traderlar[].tarz`.
+
+## `kesif.json` şeması (v1)
+```json
+{"surum": 1, "uretildi": "…Z", "evren": 12461, "islenen": 12300,
+ "adaylar": [{
+   "adres": "0x…", "tarz": "intraday|swing|scalp", "katman": "kopyalanabilir|izleme_adayi",
+   "genc_aday": false, "gecmis_gun": 365, "kapanan_islem": 120, "aktif_ay": 12, "hesap_degeri": 250000,
+   "piyasa_payi": {"kripto": 0.7, "hisse": 0.2, "emtia": 0.1}, "binance_payi": 0.65,
+   "medyan_tutma_sa": 30.5, "kisa_islem_payi": 0.08, "medyan_kaldirac": 1.8, "max_kaldirac": 6.0,
+   "kopya": {"g30": 0.12, "g120": 0.09, "g480": 0.03},
+   "karli_ay_orani": 0.67, "en_buyuk_islem_payi": 0.18, "pf_en_iyisiz": 1.6, "max_dusus": 0.22, "getiri_12a": 0.45,
+   "plasebo_p": 0.03, "alfa_t": 2.4, "alfa_kiyas": "BTC", "bhy_q": 0.08,
+   "adimlar": {"1": {"durum": "Geçti", "neden": ""}, "2": {"…": "…"}, "…": {}, "8": {}},
+   "iliskili_not": "", "egri": [["2025-10-27", 0.0], ["2025-11-03", 0.012]]
+ }]}
+```
+- Yalnız katmanı `yok` olmayanlar girer.
+- `egri`: son 365 gün, haftalık, PnL / hesap.
+- Sıralama: katman, sonra `genc_aday` olmayanlar, sonra `alfa_t`.
+- Sayılar ham (oran 0–1); biçimlendirme panoda yapılır.
 
 ## Testler (ağsız)
-Aynı anda iki coinde pozisyonu olan trader için plasebo yerleşir; tek coinde sığmayan dizide dairesel kaydırma ve not;
-1000 skor; 5xx yeniden deneme; eksikleri tamamla birleştirmesi (tekrar satır yok); ilişkili hesap işaretleri (sabit
-yanıtlarla).
+- Plasebo: aynı anda iki coinde pozisyonu olan trader için yerleşir; tek coinde sığmayan dizi dairesel kayar ve not
+  düşülür; 1000 skor üretilir.
+- Tarz sınıflaması ve sınırlar (1 saat, 24 saat, kısa işlem payı).
+- Katman kuralları.
+- Alfa kıyası seçimi (kripto payı %50 sınırı).
+- 5xx yeniden deneme; eksikleri tamamla birleştirmesi (tekrar satır yok).
+- İlişkili hesap işaretleri (sabit yanıtlarla).
+- `kesif.json` şeması.
+- Worker'da tarz etiketi.
 
 ## Kabul
-- `python -m pytest -q` yeşil.
-- `--yalniz-adim5` koşusunda 9 adresin hepsinde `plasebo_p` sayı (ya da açık nedenli `plasebo_hata`).
-- Tam koşuda işlenen ≥ %98; RAPOR huni ve listeler eksiksiz.
+- `python -m pytest -q` ve Worker testleri yeşil.
+- `--yalniz-adim5` koşusunda 9 adresin hepsinde `plasebo_p` bir sayı (ya da nedeni açık `plasebo_hata`).
+- Tam koşuda işlenen ≥ %98; RAPOR'da huni tarz ve katmana göre ayrı.
+- `kesif.json` veri dalında.
 - `docs/codex_durum_trader_secimi.md`: yapılanlar, seçimler, sınırlar.
 
-## Sonra (lider + kullanıcı)
-"Geçti" ve sınırdaki adaylar lider tarafından incelenir; izleme listesi (≤ 20) **kullanıcı onayıyla**
-`copytrade/izleme_listesi.yaml`'a girer; t0 = giriş günü; 3 ay sanal izleme. Gerçek para yok.
+## Sonra
+Sonnet: pano **Keşif** sekmesi (`kesif.json`; ayrı görev). Lider: adayları inceler ve kullanıcıya önerir. İzleme listesi
+**kullanıcı onayıyla** güncellenir; t0 = giriş günü; 3 ay sanal izleme. Gerçek para yok.
