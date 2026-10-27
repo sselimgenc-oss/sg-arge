@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1, 2026-10-27, TASLAK: kullanıcı onayı bekliyor)
+# Veri sözleşmesi — copy trade izleme (v1, 2026-10-27, kullanıcı onayı)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -7,11 +7,11 @@ sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `suru
 | Dosya | Nerede | Kim yazar | Sıklık |
 |---|---|---|---|
 | `izleme/durum.json` | sg-arge, `copytrade-izleme` dalı (main büyümesin) | Codex işi | 10 dakikada bir |
-| `izleme/ornek_durum.json` | sg-arge `main` (sabit örnek, 4 trader) | Codex | bir kez; Sonnet bununla başlar |
-| Kararlar (açtım/atladım) | **gizli depo** — herkese açık repoya yazılmaz (§4) | Telegram/pano | her karar |
+| `izleme/ornek_durum.json` | sg-arge `main` (sabit örnek, 4 trader) | lider (hazır) | sabit; Sonnet bununla başlar |
+| `izleme/kararlar.jsonl` (açtım/atladım) | sg-arge, `copytrade-izleme` dalı (repolar açık; ikinci repoya yazma anahtarı gerekmesin) | Telegram işi | her karar |
 
-Repo herkese açık: trader adresleri zaten herkese açık zincir verisidir; **kullanıcının kararları, tutarları, kişisel
-bilgisi** herkese açık dosyaya girmez.
+Repolar herkese açık (kullanıcı kararı 2026-10-27). Bu yüzden karar kaydında **tutar, bakiye, hesap, isim yoktur**;
+yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zincir verisidir.
 
 ## 2. `durum.json` şeması
 ```json
@@ -50,14 +50,14 @@ bilgisi** herkese açık dosyaya girmez.
 ```
 - `egri`: son 90 gün, günlük, t0'dan bağımsız trader'ın kümülatif PnL / hesap değeri (Hyperliquid `portfolio`).
 - `olaylar`: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
-- `buyutme`/`azaltma`: aynı yönde pozisyonun **%25'inden fazla** değişimi; daha küçükleri olay sayılmaz.
+- `buyutme`/`azaltma`: aynı yönde pozisyonun **%25'inden fazla** değişimi (lider kararı); daha küçükleri olay sayılmaz.
 - `sanal_kopya`: t0 sonrası, 30 dk gecikmeli, maliyetli (taker %0,045 + kayma %0,05 + funding) — CT-Kapı
   `delayed_copy` ile aynı hesap.
 
 ## 3. Sağlık ışığı ve form (hesap Codex'te, `pano/saglik.py` yeniden kullanılır)
 | Işık | Koşul (herhangi biri) |
 |---|---|
-| **kırmızı** | t0 sonrası getiri t0 öncesi geçmişten kurulan blok bootstrap konisinin %5 altında; zirveden düşüş > t0 öncesi en büyük düşüş × 1,5; gerçek kaldıraç > 10x; martingale işareti |
+| **kırmızı** (eşikler v1; kullanıcı sonra gözden geçirecek) | t0 sonrası getiri t0 öncesi geçmişten kurulan blok bootstrap konisinin %5 altında; zirveden düşüş > t0 öncesi en büyük düşüş × 1,5; gerçek kaldıraç > 10x; martingale işareti |
 | **sarı** | koninin %5–%20 bandında; CUSUM uyarısı; son 30 günde işlem yok; kaldıraç 3–10x |
 | **yeşil** | hiçbiri |
 
@@ -66,7 +66,7 @@ kopyalama kararını değiştirmez (karar: kapı + ışık).
 
 ## 4. Kararlar (açtım / atladım)
 Kayıt: `{"olay_id", "zaman", "karar": "acti | atladi", "neden": "gec_gordum | begenmedim | bakiye_yok | diger",
-"not": ""}`. **Gizli depoda** tutulur (sg-pano özel repo ya da Cloudflare KV — Argon araştırmasıyla seçilecek).
+"not": ""}` — `not` serbest metin değil, kısa etiket; tutar/kişisel bilgi yazılmaz. `copytrade-izleme` dalında `izleme/kararlar.jsonl`; v1'de karar yalnız Telegram düğmesiyle verilir.
 İstatistik: aynı trader için "tüm olaylar" ile "açtıklarım" sanal sonuçları ayrı hesaplanır.
 
 ## 5. Telegram

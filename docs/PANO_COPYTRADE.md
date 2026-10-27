@@ -1,6 +1,7 @@
-# İzleme ekranı tanımı — copy trade sekmesi (v1, 2026-10-27, TASLAK: kullanıcı onayı bekliyor)
+# İzleme ekranı tanımı — copy trade sekmesi (v1, 2026-10-27, kullanıcı onayı)
 
-Yapan: **Sonnet**, sg-pano reposunda. Veri: `docs/VERI_SOZLESMESI.md` (sg-arge). Önce sabit örnekle
+Yapan: **Sonnet**, sg-pano reposunda. Veri: `docs/VERI_SOZLESMESI.md` (sg-arge). Canlı veri: sg-arge `copytrade-izleme`
+dalındaki `izleme/durum.json` ve `izleme/kararlar.jsonl` (herkese açık ham GitHub adresi). Önce sabit örnekle
 (`izleme/ornek_durum.json`) çalışır; canlı veri hazır olunca yalnız kaynak adresi değişir.
 Kullanıcı tek kişi; **telefon öncelikli**, bilgisayarda da aynı sayfa (uygulama kurulmaz).
 
@@ -22,14 +23,14 @@ bu trader için "açtıklarım" ile "tümü" karşılaştırması (karar kaydı 
 
 ## 3. Akış sekmesi
 Son olaylar zaman sırasıyla (açılış/kapanış/büyütme/ışık). Her açılış satırında karar durumu: Açtım · Atladım ·
-cevapsız. Telegram'dan verilen karar burada görünür; burada da verilebilir (aynı kayıt).
+cevapsız. Karar v1'de Telegram düğmesiyle verilir; pano yalnız gösterir (`izleme/kararlar.jsonl`).
 
 ## 4. İstatistik sekmesi
 - Trader başına: tüm olayların sanal sonucu ↔ açtıklarımın sanal sonucu; atlama nedenleri dağılımı.
 - Toplam: kararlarımın değer katıp katmadığı (fark ve işlem sayısı). Az veride "yetersiz veri" yazılır.
 
 ## 5. Kurallar
-- Gizlilik: kararlar ve kullanıcıya dair hiçbir bilgi herkese açık dosyaya yazılmaz (sözleşme §4).
+- Gizlilik: repolar açık; karar kaydında tutar, bakiye, isim yok (sözleşme §4).
 - Sayılar Türkçe biçim (1.043,20 $; %4,3). Saat Türkiye saati.
 - Erişim mevcut pano gibi (`PANEL_TOKEN`); yeni hesap/şifre sistemi kurulmaz.
 - Hiçbir ekran emir göndermez; para hareketi yok.
