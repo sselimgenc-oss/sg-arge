@@ -116,3 +116,8 @@ def test_single_address_error_does_not_kill_the_shard(monkeypatch):
     from datetime import datetime, timezone
     row = kapi.evaluate_address({"address": "0xabc", "accountValue": 1000.0}, Client(), Cache(), datetime.now(timezone.utc), 0, 0, None, RULES)
     assert row["sinif"] == "Yetersiz" and row["hata"].startswith("IndexError") and row["neden"].startswith("veri hatası")
+
+
+def test_ratio_float_noise_within_tolerance_passes_but_real_excess_fails():
+    assert sanity_check(table(good_row(pay_kripto=1.0000000000000002)), RULES) == []
+    assert sanity_check(table(good_row(pay_kripto=1.0000001)), RULES) != []

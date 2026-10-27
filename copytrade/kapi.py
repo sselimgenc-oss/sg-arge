@@ -757,7 +757,8 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
     """Tek adres için 1. aşama + adım 1–6 (adım 7 ve katman birleştirmede). ``yalniz_adim5``: plaseboyu adım 3–4'e
     bakmadan hesaplar (hızlı koşu; satırın adım değerleri yine kurallara göre kalır). Her aşamanın süresi günlüğe yazılır."""
     address = leader["address"]
-    row: dict[str, Any] = {"address": address, "account_value": leader["accountValue"], "kaynak": leader.get("kaynak", "leaderboard")}
+    row: dict[str, Any] = {"address": address, "account_value": leader["accountValue"], "kaynak": leader.get("kaynak", "leaderboard"),
+                           "hesap": HESAP_SURUMU}
     progress = Progress(address[:10] + "…" + address[-4:], client, cache, *([log] if log else []))
     outcome = "tamam"
     try:
@@ -1019,6 +1020,10 @@ def freeze_report(table: pd.DataFrame) -> str:
     return "\n".join(lines + [f"- Aday listesi ({summary['aday_sayisi']} adres: kopyalanabilir + izleme_adayi) özeti: `{summary['aday_ozeti']}`"])
 
 
+# Hesap sürümü: satırın hangi hesap koduyla üretildiğini gösterir. Veri dalındaki eski sonuç dosyasında bu sütun yoksa ya da farklıysa
+# satır "eski_hesap"tır: yeni sonuca karışmaz, akıl sağlığı kapısına girmez, ayrı dosyaya yazılır (sonuc_eski_hesap.csv.gz).
+HESAP_SURUMU = "v1.1-2026-10-27b"
+
 RATIO_COLUMNS = ("profitable_month_ratio", "max_drawdown", "largest_trade_share", "kisa_islem_payi", "gece_payi", "pay_kripto", "pay_hisse",
                  "pay_endeks", "pay_emtia", "binance_payi", "candle_coverage", "plasebo_p", "bhy_q", "kopya_eksik_orani")
 LEVERAGE_COLUMNS = ("median_leverage", "max_leverage")
@@ -1040,7 +1045,8 @@ def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
     for name in RATIO_COLUMNS:
         if name in table:
             values = pd.to_numeric(table[name], errors="coerce").dropna()
-            bad = values[(values < 0) | (values > 1)]
+            tolerance = float(rules["saglik_oran_toleransi"])
+            bad = values[(values < -tolerance) | (values > 1 + tolerance)]
             if len(bad):
                 problems.append(f"{name}: {len(bad)} satırda 0–1 dışı (min {values.min():.4g}, max {values.max():.4g})")
     for name in LEVERAGE_COLUMNS:
@@ -1069,6 +1075,24 @@ def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
         if empty:
             problems.append(f"plasebo_p: adım 1–4'ü geçen {int(family.sum())} adresin {empty} tanesinde boş")
     return problems
+
+
+def sanity_by_source(table: pd.DataFrame) -> dict[str, list[str]]:
+    """Akıl sağlığı ihlallerini satır kaynağına göre (``satir_kaynagi``: bu koşu / önceki dosya) ayırır; ihlalli adreslerden ilk 5'i."""
+    out: dict[str, list[str]] = {}
+    if "satir_kaynagi" not in table:
+        return out
+    rules = load_rules()
+    for source, part in table.groupby("satir_kaynagi"):
+        found = sanity_check(part.reset_index(drop=True), rules)
+        bad = []
+        for name in (*RATIO_COLUMNS, *LEVERAGE_COLUMNS):
+            if name in part:
+                values = pd.to_numeric(part[name], errors="coerce")
+                limit = 1.0 if name in RATIO_COLUMNS else float(rules["saglik_max_kaldirac"])
+                bad += part.loc[(values < -float(rules["saglik_oran_toleransi"])) | (values > limit + float(rules["saglik_oran_toleransi"])), "address"].astype(str).tolist()
+        out[str(source)] = found + ([f"örnek adresler: {sorted(set(bad))[:5]}"] if bad else [])
+    return out
 
 
 def run_status(finished: int, expected: int | None, processed: int, universe: int | None, mod: str, rules: dict) -> dict:
@@ -1100,16 +1124,30 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
         output = root / "kapi" / date
         output.mkdir(parents=True, exist_ok=True)
         existing = output / "sonuc.csv"
+        legacy = pd.DataFrame()
+        fresh = [frame.assign(satir_kaynagi="bu_kosu") for frame in frames]
         if existing.exists():
-            frames = [pd.read_csv(existing)] + frames
+            # Önceki dosyadaki satırlar yalnız AYNI hesap sürümüyle üretildiyse (ör. aynı günün kesilen koşusu) kalır; v1.1 öncesi / farklı
+            # sürüm satırları eski_hesap olarak ayrı tutulur: yeni sonuca ve akıl sağlığı kapısına girmez.
+            previous = pd.read_csv(existing, low_memory=False)
+            same = previous["hesap"].eq(HESAP_SURUMU) if "hesap" in previous else pd.Series(False, index=previous.index)
+            legacy = previous[~same].assign(durum="eski_hesap")
+            fresh = [previous[same].assign(satir_kaynagi="onceki_dosya_ayni_hesap")] + fresh
         if not evren.get(date) and (output / "evren.json").exists():
             evren[date] = int(json.loads((output / "evren.json").read_text(encoding="utf-8"))["evren"])
-        table = pd.concat(frames, ignore_index=True).drop_duplicates("address", keep="last")
+        table = pd.concat(fresh, ignore_index=True).drop_duplicates("address", keep="last")
         table = finalize(table)
         problems = sanity_check(table)
         if problems:
-            raise SanityError(f"{date}: akıl sağlığı kapısı tutmadı, yayımlanmaz:\n- " + "\n- ".join(problems))
+            raise SanityError(f"{date}: akıl sağlığı kapısı tutmadı, yayımlanmaz:\n- " + "\n- ".join(problems)
+                              + f"\nKaynağa göre: {sanity_by_source(table)}\n(eski_hesap olarak ayrılan satır: {len(legacy)}, kapıya girmedi)")
+        if len(legacy):
+            legacy.to_csv(output / "sonuc_eski_hesap.csv.gz", index=False, compression="gzip")
         status = run_status(len(list(shards.rglob(f"{date}/bitti.json"))), expected, len(table), evren.get(date), mod, load_rules())
+        status["eski_hesap_satir"] = int(len(legacy))
+        status["hesap"] = HESAP_SURUMU
+        status["satir_kaynagi"] = table["satir_kaynagi"].value_counts().to_dict()
+        status["kapi_sorunlari"] = []
         statuses[date] = status
         (output / "durum.json").write_text(json.dumps(status, ensure_ascii=False, indent=1), encoding="utf-8")
         table.to_csv(output / "sonuc.csv", index=False)

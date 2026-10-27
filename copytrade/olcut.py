@@ -162,22 +162,34 @@ def martingale_ratio(fills: list[dict[str, Any]], min_adverse: float | None = No
 
 
 def effective_leverage(fills: list[dict[str, Any]], account_value: Any) -> tuple[float | None, float | None]:
+    """``effective_leverage_detail``'in (medyan, en yüksek) kısmı."""
+    return effective_leverage_detail(fills, account_value)[:2]
+
+
+def effective_leverage_detail(fills: list[dict[str, Any]], account_value: Any,
+                              max_plausible: float | None = None) -> tuple[float | None, float | None, int]:
     """(zaman ağırlıklı medyan, en yüksek) gerçek kaldıraç = o anki toplam pozisyon değeri / **o anki** hesap değeri.
 
     ``account_value``: sabit sayı ya da zaman indeksli hesap değeri serisi (portfolio ``accountValueHistory``); seri verilirse her
     dolumdan sonraki kaldıraç, o dolumdan önceki en son hesap değerine bölünür (bugünkü değere değil). Medyan, pozisyon açıkken geçen
     süreyle ağırlıklıdır (bir sonraki doluma kadar); en yüksek tüm örneklerden. Hesap değeri bilinmeyen/≤ 0 örnek atlanır.
+
+    ``max_plausible`` (varsayılan ``saglik_max_kaldirac``) üstündeki örnek fiziksel olarak olanaksızdır: hesap değeri geçmişi o ana göre
+    bayattır (yatırımdan hemen sonraki dolum, önceki küçük noktaya bölünür; canlı koşuda 1,46e6x görüldü). Böyle örnek atılır (ağırlık ve
+    en yüksek dışı) ve sayısı üçüncü değer olarak döner (``kaldirac_supheli_ornek``).
     """
+    from copytrade.kurallar import load_rules
+    ceiling = float(load_rules()["saglik_max_kaldirac"]) if max_plausible is None else float(max_plausible)
     data = _frame(fills)
     if data.empty:
-        return None, None
+        return None, None, 0
     series = account_value if isinstance(account_value, pd.Series) else None
     if series is None and (not account_value or account_value <= 0):
-        return None, None
+        return None, None, 0
     if series is not None:
         series = series[series > 0].sort_index()
         if series.empty:
-            return None, None
+            return None, None, 0
     data = data.sort_values("time", kind="stable")   # API sırası zamana göre garanti değil (sırasız dolum süreyi negatif yapıp çöküyordu)
     position: defaultdict[str, float] = defaultdict(float)
     price: dict[str, float] = {}
@@ -198,7 +210,9 @@ def effective_leverage(fills: list[dict[str, Any]], account_value: Any) -> tuple
     values = np.array([v for _, v in samples], dtype=float)
     values = np.where(np.isfinite(values), values, 0.0)
     if len(values) == 0:
-        return None, None
+        return None, None, 0
+    implausible = values > ceiling
+    values = np.where(implausible, 0.0, values)
     # Konumsal hesap: aynı zaman damgalı dolumlar (indeks tekrarı) ağırlık dizisini kaydırmasın.
     durations = np.diff(times).astype(float) / 1e9
     durations = np.where(np.isfinite(durations) & (durations > 0), durations, 0.0)
@@ -212,7 +226,7 @@ def effective_leverage(fills: list[dict[str, Any]], account_value: Any) -> tuple
         sorted_values, weights = held[mask][order], spans[mask][order]
         cut = int(np.searchsorted(np.cumsum(weights), weights.sum() / 2.0))
         median = float(sorted_values[min(max(cut, 0), len(sorted_values) - 1)])
-    return median, float(values.max())
+    return median, float(values.max()), int(implausible.sum())
 
 
 def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]] | None = None,
@@ -266,7 +280,7 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
     total_volume = float(volumes.sum())
     liquid_share = (float(volumes[volumes.index.isin(liquid_coins or set())].sum()) / total_volume if total_volume else 0.0)
     ratio, additions = martingale_ratio(fills, martingale_min_adverse)
-    lev_median, lev_max = effective_leverage(fills, account_history if account_history is not None else denominator)
+    lev_median, lev_max, lev_dropped = effective_leverage_detail(fills, account_history if account_history is not None else denominator)
     return {
         "history_days": int((data.time.iloc[-1] - data.time.iloc[0]).total_seconds() // 86400),
         "closed_trades": len(rounds), "profitable_month_ratio": float((daily.resample("MS").sum() > 0).mean()),
@@ -276,7 +290,7 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
         "profit_factor_without_best": (sum(x for x in without_best if x > 0) / gross_loss if gross_loss else None),
         "median_holding_hours": (float(pd.Series(held).median()) if (held := [x["holding_hours"] for x in rounds
                                   if x["holding_hours"] is not None]) else None),
-        "median_leverage": lev_median, "max_leverage": lev_max,
+        "median_leverage": lev_median, "max_leverage": lev_max, "kaldirac_supheli_ornek": lev_dropped,
         "setting_leverage": max(leverages) if leverages else None, "liquid_coin_share": liquid_share,
         "martingale_ratio": ratio, "martingale_additions": additions,
         "martingale_signal": additions >= martingale_min_additions and ratio > martingale_max_ratio,

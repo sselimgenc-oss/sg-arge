@@ -79,3 +79,14 @@ def test_leverage_survives_nan_price_and_all_zero_weights():
     assert median is not None and top is not None
     same_instant = [fill(1, "B", 5, 0, 100, tid=1), fill(1, "A", 5, 5, 100, tid=2)]
     assert effective_leverage(same_instant, 1000.0)[0] is not None
+
+
+def test_golden_leverage_drops_implausible_stale_account_samples():
+    """Canlı koşuda max_leverage 1,46e6 çıktı: yatırımdan hemen sonraki dolum, önceki ucuz hesap noktasına (0,01 $) bölünüyordu.
+    Hesap: T0'da 0,01 $, 5. saatte 1000 $. 1. saatte 10 BTC @100 → 1000/0,01 = 100.000x (olanaksız, atılır); 11. saatte 10 BTC daha → 2000/1000 = 2x;
+    31. saatte kapanış. Atılan örnek ağırlık ve en yüksekten çıkar: medyan 2x (20 sa), en yüksek 2x, atılan 1."""
+    history = pd.Series([0.01, 1000.0], index=pd.to_datetime([T0, T0 + 5 * H], unit="ms", utc=True))
+    fills = [fill(1, "B", 10, 0, 100, tid=1), fill(11, "B", 10, 10, 100, tid=2), fill(31, "A", 20, 20, 100, tid=3)]
+    from copytrade.olcut import effective_leverage_detail
+    assert effective_leverage_detail(fills, history) == (2.0, 2.0, 1)
+    assert effective_leverage_detail(fills, history, max_plausible=1e9)[1] == 100_000.0     # tavan kaldırılırsa eski hatalı değer

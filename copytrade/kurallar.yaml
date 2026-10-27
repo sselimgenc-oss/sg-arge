@@ -100,3 +100,5 @@ saglik_max_kaldirac: 200
 saglik_min_satir_sabit_kontrolu: 50
 # Adres başı hata (hata sütunu dolu) oranı bunu aşarsa kapı kırmızı
 saglik_max_hata_orani: 0.05
+# Oran sütunlarında kayan nokta farkı için tolerans (ör. paylar toplamı 1,0000000000000002)
+saglik_oran_toleransi: 1.0e-9

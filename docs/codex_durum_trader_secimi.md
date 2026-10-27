@@ -16,6 +16,14 @@
 - Altın örnek: `tests/test_defter.py::test_golden_8_…` (1 katlanmış gün + 3 saatlik satır, elle hesap: funding −0,0024, net −0,0043; eski davranış −0,0028 verirdi).
 - Not: çalışan hızlı koşu (2. deneme) bu düzeltmeden önceki koddadır; funding payı küçük. Bir sonraki hızlı koşuda etkisi ölçülür.
 
+## Bulgu — 2. hızlı koşu (run 40591879635) akıl sağlığı kapısında durdu (kapı doğru davrandı)
+- İhlaller: `max_drawdown` 1304 satır (max 1,48e12), `max_leverage` 7 satır (max 1,46e6), `pay_kripto` 3 satır.
+- **Kaynak ayrımı:** veri dalındaki eski `sonuc.csv` (8.196 satır, v1.1 öncesi) içinde 1308 satırda `max_drawdown` > 1 var (max 1,4756e12; eski payda hatası) ve `max_leverage` en çok 67 → 1304 düşüş ihlali eski dosyadan; `max_leverage` 1,46e6 ve `pay_kripto` ihlalleri bu koşuda hesaplananlardan.
+- **Çözüm 1 (eski hesap karışmasın):** her satıra `hesap` sütunu (`HESAP_SURUMU`) yazılır. Birleştirmede önceki dosyadan yalnız AYNI sürümlü satırlar kalır (kesilen aynı gün koşusu); diğerleri `durum = eski_hesap` ile `sonuc_eski_hesap.csv.gz`'ye ayrılır, yeni sonuca/BHY'ye/kapıya girmez. `durum.json`: `eski_hesap_satir`, `hesap`, `satir_kaynagi` (bu_kosu / onceki_dosya_ayni_hesap). Kapı tutmazsa hata iletisi ihlalleri kaynağa göre ve ilk 5 adresle yazar.
+- **Çözüm 2 (kök neden, yeni satırlarda `max_leverage` 1,46e6x):** kaldıraç, dolumdan önceki en son hesap değerine bölünüyor; yatırımdan hemen sonraki dolumda bu değer bayat/çok küçük (ör. 0,01 $) kalıyordu. `saglik_max_kaldirac` (200x) üstü örnekler fiziksel olarak olanaksız sayılıp ağırlık ve en yüksekten atılır, sayısı `kaldirac_supheli_ornek` sütununa yazılır (`tests/test_olcut_olculer.py::test_golden_leverage_drops_implausible_stale_account_samples`).
+- **Çözüm 3 (`pay_kripto`):** paylar toplamı kayan nokta gürültüsüyle 1,0000000000000002 çıkıyordu; oran sütunlarında `saglik_oran_toleransi: 1e-9` (kurallar.yaml). 1,0000001 gibi gerçek aşım hâlâ kırmızı.
+- Yeni hesaplanan satırlarda 0–1 dışı düşüş çıkarsa bu ayrı hata sayılır; kaynak ayrımı onu da gösterecek.
+
 SORU: (yok)
 
 Yapan: Sonnet. Dal: `claude/kapi-v1-1`. Görev: `docs/GOREV_TRADER_SECIMI.md` (iş 1–9). Kullanıcı kararlarına ve eşiklere

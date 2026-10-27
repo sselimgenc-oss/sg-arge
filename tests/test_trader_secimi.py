@@ -10,7 +10,7 @@ import pytest
 import requests
 
 from copytrade import kesif
-from copytrade.kapi import (activity_metrics, basket_returns, delay_test_days, family_mask, night_share, benchmark_kind, binance_availability, binance_symbol, classify_style,
+from copytrade.kapi import (HESAP_SURUMU, SanityError, activity_metrics, basket_returns, delay_test_days, family_mask, night_share, benchmark_kind, binance_availability, binance_symbol, classify_style,
                             delay_for_style, finalize, gate_status, katman, market_shares, merge_shards,
                             missing_addresses, placebo_scores, randomize_trades, short_trade_share)
 from copytrade.kurallar import load_rules
@@ -213,7 +213,9 @@ def result_row(address, **over):
 def test_merge_completes_existing_day_without_duplicate_rows(tmp_path: Path):
     day = tmp_path / "root" / "kapi" / "2026-10-28"
     day.mkdir(parents=True)
-    pd.DataFrame([result_row("0xa", katman="izleme_adayi", plasebo_p=.01), {"address": "0xb", "asama1": "Yetersiz", "neden": "veri hatası: HTTPError: 500", "katman": "yok"}]).to_csv(day / "sonuc.csv", index=False)
+    # Aynı hesap sürümüyle üretilmiş önceki satırlar (kesilen aynı gün koşusu) korunur; sürümsüz satırlar korunmaz (aşağıdaki test).
+    pd.DataFrame([result_row("0xa", katman="izleme_adayi", plasebo_p=.01, hesap=HESAP_SURUMU),
+                  {"address": "0xb", "asama1": "Yetersiz", "neden": "veri hatası: HTTPError: 500", "katman": "yok", "hesap": HESAP_SURUMU}]).to_csv(day / "sonuc.csv", index=False)
     (day / "evren.json").write_text('{"evren": 3}')
     shard = tmp_path / "shards" / "stage1-0" / "2026-10-28"
     shard.mkdir(parents=True)
@@ -317,17 +319,30 @@ def test_none_metrics_fail_the_step_instead_of_raising():
     assert status["adim3"] == "Kaldı" and status["adim4"] == "Kaldı"
 
 
-def test_quick_run_rows_overlay_older_same_day_results_even_in_legacy_format(tmp_path: Path):
+def test_quick_run_keeps_pre_v11_rows_apart_as_eski_hesap_and_out_of_the_gate(tmp_path: Path):
+    """Davranış değişikliği (görev: eski hesap karışmasın): hesap sürümü olmayan / farklı satırlar yeni sonuca girmez, kapıya sokulmaz,
+    ``sonuc_eski_hesap.csv.gz``'ye ``durum = eski_hesap`` ile yazılır. Eski satırdaki 1,5e12 düşüş birleştirmeyi artık kırmaz."""
     day = tmp_path / "root" / "kapi" / "2026-10-28"
     day.mkdir(parents=True)
-    # v1 (katman/tarz sütunu yok) eski sonuç: hızlı koşunun satırı onu geçersiz kılar, diğer satırlar korunur.
-    pd.DataFrame([{"address": "0xold", "asama1": "Yetersiz"}, {"address": "0xnew", "asama1": "Yetersiz", "adim5": "Kaldı"}]).to_csv(day / "sonuc.csv", index=False)
+    pd.DataFrame([{"address": "0xold", "asama1": "Geçti", "max_drawdown": 1.5e12}, {"address": "0xnew", "asama1": "Yetersiz", "adim5": "Kaldı"}]).to_csv(day / "sonuc.csv", index=False)
     shard = tmp_path / "shards" / "stage1-0" / "2026-10-28"
     shard.mkdir(parents=True)
-    pd.DataFrame([result_row("0xnew", plasebo_p=.04)]).to_csv(shard / "sonuc.csv", index=False)
-    merge_shards(tmp_path / "shards", tmp_path / "root")
+    pd.DataFrame([result_row("0xnew", plasebo_p=.04, hesap=HESAP_SURUMU)]).to_csv(shard / "sonuc.csv", index=False)
+    statuses = merge_shards(tmp_path / "shards", tmp_path / "root")
     table = pd.read_csv(day / "sonuc.csv").set_index("address")
-    assert sorted(table.index) == ["0xnew", "0xold"] and table.loc["0xnew", "plasebo_p"] == .04 and table.loc["0xnew", "tarz"] == "swing"
+    assert list(table.index) == ["0xnew"] and table.loc["0xnew", "plasebo_p"] == .04 and table.loc["0xnew", "tarz"] == "swing"
+    old = pd.read_csv(day / "sonuc_eski_hesap.csv.gz")
+    assert sorted(old.address) == ["0xnew", "0xold"] and set(old.durum) == {"eski_hesap"}
+    assert statuses["2026-10-28"]["eski_hesap_satir"] == 2 and statuses["2026-10-28"]["satir_kaynagi"] == {"bu_kosu": 1}
+
+
+def test_sanity_failure_names_the_source_of_bad_rows(tmp_path: Path):
+    shard = tmp_path / "shards" / "stage1-0" / "2026-10-28"
+    shard.mkdir(parents=True)
+    pd.DataFrame([result_row("0xbad", plasebo_p=.04, max_leverage=1.46e6, hesap=HESAP_SURUMU)]).to_csv(shard / "sonuc.csv", index=False)
+    with pytest.raises(SanityError) as caught:
+        merge_shards(tmp_path / "shards", tmp_path / "root")
+    assert "bu_kosu" in str(caught.value) and "0xbad" in str(caught.value) and "max_leverage" in str(caught.value)
 
 
 def test_progress_log_reports_stage_times_and_candle_requests():
