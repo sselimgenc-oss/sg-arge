@@ -7,7 +7,7 @@
   <meta name="description" content="sg-arge copy trade hattının animasyonlu izometrik ofis görünümü. Örnek veriyle çalışır; gerçek emir yok.">
   <link rel="stylesheet" href="ofis.css">
 </head>
-<body>
+<body class="tam">
 <a class="atla" href="#ofisTuval">Ofise geç</a>
 <noscript><p class="hata">Bu sayfa JavaScript gerektirir (piksel ofis kodla çizilir).</p></noscript>
 <p id="hata" class="hata" role="alert" hidden></p>
@@ -101,6 +101,7 @@
       <canvas id="tuval" tabindex="0" role="img" aria-label="İzometrik ofis binası" aria-describedby="ofisAciklama"></canvas>
       <p id="ofisAciklama" class="sr">Ofis yükleniyor.</p>
       <div class="ipucu" id="ipucu" role="tooltip" hidden></div>
+      <button type="button" class="gun-serit" id="gunSerit" aria-controls="kartPanel" aria-label="Günlük özet; ayrıntı için tıkla"><b>Günlük özet</b><span id="gunSeritMetin">—</span><em>ayrıntı ›</em></button>
       <div class="ust-sol">
         <span class="serit" id="ornekFlt"><i></i>örnek veri · adresler uydurma</span>
         <span class="lejant" aria-label="Kol işaretleri"><i style="background:#ffb86b"></i>kohort <i style="background:#7cc4ff"></i>kontrol <i style="background:#b7c4c9"></i>havuz</span>
@@ -110,6 +111,10 @@
         <span class="oda-baslik" id="odaBaslik"></span>
         <button type="button" id="odaBilgiBtn">Oda bilgisi</button>
       </div>
+      <aside class="kart-panel" id="kartPanel" role="region" aria-label="Ofis paneli" hidden>
+        <header class="kp-bas"><h2 id="kpBaslik">Panel</h2><button type="button" id="kpKapat" aria-label="Paneli kapat (Esc)">×</button></header>
+        <div class="kp-ic" id="kpIc"></div>
+      </aside>
       <aside class="bilgi" id="bilgi" role="region" aria-label="Bilgi kutusu" hidden></aside>
       <aside class="cekmece" id="olayCekmece" role="region" aria-label="Olay çekmecesi" hidden>
         <header><h2>Olay çekmecesi <small id="cSay"></small></h2><button type="button" id="cKapat" aria-label="Olay çekmecesini kapat">×</button></header>
@@ -127,7 +132,7 @@
         <button type="button" id="zIn" aria-label="Yakınlaştır">+</button>
         <button type="button" id="zOut" aria-label="Uzaklaştır">−</button>
         <button type="button" id="zFit" aria-label="Tüm ofisi sığdır">⌂</button>
-        <button type="button" id="zPanel" aria-label="Sol paneli gizle ya da göster" aria-pressed="false">◧</button>
+        <button type="button" id="zPanel" aria-label="Klasik kart sütununu göster ya da gizle" aria-pressed="false">◧</button>
       </div>
     </div>
     <section class="gozcu" aria-labelledby="hGozcu">

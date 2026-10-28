@@ -14,7 +14,8 @@
 `örnek veri` şeridi); gerçek `durum.json`'a bağlanması D yolu Faz 5'tir. Derleme yok, kütüphane yok, görsel varlık yok (hepsi kodla çizilir).
 - **Sürüm 2 (ilk 5 iş):** odaya tıklayınca iç görünüm (`#oda/lab`, Kapı, Arşiv…), ortak bilgi kutusu (masaüstü panel / telefon çekmece), `replikler.json`, iletişim işaretleri (zarf/not/ok), oda ve çalışan adlarını değiştirme (`kadro.json`). Testler: `node ofis/test/replik.test.js`, `node ofis/test/ui.test.js` (Playwright).
 - **Sürüm 2b:** olay çekmecesi (filtre, kameraya git), veriden türeyen bayatlık (`esik_dk`, sis, "VERİ ESKİ"), oda iç ayrıntıları, günlük özet, isteğe bağlı ses (varsayılan kapalı).
-- Düzen: ortasında avlu ve havuzlu bahçe olan iki kanatlı bina; sol dikey menü (Bina / Hat / Destek), durum plakaları, sol özet paneli (Adım 0 özgünleştirmesi, `ofis/LISANSLAR.md`).
+- Düzen: ortasında avlu ve havuzlu bahçe olan iki kanatlı bina; sol dikey menü (Bina / Hat / Destek), durum plakaları (Adım 0 özgünleştirmesi, `ofis/LISANSLAR.md`).
+- **Ofis paneli (`claude/ofis-panel`):** masaüstünde kart sütunu varsayılan **gizli**; ofis tuvali tüm genişliği kullanır. Sol menüde bir öğeye tıklayınca kamera o odaya gider ve ilgili kart(lar) ofisin üstünde açılır panel olarak gelir (eşleme tek tablo: `main.js` → `PANEL_ESLE`; tabloda olmayan odalar oda bilgisi kartını açar). Kapatma: ×, Esc, boş alana tıklama, aynı menüye ikinci tıklama, "Tüm ofis". Günlük özet ofisin üst kenarında tek satırlık şerit (tıklayınca ayrıntı paneli). ◧ düğmesi klasik kart sütununu geri getirir. Telefon düzeni değişmedi (kartlar sayfada, alttan çekmece).
 - Sayfa: `ofis/` (GitHub Pages'te `…/ofis/`). Belgeler: `ofis/SEMA.md` (veri), `ofis/OLAYLAR.md` (olay → animasyon), `ofis/LISANSLAR.md`.
 - Deneme parametreleri: `?saat=23:14` (gün ışığı), `?hiz=2`, `?etiket=0`, `?hareket=0`, `?perf=1` (ayrıntı `ofis/SEMA.md` §6).
 - Salt okunur; gerçek emir, para ve aracı kurum bağlantısı yok.

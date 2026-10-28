@@ -35,6 +35,7 @@ const srv = http.createServer((q, r) => {
   let st = await pg.evaluate(() => ({ h: location.hash, a: OFIS.debug.mode.active, r: OFIS.debug.mode.room, t: OFIS.debug.roomT(), ust: !document.getElementById('odaUst').hidden, pr: document.querySelector('.ray [data-oda=lab]').getAttribute('aria-pressed') }));
   ok('Lab: adres #oda/lab, oda içi açık, geçiş tamam, geri düğmesi görünür', st.h === '#oda/lab' && st.a && st.r === 'lab' && st.t === 1 && st.ust && st.pr === 'true', JSON.stringify(st));
   const z1 = await pg.evaluate(() => OFIS.debug.cam.z), zf = await pg.evaluate(() => { const c = OFIS.debug.cam; return c.z; });
+  await pg.keyboard.press('Escape'); await sleep(300);                          // ilk Esc: sol menüden açılan paneli kapatır (odada kalır)
   await pg.keyboard.press('Escape'); await sleep(900);
   st = await pg.evaluate(() => ({ h: location.hash, a: OFIS.debug.mode.active, t: OFIS.debug.roomT(), ust: document.getElementById('odaUst').hidden, z: OFIS.debug.cam.z }));
   ok('Esc binaya döndürür (adres temizlenir, yakınlaşma geri alınır)', st.h === '' && !st.a && st.t === 0 && st.ust && st.z < z1 * 0.7, JSON.stringify(st) + ' zLab=' + z1.toFixed(2));
@@ -409,6 +410,101 @@ const srv = http.createServer((q, r) => {
   tx = await pg.evaluate(() => document.getElementById('bilgi').textContent);
   ok('terfi eden trader\'ın kat_olay kaydı olaydan gelir (kural, olay_id)', await pg.evaluate(() => { const t = OFIS.Office.state().traders.T004, e = OFIS.data.olaylar.find(x => x.tur === 'terfi'); return t.kat_olay && t.kat_olay.id === e.id && t.kat_olay.kural === e.kural; }));
   ok('trader repliği ve "Neden burada?" kural metnini olaydaki kural alanından alır', /≥ 3 hafta ve ≥ 10 kapanmış işlem/.test(tx), tx.slice(0, 100));
+  await ctx.close();
+
+
+  /* ---------- Q. ofis paneli: kart sütunu varsayılan gizli, sol menüden açılan panel, günlük özet şeridi ---------- */
+  ({ ctx, pg } = await open());
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; });
+  const q0 = await pg.evaluate(() => ({ sol: getComputedStyle(document.getElementById('sol')).display, tw: document.getElementById('tuval').getBoundingClientRect().width, iw: innerWidth, rayW: document.querySelector('.ray').getBoundingClientRect().width,
+    serit: (() => { const e = document.getElementById('gunSerit'), r = e.getBoundingClientRect(); return { h: r.height, top: r.top, w: r.width, txt: e.textContent }; })(), zp: document.getElementById('zPanel').getAttribute('aria-pressed') }));
+  ok('masaüstü: kart sütunu varsayılan gizli, ofis tuvali tüm genişliği kullanır (sol menü kalır)', q0.sol === 'none' && q0.tw >= q0.iw - q0.rayW - 2 && q0.rayW > 100 && q0.zp === 'false', JSON.stringify({ sol: q0.sol, tw: q0.tw, iw: q0.iw, rayW: q0.rayW }));
+  ok('günlük özet: ofisin üst kenarında tek satırlık şerit ("dün: …")', q0.serit.h <= 32 && /dün:/.test(q0.serit.txt) && q0.serit.w >= q0.tw - 2, JSON.stringify(q0.serit));
+  const gozcu0 = await pg.evaluate(() => { const r = document.getElementById('hGozcu').closest('.gozcu').getBoundingClientRect(); return { l: Math.round(r.left), b: Math.round(innerHeight - r.bottom), vis: r.height > 0 }; });
+  ok('Gözcü kaydı kutusu yerinde (sol altta)', gozcu0.vis && gozcu0.l < 200 && gozcu0.b < 80, JSON.stringify(gozcu0));
+  const panelDurum = () => pg.evaluate(() => { const p = document.getElementById('kartPanel'), r = p.getBoundingClientRect(); return { acik: !p.hidden && r.height > 0, kartlar: [...p.querySelectorAll('.kart')].map(k => k.id), baslik: document.getElementById('kpBaslik').textContent, hash: location.hash, oda: OFIS.debug.mode.room, aktif: OFIS.debug.mode.active, bilgi: !document.getElementById('bilgi').hidden, yer: r.left > 0 }; });
+  ok('açılışta panel kapalı, bina görünümü', !(await panelDurum()).acik && !(await panelDurum()).aktif);
+  /* eşleme tablosu: oda → kartlar; tabloda olmayanlar oda bilgisi kartı */
+  const ESLE = { finans: ['cKasa'], risk: ['cRisk'], oda: ['cAcik', 'cKap'], arsiv: ['cVeri'], haberlesme: ['cTelegram'], kontrol: ['cKohort'], tarama: ['cOzet', 'cHuni'], kapi: ['cOzet', 'cHuni'], lab: ['cOzet', 'cHuni'], aday: ['cOzet', 'cHuni'] };
+  const bozuk = [];
+  for (const id of Object.keys(ESLE)) {
+    await pg.click('.ray [data-oda=' + id + ']'); await sleep(450);
+    const d = await panelDurum();
+    if (!(d.acik && JSON.stringify(d.kartlar) === JSON.stringify(ESLE[id]) && d.hash === '#oda/' + id && d.oda === id && d.aktif && !d.bilgi)) bozuk.push(id + ':' + JSON.stringify(d));
+  }
+  ok('sol menü → panel eşlemesi (Finans→kasa, Risk→risk, Oda→açık işlemler, Tarama/Kapı/Lab/Aday→özet+huni, Arşiv→veri kalitesi, Haberleşme→Telegram) + kamera odaya, adres #oda/<ad>', bozuk.length === 0, bozuk.join(' | ').slice(0, 300));
+  const digerleri = [];
+  for (const id of ['denetim', 'sekreterlik', 'makam', 'cay']) {
+    await pg.click('.ray [data-oda=' + id + ']'); await sleep(450);
+    const d = await panelDurum();
+    if (!(!d.acik && d.bilgi && d.oda === id && /oda/i.test(await pg.evaluate(() => document.getElementById('bilgi').textContent)))) digerleri.push(id + ':' + JSON.stringify(d));
+  }
+  ok('diğer odalar (Denetim, Sekreterlik, Makam, Çay ocağı) → oda bilgisi kartı, panel kapalı', digerleri.length === 0, digerleri.join(' | ').slice(0, 300));
+  /* kartlar panelde: sütundan alınır, kapanınca yerine döner */
+  await pg.click('.ray [data-oda=finans]'); await sleep(450);
+  ok('panelde kart sütunundan alınan gerçek kart (Gölge kasası kilitli içerik)', await pg.evaluate(() => { const k = document.querySelector('#kartPanel #cKasa'); return !!k && /kilitli/i.test(k.textContent) && k.closest('#sol') === null; }));
+  const sirasi = await pg.evaluate(() => [...document.querySelectorAll('#sol > .kart')].map(k => k.id).join(','));
+  ok('açıkken kart sütunundan eksik (cKasa yok)', !/cKasa/.test(sirasi), sirasi);
+  /* kapatma yolları */
+  const kapaliMi = async () => !(await panelDurum()).acik && await pg.evaluate(() => document.querySelectorAll('#sol > .kart').length === 10 && document.querySelector('#sol > #cKasa') !== null);
+  await pg.click('#kpKapat'); await sleep(250);
+  const dK = await panelDurum();
+  ok('× düğmesi paneli kapatır, kartlar sütuna döner, oda içinde kalınır', await kapaliMi() && dK.aktif && dK.oda === 'finans');
+  await pg.click('.ray [data-oda=finans]'); await sleep(450); await pg.keyboard.press('Escape'); await sleep(250);
+  const dE = await panelDurum();
+  ok('Esc önce paneli kapatır (odada kalır)', await kapaliMi() && dE.aktif && dE.oda === 'finans');
+  await pg.keyboard.press('Escape'); await sleep(900);
+  ok('ikinci Esc binaya döndürür', !(await panelDurum()).aktif);
+  await pg.click('.ray [data-oda=risk]'); await sleep(450);
+  await pg.click('.ray [data-oda=risk]'); await sleep(250);
+  ok('aynı menüye ikinci tıklama paneli kapatır', await kapaliMi() && (await panelDurum()).aktif);
+  await pg.click('.ray [data-oda=risk]'); await sleep(450);
+  ok('aynı menüye üçüncü tıklama yeniden açar', (await panelDurum()).acik);
+  await pg.click('.ray [data-oda=makam]'); await sleep(450); await pg.click('.ray [data-oda=makam]'); await sleep(250);
+  ok('oda bilgisi kartında da ikinci tıklama kapatır', !(await panelDurum()).bilgi);
+  await pg.click('.ray [data-oda=finans]'); await sleep(450);
+  const bos = await pg.evaluate(() => { const r = document.getElementById('tuval').getBoundingClientRect(); for (let y = 140; y < r.height - 240; y += 20) for (let x = 520; x < r.width - 80; x += 20) { const w = OFIS.debug.toWorld(x, y); if (!OFIS.debug.pick(w.x, w.y, false)) return { x: r.left + x, y: r.top + y }; } return null; });
+  await pg.mouse.click(bos.x, bos.y); await sleep(500);
+  ok('ofiste boş alana tıklama paneli kapatır', await kapaliMi() || !(await panelDurum()).acik);
+  await pg.click('.ray [data-oda=lab]'); await sleep(450);
+  await pg.click('.ray [data-tab=genel]'); await sleep(900);
+  const dT = await panelDurum();
+  ok('"Tüm ofis" paneli kapatır ve binayı gösterir (adres temizlenir)', await kapaliMi() && !dT.aktif && dT.hash === '');
+  await pg.goto(pg.url().split('#')[0] + '#oda/lab'); await pg.reload(); await pg.waitForFunction('window.OFIS&&window.OFIS.ready'); await sleep(900);
+  const dH = await panelDurum();
+  ok('adres #oda/lab davranışı korunur (doğrudan açılış: oda içi, panel kendiliğinden açılmaz)', dH.aktif && dH.oda === 'lab' && !dH.acik);
+  await pg.click('.ray [data-oda=finans]'); await sleep(450);
+  await pg.goBack(); await sleep(900);
+  ok('tarayıcı geri tuşu: panel kapanır, önceki duruma dönülür', !(await panelDurum()).acik);
+  /* günlük özet şeridi → ayrıntı paneli */
+  await pg.click('.ray [data-tab=genel]'); await sleep(700);
+  await pg.click('#gunSerit'); await sleep(300);
+  const dG = await panelDurum();
+  ok('günlük özet şeridine tıklayınca ayrıntı paneli (Günlük özet kartı)', dG.acik && JSON.stringify(dG.kartlar) === '["cGun"]' && /dün/.test(await pg.evaluate(() => document.querySelector('#kartPanel #gunIcerik').textContent)));
+  await pg.click('#gunSerit'); await sleep(250);
+  ok('şeride ikinci tıklama kapatır', await kapaliMi());
+  /* olay çekmecesi ile birlikte çakışmaz */
+  await pg.click('.ray [data-oda=risk]'); await sleep(450); await pg.click('.ray [data-olay-ac]'); await sleep(300);
+  ok('olay çekmecesi açılınca panel kapanır (çakışma yok)', !(await panelDurum()).acik && await pg.evaluate(() => !document.getElementById('olayCekmece').hidden));
+  await pg.keyboard.press('Escape');
+  /* performans körlüğü ve yasal ibare paneldeyken de aynı */
+  await pg.click('.ray [data-oda=finans]'); await sleep(450);
+  const pnlTxt = await pg.evaluate(() => document.getElementById('kartPanel').textContent);
+  ok('panelde de kasa değeri yok ("kilitli"), yasal ibare görünür', /kilitli/i.test(pnlTxt) && !/toplam kasa|kasa değeri:\s*\$/i.test(pnlTxt) && /yatırım tavsiyesi değil/i.test(await pg.evaluate(() => document.getElementById('yasal').textContent)));
+  /* ◧ düğmesi klasik sütunu geri getirir: panel modu kapanır, eski davranış */
+  await pg.click('#zPanel'); await sleep(400);
+  const dC = await pg.evaluate(() => ({ sol: getComputedStyle(document.getElementById('sol')).display, panel: document.getElementById('kartPanel').hidden, bas: document.getElementById('zPanel').getAttribute('aria-pressed'), n: document.querySelectorAll('#sol > .kart').length }));
+  ok('◧ klasik kart sütununu geri getirir (kartlar yerine döner)', dC.sol !== 'none' && dC.panel && dC.bas === 'true' && dC.n === 10, JSON.stringify(dC));
+  await pg.click('.ray [data-oda=risk]'); await sleep(500);
+  ok('klasik sütun açıkken menü eski gibi çalışır (panel açılmaz)', (await panelDurum()).acik === false && (await panelDurum()).oda === 'risk');
+  await ctx.close();
+
+  /* telefon: düzen değişmez (kart sütunu sayfada, panel ve şerit yok, alttan çekmece) */
+  ({ ctx, pg } = await open('?saat=15:40', { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }));
+  const ph = await pg.evaluate(() => ({ sol: getComputedStyle(document.getElementById('sol')).display, serit: getComputedStyle(document.getElementById('gunSerit')).display, panel: getComputedStyle(document.getElementById('kartPanel')).display, sw: document.documentElement.scrollWidth, n: document.querySelectorAll('#sol > .kart').length }));
+  ok('telefon: kart sütunu sayfada görünür, şerit ve panel yok, yatay kaydırma yok', ph.sol !== 'none' && ph.serit === 'none' && ph.panel === 'none' && ph.sw <= 390 && ph.n === 10, JSON.stringify(ph));
+  await pg.tap('.ray [data-oda=finans]'); await sleep(700);
+  ok('telefon: menüye dokununca panel açılmaz, kartlar sütunda kalır', await pg.evaluate(() => document.getElementById('kartPanel').hidden && document.querySelectorAll('#sol > .kart').length === 10));
   await ctx.close();
 
   ok('sayfa/konsol hatası yok', errs.length === 0, errs.slice(0, 3).join(' | '));
