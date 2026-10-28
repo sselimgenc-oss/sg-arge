@@ -799,6 +799,27 @@ def build_universe(board: list[dict], external: list[str], client: PublicClient 
     return sorted(universe.values(), key=lambda row: row["address"])
 
 
+def write_universe_snapshot(path: Path, board: list[dict], external: list[str], client: PublicClient | None = None) -> list[dict]:
+    """Tek lider tablosundan üretilen kapı evrenini parçalara ortak anlık görüntü olarak yazar."""
+    leaders = build_universe(board, external, client)
+    path.write_text(json.dumps({"liderler": leaders}, ensure_ascii=False), encoding="utf-8")
+    return leaders
+
+
+def read_universe_snapshot(path: Path) -> list[dict]:
+    """Plan işinin yazdığı evren anlık görüntüsünü, sırasını koruyarak yükler."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    leaders = payload.get("liderler")
+    if not isinstance(leaders, list) or any(not isinstance(row, dict) or not row.get("address") for row in leaders):
+        raise ValueError(f"evren anlık görüntüsü geçersiz: {path}")
+    return leaders
+
+
+def shard_universe(leaders: list[dict], index: int, count: int) -> list[dict]:
+    """Sabit sıralı ortak evrenden çakışmasız bir parça seçer."""
+    return leaders[index::count]
+
+
 def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now: datetime, start: int, start_200: int,
                      symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None, dexes: list[str] | None = None) -> dict[str, Any]:
     """Tek adres için 1. aşama + adım 1–6 (adım 7 ve katman birleştirmede). ``yalniz_adim5``: plaseboyu adım 3–4'e
@@ -935,6 +956,8 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--beklenen-parca", type=int, help="birleştirme: beklenen parça sayısı (eksik parça → durum: eksik)")
     parser.add_argument("--mod", default="tam", help="birleştirme: tam | hizli | eksik")
     parser.add_argument("--adres", action="append", default=[], help="kapıya zorla eklenen adres (dis_aday); tekrarlanabilir")
+    parser.add_argument("--evren-yaz", type=Path, help="yalnız ortak evren anlık görüntüsünü yazıp çık")
+    parser.add_argument("--evren-dosyasi", type=Path, help="plan işinin ortak evren anlık görüntüsünü kullan")
     args = parser.parse_args(argv)
     if args.birlestir:
         merge_shards(args.birlestir, args.root, args.beklenen_parca, args.mod)
@@ -947,7 +970,11 @@ def main(argv: list[str] | None = None) -> None:
     out.mkdir(parents=True, exist_ok=True)
     client = PublicClient(limiter=RateLimiter(1000))
     external = sorted(set(external_candidates()) | {a.lower() for a in args.adres})
-    leaders = build_universe(client.leaderboard(), external, client)
+    if args.evren_yaz:
+        leaders = write_universe_snapshot(args.evren_yaz, client.leaderboard(), external, client)
+        print(f"Evren anlık görüntüsü: {len(leaders)} adres → {args.evren_yaz}", flush=True)
+        return
+    leaders = read_universe_snapshot(args.evren_dosyasi) if args.evren_dosyasi else build_universe(client.leaderboard(), external, client)
     evren = len(leaders)
     (out / "evren.json").write_text(json.dumps({"evren": evren}), encoding="utf-8")
     (out / "bitti.json").unlink(missing_ok=True)      # parça bitişi yalnız bu koşunun sonunda yazılır; zaman aşımında yok = eksik
@@ -958,7 +985,7 @@ def main(argv: list[str] | None = None) -> None:
         leaders = [row for row in leaders if row["address"] in eligible or row["kaynak"] == "dis_aday"]
     if args.eksikleri_tamamla:
         leaders = missing_addresses(leaders, pd.read_csv(previous_path) if previous_path.exists() else None)
-    leaders = leaders[args.shard_index::args.shard_count]
+    leaders = shard_universe(leaders, args.shard_index, args.shard_count)
     symbols, binance_note = write_binance_universe(out, now)
     start = int((now - timedelta(days=int(rules["fills_lookback_days"]))).timestamp() * 1000)
     start_200 = int((now - timedelta(days=int(rules["mum_pencere_gun"]))).timestamp() * 1000)

@@ -7,7 +7,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from copytrade.kapi import build_universe, external_candidates, load_rules, merge_shards, run_status
+from copytrade.kapi import (build_universe, external_candidates, load_rules, merge_shards,
+                            read_universe_snapshot, run_status, shard_universe, write_universe_snapshot)
 
 RULES = load_rules()
 A, B, C = "0x" + "a" * 40, "0x" + "b" * 40, "0x" + "c" * 40
@@ -43,6 +44,19 @@ def test_universe_marks_external_and_bypasses_prefilter():
     assert len(universe) == 4
     assert build_universe(board, [A], None)[0]["kaynak"] == "dis_aday"                         # süzgeçten geçen de dış adaysa işaretlenir
     assert build_universe([], [A], FakeClient())[0]["accountValue"] == 0.0                     # değer alınamazsa 0
+
+
+def test_altin_ornek_ortak_evren_parcalari_cakismadan_birlesir(tmp_path):
+    """Altın örnek: tek plan dosyası her adresi yalnız bir parçaya verir."""
+    board = [board_row(address, 500_000, 10) for address in (A, B, C)]
+    snapshot = tmp_path / "evren.json"
+    write_universe_snapshot(snapshot, board, [], FakeClient())
+    frozen = read_universe_snapshot(snapshot)
+    pieces = [shard_universe(frozen, index, 2) for index in range(2)]
+    addresses = [{row["address"] for row in piece} for piece in pieces]
+    assert addresses[0].isdisjoint(addresses[1])
+    assert addresses[0] | addresses[1] == {A, B, C}
+    assert [row["address"] for row in read_universe_snapshot(snapshot)] == [A, B, C]
 
 
 def test_run_status_incomplete_when_shard_missing_or_coverage_low():

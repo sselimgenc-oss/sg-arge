@@ -43,6 +43,11 @@ jobs:
       ekle: ${{ steps.p.outputs.ekle }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
       - id: p
         shell: bash
         run: |
@@ -64,6 +69,12 @@ jobs:
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "shards=$(python3 -c "import json;print(json.dumps(list(range($count))))")" >> "$GITHUB_OUTPUT"
           echo "day=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: Ortak kapı evrenini dondur
+        run: python -m copytrade.kapi --evren-yaz evren.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kapi-evren
+          path: evren.json
 
   stage1:
     needs: plan
@@ -80,6 +91,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: kapi-evren
+          path: .
       - name: Veri dalından önceki sonuçlar (hızlı ve eksik mod bunlara bakar)
         shell: bash
         run: |
@@ -100,7 +115,7 @@ jobs:
           # uğrarsa adım (ve iş) kırmızı olur; bitmeyen parça `bitti.json` bırakmaz, birleştirme sonucu `durum: eksik` yayımlar.
           limit=100m; [ "${{ needs.plan.outputs.mod }}" = hizli ] && limit=45m
           export PYTHONWARNINGS=ignore
-          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} $extra
+          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} --evren-dosyasi evren.json $extra
       - name: Sonuçları tarih klasörüyle paketle
         if: always()
         shell: bash
