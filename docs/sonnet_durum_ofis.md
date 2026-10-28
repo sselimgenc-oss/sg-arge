@@ -39,5 +39,5 @@ Not: #18 (Adım 0) bu dalı açarken henüz birleşmemişti; dal `sonnet/ofis-ta
 - Performans körlüğü: **kasa değeri/eğrisi, günlük toplam K/Z ve kol getirisi ofiste yok** (kasa kartı ve Finans ekranı "kilitli (hafta x/12)"); kâr/zarar rengi yok (masa ekranı tek ton, K/Z işaretli nötr sayı); rozet/seri yok. Her ekranda "araştırma/sanal, yatırım tavsiyesi değil".
 - Karar noktası (lider): kasa değeri v1'de görünürdü; "toplanmış kol performansı gösterilmez" kuralı gereği kilitlendi. Geri açmak `Off.KILIT=false` ile olur (yalnız lider kararıyla).
 - Kanıt (sürüm 2): `ofis/kanit/v2/` — masaüstü (bina, Lab kişi/nesne bilgisi, Kapı, Arşiv, iletişim işaretleri: terfi, kırmızı bayrak taşıyıcısı ve notu, ayarlar) ve telefon (bina, Lab + çekmece) ekran görüntüleri, 30 sn kayıt (`ekran_kaydi_30sn.mp4/.gif`: bina → Lab → kişiye tıklama → iletişim işareti).
-- Testler: `node ofis/test/replik.test.js` (17 kontrol), `node ofis/test/ui.test.js` (Playwright; 50 kontrol). Sonuçlar PR açıklamasında.
+- Testler: `node ofis/test/replik.test.js` (18 kontrol), `node ofis/test/ui.test.js` (Playwright; 50 kontrol). Sonuçlar PR açıklamasında.
 - Düzeltme (testle bulundu): Kontrol, Lab, Finans, Haberleşme, Çay ve Aday'daki bitki/buzdolabı/sebil iç kapı boşluklarını kapatıyordu (v1'den kalma); taşındı. Artık denetçi trader masasına ve postacı posta kutusuna yürüyebilir.
