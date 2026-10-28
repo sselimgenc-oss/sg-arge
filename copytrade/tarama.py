@@ -25,6 +25,8 @@ MAX_WEIGHT_PER_MINUTE = 700  # IP sınırı 1.200; yanıt boyutu ek ağırlığ�
 class RateLimiter:
     def __init__(self, limit: int = MAX_WEIGHT_PER_MINUTE, clock=time.monotonic, sleep=time.sleep):
         self.limit, self.clock, self.sleep, self.events = limit, clock, sleep, []
+        self.waited = 0.0  # istemci tarafı hız sınırında bekleyen toplam süre (sn); ilerleme günlüğü için
+        self.weight_used = 0
 
     def acquire(self, weight: int) -> None:
         while True:
@@ -32,29 +34,51 @@ class RateLimiter:
             self.events = [(at, used) for at, used in self.events if now - at < 60]
             if sum(used for _, used in self.events) + weight <= self.limit:
                 self.events.append((now, weight))
+                self.weight_used += weight
                 return
-            self.sleep(max(0.01, 60 - (now - self.events[0][0])))
+            pause = max(0.01, 60 - (now - self.events[0][0]))
+            self.waited += pause
+            self.sleep(pause)
 
 
 class RateLimitError(RuntimeError):
     """Persistent 429 for one request; the address is skipped, the run continues."""
 
 
+SERVER_ERROR_ATTEMPTS = 3          # HTTP 5xx için toplam deneme
+SERVER_ERROR_WAITS = (2, 6)        # denemeler arası artan bekleme (sn)
+
+
 class PublicClient:
-    def __init__(self, session: requests.Session | None = None, limiter: RateLimiter | None = None):
-        self.session, self.limiter = session or requests.Session(), limiter or RateLimiter()
+    def __init__(self, session: requests.Session | None = None, limiter: RateLimiter | None = None, sleep=time.sleep):
+        self.session, self.limiter, self.sleep = session or requests.Session(), limiter or RateLimiter(), sleep
+        self.stats = {"istek": 0, "429": 0, "5xx": 0}  # ilerleme günlüğü için sayaçlar
 
     def _request(self, method: str, url: str, *, payload: dict | None = None, weight: int = 1) -> Any:
+        server_errors = 0
         for attempt in range(6):
             self.limiter.acquire(weight)
             response = self.session.request(method, url, json=payload, timeout=30)
+            self.stats["istek"] += 1
+            if response.status_code >= 500:
+                self.stats["5xx"] += 1
+                # Geçici sunucu hatası (ör. 500/502/503): 3 deneme, artan bekleme; sonra hata olarak yükselir.
+                server_errors += 1
+                if server_errors >= SERVER_ERROR_ATTEMPTS:
+                    response.raise_for_status()
+                self.sleep(SERVER_ERROR_WAITS[server_errors - 1])
+                continue
             if response.status_code != 429:
                 response.raise_for_status()
                 data = response.json()
-                if isinstance(data, list) and len(data) >= 20:
-                    self.limiter.acquire(len(data) // 20)  # documented extra weight per 20 returned items
+                # Yanıt boyutuna göre ek ağırlık (Hyperliquid belgesi): dolum/fonlama listelerinde 20 kayıt başına 1;
+                # candleSnapshot'ta 60 mum başına 1 (belgeden hatırlanan değer; 429 artarsa günlükte görünür).
+                per = 60 if isinstance(payload, dict) and payload.get("type") == "candleSnapshot" else 20
+                if isinstance(data, list) and len(data) >= per:
+                    self.limiter.acquire(len(data) // per)
                 return data
-            time.sleep(min(60, 5 * 2 ** attempt))
+            self.stats["429"] += 1
+            self.sleep(min(60, 5 * 2 ** attempt))
         raise RateLimitError("Hyperliquid rate limit exceeded after retries")
 
     def leaderboard(self) -> list[dict]:
@@ -86,6 +110,18 @@ class PublicClient:
 
     def non_funding_ledger(self, address: str, start_ms: int) -> list[dict]:
         return self.info({"type": "userNonFundingLedgerUpdates", "user": address, "startTime": start_ms}, weight=20) or []
+
+    def sub_accounts(self, address: str) -> list[dict]:
+        return self.info({"type": "subAccounts", "user": address}, weight=20) or []
+
+    def vault_equities(self, address: str) -> list[dict]:
+        return self.info({"type": "userVaultEquities", "user": address}, weight=20) or []
+
+    def vault_details(self, vault: str) -> dict:
+        return self.info({"type": "vaultDetails", "vaultAddress": vault}, weight=20) or {}
+
+    def extra_agents(self, address: str) -> list[dict]:
+        return self.info({"type": "extraAgents", "user": address}, weight=20) or []
 
     def candles(self, coin: str, start_ms: int, end_ms: int, interval: str = "1m") -> list[dict]:
         return self.info({"type": "candleSnapshot", "req": {"coin": coin, "interval": interval,
@@ -131,7 +167,7 @@ def prefilter(rows: list[dict], watchlist: list[dict] | None = None) -> list[dic
         address = _address(row)
         account = float(row.get("accountValue", row.get("account_value", 0)) or 0)
         all_time_pnl = _window(row, "allTime", "pnl")
-        if address and account >= 25_000 and all_time_pnl > 0:
+        if address and account >= float(load_rules()["evren_min_hesap_degeri"]) and all_time_pnl > 0:
             row = dict(row); row["address"] = address; row["accountValue"] = account; accepted.append(row)
     return sorted(accepted, key=lambda x: x["address"].lower())
 

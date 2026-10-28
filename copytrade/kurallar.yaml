@@ -1,5 +1,6 @@
 min_history_days: 180
 min_closed_trades: 50
+# (eski günlük tarayıcı `tarama.py`/`kurallar.evaluate` için; CT-Kapı asama1_*/adim4_* anahtarlarını kullanır)
 min_profitable_month_ratio: 0.70
 max_largest_trade_share: 0.30
 min_profit_factor_without_best: 1.20
@@ -18,7 +19,93 @@ martingale_min_additions: 5
 martingale_min_adverse: 0.02
 # Ölçüm penceresi: 180 gün geçmiş şartı için fill'ler 365 günden çekilir
 fills_lookback_days: 365
-# Sanal kopya gecikmesi (dk), tarza göre (kullanıcı kararı 2026-10-27; görev 8): izleme motoru bunu okur.
+# CT-Kapı v1.1 — kullanıcı kararları (2026-10-27, Sol 6.1 görüşüyle; docs/GOREV_TRADER_SECIMI.md).
+# Tarz: medyan elde tutma süresine göre. < 1 sa scalp (adım 3 Kaldı); 1–24 sa intraday; ≥ 24 sa swing.
+tarz_scalp_alti_saat: 1.0
+tarz_swing_ustu_saat: 24.0
+# Scalp ayıklama: kısa işlem payı en çok %25 (kısa = tarza göre dakika)
+kisa_islem_payi_max: 0.25
+kisa_islem_dk:
+  intraday: 15
+  swing: 120
+# Adım 3 ve plasebo gecikmesi (giriş ve çıkış dolumlarına; taker + kayma + funding dahil)
 kopya_gecikme_dk:
   intraday: 30
   swing: 120
+# Raporlanan stres gecikmesi (zorunlu değil; swing'de negatifse "gece riskli")
+stres_gecikme_dk:
+  intraday: 120
+  swing: 480
+# Kaldıraç kuralları (değişmedi; kapı adım 3)
+kapi_max_medyan_kaldirac: 3.0
+kapi_max_kaldirac: 10.0
+# Geçmiş ≥ 180 gün şartı aynı (min_history_days); ≥ 365 gün sıralamada öne, 180–365 gün genc_aday
+genc_aday_gun: 365
+# Adım 5 plasebo: 10.000 tekrar (kullanıcı + Sol 6.1, görev 10; sonuçlara göre değiştirilmez), tek yönlü p ≤ 0,05.
+# Çoklu test (adım 7) ailesi = adım 1–4'ü geçen tüm adresler; m RAPOR'a yazılır.
+plasebo_tekrar: 10000
+plasebo_p_max: 0.05
+# Adım 6 alfa kıyası: işlem hacminin ≥ bu payı kripto ise BTC; değilse işlem yapılan varlıkların eşit ağırlıklı sepeti
+alfa_kripto_payi_esigi: 0.5
+# HIP-3 coin → Binance USDⓈ-M sembolü (görev 9): `dex:` öneki atılır, ad aynı + USDT; yalnız farklı adlar burada.
+# "var" yalnız Binance sembol listesinde (TradFi perp'ler dahil) bulunuyorsa.
+binance_takma_ad:
+  GOLD: XAU
+  SILVER: XAG
+  BRENTOIL: BZ
+# Aktiflik (adım 2'ye ek; kullanıcı kararı, görev 11): son 90 günde kapanmış düz-düz döngü (dolum değil) sayısı
+# tarza göre en az; son işlem (son perp dolumu) en çok 30 gün önce. Kâr şartı yok. Sağlanmazsa adım 2 Yetersiz.
+aktif_pencere_gun: 90
+aktif_son90_dongu:
+  intraday: 20
+  swing: 5
+aktif_son_islem_max_gun: 30
+# Yalnız rapor (görev 12; kapı ölçütü değil): gece payı = TSİ bu saat aralığında (ilk ≤ saat < ikinci) açılan işlemlerin payı
+gece_saatleri_tsi: [1, 9]
+# Kopya maliyeti (her dolumda, notional'a oranla): taker %0,045 + kayma %0,05 (kullanıcı kararı; docs/KAPI_V3, görev 19)
+maliyet_taker: 0.00045
+maliyet_kayma: 0.0005
+
+# ---- Karar eşikleri (kodda sayı yok; görev 14 ve 23). Kullanıcı kararları: docs/GOREV_TRADER_SECIMI.md.
+# 1. aşama (kâr eğrisi; PnL / zaman ağırlıklı getiri zinciri). Kârlı ay eşiği kullanıcı kararı 2026-10-27: %44 (önce %60).
+asama1_pencere_gun: 365
+asama1_min_aktif_ay: 6
+asama1_min_karli_ay_orani: 0.44
+asama1_max_dusus: 0.30
+# Adım 1: mum kapsamı (nominal ağırlıklı); adım 2: asgari kanıt (min_history_days, min_closed_trades yukarıda)
+mum_kapsami_min: 0.90
+min_active_months: 6
+# Adım 4: kârlı ay eşiği kullanıcı kararı %49 (önce %60); en büyük işlem payı (max_largest_trade_share) ve en iyisiz PF
+# (min_profit_factor_without_best) yukarıdaki anahtarlardır.
+adim4_min_karli_ay_orani: 0.49
+# Adım 6: alfa t ve BHY (adım 7)
+alfa_t_min: 2.0
+alfa_pencere_gun: 365
+bhy_q_max: 0.10
+# Kopya defteri / mum penceresi: 1 saatlik mum tek istekte ≤ 5000 mum → ~200 gün; yürütme mumu hedeften en çok 1 aralık uzakta
+mum_pencere_gun: 200
+mum_uzaklik_max_aralik: 1
+rapor_gecikmeleri_dk: [0, 5, 30, 120, 480]
+# Evren (lider tablosu ön süzgeci)
+evren_min_hesap_degeri: 25000
+# 1. aşama hesap değeri tabanı (görev 27; kullanıcı kararı 2026-10-27): bugünkü hesap değeri (ana piyasa + tüm HIP-3 dex toplamı) bunun altındaysa Kaldı
+hesap_degeri_min_usd: 10000
+# Kapsam hedefi: işlenen / evren (tam koşu; altındaysa koşu 'eksik' sayılır, görev 24)
+kapsam_hedefi: 0.98
+# Kopya hesabında eksik dolum (görev 18a): tarzın gecikmesinde herhangi bir dolum için mum bulunamazsa satır `kopya_eksik` ve adım 3 Yetersiz.
+# Dolum geçmişi sınırı (18c): userFillsByTime ~10.000 dolumda kesilebilir; bu kadar dolum dönmüş ve ilk dolum, hesabın/pencerenin izin verdiğinden
+# bu kadar gün geç başlıyorsa satır `dolum_siniri` işaretlenir.
+dolum_siniri: 10000
+dolum_siniri_bosluk_gun: 30
+# Akıl sağlığı kapısı (18d): oran/düşüş sütunları 0–1, kaldıraç 0–saglik_max_kaldirac; sabit sütun kontrolü en az bu kadar satırda
+saglik_max_kaldirac: 200
+saglik_min_satir_sabit_kontrolu: 50
+# Adres başı hata (hata sütunu dolu) oranı bunu aşarsa kapı kırmızı
+saglik_max_hata_orani: 0.05
+# Oran sütunlarında kayan nokta farkı için tolerans (ör. paylar toplamı 1,0000000000000002)
+saglik_oran_toleransi: 1.0e-9
+# Kopya net getirisi (kopya sermayesine oran) makul aralığı: −1 (tüm sermaye) .. +100 (yüz katı); dışı satırda `hata`, sütunda kapı kırmızı
+saglik_net_min: -1.0
+saglik_net_max: 100.0
+# Tamamen boş olmasına izin verilen (isteğe bağlı / yalnız sorun varsa dolan) sütunlar; bunların DIŞINDA tamamen boş sütun kapıyı kırar (görev: ölü sütunlar sessiz kalmasın)
+saglik_bos_olabilir: [plasebo_hata, plasebo_not, hata, not, plasebo_gercek_skor, neden, bhy_q]
