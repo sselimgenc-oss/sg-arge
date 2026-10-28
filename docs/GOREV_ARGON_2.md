@@ -120,3 +120,23 @@ Bulamadığın ya da açamadığın için "doğrulanamadı" yaz; uydurma.
 
 Çıktı: tablo (proje | var mı | lisans | yöntem | alınacak parça | zayıflık | bağlantı) + kalıcılık çalışması özeti.
 ```
+
+## A7 — Hyperliquid emir kuralları ve sınırları (hemen)
+
+```
+Bağlam: Hyperliquid perp'lerinde trader'ları küçük sermayeyle (trader başına 200–1.000 $) kopyalamayı simüle ediyoruz.
+Trader'ın işlemi bizim sermayemize oranlanınca çok küçük emirler çıkabiliyor. Gerçekçi simülasyon için borsanın emir
+kurallarını kesin bilmemiz gerekiyor.
+
+Görev — yalnız resmi kaynaktan (Hyperliquid docs / API belgesi / resmi duyuru), her madde için bağlantı:
+1. Perp'te en küçük emir büyüklüğü (notional, ör. 10 $?) — sabit mi, coine göre mi değişiyor? HIP-3 piyasalarında farklı mı?
+2. Büyüklük (lot, szDecimals) ve fiyat (tick, anlamlı basamak) yuvarlama kuralları; `meta` uç noktasında hangi alanlar.
+3. Piyasa emri nasıl çalışıyor (IOC + kayma sınırı mı)? Varsayılan kayma sınırı var mı?
+4. Azaltma emirlerinde (reduce-only) en küçük emir kuralı farklı mı? Kalan küçük pozisyon kapatılabiliyor mu?
+5. API istek sınırları: info uç noktası ağırlıkları (clearinghouseState, userFillsByTime, l2Book, candleSnapshot),
+   dakikalık toplam, websocket'te izlenebilecek kullanıcı sayısı; adres başına sınırlar.
+6. Kaldıraç ve teminat: coin başına en yüksek kaldıraç nereden okunur; izole/çapraz farkı; likidasyon fiyatı formülü (özet).
+
+Bulamadığın ya da resmi kaynakta olmayan maddeye "resmi kaynakta yok" yaz; ikincil kaynaktan geldiyse ayrıca belirt.
+Çıktı: madde başına kısa cevap + bağlantı + erişim tarihi.
+```
