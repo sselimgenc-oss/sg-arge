@@ -186,7 +186,7 @@ def test_altin_pencere_oncesi_acik_pozisyon_kapanisi_saglama_kiyasindan_cikar():
     opening = fill(10, "B", 10, 0, 100, 2) | {"closedPnl": "0"}
     closing = fill(20, "A", 10, 10, 110, 3) | {"closedPnl": "100"}
     assert pencere_ici_dolumlar([old_close, opening, closing]) == [opening, closing]
-    assert pencere_ici_dolumlar([opening]) == []  # pencere sonunda hâlâ açık: ikinci kıyasa girmez
+    assert pencere_ici_dolumlar([opening]) == [opening]  # açık kalsa da sonraki kısmi kapanışların tabanı korunur
 
 
 def test_altin_pencere_ici_flip_kapanisi_alir_yeni_yonu_sonraki_kapanisa_tasir():
@@ -211,6 +211,6 @@ def test_altin_kapanir_yeniden_acilir_ve_sonda_acik_kalir_ilk_tur_saglamaya_gire
     rows = [fill(0, "B", "0.1", 0, 100, 1), fill(10, "A", "0.1", "0.1", 110, 2),
             fill(20, "B", "0.2", 0, 100, 3)]
     selected = pencere_ici_dolumlar(rows)
-    assert selected == rows[:2]
+    assert selected == rows
     diag = pozisyon_dokumu(rows)["BTC"]
     assert diag == {"son_pozisyon": "0.2", "en_kucuk_mutlak_pozisyon": "0.0", "sifira_donus_sayisi": 1}

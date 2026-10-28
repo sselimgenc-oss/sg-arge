@@ -19,6 +19,8 @@ def pencere_ici_dolumlar(fills: list[dict]) -> list[dict]:
 
     Defter, bu pozisyonu bilinçli olarak sıfırdan başlatır; trader'ın eski
     girişe ait ``closedPnl``'ini onunla karşılaştırmak geçerli bir sağlama değildir.
+    Pencere içinde sıfırdan açılan pozisyonun pencere sonunda açık kalan kısmı
+    ise atılmaz: önceki kısmi/tam kapanışların gerçekleşmiş PnL'i geçerlidir.
     """
     blocked: set[str] = set()
     seen: set[str] = set()
@@ -50,7 +52,11 @@ def pencere_ici_dolumlar(fills: list[dict]) -> list[dict]:
             buffers.setdefault(coin, []).append(row)
         if after == 0:
             out.extend(buffers.pop(coin))
-    return out
+    # Açık kalan pencere-içi pozisyonlar, gerçekleşmiş kısmi kapanışları
+    # taşıyabilir. Sağlama ``realized`` kıyasladığı için bunlar dahil edilir.
+    for coin in sorted(buffers):
+        out.extend(buffers[coin])
+    return sorted(out, key=lambda item: int(item["time"]))
 
 
 def pozisyon_dokumu(fills: list[dict]) -> dict[str, dict]:
