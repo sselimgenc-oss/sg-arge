@@ -32,6 +32,17 @@ Plasebo, alfa, BHY ve istikrar ölçütleri **bilgi sütunu** olarak kalır; kar
 **Dinamiklik:** her haftalık taramada yeni uygun adresler aynı kurallarla kollara eklenir ve **kendi etiket tarihinden** itibaren ölçülür
 (giriş haftası = "vintage"). Etiketlenen adres sonradan kollardan silinmez; pasifleşirse sıfır getirili gün olarak paydada kalır.
 
+## Kopya kuralı varyantları (Etre tweeti, 2026-10-28)
+Aynı sinyaller üzerinde paralel gölge; aynı işlemler karşılaştırıldığı için az veriyle güçlü kıyas. Önceden kayıt; sonuçla değiştirilmez.
+- **V0 birebir:** trader ne yaparsa, tarz gecikmesiyle.
+- **V1 fiyat bandı:** bizim giriş fiyatı trader girişinden %X'ten uzaksa girme (X `kurallar.yaml`'da). Atlanan işlemler de gölgede
+  izlenir: band, kazananları mı atlatıyor (ters seçim) ölçülür.
+- **V2 zaman/zarar çıkışı:** sabit zarar kesme + süre uzadıkça daralan zarar ve kâr sınırı (Etre spotta: −%30; 18 sa sonra ±%15;
+  24 sa sonra ±%20). Kaldıraç için eşikler teminata göre yazılır.
+Faz 3'te (geçmiş prova) ayrıca **çok alanlı puan** (Etre gibi birçok ölçütün ağırlıklı toplamı) ayrı bir kohort kolu olarak
+denenir; tek ölçütlü puanı geçemiyorsa kullanılmaz (aşırı uyum riski).
+Kohort güncellemesinde gidip gelmeyi azaltmak için histerezis: girmek için ilk N, çıkmak için ilk 2N'nin dışına düşmek.
+
 ## Gölge defter kuralları (hepsi altın örnek testiyle)
 1. Giriş ve çıkış: trader dolum zamanı + tarz gecikmesi (intraday 30 dk, swing 120 dk), sonraki erişilebilir fiyattan; taker + kayma.
 2. Kısmi kapanış: trader pozisyonunun %X'ini kapatırsa gölge de kendi pozisyonunun %X'ini kapatır.
