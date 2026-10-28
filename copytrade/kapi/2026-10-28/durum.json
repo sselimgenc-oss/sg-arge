@@ -1,15 +1,16 @@
 {
- "durum": "tamam",
- "parca_beklenen": 24,
- "parca_biten": 24,
- "islenen": 92,
- "evren": 13525,
- "kapsam": 0.0068,
- "neden": "",
+ "durum": "eksik",
+ "parca_beklenen": 32,
+ "parca_biten": 30,
+ "islenen": 10081,
+ "evren": 13530,
+ "kapsam": 0.7451,
+ "neden": "32 parçanın yalnız 30 tanesi bitti (zaman aşımı / hata); kapsam %74.5 < hedef %98",
  "eski_hesap_satir": 0,
  "hesap": "v1.1-2026-10-27d",
  "satir_kaynagi": {
-  "bu_kosu": 92
+  "bu_kosu": 10061,
+  "onceki_dosya_ayni_hesap": 20
  },
  "kapi_sorunlari": []
 }
