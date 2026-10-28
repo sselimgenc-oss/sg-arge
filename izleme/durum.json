@@ -1,6 +1,6 @@
 {
   "surum": 1,
-  "uretildi": "2026-10-28T16:30:54.779830Z",
+  "uretildi": "2026-10-28T21:09:55.696714Z",
   "kaynak": "hyperliquid",
   "traderlar": [
     {
@@ -10,7 +10,7 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "swing",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Kaldı",
@@ -24,21 +24,21 @@
         ]
       },
       "form": {
-        "skor": 0.004910214518311298,
-        "getiri_30g": 0.0009617114257027826,
+        "skor": 0.004027339002835189,
+        "getiri_30g": 0.0007887920007896287,
         "getiri_90g": 3.3437099488679145
       },
-      "hesap_degeri": 607646.393802,
+      "hesap_degeri": 653901.649163,
       "pozisyonlar": [
         {
           "coin": "BTC",
           "sinif": "kripto",
           "yon": "short",
           "giris": 83783.0,
-          "buyukluk_usd": 865491.64994,
-          "hesap_payi": 1.4243343806003368,
+          "buyukluk_usd": 873580.849097,
+          "hesap_payi": 1.3359514388978697,
           "kaldirac": 40.0,
-          "anlik_kz_usd": 34917.65255,
+          "anlik_kz_usd": 26828.453393,
           "acilis": "2026-09-21T08:47:08.428000Z",
           "binance": "bilinmiyor"
         },
@@ -47,10 +47,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 0.092131,
-          "buyukluk_usd": 773559.711869,
-          "hesap_payi": 1.2730425454002816,
+          "buyukluk_usd": 781892.141191,
+          "hesap_payi": 1.1957335513556648,
           "kaldirac": 10.0,
-          "anlik_kz_usd": -125366.754939,
+          "anlik_kz_usd": -117034.325617,
           "acilis": "2026-09-21T08:46:52.263000Z",
           "binance": "bilinmiyor"
         },
@@ -59,10 +59,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 16.5199,
-          "buyukluk_usd": 9602.07129,
-          "hesap_payi": 0.015802070723929633,
+          "buyukluk_usd": 9994.35339,
+          "hesap_payi": 0.015284184407231366,
           "kaldirac": 3.0,
-          "anlik_kz_usd": 474.606091,
+          "anlik_kz_usd": 866.888191,
           "acilis": "2026-10-07T07:37:10.741000Z",
           "binance": "bilinmiyor"
         },
@@ -71,10 +71,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 0.03649,
-          "buyukluk_usd": 25978.739384,
-          "hesap_payi": 0.04275305448857005,
+          "buyukluk_usd": 26461.904248,
+          "hesap_payi": 0.04046771296856564,
           "kaldirac": 3.0,
-          "anlik_kz_usd": -5504.628272,
+          "anlik_kz_usd": -5021.463408,
           "acilis": "2026-09-26T07:46:51.842000Z",
           "binance": "bilinmiyor"
         },
@@ -83,10 +83,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 0.07529,
-          "buyukluk_usd": 24683.922373,
-          "hesap_payi": 0.0406221819544661,
+          "buyukluk_usd": 25308.600592,
+          "hesap_payi": 0.038703986485422136,
           "kaldirac": 3.0,
-          "anlik_kz_usd": -2820.184708,
+          "anlik_kz_usd": -2195.506489,
           "acilis": "2026-10-07T07:33:36.361000Z",
           "binance": "bilinmiyor"
         },
@@ -95,10 +95,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 343.187,
-          "buyukluk_usd": 71137.91088,
-          "hesap_payi": 0.11707123025102673,
+          "buyukluk_usd": 64702.8176,
+          "hesap_payi": 0.09894885214438622,
           "kaldirac": 10.0,
-          "anlik_kz_usd": -4338.710132,
+          "anlik_kz_usd": -10773.803412,
           "acilis": "2026-07-31T08:13:00.552000Z",
           "binance": "bilinmiyor"
         },
@@ -107,10 +107,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 1431.724,
-          "buyukluk_usd": 2405409.1314,
-          "hesap_payi": 3.9585672784948613,
+          "buyukluk_usd": 2393604.477,
+          "hesap_payi": 3.6604961618675147,
           "kaldirac": 10.0,
-          "anlik_kz_usd": -612629.1142,
+          "anlik_kz_usd": -624433.7686,
           "acilis": "2026-08-02T19:37:05.289000Z",
           "binance": "bilinmiyor"
         },
@@ -119,10 +119,10 @@
           "sinif": "hisse",
           "yon": "short",
           "giris": 198.3187,
-          "buyukluk_usd": 2659974.2752,
-          "hesap_payi": 4.3775035980329475,
+          "buyukluk_usd": 2597108.3424,
+          "hesap_payi": 3.9717109533586923,
           "kaldirac": 10.0,
-          "anlik_kz_usd": 553296.6329,
+          "anlik_kz_usd": 616162.5657,
           "acilis": "",
           "binance": "bilinmiyor"
         }
@@ -498,15 +498,15 @@
       ],
       "sanal_kopya": {
         "baslangic_usd": 1000,
-        "bakiye_usd": 1000.9617114257028,
-        "getiri": 0.0009617114257027826,
+        "bakiye_usd": 1000.7887920007896,
+        "getiri": 0.0007887920007896287,
         "dusus": 0.0,
         "gecikme_dk": 120,
         "t0": "2026-10-28",
         "egri": [
           [
             "2026-10-28",
-            1000.9617114257028
+            1000.7887920007896
           ]
         ]
       }
@@ -518,7 +518,7 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "intraday",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Yetersiz",
@@ -533,21 +533,21 @@
         ]
       },
       "form": {
-        "skor": -1.0068363232076577e-05,
-        "getiri_30g": -0.00023950346959089597,
+        "skor": -1.2817346828103522e-05,
+        "getiri_30g": -0.0003048955391776742,
         "getiri_90g": 314.9685376997295
       },
-      "hesap_degeri": 2.439025,
+      "hesap_degeri": 2.4404969999999997,
       "pozisyonlar": [
         {
           "coin": "BTC",
           "sinif": "kripto",
           "yon": "long",
           "giris": 62307.0,
-          "buyukluk_usd": 0.80534,
-          "hesap_payi": 0.3301893174526706,
+          "buyukluk_usd": 0.812867,
+          "hesap_payi": 0.3330743696878136,
           "kaldirac": 1.0,
-          "anlik_kz_usd": 0.18227,
+          "anlik_kz_usd": 0.189797,
           "acilis": "",
           "binance": "bilinmiyor"
         },
@@ -556,10 +556,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 1797.92,
-          "buyukluk_usd": 0.233382,
-          "hesap_payi": 0.09568659607835098,
+          "buyukluk_usd": 0.23599,
+          "hesap_payi": 0.09669751694019703,
           "kaldirac": 1.0,
-          "anlik_kz_usd": 0.05359,
+          "anlik_kz_usd": 0.056198,
           "acilis": "",
           "binance": "bilinmiyor"
         },
@@ -568,10 +568,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 179.0699,
-          "buyukluk_usd": 1.4496,
-          "hesap_payi": 0.5943358514160372,
+          "buyukluk_usd": 1.4411,
+          "hesap_payi": 0.5904944771495315,
           "kaldirac": 1.0,
-          "anlik_kz_usd": -0.341099,
+          "anlik_kz_usd": -0.349599,
           "acilis": "",
           "binance": "bilinmiyor"
         }
@@ -943,15 +943,15 @@
       ],
       "sanal_kopya": {
         "baslangic_usd": 1000,
-        "bakiye_usd": 999.7604965304091,
-        "getiri": -0.00023950346959089597,
-        "dusus": 0.00023950346959089597,
+        "bakiye_usd": 999.6951044608223,
+        "getiri": -0.0003048955391776742,
+        "dusus": 0.0003048955391776742,
         "gecikme_dk": 30,
         "t0": "2026-10-28",
         "egri": [
           [
             "2026-10-28",
-            999.7604965304091
+            999.6951044608223
           ]
         ]
       }
@@ -963,12 +963,12 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "swing",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Kaldı",
         "tarih": "2026-10-28",
-        "not": "adım 7 Kaldı: BHY q 0.211 > 0.1"
+        "not": "adım 7 Kaldı: BHY q 0.385 > 0.1"
       },
       "saglik": {
         "isik": "yesil",
@@ -978,21 +978,21 @@
         ]
       },
       "form": {
-        "skor": 0.005228914540787198,
-        "getiri_30g": 0.00033061850755200517,
+        "skor": 0.006621833194410045,
+        "getiri_30g": 0.0004186912199304338,
         "getiri_90g": 0.5771932820408874
       },
-      "hesap_degeri": 285741.069406,
+      "hesap_degeri": 293550.127045,
       "pozisyonlar": [
         {
           "coin": "xyz:NVDA",
           "sinif": "hisse",
           "yon": "short",
           "giris": 216.81,
-          "buyukluk_usd": 217240.0,
-          "hesap_payi": 0.7602687301884871,
+          "buyukluk_usd": 213780.0,
+          "hesap_payi": 0.7282572218653084,
           "kaldirac": 20.0,
-          "anlik_kz_usd": -429.16951,
+          "anlik_kz_usd": 3030.83049,
           "acilis": "2026-10-16T16:35:21.984000Z",
           "binance": "bilinmiyor"
         },
@@ -1001,10 +1001,10 @@
           "sinif": "hisse",
           "yon": "short",
           "giris": 344.51,
-          "buyukluk_usd": 103632.0,
-          "hesap_payi": 0.3626780015047565,
+          "buyukluk_usd": 103755.0,
+          "hesap_payi": 0.3534490039041775,
           "kaldirac": 20.0,
-          "anlik_kz_usd": -278.78501,
+          "anlik_kz_usd": -401.78501,
           "acilis": "2026-10-15T15:08:41.599000Z",
           "binance": "bilinmiyor"
         },
@@ -1013,10 +1013,10 @@
           "sinif": "hisse",
           "yon": "short",
           "giris": 639.4,
-          "buyukluk_usd": 34059.0,
-          "hesap_payi": 0.11919532628194478,
+          "buyukluk_usd": 34090.2,
+          "hesap_payi": 0.11613076220803037,
           "kaldirac": 2.0,
-          "anlik_kz_usd": 4305.0,
+          "anlik_kz_usd": 4273.8,
           "acilis": "2026-10-05T00:08:52.035000Z",
           "binance": "bilinmiyor"
         },
@@ -1025,10 +1025,10 @@
           "sinif": "hisse",
           "yon": "short",
           "giris": 182.7065,
-          "buyukluk_usd": 124828.0,
-          "hesap_payi": 0.43685704774428497,
+          "buyukluk_usd": 121209.0,
+          "hesap_payi": 0.41290733279573466,
           "kaldirac": 2.0,
-          "anlik_kz_usd": 76149.160984,
+          "anlik_kz_usd": 79768.160984,
           "acilis": "",
           "binance": "bilinmiyor"
         },
@@ -1037,10 +1037,10 @@
           "sinif": "hisse",
           "yon": "short",
           "giris": 147.1,
-          "buyukluk_usd": 144970.0,
-          "hesap_payi": 0.5073474397690342,
+          "buyukluk_usd": 144110.0,
+          "hesap_payi": 0.49092126598844416,
           "kaldirac": 3.0,
-          "anlik_kz_usd": 2130.0,
+          "anlik_kz_usd": 2990.0,
           "acilis": "2026-10-22T23:05:05.818000Z",
           "binance": "bilinmiyor"
         }
@@ -1400,15 +1400,15 @@
       ],
       "sanal_kopya": {
         "baslangic_usd": 1000,
-        "bakiye_usd": 1000.330618507552,
-        "getiri": 0.00033061850755200517,
+        "bakiye_usd": 1000.4186912199305,
+        "getiri": 0.0004186912199304338,
         "dusus": 0.0,
         "gecikme_dk": 120,
         "t0": "2026-10-28",
         "egri": [
           [
             "2026-10-28",
-            1000.330618507552
+            1000.4186912199305
           ]
         ]
       }
@@ -1420,12 +1420,12 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "swing",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Kaldı",
         "tarih": "2026-10-28",
-        "not": "adım 5 Kaldı: plasebo p 0.553 > 0.05"
+        "not": "adım 5 Kaldı: plasebo p 0.554 > 0.05"
       },
       "saglik": {
         "isik": "sari",
@@ -1434,21 +1434,21 @@
         ]
       },
       "form": {
-        "skor": 0.0012891607722855065,
-        "getiri_30g": 6.613731509963472e-05,
-        "getiri_90g": 0.42582187443648706
+        "skor": 0.0016061102128483455,
+        "getiri_30g": 6.806592885411078e-05,
+        "getiri_90g": 0.5511698072331501
       },
-      "hesap_degeri": 156867.182188,
+      "hesap_degeri": 159004.559365,
       "pozisyonlar": [
         {
           "coin": "BTC",
           "sinif": "kripto",
           "yon": "short",
           "giris": 80714.1,
-          "buyukluk_usd": 96640.8,
-          "hesap_payi": 0.6160676736334773,
+          "buyukluk_usd": 97544.04,
+          "hesap_payi": 0.6134669369831375,
           "kaldirac": 5.0,
-          "anlik_kz_usd": 216.19161,
+          "anlik_kz_usd": -687.04839,
           "acilis": "2026-09-20T14:04:59.624000Z",
           "binance": "bilinmiyor"
         },
@@ -1457,10 +1457,10 @@
           "sinif": "kripto",
           "yon": "short",
           "giris": 2164.08,
-          "buyukluk_usd": 140028.0,
-          "hesap_payi": 0.8926532500098152,
+          "buyukluk_usd": 141594.0,
+          "hesap_payi": 0.8905027664959374,
           "kaldirac": 3.0,
-          "anlik_kz_usd": -10182.68966,
+          "anlik_kz_usd": -11748.68966,
           "acilis": "",
           "binance": "bilinmiyor"
         },
@@ -1469,10 +1469,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 4.86763,
-          "buyukluk_usd": 32267.9,
-          "hesap_payi": 0.20570204391972832,
+          "buyukluk_usd": 33146.4,
+          "hesap_payi": 0.2084619468295333,
           "kaldirac": 10.0,
-          "anlik_kz_usd": -1805.56132,
+          "anlik_kz_usd": -927.06132,
           "acilis": "2026-10-02T11:48:39.575000Z",
           "binance": "bilinmiyor"
         },
@@ -1481,10 +1481,10 @@
           "sinif": "kripto",
           "yon": "short",
           "giris": 76.9827,
-          "buyukluk_usd": 68277.01062,
-          "hesap_payi": 0.43525363092308444,
+          "buyukluk_usd": 69217.65578,
+          "hesap_payi": 0.43531868555485054,
           "kaldirac": 5.0,
-          "anlik_kz_usd": -2566.04046,
+          "anlik_kz_usd": -3506.68562,
           "acilis": "2026-08-19T19:51:00.071000Z",
           "binance": "bilinmiyor"
         },
@@ -1493,10 +1493,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 1189.5637,
-          "buyukluk_usd": 214093.957,
-          "hesap_payi": 1.36481037023675,
+          "buyukluk_usd": 218762.411,
+          "hesap_payi": 1.3758247680044442,
           "kaldirac": 5.0,
-          "anlik_kz_usd": 14330.51285,
+          "anlik_kz_usd": 18998.96685,
           "acilis": "",
           "binance": "bilinmiyor"
         }
@@ -1739,116 +1739,120 @@
         ],
         [
           "2026-09-26",
-          0.89307609181863
+          0.7686807572720801
         ],
         [
           "2026-09-27",
-          0.89307609181863
+          0.7686807572720801
         ],
         [
           "2026-09-28",
-          0.89307609181863
+          0.7686807572720801
         ],
         [
           "2026-09-29",
-          0.89307609181863
+          0.7686807572720801
         ],
         [
           "2026-09-30",
-          0.89307609181863
+          0.7475024270551744
         ],
         [
           "2026-10-01",
-          0.89307609181863
+          0.7475024270551744
         ],
         [
           "2026-10-02",
-          0.6403372465516156
+          0.7475024270551744
         ],
         [
           "2026-10-03",
-          0.6403372465516156
+          0.7475024270551744
         ],
         [
           "2026-10-04",
-          0.6403372465516156
+          0.7475024270551744
         ],
         [
           "2026-10-05",
-          0.6403372465516156
+          0.7475024270551744
         ],
         [
           "2026-10-06",
-          0.6403372465516156
+          0.7475024270551744
         ],
         [
           "2026-10-07",
-          0.6403372465516156
+          0.7339703956375475
         ],
         [
           "2026-10-08",
-          0.6403372465516156
+          0.7339703956375475
         ],
         [
           "2026-10-09",
-          0.6403372465516156
+          0.7339703956375475
         ],
         [
           "2026-10-10",
-          0.6403372465516156
+          0.7339703956375475
         ],
         [
           "2026-10-11",
-          0.7596487388726163
+          0.7339703956375475
         ],
         [
           "2026-10-12",
-          0.7596487388726163
+          0.7339703956375475
         ],
         [
           "2026-10-13",
-          0.7596487388726163
+          0.7339703956375475
         ],
         [
           "2026-10-14",
-          0.7596487388726163
+          0.7339703956375475
         ],
         [
           "2026-10-15",
-          0.7596487388726163
+          0.7339703956375475
         ],
         [
           "2026-10-16",
-          0.7596487388726163
+          0.6763246303227679
         ],
         [
           "2026-10-17",
-          0.7596487388726163
+          0.6763246303227679
         ],
         [
           "2026-10-18",
-          0.7596487388726163
+          0.6763246303227679
         ],
         [
           "2026-10-19",
-          0.7596487388726163
+          0.6763246303227679
         ],
         [
           "2026-10-20",
-          0.7176546893555218
+          0.6763246303227679
+        ],
+        [
+          "2026-10-21",
+          0.8430026221521849
         ]
       ],
       "sanal_kopya": {
         "baslangic_usd": 1000,
-        "bakiye_usd": 1000.0661373150996,
-        "getiri": 6.613731509963472e-05,
+        "bakiye_usd": 1000.0680659288541,
+        "getiri": 6.806592885411078e-05,
         "dusus": 0.0,
         "gecikme_dk": 120,
         "t0": "2026-10-28",
         "egri": [
           [
             "2026-10-28",
-            1000.0661373150996
+            1000.0680659288541
           ]
         ]
       }
@@ -1860,7 +1864,7 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "swing",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Kaldı",
@@ -1874,21 +1878,21 @@
         ]
       },
       "form": {
-        "skor": -0.010971369799408713,
-        "getiri_30g": -0.0010747573460295756,
+        "skor": -0.014364458614264814,
+        "getiri_30g": -0.0014071449326455987,
         "getiri_90g": 0.9195680627545482
       },
-      "hesap_degeri": 42113.284335000004,
+      "hesap_degeri": 44618.980161,
       "pozisyonlar": [
         {
           "coin": "BTC",
           "sinif": "kripto",
           "yon": "long",
           "giris": 80413.9,
-          "buyukluk_usd": 60085.5528,
-          "hesap_payi": 1.4267600769874742,
+          "buyukluk_usd": 60645.85888,
+          "hesap_payi": 1.3591941963077088,
           "kaldirac": 5.0,
-          "anlik_kz_usd": 90.29125,
+          "anlik_kz_usd": 650.59733,
           "acilis": "2026-10-22T11:51:33.676000Z",
           "binance": "bilinmiyor"
         },
@@ -1897,10 +1901,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 2336.86,
-          "buyukluk_usd": 39945.55418,
-          "hesap_payi": 0.9485262147270138,
+          "buyukluk_usd": 40387.14956,
+          "hesap_payi": 0.9051562678992178,
           "kaldirac": 5.0,
-          "anlik_kz_usd": -52.47478,
+          "anlik_kz_usd": 389.1206,
           "acilis": "2026-10-22T12:05:52.291000Z",
           "binance": "bilinmiyor"
         },
@@ -1909,10 +1913,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 1.265907,
-          "buyukluk_usd": 31066.474928,
-          "hesap_payi": 0.737688247748013,
+          "buyukluk_usd": 31520.4192,
+          "hesap_payi": 0.7064352229984623,
           "kaldirac": 5.0,
-          "anlik_kz_usd": 1069.520528,
+          "anlik_kz_usd": 1523.4648,
           "acilis": "2026-10-18T15:31:35.580000Z",
           "binance": "bilinmiyor"
         },
@@ -1921,10 +1925,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 162.826,
-          "buyukluk_usd": 29252.57865,
-          "hesap_payi": 0.6946164164567051,
+          "buyukluk_usd": 29602.64415,
+          "hesap_payi": 0.6634540736517037,
           "kaldirac": 5.0,
-          "anlik_kz_usd": -747.31425,
+          "anlik_kz_usd": -397.24875,
           "acilis": "2026-10-23T14:16:04.394000Z",
           "binance": "bilinmiyor"
         },
@@ -1933,10 +1937,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 83.694,
-          "buyukluk_usd": 56994.85974,
-          "hesap_payi": 1.3533700978204648,
+          "buyukluk_usd": 57709.31991,
+          "hesap_payi": 1.2933805233056814,
           "kaldirac": 5.0,
-          "anlik_kz_usd": -2981.683387,
+          "anlik_kz_usd": -2267.223217,
           "acilis": "2026-10-15T15:58:45.923000Z",
           "binance": "bilinmiyor"
         }
@@ -2308,15 +2312,15 @@
       ],
       "sanal_kopya": {
         "baslangic_usd": 1000,
-        "bakiye_usd": 998.9252426539704,
-        "getiri": -0.0010747573460295756,
-        "dusus": 0.0010747573460295756,
+        "bakiye_usd": 998.5928550673544,
+        "getiri": -0.0014071449326455987,
+        "dusus": 0.0014071449326455987,
         "gecikme_dk": 120,
         "t0": "2026-10-28",
         "egri": [
           [
             "2026-10-28",
-            998.9252426539704
+            998.5928550673544
           ]
         ]
       }
@@ -2328,7 +2332,7 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "intraday",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Kaldı",
@@ -2342,21 +2346,21 @@
         ]
       },
       "form": {
-        "skor": -0.015816189021499286,
-        "getiri_30g": -0.0007587438068967778,
-        "getiri_90g": -0.08890383736249172
+        "skor": -0.020358457836306177,
+        "getiri_30g": -0.0009823470366000508,
+        "getiri_90g": -0.08202579820342054
       },
-      "hesap_degeri": 121275.64868,
+      "hesap_degeri": 125300.73079,
       "pozisyonlar": [
         {
           "coin": "BTC",
           "sinif": "kripto",
           "yon": "long",
           "giris": 86777.1,
-          "buyukluk_usd": 439275.92436,
-          "hesap_payi": 3.622128012846841,
+          "buyukluk_usd": 443328.64758,
+          "hesap_payi": 3.5381170148401173,
           "kaldirac": 3.0,
-          "anlik_kz_usd": -34053.48108,
+          "anlik_kz_usd": -30000.75786,
           "acilis": "2026-10-05T01:18:04.911000Z",
           "binance": "bilinmiyor"
         }
@@ -2707,36 +2711,36 @@
         ],
         [
           "2026-10-23",
-          0.22512274321526657
+          0.21519230205129147
         ],
         [
           "2026-10-24",
-          0.22512274321526657
+          0.21519230205129147
         ],
         [
           "2026-10-25",
-          0.1855110641368836
+          0.17789434840703439
         ],
         [
           "2026-10-26",
-          0.1855110641368836
+          0.17789434840703439
         ],
         [
           "2026-10-27",
-          0.17147429924388033
+          0.1783523384029515
         ]
       ],
       "sanal_kopya": {
         "baslangic_usd": 1000,
-        "bakiye_usd": 999.2412561931033,
-        "getiri": -0.0007587438068967778,
-        "dusus": 0.0007587438068967778,
+        "bakiye_usd": 999.0176529634,
+        "getiri": -0.0009823470366000508,
+        "dusus": 0.0009823470366000508,
         "gecikme_dk": 30,
         "t0": "2026-10-28",
         "egri": [
           [
             "2026-10-28",
-            999.2412561931033
+            999.0176529634
           ]
         ]
       }
@@ -2748,7 +2752,7 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "intraday",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Yetersiz",
@@ -2762,21 +2766,21 @@
         ]
       },
       "form": {
-        "skor": -0.008260841272754163,
-        "getiri_30g": -0.001665795690816485,
+        "skor": -0.009440517666147353,
+        "getiri_30g": -0.0019036770140121728,
         "getiri_90g": 3.634774259151939
       },
-      "hesap_degeri": 83843.96284000001,
+      "hesap_degeri": 83214.334415,
       "pozisyonlar": [
         {
           "coin": "BNB",
           "sinif": "kripto",
           "yon": "short",
           "giris": 726.73,
-          "buyukluk_usd": 3750.15,
-          "hesap_payi": 0.04472772842519904,
+          "buyukluk_usd": 3781.85,
+          "hesap_payi": 0.0454470978658491,
           "kaldirac": 10.0,
-          "anlik_kz_usd": -116.5,
+          "anlik_kz_usd": -148.2,
           "acilis": "2026-09-17T09:29:06.186000Z",
           "binance": "bilinmiyor"
         },
@@ -2785,10 +2789,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 94.268,
-          "buyukluk_usd": 93989.0,
-          "hesap_payi": 1.1209990178942262,
+          "buyukluk_usd": 93340.0,
+          "hesap_payi": 1.1216817469752516,
           "kaldirac": 10.0,
-          "anlik_kz_usd": -279.035695,
+          "anlik_kz_usd": -928.035695,
           "acilis": "2026-08-25T02:52:50.863000Z",
           "binance": "bilinmiyor"
         },
@@ -2797,10 +2801,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 332.396,
-          "buyukluk_usd": 122592.58377,
-          "hesap_payi": 1.4621515922851147,
+          "buyukluk_usd": 111475.3699,
+          "hesap_payi": 1.3396173950519004,
           "kaldirac": 20.0,
-          "anlik_kz_usd": -3398.739983,
+          "anlik_kz_usd": -14515.953853,
           "acilis": "2026-09-09T12:59:40.463000Z",
           "binance": "bilinmiyor"
         },
@@ -2809,10 +2813,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 255.063,
-          "buyukluk_usd": 13673.63268,
-          "hesap_payi": 0.16308428438781555,
+          "buyukluk_usd": 13728.28176,
+          "hesap_payi": 0.16497496322611185,
           "kaldirac": 10.0,
-          "anlik_kz_usd": -127.317275,
+          "anlik_kz_usd": -72.668195,
           "acilis": "",
           "binance": "bilinmiyor"
         },
@@ -2821,10 +2825,10 @@
           "sinif": "emtia",
           "yon": "short",
           "giris": 89.783,
-          "buyukluk_usd": 51710.0,
-          "hesap_payi": 0.6167408868624034,
+          "buyukluk_usd": 50990.0,
+          "hesap_payi": 0.6127550061952869,
           "kaldirac": 20.0,
-          "anlik_kz_usd": -6818.5,
+          "anlik_kz_usd": -6098.5,
           "acilis": "2026-09-02T11:19:07.364000Z",
           "binance": "bilinmiyor"
         },
@@ -2833,10 +2837,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 41.321,
-          "buyukluk_usd": 8689.524585,
-          "hesap_payi": 0.10363923997225986,
+          "buyukluk_usd": 8677.5696,
+          "hesap_payi": 0.10427974532276982,
           "kaldirac": 10.0,
-          "anlik_kz_usd": -3359.320043,
+          "anlik_kz_usd": -3371.275028,
           "acilis": "",
           "binance": "bilinmiyor"
         },
@@ -2845,10 +2849,10 @@
           "sinif": "hisse",
           "yon": "long",
           "giris": 72.867,
-          "buyukluk_usd": 48145.172016,
-          "hesap_payi": 0.5742234787718199,
+          "buyukluk_usd": 47821.587522,
+          "hesap_payi": 0.5746796853954023,
           "kaldirac": 10.0,
-          "anlik_kz_usd": 318.203234,
+          "anlik_kz_usd": -5.38126,
           "acilis": "",
           "binance": "bilinmiyor"
         }
@@ -3224,15 +3228,15 @@
       ],
       "sanal_kopya": {
         "baslangic_usd": 1000,
-        "bakiye_usd": 998.3342043091835,
-        "getiri": -0.001665795690816485,
-        "dusus": 0.001665795690816485,
+        "bakiye_usd": 998.0963229859879,
+        "getiri": -0.0019036770140121728,
+        "dusus": 0.0019036770140121728,
         "gecikme_dk": 30,
         "t0": "2026-10-28",
         "egri": [
           [
             "2026-10-28",
-            998.3342043091835
+            998.0963229859879
           ]
         ]
       }
@@ -3244,7 +3248,7 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "intraday",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Kaldı",
@@ -3624,6 +3628,14 @@
         [
           "2026-10-26",
           0.14527191911716925
+        ],
+        [
+          "2026-10-27",
+          0.14527191911716925
+        ],
+        [
+          "2026-10-28",
+          0.14527191911716925
         ]
       ],
       "sanal_kopya": {
@@ -3648,7 +3660,7 @@
       "durum": "izlemede",
       "t0": "2026-10-28",
       "tarz": "intraday",
-      "veri_zamani": "2026-10-28T16:30:54.779830Z",
+      "veri_zamani": "2026-10-28T21:09:55.696714Z",
       "gecerli": true,
       "kapi": {
         "sinif": "Yetersiz",
@@ -3662,21 +3674,21 @@
         ]
       },
       "form": {
-        "skor": -0.004079653342665835,
-        "getiri_30g": -0.000508466633602489,
+        "skor": -0.005208806383920394,
+        "getiri_30g": -0.0006491983569830717,
         "getiri_90g": 0.7865113156569095
       },
-      "hesap_degeri": 21291.512363,
+      "hesap_degeri": 22151.511355,
       "pozisyonlar": [
         {
           "coin": "PURR",
           "sinif": "kripto",
           "yon": "long",
           "giris": 0.114339,
-          "buyukluk_usd": 10024.99534,
-          "hesap_payi": 0.4708446806916944,
+          "buyukluk_usd": 10113.70358,
+          "hesap_payi": 0.45656946011122407,
           "kaldirac": 3.0,
-          "anlik_kz_usd": -999.8878,
+          "anlik_kz_usd": -911.17956,
           "acilis": "2026-10-07T06:15:14.291000Z",
           "binance": "bilinmiyor"
         },
@@ -3685,10 +3697,10 @@
           "sinif": "kripto",
           "yon": "long",
           "giris": 3.752683,
-          "buyukluk_usd": 42279.3189,
-          "hesap_payi": 1.9857358265198775,
+          "buyukluk_usd": 43053.914475,
+          "hesap_payi": 1.9436106992890103,
           "kaldirac": 5.0,
-          "anlik_kz_usd": -11725.5555,
+          "anlik_kz_usd": -10950.959925,
           "acilis": "2026-09-27T12:23:44.102000Z",
           "binance": "bilinmiyor"
         }
@@ -4060,15 +4072,15 @@
       ],
       "sanal_kopya": {
         "baslangic_usd": 1000,
-        "bakiye_usd": 999.4915333663976,
-        "getiri": -0.000508466633602489,
-        "dusus": 0.000508466633602489,
+        "bakiye_usd": 999.3508016430169,
+        "getiri": -0.0006491983569830717,
+        "dusus": 0.0006491983569830717,
         "gecikme_dk": 30,
         "t0": "2026-10-28",
         "egri": [
           [
             "2026-10-28",
-            999.4915333663976
+            999.3508016430169
           ]
         ]
       }
