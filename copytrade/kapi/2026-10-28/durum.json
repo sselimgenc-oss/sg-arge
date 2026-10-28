@@ -1,0 +1,15 @@
+{
+ "durum": "tamam",
+ "parca_beklenen": 24,
+ "parca_biten": 24,
+ "islenen": 92,
+ "evren": 13627,
+ "kapsam": 0.0068,
+ "neden": "",
+ "eski_hesap_satir": 0,
+ "hesap": "v1.1-2026-10-27d",
+ "satir_kaynagi": {
+  "bu_kosu": 92
+ },
+ "kapi_sorunlari": []
+}
