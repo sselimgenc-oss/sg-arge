@@ -89,3 +89,11 @@ Eksik kaynak → alan `null` → ekranda "bilinmiyor"; sayfa hiçbir zaman eksi�
   (`{"surum":1,"odalar":{…},"calisanlar":{…},"traderlar":{"T033":"takma ad"}}`; bilinmeyen kimlikler atlanır, ad ≤ 24 karakter). Ad yalnız etiketi değiştirir: veri ve trader'ın gerçek adresi (kısaltılmış) sabit kalır.
 - **`replikler.json`**: `veri: [{olay_turu, rol, sablon}]` (olaydan doğar; `{yer_tutucu}` alanları olay/veriden dolar, yoksa "bilinmiyor") ve `suz: [{rol, metin}]` (ofis esprisi;
   **rakam, adres, oran, para içermez**; arayüzde ayrı, "ofis esprisi" etiketli kutuda). Test: `node ofis/test/replik.test.js`.
+
+## 8. Sürüm 2b alanları (yalnız ekleme)
+- `esik_dk` (dakika): her veri kaynağında (`kasa, ozet, risk, telegram, kohort_kontrol, arsiv, kapi, tarama, onkayit_kasasi`, `veri_kalitesi[]`, `katlar.*`). Bu yaştan eski veri "VERİ ESKİ" sayılır.
+- `oda_kaynak: {oda: ["veri_kalitesi:lab", "katlar:havuz", …]}` ve `ekran_kaynak`: hangi oda/ekran hangi kaynaklardan beslenir (bayatlık buradan hesaplanır).
+- `onkayit_kasasi: {surum, commit, dondurma_tarihi, zaman, esik_dk}`.
+- `gecmis_olaylar[]`: `{id, zaman, tur, oda, trader?, metin, kural?}`; olay çekmecesi ve günlük özet bunu kullanır.
+- Olaylarda `kural` zorunludur ve metin olaydan okunur; trader `kat_olay` kaydı terfi/kat düşürme olayında olaydan güncellenir.
+- `kadro.json`: `olay_turleri[tur] = {ad, ton}`, `ozet_gruplari`, yeni nesneler (`risk.alarm`, `haberlesme.zarf_rafi`, `sekreterlik.onkayit_kasasi`, `oda.masa`).

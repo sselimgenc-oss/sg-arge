@@ -41,3 +41,10 @@ Not: #18 (Adım 0) bu dalı açarken henüz birleşmemişti; dal `sonnet/ofis-ta
 - Kanıt (sürüm 2): `ofis/kanit/v2/` — masaüstü (bina, Lab kişi/nesne bilgisi, Kapı, Arşiv, iletişim işaretleri: terfi, kırmızı bayrak taşıyıcısı ve notu, ayarlar) ve telefon (bina, Lab + çekmece) ekran görüntüleri, 30 sn kayıt (`ekran_kaydi_30sn.mp4/.gif`: bina → Lab → kişiye tıklama → iletişim işareti).
 - Testler: `node ofis/test/replik.test.js` (18 kontrol), `node ofis/test/ui.test.js` (Playwright; 50 kontrol). Sonuçlar PR açıklamasında.
 - Düzeltme (testle bulundu): Kontrol, Lab, Finans, Haberleşme, Çay ve Aday'daki bitki/buzdolabı/sebil iç kapı boşluklarını kapatıyordu (v1'den kalma); taşındı. Artık denetçi trader masasına ve postacı posta kutusuna yürüyebilir.
+
+## Sürüm 2b (dal `claude/ofis-v2b`, 2026-10-28)
+- [x] Olay çekmecesi (filtre, tıkla → kamera + figür vurgusu, telefonda alttan çekmece) · [x] Bayatlık (`esik_dk` veride, "X dk önce", sis, "VERİ ESKİ") · [x] Oda ayrıntıları (Risk alarm paneli, Haberleşme ekranı + zarf rafı, ön kayıt kasası, Oda masaları, "ne yapar / ne yapmaz" kartı)
+- [x] Günlük özet (yalnız olay günlüğü; boş günde "değişiklik yok") · [x] Ses (varsayılan kapalı, kodla üretilen ton) · [x] Terfi kuralı düzeltildi ("≥ 3 hafta ve ≥ 10 kapanmış işlem"), kural metni olaydan gelir.
+- Düzeltme (testle bulundu): terfi eden trader'ın `kat_olay` kaydı eski (Kapı) kuralında kalıyordu; artık olaydan güncelleniyor.
+- Kanıt: `ofis/kanit/v2b/` (masaüstü + telefon ekran görüntüleri, 20 sn kayıt: çekmece → filtre → olaya tıkla → kamera odaya → bayat oda sisi). v2'nin gif kopyası alan açmak için silindi (mp4 duruyor).
+- Testler: `node ofis/test/replik.test.js`, `node ofis/test/ui.test.js` (86 kontrol) — hepsi geçti.

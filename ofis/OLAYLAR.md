@@ -89,3 +89,13 @@ Performansı oyunlaştıran öğe de yoktur: işlem K/Z'si yalnız işaretli say
 Çizim döngüsü durur (yaklaşık 0,7 sn'de bir yenilenir): yürüme yerine figür hedefine **hemen** geçer, vurgu ve alarm yanıp sönmez
 (sabit yanık kalır), zarf/para/koli efektleri sabit çizilir, kamera geçişleri anlıktır. Olaylar yine işlenir
 (Gözcü kaydı ve paneller güncellenir). `?hareket=0` aynı davranışı zorlar.
+
+## Sürüm 2b: çekmece, bayatlık, özet, ses
+- **Olay çekmecesi** (`cekmece.js`; rayda "Olaylar", Gözcü kaydında "Tümü · filtre"): oturumun olay günlüğü + `gecmis_olaylar`; oda, trader ve olay türü filtresi. Olaya tıklayınca kamera o odaya gider
+  (`Off.spot`: oda ve ilgili figür halkayla vurgulanır, birkaç saniye sonra söner). Masaüstünde soldan panel, telefonda alttan çekmece; `Esc` kapatır.
+- **Bayatlık** veriden türetilir, olay bayrağından değil: her veri kaynağının `esik_dk` alanı vardır (kodda sabit eşik yok); yaş = benzetim saati − kaynağın `zaman`ı. Ekran ve oda köşesinde "X dk önce";
+  eşik aşılırsa oda sislenir, plakada ve köşede "VERİ ESKİ" yazar, panelde satır işaretlenir. `veri_bayat` kaynağın zamanını eskiye çeker, `veri_taze` yeniler; sis kendiliğinden kalkar.
+- **Günlük özet** yalnız olay günlüğünden ("dün: 3 terfi, 1 çıkış, 2 bildirim"; boş günde "değişiklik yok"). Gruplar `kadro.json` `ozet_gruplari`nda.
+- **Ses**: varsayılan kapalı (Ayarlar → "Olay sesi"), olay başına tek kısa ton (WebAudio, frekans `kadro.json` `olay_turleri[tur].ton`), dosya yok; olay yağmurunda en çok birkaç ton; tercih `sgofis.ses.v1`.
+- **Kural metni** her yerde olaydaki `kural` alanından gelir (terfi: "gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem", ön kayıtla aynı); kodda veya replikte sabit sayı yoktur (test denetler).
+- **Oda ayrıntıları:** Risk alarm paneli (tavan doluluğu, alarmda yanar), Haberleşme büyük ekran + zarf rafı (bugünkü bildirim sayısı, en çok 12 zarf), Sekreterlik ön kayıt kasası (sürüm, commit, dondurma tarihi), Oda trader masaları; her odanın bilgi kutusunda "Bu birim ne yapar / ne yapmaz" kartı.

@@ -52,5 +52,15 @@ const objIds = [...new Set([...WORLD.matchAll(/'([a-z]+\.[a-z_]+\d?)'/g)].map(m 
 ok('dünyadaki her tıklanabilir nesnenin kadro.json tanımı var', objIds.every(i => K.nesneler[i]), objIds.filter(i => !K.nesneler[i]).join(', '));
 ok('hiçbir oda 3\'ten az tıklanabilir nesne taşımıyor', roomIds.every(r => new Set(objIds.filter(i => i.startsWith(r + '.'))).size >= 3), roomIds.filter(r => new Set(objIds.filter(i => i.startsWith(r + '.'))).size < 3).join(', '));
 
+/* kural metinleri: koda/replikte sabit sayı yok; kural olaydaki `kural` alanından gelir */
+const SABIT = /\d+\s*(gün|hafta|işlem)|(gün|hafta|işlem)\s*\d+/i;
+const sabitDos = ['office.js', 'panel.js', 'bilgi.js', 'cekmece.js', 'ses.js', 'main.js', 'world.js', 'iletisim.js', 'replikler.json', 'kadro.json'].filter(f => SABIT.test(rd(f)));
+ok('kod ve replikte kural sayısı sabit yazılmaz (gün/hafta/işlem)', sabitDos.length === 0, sabitDos.join(', '));
+const terKurallar = [...new Set(D.olaylar.filter(e => e.tur === 'terfi').map(e => e.kural))];
+ok('terfi kuralı ön kayıttaki gibi: ≥ 3 hafta ve ≥ 10 kapanmış işlem', terKurallar.length > 0 && terKurallar.every(k => /≥ 3 hafta ve ≥ 10 kapanmış işlem/.test(k)), terKurallar.join(' | '));
+ok('eski yanlış kural (14 gün, 20 işlem) hiçbir yerde yok', !/14 gün|20 işlem/.test(JSON.stringify(D) + rd('kadro.json') + rd('replikler.json')));
+ok('kadro.json: her olay türünün adı ve tonu var', Object.keys(K.olay_turleri || {}).length >= turler.filter(t => t !== 'sistem').length && Object.values(K.olay_turleri).every(o => o.ad && o.ton > 0));
+ok('ornek_durum.json: her veri kaynağında esik_dk', ['kasa', 'ozet', 'risk', 'telegram', 'kohort_kontrol', 'arsiv', 'kapi', 'tarama', 'onkayit_kasasi'].every(k => !D[k] || D[k].esik_dk > 0), '');
+
 console.log(bad ? '\n' + bad + ' test başarısız' : '\nhepsi geçti');
 process.exit(bad ? 1 : 0);

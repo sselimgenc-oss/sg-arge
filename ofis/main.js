@@ -147,7 +147,9 @@
       ctx.save(); ctx.beginPath();
       ctx.moveTo(p[0][0], p[0][1] - up); ctx.lineTo(p[1][0], p[1][1] - up); ctx.lineTo(p[1][0], p[1][1]); ctx.lineTo(p[2][0], p[2][1]); ctx.lineTo(p[3][0], p[3][1]); ctx.lineTo(p[3][0], p[3][1] - up); ctx.closePath();
       ctx.clip(); ctx.globalCompositeOperation = 'saturation'; ctx.fillStyle = '#808080'; ctx.fillRect(0, 0, W.CW, W.CH);
-      ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgba(150,155,170,1)'; ctx.fillRect(0, 0, W.CW, W.CH); ctx.restore();
+      ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgba(150,155,170,1)'; ctx.fillRect(0, 0, W.CW, W.CH);
+      ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = 'rgba(214,222,232,0.38)'; ctx.fillRect(0, 0, W.CW, W.CH);   // veri eski: oda sislenir
+      ctx.restore();
     });
     // oda vurgusu
     Off.highlights().forEach(h => {
@@ -240,16 +242,40 @@
     const s = Off.state(), z = cam.z, showSigns = z >= 0.3;
     const fs = Math.max(6.5, Math.min(12.5, 5.6 + z * 3.2));
     drawTraderLabels();
+    drawAgeChips();
     if (showSigns) {
       W.ROOMS.forEach(r => {
         const p = W.sign(r), v = toView(p.x, p.y);
         if (v.x < -90 || v.y < -40 || v.x > view.w + 90 || v.y > view.h + 40) return;
         const stale = s.stale[r.id], sel = s.sel === r.id || hoverRoom === r.id, acc = lighten(r.ac, 0.32);
         cx.globalAlpha = mode.room && r.id !== mode.room ? 1 - 0.68 * roomT : 1;
-        plate(v.x, v.y, Names.room(r.id, r.ad) + (stale ? ' · veri eski' : ''), { size: fs, pad: fs < 9 ? 3 : 4, stripe: fs < 9 ? 3 : 4, bg: 'rgba(12,22,28,' + (sel ? '0.97' : '0.88') + ')', fg: stale ? '#ffd98a' : '#eaf4f5', accent: stale ? '#f2b035' : acc, edge: sel ? 'rgba(255,255,255,.9)' : 'rgba(210,235,238,.28)', glow: sel ? acc : null, hatch: !!stale });
+        plate(v.x, v.y, Names.room(r.id, r.ad) + (stale ? ' · VERİ ESKİ' : ''), { size: fs, pad: fs < 9 ? 3 : 4, stripe: fs < 9 ? 3 : 4, bg: 'rgba(12,22,28,' + (sel ? '0.97' : '0.88') + ')', fg: stale ? '#ffd98a' : '#eaf4f5', accent: stale ? '#f2b035' : acc, edge: sel ? 'rgba(255,255,255,.9)' : 'rgba(210,235,238,.28)', glow: sel ? acc : null, hatch: !!stale });
         cx.globalAlpha = 1;
       });
     }
+  }
+  /* her oda köşesinde ve duvar ekranında "X dk önce"; eşik aşıldıysa (veride, kaynak başına) açık VERİ ESKİ etiketi */
+  function drawAgeChips() {
+    const z = cam.z, s = Off.state(), fs = Math.max(6.5, Math.min(11, 5.6 + z * 2.4));
+    W.ROOMS.forEach(r => {
+      if (r.out) return;
+      const inf = Off.ageInfo(r.id); if (!inf) return;
+      if (!inf.stale && z < 1.15) return;
+      const p = W.roomPoly(r), v = toView(p[3][0] + 6, p[3][1] - 4);
+      if (v.x < -80 || v.y < -30 || v.x > view.w + 80 || v.y > view.h + 30) return;
+      cx.globalAlpha = mode.room && r.id !== mode.room ? 1 - 0.6 * roomT : 1;
+      const t = O.Panel.ageTxt(inf);
+      if (inf.stale) plate(v.x + 40, v.y - 8, 'VERİ ESKİ · ' + t, { size: fs + 1, pad: 3, stripe: 4, bg: 'rgba(40,28,6,.95)', fg: '#ffe2a0', accent: '#f2b035', edge: 'rgba(242,176,53,.9)', hatch: true });
+      else plate(v.x + 22, v.y - 8, t, { size: fs - 0.5, pad: 2, stripe: 2, bg: 'rgba(12,22,28,.78)', fg: '#a9c0c6', accent: '#46d3c2', edge: 'rgba(0,0,0,0)' });
+      cx.globalAlpha = 1;
+    });
+    if (z >= 1.5) Object.keys(s.data.ekran_kaynak || {}).forEach(id => {
+      const o = W.objects.find(x => x.id === id), inf = Off.screenAge(id); if (!o || !inf) return;
+      const v = toView(o.e.px, o.e.py - 60);
+      if (v.x < -60 || v.y < -20 || v.x > view.w + 60 || v.y > view.h + 20) return;
+      const t = O.Panel.ageTxt(inf);
+      plate(v.x, v.y, inf.stale ? 'ESKİ · ' + t : t, { size: fs - 1, pad: 2, stripe: 2, bg: inf.stale ? 'rgba(40,28,6,.95)' : 'rgba(12,22,28,.8)', fg: inf.stale ? '#ffe2a0' : '#a9c0c6', accent: inf.stale ? '#f2b035' : '#46d3c2', edge: 'rgba(0,0,0,0)', hatch: inf.stale });
+    });
   }
   function drawTraderLabels() {
     const z = cam.z;
@@ -436,7 +462,7 @@
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
     const dlg = $('#ayarlar'); if (dlg && dlg.open) return;      // ayarlar penceresi kendi Esc'ini yönetir
-    if (Info.isOpen()) { Info.close(); kick(); } else if (mode.active) goBuilding(); else if (document.body.classList.contains('tam')) togglePanel();
+    if (O.Cekmece.isOpen()) { O.Cekmece.close(); kick(); } else if (Info.isOpen()) { Info.close(); kick(); } else if (mode.active) goBuilding(); else if (document.body.classList.contains('tam')) togglePanel();
   });
   function zoomBy(f) { setCam({ cx: cam.cx, cy: cam.cy, z: Math.max(fitZ * 0.7, Math.min(4.2, cam.z * f)) }, true); kick(); }
   $('#zIn').addEventListener('click', () => zoomBy(1.35));
@@ -536,7 +562,15 @@
     updateLight(); resize();
     new ResizeObserver(() => { resize(); kick(); }).observe($('#ofisTuval'));
     Off.on(() => kick());                      // durum her değiştiğinde (dışarıdan gelen olay dâhil) döngü uyanır
-    Info.init(Off, { invalidate: kick, onShow: sel => { pinned = sel.type === 'person' ? sel.a : null; shiftFor(true); }, onClose: () => { pinned = null; shiftFor(false); } }, replik || undefined);
+    Info.init(Off, { invalidate: kick, onShow: sel => { if (O.Cekmece.isOpen()) O.Cekmece.close(); pinned = sel.type === 'person' ? sel.a : null; shiftFor(true); }, onClose: () => { pinned = null; shiftFor(false); } }, replik || undefined);
+    O.Cekmece.init(Off, { invalidate: kick, beforeOpen: () => { if (Info.isOpen()) Info.close(); },
+      focusEvent: en => {                          // olaya tıkla: kamera o odaya gider, ilgili figür vurgulanır
+        const room = W.roomById[en.oda];
+        if (room && !room.out) goRoom(en.oda);
+        Off.spot(en); if (window.matchMedia('(max-width: 899px)').matches) O.Cekmece.close();
+        kick();
+      } });
+    if (O.Ses) O.Ses.init(Off, (kadro || {}).olay_turleri || {});
     Names.bindUI(); Names.onChange(refreshNames); refreshNames();
     if (O.Panel) O.Panel.init(Off, { focusRoom: id => goRoom(id) });
     const f = qs.get('oda'); if (f && W.roomById[f] && !W.roomById[f].out) { try { history.replaceState(null, '', location.pathname + '#oda/' + f); } catch (e) { /* adres çubuğu değiştirilemedi */ } }

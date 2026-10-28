@@ -18,7 +18,7 @@
   const fmtDate = d => pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
   function ago(iso) {
     const st = Off.state(); if (!iso || !st.data.uretildi) return 'bilinmiyor';
-    const m = Math.round((Date.parse(st.data.uretildi) - Date.parse(iso)) / 60000 + (Date.now() - st.loadMs) / 60000);
+    const m = Math.round(Off.ageMin(iso));
     if (isNaN(m)) return 'bilinmiyor';
     if (m < 1) return 'şimdi'; if (m < 60) return m + ' dk önce';
     const h = Math.floor(m / 60); return h < 24 ? h + ' sa ' + (m % 60) + ' dk önce' : Math.floor(h / 24) + ' g önce';
@@ -110,7 +110,10 @@
       case 'arsiv.raf1': case 'arsiv.raf2': case 'arsiv.raf3': case 'arsiv.dolap': case 'arsiv.kutu': return arsiv().length ? arsiv() : [row('Arşiv', null)];
       case 'finans.kasa': case 'finans.tv': return [row('Kasa değeri ve eğrisi', 'kilitli', 'ön kayıt: hafta ' + st.kk.hafta + '/' + st.kk.hafta_toplam)];
       case 'haberlesme.posta': case 'haberlesme.tv': return [row('Bugün bildirim', st.tg.bugun_n == null ? null : 'n=' + st.tg.bugun_n, ago(st.tg.zaman)), row('Son bildirim', esc((st.tg.son || [])[0] || 'bilinmiyor'))];
-      case 'risk.fener': case 'risk.tv': return st.risk.tavanlar.map(t => row(t.ad, '%' + Math.round(t.kullanim / t.tavan * 100) + ' dolu', ago(st.risk.zaman))).concat([row('Alarm', st.alarm ? 'açık' : 'yok')]);
+      case 'oda.masa': return [row('Oda', 'n=' + k.oda.n + '/' + k.oda.kapasite + ' trader', ago(k.oda.zaman)), row('Boş masa', 'n=' + Math.max(0, k.oda.kapasite - k.oda.n)), row('Açık gölge işlem', 'n=' + st.acik.length, ago(st.ozet.zaman))];
+      case 'sekreterlik.onkayit_kasasi': { const o = st.onkayit; return [row('Ön kayıt sürümü', esc(o.surum || 'bilinmiyor'), ago(o.zaman)), row('Commit', o.commit ? '<code>' + esc(o.commit) + '</code>' : null), row('Dondurma tarihi', esc(o.dondurma_tarihi || 'bilinmiyor'))]; }
+      case 'haberlesme.zarf_rafi': return [row('Bugün gönderilen bildirim', st.tg.bugun_n == null ? null : 'n=' + st.tg.bugun_n, ago(st.tg.zaman)), row('Rafta görünen zarf', 'n=' + Math.min(12, st.tg.bugun_n || 0) + ' (en çok 12)'), row('Son bildirim', esc((st.tg.son || [])[0] || 'bilinmiyor'))];
+      case 'risk.alarm': case 'risk.fener': case 'risk.tv': return st.risk.tavanlar.map(t => row(t.ad, '%' + Math.round(t.kullanim / t.tavan * 100) + ' dolu', ago(st.risk.zaman))).concat([row('Alarm', st.alarm ? 'açık' : 'yok')]);
       case 'denetim.sunucu1': case 'denetim.sunucu2': case 'denetim.sunucu3': return [row('Son denetim', st.denetim === 'tamam' ? 'tamam (yeşil ışık)' : 'uyarı (sarı ışık)', ago(v('denetim').zaman))];
       case 'tarama.tv': return [row('Son tarama', esc(v('tarama').deger || 'bilinmiyor'), ago(v('tarama').zaman)), row('En yüksek puanlar', (st.tarama.puanlar || []).slice(0, 3).map(p => String(p).replace('.', ',')).join(' · ') || null, ago(st.tarama.zaman))];
       case 'aday.tv': return [row('Aday katı', k.aday.n == null ? null : 'n=' + k.aday.n, ago(k.aday.zaman)), row('Görünen masa', 'n=' + k.aday.masa)];
@@ -123,6 +126,7 @@
     }
   }
 
+  const eskiRow = room => { const i = room ? Off.ageInfo(room) : null; if (!i) return ''; return row('Veri yaşı', (i.stale ? '<span class="eski-etiket">VERİ ESKİ</span> ' : '') + O.Panel.ageTxt(i), i.esik != null ? 'eşik ' + O.Panel.dkTxt(i.esik) + ' (veri kaynağına göre)' : ''); };
   /* ---------- seçime göre içerik ---------- */
   function build(sel, st) {
     const kad = Names.kadro();
@@ -134,7 +138,7 @@
         title = Names.staff(id); sub = 'çalışan · ' + oad; edit = { kind: 'calisan', id: id, cur: Names.isCustom('calisan', id) ? Names.staff(id) : '', ph: Names.staffDefault(id) };
         kimlik = rows([row('Ad', esc(title) + (Names.isCustom('calisan', id) ? '<small>varsayılan: ' + esc(Names.staffDefault(id)) + '</small>' : '')), row('Oda', esc(oad)), row('Görevi', esc(k.yapar || 'bilinmiyor'))]);
         const r = rec['rol:' + rol];
-        veri = rows(staffRows(rol, st)) + (r ? whyFromEv(r) : whyStatic('sabit kadro (kadro.json); bu oturumda henüz olay yok'));
+        veri = rows([eskiRow(k.oda)].concat(staffRows(rol, st))) + (r ? whyFromEv(r) : whyStatic('sabit kadro (kadro.json); bu oturumda henüz olay yok'));
         replik = replikHTML(veriReplik(rol, r, st), susReplik(rol, 'p:' + id));
       } else {
         const t = st.traders[a.id] || {}, al = Names.trader(a.id);
@@ -149,14 +153,14 @@
       title = d.ad; sub = 'nesne · ' + oad;
       kimlik = rows([row('Nesne', esc(d.ad)), row('Oda', esc(oad)), row('İşlevi', esc(d.ne))]);
       const data = objRows(o.id, st), r = rec['oda:' + o.room];
-      veri = (data.length ? rows(data) : '<p class="bos">Bu nesne süstür; veri taşımaz.</p>') + (!d.suz && r ? whyFromEv(r) : whyStatic('sabit oda donanımı (kadro.json)'));
+      veri = (data.length ? rows([eskiRow(o.room)].concat(data)) : '<p class="bos">Bu nesne süstür; veri taşımaz.</p>') + (!d.suz && r ? whyFromEv(r) : whyStatic('sabit oda donanımı (kadro.json)'));
       replik = replikHTML(null, susReplik('obje', 'o:' + o.id));
     } else if (sel.type === 'oda') {
       const id = sel.id, r0 = W.roomById[id] || {}, d = kad.odalar[id] || {}, info = Off.roomInfo(id) || { lines: [] };
       title = Names.room(id, r0.ad); sub = 'oda'; edit = { kind: 'oda', id: id, cur: Names.isCustom('oda', id) ? title : '', ph: Names.roomDefault(id, r0.ad) };
-      kimlik = rows([row('Ad', esc(title) + (Names.isCustom('oda', id) ? '<small>varsayılan: ' + esc(Names.roomDefault(id, r0.ad)) + '</small>' : '')), row('Bu birim yapar', esc(d.yapar || 'bilinmiyor')), row('Bu birim yapmaz', esc(d.yapmaz || 'bilinmiyor'))]);
+      kimlik = rows([row('Ad', esc(title) + (Names.isCustom('oda', id) ? '<small>varsayılan: ' + esc(Names.roomDefault(id, r0.ad)) + '</small>' : ''))]) + '<div class="birim-kart" aria-label="Bu birim ne yapar, ne yapmaz"><div><b>Bu birim ne yapar</b>' + esc(d.yapar || 'bilinmiyor') + '</div><div class="yapmaz"><b>Ne yapmaz</b>' + esc(d.yapmaz || 'bilinmiyor') + '</div></div>';
       const r = rec['oda:' + id];
-      veri = '<ul class="b-lines">' + info.lines.map(l => '<li>' + esc(l) + '</li>').join('') + '</ul>' + row2('Veri durumu', st.stale[id] ? 'eski (bayat)' : 'taze') + (r ? whyFromEv(r) : whyStatic('sabit oda (kadro.json)'));
+      veri = '<ul class="b-lines">' + info.lines.map(l => '<li>' + esc(l) + '</li>').join('') + '</ul>' + '<dl class="b-rows">' + eskiRow(id) + '</dl>' + (r ? whyFromEv(r) : whyStatic('sabit oda (kadro.json)'));
       replik = '';
     } else if (sel.type === 'isaret') {
       const m = sel.mark, n = sel.note, e = (m ? m.e : n.e) || {}, kind = m ? ({ zarf: 'Zarf', not: 'Not kâğıdı', ok: 'Ok' }[m.kind]) : 'Kırmızı bayrak notu';

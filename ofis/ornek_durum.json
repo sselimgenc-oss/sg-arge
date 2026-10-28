@@ -52,36 +52,42 @@
     "2026-10-28",
     1012.4
    ]
-  ]
+  ],
+  "esik_dk": 60
  },
  "ozet": {
   "islem_basi_usd": 20.0,
   "bugun_kz_usd": -0.62,
   "bugun_acilan_n": 7,
   "bugun_kapanan_n": 5,
-  "zaman": "2026-10-28T14:20:00Z"
+  "zaman": "2026-10-28T14:20:00Z",
+  "esik_dk": 60
  },
  "katlar": {
   "havuz": {
    "n": 126,
    "masa": 12,
-   "zaman": "2026-10-28T13:40:00Z"
+   "zaman": "2026-10-28T13:40:00Z",
+   "esik_dk": 120
   },
   "aday": {
    "n": 18,
    "masa": 8,
-   "zaman": "2026-10-28T14:00:00Z"
+   "zaman": "2026-10-28T14:00:00Z",
+   "esik_dk": 120
   },
   "oda": {
    "n": 14,
    "kapasite": 20,
    "masa": 20,
-   "zaman": "2026-10-28T14:20:00Z"
+   "zaman": "2026-10-28T14:20:00Z",
+   "esik_dk": 60
   },
   "kontrol": {
    "n": 10,
    "masa": 10,
-   "zaman": "2026-10-28T14:00:00Z"
+   "zaman": "2026-10-28T14:00:00Z",
+   "esik_dk": 120
   }
  },
  "traderlar": [
@@ -143,7 +149,7 @@
    "kol": "havuz",
    "tarz": "intraday",
    "etiket": "2026-10-12",
-   "gun": 16,
+   "gun": 23,
    "islem_n": 17,
    "puan": 0.48,
    "ornek": true,
@@ -279,13 +285,13 @@
    "kol": "kohort",
    "tarz": "intraday",
    "etiket": "2026-10-10",
-   "gun": 18,
+   "gun": 26,
    "islem_n": 98,
    "puan": 0.49,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0014",
-    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
     "zaman": "2026-10-13T08:00:00Z"
    }
   },
@@ -296,13 +302,13 @@
    "kol": "kohort",
    "tarz": "swing",
    "etiket": "2026-10-04",
-   "gun": 24,
+   "gun": 27,
    "islem_n": 36,
    "puan": 0.47,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0015",
-    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
     "zaman": "2026-10-07T08:00:00Z"
    }
   },
@@ -313,13 +319,13 @@
    "kol": "kohort",
    "tarz": "intraday",
    "etiket": "2026-10-09",
-   "gun": 19,
+   "gun": 28,
    "islem_n": 101,
    "puan": 0.76,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0016",
-    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
     "zaman": "2026-10-12T08:00:00Z"
    }
   },
@@ -330,13 +336,13 @@
    "kol": "kohort",
    "tarz": "swing",
    "etiket": "2026-10-16",
-   "gun": 12,
+   "gun": 29,
    "islem_n": 86,
    "puan": 0.67,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0017",
-    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
     "zaman": "2026-10-19T08:00:00Z"
    }
   },
@@ -347,13 +353,13 @@
    "kol": "kohort",
    "tarz": "intraday",
    "etiket": "2026-10-10",
-   "gun": 18,
+   "gun": 21,
    "islem_n": 35,
    "puan": 0.7,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0018",
-    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
     "zaman": "2026-10-13T08:00:00Z"
    }
   },
@@ -364,13 +370,13 @@
    "kol": "kohort",
    "tarz": "swing",
    "etiket": "2026-10-13",
-   "gun": 15,
+   "gun": 22,
    "islem_n": 45,
    "puan": 0.57,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0019",
-    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
     "zaman": "2026-10-16T08:00:00Z"
    }
   },
@@ -381,13 +387,13 @@
    "kol": "kohort",
    "tarz": "intraday",
    "etiket": "2026-10-17",
-   "gun": 11,
+   "gun": 23,
    "islem_n": 74,
    "puan": 0.81,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0020",
-    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
     "zaman": "2026-10-20T08:00:00Z"
    }
   },
@@ -404,7 +410,7 @@
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0031",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-10T08:00:00Z"
    }
   },
@@ -415,13 +421,13 @@
    "kol": "kohort",
    "tarz": "intraday",
    "etiket": "2026-10-06",
-   "gun": 22,
+   "gun": 26,
    "islem_n": 147,
    "puan": 0.92,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0032",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-13T08:00:00Z"
    }
   },
@@ -432,13 +438,13 @@
    "kol": "kohort",
    "tarz": "swing",
    "etiket": "2026-10-02",
-   "gun": 26,
+   "gun": 27,
    "islem_n": 124,
    "puan": 0.75,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0033",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-09T08:00:00Z"
    }
   },
@@ -449,13 +455,13 @@
    "kol": "kohort",
    "tarz": "intraday",
    "etiket": "2026-10-07",
-   "gun": 21,
+   "gun": 28,
    "islem_n": 62,
    "puan": 0.54,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0034",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-14T08:00:00Z"
    }
   },
@@ -466,13 +472,13 @@
    "kol": "kohort",
    "tarz": "swing",
    "etiket": "2026-10-01",
-   "gun": 27,
+   "gun": 29,
    "islem_n": 64,
    "puan": 0.8,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0035",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-08T08:00:00Z"
    }
   },
@@ -489,7 +495,7 @@
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0036",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-09T08:00:00Z"
    }
   },
@@ -500,13 +506,13 @@
    "kol": "kohort",
    "tarz": "swing",
    "etiket": "2026-10-07",
-   "gun": 21,
+   "gun": 22,
    "islem_n": 65,
    "puan": 0.39,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0037",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-14T08:00:00Z"
    }
   },
@@ -523,7 +529,7 @@
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0038",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-12T08:00:00Z"
    }
   },
@@ -540,7 +546,7 @@
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0039",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-11T08:00:00Z"
    }
   },
@@ -551,13 +557,13 @@
    "kol": "kohort",
    "tarz": "intraday",
    "etiket": "2026-10-08",
-   "gun": 20,
+   "gun": 25,
    "islem_n": 133,
    "puan": 0.65,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0040",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-15T08:00:00Z"
    }
   },
@@ -568,13 +574,13 @@
    "kol": "kohort",
    "tarz": "swing",
    "etiket": "2026-10-07",
-   "gun": 21,
+   "gun": 26,
    "islem_n": 109,
    "puan": 0.82,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0041",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-14T08:00:00Z"
    }
   },
@@ -591,7 +597,7 @@
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0042",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-08T08:00:00Z"
    }
   },
@@ -602,13 +608,13 @@
    "kol": "kohort",
    "tarz": "swing",
    "etiket": "2026-10-04",
-   "gun": 24,
+   "gun": 28,
    "islem_n": 71,
    "puan": 0.63,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0043",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-11T08:00:00Z"
    }
   },
@@ -619,13 +625,13 @@
    "kol": "kohort",
    "tarz": "intraday",
    "etiket": "2026-10-06",
-   "gun": 22,
+   "gun": 29,
    "islem_n": 99,
    "puan": 0.49,
    "ornek": true,
    "kat_olay": {
     "id": "ev-h-0044",
-    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem; odada kalış: puan aday katının üst yarısında",
     "zaman": "2026-10-13T08:00:00Z"
    }
   },
@@ -1004,7 +1010,8 @@
    }
   ],
   "onkayit": "ön kayıtlı analiz tarihi: hafta 12 sonu",
-  "zaman": "2026-10-28T14:00:00Z"
+  "zaman": "2026-10-28T14:00:00Z",
+  "esik_dk": 1440
  },
  "veri_kalitesi": [
   {
@@ -1012,42 +1019,48 @@
    "ad": "Tarama",
    "durum": "tamam",
    "deger": "126 adres",
-   "zaman": "2026-10-28T13:40:00Z"
+   "zaman": "2026-10-28T13:40:00Z",
+   "esik_dk": 10080
   },
   {
    "anahtar": "lab",
    "ad": "Gölge defteri",
    "durum": "tamam",
    "deger": "n=1.482 dolum",
-   "zaman": "2026-10-28T14:18:00Z"
+   "zaman": "2026-10-28T14:18:00Z",
+   "esik_dk": 30
   },
   {
    "anahtar": "arsiv",
    "ad": "Arşiv yazımı",
    "durum": "tamam",
    "deger": "48.210 satır",
-   "zaman": "2026-10-28T14:10:00Z"
+   "zaman": "2026-10-28T14:10:00Z",
+   "esik_dk": 90
   },
   {
    "anahtar": "denetim",
    "ad": "Sağlama (gölge ↔ trader PnL)",
    "durum": "tamam",
    "deger": "geçti, n=24",
-   "zaman": "2026-10-28T14:05:00Z"
+   "zaman": "2026-10-28T14:05:00Z",
+   "esik_dk": 90
   },
   {
    "anahtar": "gecikme",
    "ad": "Gecikme zinciri p95",
    "durum": "bilinmiyor",
    "deger": null,
-   "zaman": null
+   "zaman": null,
+   "esik_dk": 60
   },
   {
    "anahtar": "mum",
    "ad": "1 dk mum boşluğu",
    "durum": "tamam",
    "deger": "0 / 1.440 dk",
-   "zaman": "2026-10-28T14:19:00Z"
+   "zaman": "2026-10-28T14:19:00Z",
+   "esik_dk": 15
   }
  ],
  "risk": {
@@ -1081,7 +1094,8 @@
     "tavan": 1.0,
     "birim": "5x üst sınır"
    }
-  ]
+  ],
+  "esik_dk": 30
  },
  "telegram": {
   "bugun_n": 14,
@@ -1090,7 +1104,8 @@
    "T031 · BTC LONG açtı · 3x",
    "T036 · SOL LONG açtı · 5x",
    "T035 · WIF LONG zarar kesme ile kapandı"
-  ]
+  ],
+  "esik_dk": 120
  },
  "tarama": {
   "puanlar": [
@@ -1101,7 +1116,8 @@
    0.66,
    0.58
   ],
-  "zaman": "2026-10-28T13:40:00Z"
+  "zaman": "2026-10-28T13:40:00Z",
+  "esik_dk": 10080
  },
  "olaylar": [
   {
@@ -1156,8 +1172,8 @@
    "kimden": "lab",
    "kime": "aday",
    "oda": "aday",
-   "metin": "Lab → Aday (kural: en az 14 gün, 20 işlem)",
-   "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem"
+   "metin": "Lab → Aday (terfi kuralı sağlandı)",
+   "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem"
   },
   {
    "id": "ev-006",
@@ -1251,8 +1267,8 @@
    "kimden": "aday",
    "kime": "oda",
    "oda": "oda",
-   "metin": "Aday → Oda (ön kayıtlı kural geçti)",
-   "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem"
+   "metin": "Aday → Oda (terfi kuralı sağlandı)",
+   "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem"
   },
   {
    "id": "ev-016",
@@ -1307,8 +1323,8 @@
    "kime": "aday",
    "neden": "zarar kesme",
    "oda": "aday",
-   "metin": "Oda → Aday (histerezis: ilk 2N dışına düştü)",
-   "kural": "histerezis: ilk 2N dışına düştü"
+   "metin": "Oda → Aday (puan aday katının alt yarısına düştü)",
+   "kural": "odadan çıkış: puan aday katının alt yarısına düştü"
   },
   {
    "id": "ev-021",
@@ -1359,8 +1375,8 @@
    "kime": "lab",
    "neden": "histerezis",
    "oda": "lab",
-   "metin": "Aday → Lab (histerezis)",
-   "kural": "histerezis: ilk 2N dışına düştü"
+   "metin": "Aday → Lab (aday kuralı artık sağlanmıyor)",
+   "kural": "aday kuralı artık sağlanmıyor: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem"
   },
   {
    "id": "ev-026",
@@ -1446,11 +1462,176 @@
     "son_kayit": "2026-10-28T14:10:00Z"
    }
   ],
-  "zaman": "2026-10-28T14:10:00Z"
+  "zaman": "2026-10-28T14:10:00Z",
+  "esik_dk": 90
  },
  "kapi": {
   "bugun_gecen_n": 3,
   "bugun_elenen_n": 9,
-  "zaman": "2026-10-28T14:12:00Z"
- }
+  "zaman": "2026-10-28T14:12:00Z",
+  "esik_dk": 120
+ },
+ "onkayit_kasasi": {
+  "surum": "ön kayıt v1.3 (örnek)",
+  "commit": "a1b2c3d",
+  "dondurma_tarihi": "2026-10-14",
+  "zaman": "2026-10-28T14:00:00Z",
+  "esik_dk": 10080
+ },
+ "oda_kaynak": {
+  "lab": [
+   "veri_kalitesi:lab",
+   "katlar:havuz"
+  ],
+  "aday": [
+   "katlar:aday"
+  ],
+  "oda": [
+   "katlar:oda",
+   "ozet"
+  ],
+  "kontrol": [
+   "katlar:kontrol"
+  ],
+  "finans": [
+   "kasa"
+  ],
+  "risk": [
+   "risk"
+  ],
+  "haberlesme": [
+   "telegram"
+  ],
+  "denetim": [
+   "veri_kalitesi:denetim"
+  ],
+  "arsiv": [
+   "veri_kalitesi:arsiv",
+   "arsiv"
+  ],
+  "tarama": [
+   "veri_kalitesi:tarama",
+   "tarama"
+  ],
+  "sekreterlik": [
+   "onkayit_kasasi",
+   "kohort_kontrol"
+  ],
+  "kapi": [
+   "kapi"
+  ]
+ },
+ "ekran_kaynak": {
+  "finans.tv": "kasa",
+  "haberlesme.tv": "telegram",
+  "risk.tv": "risk",
+  "tarama.tv": "tarama",
+  "aday.tv": "katlar:aday"
+ },
+ "gecmis_olaylar": [
+  {
+   "id": "ev-g-001",
+   "tur": "terfi",
+   "zaman": "2026-10-27T09:12:00Z",
+   "oda": "aday",
+   "trader": "T017",
+   "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
+   "metin": "Lab → Aday (terfi kuralı sağlandı)"
+  },
+  {
+   "id": "ev-g-002",
+   "tur": "terfi",
+   "zaman": "2026-10-27T11:40:00Z",
+   "oda": "oda",
+   "trader": "T012",
+   "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
+   "metin": "Aday → Oda (terfi kuralı sağlandı)"
+  },
+  {
+   "id": "ev-g-003",
+   "tur": "terfi",
+   "zaman": "2026-10-27T15:05:00Z",
+   "oda": "aday",
+   "trader": "T015",
+   "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
+   "metin": "Lab → Aday (terfi kuralı sağlandı)"
+  },
+  {
+   "id": "ev-g-004",
+   "tur": "havuzdan_cikar",
+   "zaman": "2026-10-27T13:30:00Z",
+   "oda": "lab",
+   "trader": "T058",
+   "kural": "havuz kuralı: 30 gün işlem yok",
+   "metin": "Lab → çıkış (30 gün işlem yok)"
+  },
+  {
+   "id": "ev-g-005",
+   "tur": "bildirim",
+   "zaman": "2026-10-27T10:02:00Z",
+   "oda": "haberlesme",
+   "kural": "Telegram bildirim kuralı: açılış ve kapanış",
+   "metin": "T031 · ETH LONG açtı · 2x"
+  },
+  {
+   "id": "ev-g-006",
+   "tur": "bildirim",
+   "zaman": "2026-10-27T16:48:00Z",
+   "oda": "haberlesme",
+   "kural": "Telegram bildirim kuralı: açılış ve kapanış",
+   "metin": "T031 · ETH LONG kapandı"
+  },
+  {
+   "id": "ev-g-007",
+   "tur": "islem_acildi",
+   "zaman": "2026-10-27T10:01:00Z",
+   "oda": "oda",
+   "trader": "T031",
+   "kural": "gölge kopya kuralı: trader pozisyon açtı",
+   "metin": "T031 · ETH LONG 2x açıldı"
+  },
+  {
+   "id": "ev-g-008",
+   "tur": "veri_bayat",
+   "zaman": "2026-10-27T20:15:00Z",
+   "oda": "arsiv",
+   "kural": "veri tazelik eşiği",
+   "metin": "Arşiv verisi bayat",
+   "yas_dk": 100
+  },
+  {
+   "id": "ev-g-009",
+   "tur": "terfi",
+   "zaman": "2026-10-26T09:00:00Z",
+   "oda": "aday",
+   "trader": "T010",
+   "kural": "terfi: gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem",
+   "metin": "Lab → Aday (terfi kuralı sağlandı)"
+  },
+  {
+   "id": "ev-g-010",
+   "tur": "bildirim",
+   "zaman": "2026-10-26T12:30:00Z",
+   "oda": "haberlesme",
+   "kural": "Telegram bildirim kuralı: açılış ve kapanış",
+   "metin": "T036 · SOL LONG açtı · 5x"
+  },
+  {
+   "id": "ev-g-011",
+   "tur": "bildirim",
+   "zaman": "2026-10-28T08:20:00Z",
+   "oda": "haberlesme",
+   "kural": "Telegram bildirim kuralı: açılış ve kapanış",
+   "metin": "T033 · AVAX LONG açtı · 3x"
+  },
+  {
+   "id": "ev-g-012",
+   "tur": "kapi_gecti",
+   "zaman": "2026-10-28T09:40:00Z",
+   "oda": "kapi",
+   "trader": "T059",
+   "kural": "ön eleme kuralı",
+   "metin": "Kapı: ön eleme geçti → Lab"
+  }
+ ]
 }
