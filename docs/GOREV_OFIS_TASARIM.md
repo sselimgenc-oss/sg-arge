@@ -60,3 +60,56 @@ Trader'lar Lab/Aday/Oda masalarında oturan figürler; üstlerinde kısa adres e
 - Olay → animasyon eşlemesinin tablosu (`ofis/OLAYLAR.md`).
 - Lider kontrolü: Etre görüntüleriyle yan yana kalite karşılaştırması; kopya değil.
 - Durum: `sg-arge/docs/codex_durum_ofis.md` (ya da işçinin durum dosyası).
+
+---
+
+# Sürüm 2 — İçine girilebilen, etkileşimli ofis (2026-10-28, kullanıcı isteği)
+
+Başlama koşulu: sürüm 1'in iki taslağından (sg-pano #17 Codex, #18 Sonnet) **esas alınacak olan seçildi** (Argon A5
+karşılaştırması + kullanıcı kararı); diğerinin güçlü yanları içine taşındı. Öncelik trader seçiminin gerisinde; işçi seçim/gölge
+işi bitmeden buna geçmez. Sürüm 1'in bütün kuralları (açık lisans, kopya değil, olaydan doğan hareket, erişilebilirlik) geçerli.
+
+## 1. Oda içi görünüm (yakınlaşma)
+- Bina görünümünde oda tabelasına ya da odaya tıklayınca o odanın **iç sahnesi** açılır: yalnız o oda, daha büyük ölçekte;
+  masalar, dolaplar, ekranlar, kişiler ayrıntılı. Geri düğmesi + `Esc` + tarayıcı geri tuşu (adres `#oda=kapi` gibi) binaya döner.
+- Her odanın iç sahnesi kendi işlevini gösterir (Arşiv: raflar ve kutular; Kapı: kontrol masası; Oda: işlem masaları ve trader
+  ekranları; Risk: alarm paneli; Haberleşme: büyük ekran ve zarflar).
+
+## 2. Tıklanabilir nesneler ve kişiler
+- **Kişi** (çalışan ya da trader): bilgi kutusu — ad, rol, şu an ne yaptığı (son olaydan), ilgili sayılar (ör. trader: tarz, puan,
+  açık işlem, gölge K/Z; zaman damgası ile) + kısa **replik**.
+- **Nesne** (dolap, ekran, masa): bilgi kutusu — o birimin verisi (ör. Arşiv dolabı: tür başına satır, son kayıt zamanı, boşluk).
+- **Reaksiyonlar:** tıklanan kişi küçük bir animasyonla tepki verir (bakar, el sallar, ekranı gösterir).
+
+## 3. Birimler arası iletişim
+- Olay akışındaki gerçek olaylar birimler arası işaretle gösterilir: ok/zarf/kağıt taşıyan figür (Tarama → Kapı: "yeni aday";
+  Kapı → Aday: "terfi"; Risk → Oda: "tavan doldu"; Haberleşme → dışarı: "Telegram gönderildi").
+- Konuşma balonları ve not kağıtları: kısa replik + olayın kendisi (tıklayınca ayrıntı ve zaman).
+- Çalışan ↔ trader etkileşimi: ör. Denetim çalışanı trader masasına gidip "kırmızı bayrak: vault oranı yüksek" notu bırakır;
+  yalnız gerçek bayrak/olay varsa.
+
+## 4. Replik kuralları
+- **Veri replikleri** (olaydan doğar, sayı içerir): yalnız gerçek olay/sayı varsa; şablonlar `ofis/replikler.json`'da
+  (`{olay_turu, rol, sablon}`), sayı alanları veriden doldurulur.
+- **Süs replikleri** (sohbet, espri): ayrı listede, görsel olarak farklı (ör. italik/gri balon); veri gibi görünmez, sayı içermez.
+- Replikler Türkçe; dil dosyası yapısı ileride başka dile çevrilebilecek şekilde.
+
+## 5. Kişiselleştirme
+- Çalışan adları, avatar seçimi (varlık paketinden), oda tabelası adları kullanıcı tarafından değiştirilebilir: ayarlar paneli;
+  tarayıcıda saklanır, dışa/içe aktarılabilir JSON. Varsayılan adlar `ofis/kadro.json`'da.
+- Trader'lar gerçek adres yerine takma adla gösterilebilir (adres ilk 4 hane varsayılan).
+
+## 6. İleride ürünleşme için mimari (şimdiden)
+- **Veri bağdaştırıcısı:** ofis yalnız `durum.json` şemasını (`ofis/SEMA.md`) okur; sg-arge'ye özgü kod bağdaştırıcıda. Başka bir
+  veri kaynağı aynı şemayı üretirse ofis değişmeden çalışır.
+- **Varlık lisansları ticari kullanıma uygun** olmalı (CC0 ya da ticari izinli); lisansı belirsiz tek varlık bile kullanılmaz.
+- Marka/isim: Etre'ye ve başka ürünlere benzemeyen özgün ad ve görünüm.
+- Not (lider): pazarlama aşamasında yatırım tavsiyesi/kopya işlem hizmeti yasal izin gerektirebilir (Türkiye'de SPK); ürün
+  "görselleştirme/araştırma aracı" olarak konumlanır. Bu, kullanıcı kararı ve ayrı bir hukuki inceleme konusudur.
+
+## Kabul (sürüm 2)
+- Her odanın iç sahnesi; her oda için en az 3 tıklanabilir nesne ve tüm kişiler tıklanabilir.
+- Olay → iletişim işareti eşlemesi `ofis/OLAYLAR.md`'de güncel; örnek veride her olay türü en az bir kez tetiklenir.
+- Ad değiştirme: sayfa yenilenince korunur; dışa/içe aktarma çalışır.
+- Masaüstü + telefon ekran görüntüleri, 30 sn ekran kaydı (bina → oda → kişiye tıklama → iletişim işareti).
+- `LISANSLAR.md` ticari kullanım sütunuyla.
