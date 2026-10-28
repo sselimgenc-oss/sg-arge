@@ -7,12 +7,14 @@ Yapan: **Codex** (2026-10-28, lider; Sonnet seçimde). Dal: `codex/golge`. Başl
 - `defter.copy_ledger` üstüne kurulur; plasebo, kapı ve gölge aynı defterden geçer (ikinci motor yazılmaz).
 - `GOREV_D_YOLU.md` "Gölge defter kuralları" 1–10 ve "Kopya kuralı varyantları" V0–V2; her kural için altın örnek testi.
 - **Sağlama:** gecikme 0 + maliyet 0 → trader'ın gerçekleşmiş PnL'i orantılı yeniden üretilir (gerçek dolumlu en az 3 adreste).
-- **Sentetik trader'lar:** etkisi enjekte edilmiş trader yakalanır; sıfır etkili trader ~%5 oranında geçer.
 - 10.000+ dolumlu adreste zaman penceresiyle sayfalama.
 - Kat/kol mantığı `copytrade/kollar.py`: ön kayıttaki terfi, çıkış, kontrol seçimi (tohum kayda geçer), olaylar `olay` arşiv türüne.
 - V2 sayıları ve gölge pozisyon üst sınırı (3x) `docs/ONKAYIT_D.md`'de (kullanıcı onayı 2026-10-28, dondu); yalnız `kurallar.yaml`'a yazılır. Altın örnek: 8. günde −%31 → çık; 6. günde −%49 → kal; 3x'i aşan ekleme kırpılır.
 
 ## Faz 3 — Yürüyen pencereli geçmiş prova
+- **İlk iş: sentetik trader doğrulaması** (lider kararı 2026-10-28, Faz 2'den taşındı): rastgele yürüyüş fiyatlı sıfır etkili
+  sentetik trader'lar gölge motoru + kohort–kontrol ölçümünden geçer → ≥200 tohumda yanlış pozitif ~%5; etkisi enjekte edilmiş
+  trader'lar yakalanır. Bu geçmeden gerçek veriyle prova raporlanmaz.
 - T anına kadarki veriyle etiketle (katlar + kollar), sonraki 60 günü gölge motoruyla ölç, pencereyi 2 haftada bir kaydır.
 - Kollar: kohort, kontrol, taban, elle liste; varyantlar V0–V2; ek kol: çok alanlı puan.
 - Çıktı: pencere başına kol farkı + bootstrap aralığı; güç hesabı (gerçek varyansla); durdurma kriteri 1'in sonucu.
