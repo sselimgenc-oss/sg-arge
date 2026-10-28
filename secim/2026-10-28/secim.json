@@ -1,0 +1,4242 @@
+{
+ "surum": 1,
+ "tarih": "2026-10-28",
+ "tohum": 5430774789319239683,
+ "tohum_dizgesi": "secim-v1-2026-10-28",
+ "sayilar": {
+  "kapi_satiri": 13767,
+  "havuz": 226,
+  "aday": 22,
+  "oda": 20,
+  "kontrol": 20,
+  "taban": 20,
+  "elle": 9,
+  "tarz": {
+   "intraday": {
+    "havuz": 127,
+    "puansiz": 0,
+    "aday": 12,
+    "oda": 11
+   },
+   "swing": {
+    "havuz": 99,
+    "puansiz": 0,
+    "aday": 10,
+    "oda": 9
+   }
+  }
+ },
+ "oda_kisa": false,
+ "oda_kota": {
+  "intraday": 11,
+  "swing": 9
+ },
+ "kontrol": [
+  "0xb88995eae7b23ccd26c1f92308e6587bcd3e1c1a",
+  "0xa1d4fc32f21d9d77a4c20a6ac4b748815912c07c",
+  "0xd750d35610fa0c07190169e0003160574368827b",
+  "0x9d1792626cc8bfb29acc7e5e7a2f706bb6ada290",
+  "0xf94b346387ae5f1ae84bf10e36008cb552ca82d5",
+  "0x087c01d466824a47c0077f4bbeca3d4626eb607b",
+  "0x34d3a17095ef7def39a489d63c7c916e673c9ca2",
+  "0x8477e447846c758f5a675856001ea72298fd9cb5",
+  "0x29754d7a9f9f344327158e2d01508efa415bd558",
+  "0x3e051c89cd06e6867ce98c758fcc665d2148e1bb",
+  "0x09d70eac3bbebf727218b81b7f6384249826ab24",
+  "0xa1bee787616cba2c7000a221570a5239f3c4ba6a",
+  "0xcdce62a8079e1380a0524aabcf084c13fb2d8452",
+  "0x221284041f07f1e9af30beadbd08bb14f5e5838c",
+  "0x6de62240b8fec4bc7201b828934efafe9253ef7b",
+  "0x9312e0a61f21affbd5be821f436f8fdf6b6f6663",
+  "0xd1db106c95ebaff9ae45be2eb09128f47d85f217",
+  "0x1da5bcd75d2bdc41d8372e976f2f665479e73151",
+  "0xbd1b3513bb0ce1529242cfb28926618809592362",
+  "0x6a2cb9b34ba6ca342ec787b70cd1878e71810231"
+ ],
+ "adresler": {
+  "0x023a3d058020fb76cca98f01b3c48c8938a22355": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 881.0,
+   "hesap_degeri": 20464419.205477,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x042c7da0c7d135a20fb9d0e3f56df970c66c2788": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1225570862270224,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.2635495649736562,
+   "en_yuksek_kaldirac": 1.4146667267955828,
+   "gecmis_gun": 263.0,
+   "hesap_degeri": 149999.69681506002,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x080c3c74e13ee4da56e819bf402c0b6da87b457b": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1282211827633426,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.1612924086850579,
+   "en_yuksek_kaldirac": 2.919916872427288,
+   "gecmis_gun": 195.0,
+   "hesap_degeri": 165247.01668205,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 4",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x087c01d466824a47c0077f4bbeca3d4626eb607b": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0322534150972166,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0550589626248484,
+   "en_yuksek_kaldirac": 2.3624587872793272,
+   "gecmis_gun": 580.0,
+   "hesap_degeri": 31590.57375114,
+   "iliskili_not": "alt hesap 1; iç transfer karşı adres 12",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x09d70eac3bbebf727218b81b7f6384249826ab24": {
+   "kol": "elle",
+   "kollar": [
+    "elle",
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.2128555625609666,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 3.068260286641637,
+   "en_yuksek_kaldirac": 8.752045523302698,
+   "gecmis_gun": 188.0,
+   "hesap_degeri": 243625.917148,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x0a140bee49d86589fd2c9367e2c4f99ccc4c3d06": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1494133934318143,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.8113583382627336,
+   "en_yuksek_kaldirac": 2.1905154423208657,
+   "gecmis_gun": 1056.0,
+   "hesap_degeri": 373454.65691007,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x0af66f3571761d7196b713ff881609d7e7456fe1": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.3092177730776584,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4470160085502684,
+   "en_yuksek_kaldirac": 1.7817172222632316,
+   "gecmis_gun": 1014.0,
+   "hesap_degeri": 136211.65934967,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x0b8aa35c28b7c6ab18f11dc168f437a8a69fd4f8": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": null,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": null,
+   "hesap_degeri": null,
+   "iliskili_not": "",
+   "hesap_surumu": null
+  },
+  "0x0e008684ae576f280c5426a89d3f5e1da1fc7398": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0727235343208739,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.254044077070586,
+   "en_yuksek_kaldirac": 0.6536151785547532,
+   "gecmis_gun": 349.0,
+   "hesap_degeri": 122488.874865,
+   "iliskili_not": "iç transfer karşı adres 23",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x0e8bb529366f80981934ead0c3818dd2f67dd3ae": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0698676681030261,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0881201262743101,
+   "en_yuksek_kaldirac": 0.929279123245206,
+   "gecmis_gun": 1014.0,
+   "hesap_degeri": 67992.71773511,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x0f67824bf2e6e6558fd6a424cb00638dd20bf3f6": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.1996754369971581,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8499561403880146,
+   "en_yuksek_kaldirac": 2.1165456731268217,
+   "gecmis_gun": 433.0,
+   "hesap_degeri": 177600.43244493997,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x1404109f8cd4a79a0447365edbb7a13acd0b2f27": {
+   "kol": "elle",
+   "kollar": [
+    "elle"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 615.0,
+   "hesap_degeri": 91253.290722,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x14a181a3365344dc423007709346ea2edc4bbae8": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0399814715554292,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.5677337062841514,
+   "en_yuksek_kaldirac": 0.9917315738262296,
+   "gecmis_gun": 181.0,
+   "hesap_degeri": 177140.21704,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x173444bd3a63a862f6338ace2595156f19f7ebdf": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0099830292675223,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1724252990146593,
+   "en_yuksek_kaldirac": 0.7680798707715953,
+   "gecmis_gun": 1014.0,
+   "hesap_degeri": 37739.82728342,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x17826e6fbdff13b2ab252d7d9ce27c90b918e8a1": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0009659634993384,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.0647625274921527,
+   "en_yuksek_kaldirac": 2.567038527145023,
+   "gecmis_gun": 325.0,
+   "hesap_degeri": 176857.23129793,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x183c6497814803574c23866c7662dea4c044d0f9": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.8071872085491132,
+   "sira": 3,
+   "genc_aday": false,
+   "medyan_kaldirac": 2.206292377517426,
+   "en_yuksek_kaldirac": 7.566172292127233,
+   "gecmis_gun": 538.0,
+   "hesap_degeri": 36443.318403,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.06635939970817037,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 46.07210549360356,
+   "bayrak_not": ""
+  },
+  "0x19009a7f9f171dd2e1015c418303e18354df4d23": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0229917206636523,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0931156999819106,
+   "en_yuksek_kaldirac": 1.333109275311443,
+   "gecmis_gun": 622.0,
+   "hesap_degeri": 63602.55306345,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x19e90c5331a747661bdd2887a6f6156a1eda2ef9": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.3686551950453186,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.6079039620433636,
+   "en_yuksek_kaldirac": 1.1152091753247684,
+   "gecmis_gun": 265.0,
+   "hesap_degeri": 895543.82008497,
+   "iliskili_not": "başka vault'ta pay 2; iç transfer karşı adres 7",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x1a9a4932f36b3641f5f63e98f77f8a1f28d85dad": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1002125444059326,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.234347461213103,
+   "en_yuksek_kaldirac": 3.728740238622898,
+   "gecmis_gun": 874.0,
+   "hesap_degeri": 215077.01430512,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x1c4e90fc8bdade442aed58f8011db5a17a2e7199": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0862193540128383,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3749101915548737,
+   "en_yuksek_kaldirac": 4.071126555497608,
+   "gecmis_gun": 748.0,
+   "hesap_degeri": 312373.09531653,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x1da5bcd75d2bdc41d8372e976f2f665479e73151": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.064541678556272,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1747008009544886,
+   "en_yuksek_kaldirac": 199.74375502292776,
+   "gecmis_gun": 706.0,
+   "hesap_degeri": 190195.19546627,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x1f364b47ca9735ed3cd45c430f5320fdaaf78027": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.4627492675323242,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.3673020049441065,
+   "en_yuksek_kaldirac": 4.307218122053097,
+   "gecmis_gun": 1007.0,
+   "hesap_degeri": 118608.63358,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x1fbe7279da134c53fa521f5ee65891948e775e17": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0063276371023445,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1267441805606464,
+   "en_yuksek_kaldirac": 3.031644478652104,
+   "gecmis_gun": 1161.0,
+   "hesap_degeri": 140675.36656737,
+   "iliskili_not": "alt hesap 1; API ajanı 2; iç transfer karşı adres 21",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x2025137a136bea7446deba681cbfc7cf1970840e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0627533438694245,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0816310610579144,
+   "en_yuksek_kaldirac": 6.747657326080188,
+   "gecmis_gun": 664.0,
+   "hesap_degeri": 1702668.65441311,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x21e9c1004717f6abb6670e1bba709d8c1d83ad4e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0768313838577617,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.1723083725887251,
+   "en_yuksek_kaldirac": 1.3904357474372993,
+   "gecmis_gun": 225.0,
+   "hesap_degeri": 207538.62630412,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x221284041f07f1e9af30beadbd08bb14f5e5838c": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.4660193520188719,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.1033044370903882,
+   "en_yuksek_kaldirac": 3.357278421482485,
+   "gecmis_gun": 517.0,
+   "hesap_degeri": 505666.08630154,
+   "iliskili_not": "alt hesap 3; iç transfer karşı adres 5",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x22a60014185f1486afb045219f76e4007fb71e4e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1831825583900296,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5161588301197299,
+   "en_yuksek_kaldirac": 1.9989545545270035,
+   "gecmis_gun": 398.0,
+   "hesap_degeri": 132790.775631,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x2312171890250347dbf1b082bdf7950504909e92": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.4140859733932031,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7003664460049734,
+   "en_yuksek_kaldirac": 194.7629471668885,
+   "gecmis_gun": 1168.0,
+   "hesap_degeri": 673902.69954135,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x2640cff4c41e1073051048db9338da5c0a7ca826": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.203570624510528,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3345434582051956,
+   "en_yuksek_kaldirac": 2.233488950296146,
+   "gecmis_gun": 853.0,
+   "hesap_degeri": 187148.34475215,
+   "iliskili_not": "API ajanı 2; iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x275a0ba45c7f133211809e1cdd674fa07011eeed": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1045026355621292,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.295637122346109,
+   "en_yuksek_kaldirac": 1.376114939181861,
+   "gecmis_gun": 1091.0,
+   "hesap_degeri": 103313.98590423,
+   "iliskili_not": "iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x2888be6982957103ea88ac10f4179df0a294e877": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.6415223064906292,
+   "sira": 9,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2118748659356037,
+   "en_yuksek_kaldirac": 6.462994425605321,
+   "gecmis_gun": 699.0,
+   "hesap_degeri": 291555.1981627,
+   "iliskili_not": "iç transfer karşı adres 5",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.048405455219492605,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 2.6502953295615637,
+   "bayrak_not": ""
+  },
+  "0x29754d7a9f9f344327158e2d01508efa415bd558": {
+   "kol": "elle",
+   "kollar": [
+    "elle",
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0503676168953754,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1747868219407204,
+   "en_yuksek_kaldirac": 0.4647026012947914,
+   "gecmis_gun": 867.0,
+   "hesap_degeri": 502833.78950391,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 8",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x2a964fc6685577d153d40a5dd1b051225fc04aad": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0066115351503287,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.1377056526402957,
+   "en_yuksek_kaldirac": 9.26493564418657,
+   "gecmis_gun": 321.0,
+   "hesap_degeri": 719819.9851627201,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x2ac4880624dae9e823874d65e43bfeba97fc61b5": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.3221792872819221,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2973320127389477,
+   "en_yuksek_kaldirac": 3.723634023376734,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 1077694.3881454498,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x2c9632dd4adbffe07cd311c82e6738537e6195ae": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.075938299601799,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.2015122726286962,
+   "en_yuksek_kaldirac": 3.549319535352838,
+   "gecmis_gun": 930.0,
+   "hesap_degeri": 109649.83440478,
+   "iliskili_not": "iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x2fcb6898d5a0623de19c3691904927685014c4d8": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.173931829032757,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5390680612920357,
+   "en_yuksek_kaldirac": 3.718929301615444,
+   "gecmis_gun": 587.0,
+   "hesap_degeri": 3309525.45852127,
+   "iliskili_not": "iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x33433b869303070b3f8ac600e268ce134ca90a36": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.4368686425380658,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 6.835850816437393,
+   "en_yuksek_kaldirac": 15.064931606732715,
+   "gecmis_gun": 475.0,
+   "hesap_degeri": 33495.64090884,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x33a9bfecf63e33a4c3b7e84a8f7536bd51f04b6d": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.042657832140509,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.1196850191929772,
+   "en_yuksek_kaldirac": 1.9194382121736235,
+   "gecmis_gun": 247.0,
+   "hesap_degeri": 30734.2758562,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x33f709347105f119cc48ed5b6919682b1dda1029": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.3033284950232164,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 2.705838799102673,
+   "en_yuksek_kaldirac": 3.549809759852177,
+   "gecmis_gun": 433.0,
+   "hesap_degeri": 126793.105902,
+   "iliskili_not": "API ajanı 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x34246e62e88dec68f57bf21ca16d8c773d26c507": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 1.1470749006166596,
+   "sira": 1,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5724166934926429,
+   "en_yuksek_kaldirac": 6.408813424776825,
+   "gecmis_gun": 510.0,
+   "hesap_degeri": 115497.12351752,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.026854716650545136,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 8.810753973847977,
+   "bayrak_not": ""
+  },
+  "0x34d3a17095ef7def39a489d63c7c916e673c9ca2": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0724624736478927,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3084128117401348,
+   "en_yuksek_kaldirac": 1.3098610297927231,
+   "gecmis_gun": 482.0,
+   "hesap_degeri": 361155.45566826,
+   "iliskili_not": "iç transfer karşı adres 13",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x353bd2e5da5f01707dfad0dd86907561ac66cc38": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1904742679369987,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5951115903899555,
+   "en_yuksek_kaldirac": 2.450665688392803,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 195388.72767912,
+   "iliskili_not": "başka vault'ta pay 1; API ajanı 2; iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x357964620189ed90974a4048bb050e7398721e2f": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.3002061854995584,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5882489133039389,
+   "en_yuksek_kaldirac": 4.80418896415358,
+   "gecmis_gun": 454.0,
+   "hesap_degeri": 327836.33453504,
+   "iliskili_not": "iç transfer karşı adres 4",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x378defc39d5dcdfbecd4f1673a5e228f992fc08e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.3865859703199444,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 2.473809924665936,
+   "en_yuksek_kaldirac": 6.521408450943016,
+   "gecmis_gun": 587.0,
+   "hesap_degeri": 139679.21898587,
+   "iliskili_not": "iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x37f1fb49d88b588eb626c67c67f3db10e3674eb9": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.2334377732951333,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.9801592085694356,
+   "en_yuksek_kaldirac": 1.8784855962955336,
+   "gecmis_gun": 272.0,
+   "hesap_degeri": 96087.04543072,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x398433dd94502cb28814d145a4fb8e98deba601b": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1062689895904875,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7462542707315284,
+   "en_yuksek_kaldirac": 5.137479492225918,
+   "gecmis_gun": 811.0,
+   "hesap_degeri": 137252.99304727,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x39be8fad61f5fa0cdfa2fc97c30a59833f58705d": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0255281435655036,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4082727143266559,
+   "en_yuksek_kaldirac": 1.191351511519744,
+   "gecmis_gun": 622.0,
+   "hesap_degeri": 1319017.37029614,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x39c3492e9171872eac6a99d9c0b6dbae5d4ae959": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 1.1408426346383511,
+   "sira": 2,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3087781355998012,
+   "en_yuksek_kaldirac": 11.83018354915729,
+   "gecmis_gun": 678.0,
+   "hesap_degeri": 2756245.77777552,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.022317662398259695,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 33.12179490527103,
+   "bayrak_not": ""
+  },
+  "0x3bcc0a020f09dd10ec7a5a0b1a00095bd6e85146": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.3514054651369298,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2025782378604543,
+   "en_yuksek_kaldirac": 7.763259124312946,
+   "gecmis_gun": 930.0,
+   "hesap_degeri": 28181.17079124,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3d21e3d9af7ca1d76305c9eb2fb510b7af920659": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.2386767961951623,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 2.8732150820514253,
+   "en_yuksek_kaldirac": 5.421732518005658,
+   "gecmis_gun": 832.0,
+   "hesap_degeri": 191846.178255,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3d2b551c44bba75c280cc0ce1150010739a5c5dc": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0138122138279872,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2971244638597062,
+   "en_yuksek_kaldirac": 1.7423339967206557,
+   "gecmis_gun": 419.0,
+   "hesap_degeri": 2458036.7010423304,
+   "iliskili_not": "başka vault'ta pay 1; API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3d579384788a4fa74e9af4dbc4fb89fd49f48fc4": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.2980702004657788,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3863885359543926,
+   "en_yuksek_kaldirac": 4.30899873695405,
+   "gecmis_gun": 398.0,
+   "hesap_degeri": 78383.043869,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3d5f1ad033c4e7c6a6d433d50d694c488dcaebcf": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.5313099724310921,
+   "sira": 8,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2936053237795074,
+   "en_yuksek_kaldirac": 4.2133376406072,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 274845.66676148004,
+   "iliskili_not": "iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": 0.0022313003439787564,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 21.20666848663914,
+   "bayrak_not": ""
+  },
+  "0x3dc908374e11623d8eb9f07dfc7a2e5e803a54b0": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 223.0,
+   "hesap_degeri": 27421201.638602,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3e051c89cd06e6867ce98c758fcc665d2148e1bb": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0025870659695824,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.031353505291055,
+   "en_yuksek_kaldirac": 0.3832551405824798,
+   "gecmis_gun": 1021.0,
+   "hesap_degeri": 138162.87279921002,
+   "iliskili_not": "iç transfer karşı adres 8",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3e250a0ae9ff6005ea9dab67b5bea09948a0a1df": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0004130564635442,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3388667797927344,
+   "en_yuksek_kaldirac": 1.6364443257483952,
+   "gecmis_gun": 825.0,
+   "hesap_degeri": 155978.01540322002,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3e252899d87a354e8bfa4bd8b62325549b5714da": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.4685936560694391,
+   "sira": 11,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.3211307919470092,
+   "en_yuksek_kaldirac": 4.987544600538681,
+   "gecmis_gun": 517.0,
+   "hesap_degeri": 309592.70597604,
+   "iliskili_not": "iç transfer karşı adres 5",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.07235012507255045,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 7.404700613900822,
+   "bayrak_not": ""
+  },
+  "0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9": {
+   "kol": "elle",
+   "kollar": [
+    "elle",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.5086248951929198,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4538904089903272,
+   "en_yuksek_kaldirac": 1.746541826837299,
+   "gecmis_gun": 1014.0,
+   "hesap_degeri": 1126351.0045695,
+   "iliskili_not": "alt hesap 1; iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3e9b19ba0f26ed8ddedb3a5fb310aab0dd790dab": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0089270959330462,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.6465726634888945,
+   "en_yuksek_kaldirac": 0.7741186342877509,
+   "gecmis_gun": 272.0,
+   "hesap_degeri": 379655.76320186,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3ea004bbb1004936e526bf97cbd796f0c78273d7": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1218226057707778,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2727453790241047,
+   "en_yuksek_kaldirac": 23.739595475701503,
+   "gecmis_gun": 496.0,
+   "hesap_degeri": 128298.705976,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3f96c4df1e76902985d3dbd979af54b487f29671": {
+   "kol": "elle",
+   "kollar": [
+    "elle"
+   ],
+   "tarz": "intraday",
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 2.3716781456515465e-05,
+   "en_yuksek_kaldirac": 1.1463611930379551,
+   "gecmis_gun": 594.0,
+   "hesap_degeri": 101013.2357938,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x3fe1303b746bb9c88b30f364a6394261b4692943": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.1144629634549221,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2986760151725531,
+   "en_yuksek_kaldirac": 2.488722254338988,
+   "gecmis_gun": 734.0,
+   "hesap_degeri": 1118058.24961233,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x4255355de386657783fcc10e23ba92fe67991e12": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1094406622202049,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2799825174874518,
+   "en_yuksek_kaldirac": 1.572083309079778,
+   "gecmis_gun": 741.0,
+   "hesap_degeri": 31540.134478500004,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x426b4ccb67d3f81380eb52fe3b63a6d3c7fa9651": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1260294698700824,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3472647742476332,
+   "en_yuksek_kaldirac": 12.262113773861312,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 35260.252712810005,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x42fd5648cf21c158d15e4f58785760755b3f6623": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.4542931653239075,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5912671679190641,
+   "en_yuksek_kaldirac": 2.1864131978753414,
+   "gecmis_gun": 846.0,
+   "hesap_degeri": 2327666.14505125,
+   "iliskili_not": "alt hesap 1; API ajanı 2; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x43fa26c444767ea3b82ad2f998bc995305823a32": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0244721871303094,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.39339960533362,
+   "en_yuksek_kaldirac": 2.260953092977456,
+   "gecmis_gun": 1056.0,
+   "hesap_degeri": 184924.66769944,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x44e044712a7f32ad47b4ff74dbe7e99c4c8b5a73": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1692599412656808,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5495111615320125,
+   "en_yuksek_kaldirac": 4.661103361535288,
+   "gecmis_gun": 412.0,
+   "hesap_degeri": 17719.73290783,
+   "iliskili_not": "iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x452ea0373056462c8e3b301c996ecfab3511d712": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.5203024269561943,
+   "sira": 9,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.032862970979672,
+   "en_yuksek_kaldirac": 3.818718562330424,
+   "gecmis_gun": 895.0,
+   "hesap_degeri": 173434.63880021,
+   "iliskili_not": "iç transfer karşı adres 6",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.028425324289430613,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 85.85539401476224,
+   "bayrak_not": ""
+  },
+  "0x45974824c1c4e4d797aa8d057a5499b46cdefe33": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0302528395864788,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.6919310211248929,
+   "en_yuksek_kaldirac": 3.2444690914047043,
+   "gecmis_gun": 1049.0,
+   "hesap_degeri": 101249.31246245,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x45d26f28196d226497130c4bac709d808fed4029": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 1028.0,
+   "hesap_degeri": 60958037.140063,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x47add9a56df66b524d5e2c1993a43cde53b6ed85": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0542826102018342,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2182987781996937,
+   "en_yuksek_kaldirac": 1.1719081119420849,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 72966.68595008,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x484bc1608211d0604bf70bae72792a56884562f8": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": "swing",
+   "puan": null,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.0403316944402286,
+   "en_yuksek_kaldirac": 0.0898376180805835,
+   "gecmis_gun": 237.0,
+   "hesap_degeri": 46316.042444,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x4860d039cbc7cffb0267f86e63f4b4442b71505e": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.669381740256009,
+   "sira": 8,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3899468548349789,
+   "en_yuksek_kaldirac": 2.5810241043871684,
+   "gecmis_gun": 811.0,
+   "hesap_degeri": 214224.10159136,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.06990213638229795,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 11.989232541627272,
+   "bayrak_not": ""
+  },
+  "0x4af98ae1457c2ab4a01f9ab130e69cf0048abaa1": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0242693941070505,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.5688861288315686,
+   "en_yuksek_kaldirac": 1.0363696029158087,
+   "gecmis_gun": 356.0,
+   "hesap_degeri": 200198.979359,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x4ba1d152409f43ad92ba358886fe94bae4f5f656": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.2359149913705469,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2877592257015355,
+   "en_yuksek_kaldirac": 1.6133196850759832,
+   "gecmis_gun": 958.0,
+   "hesap_degeri": 181397.12633339,
+   "iliskili_not": "başka vault'ta pay 1; iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x4c921317a8301044a2287dfa34b18c37005b42db": {
+   "kol": "elle",
+   "kollar": [
+    "elle",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.124990850984739,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.2873084500846661,
+   "en_yuksek_kaldirac": 0.9294516963145076,
+   "gecmis_gun": 237.0,
+   "hesap_degeri": 107179.197746,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x504ec17f392b0aea095a1774146316bbeb464683": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0754143386967128,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7120784034563014,
+   "en_yuksek_kaldirac": 1.2991817337586289,
+   "gecmis_gun": 524.0,
+   "hesap_degeri": 82259.727671,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x50e2fe552727a4b8692c192b4f96d1a6b0d44394": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.6252112492336968,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3570688152225772,
+   "en_yuksek_kaldirac": 2.8515164331474194,
+   "gecmis_gun": 447.0,
+   "hesap_degeri": 117247.181581,
+   "iliskili_not": "iç transfer karşı adres 22",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x51b62b4bf8df6f2795b3da30cb46aa47f9f230a8": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0666871854886659,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1777938887694043,
+   "en_yuksek_kaldirac": 1.55493601567276,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 153130.026878,
+   "iliskili_not": "iç transfer karşı adres 26",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x54e0643524d6f8e477cd112df3a2261e778d5e92": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.2412064263429632,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.8021369034414327,
+   "en_yuksek_kaldirac": 2.6887587357889897,
+   "gecmis_gun": 566.0,
+   "hesap_degeri": 273202.642999,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x54eef5fa7131c68462e2b25f82f0be735321b3b8": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0741811188263455,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.1486464222587329,
+   "en_yuksek_kaldirac": 0.5680747275443443,
+   "gecmis_gun": 240.0,
+   "hesap_degeri": 49472.19814297,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x556da2b21ba831ebdbce728705736786c5e1aafb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0026913123056431,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.42739318516033,
+   "en_yuksek_kaldirac": 1.3814475202086998,
+   "gecmis_gun": 258.0,
+   "hesap_degeri": 272384.31845715,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x582e0cbcf29b1a86be93c0f5105345546214db9a": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.6343648694385088,
+   "sira": 6,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.3794953902179357,
+   "en_yuksek_kaldirac": 3.049775885880592,
+   "gecmis_gun": 685.0,
+   "hesap_degeri": 104063.69132395,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.059352171225724365,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 31.663553234360982,
+   "bayrak_not": ""
+  },
+  "0x58d70b61a2837fe764c2456d6dad26c266a8ac02": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 1.138241359982237,
+   "sira": 3,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8147925413822655,
+   "en_yuksek_kaldirac": 4.448969303651513,
+   "gecmis_gun": 1000.0,
+   "hesap_degeri": 14111.20915886,
+   "iliskili_not": "başka vault'ta pay 1; iç transfer karşı adres 10",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 2.125969480167751e-10,
+   "bayrak_funding_payi": -0.03812266440067098,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 187.82456911822288,
+   "bayrak_not": ""
+  },
+  "0x5b5d51203a0f9079f8aeb098a6523a13f298c060": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 608.0,
+   "hesap_degeri": 224513678.727765,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x5d1124fb77c539ec92e3ef853053bbce1e98271b": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0625501139365504,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1590208527052814,
+   "en_yuksek_kaldirac": 5.59766563872293,
+   "gecmis_gun": 657.0,
+   "hesap_degeri": 90731.57612409,
+   "iliskili_not": "başka vault'ta pay 2; API ajanı 1; iç transfer karşı adres 13",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x5db22b067c3ec6a8435ec37555abeab44cd58a21": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.2547124936752905,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9571231354905524,
+   "en_yuksek_kaldirac": 4.558756431127359,
+   "gecmis_gun": 426.0,
+   "hesap_degeri": 543453.44594503,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x5e13d5cedbddd7237f659947ce64bec1294e2607": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0545660619884071,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0488139458326745,
+   "en_yuksek_kaldirac": 0.3910806415340309,
+   "gecmis_gun": 825.0,
+   "hesap_degeri": 6511105.38947642,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x5f96906b85010f729e36d5a4141d027194a47b60": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.6766641366711975,
+   "sira": 6,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.4883542474990614,
+   "en_yuksek_kaldirac": 3.4231865163379265,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 381201.47285756,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": 0.17522750856104274,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 10.767264510370056,
+   "bayrak_not": ""
+  },
+  "0x63d417a577b50c96f4f09148d4e4d70950db0522": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.4034406848622406,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.2757125861856295,
+   "en_yuksek_kaldirac": 2.343305485740584,
+   "gecmis_gun": 1161.0,
+   "hesap_degeri": 4670699.353293479,
+   "iliskili_not": "başka vault'ta pay 1; iç transfer karşı adres 5",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x63fea639f62c51888e41434640f7707d638901f5": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0389142281512766,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5657648967608195,
+   "en_yuksek_kaldirac": 1.0459710536858102,
+   "gecmis_gun": 482.0,
+   "hesap_degeri": 229784.207455,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x643430283b19fa5bd70a1138b495c2b43523cdd5": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0824507318158446,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.3660941966722802,
+   "en_yuksek_kaldirac": 2.126868754310368,
+   "gecmis_gun": 1077.0,
+   "hesap_degeri": 1491333.4919857702,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x649156ebf0a350deb18a1e4835873defd4dc5349": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.463348369737573,
+   "sira": 12,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.6297901896530338,
+   "en_yuksek_kaldirac": 7.34614467088145,
+   "gecmis_gun": 461.0,
+   "hesap_degeri": 1119192.24210542,
+   "iliskili_not": "alt hesap 1; API ajanı 1; iç transfer karşı adres 14",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.007104868479019621,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 1.644700785753495,
+   "bayrak_not": ""
+  },
+  "0x6598b811205f45e715eabeb3e894678414193f0b": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0033406059740482,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0093184064577051,
+   "en_yuksek_kaldirac": 0.2156728793074162,
+   "gecmis_gun": 937.0,
+   "hesap_degeri": 12272.43641065,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x659ddde484fd9dc313917d5de92a52b6a74a9d63": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": null,
+   "hesap_degeri": 52990220.2641,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x66d1f704749ced8c60df03cd0ccfce05c5d87fae": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.2277705878996017,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5657957076907679,
+   "en_yuksek_kaldirac": 4.870637186971571,
+   "gecmis_gun": 916.0,
+   "hesap_degeri": 60788.02139341,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x68c151a40b08c6d059d8eddfc0c57e18325c9e38": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0509141494605122,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1950798843325408,
+   "en_yuksek_kaldirac": 1.2580557098506702,
+   "gecmis_gun": 496.0,
+   "hesap_degeri": 698322.9635997,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x69443708e5135532d435b7d1a3b7e6bdc481a800": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0443719275486078,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3032793236008061,
+   "en_yuksek_kaldirac": 5.465136680039946,
+   "gecmis_gun": 762.0,
+   "hesap_degeri": 155349.96306017,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x69b05701f8175c276ecd0138387a197948e240bb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.4410267457372245,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8172950709566327,
+   "en_yuksek_kaldirac": 2.5535921606151963,
+   "gecmis_gun": 503.0,
+   "hesap_degeri": 602437.2312561,
+   "iliskili_not": "alt hesap 1; iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x69eb16da29deeac170613a1cacb34227fc15f956": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.2022901989888735,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4039957491112136,
+   "en_yuksek_kaldirac": 0.9336564091474432,
+   "gecmis_gun": 1021.0,
+   "hesap_degeri": 118307.28247455,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x6a2cb9b34ba6ca342ec787b70cd1878e71810231": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0168219525624361,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4263595377328616,
+   "en_yuksek_kaldirac": 3.856002651839616,
+   "gecmis_gun": 678.0,
+   "hesap_degeri": 157780.16820818,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x6cd4af7ff851f524042feb123ec40d7ce8a27b4a": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.6755085255982559,
+   "sira": 7,
+   "genc_aday": true,
+   "medyan_kaldirac": 2.2979187182295457,
+   "en_yuksek_kaldirac": 36.47864933189635,
+   "gecmis_gun": 188.0,
+   "hesap_degeri": 61599.97161745,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": 0.010602310926916662,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 19.315303704830733,
+   "bayrak_not": ""
+  },
+  "0x6de62240b8fec4bc7201b828934efafe9253ef7b": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0366740848658197,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5828093620876937,
+   "en_yuksek_kaldirac": 1.0513601549497484,
+   "gecmis_gun": 489.0,
+   "hesap_degeri": 116794.909523,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x6e9989debf991affd8dfe4a73efcbfc8cb658473": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0600214380554738,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4259710222545244,
+   "en_yuksek_kaldirac": 1.3339804095162673,
+   "gecmis_gun": 580.0,
+   "hesap_degeri": 500625.5258491,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x6f83ab8890ed38bf38a31010aa9a5e9ca743bfad": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0416498409837998,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.6797400531021559,
+   "en_yuksek_kaldirac": 4.642212773236533,
+   "gecmis_gun": 307.0,
+   "hesap_degeri": 504715.96712854,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x71038a3e5fd46ba4ca5edc81339a4d1e9e493104": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0752951680144487,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.308706812927887,
+   "en_yuksek_kaldirac": 1.8973813678256377,
+   "gecmis_gun": 433.0,
+   "hesap_degeri": 445946.31103540014,
+   "iliskili_not": "vault lideri 1; API ajanı 1; iç transfer karşı adres 5",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x7116470134e289f7fefb0922902e28200e471447": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0209384572858894,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 2.19270615690846,
+   "en_yuksek_kaldirac": 11.08617712902836,
+   "gecmis_gun": 321.0,
+   "hesap_degeri": 482165.712248,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x739ccf4aa388ddade09316f7aee5ed0ec7ae5739": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0941161618300557,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.2628094498885349,
+   "en_yuksek_kaldirac": 2.8129672622248125,
+   "gecmis_gun": 268.0,
+   "hesap_degeri": 180294.33998278,
+   "iliskili_not": "başka vault'ta pay 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x75f15ad634f336f63754254c0ea13d953cf6fc4e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1170872798260111,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.504332985736227,
+   "en_yuksek_kaldirac": 4.066987737146222,
+   "gecmis_gun": 272.0,
+   "hesap_degeri": 49739.85158328,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x7697ffcb42e82f9980cec5b15664c992c6b8c021": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0289140532013791,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4529442928142128,
+   "en_yuksek_kaldirac": 3.8004343435054806,
+   "gecmis_gun": 391.0,
+   "hesap_degeri": 139918.04900234,
+   "iliskili_not": "başka vault'ta pay 1; iç transfer karşı adres 5",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x79bf662bb50bea267adf5499f730d2488d85411f": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1635300185368185,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7134620124600676,
+   "en_yuksek_kaldirac": 2.4388788702958366,
+   "gecmis_gun": 447.0,
+   "hesap_degeri": 146804.498061,
+   "iliskili_not": "iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x7c6670c191c787f2aaa59effe455d11cdb04bb40": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.034771578920704,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9738018958413472,
+   "en_yuksek_kaldirac": 4.191885350428932,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 93328.80796942,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x7cb42a9fd91d7f2b506de9205254e41bede28439": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.201494087025219,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8802649981928122,
+   "en_yuksek_kaldirac": 2.908177070838611,
+   "gecmis_gun": 412.0,
+   "hesap_degeri": 620464.73431944,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x7e09dfbba23d078e16f038b1ed4c558185c4be1e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0674902209100167,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1354179197772181,
+   "en_yuksek_kaldirac": 0.943875231473519,
+   "gecmis_gun": 671.0,
+   "hesap_degeri": 203380.01591298,
+   "iliskili_not": "iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x7e3b58b109e0fdbb743423c4b2844c94b24df505": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.3472269875087238,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7966722007737582,
+   "en_yuksek_kaldirac": 13.82777301011502,
+   "gecmis_gun": 937.0,
+   "hesap_degeri": 21515.88121359,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x7eb9026d0183942458bd4660371c3cc0a2df3beb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0805639361568671,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.2052850567206114,
+   "en_yuksek_kaldirac": 9.290498918425724,
+   "gecmis_gun": 363.0,
+   "hesap_degeri": 5634358.45782086,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x7fdafde5cfb5465924316eced2d3715494c517d1": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 755.0,
+   "hesap_degeri": 46679611.909692,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x811ebe95c8fa577882d1c81d45e86f69e4a53fb2": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0865067665369987,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3163530884296327,
+   "en_yuksek_kaldirac": 1.7109512257832624,
+   "gecmis_gun": 853.0,
+   "hesap_degeri": 32293.57249736,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x8477e447846c758f5a675856001ea72298fd9cb5": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1124611075540587,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1979327955783913,
+   "en_yuksek_kaldirac": 5.198531028272856,
+   "gecmis_gun": 986.0,
+   "hesap_degeri": 94992.328474,
+   "iliskili_not": "başka vault'ta pay 1; API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x84d76e64be483a615e2447ccf3b52e938cb40688": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.6137798803556775,
+   "sira": 7,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.5173103924847784,
+   "en_yuksek_kaldirac": 4.797559356607882,
+   "gecmis_gun": 1161.0,
+   "hesap_degeri": 734649.3241904001,
+   "iliskili_not": "alt hesap 2; başka vault'ta pay 1; iç transfer karşı adres 14",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 1.361193656717812e-12,
+   "bayrak_funding_payi": 0.30844152211540365,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 22.899573301233882,
+   "bayrak_not": ""
+  },
+  "0x85101bbcbbf09cd50d299f662448c3ae509592ee": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0534977581347714,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.458875355841542,
+   "en_yuksek_kaldirac": 17.810908658690725,
+   "gecmis_gun": 328.0,
+   "hesap_degeri": 108451.23305162,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x856c35038594767646266bc7fd68dc26480e910d": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": "swing",
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0255515162512368,
+   "en_yuksek_kaldirac": 0.0950423445683225,
+   "gecmis_gun": 685.0,
+   "hesap_degeri": 5435849.48203207,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x86126586d97364945ee62146bbb693922da1ddc9": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1272092732144724,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5082408710057663,
+   "en_yuksek_kaldirac": 11.085968643912995,
+   "gecmis_gun": 1042.0,
+   "hesap_degeri": 34889.8814692,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x86d2161a18a6eb5be550d5253496e5a161cdf731": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.9820303101502452,
+   "sira": 4,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1149198645356266,
+   "en_yuksek_kaldirac": 5.948697890992002,
+   "gecmis_gun": 1098.0,
+   "hesap_degeri": 252265.13461127,
+   "iliskili_not": "alt hesap 3; API ajanı 9; iç transfer karşı adres 9",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.028132734399552238,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 35.55577988936758,
+   "bayrak_not": ""
+  },
+  "0x870a4276a7770e7dec60e9582a034937ea2c98ba": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.020065386459616,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.1936740827084138,
+   "en_yuksek_kaldirac": 0.353494658777023,
+   "gecmis_gun": 216.0,
+   "hesap_degeri": 20969.47208211,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x87f9cd15f5050a9283b8896300f7c8cf69ece2cf": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 496.0,
+   "hesap_degeri": 121358808.181587,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x888e000c78b8f1aada5b3c99f880794907b76d77": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.5501258059543506,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.6356528250052662,
+   "en_yuksek_kaldirac": 3.277058980653241,
+   "gecmis_gun": 664.0,
+   "hesap_degeri": 3234384.02209534,
+   "iliskili_not": "iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x8a249d31750d727e6a3a7b534255badd575aa26f": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1574345309811695,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9726566291302616,
+   "en_yuksek_kaldirac": 2.931789271803148,
+   "gecmis_gun": 1063.0,
+   "hesap_degeri": 672822.32812765,
+   "iliskili_not": "iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x8a94c69e0801c800420f427b9015f6e8664c47d8": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0419353997887118,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5710951616199219,
+   "en_yuksek_kaldirac": 1.0404222161917769,
+   "gecmis_gun": 482.0,
+   "hesap_degeri": 182525.947189,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x8ba68ce2d9452ebe7b7cd1faa473c3c4bd3bef63": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 1.2886878551016283,
+   "sira": 1,
+   "genc_aday": true,
+   "medyan_kaldirac": 3.574121788962428,
+   "en_yuksek_kaldirac": 11.95955792978038,
+   "gecmis_gun": 237.0,
+   "hesap_degeri": 175151.475369,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.08491882287669453,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 9.887485482788643,
+   "bayrak_not": ""
+  },
+  "0x8bae3527e5a33fa0cf184f37bc112d071463ab6d": {
+   "kol": "elle",
+   "kollar": [
+    "elle",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1312380417864197,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.549132171820509,
+   "en_yuksek_kaldirac": 3.333061602299412,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 4660561.25399033,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x8c39b7cb82b9d791adcc9387098944b635c17b32": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.4324039344989335,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.8246323143743968,
+   "en_yuksek_kaldirac": 187.93407343919355,
+   "gecmis_gun": 622.0,
+   "hesap_degeri": 364635.5289712,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x8d0c44cd9493ea7954fafd8b4e7cacf3b91ae17b": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.3347383497765467,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 4.470791119063111,
+   "en_yuksek_kaldirac": 59.84048358686949,
+   "gecmis_gun": 188.0,
+   "hesap_degeri": 152774.772408,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x8def9f50456c6c4e37fa5d3d57f108ed23992dae": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": null,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": null,
+   "hesap_degeri": null,
+   "iliskili_not": "",
+   "hesap_surumu": null
+  },
+  "0x8e48c052ecb5d8c5da25624b807975f73c44b0fd": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1171214598437412,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0568338216502519,
+   "en_yuksek_kaldirac": 4.362558462466632,
+   "gecmis_gun": 1007.0,
+   "hesap_degeri": 178249.13836474,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x8fc7c0442e582bca195978c5a4fdec2e7c5bb0f7": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.3719684660351451,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5424127793435861,
+   "en_yuksek_kaldirac": 4.9737134463810975,
+   "gecmis_gun": 839.0,
+   "hesap_degeri": 798154.890879,
+   "iliskili_not": "iç transfer karşı adres 6",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x9075c8f93cd30c1015e6fbe9718f0bf2dca4e2f0": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0578978023300447,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2782582253977621,
+   "en_yuksek_kaldirac": 1.663642855988703,
+   "gecmis_gun": 650.0,
+   "hesap_degeri": 84790.72307433,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x909eb3d5ff0ac0df12c81f8495860cfccf1e7ea9": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.8558158189800025,
+   "sira": 2,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.5403372168358649,
+   "en_yuksek_kaldirac": 5.05060316724732,
+   "gecmis_gun": 314.0,
+   "hesap_degeri": 1188333.5319369498,
+   "iliskili_not": "alt hesap 1; iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.0689215827334631,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 3.0342096752271965,
+   "bayrak_not": ""
+  },
+  "0x9114a5161f18739ced233190861ea275c8b3a99b": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0623762729245272,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8466574301766332,
+   "en_yuksek_kaldirac": 1.1540415211517037,
+   "gecmis_gun": 419.0,
+   "hesap_degeri": 327205.382701,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x9312e0a61f21affbd5be821f436f8fdf6b6f6663": {
+   "kol": "elle",
+   "kollar": [
+    "elle",
+    "kontrol",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.6341916437195415,
+   "sira": 10,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.7058889578998393,
+   "en_yuksek_kaldirac": 2.418201968050109,
+   "gecmis_gun": 286.0,
+   "hesap_degeri": 181541.79660493,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": 0.009487546841595614,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 8.420409396557043,
+   "bayrak_not": ""
+  },
+  "0x936cf4fb95c30ce83f658b5bbb247e4bb381bb0f": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.0178546404464897,
+   "en_yuksek_kaldirac": 1.5089195162175597,
+   "gecmis_gun": 328.0,
+   "hesap_degeri": 15689497.59740321,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x95da8596c44dd09f4b8becce87ad3b7894fb2328": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.4443625172718543,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.9969645190293442,
+   "en_yuksek_kaldirac": 2.997257212026041,
+   "gecmis_gun": 251.0,
+   "hesap_degeri": 3311018.99618696,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 12",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x96eead4cf15be74b20f02c32bc2dbeb6494b5c17": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.3428304987351773,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7672139495214656,
+   "en_yuksek_kaldirac": 6.026924086406415,
+   "gecmis_gun": 825.0,
+   "hesap_degeri": 40326.21594728,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x9c522e518bed1a71b5d465614bc64dd512d8f2fc": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0007064458448327,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.6100307019866901,
+   "en_yuksek_kaldirac": 3.154034003771261,
+   "gecmis_gun": 706.0,
+   "hesap_degeri": 90707.2431404,
+   "iliskili_not": "başka vault'ta pay 1; API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x9d1792626cc8bfb29acc7e5e7a2f706bb6ada290": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1555211973328904,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8355625274961229,
+   "en_yuksek_kaldirac": 1.2377082437348372,
+   "gecmis_gun": 461.0,
+   "hesap_degeri": 205542.47426571,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x9db82c502472d76742fdd69609dfcc6e01327401": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0871615582730183,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3331085442560385,
+   "en_yuksek_kaldirac": 0.7818619745180193,
+   "gecmis_gun": 902.0,
+   "hesap_degeri": 618530.56083542,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x9f499f74902d52cd4e1a191083d96726ddfd8579": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0747277384092246,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.9237923432114684,
+   "en_yuksek_kaldirac": 4.016334950916328,
+   "gecmis_gun": 359.0,
+   "hesap_degeri": 838945.7419219101,
+   "iliskili_not": "alt hesap 1; başka vault'ta pay 1; iç transfer karşı adres 6",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0x9f70446ed1b0e0d1dea7cb62d3a20244b56544af": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.3994596400052992,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.0062632938717044,
+   "en_yuksek_kaldirac": 11.993040994216887,
+   "gecmis_gun": 307.0,
+   "hesap_degeri": 106928.06481587,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa0c2c48b0f45b003ef5939ade967e64eb9e3615f": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.078970021825439,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2166785538335591,
+   "en_yuksek_kaldirac": 1.7819952308622096,
+   "gecmis_gun": 433.0,
+   "hesap_degeri": 305472.41552296,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa0d95f4d1df078c257039d3fca9bf6fd5d971fc6": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.2619930880469013,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.3893768611682537,
+   "en_yuksek_kaldirac": 1.9606890191993656,
+   "gecmis_gun": 232.0,
+   "hesap_degeri": 61762.43871,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa1654cd855e60d55f8065ff22b450f657b159d41": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1535756471797202,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.7407479062808668,
+   "en_yuksek_kaldirac": 71.15504222941726,
+   "gecmis_gun": 216.0,
+   "hesap_degeri": 444585.14262,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa1b6d8efbcb2fb750a84dbc05649fa4968034f04": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0536504174789394,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0610302246078412,
+   "en_yuksek_kaldirac": 0.6602683361957137,
+   "gecmis_gun": 496.0,
+   "hesap_degeri": 731912.006888,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa1bee787616cba2c7000a221570a5239f3c4ba6a": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0004097275128529,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.6041049606621044,
+   "en_yuksek_kaldirac": 1.0410799959344577,
+   "gecmis_gun": 475.0,
+   "hesap_degeri": 308407.1574,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa1cb16d2b17202c336138f765559dfc73830b1fb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0192308671386793,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1544736753968035,
+   "en_yuksek_kaldirac": 0.9948784713934408,
+   "gecmis_gun": 839.0,
+   "hesap_degeri": 281059.65419788,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa1d4fc32f21d9d77a4c20a6ac4b748815912c07c": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "kontrol",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.7125462247956246,
+   "sira": 5,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8487731032627193,
+   "en_yuksek_kaldirac": 4.420582079225413,
+   "gecmis_gun": 370.0,
+   "hesap_degeri": 402647.276155,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.02593290290051959,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 26.328515943863184,
+   "bayrak_not": ""
+  },
+  "0xa3bd669bbb7fc764ea941587466ac710bb9e3609": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1551462302722963,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.279798525383313,
+   "en_yuksek_kaldirac": 1.9294421018157373,
+   "gecmis_gun": 272.0,
+   "hesap_degeri": 428846.724464,
+   "iliskili_not": "iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa522301c25e833b75b223a21a7f528eef9862d0e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.212363051951926,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 2.6767172443536773,
+   "en_yuksek_kaldirac": 7.991758991887673,
+   "gecmis_gun": 259.0,
+   "hesap_degeri": 1567814.317837,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa5fd942d4badbab4fe84a9e10f565dd40d5f15ff": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1728948070517239,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.8505083509982576,
+   "en_yuksek_kaldirac": 3.7026968132560953,
+   "gecmis_gun": 958.0,
+   "hesap_degeri": 4106914.93440006,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa6fc599a28c4b23b7f74bd391c56dfda70d48693": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0834264722692449,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.856763219854164,
+   "en_yuksek_kaldirac": 2.51262932751256,
+   "gecmis_gun": 706.0,
+   "hesap_degeri": 367788.6097949,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa71de7e1b7ed086b4ede0be541e7076c51244541": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0129988766968313,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1054523407056819,
+   "en_yuksek_kaldirac": 2.461253482929506,
+   "gecmis_gun": 1049.0,
+   "hesap_degeri": 31655.61912455,
+   "iliskili_not": "başka vault'ta pay 3; API ajanı 3; iç transfer karşı adres 16",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa7e9fdd2cd4416b83116ac4a230f32324fb97f56": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0449805362930125,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9102651515390812,
+   "en_yuksek_kaldirac": 51.22571916204103,
+   "gecmis_gun": 587.0,
+   "hesap_degeri": 155569.96275591,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xa844d7ac9fa3424c4fd38a25baa23e460ec3e802": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0882881610747826,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2438428964873777,
+   "en_yuksek_kaldirac": 2.2245024993876807,
+   "gecmis_gun": 643.0,
+   "hesap_degeri": 349552.340495,
+   "iliskili_not": "iç transfer karşı adres 237",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xab75bad3cddabc8348cea1be6bdd728b4b2b0393": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0083520196635728,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1284278802311748,
+   "en_yuksek_kaldirac": 1.1501037566701022,
+   "gecmis_gun": 510.0,
+   "hesap_degeri": 83050.45555606,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xac5c66fbad98b49979cd1cbaa800ace76e947866": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1724304431067249,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 3.552881759620257e-05,
+   "en_yuksek_kaldirac": 165.1970652607677,
+   "gecmis_gun": 678.0,
+   "hesap_degeri": 156466.97641546,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xacf5c9a3213f91182317ef74770ffb41f0c081f5": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0152048421269572,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.0431638595680288,
+   "en_yuksek_kaldirac": 4.196132654307188,
+   "gecmis_gun": 601.0,
+   "hesap_degeri": 105919.7284251,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xad2390287cde1172d74f1d4984f2b256d88999f5": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0167610273459278,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2005597498567438,
+   "en_yuksek_kaldirac": 8.257594706079225,
+   "gecmis_gun": 496.0,
+   "hesap_degeri": 14453.01029477,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xaf6f7a06f7bfb3bdf7bcd2c751564f4990d1efc7": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1626983921410904,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.6294837893812362,
+   "en_yuksek_kaldirac": 1.1752046206041211,
+   "gecmis_gun": 678.0,
+   "hesap_degeri": 325773.68845764,
+   "iliskili_not": "alt hesap 1; başka vault'ta pay 1; API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xafcc19396643563d0e0b21f86444668ba39dd2c6": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1173169997307064,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9216019917560478,
+   "en_yuksek_kaldirac": 2.044295602759312,
+   "gecmis_gun": 566.0,
+   "hesap_degeri": 299467.98655645,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb16395a96326a115102335ffb4da07ee2a90a72f": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.2569034421639882,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7474214108112799,
+   "en_yuksek_kaldirac": 4.129365063387458,
+   "gecmis_gun": 1014.0,
+   "hesap_degeri": 208444.98316969,
+   "iliskili_not": "alt hesap 2; iç transfer karşı adres 12",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb269326d7c94e2fcbdeaa1712a80d1fd8a2e51de": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1079627121868811,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4263863078503599,
+   "en_yuksek_kaldirac": 70.49220906494433,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 119408.082742,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb3162ca43d7455be5b4f6dbf3236435b709ed894": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.4528946060962464,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.3809416867191786,
+   "en_yuksek_kaldirac": 10.00724042992962,
+   "gecmis_gun": 356.0,
+   "hesap_degeri": 33232.90474692,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb32790c25e240cda43ca63eea1ed6326a76ebb11": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0001919135047426,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.381368315874165,
+   "en_yuksek_kaldirac": 33.65526273164494,
+   "gecmis_gun": 391.0,
+   "hesap_degeri": 229036.85106165,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb362c372e0c58bccc5fb47d8f59a1cc00895e63d": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.3797126764318469,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.163191578774655,
+   "en_yuksek_kaldirac": 3.2066204257113964,
+   "gecmis_gun": 356.0,
+   "hesap_degeri": 258080.46544039,
+   "iliskili_not": "iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb36c7e6e58e38ad608748e6a00bda29dbeaec96a": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1905241189146773,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2828230050704121,
+   "en_yuksek_kaldirac": 2.3183130168304547,
+   "gecmis_gun": 587.0,
+   "hesap_degeri": 266994.63414536003,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb65dd7c56afbf3b272ab5fc49be44b47dca18003": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0339011028028926,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.0270285015727315,
+   "en_yuksek_kaldirac": 0.9198769305018794,
+   "gecmis_gun": 241.0,
+   "hesap_degeri": 307316.549476,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb695651daa495f59dd2725c6fe98322d8b51a92d": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 62.0,
+   "hesap_degeri": 41186803.975596,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0623861848721013,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8588844289480242,
+   "en_yuksek_kaldirac": 1.0216538194245657,
+   "gecmis_gun": 608.0,
+   "hesap_degeri": 94227.705332,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb83de012dba672c76a7dbbbf3e459cb59d7d6e36": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 608.0,
+   "hesap_degeri": 207774855.0560889,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xb88995eae7b23ccd26c1f92308e6587bcd3e1c1a": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.5190751374301452,
+   "sira": 10,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.573628073292184,
+   "en_yuksek_kaldirac": 6.247540876031871,
+   "gecmis_gun": 272.0,
+   "hesap_degeri": 71295.53546335999,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 4",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.10826694563038478,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 3.8898337490223853,
+   "bayrak_not": ""
+  },
+  "0xb9fee87ada5100e29afaad51a2c60096010154c2": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0031933277161688,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8052967636663512,
+   "en_yuksek_kaldirac": 3.54710062122298,
+   "gecmis_gun": 951.0,
+   "hesap_degeri": 236741.61003374,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xba939edf38c0ae0cc689c98b492e0535f43e4550": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0959201298310253,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1594809802561987,
+   "en_yuksek_kaldirac": 0.9955632715618914,
+   "gecmis_gun": 1063.0,
+   "hesap_degeri": 220923.734804,
+   "iliskili_not": "iç transfer karşı adres 167",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xbb29e0d7124f61a4af2f133407b2135854592a80": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.2574938265404306,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.136503107530027,
+   "en_yuksek_kaldirac": 2.265304158462616,
+   "gecmis_gun": 489.0,
+   "hesap_degeri": 691822.5708280001,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xbb6b56854a71550128bc0a6a8e5d8aacfac90142": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0338107701746056,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5485077276498982,
+   "en_yuksek_kaldirac": 3.256943249702887,
+   "gecmis_gun": 678.0,
+   "hesap_degeri": 50558.14976294,
+   "iliskili_not": "iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xbbcb0c0aef0b28125af2f719f81d6a5b76f56f30": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0156866031200497,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3261840445176099,
+   "en_yuksek_kaldirac": 1.2001268794182802,
+   "gecmis_gun": 678.0,
+   "hesap_degeri": 2543035.9083894105,
+   "iliskili_not": "alt hesap 1; iç transfer karşı adres 16",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xbc3135e64552c95d11b6cdf930d12608aa8b3cbe": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.4145082219359755,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1064998248750437,
+   "en_yuksek_kaldirac": 3.9546447902158737,
+   "gecmis_gun": 594.0,
+   "hesap_degeri": 328301.6021145999,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xbd1b3513bb0ce1529242cfb28926618809592362": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.164553082883491,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.3436265102363396,
+   "en_yuksek_kaldirac": 3.0757637579121684,
+   "gecmis_gun": 972.0,
+   "hesap_degeri": 409406.45011484,
+   "iliskili_not": "alt hesap 1; iç transfer karşı adres 6",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xbdf1df422955592a0b905927d10feddc58ae82b2": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0678186374827179,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.2138167628828005,
+   "en_yuksek_kaldirac": 2.137744468812691,
+   "gecmis_gun": 306.0,
+   "hesap_degeri": 222943.132013,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xc12f80e8b763df7fa5b400767698fd86c87f7cb1": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0182014683818895,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2972710896873937,
+   "en_yuksek_kaldirac": 1.2120997960790476,
+   "gecmis_gun": 1000.0,
+   "hesap_degeri": 353667.34229487,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xc1791da88cc94c9a39e606d8760183d21268dcbb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1336118827963788,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1119484055722266,
+   "en_yuksek_kaldirac": 1.3704192610879502,
+   "gecmis_gun": 678.0,
+   "hesap_degeri": 15611.95689857,
+   "iliskili_not": "başka vault'ta pay 1; iç transfer karşı adres 14",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xc92f1da3181b999feceb179dccbfe4d0bf5291e1": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1114854907507587,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.7806817646100228,
+   "en_yuksek_kaldirac": 5.501352882009113,
+   "gecmis_gun": 279.0,
+   "hesap_degeri": 107432.67276615,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xcab90bb2b3a2f57f40326093de037c655c7fa8ae": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0680932161388281,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.164021591762776,
+   "en_yuksek_kaldirac": 0.7189936244777854,
+   "gecmis_gun": 1077.0,
+   "hesap_degeri": 47429.07211716,
+   "iliskili_not": "iç transfer karşı adres 11",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xcb30bc4a1175de202eb579c1e506e9277237d694": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.2574073969536619,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.7250546611363771,
+   "en_yuksek_kaldirac": 11.356731540974184,
+   "gecmis_gun": 303.0,
+   "hesap_degeri": 94973.801825,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xcd532243888d26791881064e24d4a25fd0041d98": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0463718132308504,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.226816189115656,
+   "en_yuksek_kaldirac": 3.491876049103874,
+   "gecmis_gun": 748.0,
+   "hesap_degeri": 284079.29685839,
+   "iliskili_not": "başka vault'ta pay 1; iç transfer karşı adres 22",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xcdce62a8079e1380a0524aabcf084c13fb2d8452": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0050747186905162,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0994240371541694,
+   "en_yuksek_kaldirac": 0.2951051807324385,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 12395.8046068,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xcfcf7db9024bbb45eba63eb145a2c779e8e8a29d": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1338601526386341,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.446685371023347,
+   "en_yuksek_kaldirac": 1.3574433435675182,
+   "gecmis_gun": 265.0,
+   "hesap_degeri": 85180.38881053,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd00b847831d886330f8cdaaa7c2ab70329c0c262": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0100287543972358,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.6637481973624044,
+   "en_yuksek_kaldirac": 1.041786664723025,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 367918.071503,
+   "iliskili_not": "API ajanı 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd0441edb3ef3b8b5ade2239c7abdf101c8060477": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1635722941032111,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.112344785882598,
+   "en_yuksek_kaldirac": 0.8855594411004665,
+   "gecmis_gun": 1000.0,
+   "hesap_degeri": 20073.41254226,
+   "iliskili_not": "alt hesap 1; vault lideri 1; iç transfer karşı adres 10",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd0bc2d8b1dd8ea9d44f0a565f23cb989ac8c464a": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0344646300375866,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5820923912898548,
+   "en_yuksek_kaldirac": 1.0560624251925526,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 169933.615108,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd107f15e0a59c02ebd4ea37c16a32b942c3e94cb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.3965566056943961,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7847184734131902,
+   "en_yuksek_kaldirac": 8.935546148138732,
+   "gecmis_gun": 706.0,
+   "hesap_degeri": 105932.48215692,
+   "iliskili_not": "iç transfer karşı adres 3",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd199ce64eb902fd58cc4e5ba19f39b03ae4b1d8e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0139283072267842,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.5421140532412473,
+   "en_yuksek_kaldirac": 3.1257298236790176,
+   "gecmis_gun": 650.0,
+   "hesap_degeri": 21179.44052374,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd1db106c95ebaff9ae45be2eb09128f47d85f217": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.1894832477910598,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.6033669341319149,
+   "en_yuksek_kaldirac": 6.766149124789388,
+   "gecmis_gun": 230.0,
+   "hesap_degeri": 240156.98153205,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd205b02969b04af5a87112ca24d27573aea2ae46": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.2673793817968475,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 2.5079945736867693,
+   "en_yuksek_kaldirac": 8.025153330287377,
+   "gecmis_gun": 255.0,
+   "hesap_degeri": 299042.288274,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd57c9295947b5a616a3933344ef03a1ad67318ea": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0257369086950676,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0813068224761145,
+   "en_yuksek_kaldirac": 1.3139266016369708,
+   "gecmis_gun": 804.0,
+   "hesap_degeri": 230758.098686,
+   "iliskili_not": "iç transfer karşı adres 81",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd750d35610fa0c07190169e0003160574368827b": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0282422955928068,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3758541770018049,
+   "en_yuksek_kaldirac": 3.3753366833923835,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 51773.83865597,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd7ff86f4413c95b4e7828adef99701d7cea61007": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.2604563235053386,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.4136285491179267,
+   "en_yuksek_kaldirac": 2.7592630692235085,
+   "gecmis_gun": 846.0,
+   "hesap_degeri": 103219.49728549,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd80c116c367050146bb2a4006bdd31603c7fc2a8": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0065260421376515,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.0244213948893588,
+   "en_yuksek_kaldirac": 0.1337020808293169,
+   "gecmis_gun": 363.0,
+   "hesap_degeri": 200821.1626109,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd9003796cc1781b1a6dfbccae25a7efc60727a6b": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0329268693593682,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.9209039249356572,
+   "en_yuksek_kaldirac": 1.52674601915432,
+   "gecmis_gun": 293.0,
+   "hesap_degeri": 53241.46610229,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xd937cb720de49f28afae787e06ce0bdc5f11a951": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0336854890341927,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.211507495105805,
+   "en_yuksek_kaldirac": 1.299508158827075,
+   "gecmis_gun": 685.0,
+   "hesap_degeri": 40178.82276621,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xdb11df3c623e5da9377e92801f6207285dfb3edb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.1623593080137634,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.287424263736014,
+   "en_yuksek_kaldirac": 3.773048132703123,
+   "gecmis_gun": 867.0,
+   "hesap_degeri": 442863.16667933005,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xdb32e78a28c49a106311401d38b47d6324f55762": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0098442315635432,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2406065174672826,
+   "en_yuksek_kaldirac": 0.6580217690931937,
+   "gecmis_gun": 482.0,
+   "hesap_degeri": 94810.45908883,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xdbbb9b4e361e1e1b6b4c640914ed4e4a11896df9": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.1417453436793805,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.8676293522482248,
+   "en_yuksek_kaldirac": 3.641781951946079,
+   "gecmis_gun": 545.0,
+   "hesap_degeri": 405446.36571709,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xdd0c5de50d72e5eaa96816e920e41ce89c4b8888": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0897812562510373,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.2049239167260457,
+   "en_yuksek_kaldirac": 5.512172810807503,
+   "gecmis_gun": 958.0,
+   "hesap_degeri": 338451.04860975,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xdd53c5297309130ab5fe5623dc905752e3342b13": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": null,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": null,
+   "hesap_degeri": null,
+   "iliskili_not": "",
+   "hesap_surumu": null
+  },
+  "0xdf954bbe619273a56e0cfa90dad8382195dc7d72": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": null,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": null,
+   "hesap_degeri": null,
+   "iliskili_not": "",
+   "hesap_surumu": null
+  },
+  "0xe06532a98a541b48f6330d2dd88e2b4b96010d6b": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0628224418578651,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.7569929290807612,
+   "en_yuksek_kaldirac": 2.7292267022933903,
+   "gecmis_gun": 678.0,
+   "hesap_degeri": 270000.12130864,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe0afe5de6831901db80d7ca9d17475f78b1a870c": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1208331268274627,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.534472800014996,
+   "en_yuksek_kaldirac": 7.756296345732793,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 472540.09230313,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe46eafafb60af2eea3a59768106a9342aec59ec3": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0064117684530619,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1369849372157172,
+   "en_yuksek_kaldirac": 0.4904917151012709,
+   "gecmis_gun": 965.0,
+   "hesap_degeri": 120802.12339546,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe4c55fdc2a2739f7237706f7957a9b276fc82b1f": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.6417101392678981,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9961729877225548,
+   "en_yuksek_kaldirac": 20.02232476913185,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 41970.3457598,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe5731d975d84c7222ebfd0ce8239f04ea3164e55": {
+   "kol": "elle",
+   "kollar": [
+    "elle"
+   ],
+   "tarz": "intraday",
+   "puan": null,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 1.6618299448946188,
+   "en_yuksek_kaldirac": 7.302593940301479,
+   "gecmis_gun": 227.0,
+   "hesap_degeri": 278698.25351714,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe5aaacff3f4f94d5009da0503144027e75a96232": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.1165147415675479,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 2.150358411965433,
+   "en_yuksek_kaldirac": 3.619727639008958,
+   "gecmis_gun": 321.0,
+   "hesap_degeri": 167980.95226837002,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe63d6f9d856cb10b44e892291612d2385f273f53": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.7894049682904685,
+   "sira": 5,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9428003928383972,
+   "en_yuksek_kaldirac": 3.860632603779156,
+   "gecmis_gun": 461.0,
+   "hesap_degeri": 178060.00253191002,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 0.0,
+   "bayrak_funding_payi": -0.03286215344322688,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 5.049875363440244,
+   "bayrak_not": ""
+  },
+  "0xe67f141977da22e5c34d15c19b35f180a1532715": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0331312428068642,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.8358581242376557,
+   "en_yuksek_kaldirac": 2.0773532351925,
+   "gecmis_gun": 573.0,
+   "hesap_degeri": 568445.70171948,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe6caf898d70a0f0365ae8c6211ade489025aa1bb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0489090597460049,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2009833251185121,
+   "en_yuksek_kaldirac": 1.2538482569803846,
+   "gecmis_gun": 1105.0,
+   "hesap_degeri": 75628.27313368,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe76065321bf27cd32409b40d81736bc3b2c6f78c": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": -0.0237929854438358,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.575673157697659,
+   "en_yuksek_kaldirac": 1.050746786057717,
+   "gecmis_gun": 482.0,
+   "hesap_degeri": 151028.486089,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe785880e67d67fe3436cc51ad89e9f800f3a0c0d": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0400709415748333,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3804287253610259,
+   "en_yuksek_kaldirac": 0.7550033497923934,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 352437.56757404,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe78c092d9265c33fc7835175114406488811f840": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0724025635829229,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.631349029777963,
+   "en_yuksek_kaldirac": 11.003431302439912,
+   "gecmis_gun": 190.0,
+   "hesap_degeri": 262583.63376604003,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe86351e0f69bd808def36e7bb2f9107443838bb8": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0399900320727665,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.6143869643311346,
+   "en_yuksek_kaldirac": 3.123961742879129,
+   "gecmis_gun": 1147.0,
+   "hesap_degeri": 4165571.2140195104,
+   "iliskili_not": "iç transfer karşı adres 14",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe8681168f59af16c60c805dab7842eb75f127879": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0069561071829901,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0420320687656737,
+   "en_yuksek_kaldirac": 6.059551075942297,
+   "gecmis_gun": 475.0,
+   "hesap_degeri": 141753.19506765,
+   "iliskili_not": "API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe9c2df5b14c7f476e8a5895d5b0c6b015e87bf2e": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.0995905104104763,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.6456444593379923,
+   "en_yuksek_kaldirac": 7.026388936709618,
+   "gecmis_gun": 566.0,
+   "hesap_degeri": 179909.117288,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xe9cef9fd872a03cedf9d3e6e90309782b3724ea6": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1338835481342941,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2737640550751388,
+   "en_yuksek_kaldirac": 2.269746446208772,
+   "gecmis_gun": 706.0,
+   "hesap_degeri": 1076625.5769830002,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xeb1dad94416e1235df18789750534a577adfd9bb": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.1447469721520182,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.2251278185716769,
+   "en_yuksek_kaldirac": 1.4984850082593195,
+   "gecmis_gun": 461.0,
+   "hesap_degeri": 49357.45489394,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xecb63caa47c7c4e77f60f1ce858cf28dc2b82b00": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": "scalp",
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9018591773799668,
+   "en_yuksek_kaldirac": 1.054431115466738,
+   "gecmis_gun": 1007.0,
+   "hesap_degeri": 56152089.97373911,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xf14d664d133a2256af354dde6af84ea6a25a5665": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1093397577331139,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.145523910290628,
+   "en_yuksek_kaldirac": 1.549395022591328,
+   "gecmis_gun": 189.0,
+   "hesap_degeri": 316283.62011591,
+   "iliskili_not": "iç transfer karşı adres 1",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xf19adedb642cc10adace471be30c98457015ec03": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.0112140886317448,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1724595977867201,
+   "en_yuksek_kaldirac": 1.9875330083046785,
+   "gecmis_gun": 937.0,
+   "hesap_degeri": 13538.31534615,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xf3da2fa1319dc8a9d8328ac345361747fae94dab": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.2595931841414347,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.1320717754644249,
+   "en_yuksek_kaldirac": 12.20513797010948,
+   "gecmis_gun": 294.0,
+   "hesap_degeri": 50830.51809628,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xf4fa6ea7cb31d95bbe61121ba827602c17e27a7a": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0611078036154055,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.3389538238102959,
+   "en_yuksek_kaldirac": 1.1068593263630626,
+   "gecmis_gun": 468.0,
+   "hesap_degeri": 129315.67238811,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xf53cab0c6f25f48f985d1e2c40e03fc7c1963364": {
+   "kol": "oda",
+   "kollar": [
+    "oda",
+    "aday",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.8068535815681084,
+   "sira": 4,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.823843709101589,
+   "en_yuksek_kaldirac": 3.1873915733192115,
+   "gecmis_gun": 1042.0,
+   "hesap_degeri": 763049.6771333,
+   "iliskili_not": "alt hesap 1; başka vault'ta pay 3; iç transfer karşı adres 6",
+   "hesap_surumu": "v1.1-2026-10-27d",
+   "bayrak_rol": "user",
+   "bayrak_vault_orani": 8.614635975858842e-05,
+   "bayrak_funding_payi": -0.18679656390263397,
+   "bayrak_alt_hesap_ters": "hayır",
+   "bayrak_hacim_orani": 2.1529976739810683,
+   "bayrak_not": ""
+  },
+  "0xf55f9ad7bb566c41ea315ff21735e9ca6f92dabf": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1007965091064162,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.18813952619169,
+   "en_yuksek_kaldirac": 0.8795750040827071,
+   "gecmis_gun": 342.0,
+   "hesap_degeri": 208200.048439,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xf94b346387ae5f1ae84bf10e36008cb552ca82d5": {
+   "kol": "kontrol",
+   "kollar": [
+    "kontrol",
+    "havuz"
+   ],
+   "tarz": "swing",
+   "puan": 0.062601029174983,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 2.135936734995589,
+   "en_yuksek_kaldirac": 17.53733774659364,
+   "gecmis_gun": 972.0,
+   "hesap_degeri": 64465.16911326,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xf97ad6704baec104d00b88e0c157e2b7b3a1ddd1": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.3065423677996434,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.269901392175784,
+   "en_yuksek_kaldirac": 2.3126297353493404,
+   "gecmis_gun": 867.0,
+   "hesap_degeri": 1723618.51205697,
+   "iliskili_not": "alt hesap 1; iç transfer karşı adres 19",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfc27136e42af1732ddc9ce2605ea9bff1b959d9d": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 202.0,
+   "hesap_degeri": 36584612.904974,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfc370c8c078ad53f5ea1df83a26c51f03b2321fd": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.2324806596380276,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.5219113305346058,
+   "en_yuksek_kaldirac": 23.51536650821788,
+   "gecmis_gun": 335.0,
+   "hesap_degeri": 185851.00151461,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfc55a72ec00ea3595ba5119882c7e7adb52985ca": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.1080331857345688,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.6617902881538059,
+   "en_yuksek_kaldirac": 3.6131415613381934,
+   "gecmis_gun": 1224.0,
+   "hesap_degeri": 41297.55498021,
+   "iliskili_not": "alt hesap 1; başka vault'ta pay 1; API ajanı 1; iç transfer karşı adres 5",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfc667adba8d4837586078f4fdcdc29804337ca06": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": "scalp",
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.9057757929336444,
+   "en_yuksek_kaldirac": 1.095808562008147,
+   "gecmis_gun": 377.0,
+   "hesap_degeri": 99277370.69437064,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfc800e6e7147e544496d2da73b4988916431b33a": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0074282669540725,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.0319867534994259,
+   "en_yuksek_kaldirac": 0.1423607470143233,
+   "gecmis_gun": 538.0,
+   "hesap_degeri": 22904.079687,
+   "iliskili_not": "alt hesap 1; başka vault'ta pay 1; API ajanı 1; iç transfer karşı adres 2",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfceaf5b6e735a6cee161d154cd1fa8cba51c81c6": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": -0.314857858908608,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 1.118280247984534,
+   "en_yuksek_kaldirac": 2.959696788267474,
+   "gecmis_gun": 1021.0,
+   "hesap_degeri": 61999.40713477,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfe7ce058edc7cfcde9ef8262ba51f8d4796ab7ae": {
+   "kol": "taban",
+   "kollar": [
+    "taban"
+   ],
+   "tarz": null,
+   "puan": null,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": null,
+   "en_yuksek_kaldirac": null,
+   "gecmis_gun": 153.0,
+   "hesap_degeri": 15996058.486992,
+   "iliskili_not": "",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfeca598e3909b1c5574b4d77828d40a75cc57fd4": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0500666252715392,
+   "sira": null,
+   "genc_aday": false,
+   "medyan_kaldirac": 0.1788367287399176,
+   "en_yuksek_kaldirac": 2.570749341073373,
+   "gecmis_gun": 692.0,
+   "hesap_degeri": 116082.91429542,
+   "iliskili_not": "iç transfer karşı adres 7",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  },
+  "0xfee82a4f44fb5710edafa4a32aa401b54b868ab1": {
+   "kol": "havuz",
+   "kollar": [
+    "havuz"
+   ],
+   "tarz": "intraday",
+   "puan": 0.0164879303867445,
+   "sira": null,
+   "genc_aday": true,
+   "medyan_kaldirac": 0.1126763761103366,
+   "en_yuksek_kaldirac": 1.989201566084764,
+   "gecmis_gun": 207.0,
+   "hesap_degeri": 33278.05570282,
+   "iliskili_not": "iç transfer karşı adres 4",
+   "hesap_surumu": "v1.1-2026-10-27d"
+  }
+ }
+}
