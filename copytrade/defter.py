@@ -37,6 +37,42 @@ def cost_rate(rules: dict | None = None) -> float:
     return float(rules["maliyet_taker"]) + float(rules["maliyet_kayma"])
 
 
+def delayed_execution_quality(fills: list[dict], market: "Market", delay_min: int,
+                              start_ms: int, end_ms: int) -> dict[str, float | int | None]:
+    """Gecikmeli dolumun kaynak doluma göre yön-duyarlı fiyat farkı.
+
+    Pozitif ortalama bp kopyacı için daha kötü, negatif değer daha iyi fiyattır.
+    Eşit fiyatlar iki yüzdeye de girmez. Bu yalnızca rapor bilgisidir; kapı
+    değerlendirmesinde kullanılmaz.
+    """
+    empty: dict[str, float | int | None] = {"yonlu_dolum_sayisi": 0,
+                                             "yonlu_dolum_iyi_orani": None,
+                                             "yonlu_dolum_kotu_orani": None,
+                                             "yonlu_dolum_ortalama_bp": None}
+    if delay_min <= 0:
+        return empty
+    differences: list[float] = []
+    for fill in fills:
+        source = float(fill.get("px", 0) or 0)
+        if not np.isfinite(source) or source <= 0:
+            continue
+        found = market.execution(str(fill["coin"]), int(fill["time"]) + delay_min * 60_000)
+        if found is None:
+            continue
+        when, execution = found
+        if when < start_ms or when > end_ms or not np.isfinite(execution) or execution <= 0:
+            continue
+        # Alışta yükselen, satışta düşen fiyat kopyacı için kötüdür.
+        direction = -1.0 if fill.get("side") in _SELL else 1.0
+        differences.append(((execution / source) - 1.0) * direction * 10_000)
+    if not differences:
+        return empty
+    return {"yonlu_dolum_sayisi": len(differences),
+            "yonlu_dolum_iyi_orani": sum(value < 0 for value in differences) / len(differences),
+            "yonlu_dolum_kotu_orani": sum(value > 0 for value in differences) / len(differences),
+            "yonlu_dolum_ortalama_bp": float(np.mean(differences))}
+
+
 class Market:
     """Coin başına saatlik mum açılış/kapanış dizileri; yürütme ve işaretleme fiyatları (bisect: dolum başına mikrosaniye)."""
 
@@ -263,8 +299,15 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
         return total, unknown
 
     unrealized_end, unknown_end = unrealized_at(end_ms)
+    open_positions = {coin: size for coin, size in held.items() if abs(size) >= 1e-15}
+    open_notional = 0.0
+    for coin, size in open_positions.items():
+        mark = market.mark(coin, end_ms)
+        if mark is not None:
+            open_notional += abs(size) * mark
     result: dict[str, Any] = {"net": realized + funding_total + unrealized_end, "missing": missing, "executed": executed, "costs": costs,
-                              "funding": funding_total, "realized": realized, "unrealized_end": unrealized_end, "mark_missing": unknown_end}
+                              "funding": funding_total, "realized": realized, "unrealized_end": unrealized_end, "mark_missing": unknown_end,
+                              "acik_pozisyon_sayisi": len(open_positions), "acik_pozisyon_notional": open_notional}
     if daily:
         days: dict[int, float] = {}
         previous_u = 0.0

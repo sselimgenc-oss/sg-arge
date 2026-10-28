@@ -85,8 +85,16 @@ def _summary(fills: list[dict], candles: dict[str, list[dict]], account, start: 
     trader = sum(float(row.get("closedPnl", 0)) * scale(int(row["time"])) for row in fills)
     shadow = float(out["realized"])
     diff = shadow - trader
+    trader_total = trader + float(out.get("unrealized_end", 0.0))
+    shadow_total = float(out["net"])
+    total_diff = shadow_total - trader_total
+    mark_missing = int(out.get("mark_missing", 0))
     return {"dolum": len(fills), "trader_gerceklesen": trader, "golge_gerceklesen": shadow,
-            "fark": diff, "goreli_hata": abs(diff) / abs(trader) if trader else None, "eksik": out["missing"]}
+            "fark": diff, "goreli_hata": abs(diff) / abs(trader) if trader else None,
+            "trader_toplam_net": trader_total, "golge_toplam_net": shadow_total,
+            "toplam_net_fark": total_diff, "toplam_net_goreli_hata": abs(total_diff) / abs(trader_total) if trader_total else None,
+            "mark_missing": mark_missing, "not": "eksik işaretleme" if mark_missing else None,
+            "eksik": out["missing"]}
 
 
 def run(addresses: list[str], days: int = 30) -> list[dict]:
