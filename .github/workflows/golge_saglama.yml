@@ -29,7 +29,10 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - run: python -m copytrade.golge_saglama --adresler "$ADRESLER" --output golge_saglama.json
+      - name: Üç-adres sağlama ve özet
+        run: |
+          python -m copytrade.golge_saglama --adresler "$ADRESLER" --output golge_saglama.json
+          cat golge_saglama.json
       - uses: actions/upload-artifact@v4
         with:
           name: golge-uc-adres-saglama
