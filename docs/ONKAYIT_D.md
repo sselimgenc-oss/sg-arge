@@ -43,3 +43,9 @@ Sayılar uygulamada yalnız `copytrade/kurallar.yaml`'dan okunur; bu belge ↔ y
   Faz 3 geçmiş prova paralel yürür. Durdurma 1 aynen geçerli: prova geçemezse canlı izleme durdurulur.
 - Seçim v1 başlangıç etiketidir (gölge motoru yokken puan = kapının tarz gecikmeli kopya getirisi). Gölge motoru gelince katlar
   ön kayıttaki terfi/çıkış kurallarıyla haftalık güncellenir; v1 etiketleri silinmez.
+
+## Sürüm 1.2 (2026-10-28, kullanıcı onayı)
+- V2'deki "teminat" = gölgenin o trader için ayırdığı sermayenin tamamı (1 birim). Her açık pozisyonun K/Z'si bu birime
+  oranlanır ve her saatlik mumda denetlenir. Neden: işlem başı teminat (trader'ın pozisyon kaldıracı) dolum kayıtlarında yok;
+  geçmiş prova ile canlı gölge aynı kuralla ölçülsün. Eşik sayıları değişmedi.
+- Faz 3 evreni: geçmiş leaderboard kaynağı yok (Dune ücretli); bugünkü leaderboard kullanılır, sonuç "iyimser üst sınır".
