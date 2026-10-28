@@ -16,7 +16,9 @@ Yapan: **Codex** (2026-10-28, lider; Sonnet seçimde). Dal: `codex/golge`. Başl
 - T anına kadarki veriyle etiketle (katlar + kollar), sonraki 60 günü gölge motoruyla ölç, pencereyi 2 haftada bir kaydır.
 - Kollar: kohort, kontrol, taban, elle liste; varyantlar V0–V2; ek kol: çok alanlı puan.
 - Çıktı: pencere başına kol farkı + bootstrap aralığı; güç hesabı (gerçek varyansla); durdurma kriteri 1'in sonucu.
-- Not: evren bugünkü leaderboard → hayatta kalan yanlılığı; sonuç iyimser üst sınır olarak raporlanır.
+- **Evren (hayatta kalan yanlılığı):** T günü evreni mümkünse geçmiş kaynaktan (`arastirma/copytrade/argon_gecmis_leaderboard.md`):
+  Dune `hyperliquid.perp_accounts_daily` (API anahtarı GitHub Secrets'ta `DUNE_API_KEY`, kullanıcı kurar). Yoksa bugünkü leaderboard;
+  o zaman sonuç "iyimser üst sınır" diye raporlanır. Hangi kaynağın kullanıldığı RAPOR'da yazılır.
 
 ## Kabul
 - Altın örnekler + sağlama + sentetik testler; tam test paketi.
