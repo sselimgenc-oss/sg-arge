@@ -369,7 +369,7 @@
   function enterRoom(id, opt) {
     const r = W.roomById[id]; if (!r || r.out) return;
     kartKapat(true);
-    mode.room = id; mode.active = true; roomTWant = 1; Off.select(id); markRay(id); infoShift = 0;
+    donCam = null; mode.room = id; mode.active = true; roomTWant = 1; Off.select(id); markRay(id); infoShift = 0;
     if (opt && opt.instant) roomT = 1;
     setCam(interiorCam(id), !(opt && opt.instant));
     $('#odaUst').hidden = false; $('#odaBaslik').textContent = Names.room(id, r.ad);
@@ -377,11 +377,13 @@
     if (Info.isOpen()) Info.close();
     kick();
   }
+  let donCam = null;
   function exitRoom(opt) {
     kartKapat(true);
     mode.active = false; infoShift = 0; roomTWant = 0; Off.select(null); markRay(null); Info.close();
     if (opt && opt.instant) { roomT = 0; mode.room = null; }
-    setCam(fit(), !(opt && opt.instant));
+    const don = donCam; donCam = null;                           // panel kapanışında kayıtlı görünüm (elle yakınlaşılmış binaya dönüş)
+    setCam(don || fit(), !(opt && opt.instant));
     $('#odaUst').hidden = true; document.body.classList.remove('oda-ici');
     kick();
   }
@@ -446,8 +448,8 @@
     hideTip();
     if (p) { Info.show(p); return; }
     const room = roomAtWorld(w.x, w.y);
-    if (room) { if (mode.active && mode.room === room.id) { Info.close(); kartKapat(); kick(); } else goRoom(room.id); }
-    else { Info.close(); kartKapat(); kick(); }
+    if (room) { if (mode.active && mode.room === room.id) panelKapat(); else goRoom(room.id); }
+    else panelKapat();
   });
   cv.addEventListener('pointerleave', () => { hover = null; hoverRoom = null; hideTip(); kick(); });
   cv.addEventListener('wheel', e => {
@@ -466,7 +468,7 @@
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
     const dlg = $('#ayarlar'); if (dlg && dlg.open) return;      // ayarlar penceresi kendi Esc'ini yönetir
-    if (O.Cekmece.isOpen()) { O.Cekmece.close(); kick(); } else if (kartAcik) { kartKapat(); kick(); } else if (Info.isOpen()) { Info.close(); kick(); } else if (mode.active) goBuilding();
+    if (O.Cekmece.isOpen()) { O.Cekmece.close(); kick(); } else if (kartAcik || (once && Info.isOpen())) panelKapat(); else if (Info.isOpen()) { Info.close(); kick(); } else if (mode.active) goBuilding();
   });
   function zoomBy(f) { setCam({ cx: cam.cx, cy: cam.cy, z: Math.max(fitZ * 0.7, Math.min(4.2, cam.z * f)) }, true); kick(); }
   $('#zIn').addEventListener('click', () => zoomBy(1.35));
@@ -507,9 +509,28 @@
   });
   /* panel modu: geniş ekran + kart sütunu gizli (varsayılan). Aksi halde (telefon, klasik sütun) eski davranış: kart sütununda kaydır */
   const panelModu = () => window.matchMedia('(min-width: 900px)').matches && document.body.classList.contains('tam');
+  /* sol menü panelinin açılmadan önceki görünümü: kapatınca (×, Esc, aynı menüye ikinci tıklama, boş alan) kamera oraya yumuşakça döner */
+  let once = null, railIc = false;
+  function anlik() {
+    const c = target ? { cx: target.cx, cy: target.cy, z: target.z } : { cx: cam.cx, cy: cam.cy, z: cam.z }, f = fit();
+    return { oda: mode.active ? mode.room : null, cam: c, fit: Math.abs(c.z - f.z) < 1e-3 && Math.abs(c.cx - f.cx) < 1 && Math.abs(c.cy - f.cy) < 1 };
+  }
+  function geriDon() {
+    const o = once; once = null; if (!o) return false;
+    if (o.oda == null) { donCam = o.fit ? null : o.cam; if (mode.active) goBuilding(); else setCam(o.fit ? fit() : o.cam, true); }
+    else { if (!mode.active || mode.room !== o.oda) goRoom(o.oda); setCam(o.cam, true); }
+    kick(); return true;
+  }
+  function panelKapat() {
+    const had = kartAcik; railIc = true;
+    try { if (had) kartKapat(true); if (Info.isOpen()) Info.close(); } finally { railIc = false; }
+    if (!geriDon() && had && mode.active) setCam(interiorCam(mode.room), true);
+    kick();
+  }
   let kartAcik = null;                                           // { id, yer: [[yerTutucu, kart], …] }
   function kartKapat(sessiz) {
     if (!kartAcik) return;
+    if (!railIc) once = null;
     kartAcik.yer.forEach(([ph, el]) => ph.replaceWith(el));
     kartAcik = null; solPx = 0; $('#kartPanel').hidden = true;
     if (!sessiz && mode.active) setCam(interiorCam(mode.room), true);
@@ -529,18 +550,22 @@
   function railTik(id) {
     if (!panelModu()) { goRoom(id); goCard((PANEL_ESLE[id] || [])[0]); return; }
     const c = Info.current();
-    if ((kartAcik && kartAcik.id === id) || (!PANEL_ESLE[id] && mode.room === id && c && c.type === 'oda' && c.id === id)) {   // aynı menüye ikinci tıklama
-      kartKapat(); if (Info.isOpen()) Info.close(); kick(); return;
-    }
-    goRoom(id);                                                  // kamera odaya gider; önceki panel kapanır
-    if (PANEL_ESLE[id]) kartAc(id, PANEL_ESLE[id], Names.room(id, (W.roomById[id] || {}).ad)); else Info.show({ type: 'oda', id });
+    if ((kartAcik && kartAcik.id === id) || (!PANEL_ESLE[id] && mode.room === id && c && c.type === 'oda' && c.id === id)) { panelKapat(); return; }   // aynı menüye ikinci tıklama
+    const onceki = once || anlik();                              // panel açıkken başka menüye geçilirse ilk görünüm korunur
+    railIc = true;
+    try {
+      goRoom(id);                                                // kamera doğrudan yeni odaya gider; önceki panel kapanır
+      if (PANEL_ESLE[id]) kartAc(id, PANEL_ESLE[id], Names.room(id, (W.roomById[id] || {}).ad)); else Info.show({ type: 'oda', id });
+    } finally { railIc = false; }
+    once = onceki;
   }
+  document.addEventListener('click', e => { if (once && e.target.closest && e.target.closest('#bKapat')) geriDon(); }, true);   // oda bilgi kutusunun × düğmesi
   function seritTik() {
     if (!panelModu()) { goCard('cGun'); return; }
-    if (kartAcik && kartAcik.id === 'gun') kartKapat(); else kartAc('gun', ['cGun'], 'Günlük özet');
+    if (kartAcik && kartAcik.id === 'gun') panelKapat(); else kartAc('gun', ['cGun'], 'Günlük özet');
   }
   $('#gunSerit').addEventListener('click', seritTik);
-  $('#kpKapat').addEventListener('click', () => kartKapat());
+  $('#kpKapat').addEventListener('click', () => panelKapat());
   window.matchMedia('(min-width: 900px)').addEventListener('change', () => kartKapat(true));
   function togglePanel() {
     const on = !document.body.classList.contains('tam');
@@ -610,8 +635,8 @@
     updateLight(); resize();
     new ResizeObserver(() => { resize(); kick(); }).observe($('#ofisTuval'));
     Off.on(() => kick());                      // durum her değiştiğinde (dışarıdan gelen olay dâhil) döngü uyanır
-    Info.init(Off, { invalidate: kick, onShow: sel => { if (O.Cekmece.isOpen()) O.Cekmece.close(); if (kartAcik && !(sel.type === 'oda')) kartKapat(true); pinned = sel.type === 'person' ? sel.a : null; shiftFor(true); }, onClose: () => { pinned = null; shiftFor(false); } }, replik || undefined);
-    O.Cekmece.init(Off, { invalidate: kick, beforeOpen: () => { if (Info.isOpen()) Info.close(); kartKapat(); },
+    Info.init(Off, { invalidate: kick, onShow: sel => { if (O.Cekmece.isOpen()) O.Cekmece.close(); if (kartAcik && !(sel.type === 'oda')) kartKapat(true); if (sel.type !== 'oda' && !railIc) once = null; pinned = sel.type === 'person' ? sel.a : null; shiftFor(true); }, onClose: () => { pinned = null; shiftFor(false); } }, replik || undefined);
+    O.Cekmece.init(Off, { invalidate: kick, beforeOpen: () => { once = null; if (Info.isOpen()) Info.close(); kartKapat(); },
       focusEvent: en => {                          // olaya tıkla: kamera o odaya gider, ilgili figür vurgulanır
         const room = W.roomById[en.oda];
         if (room && !room.out) goRoom(en.oda);
