@@ -136,6 +136,9 @@ def test_alpha_benchmark_choice_and_basket():
     shares = market_shares(fills, {"BTCUSDT", "NVDAUSDT", "XAUUSDT"})
     assert shares["pay_kripto"] == .25 and shares["pay_hisse"] == .25 and shares["pay_emtia"] == .5 and shares["binance_payi"] == 1
     assert "binance_payi" not in market_shares(fills, None)     # liste alınamadıysa sütun hiç yazılmaz (sessiz boş sütun yok)
+    assert "binance_payi" not in market_shares([], None)        # liste yok + hacim 0 → anahtar yok (run 24 hatası)
+    assert market_shares([], {"BTCUSDT"})["binance_payi"] is None   # liste var + hacim 0 → tanımlı boş
+    assert market_shares([{"coin": "BTC", "px": "100", "sz": "1"}, {"coin": "FOO", "px": "100", "sz": "3"}], {"BTCUSDT"})["binance_payi"] == .25
     day = 86_400_000
     up = [{"t": i * day, "c": str(100 * 1.1 ** i)} for i in range(3)]
     flat = [{"t": i * day, "c": "50"} for i in range(3)]
