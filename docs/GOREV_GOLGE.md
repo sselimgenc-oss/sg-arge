@@ -10,7 +10,7 @@ Yapan: **Codex** (2026-10-28, lider; Sonnet seçimde). Dal: `codex/golge`. Başl
 - **Sentetik trader'lar:** etkisi enjekte edilmiş trader yakalanır; sıfır etkili trader ~%5 oranında geçer.
 - 10.000+ dolumlu adreste zaman penceresiyle sayfalama.
 - Kat/kol mantığı `copytrade/kollar.py`: ön kayıttaki terfi, çıkış, kontrol seçimi (tohum kayda geçer), olaylar `olay` arşiv türüne.
-- V2'nin sayıları `kurallar.yaml`'a yazılır; Faz 3'ten önce lider onayıyla donar.
+- V2 sayıları ve gölge pozisyon üst sınırı (3x) `docs/ONKAYIT_D.md`'de (kullanıcı onayı 2026-10-28, dondu); yalnız `kurallar.yaml`'a yazılır. Altın örnek: 8. günde −%31 → çık; 6. günde −%49 → kal; 3x'i aşan ekleme kırpılır.
 
 ## Faz 3 — Yürüyen pencereli geçmiş prova
 - T anına kadarki veriyle etiketle (katlar + kollar), sonraki 60 günü gölge motoruyla ölç, pencereyi 2 haftada bir kaydır.
