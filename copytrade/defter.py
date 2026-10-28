@@ -188,7 +188,9 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
             signed = signed * factor
         if abs(signed) < 1e-15:
             continue
-        if delay_min == 0:
+        if "_execution_time" in fill:
+            when, price = int(fill["_execution_time"]), float(fill["_execution_price"])
+        elif delay_min == 0:
             when, price = int(fill["time"]), float(fill.get("px", 0))
         else:
             found = execution(coin, int(fill["time"]) + delay_min * 60_000)
