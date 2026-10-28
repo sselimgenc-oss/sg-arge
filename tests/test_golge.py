@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 from copytrade.kollar import adaylar, cikis, olay_yaz, sec, terfi
 from copytrade.tarama import PublicClient
-from copytrade.golge_saglama import pencere_ici_dolumlar
+from copytrade.golge_saglama import _summary, pencere_ici_dolumlar
 
 T0 = 20_833 * DAY
 RULES = load_rules()
@@ -187,3 +187,21 @@ def test_altin_pencere_oncesi_acik_pozisyon_kapanisi_saglama_kiyasindan_cikar():
     closing = fill(20, "A", 10, 10, 110, 3) | {"closedPnl": "100"}
     assert pencere_ici_dolumlar([old_close, opening, closing]) == [opening, closing]
     assert pencere_ici_dolumlar([opening]) == []  # pencere sonunda hâlâ açık: ikinci kıyasa girmez
+
+
+def test_altin_pencere_ici_flip_kapanisi_alir_yeni_yonu_sonraki_kapanisa_tasir():
+    opening = fill(0, "B", 10, 0, 100, 1)
+    flip = fill(10, "A", 15, 10, 110, 2) | {"closedPnl": "100"}
+    close_short = fill(20, "B", 5, -5, 100, 3) | {"closedPnl": "50"}
+    selected = pencere_ici_dolumlar([opening, flip, close_short])
+    assert [(row["side"], float(row["sz"]), float(row["startPosition"])) for row in selected] == [
+        ("B", 10, 0), ("A", 10, 10), ("A", 5, 0), ("B", 5, -5)]
+
+
+def test_altin_sabit_olcekli_saglama_hesap_buyumesinden_bagimsizdir():
+    account = pd.Series([1_000.0, 2_000.0], index=pd.to_datetime([T0, T0 + HOUR], unit="ms"))
+    rows = [fill(0, "B", 10, 0, 100, 1) | {"closedPnl": "0"},
+            fill(60, "A", 10, 10, 110, 2) | {"closedPnl": "100"}]
+    market = candles(100, 110)
+    assert _summary(rows, market, account, T0, T0 + HOUR)["fark"] == pytest.approx(0.05)
+    assert _summary(rows, market, account, T0, T0 + HOUR, fixed_scale=True)["fark"] == pytest.approx(0.0)

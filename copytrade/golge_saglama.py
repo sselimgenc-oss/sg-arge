@@ -27,22 +27,34 @@ def pencere_ici_dolumlar(fills: list[dict]) -> list[dict]:
         coin = str(row["coin"])
         before = float(row.get("startPosition", 0))
         signed = (-1 if row["side"] in {"A", "Sell", "sell"} else 1) * float(row["sz"])
+        after = before + signed
         if coin in blocked or (coin not in seen and before != 0):
             blocked.add(coin)
-            if abs(before + signed) < 1e-12:
+            if abs(after) < 1e-12:
                 blocked.discard(coin)
                 seen.add(coin)
+            elif before * after < 0:
+                blocked.discard(coin)
+                seen.add(coin)
+                buffers[coin] = [dict(row, sz=str(abs(after)), startPosition="0", closedPnl="0")]
             continue
         seen.add(coin)
-        buffers.setdefault(coin, []).append(row)
-        if abs(before + signed) < 1e-12:
+        if before * after < 0:
+            buffers.setdefault(coin, []).append(dict(row, sz=str(abs(before))))
+            out.extend(buffers.pop(coin))
+            buffers[coin] = [dict(row, sz=str(abs(after)), startPosition="0", closedPnl="0")]
+        else:
+            buffers.setdefault(coin, []).append(row)
+        if abs(after) < 1e-12:
             out.extend(buffers.pop(coin))
     return out
 
 
-def _summary(fills: list[dict], candles: dict[str, list[dict]], account, start: int, end: int) -> dict:
-    out = saglama(fills, candles, account, start, end)
-    scale = capital_scale(account)
+def _summary(fills: list[dict], candles: dict[str, list[dict]], account, start: int, end: int,
+             fixed_scale: bool = False) -> dict:
+    used_account = 1.0 if fixed_scale else account
+    out = saglama(fills, candles, used_account, start, end)
+    scale = capital_scale(used_account)
     trader = sum(float(row.get("closedPnl", 0)) * scale(int(row["time"])) for row in fills)
     shadow = float(out["realized"])
     diff = shadow - trader
@@ -66,7 +78,9 @@ def run(addresses: list[str], days: int = 30) -> list[dict]:
         all_candles = cache.for_fills(fills)
         full = _summary(fills, all_candles, account, start, end)
         inside = pencere_ici_dolumlar(fills)
-        closed_inside = _summary(inside, {coin: all_candles[coin] for coin in {x["coin"] for x in inside}}, account, start, end)
+        inside_candles = {coin: all_candles[coin] for coin in {x["coin"] for x in inside}}
+        closed_inside = _summary(inside, inside_candles, account, start, end)
+        fixed_inside = _summary(inside, inside_candles, account, start, end, fixed_scale=True)
         coins = {}
         for coin in sorted({str(row["coin"]) for row in fills}):
             rows = [row for row in fills if str(row["coin"]) == coin]
@@ -74,7 +88,8 @@ def run(addresses: list[str], days: int = 30) -> list[dict]:
                            "ilk_start_position": float(rows[0].get("startPosition", 0)),
                            "pencere_oncesi_acik": float(rows[0].get("startPosition", 0)) != 0}
         report.append({"adres": address, "durum": "tamam", "tum_dolumlar": full,
-                       "pencerede_acilip_kapanan": closed_inside, "coinler": coins})
+                       "pencerede_acilip_kapanan": closed_inside, "sabit_olcekli_pencere_ici": fixed_inside,
+                       "coinler": coins})
     return report
 
 
