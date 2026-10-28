@@ -152,7 +152,9 @@ def elle_liste(path: Path) -> list[str]:
     return [str(r["adres"]).lower() for r in rows or [] if r.get("kol", "elle") == "elle"]
 
 
-def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manual: list[str], rules: dict | None = None) -> dict[str, Any]:
+def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manual: list[str], rules: dict | None = None,
+        bayrak_fn=None) -> dict[str, Any]:
+    """``bayrak_fn(adres, hesap_degeri) -> {bayrak_*: …}``: yalnız aday katı için çağrılır; bilgi sütunudur, seçimi değiştirmez."""
     rules = rules or load_rules()
     pool = havuz(table)
     candidates = [r for r in adaylar(pool, rules)]
@@ -181,6 +183,9 @@ def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manu
             "gecmis_gun": _num(row.get("gecmis_gun")), "hesap_degeri": _num(row.get("hesap_degeri_bugun")) or _num(row.get("account_value")),
             "iliskili_not": room["notlar"].get(address) or (str(row.get("iliskili_not")) if str(row.get("iliskili_not", "nan")) not in ("", "nan") else ""),
             "hesap_surumu": row.get("hesap") if isinstance(row.get("hesap"), str) else None}
+        if address in sira and bayrak_fn is not None:
+            value = _num(row.get("hesap_degeri_bugun")) or _num(row.get("account_value")) or 0.0
+            entries[address].update(bayrak_fn(address, value))
     counts = {t: {"havuz": sum(r["tarz"] == t for r in pool), "puansiz": sum(r["tarz"] == t and r["puan"] is None for r in pool),
                   "aday": sum(r["tarz"] == t for r in candidates), "oda": sum(r["tarz"] == t for r in oda)} for t in TARZLAR}
     return {"surum": 1, "tarih": date, "tohum": tohum(date), "tohum_dizgesi": f"secim-v1-{date}",
@@ -219,6 +224,12 @@ def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) ->
         why = f"{e['tarz']} aday sırası {e['sira']}" + (" (genç aday, 365 günden az)" if e["genc_aday"] else "")
         lines.append(f"| {i} | `{address}` | {address[2:6]} | {e['tarz']} | {_fmt(e['puan'], 4)} | {_fmt(e['medyan_kaldirac'], 2)} | "
                      f"{_fmt(e['en_yuksek_kaldirac'], 2)} | {_fmt(e['gecmis_gun'], 0)} | {why} |")
+    flagged = [(a, e) for a, e in room if "bayrak_rol" in e]
+    if flagged:
+        lines += ["", "## Kırmızı bayraklar (bilgi; kimseyi elemez — oda üyeleri)", "",
+                  "| adres | rol | vault oranı | funding payı | alt hesapta ters | 30 gün hacim/hesap | not |", "|---|---|---|---|---|---|---|"]
+        lines += [f"| `{a}` | {e['bayrak_rol'] or '–'} | {_fmt(e['bayrak_vault_orani'])} | {_fmt(e['bayrak_funding_payi'])} | "
+                  f"{e['bayrak_alt_hesap_ters']} | {_fmt(e['bayrak_hacim_orani'], 2)} | {e['bayrak_not'] or ''} |" for a, e in flagged]
     dropped = [(a, e["iliskili_not"]) for a, e in sorted(result["adresler"].items()) if e["iliskili_not"].startswith("ilişkili hesap")]
     if dropped:
         lines += ["", "## İlişkili hesap nedeniyle odaya girmeyenler", ""] + [f"- `{a}`: {note}" for a, note in dropped]
@@ -275,6 +286,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--output", type=Path, default=Path("secim"))
     parser.add_argument("--tarih", default=None, help="varsayılan: bugün (UTC)")
     parser.add_argument("--taban-dosyasi", type=Path, default=None, help="lider tablosu JSON'u (yoksa Hyperliquid'den çekilir)")
+    parser.add_argument("--bayraksiz", action="store_true", help="kırmızı bayrak sütunlarını hesaplama (ağ isteği yok)")
     parser.add_argument("--izleme-listesi", action="store_true", help="secim.json'dan copytrade/izleme_listesi.yaml üret")
     parser.add_argument("--secim", type=Path, default=None, help="--izleme-listesi için secim.json (varsayılan: en son)")
     args = parser.parse_args(argv)
@@ -301,7 +313,13 @@ def main(argv: list[str] | None = None) -> None:
     else:
         from copytrade.tarama import PublicClient
         board = PublicClient().leaderboard()
-    result = sec(table, date, board, elle_liste(list_path), rules)
+    bayrak_fn = None
+    if not args.bayraksiz:
+        from copytrade import bayrak
+        from copytrade.tarama import PublicClient
+        client = PublicClient()
+        bayrak_fn = lambda address, value: bayrak.hesapla(client, address, value)    # noqa: E731
+    result = sec(table, date, board, elle_liste(list_path), rules, bayrak_fn)
     out = args.output / date
     out.mkdir(parents=True, exist_ok=True)
     (out / "secim.json").write_text(json.dumps(result, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")

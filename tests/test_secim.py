@@ -153,6 +153,6 @@ def test_tam_kosu_degilse_durur(tmp_path: Path):
         secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28"])
     (day / "durum.json").write_text(json.dumps({"durum": "tamam", "kapsam": 0.95, "hesap": "v1.1-test"}), encoding="utf-8")     # 0,95 → çalışır
     (tmp_path / "board.json").write_text("[]", encoding="utf-8")
-    secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28", "--taban-dosyasi", str(tmp_path / "board.json")])
+    secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28", "--taban-dosyasi", str(tmp_path / "board.json"), "--bayraksiz"])
     assert json.loads((tmp_path / "secim/2026-10-28/secim.json").read_text())["sayilar"]["oda"] == 2
     assert (tmp_path / "secim/2026-10-28/RAPOR.md").exists()
