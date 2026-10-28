@@ -129,7 +129,7 @@ def test_ratio_float_noise_within_tolerance_passes_but_real_excess_fails():
 
 
 def test_net_return_outside_minus1_to_100_fails_the_gate():
-    for column, value in (("gecikme_30dk_net", -2.7e6), ("gecikme_120dk_net", 101.0)):
+    for column, value in (("gecikme_30dk_net", -2.7e6), ("gecikme_120dk_net", 101.0), ("alfa_yillik", -3.3e6)):
         assert any(p.startswith(column) for p in sanity_check(table(good_row(**{column: value})), RULES)), column
     assert sanity_check(table(good_row(gecikme_30dk_net=-1.0, gecikme_120dk_net=100.0)), RULES) == []     # sınırlar dahil
 

@@ -29,7 +29,6 @@ jobs:
           github-token: ${{ github.token }}
           pattern: stage1-*
           path: shards
-          merge-multiple: true
       - name: Veri dalındaki aynı günün sonuçlarını getir
         run: |
           if git ls-remote --exit-code --heads origin refs/heads/copytrade-kapi >/dev/null 2>&1; then
@@ -40,7 +39,7 @@ jobs:
         id: birlestir
         run: |
           find shards -name sonuc.csv | grep -q .
-          day=$(date -u +%F)
+          day=2026-10-28
           python -m copytrade.kapi --root copytrade --birlestir shards --beklenen-parca 32 --mod tam
           status=$(python3 -c "import json; print(json.load(open('copytrade/kapi/' + '$day' + '/durum.json'))['durum'])")
           echo "durum=$status" >> "$GITHUB_OUTPUT"
@@ -48,6 +47,6 @@ jobs:
       - name: Veri dalına yaz
         if: ${{ !cancelled() && steps.birlestir.outcome == 'success' }}
         run: |
-          export DAY=$(date -u +%F)
+          export DAY=2026-10-28
           export MOD=tam
           bash .github/scripts/kapi_yayimla.sh

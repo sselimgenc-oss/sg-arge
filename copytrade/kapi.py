@@ -1218,8 +1218,10 @@ def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
             problems.append(f"{name}: {len(bad)} satırda net getiri {low:g}..{high:g} dışı (min {values.min():.4g}, max {values.max():.4g})")
     if "alfa_yillik" in table:
         values = pd.to_numeric(table["alfa_yillik"], errors="coerce").dropna()
-        if len(values) and not np.isfinite(values).all():
-            problems.append("alfa_yillik: sonlu olmayan değer var")
+        low_alpha, high_alpha = low * 365, high * 365
+        bad = values[~np.isfinite(values) | (values < low_alpha) | (values > high_alpha)]
+        if len(bad):
+            problems.append(f"alfa_yillik: {len(bad)} satırda yıllık net getiri {low_alpha:g}..{high_alpha:g} dışı")
     if len(metric_rows):
         allowed = set(rules["saglik_bos_olabilir"])
         for name in table.columns:
