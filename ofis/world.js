@@ -245,7 +245,7 @@
     const sk = pod('sekreterlik', 5, 1, 2, '#c9a36a', 30, { kind: 'staff' });
     sk.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'sekreter', room: 'sekreterlik', seat: sk, pose: 'sit', look: O.look(911, 'sek', { shirt: '#c05a8a', hs: 'bun', hair: '#4a3322', acc: '' }) });
-    L(S.printer(), 7, 2, { obj: 'sekreterlik.yazici' }); L(S.plant('tall'), 4, 3); L(S.cabinet('y'), 7, 3, { obj: 'sekreterlik.dosya_dolabi' }); L(S.box(3), 4, 2);
+    L(S.safe(), 7, 1, { obj: 'sekreterlik.onkayit_kasasi' }); L(S.printer(), 7, 2, { obj: 'sekreterlik.yazici' }); L(S.plant('tall'), 4, 3); L(S.cabinet('y'), 7, 3, { obj: 'sekreterlik.dosya_dolabi' }); L(S.box(3), 4, 2);
     /* --- FİNANS --- */
     L(S.safe(), 8, 0, { obj: 'finans.kasa' }); L(S.coins(), 11, 1, { obj: 'finans.para' }); OBJ('finans.tv', W.tvs.finans.e); OBJ('haberlesme.tv', W.tvs.haber.e); OBJ('risk.tv', W.tvs.risk.e); OBJ('tarama.tv', W.tvs.tarama.e); OBJ('aday.tv', W.tvs.aday.e);
     const f1 = pod('finans', 10, 1, 2, '#d8d2c2', 40, { kind: 'staff' }); f1.scr.s = S.screen('y', 'staff');
@@ -258,7 +258,7 @@
     const h2 = pod('haberlesme', 15, 1, 2, '#9aa5b4', 51, { kind: 'staff' }); h2.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'haber1', room: 'haberlesme', seat: h1, pose: 'sit', look: O.look(931, 'hab', { acc: 'headset', shirt: '#3b6fb4' }) });
     W.staff.push({ id: 'haber2', room: 'haberlesme', seat: h2, pose: 'sit', look: O.look(932, 'hab', { acc: 'headset', shirt: '#2f9aa8', hs: 'long' }) });
-    L(S.mailbox(), 12, 3, { obj: 'haberlesme.posta' }); L(S.plant('small'), 15, 3); L(S.cooler(), 14, 1, { obj: 'haberlesme.sebil' }); L(S.box(1), 12, 1, { obj: 'haberlesme.koli' }); L(S.box(2), 12, 2, { obj: 'haberlesme.koli' });
+    L(S.mailbox(), 12, 3, { obj: 'haberlesme.posta' }); W.zarfE = putT(null, BX + 15, BY + 0); W.block(BX + 15, BY + 0); OBJ('haberlesme.zarf_rafi', W.zarfE);   // zarf rafı: bugünkü bildirimler (dinamik) L(S.plant('small'), 15, 3); L(S.cooler(), 14, 1, { obj: 'haberlesme.sebil' }); L(S.box(1), 12, 1, { obj: 'haberlesme.koli' }); L(S.box(2), 12, 2, { obj: 'haberlesme.koli' });
     W.mailboxLocal = [12, 3];
     /* --- RİSK --- */
     const r1 = pod('risk', 17, 1, 2, '#c9b9a0', 60, { kind: 'staff' }); r1.scr.s = S.screen('y', 'staff');
@@ -267,6 +267,7 @@
     W.staff.push({ id: 'risk2', room: 'risk', seat: r2, pose: 'sit', look: O.look(942, 'risk', { shirt: '#b5472f', acc: 'glasses' }) });
     L(S.beacon(), 16, 0, { obj: 'risk.fener' }); W.beaconE = ent(BX + 16 + BY + 0 + 1.02, sx(BX + 16, BY), sy(BX + 16, BY), null);
     L(S.cabinet('y'), 16, 3, { obj: 'risk.dolap' }); L(S.plant('small'), 19, 3);
+    W.alarmE = putT(null, BX + 18, BY + 3); W.block(BX + 18, BY + 3); OBJ('risk.alarm', W.alarmE);   // alarm paneli: tavan doluluğu (dinamik sprite, office.js)
     /* --- DENETİM --- */
     ['20', '21', '22'].forEach((x, i) => { L(S.rack('y'), +x, 0, { obj: ['denetim.sunucu1', 'denetim.sunucu2', 'denetim.sunucu3'][i] }); W.leds['rack' + x] = ent(BX + +x + BY + 1.02, sx(BX + +x, BY), sy(BX + +x, BY), null); });
     const d1 = pod('denetim', 21, 2, 3, '#aeb8c6', 70, { kind: 'staff' }); d1.scr.s = S.screen('y', 'staff');
@@ -301,6 +302,7 @@
     seats.aday.forEach(sk => W.objects.push({ id: 'aday.masa', room: 'aday', e: sk.deskE }));
     /* --- ODA --- */
     [7, 8, 10, 11, 13, 14, 16, 17, 19, 20].forEach((x, i) => { seats.oda.push(pod('oda', x, 15, 16, '#b4c2cc', 300 + i)); seats.oda.push(pod('oda', x, 18, 19, '#b4c2cc', 330 + i)); });
+    seats.oda.forEach(sk => W.objects.push({ id: 'oda.masa', room: 'oda', e: sk.deskE }));
     [6, 12, 18, 21].forEach((x, i) => L(S.plant('tall'), x, 15, i < 3 ? { obj: ['oda.bitki1', 'oda.bitki2', 'oda.bitki3'][i] } : {}));
     /* --- KAPI --- */
     L(S.turnstile(), 24, 16, { obj: 'kapi.turnike1' }); L(S.turnstile(), 24, 18, { obj: 'kapi.turnike2' });

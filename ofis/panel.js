@@ -19,6 +19,15 @@
   const ODA_AD = id => { const r = O.World.roomById[id]; return r ? O.Names.room(id, r.ad) : id; };
   const ORN = '<span class="ornek">örnek</span>';
 
+  const dkTxt = m => { m = Math.round(m); return m < 1 ? 'şimdi' : m < 60 ? m + ' dk' : m < 1440 ? Math.floor(m / 60) + ' sa' + (m % 60 ? ' ' + (m % 60) + ' dk' : '') : Math.floor(m / 1440) + ' g'; };
+  const ageTxt = inf => (inf ? (Math.round(inf.dk) < 1 ? 'şimdi' : dkTxt(inf.dk) + ' önce') : 'bilinmiyor');
+  P.dkTxt = dkTxt; P.ageTxt = ageTxt;
+  /* günlük özet: yalnız olay günlüğünden */
+  function gun() {
+    const g = (O.Names.kadro().ozet_gruplari || []), r = Off.gunlukOzet(g);
+    $('#gunIcerik').innerHTML = '<p class="gun-satir"><b>' + esc(r.dun) + '</b></p><p class="gun-satir gun-alt">' + esc(r.bugun) + '</p>';
+    $('#gunMeta').innerHTML = 'kaynak: olay günlüğü (n=' + r.n + ') · ' + ORN;
+  }
   function kasa() {
     // ön kayıt: toplanmış performans (kasa değeri, eğri, % değişim) ofiste gösterilmez
     const k = st.kasa, el = $('#kasaIcerik'), tem = st.acik.reduce((sum, x) => sum + (x.teminat_usd || 0), 0), kk = st.kk;
@@ -80,8 +89,9 @@
   }
   function veri() {
     $('#veriIcerik').innerHTML = st.vk.map(r => {
-      const d = r.durum === 'tamam' ? 'ok' : r.durum === 'bilinmiyor' ? 'bl' : 'wr';
-      return '<div class="vr"><i class="nk ' + d + '" aria-hidden="true"></i><div class="vk"><b>' + esc(r.ad) + '</b><div class="ks">' + (r.deger == null ? UNK : esc(r.deger)) + ' · ' + (r.zaman ? hm(r.zaman) : 'zaman bilinmiyor') + '</div></div><span class="rz ' + d + '">' + (r.durum === 'tamam' ? 'tamam' : r.durum === 'bayat' ? 'bayat' : r.durum === 'bilinmiyor' ? 'bilinmiyor' : 'uyarı') + '</span></div>';
+      const inf = Off.srcInfo(r), eski = !!(inf && inf.stale), dur = eski ? 'bayat' : r.durum;
+      const d = dur === 'tamam' ? 'ok' : dur === 'bilinmiyor' ? 'bl' : 'wr';
+      return '<div class="vr"><i class="nk ' + d + '" aria-hidden="true"></i><div class="vk"><b>' + esc(r.ad) + '</b><div class="ks">' + (r.deger == null ? UNK : esc(r.deger)) + ' · ' + (r.zaman ? hm(r.zaman) + ' · ' + ageTxt(inf) : 'zaman bilinmiyor') + (inf && inf.esik != null ? ' · eşik ' + dkTxt(inf.esik) : '') + '</div></div><span class="rz ' + d + '">' + (dur === 'tamam' ? 'tamam' : dur === 'bayat' ? 'VERİ ESKİ' : dur === 'bilinmiyor' ? 'bilinmiyor' : 'uyarı') + '</span></div>';
     }).join('');
     $('#veriMeta').innerHTML = 'n=' + st.vk.length + ' kontrol · ' + ORN;
   }
@@ -113,7 +123,7 @@
   }
   function render() {
     raf = 0; st = Off.state(); if (!st) return;
-    kasa(); ozet(); acik(); kapanan(); huni(); kohort(); veri(); risk(); tg(); gozcu(); aciklama(); top();
+    gun(); kasa(); ozet(); acik(); kapanan(); huni(); kohort(); veri(); risk(); tg(); gozcu(); aciklama(); top();
   }
   function schedule() { if (!raf) raf = requestAnimationFrame(render); }
   P.init = function (off, a) {

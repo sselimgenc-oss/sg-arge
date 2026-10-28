@@ -254,6 +254,163 @@ const srv = http.createServer((q, r) => {
   ok('çekmece kapanır', await pg.evaluate(() => document.getElementById('bilgi').hidden));
   await ctx.close();
 
+
+  /* ---------- K. olay çekmecesi: filtre, olaya tıkla → kamera odaya, figür vurgulanır; telefonda alttan çekmece ---------- */
+  ({ ctx, pg } = await open());
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'yeni_adres')); OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'terfi')); });
+  await pg.click('.gozcu .g-tumu'); await sleep(400);
+  const c0 = await pg.evaluate(() => ({ vis: !document.getElementById('olayCekmece').hidden, n: document.querySelectorAll('#cListe button').length, oda: document.querySelectorAll('#fOda option').length, tur: document.querySelectorAll('#fTur option').length }));
+  ok('olay çekmecesi açılır; geçmiş günlük + oturum olayları listelenir; oda/trader/tür filtreleri var', c0.vis && c0.n >= 14 && c0.oda === 15 && c0.tur >= 21, JSON.stringify(c0));
+  await pg.selectOption('#fOda', 'haberlesme'); await sleep(200);
+  let fl = await pg.evaluate(() => { const l = OFIS.Cekmece.filtered(); return { n: l.length, hep: l.every(e => e.oda === 'haberlesme') }; });
+  ok('oda filtresi: yalnız o odanın olayları (n=' + fl.n + ')', fl.n >= 3 && fl.hep);
+  await pg.selectOption('#fTur', 'terfi'); await sleep(200);
+  fl = await pg.evaluate(() => ({ n: OFIS.Cekmece.filtered().length, ui: document.querySelectorAll('#cListe button').length }));
+  ok('oda ve tür filtresi birlikte (haberleşme + terfi) → boş sonuç iletisi', fl.n === 0 && fl.ui === 0 && /olay yok/.test(await pg.evaluate(() => document.getElementById('cListe').textContent)));
+  await pg.click('#fTemizle'); await pg.selectOption('#fTur', 'terfi'); await sleep(200);
+  fl = await pg.evaluate(() => { const l = OFIS.Cekmece.filtered(); return { n: l.length, hep: l.every(e => e.tur === 'terfi'), trader: [...new Set(l.map(e => e.trader))] }; });
+  ok('tür filtresi: yalnız terfi (n=' + fl.n + ')', fl.n >= 4 && fl.hep, '');
+  await pg.selectOption('#fTrader', fl.trader[0]); await sleep(200);
+  ok('trader filtresi', await pg.evaluate(t => OFIS.Cekmece.filtered().length >= 1 && OFIS.Cekmece.filtered().every(e => e.trader === t), fl.trader[0]));
+  await pg.click('#fTemizle'); await pg.selectOption('#fTur', 'terfi'); await sleep(200);
+  await pg.click('#cListe button >> nth=0'); await sleep(1100);
+  const sp = await pg.evaluate(() => { const st = OFIS.Office.state(), l = OFIS.Cekmece.filtered()[0]; return { room: OFIS.debug.mode.room, want: l.oda, trader: l.trader, spot: st.spot && st.spot.id, active: OFIS.debug.mode.active, hash: location.hash }; });
+  ok('olaya tıklayınca kamera o odaya gider ve ilgili figür vurgulanır', sp.active && sp.room === sp.want && sp.spot === sp.trader && sp.hash === '#oda/' + sp.want, JSON.stringify(sp));
+  await pg.keyboard.press('Escape'); await sleep(300);
+  ok('Esc önce çekmeceyi kapatır', await pg.evaluate(() => document.getElementById('olayCekmece').hidden && OFIS.debug.mode.active));
+  await sleep(5300);
+  ok('vurgu birkaç sn sonra kalkar, döngü uyur', await pg.evaluate(() => !OFIS.Office.busy() || OFIS.Office.state().spot.until < performance.now()));
+  await ctx.close();
+  ({ ctx, pg } = await open('?saat=15:40', { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true }));
+  await pg.tap('.gozcu .g-tumu'); await sleep(500);
+  const mc = await pg.evaluate(() => { const b = document.getElementById('olayCekmece'), r = b.getBoundingClientRect(), it = document.querySelector('#cListe button').getBoundingClientRect(), sel = document.getElementById('fOda').getBoundingClientRect(); return { pos: getComputedStyle(b).position, bottom: Math.round(r.bottom), vh: innerHeight, w: Math.round(r.width), ih: Math.round(it.height), sh: Math.round(sel.height) }; });
+  ok('telefonda olay çekmecesi alttan açılır; satır ve filtreler ≥ 44 px', mc.pos === 'fixed' && Math.abs(mc.bottom - mc.vh) <= 1 && mc.w === 390 && mc.ih >= 44 && mc.sh >= 44, JSON.stringify(mc));
+  await pg.tap('#cListe button >> nth=0'); await sleep(900);
+  ok('telefonda olaya dokununca çekmece kapanır, oda açılır', await pg.evaluate(() => document.getElementById('olayCekmece').hidden && OFIS.debug.mode.active));
+  await ctx.close();
+
+  /* ---------- L. bayatlık: eşik veride, X dk önce, VERİ ESKİ, sis ---------- */
+  ({ ctx, pg } = await open());
+  const bz = await pg.evaluate(() => { const d = OFIS.data, kay = []; Object.keys(d.oda_kaynak).forEach(r => d.oda_kaynak[r].forEach(p => { const a = p.split(':'), o = a[0] === 'veri_kalitesi' ? d.veri_kalitesi.find(x => x.anahtar === a[1]) : a[0] === 'katlar' ? d.katlar[a[1]] : d[a[0]]; if (!o || typeof o.esik_dk !== 'number') kay.push(p); })); return kay; });
+  ok('her veri kaynağında esik_dk alanı var (koda sabit yazılmamış)', bz.length === 0, bz.join(','));
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; });
+  const b0 = await pg.evaluate(() => { const i = OFIS.Office.ageInfo('lab'); return { dk: Math.round(i.dk), esik: i.esik, stale: i.stale, st: !!OFIS.Office.state().stale.lab, txt: OFIS.Panel.ageTxt(i) }; });
+  ok('Lab verisi taze: "X dk önce" ve eşik veriden', !b0.stale && b0.esik > 0 && /dk önce|şimdi/.test(b0.txt), JSON.stringify(b0));
+  await pg.evaluate(() => OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'veri_bayat'))); await sleep(300);
+  const b1 = await pg.evaluate(() => { const i = OFIS.Office.ageInfo('lab'); return { dk: Math.round(i.dk), stale: i.stale, st: !!OFIS.Office.state().stale.lab }; });
+  ok('veri eşikten eskiyse oda bayat olur (95 dk > eşik)', b1.stale && b1.st && b1.dk >= 95, JSON.stringify(b1));
+  await pg.click('.ray [data-oda=lab]'); await sleep(900); await pg.click('#odaBilgiBtn'); await sleep(300);
+  tx = await pg.evaluate(() => document.getElementById('bilgi').textContent);
+  ok('Oda bilgisi: açık "VERİ ESKİ" etiketi, yaş ve eşik', /VERİ ESKİ/.test(tx) && /dk önce/.test(tx) && /eşik/.test(tx), '');
+  const fogA = await pg.evaluate(() => { const c = document.getElementById('tuval'), r = OFIS.World.roomById.lab, p = OFIS.World.roomPoly(r), v = OFIS.debug.toView((p[0][0] + p[2][0]) / 2, (p[0][1] + p[2][1]) / 2), x = c.getContext('2d').getImageData(Math.round(v.x * (c.width / OFIS.debug.view.w)), Math.round(v.y * (c.height / OFIS.debug.view.h)), 1, 1).data; return [x[0], x[1], x[2]]; });
+  await pg.evaluate(() => OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'veri_taze'))); await sleep(500);
+  const fogB = await pg.evaluate(() => { const c = document.getElementById('tuval'), r = OFIS.World.roomById.lab, p = OFIS.World.roomPoly(r), v = OFIS.debug.toView((p[0][0] + p[2][0]) / 2, (p[0][1] + p[2][1]) / 2), x = c.getContext('2d').getImageData(Math.round(v.x * (c.width / OFIS.debug.view.w)), Math.round(v.y * (c.height / OFIS.debug.view.h)), 1, 1).data; return [x[0], x[1], x[2]]; });
+  const sat = a => Math.max(...a) - Math.min(...a);
+  ok('bayat oda sislenir (renksizleşir); veri tazelenince renk döner', sat(fogA) < sat(fogB) || Math.abs(fogA[0] - fogB[0]) + Math.abs(fogA[2] - fogB[2]) > 20, JSON.stringify([fogA, fogB]));
+  ok('veri_taze sonrası oda bayat değil', await pg.evaluate(() => !OFIS.Office.state().stale.lab));
+  await ctx.close();
+  // eşik veriden gelir: kasa eşiğini çok küçük yap → olay olmadan oda kendiliğinden bayatlar ve döngü o anda uyanır
+  ctx = await b.newContext({ viewport: { width: 1440, height: 900 } }); pg = await ctx.newPage(); pg.on('pageerror', e => errs.push(e.message));
+  const o2 = JSON.parse(fs.readFileSync(path.join(root, 'ofis', 'ornek_durum.json'), 'utf8')); o2.olaylar = []; o2.kasa.esik_dk = 0.03; o2.risk.esik_dk = 100000;
+  await pg.route('**/esik.json', r => r.fulfill({ contentType: 'application/json', body: JSON.stringify(o2) }));
+  await pg.goto(base + 'index.html?saat=15:40&durum=esik.json'); await pg.waitForFunction('window.OFIS&&window.OFIS.ready');
+  const e0 = await pg.evaluate(() => !!OFIS.Office.state().stale.finans); await sleep(4000);
+  const e1 = await pg.evaluate(() => ({ fin: !!OFIS.Office.state().stale.finans, risk: !!OFIS.Office.state().stale.risk, loop: OFIS.debug.loop().raf }));
+  ok('eşik veri dosyasından okunur: kasa eşiği 0,03 dk iken Finans kendiliğinden bayatlar (olay yok), Risk eşiği büyükken taze kalır', !e0 && e1.fin && !e1.risk, JSON.stringify(e1));
+  await ctx.close();
+
+  /* ---------- M. oda iç ayrıntıları ve "bu birim ne yapar / ne yapmaz" kartı ---------- */
+  ({ ctx, pg } = await open());
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; });
+  const det = await pg.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), out = {};
+    for (const [id, room] of [['risk.alarm', 'risk'], ['haberlesme.zarf_rafi', 'haberlesme'], ['sekreterlik.onkayit_kasasi', 'sekreterlik'], ['oda.masa', 'oda']]) {
+      OFIS.debug.goRoom(room); await wait(900);
+      const o = OFIS.World.objects.filter(x => x.id === id), hits = [];
+      o.forEach(ob => { const s = ob.e.s; if (!s) return; const x0 = ob.e.px - s.ax, y0 = ob.e.py - s.ay; for (let y = 2; y < s.c.height; y += 3) for (let x = 2; x < s.c.width; x += 3) { const p = OFIS.debug.pick(x0 + x, y0 + y, false); if (p && p.type === 'obje' && p.o.id === id) hits.push([x0 + x, y0 + y]); } });
+      if (!hits.length) { out[id] = null; continue; }
+      const mx = hits.reduce((a, h) => a + h[0], 0) / hits.length, my = hits.reduce((a, h) => a + h[1], 0) / hits.length; hits.sort((a, b) => Math.hypot(a[0] - mx, a[1] - my) - Math.hypot(b[0] - mx, b[1] - my));
+      const v = OFIS.debug.toView(hits[0][0], hits[0][1]), r = document.getElementById('tuval').getBoundingClientRect(); out[id] = { x: v.x + r.left, y: v.y + r.top };
+    }
+    return out;
+  });
+  const missing = Object.keys(det).filter(k => !det[k]);
+  ok('Risk alarm paneli, Haberleşme zarf rafı, Sekreterlik ön kayıt kasası, Oda masaları tıklanabilir', missing.length === 0, missing.join(','));
+  const want = { 'risk.alarm': [/Alarm paneli/, /Coin başı/, /dolu/], 'haberlesme.zarf_rafi': [/Zarf rafı/, /n=\d+/, /en çok 12/], 'sekreterlik.onkayit_kasasi': [/Ön kayıt kasası/, /ön kayıt v1\.3/, /a1b2c3d/, /2026-10-14/], 'oda.masa': [/Oda masaları/, /n=14\/20/, /Boş masa/] };
+  for (const id of Object.keys(want)) {
+    const room = id.split('.')[0]; await pg.evaluate(r => OFIS.debug.goRoom(r), room); await sleep(900);
+    const q = await pg.evaluate(id => { const ob = OFIS.World.objects.find(x => x.id === id), s = ob.e.s, x0 = ob.e.px - s.ax, y0 = ob.e.py - s.ay, hits = []; OFIS.World.objects.filter(x => x.id === id).some(o2 => { const s2 = o2.e.s, ax = o2.e.px - s2.ax, ay = o2.e.py - s2.ay; for (let y = 2; y < s2.c.height; y += 3) for (let x = 2; x < s2.c.width; x += 3) { const p = OFIS.debug.pick(ax + x, ay + y, false); if (p && p.type === 'obje' && p.o.id === id) hits.push([ax + x, ay + y]); } return hits.length > 0; }); const mx = hits.reduce((a, h) => a + h[0], 0) / hits.length, my = hits.reduce((a, h) => a + h[1], 0) / hits.length; hits.sort((a, b) => Math.hypot(a[0] - mx, a[1] - my) - Math.hypot(b[0] - mx, b[1] - my)); const v = OFIS.debug.toView(hits[0][0], hits[0][1]), r = document.getElementById('tuval').getBoundingClientRect(); return { x: v.x + r.left, y: v.y + r.top }; }, id);
+    await pg.mouse.click(q.x, q.y); await sleep(350);
+    const t = await pg.evaluate(() => document.getElementById('bilgi').textContent);
+    ok(id + ' bilgi kutusu işlevini gösterir', want[id].every(re => re.test(t)), t.slice(0, 160));
+    await pg.keyboard.press('Escape');
+  }
+  const s0 = await pg.evaluate(() => [OFIS.World.alarmE.s, OFIS.World.zarfE.s]);
+  await pg.evaluate(() => { OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'risk_tavan')); OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'bildirim')); }); await sleep(900);
+  ok('alarm paneli ve zarf rafı veriyle yeniden çizilir (tavan dolunca / bildirim gelince)', await pg.evaluate(a => OFIS.World.alarmE.s !== a[0] && OFIS.World.zarfE.s !== a[1], s0));
+  const kart = await pg.evaluate(async () => {
+    const bad = []; const wait = ms => new Promise(r => setTimeout(r, ms));
+    for (const r of OFIS.World.ROOMS.filter(x => !x.out)) { OFIS.debug.goRoom(r.id); await wait(250); document.getElementById('odaBilgiBtn').click(); await wait(120); const b = document.getElementById('bilgi'), kc = b.querySelector('.birim-kart'); if (!kc || !/Bu birim ne yapar/.test(kc.textContent) || !/Ne yapmaz/.test(kc.textContent) || kc.querySelectorAll('div').length !== 2 || kc.textContent.length < 50) bad.push(r.id); }
+    return bad;
+  });
+  ok('14 odanın hepsinde "Bu birim ne yapar / ne yapmaz" kartı (Oda bilgisi düğmesinde)', kart.length === 0, kart.join(','));
+  await ctx.close();
+
+  /* ---------- N. günlük özet: yalnız olay günlüğünden ---------- */
+  ({ ctx, pg } = await open());
+  ok('günlük özet: "dün: 3 terfi, 1 çıkış, 2 bildirim"', await pg.evaluate(() => /dün: 3 terfi, 1 çıkış, 2 bildirim/.test(document.getElementById('gunIcerik').textContent)));
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'terfi')); }); await sleep(400);
+  ok('bugünkü olaylar özete eklenir (olay günlüğünden)', await pg.evaluate(() => /bugün: 1 terfi, 1 bildirim/.test(document.getElementById('gunIcerik').textContent)), await pg.evaluate(() => document.getElementById('gunIcerik').textContent));
+  await ctx.close();
+  ctx = await b.newContext({ viewport: { width: 1440, height: 900 } }); pg = await ctx.newPage(); pg.on('pageerror', e => errs.push(e.message));
+  const o3 = JSON.parse(fs.readFileSync(path.join(root, 'ofis', 'ornek_durum.json'), 'utf8')); o3.olaylar = []; o3.gecmis_olaylar = o3.gecmis_olaylar.filter(g => !g.zaman.startsWith('2026-10-27'));
+  await pg.route('**/bos3.json', r => r.fulfill({ contentType: 'application/json', body: JSON.stringify(o3) }));
+  await pg.goto(base + 'index.html?saat=15:40&durum=bos3.json'); await pg.waitForFunction('window.OFIS&&window.OFIS.ready');
+  ok('boş günde "dün: değişiklik yok"', await pg.evaluate(() => /dün: değişiklik yok/.test(document.getElementById('gunIcerik').textContent)));
+  o3.gecmis_olaylar = []; await ctx.close();
+  ctx = await b.newContext({ viewport: { width: 1440, height: 900 } }); pg = await ctx.newPage(); pg.on('pageerror', e => errs.push(e.message));
+  const o4 = JSON.parse(fs.readFileSync(path.join(root, 'ofis', 'ornek_durum.json'), 'utf8')); o4.olaylar = []; o4.gecmis_olaylar = [{ id: 'x1', tur: 'terfi', zaman: '2026-10-27T10:00:00Z' }, { id: 'x2', tur: 'terfi', zaman: '2026-10-27T11:00:00Z' }, { id: 'x3', tur: 'havuzdan_cikar', zaman: '2026-10-27T12:00:00Z' }, { id: 'x4', tur: 'islem_acildi', zaman: '2026-10-27T12:30:00Z' }];
+  await pg.route('**/bos4.json', r => r.fulfill({ contentType: 'application/json', body: JSON.stringify(o4) }));
+  await pg.goto(base + 'index.html?saat=15:40&durum=bos4.json'); await pg.waitForFunction('window.OFIS&&window.OFIS.ready');
+  ok('özet yalnız günlükten türer ve yalnız tanımlı gruplar yazılır ("dün: 2 terfi, 1 çıkış")', await pg.evaluate(() => /dün: 2 terfi, 1 çıkış(?!,)/.test(document.getElementById('gunIcerik').textContent)), await pg.evaluate(() => document.getElementById('gunIcerik').textContent));
+  await ctx.close();
+
+  /* ---------- O. ses: varsayılan kapalı, ayarlardan açılır, olay başına tek kısa ton (kodla) ---------- */
+  ctx = await b.newContext({ viewport: { width: 1440, height: 900 } }); pg = await ctx.newPage(); pg.on('pageerror', e => errs.push(e.message));
+  await pg.addInitScript(() => {
+    window.__tones = [];
+    window.AudioContext = class { constructor() { this.currentTime = 0; this.destination = {}; this.state = 'running'; } resume() { return Promise.resolve(); }
+      createGain() { return { gain: { value: 1, setValueAtTime() {}, exponentialRampToValueAtTime() {}, linearRampToValueAtTime() {} }, connect() {} }; }
+      createOscillator() { const o = { type: '', frequency: { value: 0 }, connect() {}, start() { window.__tones.push(o.frequency.value); }, stop() {} }; return o; } };
+  });
+  await pg.goto(base + '?saat=15:40'); await pg.waitForFunction('window.OFIS&&window.OFIS.ready');
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; });
+  const so = await pg.evaluate(() => ({ on: OFIS.Ses.isOn(), cb: document.getElementById('sesAc').checked }));
+  ok('ses varsayılan kapalı', !so.on && !so.cb);
+  await pg.evaluate(() => { ['bildirim', 'terfi', 'risk_tavan'].forEach(t => OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === t))); }); await sleep(300);
+  ok('kapalıyken hiç ton çalmaz', (await pg.evaluate(() => window.__tones.length)) === 0);
+  await pg.click('#ayarBtn'); await sleep(200); await pg.check('#sesAc'); await pg.click('#ayarKapat'); await sleep(200);
+  await pg.evaluate(() => OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'bildirim'))); await sleep(300);
+  await pg.evaluate(() => OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'risk_tavan'))); await sleep(300);
+  const tn = await pg.evaluate(() => ({ t: window.__tones.slice(), k: OFIS.Names.kadro().olay_turleri }));
+  ok('açıkken olay başına tek ton; frekans kadro.json olay_turleri\'nden (bildirim ≠ risk_tavan)', tn.t.length === 2 && tn.t[0] === tn.k.bildirim.ton && tn.t[1] === tn.k.risk_tavan.ton && tn.t[0] !== tn.t[1], JSON.stringify(tn.t));
+  await pg.evaluate(() => { const s = OFIS.Office.state(); s.fastUntil = performance.now() + 4000; OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'terfi')); }); await sleep(200);
+  ok('olay yağmurunda ton çalınmaz', (await pg.evaluate(() => window.__tones.length)) === 2);
+  await pg.reload(); await pg.waitForFunction('window.OFIS&&window.OFIS.ready');
+  ok('ses tercihi bu tarayıcıda saklanır', await pg.evaluate(() => OFIS.Ses.isOn() && document.getElementById('sesAc').checked));
+  await ctx.close();
+
+  /* ---------- P. terfi kuralı veriden gelir, kodda sabit sayı yok ---------- */
+  ({ ctx, pg } = await open());
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; OFIS.Office.applyEvent(OFIS.data.olaylar.find(e => e.tur === 'terfi')); });
+  const tk = await pg.evaluate(() => OFIS.data.olaylar.filter(e => e.tur === 'terfi').map(e => e.kural).concat(OFIS.data.traderlar.filter(t => t.kat === 'aday').map(t => t.kat_olay.kural)));
+  ok('terfi kuralı örnek veride ön kayıttaki gibi: ≥ 3 hafta ve ≥ 10 kapanmış işlem', tk.length >= 5 && tk.every(k => /≥ 3 hafta ve ≥ 10 kapanmış işlem/.test(k)) && !tk.some(k => /14 gün|20 işlem/.test(k)));
+  await pg.click('.ray [data-oda=aday]'); await sleep(900); await click(pg, 'T014'); await sleep(400);
+  tx = await pg.evaluate(() => document.getElementById('bilgi').textContent);
+  ok('terfi eden trader\'ın kat_olay kaydı olaydan gelir (kural, olay_id)', await pg.evaluate(() => { const t = OFIS.Office.state().traders.T004, e = OFIS.data.olaylar.find(x => x.tur === 'terfi'); return t.kat_olay && t.kat_olay.id === e.id && t.kat_olay.kural === e.kural; }));
+  ok('trader repliği ve "Neden burada?" kural metnini olaydaki kural alanından alır', /≥ 3 hafta ve ≥ 10 kapanmış işlem/.test(tx), tx.slice(0, 100));
+  await ctx.close();
+
   ok('sayfa/konsol hatası yok', errs.length === 0, errs.slice(0, 3).join(' | '));
   console.log(bad ? '\n' + bad + ' test başarısız' : '\nhepsi geçti');
   await b.close(); srv.close(); process.exit(bad ? 1 : 0);

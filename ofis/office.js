@@ -18,6 +18,29 @@
      Tek tek işlem K/Z'si Telegram'daki kadar görünür kalır. */
   Off.KILIT = true;
   const evHooks = [];
+  /* ---------- örnek saat, veri yaşı ve bayatlık (eşikler veride: her kaynakta esik_dk) ---------- */
+  const TOP = { kasa: 'kasa', ozet: 'ozet', risk: 'risk', telegram: 'tg', kohort_kontrol: 'kk', arsiv: 'arsiv', kapi: 'kapi', tarama: 'tarama', onkayit_kasasi: 'onkayit' };
+  Off.simNow = () => { const b = st ? Date.parse(st.data.uretildi) : NaN; return (isNaN(b) ? Date.now() : b) + (st ? Date.now() - st.loadMs : 0); };
+  Off.simISO = () => new Date(Off.simNow()).toISOString();
+  Off.ageMin = iso => { const t = iso ? Date.parse(iso) : NaN; return isNaN(t) ? null : (Off.simNow() - t) / 60000; };
+  function srcObj(path) { const a = String(path).split(':'); if (a[0] === 'veri_kalitesi') return st.vk.find(x => x.anahtar === a[1]); if (a[0] === 'katlar') return st.katlar[a[1]]; return st[TOP[a[0]]]; }
+  const srcOfRoom = room => ((st.data.oda_kaynak || {})[room] || []).map(srcObj).filter(Boolean);
+  const touch = (...paths) => paths.forEach(p => { const o = srcObj(p); if (o) o.zaman = Off.simISO(); });
+  const touchRoom = room => srcOfRoom(room).forEach(o => { o.zaman = Off.simISO(); });
+  Off.srcInfo = o => { const age = o ? Off.ageMin(o.zaman) : null; if (age == null) return null; return { dk: age, esik: o.esik_dk == null ? null : o.esik_dk, stale: o.esik_dk != null && age > o.esik_dk }; };
+  /* bir odanın en eski kaynağı (bayatsa bayat olan) */
+  Off.ageInfo = room => {
+    let w = null;
+    srcOfRoom(room).forEach(o => { const i = Off.srcInfo(o); if (!i) return; if (!w || (i.stale && !w.stale) || (i.stale === w.stale && i.dk > w.dk)) w = i; });
+    return w;
+  };
+  Off.screenAge = id => { const p = (st.data.ekran_kaynak || {})[id]; return p ? Off.srcInfo(srcObj(p)) : null; };
+  Off.srcObj = srcObj;
+  function updateStale() {
+    let ch = false;
+    Object.keys(st.data.oda_kaynak || {}).forEach(r => { const i = Off.ageInfo(r), v = !!(i && i.stale); if (!!st.stale[r] !== v) { st.stale[r] = v; ch = true; } });
+    if (ch) emit();
+  }
   Off.onEvent = f => evHooks.push(f);
 
   const clone = x => JSON.parse(JSON.stringify(x));
@@ -32,6 +55,8 @@
     data.risk = Object.assign({ tavanlar: [], zaman: null }, data.risk || {});
     data.telegram = Object.assign({ bugun_n: null, son: [], zaman: null }, data.telegram || {});
     data.arsiv = Object.assign({ turler: [], zaman: null }, data.arsiv || {});
+    data.onkayit_kasasi = Object.assign({ surum: null, commit: null, dondurma_tarihi: null, zaman: null }, data.onkayit_kasasi || {});
+    data.gecmis_olaylar = data.gecmis_olaylar || []; data.oda_kaynak = data.oda_kaynak || {}; data.ekran_kaynak = data.ekran_kaynak || {};
     data.kapi = Object.assign({ bugun_gecen_n: null, bugun_elenen_n: null, zaman: null }, data.kapi || {});
     data.tarama = Object.assign({ puanlar: [], zaman: null }, data.tarama || {});
     data.kohort_kontrol = Object.assign({ hafta: 0, hafta_toplam: 12, performans_kilitli: true, kollar: [], onkayit: '', zaman: null }, data.kohort_kontrol || {});
@@ -40,7 +65,7 @@
     st = {
       data: data, initial: clone(data), loadMs: Date.now(), simT: 0, evIdx: 0, speed: opt.speed || 1, turn: 0,
       traders: {}, actors: [], actorById: {}, katlar: clone(data.katlar), acik: clone(data.acik_islemler), kapanan: clone(data.kapananlar),
-      kasa: clone(data.kasa), ozet: clone(data.ozet), risk: clone(data.risk), vk: clone(data.veri_kalitesi), tg: clone(data.telegram), kk: clone(data.kohort_kontrol), arsiv: clone(data.arsiv), kapi: clone(data.kapi), fastUntil: 0,
+      kasa: clone(data.kasa), ozet: clone(data.ozet), risk: clone(data.risk), vk: clone(data.veri_kalitesi), tg: clone(data.telegram), kk: clone(data.kohort_kontrol), arsiv: clone(data.arsiv), kapi: clone(data.kapi), onkayit: clone(data.onkayit_kasasi), gecmis: clone(data.gecmis_olaylar), oturum: [], spot: null, fastUntil: 0,
       tarama: clone(data.tarama), stale: {}, hl: {}, sel: null, alarm: false, denetim: 'tamam', boxN: 3, log: [], fx: [], flash: {},
       scanUntil: 0, haberUntil: 0, kasaUntil: 0, last: { kz: null }
     };
@@ -49,6 +74,7 @@
     (W.emptyChairs || []).forEach(c => { const s = O.chairSpr(c.c, 'b'); W.ent(c.tx + c.ty + 1.2, W.sx(c.tx, c.ty), W.sy(c.tx, c.ty) + HH, s); });
     W.resort();
     buildActors();
+    updateStale();
     refreshVisuals();
     emit();
   };
@@ -58,7 +84,8 @@
     st.katlar = clone(d.katlar); st.acik = clone(d.acik_islemler); st.kapanan = clone(d.kapananlar); st.kasa = clone(d.kasa); st.ozet = clone(d.ozet);
     st.risk = clone(d.risk); st.vk = clone(d.veri_kalitesi); st.tg = clone(d.telegram); st.stale = {}; st.alarm = false; st.denetim = 'tamam';
     if (Off.resetHook) Off.resetHook();
-    st.kapi = clone(d.kapi); st.arsiv = clone(d.arsiv); Object.keys(st.traders).forEach(k => { delete st.traders[k].bayrak; });
+    st.kapi = clone(d.kapi); st.arsiv = clone(d.arsiv); st.onkayit = clone(d.onkayit_kasasi); st.oturum = []; st.spot = null; st.tarama = clone(d.tarama); st.kk = clone(d.kohort_kontrol);
+    st.loadMs = Date.now();   // örnek akış başa sarınca örnek saat de başa döner (veri yaşları akışla birlikte yenilenir) Object.keys(st.traders).forEach(k => { delete st.traders[k].bayrak; });
     st.evIdx = 0; st.simT = 0; st.turn++;
     log({ tur: 'sistem', oda: 'makam', metin: 'Örnek olay akışı baştan başladı (tur ' + (st.turn + 1) + ')' });
     emit();
@@ -132,8 +159,10 @@
   const pad = n => (n < 10 ? '0' : '') + n;
   function log(e) {
     const c = Off.clock();
-    st.log.unshift({ ts: pad(c.getHours()) + ':' + pad(c.getMinutes()) + ':' + pad(c.getSeconds()), oda: e.oda || '', tur: e.tur, metin: e.metin || e.tur, olay_id: e.id || null, n: ++logN });
-    if (st.log.length > 60) st.log.length = 60;
+    const iso = Off.simISO();
+    st.log.unshift({ ts: pad(c.getHours()) + ':' + pad(c.getMinutes()) + ':' + pad(c.getSeconds()), iso: iso, oda: e.oda || '', tur: e.tur, trader: e.trader || null, metin: e.metin || e.tur, olay_id: e.id || null, n: ++logN });
+    if (st.log.length > 400) st.log.length = 400;
+    if (e.tur !== 'sistem') st.oturum.push({ tur: e.tur, iso: iso });
   }
   let logN = 0;
   function hl(room, ms) { if (!room) return; st.hl[room] = { until: now() + (ms || 3200), t0: now() }; }
@@ -153,7 +182,7 @@
     const seat = freeSeat(kime);
     standUp(a); a.kat = kime;
     if (seat) { seat.occ = a; a.seat = seat; a.queue = [{ go: [seat.tx, seat.ty] }, { sit: seat }]; a.pose = 'stand'; }
-    if (st.traders[tid]) st.traders[tid].kat = kime;
+    if (st.traders[tid]) { st.traders[tid].kat = kime; if (e && e.id) st.traders[tid].kat_olay = { id: e.id, kural: e.kural || e.neden, zaman: Off.simISO ? Off.simISO() : new Date().toISOString() }; }
     const k = { lab: 'havuz', aday: 'aday', oda: 'oda' };
     if (k[kimden] && st.katlar[k[kimden]]) st.katlar[k[kimden]].n--;
     if (k[kime] && st.katlar[k[kime]]) st.katlar[k[kime]].n++;
@@ -174,13 +203,13 @@
       const seat = freeSeat('lab'); a.kat = 'lab'; if (st.traders[e.trader]) st.traders[e.trader].kat = 'lab';
       if (seat) { seat.occ = a; a.seat = seat; a.queue = [{ go: [seat.tx, seat.ty] }, { sit: seat }]; }
       st.katlar.havuz.n++;
-      st.kapi.bugun_gecen_n = (st.kapi.bugun_gecen_n || 0) + 1;
+      touch('kapi'); st.kapi.bugun_gecen_n = (st.kapi.bugun_gecen_n || 0) + 1;
       hl('kapi', 3000); hl('lab', 4000); bubble('kapi', 'tik', '#1f8a5a');
     },
     kapi_elendi(e) {
       const a = st.actorById[e.trader]; if (!a) return;
       a.queue = [{ go: [EXIT[0], EXIT[1]] }, { remove: true }];
-      st.kapi.bugun_elenen_n = (st.kapi.bugun_elenen_n || 0) + 1;
+      touch('kapi'); st.kapi.bugun_elenen_n = (st.kapi.bugun_elenen_n || 0) + 1;
       hl('kapi', 3800); bubble('kapi', 'uyari', '#c0392b');
     },
     havuzdan_cikar(e) {
@@ -208,46 +237,46 @@
       st.fx.push({ type: 'coin', t0: now(), dur: 2400, lx: 8.5, ly: 1.2, sign: e.kz_usd >= 0 });
     },
     bildirim(e) {
-      st.tg.bugun_n++; st.tg.son.unshift(e.metin); if (st.tg.son.length > 4) st.tg.son.length = 4;
+      touch('telegram'); st.tg.bugun_n++; st.tg.son.unshift(e.metin); if (st.tg.son.length > 4) st.tg.son.length = 4;
       st.haberUntil = now() + 3200; hl('haberlesme', 3400);
       // zarf: iletisim.js (postacı posta kutusuna yürür, zarf dışarı süzülür)
     },
     risk_tavan(e) {
-      const it = st.risk.tavanlar.find(x => x.anahtar === e.kalem); if (it) it.kullanim = e.deger;
+      touch('risk'); const it = st.risk.tavanlar.find(x => x.anahtar === e.kalem); if (it) it.kullanim = e.deger;
       st.alarm = true; hl('risk', 5200); bubble('risk', 'uyari', '#c0392b');
     },
     risk_normal(e) {
-      const it = st.risk.tavanlar.find(x => x.anahtar === e.kalem); if (it) it.kullanim = e.deger;
+      touch('risk'); const it = st.risk.tavanlar.find(x => x.anahtar === e.kalem); if (it) it.kullanim = e.deger;
       st.alarm = st.risk.tavanlar.some(x => x.kullanim >= x.tavan * 0.999 || x.kullanim >= 1);
       hl('risk', 2600); bubble('risk', 'tik', '#1f8a5a');
     },
-    veri_bayat(e) {
-      st.stale[e.oda] = true; const row = st.vk.find(x => x.anahtar === e.oda); if (row) { row._d = row.durum; row.durum = 'bayat'; row._v = row.deger; row.deger = e.yas_dk + ' dk önce'; }
+    veri_bayat(e) {   // kaynağın zamanı eskir; bayatlık eşikle (veride) hesaplanır
+      srcOfRoom(e.oda).forEach(o => { o.zaman = new Date(Off.simNow() - (e.yas_dk || 0) * 60000).toISOString(); });
       hl(e.oda, 3600); bubble(e.oda, 'saat', '#b8860b');
     },
     veri_taze(e) {
-      st.stale[e.oda] = false; const row = st.vk.find(x => x.anahtar === e.oda); if (row) { row.durum = row._d || 'tamam'; row.deger = row._v || row.deger; }
+      touchRoom(e.oda);
       hl(e.oda, 2800); bubble(e.oda, 'tik', '#1f8a5a');
     },
     denetim(e) {
-      st.denetim = e.sonuc; const row = st.vk.find(x => x.anahtar === 'denetim'); if (row) row.durum = e.sonuc === 'tamam' ? 'tamam' : 'uyari';
+      touch('veri_kalitesi:denetim'); st.denetim = e.sonuc; const row = st.vk.find(x => x.anahtar === 'denetim'); if (row) row.durum = e.sonuc === 'tamam' ? 'tamam' : 'uyari';
       hl('denetim', 3600); bubble('denetim', e.sonuc === 'tamam' ? 'tik' : 'goz', e.sonuc === 'tamam' ? '#1f8a5a' : '#b8860b');
     },
     arsiv_yazildi(e) {
-      st.boxN = Math.min(5, st.boxN + 1); const row = st.vk.find(x => x.anahtar === 'arsiv'); if (row) row.deger = e.satir.toLocaleString('tr-TR') + ' satır';
+      touch('arsiv', 'veri_kalitesi:arsiv'); st.boxN = Math.min(5, st.boxN + 1); const row = st.vk.find(x => x.anahtar === 'arsiv'); if (row) row.deger = e.satir.toLocaleString('tr-TR') + ' satır';
       hl('arsiv', 3600); st.fx.push({ type: 'box', t0: now(), dur: 900 });
       if (st.boxN >= 5) st.boxN = 3;
     },
     kasa_guncelle(e) {
-      st.kasa.deger_usd = e.deger_usd; st.kasaUntil = now() + 3000; hl('finans', 3200);
+      touch('kasa'); st.kasa.deger_usd = e.deger_usd; st.kasaUntil = now() + 3000; hl('finans', 3200);
       st.fx.push({ type: 'coin', t0: now(), dur: 2400, lx: 8.5, ly: 1.2, sign: true });
     },
     kirmizi_bayrak(e) { const t = st.traders[e.trader]; if (t) t.bayrak = { id: e.id || null, neden: e.neden || 'bilinmiyor', zaman: Off.clock().toISOString() }; hl('denetim', 3400); hl(tradeKat(e.trader) || 'kontrol', 3400); bubble('denetim', 'uyari', '#b8860b'); },
     bayrak_kalkti(e) { const t = st.traders[e.trader]; if (t) delete t.bayrak; hl('denetim', 2600); bubble('denetim', 'tik', '#1f8a5a'); },
-    kural_kitabi(e) { hl('sekreterlik', 3400); bubble('sekreterlik', 'belge', '#7a6a50'); },
+    kural_kitabi(e) { touch('onkayit_kasasi'); hl('sekreterlik', 3400); bubble('sekreterlik', 'belge', '#7a6a50'); },
     kullanici_karari(e) { hl('makam', 3600); bubble('makam', 'tik', '#6b3f2a'); },
     veri_yenile(e) {
-      (e.guncellemeler || []).forEach(u => { const x = st.acik.find(y => y.id === u.id); if (x) { x.kz_usd = u.kz_usd; x.kz_yuzde = u.kz_yuzde; x.lik_uzaklik = u.lik_uzaklik; } });
+      touch('ozet', 'katlar:oda'); (e.guncellemeler || []).forEach(u => { const x = st.acik.find(y => y.id === u.id); if (x) { x.kz_usd = u.kz_usd; x.kz_yuzde = u.kz_yuzde; x.lik_uzaklik = u.lik_uzaklik; } });
       st.ozet.zaman = Off.clock().toISOString(); hl('finans', 2600); hl('oda', 2600);
     }
   };
@@ -264,6 +293,30 @@
       pl(0.05, span - 0.05, 15, 43, '#141927'); pl(0.05, span - 0.05, 42, 43, '#2c3550');
       draw(pl, ln, span);
     }, { w: 48 + span * 20, ax: side === 'L' ? 24 : 24 + span * 20 });
+  }
+  /* Risk: alarm paneli (her çubuk bir tavanın doluluğu) ve Haberleşme: zarf rafı (bugünkü bildirim sayısı kadar zarf) — veriyle çizilir */
+  const dynCache = {};
+  function alarmSprite(ratios, alarm) {
+    const k = 'al' + ratios.map(r => Math.round(r * 20)).join(',') + alarm;
+    return dynCache[k] || (dynCache[k] = O.tspr(46, I => {
+      I.box(0.08, 0.2, 0.92, 0.8, 0, 24, O.mat('#2c3342'));
+      I.fl(0.12, 0.88, 0.8, 4, 22, '#10141f');
+      ratios.slice(0, 5).forEach((r, i) => { const z = 18 - i * 3.4, c = r >= 0.999 ? '#ff5a5a' : r >= 0.75 ? '#ffc94a' : '#3dd68c'; I.fl(0.16, 0.84, 0.8, z, z + 2.2, '#242c40'); I.fl(0.16, 0.16 + 0.68 * Math.min(1, r), 0.8, z, z + 2.2, c); });
+      I.box(0.4, 0.4, 0.6, 0.6, 24, 28, O.mat(alarm ? '#ff4040' : '#5a1c1c'));
+      I.P.outline('#2a2230');
+    }, { w: 56 }));
+  }
+  function zarfSprite(n) {
+    const k = 'zr' + n;
+    return dynCache[k] || (dynCache[k] = O.tspr(48, I => {
+      I.box(0.06, 0.12, 0.94, 0.5, 0, 42, O.mat('#8e6238'));
+      for (let r = 0; r < 4; r++) I.fl(0.12, 0.88, 0.5, 4 + r * 10, 11 + r * 10, '#5e3f20');
+      for (let i = 0; i < 12; i++) {
+        const r = Math.floor(i / 3), c = i % 3, a = 0.14 + c * 0.25;
+        if (i < n) { I.fl(a, a + 0.2, 0.5, 5 + r * 10, 9.5 + r * 10, '#fbf7ea'); I.fl(a, a + 0.2, 0.5, 8.6 + r * 10, 9.5 + r * 10, '#d4553b'); }
+      }
+      I.P.outline('#2a2230');
+    }, { w: 56 }));
   }
   function drawFinans(flash) {
     // ön kayıt: toplanmış performans (kasa değeri, eğri) gösterilmez; ekranda yalnız hafta ilerlemesi ve kilit
@@ -344,6 +397,8 @@
     const fk = st.kasaUntil > t ? 1 : 0, hk = st.haberUntil > t ? 1 : 0;
     const eg = st.kasa.egri;
     W.tvs.finans.e.s = tvSprite('finans', fk + ':' + st.kk.hafta, () => drawFinans(!!fk));
+    W.alarmE.s = alarmSprite(st.risk.tavanlar.map(t => t.kullanim / t.tavan), st.alarm ? 1 : 0);
+    W.zarfE.s = zarfSprite(Math.min(12, st.tg.bugun_n || 0));
     W.tvs.aday.e.s = tvSprite('aday', W.seats.aday.map(x => (x.occ ? 1 : 0)).join(''), () => drawAday());
     W.tvs.haber.e.s = tvSprite('haber', hk + ':' + (st.stale.haberlesme ? 1 : 0), () => drawHaber(!!hk, !st.stale.haberlesme));
     W.tvs.risk.e.s = tvSprite('risk', st.alarm + ':' + (Off.reduced ? 1 : blink) + ':' + st.risk.tavanlar.map(x => x.kullanim).join(','), () => drawRisk(st.alarm, Off.reduced || !!blink));
@@ -365,6 +420,7 @@
     if (due.length >= 3) st.fastUntil = now() + 4000;
     due.forEach(e => Off.applyEvent(e));
     if (st.evIdx >= evs.length && st.simT >= total) Off.reset();
+    updateStale();
     let walkers = 0; st.actors.forEach(a => { if (a.path.length) walkers++; });
     const k = walkers > 8 ? 3 : walkers > 4 ? 2 : 1;       // çok yürüyen varsa yürüyüş hızlanır
     st.actors.forEach(a => stepActor(a, dt * k));
@@ -382,6 +438,7 @@
     for (let i = 0; i < st.actors.length; i++) { const a = st.actors[i]; if (a.path.length || a.queue.length || a.wait > 0 || a.react) return 'raf'; }
     const hs = Object.keys(st.hl); for (let i = 0; i < hs.length; i++) if (st.hl[hs[i]].until > t) return 'raf';
     if (st.scanUntil > t || st.haberUntil > t || st.kasaUntil > t) return 'raf';
+    if (st.spot && st.spot.until > t) return 'raf';
     const fl = Object.keys(st.flash); for (let i = 0; i < fl.length; i++) if (st.flash[fl[i]] > t) return 'raf';
     if (Off.markBusy && Off.markBusy()) return 'raf';
     if (st.alarm && !Off.reduced) return 'slow';
@@ -391,7 +448,25 @@
   Off.nextEventMs = function () {
     if (!st) return 5000;
     const evs = st.data.olaylar, total = st.data.akis_suresi_sn || 120, nxt = st.evIdx < evs.length ? evs[st.evIdx].t : total;
-    return Math.max(20, (nxt - st.simT) / st.speed * 1000);
+    let ms = (nxt - st.simT) / st.speed * 1000;
+    Object.keys(st.data.oda_kaynak || {}).forEach(r => srcOfRoom(r).forEach(o => { const a = Off.ageMin(o.zaman); if (a != null && o.esik_dk != null && a <= o.esik_dk) ms = Math.min(ms, (o.esik_dk - a) * 60000 + 50); }));
+    return Math.max(20, ms);
+  };
+  /* olay çekmecesinden seçilen olayın figürü vurgulanır (kullanıcı eylemi; birkaç sn sürer) */
+  Off.EVROL = { yeni_adres: ['tarama', 'kapici'], kapi_gecti: ['kapici'], kapi_elendi: ['kapici'], havuzdan_cikar: ['kapici'], islem_acildi: ['finans'], islem_kapandi: ['finans'], bildirim: ['haber'], risk_tavan: ['risk'], risk_normal: ['risk'], veri_bayat: ['denetim'], veri_taze: ['denetim'], denetim: ['denetim'], arsiv_yazildi: ['arsivci'], kasa_guncelle: ['finans'], kural_kitabi: ['sekreter'], kullanici_karari: ['makam'], veri_yenile: ['finans'], kirmizi_bayrak: ['denetim'], bayrak_kalkti: ['denetim'] };
+  Off.spot = function (entry) {
+    let a = entry.trader ? st.actorById[entry.trader] : null;
+    if (!a) { const rol = (Off.EVROL[entry.tur] || [])[0]; a = rol ? st.actors.find(x => x.kind === 'staff' && x.staffId.replace(/\d$/, '').replace(/^haberlesme$/, 'haber') === rol) : null; }
+    st.spot = a ? { id: a.id, t0: now(), until: now() + 5200 } : null; return a;
+  };
+  /* günlük özet: yalnız olay günlüğünden (geçmiş günlük + bu oturumun olayları); gruplar kadro.json'dadır */
+  Off.gunlukOzet = function (groups) {
+    const day = ms => new Date(ms).toISOString().slice(0, 10), nowMs = Off.simNow();
+    const evs = st.gecmis.map(x => ({ tur: x.tur, iso: x.zaman })).concat(st.oturum);
+    const count = ds => groups.map(g => ({ ad: g.ad, n: evs.filter(e => day(Date.parse(e.iso)) === ds && g.turler.indexOf(e.tur) >= 0).length })).filter(g => g.n > 0);
+    const text = (pre, l) => pre + ': ' + (l.length ? l.map(g => g.n + ' ' + g.ad).join(', ') : 'değişiklik yok');
+    const d = count(day(nowMs - 864e5)), b = count(day(nowMs));
+    return { dun: text('dün', d), bugun: text('bugün', b), n: evs.length };
   };
   /* tıklanan kişi küçük bir tepki verir (yalnız kullanıcı eylemiyle) */
   Off.react = function (a) {
@@ -419,6 +494,14 @@
     for (let i = 0; i < Off.boxes; i++) {
       const px = W.sx(BX + 25, BY + 3), py = W.sy(BX + 25, BY + 3) + HH - 12 * i, spr = O.icons.kutu();
       out.push({ k: BX + 25 + BY + 3 + 1.1 + i * 0.01, draw: ctx => ctx.drawImage(spr.c, Math.round(px - spr.ax), Math.round(py - spr.ay + 8)) });
+    }
+    if (st.spot && st.spot.until > t) {
+      const a = st.actorById[st.spot.id], sp = (t - st.spot.t0) / 1000;
+      if (a && a.sx != null) out.push({ k: a.fx + a.fy - 0.02, draw: ctx => {
+        const pul = Off.reduced ? 1 : 0.65 + 0.35 * Math.sin(sp * 6), r = 14 + (Off.reduced ? 0 : 2 * Math.sin(sp * 6));
+        ctx.save(); ctx.strokeStyle = '#46d3c2'; ctx.lineWidth = 2.5; ctx.globalAlpha = pul; ctx.beginPath(); ctx.ellipse(a.sx, a.sy + 2, r * 1.5, r * 0.75, 0, 0, 7); ctx.stroke();
+        ctx.fillStyle = '#46d3c2'; const y = a.sy - 42 - (Off.reduced ? 0 : 2 * Math.abs(Math.sin(sp * 4))); ctx.beginPath(); ctx.moveTo(a.sx, y + 8); ctx.lineTo(a.sx - 5, y); ctx.lineTo(a.sx + 5, y); ctx.closePath(); ctx.fill(); ctx.restore();
+      } });
     }
     st.fx.forEach(f => {
       const p = (t - f.t0) / f.dur, e = Off.reduced ? 1 : Math.min(1, p * 4);

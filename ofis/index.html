@@ -18,6 +18,7 @@
   <div class="ray-ic" id="rayIc">
     <p class="ray-bas">Bina</p>
     <button type="button" data-tab="genel" aria-pressed="true"><i class="el"></i><span>Tüm ofis</span></button>
+    <button type="button" data-olay-ac aria-controls="olayCekmece"><i class="el" style="--c:#ffb86b"></i><span>Olaylar</span></button>
     <p class="ray-bas">Hat</p>
     <button type="button" data-oda="tarama" aria-pressed="false"><i class="el"></i><span>Tarama</span></button>
     <button type="button" data-oda="kapi" aria-pressed="false"><i class="el"></i><span>Kapı</span></button>
@@ -44,6 +45,11 @@
 </nav>
 <main class="ana">
   <aside class="sol" id="sol" aria-label="Pano özeti">
+    <section class="kart" id="cGun" aria-labelledby="hGun">
+      <header><h2 id="hGun">Günlük özet <small>yalnız olay günlüğünden</small></h2></header>
+      <div id="gunIcerik"></div>
+      <p class="meta" id="gunMeta"></p>
+    </section>
     <section class="kart" id="cKasa" aria-labelledby="hKasa">
       <header><h2 id="hKasa">Gölge kasası <small>sanal</small></h2><span class="rozet">SİM</span></header>
       <div id="kasaIcerik"></div>
@@ -105,6 +111,17 @@
         <button type="button" id="odaBilgiBtn">Oda bilgisi</button>
       </div>
       <aside class="bilgi" id="bilgi" role="region" aria-label="Bilgi kutusu" hidden></aside>
+      <aside class="cekmece" id="olayCekmece" role="region" aria-label="Olay çekmecesi" hidden>
+        <header><h2>Olay çekmecesi <small id="cSay"></small></h2><button type="button" id="cKapat" aria-label="Olay çekmecesini kapat">×</button></header>
+        <div class="c-filtre">
+          <label>Oda<select id="fOda"></select></label>
+          <label>Trader<select id="fTrader"></select></label>
+          <label>Olay türü<select id="fTur"></select></label>
+          <button type="button" id="fTemizle">Filtreyi temizle</button>
+        </div>
+        <ol id="cListe"></ol>
+        <p class="yasal">Araştırma / sanal gösterim; yatırım tavsiyesi değildir. Örnek veri.</p>
+      </aside>
       <p class="perf" id="perf" hidden></p>
       <div class="zoom">
         <button type="button" id="zIn" aria-label="Yakınlaştır">+</button>
@@ -114,7 +131,8 @@
       </div>
     </div>
     <section class="gozcu" aria-labelledby="hGozcu">
-      <h2 id="hGozcu">Gözcü kaydı <small>zaman · oda · olay</small></h2>
+      <div class="g-ust"><h2 id="hGozcu">Gözcü kaydı <small>zaman · oda · olay</small></h2>
+      <button type="button" class="g-tumu" data-olay-ac aria-controls="olayCekmece">Tümü · filtre</button></div>
       <ul id="gozcuListe" role="log" aria-live="off"></ul>
     </section>
     <p class="yasal-serit" id="yasal">Araştırma / sanal gösterim · yatırım tavsiyesi değil · gerçek emir yok</p>
@@ -125,6 +143,7 @@
   <div class="ay-ic">
     <header><h2 id="ayarBas">Oda ve çalışan adları</h2><button type="button" id="ayarKapat" aria-label="Ayarları kapat">×</button></header>
     <p class="ks">Adlar yalnız bu tarayıcıda saklanır; JSON olarak dışa ve içe aktarılır. Yalnız etiket değişir: veri ve trader'ın gerçek adresi (kısaltılmış) sabit kalır.</p>
+    <div class="ses-satir"><label class="sw"><input type="checkbox" id="sesAc"><span>Ses: olay başına tek kısa ton</span></label><p class="ks">Varsayılan kapalı. Tonlar kodla üretilir (ses dosyası yok); bu tarayıcıda saklanır.</p></div>
     <div id="ayarListe"></div>
     <div class="b-btnler">
       <button type="button" id="ayarDisa">Dışa aktar (JSON)</button>
@@ -143,6 +162,8 @@
 <script src="ad.js"></script>
 <script src="iletisim.js"></script>
 <script src="bilgi.js"></script>
+<script src="cekmece.js"></script>
+<script src="ses.js"></script>
 <script src="panel.js"></script>
 <script src="main.js"></script>
 </body>

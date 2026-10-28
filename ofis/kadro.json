@@ -385,6 +385,145 @@
    "ad": "Aday masası",
    "ne": "Terfi kuralına yaklaşan adresler bu masalarda bekler.",
    "suz": false
+  },
+  "risk.alarm": {
+   "ad": "Alarm paneli",
+   "ne": "Risk tavanlarının doluluğu: her çubuk bir tavan; tavan dolunca panel ve fener alarm verir.",
+   "suz": false
+  },
+  "haberlesme.zarf_rafi": {
+   "ad": "Zarf rafı",
+   "ne": "Bugün gönderilen Telegram bildirimleri rafta zarf olarak durur.",
+   "suz": false
+  },
+  "sekreterlik.onkayit_kasasi": {
+   "ad": "Ön kayıt kasası",
+   "ne": "Ön kayıt sürümü, commit ve dondurma tarihi kilitli tutulur.",
+   "suz": false
+  },
+  "oda.masa": {
+   "ad": "Oda masaları",
+   "ne": "Gölgede kopyalanan trader'ların masaları; açık gölge işlemleri buradan doğar.",
+   "suz": false
   }
- }
+ },
+ "olay_turleri": {
+  "yeni_adres": {
+   "ad": "Yeni adres",
+   "ton": 660
+  },
+  "kapi_gecti": {
+   "ad": "Kapıdan geçti",
+   "ton": 700
+  },
+  "kapi_elendi": {
+   "ad": "Elendi",
+   "ton": 330
+  },
+  "havuzdan_cikar": {
+   "ad": "Havuzdan çıktı",
+   "ton": 310
+  },
+  "terfi": {
+   "ad": "Terfi",
+   "ton": 880
+  },
+  "kat_dusur": {
+   "ad": "Kat düştü",
+   "ton": 360
+  },
+  "islem_acildi": {
+   "ad": "İşlem açıldı",
+   "ton": 740
+  },
+  "islem_kapandi": {
+   "ad": "İşlem kapandı",
+   "ton": 520
+  },
+  "bildirim": {
+   "ad": "Bildirim",
+   "ton": 800
+  },
+  "risk_tavan": {
+   "ad": "Risk tavanı doldu",
+   "ton": 280
+  },
+  "risk_normal": {
+   "ad": "Risk normale döndü",
+   "ton": 600
+  },
+  "veri_bayat": {
+   "ad": "Veri eski",
+   "ton": 300
+  },
+  "veri_taze": {
+   "ad": "Veri tazelendi",
+   "ton": 640
+  },
+  "denetim": {
+   "ad": "Denetim",
+   "ton": 480
+  },
+  "arsiv_yazildi": {
+   "ad": "Arşiv yazıldı",
+   "ton": 420
+  },
+  "kasa_guncelle": {
+   "ad": "Kasa güncellendi",
+   "ton": 560
+  },
+  "kural_kitabi": {
+   "ad": "Kural kitabı",
+   "ton": 500
+  },
+  "kullanici_karari": {
+   "ad": "Kullanıcı kararı",
+   "ton": 440
+  },
+  "veri_yenile": {
+   "ad": "Veri yenilendi",
+   "ton": 580
+  },
+  "kirmizi_bayrak": {
+   "ad": "Kırmızı bayrak",
+   "ton": 260
+  },
+  "bayrak_kalkti": {
+   "ad": "Bayrak kalktı",
+   "ton": 620
+  }
+ },
+ "ozet_gruplari": [
+  {
+   "ad": "terfi",
+   "turler": [
+    "terfi"
+   ]
+  },
+  {
+   "ad": "çıkış",
+   "turler": [
+    "havuzdan_cikar",
+    "kapi_elendi"
+   ]
+  },
+  {
+   "ad": "kat düşüşü",
+   "turler": [
+    "kat_dusur"
+   ]
+  },
+  {
+   "ad": "bildirim",
+   "turler": [
+    "bildirim"
+   ]
+  },
+  {
+   "ad": "kırmızı bayrak",
+   "turler": [
+    "kirmizi_bayrak"
+   ]
+  }
+ ]
 }
