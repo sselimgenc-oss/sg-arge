@@ -1,4 +1,5 @@
 """Seçim v1 altın örnekleri (docs/GOREV_SECIM_V1.md): 12 satırlık, elle hesaplanmış kapı tablosu → havuz / aday / oda / kontrol."""
+import re
 import json
 from pathlib import Path
 
@@ -164,3 +165,9 @@ def test_secim_main_calistir_dosyasi_ile_tetiklenir():
     assert "workflow_dispatch:" in workflow
     assert "branches:\n      - main" in workflow
     assert "- copytrade/secim/CALISTIR" in workflow
+
+
+def test_secim_isi_bayrak_cekimi_icin_yeterli_sure_tanir():
+    # Run 1 (22 aday) 20 dk'da iptal oldu: aday başına 365 günlük dolum/funding çekimi.
+    minutes = int(re.search(r"timeout-minutes: (\d+)", WORKFLOW.read_text(encoding="utf-8")).group(1))
+    assert minutes >= 120
