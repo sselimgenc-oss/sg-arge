@@ -154,3 +154,17 @@ Her ekranda "araştırma/sanal, yatırım tavsiyesi değil" ibaresi; gerçek par
 
 **İlk 5 iş (sıralı):** 1) Lab odasında oda içi görünüm prototipi; 2) ortak bilgi kutusu (masaüstü panel / telefon çekmece);
 3) `replikler.json` + süs repliği rakam testi; 4) `OLAYLAR.md`'ye zarf/not/ok eşlemesi; 5) ad değiştirme ayarları + dışa/içe aktarma.
+
+## Karar: temel taslak ve sıra (kullanıcı onayı 2026-10-28)
+- **Temel: Taslak 2 (sg-pano #18, Sonnet)** — kodla çizilmiş Canvas 2D motoru, figürler, olaylar, telefon görünümü çalışıyor;
+  dış varlık yok. Taslak 1 (#17) tek bir üretilmiş PNG (3,7 MB) olduğu için sürüm 2'ye temel olamaz; birleştirilmeden kapatılır.
+- **Adım 0 — özgünleştirme (sürüm 2'den önce):** Argon A5 ve lider karşılaştırması Taslak 2'nin Etre'ye fazla benzediğini gösterdi
+  (çapraz bina + sol altta açılı otopark, krem oda etiketleri, üst çubuk düzeni: sekmeler + "SİM/TELEGRAM AÇIK" çipleri + vardiya/saat +
+  "Ofis tam ekran"). Sürüm 1'deki üst çubuk tarifi Etre'den alınmıştı; o tarif geçersiz. Yapılacak:
+  - Farklı bina biçimi ve yerleşim (ör. iç avlu/bahçe merkezli); otopark sol altta açılı dizilim olmaz.
+  - Kendi gezinmemiz (ör. sol dikey menü) ve kendi çip/etiket dili; kendi renk paleti.
+  - Taslak 1'den **kodla yeniden çizilerek** alınacaklar: sıcak iç ışık, cam bölmeler, havuzlu bahçe (PNG kullanılmaz).
+  - A5 hızlı kazanımları: ortam ışığı, odaya göre farklı zemin, küçük işlev nesneleri (semaver, koliler, sunucu ışıkları).
+  - Kabul: Etre görüntüsüyle yan yana ekran görüntüsü PR'da; lider benzerlik kontrolü.
+- **Sonra:** sürüm 2 (yukarıdaki "Sürüm 2" ve "araştırma sentezi"), ilk iş Lab odası iç görünümü.
+- **Yapan:** Sonnet, seçim ve izleme işleri bittikten sonra. Dal: sg-pano #18'in dalı.
