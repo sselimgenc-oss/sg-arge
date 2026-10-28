@@ -18,8 +18,8 @@ verir, çıktıyı elle getirir; lider `arastirma/`'ya koyar).
 
 | Faz | Kim | Görev | Durum |
 |---|---|---|---|
-| 0 kapı v1.1 → main + tam koşu | lider | #309 birleşti; hızlı koşu 24 akıl sağlığı kapısında durdu (`binance_payi` boş) | engel |
-| 0b kapı düzeltmesi | Sonnet | `docs/GOREV_KAPI_DUZELTME.md` | verilecek (kullanıcı) |
+| 0 kapı v1.1 → main + tam koşu | lider | #309, #317 birleşti; hızlı koşu 25 yeşil (hesap d); tam koşu başladı (2026-10-28) | sürüyor |
+| 0b kapı düzeltmesi | Sonnet | `docs/GOREV_KAPI_DUZELTME.md` | bitti (#317) |
 | A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | durdu: Codex ortamında internet yok (kullanıcı açacak); boşluk eşiği karara bağlandı |
 | altyapı sınırları araştırması | Argon | `docs/GOREV_ARGON_ALTYAPI.md` | verilecek (kullanıcı elle) |
 | 2–3 gölge motoru + geçmiş prova | Codex | `docs/GOREV_GOLGE.md` | 0b ve tam koşu bitince |
