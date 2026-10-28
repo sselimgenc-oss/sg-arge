@@ -18,6 +18,7 @@ on:
     branches:
       - main
       - claude/kapi-v1-1
+      - claude/kapi-duzeltme
     paths:
       - copytrade/kapi/CALISTIR
   schedule:
