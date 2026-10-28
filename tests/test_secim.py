@@ -11,6 +11,7 @@ from copytrade.izleme_motoru import load_list
 from copytrade.kurallar import load_rules
 
 RULES = load_rules()
+WORKFLOW = Path(__file__).resolve().parents[1] / ".github/workflows/copytrade_secim.yml"
 
 
 def addr(name: str) -> str:
@@ -156,3 +157,10 @@ def test_tam_kosu_degilse_durur(tmp_path: Path):
     secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28", "--taban-dosyasi", str(tmp_path / "board.json"), "--bayraksiz"])
     assert json.loads((tmp_path / "secim/2026-10-28/secim.json").read_text())["sayilar"]["oda"] == 2
     assert (tmp_path / "secim/2026-10-28/RAPOR.md").exists()
+
+
+def test_secim_main_calistir_dosyasi_ile_tetiklenir():
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+    assert "workflow_dispatch:" in workflow
+    assert "branches:\n      - main" in workflow
+    assert "- copytrade/secim/CALISTIR" in workflow

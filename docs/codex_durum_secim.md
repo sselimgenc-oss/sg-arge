@@ -8,7 +8,8 @@
 - [x] Kırmızı bayraklar (`copytrade/bayrak.py`, `tests/test_bayrak.py`): `bayrak_rol`, `bayrak_vault_orani`, `bayrak_funding_payi`, `bayrak_alt_hesap_ters`,
       `bayrak_hacim_orani` (+ `bayrak_not`); yalnız aday katı, `secim.json` ve RAPOR bölümü; eşik yok, kimseyi elemez; `--bayraksiz` ağ isteğini kapatır.
 - [ ] **Gerçek RAPOR bekliyor: veri dalındaki son koşu HIZLI koşudur (92 satır, kapsam 0,0067); tam koşu yok.** Seçim yalnız `durum = tamam` ve
-      kapsam ≥ 0,95 ile çalışır; tam koşu bitince `CT-Seçim v1` iş akışı elle tetiklenir, RAPOR özeti PR açıklamasına eklenir.
+      kapsam ≥ 0,95 ile çalışır; tam koşu bitince lider PR'ı birleştirir, `CALISTIR` değişikliği `main`de `CT-Seçim v1` iş akışını başlatır ve RAPOR özeti PR açıklamasına eklenir.
+- [ ] **RAPOR: tam koşu bekleniyor.** Tarama `tamam` olmadan seçim tetiklenmez.
 
 ## Kararlar / varsayımlar (belgede yazmıyordu; lider denetlesin)
 - `secim_min_kapsam` = 0,95 (kullanıcı kararı 2026-10-28; lider denetimi).

@@ -4,6 +4,11 @@ name: CT-Seçim v1
 # Çıktı: veri dalına `secim/<tarih>/secim.json` + `RAPOR.md`. İzleme listesi burada üretilmez (kullanıcı onayından sonra, elle: `--izleme-listesi`).
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - copytrade/secim/CALISTIR
 
 permissions:
   contents: write

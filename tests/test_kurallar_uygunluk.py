@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import ast
+from collections import Counter
 import re
 from pathlib import Path
 
@@ -45,6 +46,14 @@ def test_numbered_user_decisions_10_11_14():
     assert RULES["aktif_son_islem_max_gun"] == int(last)
     first, fourth = grab(r"1\. aşama ≥ %(\d+), adım 4 ≥ %(\d+)")
     assert RULES["asama1_min_karli_ay_orani"] == int(first) / 100 and RULES["adim4_min_karli_ay_orani"] == int(fourth) / 100
+
+
+def test_kurallar_yaml_ust_duzey_anahtarlari_yinelenmez():
+    """YAML yükleyicisi son anahtarı sessizce ezdiği için ham metni de denetler."""
+    keys = [line.split(":", 1)[0].strip() for line in (ROOT / "copytrade/kurallar.yaml").read_text(encoding="utf-8").splitlines()
+            if line and not line[0].isspace() and not line.startswith("#") and ":" in line]
+    duplicate = sorted(key for key, count in Counter(keys).items() if count > 1)
+    assert not duplicate, f"kurallar.yaml yinelenen üst düzey anahtarlar: {', '.join(duplicate)}"
 
 
 def test_numbered_user_decision_27_account_floor():
