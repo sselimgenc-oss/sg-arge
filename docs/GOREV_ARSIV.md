@@ -35,3 +35,14 @@ Hyperliquid'in sınırlı verdiği ve sonradan alınamayan verileri bugünden, a
 - Canlı koşu: en az 24 saat çalışmış arşivin kapsam özeti PR açıklamasında (tür başına satır, adres, boşluk; sütun min/medyan/max).
 - Toplam boyut ve günlük büyüme tahmini (R2 ücretsiz katmanına kaç gün/ay sığar).
 - Durum: `docs/codex_durum_arsiv.md`.
+
+## Ek: emir defteri görüntüsü ve gerçek kayma ölçümü (2026-10-28, lider; Codex)
+Neden: kopya maliyeti varsayımı (%0,045 taker + %0,05 kayma) tahmine dayanıyor; Argon A2 küçük coin ve HIP-3'te iyimser olabileceğini
+söylüyor (`arastirma/copytrade/argon_maliyet_dogrulama.md`). Önce ölçülür; kural değişikliği kullanıcı kararı. **Bilgi amaçlıdır.**
+- Yeni tür `l2book`: havuzdaki adreslerin son 7 günde işlem yaptığı coinler (HIP-3 dahil) için `l2Book` görüntüsü, iki taraf ilk 20
+  kademe; mum/pozisyon işiyle aynı sıklık (hedef 15 dk). İstek ağırlığı durum dosyasına (dakikada ≤ 1.200 sınırı ortak).
+- Türetilmiş günlük özet `tur=kayma/`: coin başına 200 $, 1.000 $, 10.000 $ piyasa emrinin orta fiyata göre ortalama kayması
+  (alış ve satış ayrı), medyan ve %90'lık değer, görüntü sayısı. Defter derinliği yetmezse "yetersiz derinlik" olarak işaretlenir.
+- Altın örnek: elle yazılmış 3 kademeli defterde 1.000 $ alışın ağırlıklı ortalama fiyatı ve kayması.
+- Kabul: 24 saatlik koşudan coin sınıfı (BTC/ETH, büyük, küçük, HIP-3) başına kayma tablosu PR açıklamasında; boyut artışı tahmini.
+- Öncelik: gölge motoru (#327) birleştikten sonra; Actions kotası doluyken koşu beklenir.
