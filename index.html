@@ -127,6 +127,7 @@
 
   <main class="sayfa flex-1" id="main">
     <div id="ctMsg" class="hidden p-3 mb-4 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
+    <div id="ksMsg" role="alert" class="hidden w-full p-3 mb-4 rounded border border-amber-600 bg-amber-950/50 text-sm text-amber-100"></div>
     <section data-tab="ozet" class="tab hidden space-y-4"><div id="ozMain" class="space-y-4"></div></section>
     <section data-tab="traderlar" class="tab hidden space-y-4"><div id="trMain"></div></section>
     <section data-tab="huni" class="tab hidden space-y-4"><div id="huMain" class="space-y-4"></div></section>
@@ -151,7 +152,7 @@
   const CT_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/durum.json';
   const CT_KARAR = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/kararlar.jsonl'; // dosya yoksa (404) karar kaydı yok sayılır
   // Keşif verisinin tek uzak kaynağı: GitHub API tarih klasörünü, ardından API'nin verdiği ham adresi bulur.
-  const KESIF_KAYNAK = 'https://api.github.com/repos/sselimgenc-oss/sg-arge/contents/copytrade/kapi?ref=copytrade-kapi';
+  const KESIF_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/kesif/kesif.json';   // yayıncı (kapi_yayimla.sh) sabit yola yazar
   const KESIF_ORNEK = './kesif/ornek_kesif.json';
   const CT_ESKI_DK = 90, CT_SAYFA = 8, CT_AKIS_ADIM = 50, CT_YETERSIZ = 10;
   const KAYMA_ESIK = { intraday: 0.005, swing: 0.015 }; // kullanıcı kararı: %0,5 / %1,5
@@ -645,19 +646,9 @@
       return r.json();
     };
     try {
-      const kok = await jsonOku(KESIF_KAYNAK);
-      if (!Array.isArray(kok)) throw new Error('tarih klasörü listesi bekleniyordu');
-      const tarihler = kok.filter((x) => x?.type === 'dir' && /^\d{4}-\d{2}-\d{2}$/.test(x.name)).map((x) => x.name).sort().reverse();
-      let bulunan = null;
-      for (const tarih of tarihler) {
-        const klasor = await jsonOku(`${KESIF_KAYNAK.replace('?ref=', `/${tarih}?ref=`)}`);
-        const dosya = Array.isArray(klasor) && klasor.find((x) => x?.type === 'file' && x.name === 'kesif.json');
-        if (dosya?.download_url) { bulunan = { tarih, adres: dosya.download_url }; break; }
-      }
-      if (!bulunan) throw new Error('hiçbir tarih klasöründe kesif.json yok');
-      const j = await jsonOku(bulunan.adres);
+      const j = await jsonOku(KESIF_KAYNAK);
       if (!uygunMu(j)) throw new Error('canlı dosyada v1 şeması beklenen alanları içermiyor');
-      KS = j; ksHata = null; ksKaynak = { tarih: bulunan.tarih, ornek: false };
+      KS = j; ksHata = null; ksKaynak = { tarih: String(j.uretildi || '').slice(0, 10), ornek: false };
     } catch (e) {
       try {
         const ornek = await jsonOku(KESIF_ORNEK);
@@ -669,6 +660,9 @@
         ksHata = `Keşif verisi okunamadı (${e.message}; örnek veri: ${ornekHata.message}).`;
       }
     }
+    const ksKutu = $('ksMsg');
+    ksKutu.classList.toggle('hidden', !ksHata);
+    ksKutu.textContent = !ksHata ? '' : ksKaynak?.ornek ? `⚠ Keşif ve Huni ÖRNEK (sahte) veri gösteriyor — gerçek tarama değil. ${ksHata}` : `⚠ ${ksHata}`;
     render(); yonlendir(); detayAc();
   }
   // trader sayfası açıksa o adresin canlı verisini yükle

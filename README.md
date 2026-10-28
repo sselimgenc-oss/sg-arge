@@ -32,7 +32,7 @@
 Eski veri uyarısı 90 dakikadan sonra çıkar (`CT_ESKI_DK`). "ÖRNEK VERİ" etiketi yalnız `kaynak` alanı `ornek` ile başlıyorsa görünür.
 `izleme/ornek_durum.json`: sg-arge `main`'deki sabit örneğin kopyası (sahte veri); test için `CT_KAYNAK` geçici olarak `./izleme/ornek_durum.json` yapılabilir.
 
-Keşif kaynağı `index.html` içindeki `KESIF_KAYNAK` sabitidir. GitHub API ile `copytrade-kapi` dalındaki en yeni tarih klasörünü bulur, içinde `kesif.json` yoksa önceki tarihi dener ve ham dosyayı okur. Canlı kaynak yoksa görünür uyarıyla yerel örneğe düşer. Keşif'teki “Adresi kopyala” düğmesi yalnız cüzdan adresini panoya yazar; emir göndermez.
+Keşif kaynağı `index.html` içindeki `KESIF_KAYNAK` sabitidir: veri dalındaki sabit yol `https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/kesif/kesif.json` (yayıncı `kapi_yayimla.sh` oraya yazar; tarih klasörü listelemesi ve GitHub API çağrısı yok). Canlı kaynak okunamazsa her sekmenin üstünde tam genişlikte "ÖRNEK (sahte) veri" uyarısıyla yerel örneğe düşer. Keşif'teki “Adresi kopyala” düğmesi yalnız cüzdan adresini panoya yazar; emir göndermez.
 
 ## Dosyalar
 | Dosya | Görev |

@@ -15,12 +15,16 @@ function sunucu() {
 
 const ADRES = (n) => '0x' + String(n).padStart(40, '0');
 const HL_POZ = (coin, szi, giris) => ({ position: { coin, szi: String(szi), entryPx: String(giris), unrealizedPnl: '120.5', leverage: { value: 3 } } });
-/* opt: durum (özel durum.json nesnesi), kesif (özel kesif.json nesnesi | 'hata'), hl: false → Hyperliquid erişilemez */
+/* opt: durum (özel durum.json nesnesi), kesif (özel kesif.json nesnesi | 'hata'), canliKesif (veri dalındaki kesif/kesif.json içeriği; yoksa 404), hl: false → Hyperliquid erişilemez.
+   page.istekler: raw/API istek adresleri (sözleşme testi için). */
 async function yakala(page, opt = {}) {
   const oku = (f) => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
   const json = (b) => ({ status: 200, contentType: 'application/json', body: JSON.stringify(b) });
+  page.istekler = [];
+  page.on('request', (q) => { if (/raw\.githubusercontent\.com|api\.github\.com/.test(q.url())) page.istekler.push(q.url().replace(/[?&]t=\d+$/, '')); });
   await page.route('**/raw.githubusercontent.com/**', (r) => {
     const u = r.request().url();
+    if (u.includes('/copytrade-kapi/kesif/kesif.json')) return opt.canliKesif ? r.fulfill(json(opt.canliKesif)) : r.fulfill({ status: 404, body: '' });
     if (u.includes('durum.json')) return r.fulfill(json(opt.durum || oku('izleme/ornek_durum.json')));
     if (u.includes('kararlar.jsonl')) return r.fulfill({ status: 404, body: '' });
     return r.fulfill({ status: 404, body: '' });
