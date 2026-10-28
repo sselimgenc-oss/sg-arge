@@ -29,6 +29,11 @@ Plasebo, alfa, BHY ve istikrar ölçütleri **bilgi sütunu** olarak kalır; kar
 - **Elle liste:** `copytrade/izleme_listesi.yaml` (bugünkü 9 adres).
 - **Elle kopya (Telegram):** [Açtım]/[Atladım] ayrı bir kol olarak ölçülür; elle seçim değer katıyor mu.
 
+**Üç kat (Etre: 1000 → 100 → 20, her katta gölge kopya):** uygun havuzun **tamamı** gölgede izlenir (altyapı izin verdiği ölçüde);
+gölge puanına göre **aday** katı (≈ havuzun %10–20'si) ve **oda** (10–20 adres) seçilir. Kat geçiş kuralları önceden yazılır (en az gün
+ve işlem sayısı, histerezis). Asıl ölçüm her katın **terfiden sonraki** getirisinin havuzun geri kalanıyla farkıdır (Etre'nin
+"kohort ↔ havuz" kıyası); terfi öncesi gölge sonucu kanıt sayılmaz.
+
 **Dinamiklik:** her haftalık taramada yeni uygun adresler aynı kurallarla kollara eklenir ve **kendi etiket tarihinden** itibaren ölçülür
 (giriş haftası = "vintage"). Etiketlenen adres sonradan kollardan silinmez; pasifleşirse sıfır getirili gün olarak paydada kalır.
 
