@@ -1211,11 +1211,15 @@ def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
             elif len(metric_rows) >= int(rules["saglik_min_satir_sabit_kontrolu"]) and metric_rows[name].nunique() <= 1:
                 problems.append(f"{name}: {len(metric_rows)} satırda sabit değer ({metric_rows[name].iloc[0]!r})")
     low, high = float(rules["saglik_net_min"]), float(rules["saglik_net_max"])
-    for name in [c for c in table.columns if re.fullmatch(r"gecikme_\d+dk_net", c)] + (["alfa_yillik"] if "alfa_yillik" in table else []):
+    for name in [c for c in table.columns if re.fullmatch(r"gecikme_\d+dk_net", c)]:
         values = pd.to_numeric(table[name], errors="coerce").dropna()
         bad = values[(values < low) | (values > high)]
         if len(bad):
             problems.append(f"{name}: {len(bad)} satırda net getiri {low:g}..{high:g} dışı (min {values.min():.4g}, max {values.max():.4g})")
+    if "alfa_yillik" in table:
+        values = pd.to_numeric(table["alfa_yillik"], errors="coerce").dropna()
+        if len(values) and not np.isfinite(values).all():
+            problems.append("alfa_yillik: sonlu olmayan değer var")
     if len(metric_rows):
         allowed = set(rules["saglik_bos_olabilir"])
         for name in table.columns:
