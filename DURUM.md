@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-28, lider (Claude).
+Son güncelleme: 2026-10-28 (akşam), lider (Claude).
 
 ## Şu an
 **Kullanıcı kararı 2026-10-28: proje yeniden açıldı (sg-arge + sg-pano), lider Claude. Yeni yol: D** —
@@ -18,12 +18,19 @@ verir, çıktıyı elle getirir; lider `arastirma/`'ya koyar).
 
 | Faz | Kim | Görev | Durum |
 |---|---|---|---|
-| 0 kapı v1.1 → main + tam koşu | lider | #309 birleşti; hızlı koşu 24 akıl sağlığı kapısında durdu (`binance_payi` boş) | engel |
-| 0b kapı düzeltmesi | Sonnet | `docs/GOREV_KAPI_DUZELTME.md` | verilecek (kullanıcı) |
-| A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | durdu: Codex ortamında internet yok (kullanıcı açacak); boşluk eşiği karara bağlandı |
-| altyapı sınırları araştırması | Argon | `docs/GOREV_ARGON_ALTYAPI.md` | verilecek (kullanıcı elle) |
-| 2–3 gölge motoru + geçmiş prova | Sonnet | `docs/GOREV_GOLGE.md` | 0b ve tam koşu bitince |
-| ofis görünümü (sg-pano, örnek veri) | atanacak | `docs/GOREV_OFIS_TASARIM.md` | verilecek (kullanıcı) |
+| 0 kapı v1.1 → main + tam koşu | lider | #309, #317 birleşti; hızlı koşu 25 yeşil (hesap d); tam koşu run 27 kuyrukta (2026-10-28) | sürüyor |
+| 1 Seçim v1 | Sonnet | `docs/GOREV_SECIM_V1.md` (#322; kırmızı bayrak sütunları dahil) | kod hazır; tam koşu sonucunu bekliyor |
+| 0b kapı düzeltmesi | Sonnet | `docs/GOREV_KAPI_DUZELTME.md` | bitti (#317) |
+| A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | birleşti (#319, #321); ilk 24 saat kapsam kanıtı bekleniyor |
+| Argon araştırmaları | Argon | altyapı sınırları, kırmızı bayrak, geçmiş leaderboard (`arastirma/copytrade/argon_*.md`) | bitti |
+| 2–3 gölge motoru + geçmiş prova | Codex | `docs/GOREV_GOLGE.md` | Faz 2 #327 denetimde (V2 tamam; likidasyon, sentetik, sağlama açık); Faz 3 Faz 2'den sonra |
+| ofis görünümü (sg-pano, örnek veri) | Codex + Sonnet | `docs/GOREV_OFIS_TASARIM.md` | iki taslak: sg-pano #17 (Codex), #18 (Sonnet); karşılaştırma sonra |
+
+**Kararlar (kullanıcı, 2026-10-28):**
+- V2 teminatı = trader'a ayrılan gölge sermayesinin tamamı (ön kayıt sürüm 1.2).
+- Dune yok (API ücretli). Faz 3 evreni bugünkü leaderboard; sonuç "iyimser üst sınır" diye raporlanır. Arşivin haftalık
+  leaderboard görüntüleri ileride gerçek geçmiş evreni verir.
+- K8: şimdilik ücretsiz GitHub Actions (canlı izleme saatlik); gecikme sorun olursa yeniden açılır. Ücretli plan yok.
 
 ## Geçmiş (2026-10-27)
 **Kullanıcı kararı 2026-10-27: proje copy trade'e geçti.** Strateji araştırması kapandı ve silindi: strateji kodları,

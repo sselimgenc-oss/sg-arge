@@ -49,3 +49,11 @@ Lider oda tablosunu kullanıcıya sunarken bayraklı adresleri ayrıca gösterir
 - `bayrak_alt_hesap_ters`: master'ın diğer alt hesaplarında aynı coinde ters yönlü açık pozisyon var mı (evet/hayır/kontrol edilemedi).
 - `bayrak_hacim_orani`: 30 gün hacim / hesap değeri (`portfolio`).
 - Altın örnekler: her sütun için elle hesaplanmış bir örnek; istek düşerse değer boş ve `bayrak_not` = "kontrol edilemedi: …".
+
+## Ek 2: bilgi sütunları (2026-10-28, lider; seçim birleştikten sonra ayrı PR; kaynak `arastirma/copytrade/dunya_pratikleri/`)
+Yalnız aday katı; **kimseyi elemez**, oda kararını değiştirmez.
+- `kopya_verimi`: tarz gecikmesindeki net kopya getirisi / trader'ın aynı dönem gerçekleşen getirisi (trader getirisi ≤ 0 ise boş).
+- `min_emir_alti_200`, `min_emir_alti_1000`: trader başına 200 $ / 1.000 $ gölge sermayesinde ölçeklenmiş dolumların Hyperliquid
+  minimum emir büyüklüğünün (10 $, `arastirma/copytrade/argon_emir_kurallari.md`) altında kalan oranı (eşik `kurallar.yaml`'a, kaynağıyla).
+- `stil_kaldirac_orani`: son 30 gün medyan kaldıraç / önceki dönem medyanı; `islemsiz_gun`: son işlemden bu yana gün.
+- Altın örnek: her sütun için elle hesaplanmış bir örnek.

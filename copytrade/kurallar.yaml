@@ -19,6 +19,12 @@ martingale_min_additions: 5
 martingale_min_adverse: 0.02
 # Ölçüm penceresi: 180 gün geçmiş şartı için fill'ler 365 günden çekilir
 fills_lookback_days: 365
+# Gölge katları (ONKAYIT_D): aday havuzun en iyi %15'i; oda adayın en iyi 10–20 adresi.
+secim_aday_orani: 0.15
+secim_oda_min: 10
+secim_oda_max: 20
+golge_terfi_min_hafta: 3
+golge_terfi_min_kapanmis_islem: 10
 # CT-Kapı v1.1 — kullanıcı kararları (2026-10-27, Sol 6.1 görüşüyle; docs/GOREV_TRADER_SECIMI.md).
 # Tarz: medyan elde tutma süresine göre. < 1 sa scalp (adım 3 Kaldı); 1–24 sa intraday; ≥ 24 sa swing.
 tarz_scalp_alti_saat: 1.0
@@ -32,6 +38,25 @@ kisa_islem_dk:
 kopya_gecikme_dk:
   intraday: 30
   swing: 120
+# Gölge V1 (ön kayıt v1.1): trader girişinden azami fiyat sapması.
+golge_fiyat_bandi:
+  intraday: 0.01
+  swing: 0.02
+# Gölge V2 (ONKAYIT_D v1.1; kullanıcı kararı 2026-10-28, dondu).
+golge_v2:
+  intraday:
+    zarar_kes: -0.50
+  swing:
+    gun_0:
+      zarar_kes: -0.50
+      kar_al: null
+    gun_7:
+      zarar_kes: -0.30
+      kar_al: 0.60
+    gun_14:
+      zarar_kes: -0.20
+      kar_al: 0.40
+golge_pozisyon_tavan_carpani: 3.0
 # Raporlanan stres gecikmesi (zorunlu değil; swing'de negatifse "gece riskli")
 stres_gecikme_dk:
   intraday: 120

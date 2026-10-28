@@ -21,8 +21,11 @@ Sayılar uygulamada yalnız `copytrade/kurallar.yaml`'dan okunur; bu belge ↔ y
 ## Kopya kuralı varyantları (aynı sinyaller, paralel gölge)
 - V0 birebir (tarz gecikmesi: intraday 30 dk, swing 120 dk).
 - V1 fiyat bandı: giriş, trader girişinden intraday ≤ %1, swing ≤ %2 uzaksa; atlananlar ayrıca izlenir.
-- V2 zarar/süre çıkışı: teminatın %50'si zararda çık; swing'de 7. ve 14. günde zarar/kâr sınırı daralır (ayrıntı Faz 2'de
-  `kurallar.yaml`'a yazılır, Faz 3'ten önce donar).
+- V2 zarar/süre çıkışı (sayılar kullanıcı onayı 2026-10-28, **dondu**). Teminat = gölgenin o işleme ayırdığı para.
+  - Intraday: teminatın −%50'si zararda çık.
+  - Swing: 0–7. gün zarar −%50, kâr sınırı yok; 7. günden sonra −%30 / +%60; 14. günden sonra −%20 / +%40.
+- Gölge pozisyon üst sınırı (tüm varyantlar, **dondu**): tek pozisyonun büyüklüğü o trader'a ayrılan gölge parasının en çok 3 katı;
+  aşan ekleme kırpılır, olay `kirpildi` diye kaydedilir.
 
 ## Ölçüm
 - Birincil: eşit ağırlıklı, sabit sermayeli kohort ve kontrol portföylerinin günlük net getiri farkı (V0).
@@ -40,3 +43,9 @@ Sayılar uygulamada yalnız `copytrade/kurallar.yaml`'dan okunur; bu belge ↔ y
   Faz 3 geçmiş prova paralel yürür. Durdurma 1 aynen geçerli: prova geçemezse canlı izleme durdurulur.
 - Seçim v1 başlangıç etiketidir (gölge motoru yokken puan = kapının tarz gecikmeli kopya getirisi). Gölge motoru gelince katlar
   ön kayıttaki terfi/çıkış kurallarıyla haftalık güncellenir; v1 etiketleri silinmez.
+
+## Sürüm 1.2 (2026-10-28, kullanıcı onayı)
+- V2'deki "teminat" = gölgenin o trader için ayırdığı sermayenin tamamı (1 birim). Her açık pozisyonun K/Z'si bu birime
+  oranlanır ve her saatlik mumda denetlenir. Neden: işlem başı teminat (trader'ın pozisyon kaldıracı) dolum kayıtlarında yok;
+  geçmiş prova ile canlı gölge aynı kuralla ölçülsün. Eşik sayıları değişmedi.
+- Faz 3 evreni: geçmiş leaderboard kaynağı yok (Dune ücretli); bugünkü leaderboard kullanılır, sonuç "iyimser üst sınır".

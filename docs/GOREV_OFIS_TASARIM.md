@@ -60,3 +60,111 @@ Trader'lar Lab/Aday/Oda masalarında oturan figürler; üstlerinde kısa adres e
 - Olay → animasyon eşlemesinin tablosu (`ofis/OLAYLAR.md`).
 - Lider kontrolü: Etre görüntüleriyle yan yana kalite karşılaştırması; kopya değil.
 - Durum: `sg-arge/docs/codex_durum_ofis.md` (ya da işçinin durum dosyası).
+
+---
+
+# Sürüm 2 — İçine girilebilen, etkileşimli ofis (2026-10-28, kullanıcı isteği)
+
+Başlama koşulu: sürüm 1'in iki taslağından (sg-pano #17 Codex, #18 Sonnet) **esas alınacak olan seçildi** (Argon A5
+karşılaştırması + kullanıcı kararı); diğerinin güçlü yanları içine taşındı. Öncelik trader seçiminin gerisinde; işçi seçim/gölge
+işi bitmeden buna geçmez. Sürüm 1'in bütün kuralları (açık lisans, kopya değil, olaydan doğan hareket, erişilebilirlik) geçerli.
+
+## 1. Oda içi görünüm (yakınlaşma)
+- Bina görünümünde oda tabelasına ya da odaya tıklayınca o odanın **iç sahnesi** açılır: yalnız o oda, daha büyük ölçekte;
+  masalar, dolaplar, ekranlar, kişiler ayrıntılı. Geri düğmesi + `Esc` + tarayıcı geri tuşu (adres `#oda=kapi` gibi) binaya döner.
+- Her odanın iç sahnesi kendi işlevini gösterir (Arşiv: raflar ve kutular; Kapı: kontrol masası; Oda: işlem masaları ve trader
+  ekranları; Risk: alarm paneli; Haberleşme: büyük ekran ve zarflar).
+
+## 2. Tıklanabilir nesneler ve kişiler
+- **Kişi** (çalışan ya da trader): bilgi kutusu — ad, rol, şu an ne yaptığı (son olaydan), ilgili sayılar (ör. trader: tarz, puan,
+  açık işlem, gölge K/Z; zaman damgası ile) + kısa **replik**.
+- **Nesne** (dolap, ekran, masa): bilgi kutusu — o birimin verisi (ör. Arşiv dolabı: tür başına satır, son kayıt zamanı, boşluk).
+- **Reaksiyonlar:** tıklanan kişi küçük bir animasyonla tepki verir (bakar, el sallar, ekranı gösterir).
+
+## 3. Birimler arası iletişim
+- Olay akışındaki gerçek olaylar birimler arası işaretle gösterilir: ok/zarf/kağıt taşıyan figür (Tarama → Kapı: "yeni aday";
+  Kapı → Aday: "terfi"; Risk → Oda: "tavan doldu"; Haberleşme → dışarı: "Telegram gönderildi").
+- Konuşma balonları ve not kağıtları: kısa replik + olayın kendisi (tıklayınca ayrıntı ve zaman).
+- Çalışan ↔ trader etkileşimi: ör. Denetim çalışanı trader masasına gidip "kırmızı bayrak: vault oranı yüksek" notu bırakır;
+  yalnız gerçek bayrak/olay varsa.
+
+## 4. Replik kuralları
+- **Veri replikleri** (olaydan doğar, sayı içerir): yalnız gerçek olay/sayı varsa; şablonlar `ofis/replikler.json`'da
+  (`{olay_turu, rol, sablon}`), sayı alanları veriden doldurulur.
+- **Süs replikleri** (sohbet, espri): ayrı listede, görsel olarak farklı (ör. italik/gri balon); veri gibi görünmez, sayı içermez.
+- Replikler Türkçe; dil dosyası yapısı ileride başka dile çevrilebilecek şekilde.
+
+## 5. Kişiselleştirme
+- Çalışan adları, avatar seçimi (varlık paketinden), oda tabelası adları kullanıcı tarafından değiştirilebilir: ayarlar paneli;
+  tarayıcıda saklanır, dışa/içe aktarılabilir JSON. Varsayılan adlar `ofis/kadro.json`'da.
+- Trader'lar gerçek adres yerine takma adla gösterilebilir (adres ilk 4 hane varsayılan).
+
+## 6. İleride ürünleşme için mimari (şimdiden)
+- **Veri bağdaştırıcısı:** ofis yalnız `durum.json` şemasını (`ofis/SEMA.md`) okur; sg-arge'ye özgü kod bağdaştırıcıda. Başka bir
+  veri kaynağı aynı şemayı üretirse ofis değişmeden çalışır.
+- **Varlık lisansları ticari kullanıma uygun** olmalı (CC0 ya da ticari izinli); lisansı belirsiz tek varlık bile kullanılmaz.
+- Marka/isim: Etre'ye ve başka ürünlere benzemeyen özgün ad ve görünüm.
+- Not (lider): pazarlama aşamasında yatırım tavsiyesi/kopya işlem hizmeti yasal izin gerektirebilir (Türkiye'de SPK); ürün
+  "görselleştirme/araştırma aracı" olarak konumlanır. Bu, kullanıcı kararı ve ayrı bir hukuki inceleme konusudur.
+
+## Kabul (sürüm 2)
+- Her odanın iç sahnesi; her oda için en az 3 tıklanabilir nesne ve tüm kişiler tıklanabilir.
+- Olay → iletişim işareti eşlemesi `ofis/OLAYLAR.md`'de güncel; örnek veride her olay türü en az bir kez tetiklenir.
+- Ad değiştirme: sayfa yenilenince korunur; dışa/içe aktarma çalışır.
+- Masaüstü + telefon ekran görüntüleri, 30 sn ekran kaydı (bina → oda → kişiye tıklama → iletişim işareti).
+- `LISANSLAR.md` ticari kullanım sütunuyla.
+
+## Sürüm 2 — araştırma sentezi (2026-10-28, lider; kaynak `arastirma/ofis/`)
+Üç bağımsız emsal raporu (AI Town, Generative Agents, Pixel Agents, Agent Pixel Office, Kairosoft, Two Point Hospital vb.).
+
+**Teknik karar:** seçilen taslağın mevcut teknolojisinde kalınır (yeniden yazma yok). PixiJS'e geçiş ancak gerçek cihazda
+ölçülmüş 60 fps sorunu varsa. Panel, bilgi kutusu, tooltip HTML/CSS katmanında (erişilebilirlik).
+
+**Varlık:** varsayılan kendi çizimimiz. Dış varlık yalnız lisansı kaynak sayfasından doğrulanıp `LISANSLAR.md`'ye ticari kullanım
+sütunuyla yazılırsa. Sanatı ticari olmayan paketler (ör. Star Office UI sanatı) ve LimeZu gibi lisansı belirsizler kullanılmaz.
+
+**Alınanlar (sürüm 2 kabulüne eklenir):**
+- Odaya giriş aynı tuvalde kamera yakınlaşmasıyla; diğer odalar soluklaşır, seçili odanın duvar/çatısı kalkar. Adres `#oda/<ad>`.
+- Telefonda iki seviye (bina / oda), bilgi alttan çekmece, dokunma hedefi ≥ 44 px, hover'a bağlı işlev yok.
+- Ortak bilgi kutusu üç bölüm: **Kimlik** · **Gerçek veri** (zaman, n, geçerlilik) · **Replik** (ayrı görünüm, "ofis esprisi" etiketi).
+- **"Neden burada?"**: her figür/ekran için o durumu doğuran olay, kural ve tarih; olay işaretine tıklayınca `olay_id` ve zaman.
+- Olay çekmecesi: oda/trader/olay türü filtresi; olaya tıklayınca kamera o odaya gider.
+- Olay kuyruğu: olaylar hızlı gelirse animasyon hızlanır ya da figür doğrudan yeni yerine geçer; pano hiçbir zaman eski bir
+  animasyon yüzünden yanlış durum göstermez.
+- Bayatlık: her ekran köşesinde "X dk önce"; veri bayatsa oda sislenir + açık `VERİ ESKİ` etiketi.
+- Ad değiştirme yalnız etiketi değiştirir; bilgi kutusunda trader'ın gerçek adresi (kısaltılmış) ve kaşif bağlantısı sabit kalır.
+- Süs repliklerinde rakam, adres, oran yasak — bunu denetleyen otomatik test.
+- Olay yokken çizim döngüsü durur (pil ve sahte hareket).
+- Sekreterlikte **ön kayıt kasası** (sürüm, commit, dondurma tarihi); her odada "bu birim ne yapar / ne yapmaz" kartı.
+- Günlük özet yalnız olay günlüğünden ("dün: 3 terfi, 1 çıkış, 2 bildirim"; boş günde "değişiklik yok").
+- Ses varsayılan kapalı, yalnız olay başına bir ton.
+
+**Alınmayanlar (gerekçe):**
+- Kâr/zarara göre renk değiştiren zemin, kâr rozetleri, "en çok kazandıran" manşeti, düşüşte "patron teftişi", seri (streak):
+  performansı oyunlaştırır ve ön kayıttaki **performans körlüğünü** bozar.
+- Trader pozisyonlarını espriye çeviren "dedikodu tahtası": veri ile süsü karıştırır.
+- Ofis içine canlı fiyat grafiği: kapsam dışı.
+
+**Performans körlüğü (ön kayıt "Ölçüm"):** canlı gölge süresince kohort ↔ kontrol karşılaştırması ve kol toplam getirileri
+ofiste **kilitli** (yalnız "hafta x/12"). Tek tek işlem K/Z'si Telegram'daki kadar görünür; toplanmış kol performansı gösterilmez.
+Ofisten hiçbir seçim/oda kararı verilmez.
+
+**Ürünleşme:** veri bağdaştırıcısı + sürümlü şema (`surum`), salt-okunur paylaşım (`?durum=URL`), tema/düzen dışa-içe aktarma.
+Her ekranda "araştırma/sanal, yatırım tavsiyesi değil" ibaresi; gerçek parayla kopyalamaya yönlendiren düğme yok.
+
+**İlk 5 iş (sıralı):** 1) Lab odasında oda içi görünüm prototipi; 2) ortak bilgi kutusu (masaüstü panel / telefon çekmece);
+3) `replikler.json` + süs repliği rakam testi; 4) `OLAYLAR.md`'ye zarf/not/ok eşlemesi; 5) ad değiştirme ayarları + dışa/içe aktarma.
+
+## Karar: temel taslak ve sıra (kullanıcı onayı 2026-10-28)
+- **Temel: Taslak 2 (sg-pano #18, Sonnet)** — kodla çizilmiş Canvas 2D motoru, figürler, olaylar, telefon görünümü çalışıyor;
+  dış varlık yok. Taslak 1 (#17) tek bir üretilmiş PNG (3,7 MB) olduğu için sürüm 2'ye temel olamaz; birleştirilmeden kapatılır.
+- **Adım 0 — özgünleştirme (sürüm 2'den önce):** Argon A5 ve lider karşılaştırması Taslak 2'nin Etre'ye fazla benzediğini gösterdi
+  (çapraz bina + sol altta açılı otopark, krem oda etiketleri, üst çubuk düzeni: sekmeler + "SİM/TELEGRAM AÇIK" çipleri + vardiya/saat +
+  "Ofis tam ekran"). Sürüm 1'deki üst çubuk tarifi Etre'den alınmıştı; o tarif geçersiz. Yapılacak:
+  - Farklı bina biçimi ve yerleşim (ör. iç avlu/bahçe merkezli); otopark sol altta açılı dizilim olmaz.
+  - Kendi gezinmemiz (ör. sol dikey menü) ve kendi çip/etiket dili; kendi renk paleti.
+  - Taslak 1'den **kodla yeniden çizilerek** alınacaklar: sıcak iç ışık, cam bölmeler, havuzlu bahçe (PNG kullanılmaz).
+  - A5 hızlı kazanımları: ortam ışığı, odaya göre farklı zemin, küçük işlev nesneleri (semaver, koliler, sunucu ışıkları).
+  - Kabul: Etre görüntüsüyle yan yana ekran görüntüsü PR'da; lider benzerlik kontrolü.
+- **Sonra:** sürüm 2 (yukarıdaki "Sürüm 2" ve "araştırma sentezi"), ilk iş Lab odası iç görünümü.
+- **Yapan:** Sonnet, seçim ve izleme işleri bittikten sonra. Dal: sg-pano #18'in dalı.

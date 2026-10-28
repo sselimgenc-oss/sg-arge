@@ -26,6 +26,11 @@ def test_good_table_passes():
     assert sanity_check(table(good_row("0xa"), good_row("0xb")), RULES) == []
 
 
+def test_alfa_yillik_yilliklandirilmis_oldugu_icin_net_getiri_araligina_girmez():
+    assert sanity_check(table(good_row(alfa_yillik=-3.6)), RULES) == []
+    assert any(item.startswith("gecikme_30dk_net") for item in sanity_check(table(good_row(gecikme_30dk_net=-3.6)), RULES))
+
+
 @pytest.mark.parametrize("column,value", [("max_drawdown", 1.5e12), ("max_drawdown", -0.1), ("profitable_month_ratio", 1.2), ("plasebo_p", 2)])
 def test_ratio_outside_0_1_fails(column, value):
     problems = sanity_check(table(good_row(**{column: value})), RULES)

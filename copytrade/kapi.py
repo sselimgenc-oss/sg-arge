@@ -597,15 +597,14 @@ def market_shares(fills: list[dict], symbols: set[str] | None = None) -> dict[st
         volume[str(fill.get("coin"))] = volume.get(str(fill.get("coin")), 0.0) + abs(float(fill.get("px", 0)) * float(fill.get("sz", 0)))
     total = sum(volume.values())
     out: dict[str, float | None] = {f"pay_{name}": 0.0 for name in ("kripto", "hisse", "endeks", "emtia")}
-    out["binance_payi"] = None
+    if symbols is not None:
+        out["binance_payi"] = None         # liste var ama hacim 0: tanımlı boş (satır zaten metrik üretmiyor)
     if not total:
         return out
     for coin, value in volume.items():
         out[f"pay_{asset_class(coin)}"] = (out.get(f"pay_{asset_class(coin)}") or 0.0) + value / total
-    if symbols is not None:
+    if symbols is not None:                # liste alınamadıysa (HTTP 451 vb.) sütun hiç yazılmaz; sessiz boş sütun bırakılmaz
         out["binance_payi"] = sum(v for c, v in volume.items() if binance_availability(c, symbols) == "var") / total
-    else:
-        out.pop("binance_payi", None)      # Binance sembol listesi alınamadıysa (HTTP 451 vb.) sütun hiç yazılmaz; sessiz boş sütun bırakılmaz
     return out
 
 
@@ -800,6 +799,27 @@ def build_universe(board: list[dict], external: list[str], client: PublicClient 
     return sorted(universe.values(), key=lambda row: row["address"])
 
 
+def write_universe_snapshot(path: Path, board: list[dict], external: list[str], client: PublicClient | None = None) -> list[dict]:
+    """Tek lider tablosundan üretilen kapı evrenini parçalara ortak anlık görüntü olarak yazar."""
+    leaders = build_universe(board, external, client)
+    path.write_text(json.dumps({"liderler": leaders}, ensure_ascii=False), encoding="utf-8")
+    return leaders
+
+
+def read_universe_snapshot(path: Path) -> list[dict]:
+    """Plan işinin yazdığı evren anlık görüntüsünü, sırasını koruyarak yükler."""
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    leaders = payload.get("liderler")
+    if not isinstance(leaders, list) or any(not isinstance(row, dict) or not row.get("address") for row in leaders):
+        raise ValueError(f"evren anlık görüntüsü geçersiz: {path}")
+    return leaders
+
+
+def shard_universe(leaders: list[dict], index: int, count: int) -> list[dict]:
+    """Sabit sıralı ortak evrenden çakışmasız bir parça seçer."""
+    return leaders[index::count]
+
+
 def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now: datetime, start: int, start_200: int,
                      symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None, dexes: list[str] | None = None) -> dict[str, Any]:
     """Tek adres için 1. aşama + adım 1–6 (adım 7 ve katman birleştirmede). ``yalniz_adim5``: plaseboyu adım 3–4'e
@@ -936,6 +956,8 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--beklenen-parca", type=int, help="birleştirme: beklenen parça sayısı (eksik parça → durum: eksik)")
     parser.add_argument("--mod", default="tam", help="birleştirme: tam | hizli | eksik")
     parser.add_argument("--adres", action="append", default=[], help="kapıya zorla eklenen adres (dis_aday); tekrarlanabilir")
+    parser.add_argument("--evren-yaz", type=Path, help="yalnız ortak evren anlık görüntüsünü yazıp çık")
+    parser.add_argument("--evren-dosyasi", type=Path, help="plan işinin ortak evren anlık görüntüsünü kullan")
     args = parser.parse_args(argv)
     if args.birlestir:
         merge_shards(args.birlestir, args.root, args.beklenen_parca, args.mod)
@@ -948,7 +970,11 @@ def main(argv: list[str] | None = None) -> None:
     out.mkdir(parents=True, exist_ok=True)
     client = PublicClient(limiter=RateLimiter(1000))
     external = sorted(set(external_candidates()) | {a.lower() for a in args.adres})
-    leaders = build_universe(client.leaderboard(), external, client)
+    if args.evren_yaz:
+        leaders = write_universe_snapshot(args.evren_yaz, client.leaderboard(), external, client)
+        print(f"Evren anlık görüntüsü: {len(leaders)} adres → {args.evren_yaz}", flush=True)
+        return
+    leaders = read_universe_snapshot(args.evren_dosyasi) if args.evren_dosyasi else build_universe(client.leaderboard(), external, client)
     evren = len(leaders)
     (out / "evren.json").write_text(json.dumps({"evren": evren}), encoding="utf-8")
     (out / "bitti.json").unlink(missing_ok=True)      # parça bitişi yalnız bu koşunun sonunda yazılır; zaman aşımında yok = eksik
@@ -959,7 +985,7 @@ def main(argv: list[str] | None = None) -> None:
         leaders = [row for row in leaders if row["address"] in eligible or row["kaynak"] == "dis_aday"]
     if args.eksikleri_tamamla:
         leaders = missing_addresses(leaders, pd.read_csv(previous_path) if previous_path.exists() else None)
-    leaders = leaders[args.shard_index::args.shard_count]
+    leaders = shard_universe(leaders, args.shard_index, args.shard_count)
     symbols, binance_note = write_binance_universe(out, now)
     start = int((now - timedelta(days=int(rules["fills_lookback_days"]))).timestamp() * 1000)
     start_200 = int((now - timedelta(days=int(rules["mum_pencere_gun"]))).timestamp() * 1000)
@@ -1212,11 +1238,17 @@ def sanity_check(table: pd.DataFrame, rules: dict | None = None) -> list[str]:
             elif len(metric_rows) >= int(rules["saglik_min_satir_sabit_kontrolu"]) and metric_rows[name].nunique() <= 1:
                 problems.append(f"{name}: {len(metric_rows)} satırda sabit değer ({metric_rows[name].iloc[0]!r})")
     low, high = float(rules["saglik_net_min"]), float(rules["saglik_net_max"])
-    for name in [c for c in table.columns if re.fullmatch(r"gecikme_\d+dk_net", c)] + (["alfa_yillik"] if "alfa_yillik" in table else []):
+    for name in [c for c in table.columns if re.fullmatch(r"gecikme_\d+dk_net", c)]:
         values = pd.to_numeric(table[name], errors="coerce").dropna()
         bad = values[(values < low) | (values > high)]
         if len(bad):
             problems.append(f"{name}: {len(bad)} satırda net getiri {low:g}..{high:g} dışı (min {values.min():.4g}, max {values.max():.4g})")
+    if "alfa_yillik" in table:
+        values = pd.to_numeric(table["alfa_yillik"], errors="coerce").dropna()
+        low_alpha, high_alpha = low * 365, high * 365
+        bad = values[~np.isfinite(values) | (values < low_alpha) | (values > high_alpha)]
+        if len(bad):
+            problems.append(f"alfa_yillik: {len(bad)} satırda yıllık net getiri {low_alpha:g}..{high_alpha:g} dışı")
     if len(metric_rows):
         allowed = set(rules["saglik_bos_olabilir"])
         for name in table.columns:
