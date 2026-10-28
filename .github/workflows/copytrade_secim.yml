@@ -1,0 +1,58 @@
+name: CT-Seçim v1
+
+# Elle çalışır. Girdi: `copytrade-kapi` veri dalındaki en son TAM kapı koşusu (durum = tamam, kapsam ≥ secim_min_kapsam).
+# Çıktı: veri dalına `secim/<tarih>/secim.json` + `RAPOR.md`. İzleme listesi burada üretilmez (kullanıcı onayından sonra, elle: `--izleme-listesi`).
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - copytrade/secim/CALISTIR
+
+permissions:
+  contents: write
+
+concurrency:
+  group: copytrade-secim
+  cancel-in-progress: false
+
+jobs:
+  secim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Veri dalından kapı sonuçlarını getir
+        run: |
+          git fetch --depth=1 origin copytrade-kapi
+          git archive FETCH_HEAD copytrade/kapi | tar -x
+      - name: Seçim
+        run: python -m copytrade.secim --root copytrade --output secim
+      - name: Veri dalına yaz
+        run: |
+          day=$(date -u +%F)
+          archive=$(mktemp -d)
+          mkdir -p "$archive/secim"
+          cp -r "secim/$day" "$archive/secim/"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin copytrade-kapi
+          git checkout -f -B copytrade-kapi FETCH_HEAD
+          cp -r "$archive"/. .
+          git add -f "secim/$day"
+          git diff --cached --quiet && exit 0
+          git commit -m "copytrade: Seçim v1 $day"
+          for attempt in 1 2 3; do
+            git pull --rebase origin copytrade-kapi
+            git push origin HEAD:copytrade-kapi && exit 0
+            sleep 5
+          done
+          exit 1

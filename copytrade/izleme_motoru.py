@@ -29,6 +29,7 @@ from pano.saglik import CUSUM_YELLOW, _cusum, _mdd, blok_bootstrap
 MINUTE = 60_000
 DAY = 86_400_000
 STYLES = {'intraday', 'swing'}
+KOLLAR = {'oda', 'kontrol', 'taban', 'elle'}
 
 
 def timestamp(value) -> pd.Timestamp:
@@ -61,8 +62,10 @@ def load_list(path: Path) -> list[dict]:
     ids, addresses = set(), set()
     for row in rows:
         required = {'id', 'adres', 'takma_ad', 'durum', 't0'}
-        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {'tarz'}:
-            raise ValueError('İzleme satırında yalnız id, adres, takma_ad, durum, t0 (ve isteğe bağlı tarz) olmalı.')
+        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {'tarz', 'kol', 'kollar'}:
+            raise ValueError('İzleme satırında yalnız id, adres, takma_ad, durum, t0 (ve isteğe bağlı tarz, kol, kollar) olmalı.')
+        if 'kol' in row and row['kol'] not in KOLLAR:
+            raise ValueError('Geçersiz kol (oda | kontrol | taban | elle).')
         if 'tarz' in row and row['tarz'] not in STYLES:
             raise ValueError('Geçersiz tarz (intraday | swing).')
         if not isinstance(row['id'], str) or not re.fullmatch(r'[A-Za-z0-9_-]+', row['id']):

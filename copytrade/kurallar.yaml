@@ -19,10 +19,6 @@ martingale_min_additions: 5
 martingale_min_adverse: 0.02
 # Ölçüm penceresi: 180 gün geçmiş şartı için fill'ler 365 günden çekilir
 fills_lookback_days: 365
-# Gölge katları (ONKAYIT_D): aday havuzun en iyi %15'i; oda adayın en iyi 10–20 adresi.
-secim_aday_orani: 0.15
-secim_oda_min: 10
-secim_oda_max: 20
 golge_terfi_min_hafta: 3
 golge_terfi_min_kapanmis_islem: 10
 # CT-Kapı v1.1 — kullanıcı kararları (2026-10-27, Sol 6.1 görüşüyle; docs/GOREV_TRADER_SECIMI.md).
@@ -137,3 +133,10 @@ saglik_bos_olabilir: [plasebo_hata, plasebo_not, hata, not, plasebo_gercek_skor,
 # Arşiv: ardışık kayıt arası > 3 × hedef aralık boşluktur; günlük boşluk > %10 ise iş kırmızıdır.
 arsiv_bosluk_carpani: 3
 arsiv_bosluk_esigi: 0.10
+# Seçim v1 (docs/GOREV_SECIM_V1.md, kullanıcı onaylı 2026-10-28): aday = tarz başına puanı > 0 olanların en iyi %15'i (yukarı yuvarla);
+# oda aday katından en çok 20, en az 10 (aday < 10 ise oda = tüm aday, RAPOR'da yazılır).
+secim_aday_orani: 0.15
+secim_oda_min: 10
+secim_oda_max: 20
+# Seçim yalnız tam koşuda çalışır: durum.json kapsamı (işlenen / evren) bunun altındaysa (ör. hızlı koşu) durur. (Kullanıcı kararı 2026-10-28: 0,95.)
+secim_min_kapsam: 0.95
