@@ -35,10 +35,19 @@ jobs:
           git fetch --depth=1 origin copytrade-kapi
           git archive FETCH_HEAD copytrade/kapi | tar -x
       - name: Seçim
-        run: python -m copytrade.secim --root copytrade --output secim
+        id: secim
+        run: |
+          # Gün bir kez belirlenir; yayım aynı günü kullanır (gece yarısını geçen koşu sonucu kaybetmesin).
+          day=$(date -u +%F)
+          echo "day=$day" >> "$GITHUB_OUTPUT"
+          python -m copytrade.secim --root copytrade --output secim --tarih "$day"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: secim-${{ steps.secim.outputs.day }}
+          path: secim
       - name: Veri dalına yaz
         run: |
-          day=$(date -u +%F)
+          day=${{ steps.secim.outputs.day }}
           archive=$(mktemp -d)
           mkdir -p "$archive/secim"
           cp -r "secim/$day" "$archive/secim/"
