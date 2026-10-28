@@ -1,6 +1,8 @@
 from copytrade.defter import DAY, HOUR
 from copytrade.golge import calistir, kirp_pozisyon, saglama, v2_sinir
 from copytrade.kurallar import load_rules
+import pytest
+from copytrade.kollar import olay_yaz, sec
 
 T0 = 20_833 * DAY
 RULES = load_rules()
@@ -23,7 +25,7 @@ def test_altin_v0_kismi_kapama_flip_funding_ve_saglama():
 
 
 def test_altin_v1_bant_ve_eksik_kacirilan_satiri_kaybolmaz():
-    rows = [fill(10, "B", 1, 0, 100), fill(200, "A", 1, 1, 100, 2)]
+    rows = [fill(10, "B", 1, 0, 100), fill(20, "A", 1, 1, 100, 2)]
     result = calistir(rows, candles(100, 103), 1000, style="intraday", etiket_ms=T0, end_ms=T0 + HOUR, variant="V1")
     assert any(event["durum"] == "atlandi_bant" for event in result["olaylar"])
     assert any(event["durum"] == "kacirildi" for event in result["olaylar"])
@@ -48,6 +50,13 @@ def test_altin_v2_8_gunde_eksi31_cikar_6_gunde_eksi49_kalir():
 
 
 def test_altin_3x_asan_ekleme_kirpilir():
-    clipped, event = kirp_pozisyon(fill(10, "B", 40, 0, 100), 1_000)
-    assert float(clipped["sz"]) == 30.0
-    assert event == {"durum": "kirpildi", "eski_sz": "40", "yeni_sz": "30.0", "tavan_usd": 3_000.0}
+    clipped, event = kirp_pozisyon(fill(10, "B", 40, 0, 100), 20 / 1_000, 1_000)
+    assert float(clipped["sz"]) == pytest.approx(10.0)
+    assert event["durum"] == "kirpildi" and event["tavan_usd"] == 3.0
+
+
+def test_altin_kontrol_tohumu_ve_olay_arsivi_tekrarlanabilir(tmp_path):
+    assert sec(["a", "b", "c"], {"a": 2, "b": 1}, 1, "2026-10-28") == sec(["a", "b", "c"], {"a": 2, "b": 1}, 1, "2026-10-28")
+    path = tmp_path / "tur=olay" / "olaylar.jsonl"
+    olay_yaz(path, {"durum": "giris", "adres": "a"})
+    assert path.read_text().count("giris") == 1

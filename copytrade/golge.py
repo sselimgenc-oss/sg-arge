@@ -22,13 +22,27 @@ def _delay(style: str, rules: dict) -> int:
 
 def _band_fills(fills: list[dict], market: Market, delay: int, style: str, rules: dict) -> tuple[list[dict], list[dict]]:
     """V1: bandı aşan giriş/eklemeyi silmez, denetim için `atlandi_bant` kaydeder."""
-    allowed, skipped = [], []
+    allowed, skipped, skipped_openings = [], [], set()
     limit = float(rules["golge_fiyat_bandi"][style])
     for fill in fills:
-        execution = market.execution(str(fill["coin"]), int(fill["time"]) + delay * 60_000)
+        coin = str(fill["coin"])
+        signed = (-1 if fill["side"] in {"A", "Sell", "sell"} else 1) * float(fill["sz"])
+        before = float(fill.get("startPosition", 0))
+        opening_or_add = before == 0 or before * signed > 0
+        # Atlanan girişin sonraki kapanışı gölgede ters işlem başlatmamalı.
+        if coin in skipped_openings and not opening_or_add:
+            skipped.append({"durum": "atlandi_bant", "dolum": fill, "neden": "giris_atlandi"})
+            if before + signed == 0:
+                skipped_openings.discard(coin)
+            continue
+        if not opening_or_add:
+            allowed.append(fill)
+            continue
+        execution = market.execution(coin, int(fill["time"]) + delay * 60_000)
         source = float(fill.get("px", 0))
         if execution and source and abs(execution[1] / source - 1) > limit:
             skipped.append({"durum": "atlandi_bant", "dolum": fill, "giris": execution[1]})
+            skipped_openings.add(coin)
         else:
             allowed.append(fill)
     return allowed, skipped
@@ -48,14 +62,16 @@ def v2_sinir(style: str, gecen_gun: float, getiri: float, rules: dict | None = N
     return None
 
 
-def kirp_pozisyon(fill: dict, account: float, rules: dict | None = None) -> tuple[dict, dict | None]:
-    """Tek işlemdeki gölge notionalını ön kayıtlı 3× teminat tavanına kırpar."""
+def kirp_pozisyon(fill: dict, shadow_before: float, account: float, rules: dict | None = None) -> tuple[dict, dict | None]:
+    """Tavan tek doluma değil, ekleme SONRASI birikmiş gölge pozisyonuna uygulanır."""
     rules = rules or load_rules()
-    cap = float(account) * float(rules["golge_pozisyon_tavan_carpani"])
+    cap = float(rules["golge_pozisyon_tavan_carpani"])
     price, size = abs(float(fill.get("px", 0))), float(fill["sz"])
-    if not price or abs(size) * price <= cap:
+    signed = size / float(account)
+    if not price or abs(shadow_before + signed) * price <= cap:
         return fill, None
-    clipped = dict(fill, sz=str(cap / price))
+    allowed = max(0.0, cap / price - abs(shadow_before)) * float(account)
+    clipped = dict(fill, sz=str(allowed))
     return clipped, {"durum": "kirpildi", "eski_sz": str(fill["sz"]), "yeni_sz": clipped["sz"], "tavan_usd": cap}
 
 
@@ -71,6 +87,7 @@ def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *,
     rules = rules or load_rules()
     delay = _delay(style, rules) if delay_min is None else delay_min
     source = [row for row in fills if int(row["time"]) >= etiket_ms]
+    trader_source = list(source)
     market = Market(candles)
     skipped: list[dict] = []
     if variant == "V1":
@@ -79,9 +96,14 @@ def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *,
         raise ValueError("Varyant V0, V1 veya V2 olmalı")
     capped = []
     cap_events = []
+    shadow = {}
     for row in source:
-        row, event = kirp_pozisyon(row, float(account), rules)
+        coin = str(row["coin"])
+        before = shadow.get(coin, 0.0)
+        row, event = kirp_pozisyon(row, before, float(account), rules)
         capped.append(row)
+        sign = -1 if row["side"] in {"A", "Sell", "sell"} else 1
+        shadow[coin] = before + sign * float(row["sz"]) / float(account)
         if event:
             cap_events.append(event)
     ledger = copy_ledger(capped, market, account, delay, etiket_ms, end_ms, FundingRates(funding), rules, daily=True)
@@ -89,9 +111,13 @@ def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *,
     if ledger.get("missing", 0):
         events.append({"durum": "eksik", "sayi": ledger["missing"]})
     # Trader girişinden önce çıkarsa gecikmeli giriş gerçekleşemez; satır kanıt olarak kalır.
-    for fill in source:
+    for fill in trader_source:
         target = int(fill["time"]) + delay * 60_000
-        if target > end_ms:
+        # Trader gecikmeli giriş zamanından önce aynı pozisyonu kapattıysa kaçırıldı.
+        later_close = any(str(other["coin"]) == str(fill["coin"]) and int(fill["time"]) < int(other["time"]) < target
+                          and float(other.get("startPosition", 0)) * ((-1 if other["side"] in {"A", "Sell", "sell"} else 1) * float(other["sz"])) < 0
+                          for other in trader_source)
+        if later_close:
             events.append({"durum": "kacirildi", "dolum": fill})
     if variant == "V2" and ledger.get("net") is not None:
         reason = v2_sinir(style, (end_ms - etiket_ms) / 86_400_000, float(ledger["net"]), rules)
