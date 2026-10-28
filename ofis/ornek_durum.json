@@ -95,7 +95,12 @@
    "gun": 6,
    "islem_n": 51,
    "puan": 0.43,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0001",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-22T08:00:00Z"
+   }
   },
   {
    "id": "T002",
@@ -107,7 +112,12 @@
    "gun": 22,
    "islem_n": 49,
    "puan": 0.46,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0002",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-06T08:00:00Z"
+   }
   },
   {
    "id": "T003",
@@ -119,7 +129,12 @@
    "gun": 7,
    "islem_n": 44,
    "puan": 0.63,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0003",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-21T08:00:00Z"
+   }
   },
   {
    "id": "T004",
@@ -131,7 +146,12 @@
    "gun": 16,
    "islem_n": 17,
    "puan": 0.48,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0004",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-12T08:00:00Z"
+   }
   },
   {
    "id": "T005",
@@ -143,7 +163,12 @@
    "gun": 15,
    "islem_n": 14,
    "puan": 0.86,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0005",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-13T08:00:00Z"
+   }
   },
   {
    "id": "T006",
@@ -155,7 +180,12 @@
    "gun": 7,
    "islem_n": 42,
    "puan": 0.46,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0006",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-21T08:00:00Z"
+   }
   },
   {
    "id": "T007",
@@ -167,7 +197,12 @@
    "gun": 3,
    "islem_n": 30,
    "puan": 0.49,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0007",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-25T08:00:00Z"
+   }
   },
   {
    "id": "T008",
@@ -179,7 +214,12 @@
    "gun": 6,
    "islem_n": 30,
    "puan": 0.94,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0008",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-22T08:00:00Z"
+   }
   },
   {
    "id": "T009",
@@ -191,7 +231,12 @@
    "gun": 13,
    "islem_n": 48,
    "puan": 0.94,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0009",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-15T08:00:00Z"
+   }
   },
   {
    "id": "T010",
@@ -203,7 +248,12 @@
    "gun": 7,
    "islem_n": 15,
    "puan": 0.89,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0010",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-21T08:00:00Z"
+   }
   },
   {
    "id": "T011",
@@ -215,7 +265,12 @@
    "gun": 19,
    "islem_n": 37,
    "puan": 0.76,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0011",
+    "kural": "ön eleme kuralı: Kapı'dan geçti",
+    "zaman": "2026-10-09T08:00:00Z"
+   }
   },
   {
    "id": "T014",
@@ -227,7 +282,12 @@
    "gun": 18,
    "islem_n": 98,
    "puan": 0.49,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0014",
+    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "zaman": "2026-10-13T08:00:00Z"
+   }
   },
   {
    "id": "T015",
@@ -239,7 +299,12 @@
    "gun": 24,
    "islem_n": 36,
    "puan": 0.47,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0015",
+    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "zaman": "2026-10-07T08:00:00Z"
+   }
   },
   {
    "id": "T016",
@@ -251,7 +316,12 @@
    "gun": 19,
    "islem_n": 101,
    "puan": 0.76,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0016",
+    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "zaman": "2026-10-12T08:00:00Z"
+   }
   },
   {
    "id": "T017",
@@ -263,7 +333,12 @@
    "gun": 12,
    "islem_n": 86,
    "puan": 0.67,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0017",
+    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "zaman": "2026-10-19T08:00:00Z"
+   }
   },
   {
    "id": "T018",
@@ -275,7 +350,12 @@
    "gun": 18,
    "islem_n": 35,
    "puan": 0.7,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0018",
+    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "zaman": "2026-10-13T08:00:00Z"
+   }
   },
   {
    "id": "T019",
@@ -287,7 +367,12 @@
    "gun": 15,
    "islem_n": 45,
    "puan": 0.57,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0019",
+    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "zaman": "2026-10-16T08:00:00Z"
+   }
   },
   {
    "id": "T020",
@@ -299,7 +384,12 @@
    "gun": 11,
    "islem_n": 74,
    "puan": 0.81,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0020",
+    "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem",
+    "zaman": "2026-10-20T08:00:00Z"
+   }
   },
   {
    "id": "T031",
@@ -311,7 +401,12 @@
    "gun": 25,
    "islem_n": 87,
    "puan": 0.45,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0031",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-10T08:00:00Z"
+   }
   },
   {
    "id": "T032",
@@ -323,7 +418,12 @@
    "gun": 22,
    "islem_n": 147,
    "puan": 0.92,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0032",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-13T08:00:00Z"
+   }
   },
   {
    "id": "T033",
@@ -335,7 +435,12 @@
    "gun": 26,
    "islem_n": 124,
    "puan": 0.75,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0033",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-09T08:00:00Z"
+   }
   },
   {
    "id": "T034",
@@ -347,7 +452,12 @@
    "gun": 21,
    "islem_n": 62,
    "puan": 0.54,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0034",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-14T08:00:00Z"
+   }
   },
   {
    "id": "T035",
@@ -359,7 +469,12 @@
    "gun": 27,
    "islem_n": 64,
    "puan": 0.8,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0035",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-08T08:00:00Z"
+   }
   },
   {
    "id": "T036",
@@ -371,7 +486,12 @@
    "gun": 26,
    "islem_n": 93,
    "puan": 0.92,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0036",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-09T08:00:00Z"
+   }
   },
   {
    "id": "T037",
@@ -383,7 +503,12 @@
    "gun": 21,
    "islem_n": 65,
    "puan": 0.39,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0037",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-14T08:00:00Z"
+   }
   },
   {
    "id": "T038",
@@ -395,7 +520,12 @@
    "gun": 23,
    "islem_n": 85,
    "puan": 0.75,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0038",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-12T08:00:00Z"
+   }
   },
   {
    "id": "T039",
@@ -407,7 +537,12 @@
    "gun": 24,
    "islem_n": 53,
    "puan": 0.65,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0039",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-11T08:00:00Z"
+   }
   },
   {
    "id": "T040",
@@ -419,7 +554,12 @@
    "gun": 20,
    "islem_n": 133,
    "puan": 0.65,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0040",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-15T08:00:00Z"
+   }
   },
   {
    "id": "T041",
@@ -431,7 +571,12 @@
    "gun": 21,
    "islem_n": 109,
    "puan": 0.82,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0041",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-14T08:00:00Z"
+   }
   },
   {
    "id": "T042",
@@ -443,7 +588,12 @@
    "gun": 27,
    "islem_n": 94,
    "puan": 0.45,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0042",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-08T08:00:00Z"
+   }
   },
   {
    "id": "T043",
@@ -455,7 +605,12 @@
    "gun": 24,
    "islem_n": 71,
    "puan": 0.63,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0043",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-11T08:00:00Z"
+   }
   },
   {
    "id": "T044",
@@ -467,7 +622,12 @@
    "gun": 22,
    "islem_n": 99,
    "puan": 0.49,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0044",
+    "kural": "kat geçiş kuralı + ilk 2N içinde",
+    "zaman": "2026-10-13T08:00:00Z"
+   }
   },
   {
    "id": "T045",
@@ -479,7 +639,12 @@
    "gun": 11,
    "islem_n": 16,
    "puan": 0.61,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0045",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-17T08:00:00Z"
+   }
   },
   {
    "id": "T046",
@@ -491,7 +656,12 @@
    "gun": 27,
    "islem_n": 47,
    "puan": 0.61,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0046",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-01T08:00:00Z"
+   }
   },
   {
    "id": "T047",
@@ -503,7 +673,12 @@
    "gun": 26,
    "islem_n": 79,
    "puan": 0.9,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0047",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-02T08:00:00Z"
+   }
   },
   {
    "id": "T048",
@@ -515,7 +690,12 @@
    "gun": 24,
    "islem_n": 61,
    "puan": 0.75,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0048",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-04T08:00:00Z"
+   }
   },
   {
    "id": "T049",
@@ -527,7 +707,12 @@
    "gun": 12,
    "islem_n": 43,
    "puan": 0.59,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0049",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-16T08:00:00Z"
+   }
   },
   {
    "id": "T050",
@@ -539,7 +724,12 @@
    "gun": 27,
    "islem_n": 28,
    "puan": 0.72,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0050",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-01T08:00:00Z"
+   }
   },
   {
    "id": "T051",
@@ -551,7 +741,12 @@
    "gun": 13,
    "islem_n": 52,
    "puan": 0.87,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0051",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-15T08:00:00Z"
+   }
   },
   {
    "id": "T052",
@@ -563,7 +758,12 @@
    "gun": 24,
    "islem_n": 24,
    "puan": 0.44,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0052",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-04T08:00:00Z"
+   }
   },
   {
    "id": "T053",
@@ -575,7 +775,12 @@
    "gun": 16,
    "islem_n": 36,
    "puan": 0.83,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0053",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-12T08:00:00Z"
+   }
   },
   {
    "id": "T054",
@@ -587,7 +792,12 @@
    "gun": 12,
    "islem_n": 72,
    "puan": 0.65,
-   "ornek": true
+   "ornek": true,
+   "kat_olay": {
+    "id": "ev-h-0054",
+    "kural": "rastgele atama (sabit tohum, ön kayıtlı)",
+    "zaman": "2026-10-16T08:00:00Z"
+   }
   },
   {
    "id": "T061",
@@ -895,24 +1105,28 @@
  },
  "olaylar": [
   {
+   "id": "ev-001",
    "t": 2,
    "tur": "yeni_adres",
    "trader": "T061",
    "adres": "0xAAAA…0061",
    "oda": "tarama",
-   "metin": "Tarama: yeni adres bulundu"
+   "metin": "Tarama: yeni adres bulundu",
+   "kural": "haftalık tarama (leaderboard + ön kayıt süzgeci)"
   },
   {
+   "id": "ev-002",
    "t": 6,
    "tur": "kapi_gecti",
    "trader": "T061",
    "oda": "kapi",
-   "metin": "Kapı: ön eleme geçti → Lab"
+   "metin": "Kapı: ön eleme geçti → Lab",
+   "kural": "ön eleme kuralı"
   },
   {
+   "id": "ev-003",
    "t": 11,
    "tur": "islem_acildi",
-   "id": "y1",
    "trader": "T033",
    "coin": "BTC",
    "yon": "long",
@@ -922,104 +1136,138 @@
    "kz_yuzde": 0.0,
    "lik_uzaklik": 31.5,
    "oda": "oda",
-   "metin": "T033 · BTC LONG 3x açıldı"
+   "metin": "T033 · BTC LONG 3x açıldı",
+   "kural": "gölge kopya kuralı: trader pozisyon açtı"
   },
   {
+   "id": "ev-004",
    "t": 14,
    "tur": "bildirim",
    "kanal": "telegram",
    "oda": "haberlesme",
-   "metin": "T033 · BTC LONG açtı · 3x"
+   "metin": "T033 · BTC LONG açtı · 3x",
+   "kural": "Telegram bildirim kuralı: açılış ve kapanış"
   },
   {
+   "id": "ev-005",
    "t": 19,
    "tur": "terfi",
    "trader": "T004",
    "kimden": "lab",
    "kime": "aday",
    "oda": "aday",
-   "metin": "Lab → Aday (kural: en az 14 gün, 20 işlem)"
+   "metin": "Lab → Aday (kural: en az 14 gün, 20 işlem)",
+   "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem"
   },
   {
+   "id": "ev-006",
    "t": 27,
    "tur": "risk_tavan",
    "kalem": "coin",
    "deger": 1.0,
    "oda": "risk",
-   "metin": "Risk: coin başı tavan doldu (BTC)"
+   "metin": "Risk: coin başı tavan doldu (BTC)",
+   "kural": "risk tavanı: coin başı"
   },
   {
+   "id": "ev-007",
    "t": 31,
    "tur": "islem_kapandi",
-   "id": "x2",
    "neden": "trader_kapatti",
    "kz_usd": -1.88,
    "kz_yuzde": -9.4,
    "oda": "finans",
-   "metin": "T033 · ETH SHORT trader kapattı"
+   "metin": "T033 · ETH SHORT trader kapattı",
+   "kural": "trader_kapatti"
   },
   {
+   "id": "ev-008",
    "t": 35,
    "tur": "bildirim",
    "kanal": "telegram",
    "oda": "haberlesme",
-   "metin": "T033 · ETH SHORT kapandı"
+   "metin": "T033 · ETH SHORT kapandı",
+   "kural": "Telegram bildirim kuralı: açılış ve kapanış"
   },
   {
+   "id": "ev-009",
    "t": 40,
    "tur": "veri_bayat",
    "oda": "lab",
    "yas_dk": 95,
-   "metin": "Lab verisi bayat (95 dk)"
+   "metin": "Lab verisi bayat (95 dk)",
+   "kural": "veri tazelik eşiği: 90 dk"
   },
   {
+   "id": "ev-010",
    "t": 45,
    "tur": "denetim",
    "sonuc": "uyari",
    "oda": "denetim",
-   "metin": "Denetim: Lab verisi bayat, yayım durdu"
+   "metin": "Denetim: Lab verisi bayat, yayım durdu",
+   "kural": "saatlik sağlama (gölge ↔ trader PnL)"
   },
   {
+   "id": "ev-011",
    "t": 54,
    "tur": "veri_taze",
    "oda": "lab",
-   "metin": "Lab verisi yenilendi"
+   "metin": "Lab verisi yenilendi",
+   "kural": "veri tazelik eşiği: 90 dk"
   },
   {
+   "id": "ev-012",
    "t": 56,
    "tur": "denetim",
    "sonuc": "tamam",
    "oda": "denetim",
-   "metin": "Denetim: sağlama geçti"
+   "metin": "Denetim: sağlama geçti",
+   "kural": "saatlik sağlama (gölge ↔ trader PnL)"
   },
   {
+   "id": "ev-013",
    "t": 60,
    "tur": "risk_normal",
    "kalem": "coin",
    "deger": 0.66,
    "oda": "risk",
-   "metin": "Risk: coin başı tavan altına indi"
+   "metin": "Risk: coin başı tavan altına indi",
+   "kural": "risk tavanı: coin başı"
   },
   {
+   "id": "ev-014",
    "t": 65,
    "tur": "arsiv_yazildi",
    "satir": 48210,
    "oda": "arsiv",
-   "metin": "Arşiv: 1.050 satır yazıldı"
+   "metin": "Arşiv: 1.050 satır yazıldı",
+   "kural": "arşiv yazım kuralı: saatlik"
   },
   {
+   "id": "ev-015",
    "t": 71,
    "tur": "terfi",
    "trader": "T020",
    "kimden": "aday",
    "kime": "oda",
    "oda": "oda",
-   "metin": "Aday → Oda (ön kayıtlı kural geçti)"
+   "metin": "Aday → Oda (ön kayıtlı kural geçti)",
+   "kural": "kat geçiş kuralı: en az 14 gün, 20 işlem"
   },
   {
+   "id": "ev-016",
+   "t": 72,
+   "tur": "kirmizi_bayrak",
+   "trader": "T046",
+   "oda": "kontrol",
+   "neden": "vault oranı eşiği aştı",
+   "metin": "Denetim: T046 masasına kırmızı bayrak notu bırakıldı (vault oranı eşiği aştı)",
+   "kural": "denetim kuralı: vault oranı eşiği"
+  },
+  {
+   "id": "ev-017",
    "t": 79,
    "tur": "islem_acildi",
-   "id": "y2",
    "trader": "T020",
    "coin": "ETH",
    "yon": "long",
@@ -1029,23 +1277,29 @@
    "kz_yuzde": 0.0,
    "lik_uzaklik": 30.1,
    "oda": "oda",
-   "metin": "T020 · ETH LONG 3x açıldı"
+   "metin": "T020 · ETH LONG 3x açıldı",
+   "kural": "gölge kopya kuralı: trader pozisyon açtı"
   },
   {
+   "id": "ev-018",
    "t": 83,
    "tur": "kasa_guncelle",
    "deger_usd": 1013.1,
    "oda": "finans",
    "neden": "funding",
-   "metin": "Kasa: funding işlendi"
+   "metin": "Kasa: funding işlendi",
+   "kural": "kasa kuralı: funding işlenir"
   },
   {
+   "id": "ev-019",
    "t": 88,
    "tur": "kural_kitabi",
    "oda": "sekreterlik",
-   "metin": "Sekreterlik: kurallar.yaml sürümü kaydedildi (hash a1b2c3d)"
+   "metin": "Sekreterlik: kurallar.yaml sürümü kaydedildi (hash a1b2c3d)",
+   "kural": "ön kayıt: kural kitabı sürümü"
   },
   {
+   "id": "ev-020",
    "t": 96,
    "tur": "kat_dusur",
    "trader": "T020",
@@ -1053,42 +1307,51 @@
    "kime": "aday",
    "neden": "zarar kesme",
    "oda": "aday",
-   "metin": "Oda → Aday (histerezis: ilk 2N dışına düştü)"
+   "metin": "Oda → Aday (histerezis: ilk 2N dışına düştü)",
+   "kural": "histerezis: ilk 2N dışına düştü"
   },
   {
+   "id": "ev-021",
    "t": 101,
    "tur": "islem_kapandi",
-   "id": "y2",
    "neden": "zarar_kesme",
    "kz_usd": -0.55,
    "kz_yuzde": -9.9,
    "oda": "finans",
-   "metin": "T020 · ETH LONG zarar kesme"
+   "metin": "T020 · ETH LONG zarar kesme",
+   "kural": "zarar_kesme"
   },
   {
+   "id": "ev-022",
    "t": 106,
    "tur": "yeni_adres",
    "trader": "T062",
    "adres": "0xAAAA…0062",
    "oda": "tarama",
-   "metin": "Tarama: yeni adres bulundu"
+   "metin": "Tarama: yeni adres bulundu",
+   "kural": "haftalık tarama (leaderboard + ön kayıt süzgeci)"
   },
   {
+   "id": "ev-023",
    "t": 111,
    "tur": "kapi_elendi",
    "trader": "T062",
    "neden": "hesap değeri tabanın altında",
    "oda": "kapi",
-   "metin": "Kapı: elendi (hesap değeri tabanın altında)"
+   "metin": "Kapı: elendi (hesap değeri tabanın altında)",
+   "kural": "hesap değeri tabanın altında"
   },
   {
+   "id": "ev-024",
    "t": 118,
    "tur": "havuzdan_cikar",
    "trader": "T061",
    "oda": "lab",
-   "metin": "Lab → çıkış (30 gün işlem yok)"
+   "metin": "Lab → çıkış (30 gün işlem yok)",
+   "kural": "havuz kuralı: 30 gün işlem yok"
   },
   {
+   "id": "ev-025",
    "t": 124,
    "tur": "kat_dusur",
    "trader": "T004",
@@ -1096,15 +1359,19 @@
    "kime": "lab",
    "neden": "histerezis",
    "oda": "lab",
-   "metin": "Aday → Lab (histerezis)"
+   "metin": "Aday → Lab (histerezis)",
+   "kural": "histerezis: ilk 2N dışına düştü"
   },
   {
+   "id": "ev-026",
    "t": 131,
    "tur": "kullanici_karari",
    "oda": "makam",
-   "metin": "Makam: kullanıcı kararı kaydedildi (ön kayıt değerleri)"
+   "metin": "Makam: kullanıcı kararı kaydedildi (ön kayıt değerleri)",
+   "kural": "ön kayıt değerleri kullanıcı kararıdır"
   },
   {
+   "id": "ev-027",
    "t": 137,
    "tur": "veri_yenile",
    "oda": "finans",
@@ -1128,22 +1395,62 @@
      "kz_yuzde": -7.0,
      "lik_uzaklik": 13.9
     }
-   ]
+   ],
+   "kural": "saatlik veri yenileme"
   },
   {
+   "id": "ev-028",
    "t": 142,
    "tur": "bildirim",
    "kanal": "telegram",
    "oda": "haberlesme",
-   "metin": "Gün sonu özeti gönderildi"
+   "metin": "Gün sonu özeti gönderildi",
+   "kural": "Telegram bildirim kuralı: açılış ve kapanış"
   },
   {
+   "id": "ev-029",
+   "t": 146,
+   "tur": "bayrak_kalkti",
+   "trader": "T046",
+   "oda": "kontrol",
+   "neden": "vault oranı eşik altına indi",
+   "metin": "Denetim: T046 bayrağı kaldırıldı (vault oranı eşik altına indi)",
+   "kural": "denetim kuralı: vault oranı eşiği"
+  },
+  {
+   "id": "ev-030",
    "t": 150,
    "tur": "denetim",
    "sonuc": "tamam",
    "oda": "denetim",
-   "metin": "Denetim: sağlama geçti (n=25)"
+   "metin": "Denetim: sağlama geçti (n=25)",
+   "kural": "saatlik sağlama (gölge ↔ trader PnL)"
   }
  ],
- "akis_suresi_sn": 156
+ "akis_suresi_sn": 156,
+ "arsiv": {
+  "turler": [
+   {
+    "tur": "gölge defteri (dolum)",
+    "satir": 27840,
+    "son_kayit": "2026-10-28T14:18:00Z"
+   },
+   {
+    "tur": "1 dk mum",
+    "satir": 18312,
+    "son_kayit": "2026-10-28T14:19:00Z"
+   },
+   {
+    "tur": "olay günlüğü",
+    "satir": 2058,
+    "son_kayit": "2026-10-28T14:10:00Z"
+   }
+  ],
+  "zaman": "2026-10-28T14:10:00Z"
+ },
+ "kapi": {
+  "bugun_gecen_n": 3,
+  "bugun_elenen_n": 9,
+  "zaman": "2026-10-28T14:12:00Z"
+ }
 }

@@ -1,4 +1,4 @@
-# Ofis veri şeması (v1, 2026-10-28)
+# Ofis veri şeması (v1, 2026-10-28; sürüm 2 alanları eklendi, `surum` hâlâ 1: yalnız ekleme, geriye dönük uyumlu)
 
 Tek giriş dosyası: `ofis/ornek_durum.json`. Biçim `sg-arge/docs/VERI_SOZLESMESI.md` tarzındadır (`surum`, `uretildi`, `kaynak`).
 İlk sürüm **örnek veriyle** çalışır; D yolu Faz 5'te aynı biçim gerçek `durum.json`'dan (ve gölge defteri çıktısından) üretilir.
@@ -33,7 +33,8 @@ Gün ışığı **gerçek saate** göre sayfada hesaplanır (arayüzde yalnız "
 
 ## 3. Alanlar
 **`kasa`** (gölge kasası, sanal): `deger_usd`, `baslangic_usd`, `zaman`, `gun_n` (kaç günlük veri), `egri: [["2026-10-20", 1000.0], …]` günlük değer.
-`egri` 5 günden kısaysa kart ve Finans duvar ekranı "veri birikiyor" der.
+**Ön kayıt (performans körlüğü):** `deger_usd` ve `egri` veri olarak durur ama **ofiste gösterilmez**: kasa kartı ve Finans ekranı "kilitli (hafta x/12)" der; yalnız `baslangic_usd`
+ve açık işlem teminatı görünür. Aynı kural `ozet.bugun_kz_usd` (günlük toplam K/Z) ve kol toplam getirileri için de geçerlidir. Kapatma: `Off.KILIT` (`office.js`), yalnız lider kararıyla.
 
 **`ozet`**: `islem_basi_usd` (kural), `bugun_kz_usd`, `bugun_acilan_n`, `bugun_kapanan_n`, `zaman`.
 
@@ -41,7 +42,8 @@ Gün ışığı **gerçek saate** göre sayfada hesaplanır (arayüzde yalnız "
 (en yüksek puanlı `masa` adres figür olur, kalanı yalnız sayıdır — ofis ölçeklenmez). `havuz` → Lab, `aday` → Aday, `oda` → Oda, `kontrol` → Kontrol grubu.
 
 **`traderlar[]`**: `id`, `adres` (kısa), `kat` (`lab|aday|oda|kontrol|disari`), `kol` (`havuz|kohort|kontrol`), `tarz` (`intraday|swing`),
-`etiket` (etiketlenme tarihi), `gun` (n), `islem_n` (n), `puan` (bilgi sütunu; karar vermez), `ornek: true`.
+`etiket` (etiketlenme tarihi), `gun` (n), `islem_n` (n), `puan` (bilgi sütunu; karar vermez), `ornek: true`,
+`kat_olay` (sürüm 2): `{id, kural, zaman}` = trader'ı bu kata koyan geçmiş olay (bilgi kutusunda "Neden burada?").
 Yalnız figür çizilecek adresler listelenir (`masa` sınırı kadar).
 
 **`acik_islemler[]`**: `id`, `trader`, `coin`, `yon` (`long|short`), `kaldirac`, `yas_dk` (veri üretildiğinde yaşı), `kz_usd`, `kz_yuzde`,
@@ -58,10 +60,12 @@ Yalnız figür çizilecek adresler listelenir (`masa` sınırı kadar).
 **`risk`**: `zaman`, `tavanlar: [{anahtar, ad, kullanim, tavan, birim}]`; doluluk = `kullanim / tavan`; ≥ 1 → "TAVAN DOLU" ve Risk odasında alarm.
 Eşikler yalnız `kurallar.yaml`'dadır; bu dosya yalnız okur.
 
+**`arsiv`** (sürüm 2, isteğe bağlı): `turler: [{tur, satir, son_kayit}]`, `zaman` (Arşiv rafı bilgi kutusu). **`kapi`**: `bugun_gecen_n`, `bugun_elenen_n`, `zaman` (turnike bilgi kutusu).
 **`telegram`**: `bugun_n`, `son: [metin]`, `zaman`.  **`tarama`**: `puanlar` (Tarama duvar ekranındaki sıralama çubukları), `zaman`.
 
 ## 4. Olay akışı (`olaylar[]`)
-Her olay: `t` (örnek akışta saniye; gerçek veride `zaman` ISO), `tur`, `oda` (vurgulanacak oda) ve türe özgü alanlar. Türler, animasyon eşlemesi ve
+Her olay: `id` (**`olay_id`**, kalıcı ve tekil), `t` (örnek akışta saniye; gerçek veride `zaman` ISO), `tur`, `oda` (vurgulanacak oda), `kural` (olayı doğuran kural, kısa metin) ve türe özgü alanlar.
+Yeni türler: `kirmizi_bayrak` / `bayrak_kalkti` (`trader`, `neden`). Türler, animasyon eşlemesi ve
 panel etkisi **`OLAYLAR.md`**'dedir. Örnek akış `akis_suresi_sn` sonunda başa sarar (sayılar ilk veriye döner; kişiler başlangıç koltuklarına döndüğü
 için akış döngü içinde tutarlıdır). Gerçek veride akış yeniden oynatılmaz: yeni olay geldikçe aynı işleyiciler çalışır.
 
@@ -77,4 +81,11 @@ Eksik kaynak → alan `null` → ekranda "bilinmiyor"; sayfa hiçbir zaman eksi�
 
 ## 6. Adres parametreleri (denemek için)
 `?durum=URL` başka veri dosyası · `?saat=SS:DD` gün ışığı · `?hiz=2` örnek akış hızı · `?etiket=0` trader etiketlerini gizler ·
-`?hareket=0` hareketi kapatır (`prefers-reduced-motion` açıkken zaten kapalıdır) · `?oda=lab` açılışta odaya yaklaşır · `?perf=1` kare süresi.
+`?hareket=0` hareketi kapatır (`prefers-reduced-motion` açıkken zaten kapalıdır) · `?oda=lab` açılışta odaya yaklaşır · `?perf=1` kare süresi · `#oda/<id>` adresi odanın iç görünümünü açar (`?oda=lab` aynısına çevrilir).
+
+## 7. Kadro ve replikler (sürüm 2)
+- **`kadro.json`**: varsayılan oda adları (`odalar[id]: {ad, yapar, yapmaz}`), çalışan adları (`calisanlar[id]: {ad, oda, yapar}`) ve nesne açıklamaları (`nesneler["oda.nesne"]: {ad, ne, suz}`).
+  Kullanıcı adları **tarayıcıda** (`localStorage`, anahtar `sgofis.adlar.v1`) saklanır; **Adlar** düğmesinden JSON olarak dışa/içe aktarılır
+  (`{"surum":1,"odalar":{…},"calisanlar":{…},"traderlar":{"T033":"takma ad"}}`; bilinmeyen kimlikler atlanır, ad ≤ 24 karakter). Ad yalnız etiketi değiştirir: veri ve trader'ın gerçek adresi (kısaltılmış) sabit kalır.
+- **`replikler.json`**: `veri: [{olay_turu, rol, sablon}]` (olaydan doğar; `{yer_tutucu}` alanları olay/veriden dolar, yoksa "bilinmiyor") ve `suz: [{rol, metin}]` (ofis esprisi;
+  **rakam, adres, oran, para içermez**; arayüzde ayrı, "ofis esprisi" etiketli kutuda). Test: `node ofis/test/replik.test.js`.

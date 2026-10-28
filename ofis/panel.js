@@ -16,28 +16,22 @@
   function dur(sec) { sec = Math.max(0, Math.round(sec)); const m = Math.floor(sec / 60); if (m < 1) return sec + ' sn'; if (m < 60) return m + ' dk'; const h = Math.floor(m / 60); if (h < 24) return h + ' sa ' + pad(m % 60) + ' dk'; return Math.floor(h / 24) + ' g ' + (h % 24) + ' sa'; }
   const NEDEN = { trader_kapatti: 'trader kapattı', zarar_kesme: 'zarar kesme', sure: 'süre doldu' };
   const KATAD = { lab: 'Lab', aday: 'Aday', oda: 'Oda', kontrol: 'Kontrol' };
-  const ODA_AD = id => { const r = O.World.roomById[id]; return r ? r.ad : id; };
+  const ODA_AD = id => { const r = O.World.roomById[id]; return r ? O.Names.room(id, r.ad) : id; };
   const ORN = '<span class="ornek">örnek</span>';
 
   function kasa() {
-    const k = st.kasa, el = $('#kasaIcerik');
-    const ch = k.deger_usd != null && k.baslangic_usd ? (k.deger_usd / k.baslangic_usd - 1) * 100 : null;
-    let spark = '';
-    const v = (k.egri || []).map(p => p[1]);
-    if (v.length >= 5) {
-      const mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), W = 168, H = 54, pts = v.map((y, i) => [4 + (W - 8) * i / (v.length - 1), H - 6 - (H - 12) * (y - mn) / ((mx - mn) || 1)]);
-      const line = pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '), up = v[v.length - 1] >= v[0], c = '#46d3c2';
-      spark = '<svg class="spark" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Gölge kasası eğrisi, ' + v.length + ' gün, ' + (up ? 'yukarı' : 'aşağı') + '"><polygon points="' + pts[0][0] + ',' + (H - 4) + ' ' + line + ' ' + pts[pts.length - 1][0] + ',' + (H - 4) + '" fill="' + c + '" fill-opacity=".14"/><polyline points="' + line + '" fill="none" stroke="' + c + '" stroke-width="2" stroke-linejoin="round"/><circle cx="' + pts[pts.length - 1][0] + '" cy="' + pts[pts.length - 1][1] + '" r="3" fill="' + c + '"/></svg>';
-    } else spark = '<div class="spark bos">veri birikiyor<small>n=' + (k.gun_n == null ? '?' : k.gun_n) + ' gün; eğri 5 günden sonra</small></div>';
-    el.innerHTML = '<div class="kasa-satir"><div><div class="kdeger">' + (k.deger_usd == null ? UNK : usd(k.deger_usd)) + '</div><div class="kalt">başlangıç ' + usd(k.baslangic_usd) + ' · <b class="' + cls(ch) + '">' + pct(ch, true, 2) + '</b></div></div>' + spark + '</div>' +
-      '<p class="meta">n=' + (k.gun_n == null ? 'bilinmiyor' : k.gun_n + ' gün') + ' · güncel ' + hm(k.zaman) + ' · ' + ORN + '</p>';
+    // ön kayıt: toplanmış performans (kasa değeri, eğri, % değişim) ofiste gösterilmez
+    const k = st.kasa, el = $('#kasaIcerik'), tem = st.acik.reduce((sum, x) => sum + (x.teminat_usd || 0), 0), kk = st.kk;
+    el.innerHTML = '<div class="kilit" role="note"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7zm2 0h4V5a2 2 0 0 0-4 0z" fill="currentColor"/></svg><div><b>Kasa değeri kilitli</b><div class="ks">Toplanmış performans ön kayıt gereği gösterilmez (hafta ' + kk.hafta + '/' + kk.hafta_toplam + ').</div></div></div>' +
+      '<div class="kasa-satir ks2"><div><span class="kl">başlangıç</span><div class="kv">' + usd(k.baslangic_usd) + '</div></div><div><span class="kl">açık işlem teminatı</span><div class="kv">' + usd(tem) + '</div></div></div>' +
+      '<p class="meta">n=' + (k.gun_n == null ? 'bilinmiyor' : k.gun_n + ' gün') + ' · veri ' + hm(k.zaman) + ' · ' + ORN + '</p>';
   }
   function ozet() {
     const a = st.acik, tem = a.reduce((s, x) => s + (x.teminat_usd || 0), 0), o = st.ozet, k = st.katlar;
     const box = (l, v, sub) => '<div class="kutu"><div class="kl">' + l + '</div><div class="kv">' + v + '</div><div class="ks">' + sub + '</div></div>';
     $('#ozetIcerik').innerHTML =
       box('Açık işlem', a.length, 'teminat ' + usd(tem)) +
-      box('Bugün', '<span class="' + cls(o.bugun_kz_usd) + '">' + usd(o.bugun_kz_usd, true) + '</span>', o.bugun_acilan_n + ' açıldı · ' + o.bugun_kapanan_n + ' kapandı') +
+      box('Bugün', 'n=' + (o.bugun_acilan_n + o.bugun_kapanan_n), o.bugun_acilan_n + ' açıldı · ' + o.bugun_kapanan_n + ' kapandı') +
       box('Oda', k.oda.n + '<small>/' + k.oda.kapasite + '</small>', 'doluluk ' + pct(k.oda.n / k.oda.kapasite * 100, false, 0)) +
       box('Aday', k.aday.n, 'n=' + k.aday.n + ' · ' + hm(k.aday.zaman)) +
       box('Havuz', k.havuz.n, 'n=' + k.havuz.n + ' · ' + hm(k.havuz.zaman)) +
@@ -79,7 +73,7 @@
   }
   function kohort() {
     const k = st.kk, pr = Math.max(0, Math.min(1, k.hafta / k.hafta_toplam));
-    $('#kohIcerik').innerHTML = '<div class="hafta"><span>hafta <b>' + k.hafta + '/' + k.hafta_toplam + '</b></span><div class="hb"><i style="width:' + (pr * 100).toFixed(0) + '%;background:#f5cb5c"></i></div></div>' +
+    $('#kohIcerik').innerHTML = '<div class="hafta"><span>hafta <b>' + k.hafta + '/' + k.hafta_toplam + '</b></span><div class="hb"><i style="width:' + (pr * 100).toFixed(0) + '%;background:#46d3c2"></i></div></div>' +
       '<ul class="kollar">' + k.kollar.map(c => '<li><span>' + esc(c.ad) + '</span><b>N=' + c.n + '</b></li>').join('') + '</ul>' +
       (k.performans_kilitli ? '<div class="kilit" role="note"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7zm2 0h4V5a2 2 0 0 0-4 0z" fill="currentColor"/></svg><div><b>Performans kilitli</b><div class="ks">' + esc(k.onkayit) + '. Kâr görüldükçe trader, eşik ya da süre değiştirilmez.</div></div></div>' : '<p class="bos">Performans: bilinmiyor.</p>');
     $('#kohMeta').innerHTML = 'veri ' + hm(k.zaman) + ' · ' + ORN;
@@ -124,7 +118,7 @@
   function schedule() { if (!raf) raf = requestAnimationFrame(render); }
   P.init = function (off, a) {
     Off = off; api = a;
-    Off.on(schedule);
+    Off.on(schedule); O.Names.onChange(schedule);
     document.addEventListener('click', e => {
       const b = e.target.closest('[data-oda]'); if (b && b.closest('#gozcuListe') && b.dataset.oda) api.focusRoom(b.dataset.oda);
       const s = e.target.closest('.sb'); if (s) { const act = Off.state().actorById[s.dataset.trader]; const k = act && act.kat; if (k) api.focusRoom(k); }

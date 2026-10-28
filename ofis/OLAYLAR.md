@@ -1,4 +1,4 @@
-# Olay → animasyon eşlemesi (v1, Adım 0 özgünleştirmesi sonrası)
+# Olay → animasyon eşlemesi (sürüm 2)
 
 **İlke:** ofisteki her hareket bir olaydan doğar; boşta "çalışıyormuş gibi" sahte hareket yoktur. Olay akışı örnekte
 `ornek_durum.json` → `olaylar[]` içinde simüle edilir (şema: `SEMA.md`). Her olay ayrıca **Gözcü kaydına** (`zaman · oda · olay`) yazılır
@@ -14,7 +14,7 @@ ve olayın odası ~3 sn **vurgulanır** (sarı çerçeve + yumuşak parıltı). 
 | `kat_dusur` | Histerezis / zarar kesme: kat düştü | Aynı yürüyüş, ters yönde; aşağı-ok balonu (kırmızı) | Kat sayıları |
 | `islem_acildi` | Yeni gölge işlem (yeni sinyal) | İlgili masanın **monitörü parlar** (4 sn), sonra işlem sürdükçe mum grafiği yanık kalır (yeşil kâr / kırmızı zarar). Masanın odası vurgulanır | Açık işlem tablosuna satır; Özet: açık işlem, "bugün açıldı" |
 | `islem_kapandi` | İşlem kapandı (trader kapattı / zarar kesme / süre) | Masanın ekranı söner (başka işlem yoksa). **Finans**: kasadan para parıltısı yükselir, duvar eğrisi yanıp söner, oda vurgulanır | Tablo → Son kapananlar (neden, süre, K/Z); kasa ve "bugün K/Z" |
-| `bildirim` | Telegram bildirimi gitti | Haberleşme'de posta kutusundan **zarf çıkar**, sağ üste süzülüp kaybolur; Haberleşme duvar ekranı mavi parlar | Telegram kartı: bugün n, son bildirimler |
+| `bildirim` | Telegram bildirimi gitti | **Postacı masasından kalkıp zarfla posta kutusuna yürür**, zarfı bırakır; zarf sağ üste süzülüp kaybolur; Haberleşme duvar ekranı mavi parlar | Telegram kartı: bugün n, son bildirimler |
 | `risk_tavan` | Bir risk tavanı doldu (≥ %100) | Risk odasında **alarm lambası** yanıp söner (kırmızı ışık), duvardaki çubuk ekranın çerçevesi kırmızı yanıp söner; oda vurgulanır | Risk kartı: çubuk kırmızı, "TAVAN DOLU" |
 | `risk_normal` | Tavan altına indi | Alarm lambası söner; onay balonu | Risk çubuğu normale döner |
 | `veri_bayat` | Oda verisi eşikten eski (`yas_dk`) | Oda **renksizleşir** (gri), plakaya "veri eski" (taralı şerit) eklenir, odanın sıcak iç ışığı söner, odadaki ekranlar söner; saat balonu | Veri kalitesi satırı sarı "bayat" |
@@ -25,7 +25,51 @@ ve olayın odası ~3 sn **vurgulanır** (sarı çerçeve + yumuşak parıltı). 
 | `kural_kitabi` | Kural kitabı / ön kayıt kaydedildi | Sekreterlik'te belge balonu, oda vurgusu | Gözcü kaydı |
 | `kullanici_karari` | Kullanıcı kararı işlendi | Makam'da onay balonu, oda vurgusu | Gözcü kaydı |
 | `veri_yenile` | Saatlik veri yenilemesi | Finans + Oda vurgulanır | Açık işlemlerde K/Z, lik. uzaklığı güncellenir |
+| `kirmizi_bayrak` | Denetim bir trader için kırmızı bayrak koydu (ör. vault oranı eşiği aştı) | **Denetçi masasından kalkıp** trader'ın masasına yürür, **kırmızı bayrak notu** bırakır ve masasına döner. Not, bayrak kalkana kadar masada durur; Denetim + trader odası vurgulanır | Trader bilgi kutusunda "Kırmızı bayrak" satırı; Denetçi satırında açık bayrak sayısı |
+| `bayrak_kalkti` | Bayrak nedeni ortadan kalktı | Denetçi yine masaya yürüyüp notu alır; not masadan kalkar | Bayrak satırı kaybolur |
 | `sistem` | Örnek akış başa sardı | — (yalnız örnek akışta) | Gözcü kaydı; sayılar ilk veriye döner |
+
+## İletişim işaretleri (olay → zarf / not / ok)
+Her işaret **bir olaydan** doğar ve `olay_id` taşır; işarete tıklayınca bilgi kutusu olay_id, zaman ve kuralı gösterir. Olay yoksa işaret yoktur.
+Renk anlamı: **aqua = bilgi, kayısı = uyarı**; hiçbir renk kâr/zarar ya da performans anlamı taşımaz. İşaretler ~3,6 sn görünür; aynı anda en fazla 8 işaret çizilir.
+
+| Olay | İşaret (kimden → kime) |
+|---|---|
+| `yeni_adres` | **zarf** Tarama → Kapı (uçar) + ok |
+| `kapi_gecti` | **ok** Kapı → Lab |
+| `kapi_elendi` | **not** (uyarı) Kapı → çıkış |
+| `havuzdan_cikar` | **ok** Lab → Kapı |
+| `terfi` | **ok** eski kat → yeni kat + **not** trader'ın yeni masasına |
+| `kat_dusur` | **ok** (uyarı) eski kat → yeni kat + **not** (uyarı) trader'a |
+| `islem_acildi` | **not** trader'ın odası → Finans |
+| `islem_kapandi` | **zarf** trader'ın odası → Finans |
+| `bildirim` | **zarf taşıyan figür** (Postacı → posta kutusu) + **zarf** posta kutusu → dışarı |
+| `risk_tavan` | **ok** + **not** (uyarı) Risk → Oda |
+| `risk_normal` | **ok** Risk → Oda |
+| `veri_bayat` | **not** (uyarı) Denetim → bayat oda |
+| `veri_taze` | **ok** Denetim → oda |
+| `denetim` | **not** Denetim → Makam (uyarıda kayısı) |
+| `arsiv_yazildi` | **ok** Denetim → Arşiv (koli yığını zaten çizilir) |
+| `kasa_guncelle` | **ok** Finans → Makam (değer gösterilmez, ön kayıt) |
+| `kural_kitabi` | **zarf** Sekreterlik → Makam |
+| `kullanici_karari` | **not** Makam → Sekreterlik |
+| `veri_yenile` | **ok** Finans → Oda |
+| `kirmizi_bayrak` | **not taşıyan figür** (Denetçi → trader masası) + kalıcı **kırmızı bayrak notu** masada |
+| `bayrak_kalkti` | Denetçi notu alır (figür yürür) + **ok** trader → Denetim |
+
+## Olay kuyruğu (hızlı gelen olaylar)
+Durum her olayda **anında** güncellenir (sayılar, koltuklar, bayraklar, bayat odalar); animasyon yalnız bunu göstermenin yoludur.
+- Aynı anda 4'ten fazla figür yürüyorsa yürüyüş 2×, 8'den fazlaysa 3× hızlanır.
+- Bir güncellemede 3 ya da daha fazla olay birden gelirse (sekme uykudan döndü, hız yüksek) sonraki 4 sn boyunca figürler yürümez, **hedef yerine doğrudan geçer**; taşıyıcı figürler (zarf/not) atlanır; işaret sayısı 8 ile sınırlıdır.
+- Hiçbir durumda eski bir animasyon yüzünden pano yanlış durum göstermez: bilgi kutusu, paneller ve masa ekranları her olayda yeniden çizilir.
+- **Olay yokken çizim döngüsü durur** (kare çizilmez, zamanlayıcı sıradaki örnek olaya kadar uyur; yalnız risk alarmı yanıyorsa ~5 kare/sn yavaş döngü çalışır). Pencere yeniden görünür olunca ya da etkileşimde döngü uyanır.
+
+## Tıklama etkileşimi (olay değil, kullanıcı eylemi)
+- **Odaya giriş:** oda plakasına/zeminine ya da sol menüdeki oda düğmesine tıklamak aynı tuvalde kamerayı odaya yaklaştırır (~0,5 sn); diğer odalar soluklaşır, seçili odanın tam yükseklikli duvarları (ör. Arşiv, Denetim, Makam) kalkar. Adres `#oda/<id>`;
+  Esc, **← Bina** düğmesi ve tarayıcı geri tuşu binaya döndürür. Dokunmada ≥ 44 px hedef; hareket azaltma açıksa geçiş anlıktır.
+- **Bilgi kutusu:** kişiye, nesneye, iletişim işaretine ya da "Oda bilgisi" düğmesine tıklayınca açılır (masaüstü: sağda panel, telefon: alttan çekmece). Kimlik · Gerçek veri · Replik; hover'a bağlı işlev yoktur (fare ipucu yalnız ek kolaylıktır).
+- **Tepki animasyonu:** tıklanan figür ~0,65 sn küçük bir sıçrama yapar ve üstünde gülümseme balonu çıkar. Yalnız tıklamayla olur; veri değiştirmez, kalıcı değildir; hareket azaltmada yalnız balon görünür.
+- **Replikler:** olay repliği (`replikler.json` `veri`, olaydan ve sayılarla) ile **ofis esprisi** (`suz`, ayrı çerçeveli ve etiketli kutu, sayı/adres/oran içermez) birlikte gösterilir. Olay yoksa olay repliği gösterilmez.
 
 ## Ekran ve ışık durumları (olaydan değil, durumdan)
 - **Masa monitörleri:** işlemi olan trader'ın ekranı grafik gösterir (mavi/mor ton; kâra ya da zarara göre renk **yok**), olmayanınki kapalıdır. Bayat odada tüm ekranlar kapalıdır.

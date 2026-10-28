@@ -3,6 +3,7 @@
   'use strict';
   const O = window.OFIS, W = O.World, Off = O.Office, S = O.S, HW = O.HW, HH = O.HH;
   const $ = s => document.querySelector(s);
+  const Names = O.Names, Info = O.Info;
   const qs = new URLSearchParams(location.search);
   const mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
   let reduced = mq.matches || qs.get('hareket') === '0';
@@ -74,6 +75,10 @@
   }
   function lightKey() { const s = Off.state(); return light.bucket + '|' + Object.keys(s.stale).filter(k => s.stale[k]).join(','); }
 
+  /* ---------- oda içi görünüm durumu ---------- */
+  const mode = { room: null, active: false };   // active: oda içindeyiz; room: soluklaşma sürerken önceki oda
+  let roomT = 0, roomTWant = 0;                  // 0 = bina, 1 = oda içi (yumuşak geçiş)
+
   /* ---------- tuval ve kamera ---------- */
   const cv = $('#tuval'), cx = cv.getContext('2d');
   const lo = document.createElement('canvas'), lc = lo.getContext('2d');
@@ -103,7 +108,7 @@
     const f = fit(), first = !cam.z || cam.first;
     const wasFit = Math.abs(cam.z - fitZ) < 1e-3 || !fitZ;
     fitZ = f.z;
-    if (!cam.init) { Object.assign(cam, f); cam.init = true; } else if (wasFit) Object.assign(cam, f);
+    if (!cam.init) { Object.assign(cam, f); cam.init = true; } else if (mode.active && mode.room) Object.assign(cam, interiorCam(mode.room)); else if (wasFit) Object.assign(cam, f);
     dirty = true;
   }
   const toWorld = (px, py) => ({ x: (px - view.w / 2) / cam.z + cam.cx, y: (py - view.h / 2) / cam.z + cam.cy });
@@ -127,6 +132,10 @@
       const e = st[i];
       while (j < dyn.length && dyn[j].k <= e.k) { dyn[j].draw(ctx); j++; }
       if (!e.s) continue;
+      if (e.wall && mode.room && roomT > 0.01 && e.wall.indexOf(mode.room) >= 0) {   // seçili odanın duvarı kalkar
+        const al = 1 - roomT; if (al < 0.04) continue;
+        ctx.globalAlpha = al; ctx.drawImage(e.s.c, Math.round(e.px - e.s.ax), Math.round(e.py - e.s.ay)); ctx.globalAlpha = 1; continue;
+      }
       ctx.drawImage(e.s.c, Math.round(e.px - e.s.ax), Math.round(e.py - e.s.ay));
     }
     while (j < dyn.length) { dyn[j].draw(ctx); j++; }
@@ -150,6 +159,13 @@
       ctx.lineWidth = 2; ctx.strokeStyle = h.sel ? 'rgba(255,255,255,0.95)' : 'rgba(255,214,90,' + (0.6 + 0.4 * h.pulse) + ')'; ctx.stroke();
       ctx.restore();
     });
+    // oda içi görünüm: diğer odalar soluklaşır
+    if (mode.room && roomT > 0.01) {
+      const r = W.roomById[mode.room], p = W.roomPoly(r), up = 46;
+      ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W.CW, W.CH);
+      ctx.moveTo(p[0][0], p[0][1] - up); ctx.lineTo(p[1][0], p[1][1] - up); ctx.lineTo(p[1][0], p[1][1]); ctx.lineTo(p[2][0], p[2][1]); ctx.lineTo(p[3][0], p[3][1]); ctx.lineTo(p[3][0], p[3][1] - up); ctx.closePath();
+      ctx.clip('evenodd'); ctx.fillStyle = 'rgba(9,16,20,' + (0.62 * roomT).toFixed(3) + ')'; ctx.fillRect(0, 0, W.CW, W.CH); ctx.restore();
+    }
     // gün ışığı (çarpım) + ortam ışığı (çarpım) + odalara sıcak iç ışık (toplama)
     const t = light.tint;
     ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgb(' + t[0] + ',' + t[1] + ',' + t[2] + ')'; ctx.fillRect(0, 0, W.CW, W.CH);
@@ -229,7 +245,9 @@
         const p = W.sign(r), v = toView(p.x, p.y);
         if (v.x < -90 || v.y < -40 || v.x > view.w + 90 || v.y > view.h + 40) return;
         const stale = s.stale[r.id], sel = s.sel === r.id || hoverRoom === r.id, acc = lighten(r.ac, 0.32);
-        plate(v.x, v.y, r.ad + (stale ? ' · veri eski' : ''), { size: fs, pad: fs < 9 ? 3 : 4, stripe: fs < 9 ? 3 : 4, bg: 'rgba(12,22,28,' + (sel ? '0.97' : '0.88') + ')', fg: stale ? '#ffd98a' : '#eaf4f5', accent: stale ? '#f2b035' : acc, edge: sel ? 'rgba(255,255,255,.9)' : 'rgba(210,235,238,.28)', glow: sel ? acc : null, hatch: !!stale });
+        cx.globalAlpha = mode.room && r.id !== mode.room ? 1 - 0.68 * roomT : 1;
+        plate(v.x, v.y, Names.room(r.id, r.ad) + (stale ? ' · veri eski' : ''), { size: fs, pad: fs < 9 ? 3 : 4, stripe: fs < 9 ? 3 : 4, bg: 'rgba(12,22,28,' + (sel ? '0.97' : '0.88') + ')', fg: stale ? '#ffd98a' : '#eaf4f5', accent: stale ? '#f2b035' : acc, edge: sel ? 'rgba(255,255,255,.9)' : 'rgba(210,235,238,.28)', glow: sel ? acc : null, hatch: !!stale });
+        cx.globalAlpha = 1;
       });
     }
   }
@@ -242,35 +260,19 @@
       if (!showAll && !hov) return;
       const v = toView(l.x, l.y);
       if (v.x < -40 || v.y < -20 || v.x > view.w + 40 || v.y > view.h + 20) return;
-      const t = l.t || {}, short = hov || z >= 2.0 ? (t.adres || l.a.id) : '…' + String(t.adres || l.a.id).slice(-4);
+      const t = l.t || {}, al = Names.trader(l.a.id), short = al || (hov || z >= 2.0 ? (t.adres || l.a.id) : '…' + String(t.adres || l.a.id).slice(-4));
+      cx.globalAlpha = mode.room && l.a.kat !== mode.room ? 1 - 0.6 * roomT : 1;
       plate(v.x + 4, v.y, short, { size: fs2, pad: 2, stripe: 2, bg: 'rgba(12,22,28,' + (hov ? '0.96' : '0.72') + ')', fg: hov ? '#ffd9a3' : '#eaf4f5', accent: KOLC[t.kol] || '#b7c4c9', edge: hov ? 'rgba(255,217,163,.8)' : 'rgba(0,0,0,0)' });
+      cx.globalAlpha = 1;
     });
   }
 
-  /* ---------- ipucu ---------- */
+  /* ---------- ipucu (yalnız ek kolaylık; asıl bilgi tıklamayla bilgi kutusunda) ---------- */
   const tip = $('#ipucu');
-  function fmtUsd(v) { return (v < 0 ? '−' : v > 0 ? '+' : '') + '$' + Math.abs(v).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-  function fmtPct(v) { return (v < 0 ? '−' : v > 0 ? '+' : '') + '%' + Math.abs(v).toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
-  const KATAD = { lab: 'Lab (havuz)', aday: 'Aday', oda: 'Oda (kopya)', kontrol: 'Kontrol grubu', disari: 'Kapıda' };
   function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
-  function tipFor(a) {
-    const s = Off.state();
-    if (a.kind === 'staff') {
-      const names = { makam: 'Makam · karar kullanıcının', sekreter: 'Sekreter · kural kitabı', finans1: 'Finans · kasa ve işlem büyüklüğü', finans2: 'Finans · kasa ve işlem büyüklüğü', haber1: 'Haberleşme · Telegram', haber2: 'Haberleşme · Telegram', risk1: 'Risk · tavanlar', risk2: 'Risk · tavanlar', denetim: 'Denetim · veri kalitesi', arsivci: 'Arşiv · veri saklama', tarama1: 'Tarama · keşif', tarama2: 'Tarama · keşif', kapici: 'Kapı · ön eleme', cayci: 'Çaycı' };
-      const id = a.staffId, note = id === 'cayci' ? '<div class="m">Yalnız ofis süsü; veri göstermez.</div>' : '<div class="m">Rol karakteri: modülün durumunu gösterir (karar kuraldadır).</div>';
-      return '<b>' + esc(names[id] || 'Personel') + '</b>' + note;
-    }
-    const t = s.traders[a.id] || {}, tr = s.acik.filter(x => x.trader === a.id);
-    let h = '<b>' + esc(t.adres || a.id) + '</b> <span class="ornek">örnek</span><div class="m">' + esc(KATAD[a.kat] || '—') + ' · kol: ' + esc(t.kol || 'bilinmiyor') + ' · tarz: ' + esc(t.tarz || 'bilinmiyor') + '</div>';
-    h += '<div class="m">Etiket: ' + esc(t.etiket || 'bilinmiyor') + ' · gün n=' + (t.gun != null ? t.gun : 'bilinmiyor') + ' · işlem n=' + (t.islem_n != null ? t.islem_n : 'bilinmiyor') + '</div>';
-    h += '<div class="m">Gölge puanı (bilgi): ' + (t.puan != null ? String(t.puan).replace('.', ',') : 'bilinmiyor') + '</div>';
-    if (tr.length) tr.forEach(x => { h += '<div class="t">' + esc(x.coin) + ' ' + (x.yon === 'long' ? 'LONG' : 'SHORT') + ' ' + x.kaldirac + 'x · ' + fmtUsd(x.kz_usd) + ' (' + fmtPct(x.kz_yuzde) + ') · lik. %' + String(x.lik_uzaklik).replace('.', ',') + '</div>'; });
-    else h += '<div class="m">Açık gölge işlemi yok.</div>';
-    return h;
-  }
   function showTip(html, px, py) {
     tip.innerHTML = html; tip.hidden = false;
-    const r = $('#ofisTuval').getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
     let x = px + 14, y = py + 14;
     if (x + tw > view.w - 6) x = Math.max(6, px - tw - 14);
     if (y + th > view.h - 6) y = Math.max(6, py - th - 14);
@@ -295,6 +297,96 @@
     return hit;
   }
 
+  /* ---------- seçim: kişi, işaret, nesne (piksel isabetli; dokunmada ≥ 44 px hedef) ---------- */
+  function spriteAlpha(e, wx, wy) {
+    const s = e.s; if (!s) return 0;
+    const x = Math.floor(wx - (e.px - s.ax)), y = Math.floor(wy - (e.py - s.ay));
+    if (x < 0 || y < 0 || x >= s.c.width || y >= s.c.height) return 0;
+    try { return s.c.getContext('2d').getImageData(x, y, 1, 1).data[3]; } catch (err) { return 255; }
+  }
+  function objectAt(wx, wy, tol) {
+    let hit = null, hk = -1, near = null, nd = 1e9;
+    W.objects.forEach(o => {
+      if (o.room !== mode.room || !o.e.s) return;
+      const sp = o.e.s, x0 = o.e.px - sp.ax, y0 = o.e.py - sp.ay, x1 = x0 + sp.c.width, y1 = y0 + sp.c.height;
+      if (wx >= x0 && wx <= x1 && wy >= y0 && wy <= y1 && spriteAlpha(o.e, wx, wy) > 24) { if (o.e.k > hk) { hk = o.e.k; hit = o; } }
+      else if (tol > 0) { const d = Math.hypot(Math.max(x0 - wx, 0, wx - x1), Math.max(y0 - wy, 0, wy - y1)); if (d <= tol && d < nd) { nd = d; near = o; } }
+    });
+    return hit || near;
+  }
+  function nearPerson(wx, wy, tol) {
+    let best = null, bd = tol;
+    Off.state().actors.forEach(a => { if (a.sx == null || a.dead) return; const d = Math.hypot(wx - a.sx, wy - (a.sy - 14)); if (d <= bd) { bd = d; best = a; } });
+    return best;
+  }
+  function pick(wx, wy, touch) {
+    const a = Off.hit(wx, wy);
+    if (a) return { type: 'person', a: a };
+    const m = Off.markAt(wx, wy); if (m) return m;
+    if (mode.active) {
+      const o = objectAt(wx, wy, 0); if (o) return { type: 'obje', o: o };
+      if (touch) {
+        const tol = 22 / cam.z, p = nearPerson(wx, wy, tol); if (p) return { type: 'person', a: p };
+        const o2 = objectAt(wx, wy, tol); if (o2) return { type: 'obje', o: o2 };
+      }
+    }
+    return null;
+  }
+
+  /* ---------- oda içi görünüm: aynı tuvalde kamera yakınlaşması, diğer odalar soluklaşır, adres #oda/<id> ---------- */
+  function interiorCam(id) {
+    const r = W.roomById[id], p = W.roomPoly(r), cxp = (p[0][0] + p[2][0]) / 2, cyp = (p[0][1] + p[2][1]) / 2, ww = p[1][0] - p[3][0], hh = p[2][1] - p[0][1] + 52;
+    const pad = view.w < 700 ? 18 : 60, z = Math.max(fitZ * 1.15, Math.min(4.2, Math.min(view.w / (ww + pad * 2), view.h / (hh + pad + 56))));
+    return { cx: cxp, cy: cyp - 18, z: z };
+  }
+  function enterRoom(id, opt) {
+    const r = W.roomById[id]; if (!r || r.out) return;
+    mode.room = id; mode.active = true; roomTWant = 1; Off.select(id); markRay(id); infoShift = 0;
+    if (opt && opt.instant) roomT = 1;
+    setCam(interiorCam(id), !(opt && opt.instant));
+    $('#odaUst').hidden = false; $('#odaBaslik').textContent = Names.room(id, r.ad);
+    document.body.classList.add('oda-ici');
+    if (Info.isOpen()) Info.close();
+    kick();
+  }
+  function exitRoom(opt) {
+    mode.active = false; infoShift = 0; roomTWant = 0; Off.select(null); markRay(null); Info.close();
+    if (opt && opt.instant) { roomT = 0; mode.room = null; }
+    setCam(fit(), !(opt && opt.instant));
+    $('#odaUst').hidden = true; document.body.classList.remove('oda-ici');
+    kick();
+  }
+  const roomFromHash = () => { const m = /^#oda\/([a-z]+)$/.exec(location.hash); return m && W.roomById[m[1]] && !W.roomById[m[1]].out ? m[1] : null; };
+  function applyRoute(opt) { const id = roomFromHash(); if (id) enterRoom(id, opt); else if (mode.active) exitRoom(opt); }
+  const depth = () => (history.state && history.state.d) || 0;
+  function goRoom(id) {
+    if (!W.roomById[id] || W.roomById[id].out) return;
+    if (location.hash !== '#oda/' + id) { try { history.pushState({ d: depth() + 1 }, '', '#oda/' + id); } catch (e) { location.hash = '#oda/' + id; } }
+    applyRoute();
+  }
+  function goBuilding() {
+    if (!mode.active) { markRay(null); setCam(fit(), true); kick(); return; }
+    const d = depth();
+    if (d > 0) history.go(-d);                                    // tarayıcı geçmişi: popstate binaya döndürür
+    else { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { location.hash = ''; } applyRoute(); }
+  }
+  window.addEventListener('popstate', () => applyRoute());
+  $('#geriBtn').addEventListener('click', goBuilding);
+  $('#odaBilgiBtn').addEventListener('click', () => { if (mode.room) Info.show({ type: 'oda', id: mode.room }); });
+  /* masaüstünde bilgi kutusu sağdan açılınca oda içi görünüm sola kayar, böylece oda kutunun altında kalmaz */
+  let infoShift = 0;
+  function shiftFor(open) {
+    if (!mode.active || !window.matchMedia('(min-width: 900px)').matches) { if (!open) infoShift = 0; return; }
+    if (open && !infoShift) { infoShift = 175 / cam.z; setCam({ cx: cam.cx + infoShift, cy: cam.cy, z: cam.z }, true); }
+    else if (!open && infoShift) { setCam({ cx: cam.cx - infoShift, cy: cam.cy, z: cam.z }, true); infoShift = 0; }
+  }
+  function animRoom(dt) {
+    if (roomT === roomTWant) return;
+    const sp = reduced ? 1 : dt / 0.45;
+    roomT = roomTWant > roomT ? Math.min(roomTWant, roomT + sp) : Math.max(roomTWant, roomT - sp);
+    if (roomT <= 0 && !mode.active) mode.room = null;
+  }
+
   /* ---------- etkileşim ---------- */
   let drag = null;
   cv.addEventListener('pointerdown', e => {
@@ -305,57 +397,51 @@
     const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
     if (drag) {
       const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-      if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
-      if (drag.moved && (cam.z > fitZ * 1.04 || !drag.touch)) { cam.cx = drag.cx - dx / cam.z; cam.cy = drag.cy - dy / cam.z; target = null; clampCam(); dirty = true; hideTip(); return; }
+      if (Math.abs(dx) + Math.abs(dy) > 6) drag.moved = true;
+      if (drag.moved && (cam.z > fitZ * 1.04 || !drag.touch)) { cam.cx = drag.cx - dx / cam.z; cam.cy = drag.cy - dy / cam.z; target = null; clampCam(); hideTip(); kick(); return; }
     }
     if (e.pointerType === 'touch') return;
-    const w = toWorld(px, py), a = Off.hit(w.x, w.y);
-    hover = a; hoverRoom = a ? null : (roomAtWorld(w.x, w.y) || {}).id || null;
-    if (a) showTip(tipFor(a), px, py);
-    else if (hoverRoom) { const i = Off.roomInfo(hoverRoom); showTip('<b>' + esc(i.ad) + (i.stale ? ' · bayat' : '') + '</b>' + i.lines.map(l => '<div class="m">' + esc(l) + '</div>').join(''), px, py); }
-    else if (!pinned) hideTip();
-    cv.style.cursor = a || hoverRoom ? 'pointer' : (cam.z > fitZ * 1.04 ? 'grab' : 'default');
-    dirty = true;
+    const w = toWorld(px, py), p = pick(w.x, w.y, false);
+    hover = p && p.type === 'person' ? p.a : null; hoverRoom = p ? null : (roomAtWorld(w.x, w.y) || {}).id || null;
+    if (p) showTip('<b>' + esc(Info.title(p)) + '</b><div class="m">tıkla: bilgi kutusu</div>', px, py);
+    else if (hoverRoom) showTip('<b>' + esc(Names.room(hoverRoom, (W.roomById[hoverRoom] || {}).ad)) + '</b><div class="m">' + (mode.active ? 'tıkla: bu odaya geç' : 'tıkla: odaya gir') + '</div>', px, py);
+    else hideTip();
+    cv.style.cursor = p || hoverRoom ? 'pointer' : (cam.z > fitZ * 1.04 ? 'grab' : 'default');
+    kick();
   });
   cv.addEventListener('pointerup', e => {
     const was = drag; drag = null;
     if (!was || was.moved) return;
-    const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top, w = toWorld(px, py), a = Off.hit(w.x, w.y);
-    if (a) { pinned = a; showTip(tipFor(a), px, py); }
-    else { pinned = null; const room = roomAtWorld(w.x, w.y); if (room) { selectRoom(room.id, true); const i = Off.roomInfo(room.id); showTip('<b>' + esc(i.ad) + '</b>' + i.lines.map(l => '<div class="m">' + esc(l) + '</div>').join(''), px, py); } else hideTip(); }
-    dirty = true;
+    const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top, w = toWorld(px, py), p = pick(w.x, w.y, was.touch);
+    hideTip();
+    if (p) { Info.show(p); return; }
+    const room = roomAtWorld(w.x, w.y);
+    if (room) { if (mode.active && mode.room === room.id) { Info.close(); kick(); } else goRoom(room.id); }
+    else { Info.close(); kick(); }
   });
-  cv.addEventListener('pointerleave', () => { hover = null; hoverRoom = null; if (!pinned) hideTip(); dirty = true; });
+  cv.addEventListener('pointerleave', () => { hover = null; hoverRoom = null; hideTip(); kick(); });
   cv.addEventListener('wheel', e => {
     e.preventDefault();
     const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top, before = toWorld(px, py);
     cam.z *= Math.exp(-e.deltaY * 0.0012); clampCam();
-    const after = toWorld(px, py); cam.cx += before.x - after.x; cam.cy += before.y - after.y; clampCam(); target = null; dirty = true;
+    const after = toWorld(px, py); cam.cx += before.x - after.x; cam.cy += before.y - after.y; clampCam(); target = null; kick();
   }, { passive: false });
   cv.addEventListener('keydown', e => {
     const step = 40 / cam.z;
     if (e.key === 'ArrowLeft') cam.cx -= step; else if (e.key === 'ArrowRight') cam.cx += step; else if (e.key === 'ArrowUp') cam.cy -= step; else if (e.key === 'ArrowDown') cam.cy += step;
-    else if (e.key === '+' || e.key === '=') zoomBy(1.25); else if (e.key === '-') zoomBy(0.8); else if (e.key === '0') setCam(fit(), true); else if (e.key === 'Escape') { pinned = null; hideTip(); }
+    else if (e.key === '+' || e.key === '=') zoomBy(1.25); else if (e.key === '-') zoomBy(0.8); else if (e.key === '0') goBuilding();
     else return;
-    e.preventDefault(); clampCam(); dirty = true;
+    e.preventDefault(); clampCam(); kick();
   });
-  function zoomBy(f) { setCam({ cx: cam.cx, cy: cam.cy, z: Math.max(fitZ * 0.7, Math.min(4.2, cam.z * f)) }, true); }
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const dlg = $('#ayarlar'); if (dlg && dlg.open) return;      // ayarlar penceresi kendi Esc'ini yönetir
+    if (Info.isOpen()) { Info.close(); kick(); } else if (mode.active) goBuilding(); else if (document.body.classList.contains('tam')) togglePanel();
+  });
+  function zoomBy(f) { setCam({ cx: cam.cx, cy: cam.cy, z: Math.max(fitZ * 0.7, Math.min(4.2, cam.z * f)) }, true); kick(); }
   $('#zIn').addEventListener('click', () => zoomBy(1.35));
   $('#zOut').addEventListener('click', () => zoomBy(1 / 1.35));
-  $('#zFit').addEventListener('click', () => setTab('genel'));
-
-  function roomCenter(r) {
-    const p = W.roomPoly(r), cxp = (p[0][0] + p[2][0]) / 2, cyp = (p[0][1] + p[2][1]) / 2;
-    const ww = p[1][0] - p[3][0], hh = p[2][1] - p[0][1] + 52;
-    return { cx: cxp, cy: cyp - 18, w: ww, h: hh };
-  }
-  function focusRoom(id) {
-    const r = W.roomById[id]; if (!r) return;
-    const c = roomCenter(r), z = Math.max(fitZ * 1.1, Math.min(3.4, Math.min(view.w / (c.w + 140), view.h / (c.h + 110))));
-    setCam({ cx: c.cx, cy: c.cy, z: z }, true);
-  }
-  function selectRoom(id, focus) { Off.select(id); markRay(id); if (id && focus) focusRoom(id); dirty = true; }
-  window.OFIS.focusRoom = id => selectRoom(id, true);
+  $('#zFit').addEventListener('click', goBuilding);
 
   /* ---------- sol dikey menü ---------- */
   const ODA_KART = { tarama: '#cHuni', kapi: '#cHuni', lab: '#cHuni', aday: '#cHuni', oda: '#cAcik', kontrol: '#cKohort', finans: '#cKasa', risk: '#cRisk', denetim: '#cVeri', arsiv: '#cVeri', haberlesme: '#cTelegram', sekreterlik: '#cOzet' };
@@ -365,79 +451,102 @@
   function goCard(sel) {
     const el = sel && $(sel); if (!el) return;
     const sol = $('#sol');
-    if (window.matchMedia('(min-width: 900px)').matches && sol) sol.scrollTo({ top: el.offsetTop - 8, behavior: reduced ? 'auto' : 'smooth' });
-    else el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    if (!window.matchMedia('(min-width: 900px)').matches || !sol) return;   // telefonda sayfa kaymaz: ofis görünür kalır
+    sol.scrollTo({ top: el.offsetTop - 8, behavior: reduced ? 'auto' : 'smooth' });
     el.classList.add('vurgu'); setTimeout(() => el.classList.remove('vurgu'), 1800);
   }
-  function setTab(name) { // 'genel' = tüm ofis
-    if (name === 'genel') { selectRoom(null); setCam(fit(), true); const sol = $('#sol'); if (sol) sol.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); }
+  function setTab(name) { if (name === 'genel') { goBuilding(); const sol = $('#sol'); if (sol) sol.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); } }
+  function refreshNames() {
+    document.querySelectorAll('.ray [data-oda] span').forEach(sp => {
+      const b = sp.parentElement, id = b.dataset.oda; if (!sp.dataset.def) sp.dataset.def = sp.textContent;
+      sp.textContent = Names.isCustom('oda', id) ? Names.room(id) : sp.dataset.def;
+    });
+    if (mode.room) $('#odaBaslik').textContent = Names.room(mode.room, (W.roomById[mode.room] || {}).ad);
+    kick();
   }
   document.querySelectorAll('.ray [data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
   document.querySelectorAll('.ray [data-oda]').forEach(b => {
     const r = W.roomById[b.dataset.oda]; if (r) b.style.setProperty('--c', lighten(r.ac, 0.28));
-    b.addEventListener('click', () => { selectRoom(b.dataset.oda, true); goCard(ODA_KART[b.dataset.oda]); });
+    b.addEventListener('click', () => { goRoom(b.dataset.oda); goCard(ODA_KART[b.dataset.oda]); });
   });
   function togglePanel() {
     const on = !document.body.classList.contains('tam');
     document.body.classList.toggle('tam', on);
     const b = $('#zPanel'); if (b) b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    setTimeout(() => { resize(); setCam(fit(), false); }, 60);
+    setTimeout(() => { resize(); setCam(mode.active ? interiorCam(mode.room) : fit(), false); kick(); }, 60);
   }
   $('#zPanel').addEventListener('click', togglePanel);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('tam')) togglePanel(); });
   window.OFIS.setTab = setTab;
 
-  /* ---------- ana döngü ---------- */
-  let last = performance.now(), fpsN = 0, fpsT = 0;
-  function frame(t) {
-    const dt = Math.min(0.1, (t - last) / 1000); last = t;
+  /* ---------- ana döngü: olay yokken durur ---------- */
+  let raf = 0, wakeT = 0, lastSync = performance.now(), fpsN = 0, fpsT = 0;
+  function step(t) {
+    const real = Math.max(0, (t - lastSync) / 1000); lastSync = t;
+    const dt = Math.min(0.1, real);
     updateLight();
-    Off.update(dt);
+    Off.update(dt, real);                       // örnek olay zamanı gerçek süreyle ilerler (uyku dâhil)
     if (target) {
       const p = Math.min(1, (t - target.t0) / target.dur), e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       cam.cx = target.from.cx + (target.cx - target.from.cx) * e; cam.cy = target.from.cy + (target.cy - target.from.cy) * e; cam.z = target.from.z * Math.pow(target.z / target.from.z, e);
       if (p >= 1) target = null;
     }
+    animRoom(dt);
     clampCam();
     const p0 = performance.now(); drawScene(t); const p1 = performance.now(); blit(); const p2 = performance.now(); drawLabels(); const p3 = performance.now();
-    const pf = window.OFIS.perf || (window.OFIS.perf = { scene: 0, blit: 0, lab: 0 }); pf.scene = pf.scene * 0.9 + (p1 - p0) * 0.1; pf.blit = pf.blit * 0.9 + (p2 - p1) * 0.1; pf.lab = pf.lab * 0.9 + (p3 - p2) * 0.1;
+    const pf = window.OFIS.perf || (window.OFIS.perf = { scene: 0, blit: 0, lab: 0, kare: 0 }); pf.scene = pf.scene * 0.9 + (p1 - p0) * 0.1; pf.blit = pf.blit * 0.9 + (p2 - p1) * 0.1; pf.lab = pf.lab * 0.9 + (p3 - p2) * 0.1; pf.kare++;
     dirty = false;
-    if (qs.get('perf') === '1') { const el = $('#perf'); if (el) { el.hidden = false; el.textContent = (window.OFIS.fps || 0) + ' fps · sahne ' + pf.scene.toFixed(1) + ' ms · aktarım ' + pf.blit.toFixed(1) + ' ms'; } }
+    if (qs.get('perf') === '1') { const el = $('#perf'); if (el) { el.hidden = false; el.textContent = (window.OFIS.fps || 0) + ' fps · sahne ' + pf.scene.toFixed(1) + ' ms · aktarım ' + pf.blit.toFixed(1) + ' ms · kare ' + pf.kare; } }
     fpsN++; fpsT += dt; if (fpsT >= 1) { window.OFIS.fps = Math.round(fpsN / fpsT); fpsN = 0; fpsT = 0; }
-    if (!reduced) requestAnimationFrame(frame);
   }
-  function startLoop() {
-    last = performance.now();
-    if (!reduced) requestAnimationFrame(frame);
+  const busyNow = () => (target || roomT !== roomTWant) ? 'raf' : (Off.busy() || false);
+  function schedule() {
+    if (raf) return;                                  // olay işleyicisi (emit) zaten bir kare istedi
+    clearTimeout(wakeT); wakeT = 0;
+    const b = reduced ? false : busyNow();
+    if (b === 'raf') raf = requestAnimationFrame(tick);
+    else if (b === 'slow') wakeT = setTimeout(kick, 190);
+    else wakeT = setTimeout(kick, Math.min(Off.nextEventMs(), 30000));    // uyku: sıradaki örnek olayda (en geç 30 sn'de, ışık saati için) uyan
   }
-  let redTimer = null;
+  function tick(t) { raf = 0; step(t); schedule(); }
+  function kick() { if (raf) return; clearTimeout(wakeT); raf = requestAnimationFrame(tick); }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
   function applyMotion() {
     Off.reduced = reduced; document.body.classList.toggle('az-hareket', reduced);
-    if (redTimer) { clearInterval(redTimer); redTimer = null; }
-    if (reduced) redTimer = setInterval(() => frame(performance.now() + 0), 700);
-    else startLoop();
+    kick();
   }
   if (mq.addEventListener) mq.addEventListener('change', e => { reduced = e.matches; applyMotion(); });
 
   /* ---------- açılış ---------- */
+  async function getJSON(url, req) {
+    try { const r = await fetch(url, { cache: 'no-store' }); if (!r.ok) throw new Error('HTTP ' + r.status); return await r.json(); }
+    catch (err) { if (req) throw err; return null; }
+  }
   async function boot() {
     if (qs.get('saat')) { const m = /^(\d{1,2}):(\d{2})$/.exec(qs.get('saat')); if (m) { const d = new Date(); d.setHours(+m[1], +m[2], 0, 0); Off.timeOffsetMs = d.getTime() - Date.now(); } }
     const url = qs.get('durum') || 'ornek_durum.json';
     let data;
-    try { const r = await fetch(url, { cache: 'no-store' }); if (!r.ok) throw new Error('HTTP ' + r.status); data = await r.json(); if (data.surum !== 1) throw new Error('desteklenmeyen şema sürümü: ' + data.surum); }
+    try { data = await getJSON(url, true); if (data.surum !== 1) throw new Error('desteklenmeyen şema sürümü: ' + data.surum); }
     catch (err) { $('#hata').hidden = false; $('#hata').textContent = 'Veri okunamadı (' + err.message + '). Sahte veri gösterilmiyor.'; return; }
+    const kadro = await getJSON('kadro.json'), replik = await getJSON('replikler.json');
+    if (!kadro || !replik) { $('#hata').hidden = false; $('#hata').textContent = 'kadro.json ya da replikler.json okunamadı; varsayılan adlar ve replikler kullanılamıyor (veri etkilenmez).'; }
+    Names.init(kadro || { odalar: {}, calisanlar: {}, nesneler: {} });
     W.build();
     Off.init(data, { reduced: reduced, speed: parseFloat(qs.get('hiz')) || 1 });
     window.OFIS.data = data;
     updateLight(); resize();
-    new ResizeObserver(() => { resize(); }).observe($('#ofisTuval'));
-    if (O.Panel) O.Panel.init(Off, { focusRoom: id => selectRoom(id, true) });
-    applyMotion();
-    const f = qs.get('oda'); if (f) { setTimeout(() => selectRoom(f, true), 300); }
+    new ResizeObserver(() => { resize(); kick(); }).observe($('#ofisTuval'));
+    Off.on(() => kick());                      // durum her değiştiğinde (dışarıdan gelen olay dâhil) döngü uyanır
+    Info.init(Off, { invalidate: kick, onShow: sel => { pinned = sel.type === 'person' ? sel.a : null; shiftFor(true); }, onClose: () => { pinned = null; shiftFor(false); } }, replik || undefined);
+    Names.bindUI(); Names.onChange(refreshNames); refreshNames();
+    if (O.Panel) O.Panel.init(Off, { focusRoom: id => goRoom(id) });
+    const f = qs.get('oda'); if (f && W.roomById[f] && !W.roomById[f].out) { try { history.replaceState(null, '', location.pathname + '#oda/' + f); } catch (e) { /* adres çubuğu değiştirilemedi */ } }
     window.OFIS.ready = true;
-    if (reduced) frame(performance.now());
+    lastSync = performance.now();
+    applyMotion();
+    applyRoute({ instant: true });
   }
-  window.OFIS.debug = { cam: cam, view: view, toView: toView, toWorld: toWorld };
-  window.OFIS.invalidate = () => { dirty = true; if (reduced) frame(performance.now()); };
+  window.OFIS.debug = { cam: cam, view: view, toView: toView, toWorld: toWorld, mode: mode, pick: pick, goRoom: goRoom, goBuilding: goBuilding, roomT: () => roomT, loop: () => ({ raf: !!raf, wake: !!wakeT }) };
+  window.OFIS.invalidate = kick;
+  window.OFIS.focusRoom = id => goRoom(id);
   boot();
 })();
