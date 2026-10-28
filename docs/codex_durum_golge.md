@@ -1,14 +1,9 @@
 # Gölge motoru durumu (Codex, 2026-10-28)
 
-## Faz 2 engeli
-- V2 için `kurallar.yaml`'a yazılması gereken sayılar eksik: 7. ve 14. günlerdeki kâr/zarar sınırları ile gölge pozisyon üst sınırı.
-- Ön kayıt yalnız teminatın `%50` zarar kesmesini ve swing için 7/14 günü belirliyor; bu günlerdeki sınırları ve üst sınırı tanımlamıyor.
-- Bu değerler sonuç görülmeden dondurulacak karar eşikleridir. Tahmin edilmedi.
+## Faz 2 sayıları
+- Kullanıcı onayıyla donan V2 ve 3× tavan değerleri `copytrade/kurallar.yaml`'a aktarıldı; kodda eşik yok.
+- Swing: 0–7 gün −%50; 7–14 gün −%30 / +%60; 14. günden sonra −%20 / +%40. Intraday −%50 zarar kes.
 
-## Hazır taslak
-- `copy_ledger` üstünde V0/V1, gecikme zinciri, eksik/kaçırılan olay ve sıfır maliyet/gecikme sağlaması için yerel taslak hazırlandı.
-- Taslak commit edilmedi; V2 kararları gelince tamamlanıp her kuralın altın örnekleriyle tek Faz 2 PR'ı olarak açılacak.
-
-## Gereken lider kararı
-- V2 swing 7. ve 14. gün için teminata göre zarar ve kâr sınırları.
-- Gölge pozisyonu başına üst sınır.
+## Faz 2 kapsamı
+- `copy_ledger` üstünde V0/V1/V2 katmanı, gecikme zinciri, eksik/kaçırılan/bant/kırpma olayları ve sıfır maliyet/gecikme sağlaması eklendi.
+- Faz 3'e geçilmedi; lider onayı gerekir.
