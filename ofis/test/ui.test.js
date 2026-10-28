@@ -447,17 +447,17 @@ const srv = http.createServer((q, r) => {
   ok('açıkken kart sütunundan eksik (cKasa yok)', !/cKasa/.test(sirasi), sirasi);
   /* kapatma yolları */
   const kapaliMi = async () => !(await panelDurum()).acik && await pg.evaluate(() => document.querySelectorAll('#sol > .kart').length === 10 && document.querySelector('#sol > #cKasa') !== null);
-  await pg.click('#kpKapat'); await sleep(250);
+  await pg.click('#kpKapat'); await sleep(1000);
   const dK = await panelDurum();
-  ok('× düğmesi paneli kapatır, kartlar sütuna döner, oda içinde kalınır', await kapaliMi() && dK.aktif && dK.oda === 'finans');
-  await pg.click('.ray [data-oda=finans]'); await sleep(450); await pg.keyboard.press('Escape'); await sleep(250);
+  ok('× düğmesi paneli kapatır, kartlar sütuna döner, kamera binaya döner (adres temizlenir)', await kapaliMi() && !dK.aktif && dK.hash === '');
+  await pg.click('.ray [data-oda=finans]'); await sleep(450); await pg.keyboard.press('Escape'); await sleep(1000);
   const dE = await panelDurum();
-  ok('Esc önce paneli kapatır (odada kalır)', await kapaliMi() && dE.aktif && dE.oda === 'finans');
+  ok('Esc paneli kapatır ve kamera binaya döner', await kapaliMi() && !dE.aktif && dE.hash === '');
   await pg.keyboard.press('Escape'); await sleep(900);
   ok('ikinci Esc binaya döndürür', !(await panelDurum()).aktif);
   await pg.click('.ray [data-oda=risk]'); await sleep(450);
-  await pg.click('.ray [data-oda=risk]'); await sleep(250);
-  ok('aynı menüye ikinci tıklama paneli kapatır', await kapaliMi() && (await panelDurum()).aktif);
+  await pg.click('.ray [data-oda=risk]'); await sleep(1000);
+  ok('aynı menüye ikinci tıklama paneli kapatır, kamera binaya döner', await kapaliMi() && !(await panelDurum()).aktif);
   await pg.click('.ray [data-oda=risk]'); await sleep(450);
   ok('aynı menüye üçüncü tıklama yeniden açar', (await panelDurum()).acik);
   await pg.click('.ray [data-oda=makam]'); await sleep(450); await pg.click('.ray [data-oda=makam]'); await sleep(250);
@@ -516,6 +516,63 @@ const srv = http.createServer((q, r) => {
   ({ ctx, pg } = await open('?saat=15:40', { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }));
   const apt = await pg.evaluate(() => { const e = document.getElementById('anaPanoLink'), r = e.getBoundingClientRect(); return { gor: r.width > 0 && r.left >= 0 && r.right <= innerWidth, h: r.height }; });
   ok('telefon: "Ana pano" bağlantısı ekranda ve ≥ 44 px', apt.gor && apt.h >= 43.5, JSON.stringify(apt));
+  await ctx.close();
+
+  /* ---------- T. sol menü paneli kapanınca kamera panel öncesi görünüme yumuşakça döner ---------- */
+  ({ ctx, pg } = await open());
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; });
+  const camDurum = () => pg.evaluate(() => { const c = OFIS.debug.cam; return { z: c.z, cx: c.cx, cy: c.cy, hash: location.hash, aktif: OFIS.debug.mode.active, oda: OFIS.debug.mode.room, panel: !document.getElementById('kartPanel').hidden }; });
+  const yakin = (a, c) => Math.abs(a.z - c.z) < 0.01 && Math.abs(a.cx - c.cx) < 1 && Math.abs(a.cy - c.cy) < 1;
+  const bina0 = await camDurum();
+  const yol = [['× düğmesi', () => pg.click('#kpKapat')], ['Esc', () => pg.keyboard.press('Escape')], ['aynı menüye ikinci tıklama', () => pg.click('.ray [data-oda=aday]')]];
+  for (const [ad, kapat] of yol) {
+    await pg.click('.ray [data-oda=aday]'); await sleep(900);
+    const ac = await camDurum();
+    ok(`${ad}: panel açıkken kamera odaya yakın (z büyük), adres #oda/aday`, ac.panel && ac.z > bina0.z * 1.3 && ac.hash === '#oda/aday', JSON.stringify(ac));
+    await kapat(); await sleep(150);
+    const ara = await camDurum();
+    await sleep(1100);
+    const son = await camDurum();
+    ok(`${ad}: kamera yumuşak geçişle panel öncesi görünüme (bina) döner`, yakin(son, bina0) && !son.aktif && !son.panel, JSON.stringify({ son, bina0 }));
+    ok(`${ad}: geçiş animasyonlu (150 ms'de hâlâ yolda)`, ara.z !== son.z || ara.cx !== son.cx, JSON.stringify(ara));
+    ok(`${ad}: #oda/… adresi temizlendi`, son.hash === '', son.hash);
+  }
+  /* panel açıkken başka menüye geçiş: doğrudan yeni odaya, binaya dönmeden */
+  await pg.click('.ray [data-oda=aday]'); await sleep(900);
+  await pg.evaluate(() => { window.__zler = []; const c = OFIS.debug.cam; window.__izle = setInterval(() => window.__zler.push(c.z), 16); });
+  await pg.click('.ray [data-oda=finans]'); await sleep(1000);
+  const gec = await pg.evaluate(() => { clearInterval(window.__izle); return { min: Math.min(...window.__zler), oda: OFIS.debug.mode.room }; });
+  const binaZ = bina0.z;
+  ok('başka menüye geçiş: kamera doğrudan yeni odaya gider, bina görünümüne dönmez (z hiç bina seviyesine inmez)', gec.oda === 'finans' && gec.min > binaZ * 1.2, JSON.stringify(gec));
+  await pg.click('#kpKapat'); await sleep(1300);
+  ok('geçişten sonra kapatınca kamera ilk görünüme (bina) döner', yakin(await camDurum(), bina0));
+  /* elle yakınlaştırma / sürükleme sonrası kapatma */
+  await pg.click('.ray [data-oda=aday]'); await sleep(900);
+  const tv = await pg.evaluate(() => { const r = document.getElementById('tuval').getBoundingClientRect(); return { x: r.left + r.width / 2 + 200, y: r.top + r.height / 2 }; });
+  await pg.mouse.move(tv.x, tv.y); await pg.mouse.wheel(0, 700); await sleep(200);
+  await pg.mouse.move(tv.x, tv.y); await pg.mouse.down(); await pg.mouse.move(tv.x + 90, tv.y + 40, { steps: 6 }); await pg.mouse.up(); await sleep(200);
+  const elle = await camDurum();
+  ok('elle yakınlaştırma/sürükleme kamerayı değiştirdi', !!elle.panel && Math.abs(elle.z - bina0.z) > 0.01);
+  await pg.keyboard.press('Escape'); await sleep(1300);
+  ok('elle hareketten sonra da kapatınca panel öncesi görünüme dönülür', yakin(await camDurum(), bina0), JSON.stringify(await camDurum()));
+  /* geri tuşu: paneli kapatır, binaya döner */
+  await pg.click('.ray [data-oda=aday]'); await sleep(900);
+  await pg.goBack(); await sleep(1300);
+  const gb = await camDurum();
+  ok('tarayıcı geri tuşu paneli kapatır, bina görünümüne döner, adres temizlenir', !gb.panel && !gb.aktif && gb.hash === '' && yakin(gb, bina0), JSON.stringify(gb));
+  /* bina yakınlaştırılmışken açılan panel kapanınca o görünüme döner */
+  await pg.evaluate(() => { OFIS.debug.cam.z *= 1.15; });
+  await pg.evaluate(() => { OFIS.debug.cam.cx += 25; });
+  const elleBina = await camDurum();
+  await pg.click('.ray [data-oda=risk]'); await sleep(900); await pg.click('#kpKapat'); await sleep(1300);
+  ok('panel öncesi elle ayarlı bina görünümüne dönülür', yakin(await camDurum(), elleBina), JSON.stringify({ s: await camDurum(), elleBina }));
+  await ctx.close();
+  /* azaltılmış hareket: geçiş animasyonsuz */
+  ({ ctx, pg } = await open('?saat=15:40', { reducedMotion: 'reduce' }));
+  await pg.evaluate(() => { OFIS.Office.state().speed = 0; });
+  const rb = await camDurum();
+  await pg.click('.ray [data-oda=aday]'); await sleep(300); await pg.click('#kpKapat'); await sleep(60);
+  ok('prefers-reduced-motion: kapatınca kamera anında panel öncesi görünümde', yakin(await camDurum(), rb), JSON.stringify({ s: await camDurum(), rb }));
   await ctx.close();
 
   ok('sayfa/konsol hatası yok', errs.length === 0, errs.slice(0, 3).join(' | '));
