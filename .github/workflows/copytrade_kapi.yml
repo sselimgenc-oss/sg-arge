@@ -145,6 +145,7 @@ jobs:
       - run: pip install -r requirements.txt
       - uses: actions/download-artifact@v4
         with:
+          pattern: stage1-*
           path: shards
       - name: Veri dalındaki aynı günün sonuçlarını getir
         shell: bash

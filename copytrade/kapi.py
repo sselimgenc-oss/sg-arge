@@ -1322,7 +1322,10 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
     for path in sorted(shards.rglob("sonuc.csv")):
         groups.setdefault(path.parent.name, []).append(pd.read_csv(path))
     for path in shards.rglob("evren.json"):
-        evren[path.parent.name] = max(evren.get(path.parent.name, 0), int(json.loads(path.read_text(encoding="utf-8"))["evren"]))
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if "evren" not in payload:
+            continue  # ortak evren anlık görüntüsü ({"liderler": [...]}) sayı dosyası değildir
+        evren[path.parent.name] = max(evren.get(path.parent.name, 0), int(payload["evren"]))
     for date, frames in groups.items():
         output = root / "kapi" / date
         output.mkdir(parents=True, exist_ok=True)
