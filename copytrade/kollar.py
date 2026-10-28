@@ -38,12 +38,6 @@ def cikis(adres: str, sirali_adaylar: list[str]) -> bool:
     return adres not in list(sirali_adaylar)[:math.ceil(len(sirali_adaylar) / 2)]
 
 
-def sentetik_gecer(p_degeri: float, rules: dict | None = None) -> bool:
-    """Sentetik kontrolün karar eşiği, kapıyla ortak ön kayıtlı p eşiğidir."""
-    rules = rules or load_rules()
-    return float(p_degeri) <= float(rules["plasebo_p_max"])
-
-
 def olay_yaz(path: Path, olay: dict) -> None:
     """Arşiv `olay` türü için yalnız eklemeli JSONL ara kaydı."""
     path.parent.mkdir(parents=True, exist_ok=True)
