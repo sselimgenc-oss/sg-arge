@@ -2,45 +2,45 @@
 
 Run: `40711594322` · gün: `2026-10-28`.
 
-| Parça | Plan | İşlenen (bitti/log) | sonuc.csv | plan listesi | CSV−plan | plan−CSV | bitti.json |
-| ---: | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
-| 0 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 1 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 2 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 3 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 4 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 5 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 6 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 7 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 8 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 9 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 10 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 11 | 423 | — | 389 | 92 | 386 | 89 | hayır |
-| 12 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 13 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 14 | 423 | — | 182 | 92 | 179 | 89 | hayır |
-| 15 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 16 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 17 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 18 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 19 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 20 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 21 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
-| 22 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
-| 23 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 24 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 25 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
-| 26 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
-| 27 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
-| 28 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
-| 29 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
-| 30 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
-| 31 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
+| Parça | Evren | Plan | İşlenen (bitti/log) | sonuc.csv | plan listesi | CSV−plan | plan−CSV | bitti.json |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
+| 0 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 1 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 2 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 3 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 4 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 5 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 6 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 7 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 8 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 9 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 10 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 11 | 13530 | 423 | — | 389 | eski/yarım | — | — | hayır |
+| 12 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 13 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 14 | 13525 | 423 | — | 182 | eski/yarım | — | — | hayır |
+| 15 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 16 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 17 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 18 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 19 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 20 | 13525 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 21 | 13525 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
+| 22 | 13525 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
+| 23 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 24 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 25 | 13530 | 423 | 423 | 423 | 423 | 0 | 0 | evet |
+| 26 | 13525 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
+| 27 | 13525 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
+| 28 | 13530 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
+| 29 | 13530 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
+| 30 | 13525 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
+| 31 | 13525 | 422 | 422 | 422 | 422 | 0 | 0 | evet |
 
 ## Adres kümeleri
 
 - Parça CSV toplamı: **13253**; tekil adres: **10061**; yinelenen satır: **3192**.
-- Plan listesi toplamı: **12866**; tekil plan adresi: **9834**.
+- Bitmiş parçalardaki plan listesi toplamı: **12682**; tekil plan adresi: **9811**.
 - `evren.json`: [13525, 13530]; tüm parçalarda aynı sayı: **hayır**.
 - Boş/NaN address: **0**; yalnız büyük-küçük harften doğan ek çakışma: **0**.
 
@@ -73,6 +73,6 @@ Run: `40711594322` · gün: `2026-10-28`.
 
 ## Bulgu
 
-Tamamlanan parçalarda plan, bitti ve CSV sayıları eşitse satır parça içinde kaybolmamıştır. Ortak evren her işte yeniden API'den üretildiği için `evren.json` yalnız aynı **sayının** geldiğini gösterir; plan listelerindeki kesişimler farklı anlık görüntülerin aynı adresleri ayrı parçalara koyduğunu kanıtlar. Birleştirmedeki `drop_duplicates("address")` bu çakışan satırları tekile indirir.
+Tamamlanan parçalarda plan, bitti ve CSV sayıları eşitse satır parça içinde kaybolmamıştır. Bitmeyen parçada `asama1.csv.gz` döngünün sonunda yazılmadığından veri dalından kalmış olabilir; bu yüzden kendi planıyla kıyaslanmaz. Ortak evren her işte yeniden API'den üretildiği için `evren.json` aynı **sayıyı** verse bile aynı adres listesini garanti etmez; plan listelerindeki kesişimler farklı anlık görüntülerin aynı adresleri ayrı parçalara koyduğunu kanıtlar. Birleştirmedeki `drop_duplicates("address")` bu çakışan satırları tekile indirir.
 
 Düzeltme: plan işi adres listesini içeren ortak anlık görüntü üretir; her `stage1` işi bu dosyadan kendi sabit dilimini seçer. Eşik, kapı ve karar hesabı değişmez.
