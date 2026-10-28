@@ -1,16 +1,16 @@
 {
- "durum": "eksik",
+ "durum": "tamam",
  "parca_beklenen": 32,
  "parca_biten": 32,
- "islenen": 12769,
- "evren": 13615,
- "kapsam": 0.9379,
- "neden": "kapsam %93.8 < hedef %98",
+ "islenen": 13767,
+ "evren": 13710,
+ "kapsam": 1.0042,
+ "neden": "",
  "eski_hesap_satir": 0,
  "hesap": "v1.1-2026-10-27d",
  "satir_kaynagi": {
-  "onceki_dosya_ayni_hesap": 9962,
-  "bu_kosu": 2807
+  "onceki_dosya_ayni_hesap": 12584,
+  "bu_kosu": 1183
  },
  "kapi_sorunlari": []
 }

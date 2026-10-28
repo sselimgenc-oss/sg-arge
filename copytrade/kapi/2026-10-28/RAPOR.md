@@ -1,37 +1,37 @@
 # CT-Kapı v1.1
 
-> **DURUM: EKSİK** — kapsam %93.8 < hedef %98. Bu sonuç eksik koşudur; karar için kullanılmaz.
+Durum: tamam (parça 32/32).
 
-Hatalı adres: 186/12769 (hata sütunu; sınıf Yetersiz).
+Hatalı adres: 197/13767 (hata sütunu; sınıf Yetersiz).
 
-- Plasebo test ailesi **m = 23** (adım 1–4'ü geçen adresler; BHY bu aile üzerinde, p'si olmayan üye p = 1 sayılır); tekrar sayısı 10000
-- İşlenen / evren: 12769 / 13615 (%93.8; hedef ≥ %98: ✗)
-- 1. aşama (kâr eğrisi) geçti: 1166
-- Veri hatası: 186
-- Sınıf: Yetersiz 10998, Kaldı 1770, Geçti 1
+- Plasebo test ailesi **m = 24** (adım 1–4'ü geçen adresler; BHY bu aile üzerinde, p'si olmayan üye p = 1 sayılır); tekrar sayısı 10000
+- İşlenen / evren: 13767 / 13710 (%100.4; hedef ≥ %98: ✓)
+- 1. aşama (kâr eğrisi) geçti: 1244
+- Veri hatası: 197
+- Sınıf: Yetersiz 11875, Kaldı 1891, Geçti 1
 
 ## Huni — tarza göre (geçen sayısı)
 
 | tarz | adres | adım 1 | adım 2 | adım 3 | adım 4 | adım 5 | adım 6 | adım 7 | izleme_adayi | kopyalanabilir |
 |---|---|---|---|---|---|---|---|---|---|---|
-| intraday | 270 | 254 | 118 | 44 | 35 | 4 | 7 | 1 | 43 | 1 |
-| swing | 362 | 339 | 95 | 37 | 19 | 6 | 7 | 1 | 37 | 0 |
-| scalp | 165 | 157 | 82 | 0 | 49 | 0 | 14 | 0 | 0 | 0 |
-| belirsiz | 11972 | 37 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| intraday | 292 | 274 | 127 | 47 | 37 | 4 | 8 | 1 | 46 | 1 |
+| swing | 381 | 355 | 99 | 40 | 21 | 6 | 7 | 1 | 40 | 0 |
+| scalp | 177 | 168 | 88 | 0 | 52 | 0 | 15 | 0 | 0 | 0 |
+| belirsiz | 12917 | 39 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ## Katman
 
-- yok: 12688
-- izleme_adayi: 80
+- yok: 13680
+- izleme_adayi: 86
 - kopyalanabilir: 1
 
 ## Dondurma (kurallar ve kod özeti)
 
 - `kurallar.yaml` SHA-256: `aa037fc2ca06bc3368ceb02ea1b3e94afb6209d8e573428e795785f36a592a8b`
-- `kapi.py` SHA-256: `b5e301c617386922bc8fd4512ed3e9c12fd89978ce30a3327d7dd9f4d5195fe5`
+- `kapi.py` SHA-256: `c787c00878fcdf9a975abc718db89838abbe0135abd98b4e6bb06b845f7d3437`
 - `olcut.py` SHA-256: `fc6d1923aad8e25a643a5f27861b1a8d8c186d9b90f2090f0b29b5cc24ee98c4`
 - `defter.py` SHA-256: `39dd44739efe5c0ebc5fb32cc3d9129009aa0de839cd1bc8b903470b9d655df2`
-- Aday listesi (81 adres: kopyalanabilir + izleme_adayi) özeti: `9380583ceb039cca6a5dc299ccce6725b87527691513e731a5dd3b366e038474`
+- Aday listesi (87 adres: kopyalanabilir + izleme_adayi) özeti: `0bab42d9c22821704b0faf3772e34ae47d72cb65f6488d0ee79b417a83a5d14f`
 
 ## Adım 2'yi geçenler (alfa t'ye göre ilk 15)
 
@@ -42,15 +42,15 @@ Hatalı adres: 186/12769 (hata sütunu; sınıf Yetersiz).
 | 0xa4ac1d48fe393ac94e7f9480af8abd9360abf48a | scalp | yok | False | 0.923 | 0.0288 | 0.387 | 1.58e+03 | 0.014 | 0.454 | 0.726 | 396 | 1.3 | 0.304 | 200 | -0.0524 | -0.113 | -0.0797 | nan | 3.72 | BTC | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0xa4178e3b8d7799cd472ceeb63b302b4a1344da19 | scalp | yok | False | 0.923 | 0.0362 | 1.62 | 649 | 0.00477 | 0.0839 | 0.966 | 167 | 1.4 | 0.468 | 197 | -0.112 | -0.073 | -0.0784 | nan | 3.55 | BTC | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0x8bae3527e5a33fa0cf184f37bc112d071463ab6d | swing | yok | False | 1 | 0.0842 | 18.1 | 155 | 81 | 0.549 | 0.0986 | 19 | 15.6 | 0.324 | 200 | 0.109 | 0.131 | 0.0928 | nan | 3.45 | BTC | nan | Yetersiz | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
+| 0xac5c66fbad98b49979cd1cbaa800ace76e947866 | intraday | yok | False | 0.917 | 0.153 | 2.82 | 151 | 3.06 | 3.55e-05 | 0.245 | 29 | 2.7 | 0.278 | 200 | 0.172 | 0.0728 | 0.0557 | nan | 3.22 | BTC | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0x6809111be108b5f2fc57ac50799039af8ee14f8f | scalp | yok | True | 1 | 0.0636 | 2.14 | 1.22e+03 | 0.00214 | 0.205 | 0.89 | 342 | 0.7 | 0.341 | 200 | -0.000765 | -0.0857 | -0.121 | nan | 3.12 | sepet | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0xa4b00205646b41142f8aadacee815a98ecd3b35c | scalp | yok | False | 0.846 | 0.111 | 12.9 | 943 | 0.000984 | 0.169 | 0.967 | 141 | 1.2 | 0.26 | 200 | -0.0912 | -0.106 | -0.197 | nan | 3.01 | sepet | nan | Kaldı | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0xf97ad6704baec104d00b88e0c157e2b7b3a1ddd1 | intraday | izleme_adayi | False | 0.923 | 0.186 | 1.64 | 701 | 9.19 | 0.27 | 0.0858 | 296 | 0.1 | 0.192 | 200 | 0.307 | 0.32 | 0.201 | nan | 3.01 | BTC | nan | Geçti | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
-| 0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9 | swing | izleme_adayi | False | 0.846 | 0.181 | 1.19 | 86 | 48.1 | 0.454 | 0.119 | 27 | 3.9 | 0.476 | 199 | 0.556 | 0.509 | 0.435 | 0.0175 | 2.92 | sepet | 0.407 | Geçti | Geçti | Geçti | Geçti | Kaldı | Kaldı |
+| 0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9 | swing | izleme_adayi | False | 0.846 | 0.181 | 1.19 | 86 | 48.1 | 0.454 | 0.119 | 27 | 3.9 | 0.476 | 199 | 0.556 | 0.509 | 0.435 | 0.0175 | 2.92 | sepet | 0.43 | Geçti | Geçti | Geçti | Geçti | Kaldı | Kaldı |
+| 0x8f308355ce0604dd4fd872309d5761167655b07c | scalp | yok | False | 0.75 | 0.0375 | 1.53 | 211 | 0.00268 | 0.0549 | 0.991 | 124 | 0 | 0.265 | 199 | -0.0916 | -0.0926 | -0.0921 | nan | 2.74 | BTC | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0x2312171890250347dbf1b082bdf7950504909e92 | swing | yok | False | 0.385 | 0.28 | 0.205 | 166 | 80.3 | 0.7 | 0.0798 | 45 | 4.2 | 0.0613 | 198 | 0.484 | 0.414 | 0.331 | nan | 2.67 | BTC | nan | Kaldı | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0x378defc39d5dcdfbecd4f1673a5e228f992fc08e | intraday | izleme_adayi | False | 0.692 | 0.202 | 2.33 | 92 | 2.97 | 2.47 | 0.198 | 86 | 2.7 | 0.209 | 80.9 | 0.387 | 0.397 | 0.197 | nan | 2.57 | sepet | nan | Geçti | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
-| 0xba939edf38c0ae0cc689c98b492e0535f43e4550 | swing | izleme_adayi | False | 0.846 | 0.107 | 0.153 | 175 | 53.3 | 0.159 | 0.076 | 50 | 1.7 | 0.444 | 200 | 0.105 | 0.0959 | 0.0937 | 0.0358 | 2.51 | BTC | 0.407 | Geçti | Geçti | Geçti | Geçti | Kaldı | Kaldı |
+| 0xba939edf38c0ae0cc689c98b492e0535f43e4550 | swing | izleme_adayi | False | 0.846 | 0.107 | 0.153 | 175 | 53.3 | 0.159 | 0.076 | 50 | 1.7 | 0.444 | 200 | 0.105 | 0.0959 | 0.0937 | 0.0358 | 2.51 | BTC | 0.43 | Geçti | Geçti | Geçti | Geçti | Kaldı | Kaldı |
 | 0xbd7b48a5f74fec74643899795b6964a8fac7e69a | scalp | yok | True | 0.7 | 0.0727 | 4.2 | 1.92e+03 | 0.00388 | 0.223 | 0.907 | 818 | 0.8 | 0.215 | 176 | -0.442 | -0.533 | -0.419 | nan | 2.5 | BTC | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
-| 0x398433dd94502cb28814d145a4fb8e98deba601b | swing | yok | False | 0.846 | 0.125 | 0.63 | 156 | 53.6 | 0.746 | 0.143 | 14 | 0.6 | 0.379 | 200 | 0.1 | 0.106 | 0.0403 | nan | 2.41 | sepet | nan | Yetersiz | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
-| 0xb3162ca43d7455be5b4f6dbf3236435b709ed894 | intraday | yok | True | 0.769 | 0.164 | 8.34 | 219 | 3.96 | 1.38 | 0.174 | 22 | 12.1 | 0.113 | 197 | 0.453 | 0.364 | 0.412 | nan | 2.36 | BTC | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 
 Gecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.
