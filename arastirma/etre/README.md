@@ -7,9 +7,10 @@ Değerlendirme: `docs/GOREV_D_YOLU.md` (roller, varyantlar, huni), `docs/KARARLA
 |---|---|
 | `01_ofis_genel.webp` | Ofis + spot/kaldıraç kasaları, açık işlemler (V2 öncesi) |
 | `02_kesif_kohort_havuz.webp` | Keşif: kohort ↔ havuz/kontrol, önceden sabit karar kuralı, "veri birikiyor" |
-| `03_ajan_rolleri.png` | Ajan rolleri metni |
+| `03_ajan_rolleri.png`, `03b_ajan_rolleri_ikinci_kopya.png` | Ajan rolleri metni (iki gönderim) |
 | `04_spot_trader_odasi.webp` | Spot trader odası 19/20 · 14 deneme |
 | `2026-10-28_ofis_ileri_test_gun4.png` | V2 ileri test gün 4/7 (aşağıda) |
+| `tweetler.md` | Tweet metinleri |
 
 ## 2026-10-28 görüntüsünden notlar (ileri test gün 4/7)
 - Kasa: spot 201,23 $ (+%0,00), kaldıraç 200,91 $ (+%0,45); işlem başı ~5,2 $.
