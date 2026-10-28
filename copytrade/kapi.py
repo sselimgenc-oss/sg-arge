@@ -597,15 +597,14 @@ def market_shares(fills: list[dict], symbols: set[str] | None = None) -> dict[st
         volume[str(fill.get("coin"))] = volume.get(str(fill.get("coin")), 0.0) + abs(float(fill.get("px", 0)) * float(fill.get("sz", 0)))
     total = sum(volume.values())
     out: dict[str, float | None] = {f"pay_{name}": 0.0 for name in ("kripto", "hisse", "endeks", "emtia")}
-    out["binance_payi"] = None
+    if symbols is not None:
+        out["binance_payi"] = None         # liste var ama hacim 0: tanımlı boş (satır zaten metrik üretmiyor)
     if not total:
         return out
     for coin, value in volume.items():
         out[f"pay_{asset_class(coin)}"] = (out.get(f"pay_{asset_class(coin)}") or 0.0) + value / total
-    if symbols is not None:
+    if symbols is not None:                # liste alınamadıysa (HTTP 451 vb.) sütun hiç yazılmaz; sessiz boş sütun bırakılmaz
         out["binance_payi"] = sum(v for c, v in volume.items() if binance_availability(c, symbols) == "var") / total
-    else:
-        out.pop("binance_payi", None)      # Binance sembol listesi alınamadıysa (HTTP 451 vb.) sütun hiç yazılmaz; sessiz boş sütun bırakılmaz
     return out
 
 
