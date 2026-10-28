@@ -73,6 +73,12 @@ Kohort güncellemesinde gidip gelmeyi azaltmak için histerezis: girmek için il
 ## Fazlar (bir faz bitmeden sıradakine geçilmez)
 - **Faz 0 — Temel:** `claude/kapi-v1-1` dalı (`defter.py`, altın örnekler, akıl sağlığı kapısı) gözden geçirilip `main`'e alınır. PR açık
   değil; lider açar ve denetler. Hesap sürümü d ile final hızlı koşu sonucu veri dalında yok (son yazılan: c) → yeniden koşulur.
+- **Faz A — Arşiv (Faz 0 ile paralel; öneri, kullanıcı onayı gerekli):** geriye doldurulamayan veriler bugünden kaydedilir, çünkü
+  Hyperliquid geçmişi sınırlı veriyor (dolumlarda ~10.000 son kayıt, mumlarda ~5.000 mum ≈ 200 gün 1 saatlik). Kaydedilecekler:
+  haftalık leaderboard anlık görüntüsü (gelecekte hayatta kalan yanlılığı olmadan geçmiş prova için), havuzun dolumları ve
+  funding'i, işlem gören coinlerin 1 dakikalık mumları, gölge/oda olayları. Biçim: Parquet (zstd), tür/gün bölümlü, şema sürümlü,
+  yalnız ekleme. Yer: git değil (büyür) — Cloudflare R2 ya da GitHub Release dosyaları (karar kullanıcının). Her gün kapsam özeti
+  (adres, satır, boşluk) yayımlanır; boşluk sessiz kalmaz.
 - **Faz 1 — Ön kayıt:** `docs/ONKAYIT_D.md`: kollar, N, tohum, metrik, birim, süre, analiz tarihi, durdurma kriterleri; commit hash'iyle
   dondurulur. Sayısal değerler kullanıcı onayıyla.
 - **Faz 2 — Gölge motoru:** `copytrade/golge.py` + yukarıdaki 10 kural için altın örnekler + sağlama testi. Cevabı bilinen sentetik
