@@ -2,6 +2,7 @@ from copytrade.defter import DAY, HOUR
 from copytrade.golge import calistir, kirp_pozisyon, saglama, v2_sinir
 from copytrade.kurallar import load_rules
 import pytest
+import pandas as pd
 from copytrade.kollar import olay_yaz, sec
 
 T0 = 20_833 * DAY
@@ -49,6 +50,12 @@ def test_altin_v2_8_gunde_eksi31_cikar_6_gunde_eksi49_kalir():
     assert v2_sinir("swing", 14, 0.40) == "kar_al"
 
 
+def test_altin_v2_onkayit_d_ile_ayni_donmus_esikleri_kullanir():
+    assert RULES["golge_v2"]["intraday"]["zarar_kes"] == -0.50
+    assert RULES["golge_v2"]["swing"]["gun_7"] == {"zarar_kes": -0.30, "kar_al": 0.60}
+    assert RULES["golge_v2"]["swing"]["gun_14"] == {"zarar_kes": -0.20, "kar_al": 0.40}
+
+
 def test_altin_3x_asan_ekleme_kirpilir():
     clipped, event = kirp_pozisyon(fill(10, "B", 40, 0, 100), 20 / 1_000, 1_000)
     assert float(clipped["sz"]) == pytest.approx(10.0)
@@ -62,6 +69,65 @@ def test_altin_v2_8_gunde_eksi31_mumda_maliyetli_cikar():
     out = calistir(rows, market, 1_000, style="swing", etiket_ms=T0, end_ms=T0 + 9 * 24 * HOUR, variant="V2", delay_min=0)
     assert any(event["durum"] == "v2_cikis" for event in out["olaylar"])
     assert out["defter"]["costs"] > 0
+
+
+def test_altin_v2_swing_esikleri_fiyat_ve_maliyetle_donuyor():
+    rows = [fill(0, "B", 10, 0, 100)]
+    market = {"BTC": [{"t": T0 + h * HOUR, "o": 100 if h < 8 * 24 else 69, "c": 100 if h < 8 * 24 else 69}
+                      for h in range(9 * 24 + 1)]}
+    out = calistir(rows, market, 1_000, style="swing", etiket_ms=T0, end_ms=T0 + 9 * DAY, variant="V2", delay_min=0)
+    event = next(item for item in out["olaylar"] if item["durum"] == "v2_cikis")
+    assert event["zaman_ms"] == T0 + 8 * DAY
+    # 0,01 BTC: giriş 100, zorunlu çıkış 69; iki dolumun taker+kayma maliyeti.
+    assert out["defter"]["costs"] == pytest.approx(0.01 * (100 + 69) * 0.00095)
+
+
+def test_altin_v2_6_gun_eksi49_kalir_15_gun_artı41_kar_alir():
+    rows = [fill(0, "B", 10, 0, 100)]
+    six = {"BTC": [{"t": T0 + h * HOUR, "o": 51, "c": 51} for h in range(6 * 24 + 1)]}
+    assert not any(x["durum"] == "v2_cikis" for x in calistir(rows, six, 1_000, style="swing", etiket_ms=T0,
+                                                                 end_ms=T0 + 6 * DAY, variant="V2", delay_min=0)["olaylar"])
+    fifteen = {"BTC": [{"t": T0 + h * HOUR, "o": 100 if h < 15 * 24 else 141, "c": 141}
+                       for h in range(15 * 24 + 1)]}
+    out = calistir(rows, fifteen, 1_000, style="swing", etiket_ms=T0, end_ms=T0 + 15 * DAY, variant="V2", delay_min=0)
+    assert any(x["durum"] == "v2_cikis" and x["neden"] == "kar_al" for x in out["olaylar"])
+
+
+def test_altin_v2_intraday_eksi50_cikar():
+    rows = [fill(0, "B", 10, 0, 100)]
+    out = calistir(rows, candles(100, 50), 1_000, style="intraday", etiket_ms=T0, end_ms=T0 + HOUR,
+                   variant="V2", delay_min=0)
+    assert any(x["durum"] == "v2_cikis" and x["neden"] == "zarar_kes" for x in out["olaylar"])
+
+
+def test_altin_v2_cikis_sonrasi_kapanis_atlanir_yeni_acilis_kopyalanir():
+    rows = [fill(0, "B", 10, 0, 100), fill(9 * 24 * 60, "A", 10, 10, 69, 2),
+            fill(10 * 24 * 60, "B", 10, 0, 70, 3)]
+    market = {"BTC": [{"t": T0 + h * HOUR, "o": 100 if h < 8 * 24 else 69 if h < 10 * 24 else 70, "c": 70}
+                      for h in range(11 * 24 + 1)]}
+    out = calistir(rows, market, 1_000, style="swing", etiket_ms=T0, end_ms=T0 + 11 * DAY, variant="V2", delay_min=0)
+    assert any(x["durum"] == "atlandi_v2" and x["dolum"]["tid"] == 2 for x in out["olaylar"])
+    # Zorunlu çıkış + ilk açılış + sıfırlama sonrası yeni açılış: ters yönlü kapanış yok.
+    assert out["defter"]["executed"] == 3
+    assert out["defter"]["unrealized_end"] == 0
+
+
+def test_altin_v2_ekleme_gecmis_mumlari_yeniden_taramaz():
+    rows = [fill(0, "B", 10, 0, 100), fill(8 * 24 * 60, "B", 10, 10, 100, 2)]
+    market = {"BTC": [{"t": T0 + h * HOUR, "o": 51 if h == 6 * 24 else 100, "c": 100}
+                      for h in range(8 * 24 + 1)]}
+    out = calistir(rows, market, 1_000, style="swing", etiket_ms=T0, end_ms=T0 + 8 * DAY, variant="V2", delay_min=0)
+    assert not any(x["durum"] == "v2_cikis" for x in out["olaylar"])
+
+
+def test_altin_tavan_hesap_serisi_dolum_anindaki_olcekle_buyur():
+    account = pd.Series([1_000.0, 2_000.0], index=pd.to_datetime([T0, T0 + DAY], unit="ms"))
+    rows = [fill(0, "B", 30, 0, 100), fill(24 * 60, "B", 60, 30, 100, 2)]
+    out = calistir(rows, candles(*([100] * 26)), account, style="intraday", etiket_ms=T0, end_ms=T0 + DAY,
+                   variant="V0", delay_min=0)
+    # İlk dolum 3x tavana tam gelir; iki kat hesaptaki ikinci ekleme de aynı 3x gölge tavanına göre kırpılır.
+    clipped = [x for x in out["olaylar"] if x["durum"] == "kirpildi"]
+    assert clipped and float(clipped[0]["yeni_sz"]) == pytest.approx(0.0)
 
 
 def test_altin_kontrol_tohumu_ve_olay_arsivi_tekrarlanabilir(tmp_path):
