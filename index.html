@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SG Pano</title>
-  <meta name="description" content="sg-arge paper trade panosu: sanal defter, gerçek para yok.">
+  <meta name="description" content="sg-arge copy trade panosu: sanal gölge ölçüm, gerçek para ve emir yok. Araştırma; yatırım tavsiyesi değildir.">
   <link rel="stylesheet" href="vendor/tailwind.3.4.17.css">
-  <script src="vendor/chart.umd.4.4.1.js"></script>
   <script src="vendor/lucide.0.460.0.min.js"></script>
   <style>
     :root {
@@ -39,26 +38,8 @@
     .ct-sec { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); font-size: 12px; }
     .ct-b-ok { background: rgba(16,185,129,.18); color: #34d399; } .ct-b-warn { background: rgba(245,203,92,.18); color: #f5cb5c; }
     .ct-b-bad { background: rgba(239,68,68,.18); color: #f87171; } .ct-b-mut { background: rgba(148,163,184,.18); color: #cbd5e1; }
-    /* sabit üst şerit: sticky'nin çalışması için CT sekmesi açıkken main/kap taşma kırpmasını bırakır (belge kayar) */
-    body.ct-aktif #layoutWrap, body.ct-aktif #main { overflow: visible; }
-    .ct-sticky { position: sticky; top: 0; z-index: 30; background: var(--bg); padding: 0.375rem 0; margin-top: -0.375rem; }
-    .ct-strip { padding: 0.375rem 0.625rem; font-size: 11px; color: var(--muted); }
-    .ct-strip.stale { border-color: #b45309; background: #2a2012; color: #fcd34d; }
-    .ct-stat { display: grid; grid-template-columns: 1fr 1fr 1.6fr; gap: 0.5rem; }
-    .ct-stat .k { font-size: 9px; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); }
-    .ct-stat .v { font-size: 13px; font-weight: 700; color: #fff; overflow-wrap: anywhere; }
-    .ct-age { margin-top: 2px; display: flex; flex-wrap: wrap; gap: 0 0.5rem; font-size: 10px; }
-    .ct-card.tik { cursor: pointer; }
-    .ct-pos summary { list-style: none; cursor: pointer; }
-    .ct-pos summary::-webkit-details-marker { display: none; }
-    .ct-pos summary .ok { display: inline-block; color: var(--muted); transition: transform .15s; margin-left: 2px; }
-    .ct-pos[open] summary .ok { transform: rotate(90deg); }
-    .ct-bn { display: inline-flex; align-items: center; gap: 0.25rem; white-space: nowrap; }
-    .ct-pos .ek span { white-space: nowrap; }
-    .ct-pos .ek { color: var(--muted); font-size: 11px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 0.75rem; align-items: center; }
     .ct-row { padding: 0.625rem 0; border-top: 1px solid var(--border); font-size: 12px; min-width: 0; overflow-wrap: anywhere; }
     .ct-row:first-child { border-top: 0; }
-    @media (max-width: 359px) { .yenile-yazi { display: none; } }
     .ct-detay { max-width: 760px; }
     .ct-btn { background: #1c2a47; border: 1px solid var(--border); border-radius: 0.375rem; padding: 0.5rem 0.875rem; font-size: 12px; color: var(--text); min-height: 40px; }
     .ct-btn[disabled] { opacity: 0.4; }
@@ -72,7 +53,6 @@
     .ks-card:hover, .ks-card:focus-visible { background: var(--hover); outline: none; }
     .ks-card-head { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem; }
     .ks-address { font-weight: 700; color: #fff; font-size: 14px; }
-    .ks-egr i { display: block; height: 42px; }
     .ks-share { display: flex; height: 7px; overflow: hidden; border-radius: 99px; background: #0f172a; margin-top: .3rem; }
     .ks-share > span { min-width: 0; }
     .ks-adim { display: grid; grid-template-columns: auto 1fr; gap: .25rem .6rem; align-items: start; border-top: 1px solid var(--border); padding: .55rem 0; font-size: 12px; }
@@ -80,77 +60,81 @@
     .ks-copy-note { min-height: 1.1rem; font-size: 11px; color: var(--muted); }
     .ks-bilgi { font-size: 11px; color: var(--muted); }
     .ct-live { font-size: 12px; color: var(--muted); }
-    .ct-live-pos { border-top: 1px solid var(--border); padding: .6rem 0; }
-    .ct-live-pos:first-child { border-top: 0; }
     .ct-link { color: #93c5fd; text-decoration: underline; font-size: 12px; min-height: 44px; display: inline-flex; align-items: center; }
-    .ct-open-strip { overflow: hidden; max-height: 18rem; }
-    .ct-open-strip.pause .ct-open-list { animation-play-state: paused; }
     .ct-open-row { display: block; width: 100%; text-align: left; border-top: 1px solid var(--border); padding: .55rem 0; font-size: 12px; color: var(--text); }
     .ct-open-row:first-child { border-top: 0; }
     .ct-trade { border-top: 1px solid var(--border); padding: .65rem 0; font-size: 12px; }
     .ct-trade:first-child { border-top: 0; }
     .ct-trade.vurgu { background: rgba(250, 204, 21, .12); box-shadow: 0 0 0 1px rgba(250, 204, 21, .5); padding-inline: .4rem; border-radius: .35rem; }
-    @media (prefers-reduced-motion: no-preference) { .ct-open-strip.kayan .ct-open-list { animation: ct-open-scroll 20s linear infinite; } @keyframes ct-open-scroll { from { transform: translateY(0); } to { transform: translateY(-50%); } } }
+    /* pano-sade: sabit üst (başlık + sekmeler + yasal ibare), telefon öncelikli */
+    html { scroll-padding-top: 7rem; }
+    .ust { position: sticky; top: 0; z-index: 40; background: var(--header); border-bottom: 1px solid var(--border); }
+    .ust-1 { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .5rem 1rem; }
+    .yasal { padding: .25rem 1rem; font-size: 11px; color: #cbd5e1; background: #0b1222; border-top: 1px solid var(--border); text-align: center; }
+    .sekmeler { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .nav-btn { display: flex; align-items: center; justify-content: center; gap: .4rem; min-height: 48px; padding: 0 .25rem; font-size: 13px; color: #cbd5e1; border-bottom: 3px solid transparent; }
+    .nav-btn.active { color: #fff; border-bottom-color: var(--accent); background: #1c2a47; }
+    .nav-btn.active i { color: var(--accent); }
+    @media (max-width: 420px) { .nav-btn i { display: none; } }
+    .sayfa { max-width: 960px; margin: 0 auto; padding: 1rem; width: 100%; }
+    .bas { font-size: 14px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: .4rem; }
+    .alt { font-size: 12px; font-weight: 600; color: #cbd5e1; margin: .9rem 0 .35rem; }
+    .ip { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 99px; border: 1px solid #475569; color: #cbd5e1; font-size: 11px; font-weight: 700; line-height: 1; position: relative; vertical-align: middle; }
+    .ip::after { content: ""; position: absolute; inset: -11px; }   /* dokunma alanı ≥ 44 px */
+    #ipKutu { position: fixed; left: .75rem; right: .75rem; bottom: .75rem; z-index: 60; max-width: 520px; margin: 0 auto; background: #1c2a47; border: 1px solid var(--accent); border-radius: .5rem; padding: .75rem; font-size: 13px; display: flex; flex-direction: column; gap: .4rem; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+    #ipKutu[hidden] { display: none; }
+    #ipKutu b { color: #fff; }
+    .chips { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+    .chip { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; padding: 0 .8rem; border-radius: 99px; border: 1px solid var(--border); background: #1c2a47; color: var(--text); font-size: 12px; }
+    .chip b { color: #fff; }
+    .chip.on { border-color: var(--accent); background: #26365a; }
+    .kilit { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .6rem; padding: .5rem .6rem; border: 1px dashed #64748b; border-radius: .375rem; font-size: 12px; color: #cbd5e1; }
+    .kilit b { color: #fff; }
+    .taze { display: grid; grid-template-columns: 1fr auto; gap: 0 .75rem; padding: .4rem 0; border-top: 1px solid var(--border); font-size: 12px; }
+    .taze:first-child { border-top: 0; }
+    .taze > .ct-sub { grid-column: 1 / -1; }
+    .taze.eski b { color: #fcd34d; }
+    .huni { display: flex; align-items: stretch; gap: .5rem; flex-wrap: wrap; }
+    .huni .ok { align-self: center; color: var(--muted); }
+    .hk { flex: 1 1 90px; min-width: 0; background: #101a30; border: 1px solid var(--border); border-radius: .375rem; padding: .5rem; }
+    .hk .k { font-size: 11px; color: var(--muted); } .hk .v { font-size: 20px; font-weight: 700; color: #fff; }
+    details.det > summary { cursor: pointer; list-style: none; min-height: 28px; display: flex; align-items: center; gap: .4rem; }
+    details.det > summary::-webkit-details-marker { display: none; }
+    details.det > summary::before { content: "›"; color: var(--muted); transition: transform .15s; }
+    details.det[open] > summary::before { transform: rotate(90deg); }
+    .ct-btn, .ct-link { min-height: 44px; }
+    .ct-name { text-decoration: none; }
+    .ct-row > .flex { gap: .25rem .5rem; }
+    .geri { display: inline-flex; align-items: center; margin-bottom: .75rem; padding: 0 .9rem; }
+    code { background: #101a30; padding: 0 .25rem; border-radius: .2rem; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
-
-  <!-- ÜST BAŞLIK -->
-  <header class="bg-[#101a30] border-b border-[#243555] px-4 py-2.5 flex items-center justify-between gap-3">
-    <h1 class="text-base font-bold text-white min-w-0 truncate">SG Pano · Copy trade</h1>
-    <div class="flex items-center gap-2 flex-shrink-0">
-      <span class="text-[11px] text-slate-400 whitespace-nowrap" id="dataAge">—</span>
-      <button onclick="ctYukle(true)" class="ct-btn flex items-center justify-center gap-1.5" style="padding:0.375rem 0.75rem;min-height:36px" aria-label="Yenile">
-        <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-[#f5cb5c]"></i><span class="yenile-yazi">Yenile</span>
-      </button>
+  <header class="ust">
+    <div class="ust-1">
+      <h1 class="text-base font-bold text-white min-w-0 truncate">SG Pano</h1>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <span class="text-[11px] text-slate-400 whitespace-nowrap" id="dataAge">—</span>
+        <button onclick="ctYukle(true)" class="ct-btn flex items-center justify-center gap-1.5" style="padding:0.375rem 0.75rem" aria-label="Yenile">
+          <i id="refreshIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-[#f5cb5c]"></i><span class="yenile-yazi">Yenile</span>
+        </button>
+      </div>
     </div>
+    <nav id="nav" class="sekmeler" aria-label="Bölümler"></nav>
+    <div class="yasal" id="yasal">Araştırma / sanal, yatırım tavsiyesi değil · gerçek emir yok</div>
   </header>
 
-  <div id="layoutWrap" class="flex-1 flex flex-col lg:flex-row overflow-hidden">
-    <!-- MENÜ: geniş ekranda sol sütun, dar ekranda yatay şerit -->
-    <aside class="lg:w-60 bg-[#101a30] border-b lg:border-b-0 lg:border-r border-[#243555] flex lg:flex-col justify-between flex-shrink-0">
-      <nav id="nav" class="flex lg:flex-col overflow-x-auto lg:overflow-visible py-1 lg:py-2 text-xs w-full"></nav>
-    </aside>
-
-    <main class="flex-1 overflow-y-auto p-4 md:p-6" id="main">
-      <!-- COPY TRADE: ana ekran (kartlar) + ayrıntı -->
-      <section data-tab="ct" class="tab hidden space-y-4">
-        <div class="ct-msg hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
-        <div class="ct-sticky"><div class="ct-strip card"></div></div>
-        <div id="ctMain"></div>
-      </section>
-
-      <!-- COPY TRADE: akış -->
-      <section data-tab="ctakis" class="tab hidden space-y-4">
-        <div class="ct-msg hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
-        <div class="ct-sticky"><div class="ct-strip card"></div></div>
-        <div id="ctAkis"></div>
-      </section>
-
-      <!-- COPY TRADE: istatistik -->
-      <section data-tab="ctistat" class="tab hidden space-y-4">
-        <div class="ct-msg hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
-        <div class="ct-sticky"><div class="ct-strip card"></div></div>
-        <div id="ctIstat"></div>
-      </section>
-
-      <!-- KEŞİF: kapı adayları, yalnız okunur; kopyalama düğmesi adresi panoya alır. -->
-      <section data-tab="kesif" class="tab hidden space-y-4">
-        <div id="ksMsg" class="hidden p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
-        <div id="ksMain"></div>
-      </section>
-
-      <section data-tab="ayarlar" class="tab hidden space-y-4">
-        <div id="ayarMain"></div>
-      </section>
-
-    </main>
-  </div>
+  <main class="sayfa flex-1" id="main">
+    <div id="ctMsg" class="hidden p-3 mb-4 rounded border border-red-800 bg-red-950/40 text-xs text-red-200"></div>
+    <section data-tab="ozet" class="tab hidden space-y-4"><div id="ozMain" class="space-y-4"></div></section>
+    <section data-tab="traderlar" class="tab hidden space-y-4"><div id="trMain"></div></section>
+    <section data-tab="huni" class="tab hidden space-y-4"><div id="huMain" class="space-y-4"></div></section>
+    <section data-tab="ayarlar" class="tab hidden space-y-4"><div id="ayarMain" class="space-y-4"></div></section>
+  </main>
+  <div id="ipKutu" role="dialog" aria-live="polite" hidden></div>
 
 <script>
-  const TABS = [
-    ['ct', 'Copy trade', 'users'], ['kesif', 'Keşif', 'compass'], ['ctakis', 'CT akış', 'activity'], ['ctistat', 'CT istatistik', 'bar-chart-3'], ['ayarlar', 'Ayarlar', 'settings'],
-  ];
+  const TABS = [['ozet', 'Özet', 'layout-dashboard'], ['traderlar', "Trader'lar", 'users'], ['huni', 'Huni', 'filter'], ['ayarlar', 'Ayarlar', 'settings']];
   const charts = {};
 
   // ---------- yardımcılar
@@ -158,29 +142,9 @@
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const isNum = (v) => typeof v === 'number' && isFinite(v);
   const fmt = (v, d = 2) => isNum(v) ? v.toLocaleString('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—';
-  const cls = (v) => !isNum(v) ? 'flat' : v > 0 ? 'up' : v < 0 ? 'down' : 'flat';
-  function buildNav() {
-    $('nav').innerHTML = TABS.map(([id, label, icon]) =>
-      `<button data-nav="${id}" onclick="showTab('${id}')" class="nav-btn flex items-center gap-2.5 px-4 py-2.5 text-slate-300 hover:bg-[#1a2438] whitespace-nowrap lg:w-full">
-         <i data-lucide="${icon}" class="w-4 h-4 text-slate-400"></i><span>${label}</span><span class="ml-auto text-[10px] text-slate-400" id="navc-${id}"></span></button>`).join('');
-  }
-  function showTab(id) {
-    document.querySelectorAll('.tab').forEach((s) => s.classList.toggle('hidden', s.dataset.tab !== id));
-    document.querySelectorAll('.nav-btn').forEach((b) => b.classList.toggle('active', b.dataset.nav === id));
-    document.body.classList.toggle('ct-aktif', id.startsWith('ct'));
-    if (id === 'ct') ctCizim();
-    if (id === 'kesif') ksRender();
-    if (id === 'ayarlar') ayarRender();
-  }
+  const cls = () => '';   // kâr/zarar rengi yok (ön kayıt: performans körlüğü); yön ve uyarı renkleri ayrı sınıflardır
 
-  function chart(id, cfg) {
-    if (charts[id]) charts[id].destroy();
-    const el = $(id); if (!el || !window.Chart) return;
-    charts[id] = new Chart(el, cfg);
-  }
-  const axes = { x: { ticks: { color: '#94a3b8', maxTicksLimit: 8, font: { size: 10 } }, grid: { color: '#1f2b42' } }, y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#1f2b42' } } };
-  const base = { responsive: true, maintainAspectRatio: false, animation: false, plugins: { legend: { display: false } }, scales: axes };
-
+  // ---------- veri (tanım: sg-arge docs/PANO_COPYTRADE.md, docs/VERI_SOZLESMESI.md, surum 1)
   // ---------- copy trade izleme (tanım: sg-arge docs/PANO_COPYTRADE.md, veri: docs/VERI_SOZLESMESI.md, surum 1)
   // Kaynak adresleri yalnız burada değişir (canlı: sg-arge copytrade-izleme dalı; örnek sabit veri: ./izleme/ornek_durum.json).
   const CT_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/durum.json';
@@ -195,7 +159,9 @@
   let ctSel = null, traderAdres = null, traderCoin = null, ctSayfa = 0, ctFiltre = '', ctAkisN = CT_AKIS_ADIM;
   let KS = null, ksHata = null, ksSel = null, ksKaynak = null;
   let HL = {}, MIDS = {}, midsZaman = null, midDexler = null;
-  let ksFiltre = { tarz: '', katman: '', piyasa: '', gecmis: '', sirala: 'alfa_t' };
+  let ksFiltre = { tarz: '', katman: '', piyasa: '', gecmis: '' };
+  let sekme = 'ozet', kolFiltre = '';
+
 
   const ISIK = { yesil: ['🟢', 'Yeşil'], sari: ['🟡', 'Sarı'], kirmizi: ['🔴', 'Kırmızı'] };
   const TUR = { acilis: 'Açılış', kapanis: 'Kapanış', buyutme: 'Büyütme', azaltma: 'Azaltma', isik: 'Işık' };
@@ -206,7 +172,6 @@
   const ctYonRozet = (y) => ctRozet(ctYon(y) || '?', y === 'long' ? 'ct-b-ok' : y === 'short' ? 'ct-b-bad' : 'ct-b-mut');
   const ctKaldirac = (v) => isNum(v) ? ctRozet(fmt(v, 1).replace(',0', '') + 'x', 'ct-b-mut') : '';
   const ctRozet = (txt, c) => `<span class="badge ${c}">${esc(txt)}</span>`;
-  const ctKapiRozet = (k) => { const s = k && k.sinif; return ctRozet(s || 'kapı yok', s === 'Geçti' ? 'ct-b-ok' : s === 'Yetersiz' ? 'ct-b-warn' : s === 'Kaldı' ? 'ct-b-bad' : 'ct-b-mut'); };
   // oranlar (0,08) → %8 ; sayılar Türkçe biçim, para "1.043,20 $"
   const ctP = (v, d = 0) => isNum(v) ? '%' + fmt(v * 100, d) : '—';
   const ctPs = (v, d = 1) => isNum(v) ? (v > 0 ? '+' : v < 0 ? '-' : '') + '%' + fmt(Math.abs(v * 100), d) : '—';
@@ -228,15 +193,11 @@
     if (gun(t) === gun(new Date(Date.now() - 86400000))) return `Dün ${saat}`;
     return t.toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   };
+  const ctEskiVeri = (t) => t && t.gecerli === false;
   const ctAdr = (a) => { a = String(a || ''); return a.length > 14 ? a.slice(0, 6) + '…' + a.slice(-4) : a; };
   const ctYasDakika = (iso) => { const d = ctDate(iso); return !isNaN(d) ? Math.max(0, Math.round((Date.now() - d.getTime()) / 60000)) : null; };
   const ctTazelik = (iso) => { const dk = ctYasDakika(iso); return dk == null ? 'Veri saati bilinmiyor' : `Veri ${ctYas(dk)}${dk > CT_ESKI_DK ? ' · eski' : ''}`; };
-  const ctEskiVeri = (t) => t && t.gecerli === false;
   function ctYas(dk) { return dk < 60 ? `${dk} dk önce` : dk < 2880 ? `${Math.round(dk / 60)} sa önce` : `${Math.round(dk / 1440)} gün önce`; }
-  function ctBinance(b) {
-    const m = b === 'var' ? ['badge-check', 'up', "Binance'te var"] : b === 'yok' ? ['ban', 'down', "Binance'te yok"] : ['circle-help', 'flat', 'Binance durumu bilinmiyor'];
-    return `<span class="ct-bn ${m[1]}" title="${esc(m[2])}" aria-label="${esc(m[2])}"><i data-lucide="${m[0]}" class="w-3.5 h-3.5"></i></span>`;
-  }
   async function hlPost(body) {
     const r = await fetch(HL_INFO, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
     if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -248,7 +209,7 @@
     try {
       midDexler = midDexler || hlDexler(await hlPost({ type: 'perpDexs' }));
       const yanitlar = await Promise.all([hlPost({ type: 'allMids' }), ...midDexler.map((dex) => hlPost({ type: 'allMids', dex }))]);
-      MIDS = Object.assign({}, ...yanitlar); midsZaman = Date.now(); ctSerit();
+      MIDS = Object.assign({}, ...yanitlar); midsZaman = Date.now(); render();
     } catch (e) { /* static durum.json positions remain visible */ }
   }
   async function hlSon30GunIslemleri(adres) {
@@ -275,7 +236,7 @@
   }
   async function hlDetayYukle(adres, zorla = false) {
     const once = HL[adres]; if (once?.durum === 'yukleniyor' || (!zorla && once?.durum === 'hazir')) return;
-    HL[adres] = { durum: 'yukleniyor' }; ctRender(); ksRender();
+    HL[adres] = { durum: 'yukleniyor' }; render();
     try {
       const [dexYaniti, anaDurum, anaMids, dolumlar] = await Promise.all([
         hlPost({ type: 'perpDexs' }), hlPost({ type: 'clearinghouseState', user: adres }), hlPost({ type: 'allMids' }),
@@ -292,7 +253,7 @@
       ];
       HL[adres] = { durum: 'hazir', pozisyonlar, dolumlar: (Array.isArray(dolumlar) ? dolumlar : []).slice().sort((x, y) => Number(x.time) - Number(y.time)) };
     } catch (e) { HL[adres] = { durum: 'hata', hata: e.message }; }
-    ctRender(); ksRender();
+    render();
   }
   function kaymaRozeti(p, tarz, olaylar = []) {
     const olay = olaylar.filter((o) => o.coin === p.coin && ['acilis', 'buyutme'].includes(o.tur) && isNum(o.fiyat)).sort((a, b) => String(b.zaman).localeCompare(String(a.zaman)))[0];
@@ -310,12 +271,6 @@
     const a = tutarAyar(); if (!a.acik || !isNum(p.hesap_payi) || !isNum(Number(a.butce)) || Number(a.butce) <= 0) return '';
     const tutar = Number(a.butce) * p.hesap_payi;
     return `<div class="ct-sub mt-1">trader hesabının ${ctP(p.hesap_payi, 1)}’i → bütçenin ${ctP(p.hesap_payi, 1)}’i = ${ctUsd(tutar)} · bilgi amaçlı, emir değil</div>`;
-  }
-  function hlPozisyonHtml(p, t, olaylar) {
-    const coin = encodeURIComponent(p.coin);
-    return `<div class="ct-live-pos"><div class="ct-head"><b class="text-white">${esc(p.coin)}</b>${ctYonRozet(p.yon)}${ctKaldirac(p.kaldirac)}${kaymaRozeti(p, t.tarz, olaylar)}</div>
-      <div class="ct-sub mt-1">giriş ${ctFiyat(p.giris)} · şimdi ${ctFiyat(p.mid)} · değer ${ctUsd(p.deger)} · anlık K/Z <span class="${cls(p.anlik_kz)}">${ctUsds(p.anlik_kz)}</span></div>${tutarMetni(p)}
-      <a class="ct-link" target="_blank" rel="noopener" href="https://app.hyperliquid.xyz/trade/${coin}">${esc(p.coin)} için Hyperliquid’i aç</a></div>`;
   }
   function hlGrupla(rows) {
     const once = new Map();
@@ -357,250 +312,217 @@
   }
   function sureBaslangic(ms) { if (!ms) return '30 günden eski'; return ctTarih(new Date(ms).toISOString()); }
   function sure(ms, bitis) { if (!ms) return '—'; const d = Math.max(0, (bitis - ms) / 60000); return d < 60 ? `${Math.round(d)} dk` : d < 2880 ? `${Math.round(d / 60)} sa` : `${Math.round(d / 1440)} gün`; }
-  function traderSayfasi(t, olaylar = []) {
-    const h = HL[t.adres], islemler = h?.durum === 'hazir' ? hlIslemler(h.dolumlar) : [];
-    const acik = h?.durum === 'hazir' ? h.pozisyonlar.map((p) => ({ ...(islemler.find((x) => !x.kapanis && x.coin === p.coin && x.yon === p.yon) || {}), p, coin: p.coin, yon: p.yon, giris: p.giris })) : [];
-    const parcalar = location.hash.split('/'), sayfa = /^\d+$/.test(parcalar[2] || '') ? Number(parcalar[2]) : 0;
-    const gecmis = islemler.slice(sayfa * 20, sayfa * 20 + 20);
-    const [em, ad] = ctIsik(t), neden = t.saglik?.nedenler?.[0] || 'neden belirtilmemiş';
-    const satir = (x) => `<div class="ct-trade"><div class="ct-head"><b>${esc(x.coin)}</b>${ctYonRozet(x.yon)}${x.kapanis ? ctRozet('⚪ Kapandı', 'ct-b-mut') : ctRozet('🟢 Açık', 'ct-b-ok')}</div><div class="ct-sub mt-1">açılış ${sureBaslangic(x.acilis)} · giriş ${ctFiyat(x.giris)} · ${x.kapanis ? `kapanış ${ctTarih(new Date(x.kapanis).toISOString())} · ${sure(x.acilis, x.kapanis)} · <span class="${cls(x.sonuc)}">${ctPs(x.sonuc, 2)}</span>` : `devam ediyor · ${sure(x.acilis, Date.now())}`}</div></div>`;
-    const acikSatir = (x) => { const p = x.p, sonuc = x.giris ? (p.mid - x.giris) / x.giris * (x.yon === 'short' ? -1 : 1) : null; return `<div class="ct-trade${traderCoin === x.coin ? ' vurgu' : ''}"><div class="ct-head"><b>${esc(x.coin)}</b>${ctYonRozet(x.yon)}${ctRozet('🟢 Açık', 'ct-b-ok')}${kaymaRozeti(p, t.tarz, olaylar)}</div><div class="ct-sub mt-1">açılış ${sureBaslangic(x.acilis)} · giriş ${ctFiyat(x.giris)} · şimdi ${ctFiyat(p.mid)} · <span class="${cls(sonuc)}">K/Z ${ctPs(sonuc, 2)}</span></div></div>`; };
-    if (!h || h.durum === 'yukleniyor') return `<div class="card ct-card"><a href="#" class="ct-btn inline-flex mb-3">← Traderlar</a><div class="ct-head"><b class="ct-name">${esc(ctAdr(t.adres))}</b>${ksRozet(ksTarz(t), 'ct-b-mut')}<span>${em} ${esc(ad)}</span></div><div class="ct-sub mt-1">${esc(neden)}</div><div class="ct-live mt-3">Canlı işlemler yükleniyor…</div></div>`;
-    if (h.durum === 'hata') return `<div class="card ct-card"><a href="#" class="ct-btn inline-flex mb-3">← Traderlar</a><div class="ct-live down">Canlı veri alınamadı (${esc(h.hata)}).</div></div>`;
-    return `<a href="#" class="ct-btn inline-flex mb-3">← Traderlar</a><div class="space-y-4 ct-detay"><div class="card ct-card"><div class="ct-head"><b class="ct-name">${esc(ctAdr(t.adres))}</b>${ksRozet(ksTarz(t), 'ct-b-mut')}<span>${em} ${esc(ad)}</span></div><div class="ct-sub mt-1">${esc(neden)}</div><div class="flex flex-wrap gap-2 mt-2"><button class="ct-btn" onclick="hlDetayYukle('${esc(t.adres)}', true)">Yenile</button><a class="ct-link" target="_blank" rel="noopener" href="https://hyperdash.com/address/${encodeURIComponent(t.adres)}">Hyperdash’te aç</a></div></div><div class="card ct-card"><h2 class="text-sm font-bold text-white mb-2">Açık işlemler</h2>${acik.length ? acik.map(acikSatir).join('') : '<div class="ct-sub">Açık işlem yok.</div>'}</div><div class="card ct-card"><h2 class="text-sm font-bold text-white mb-2">İşlem geçmişi <span class="ct-sub font-normal">(son 30 gün)</span></h2>${gecmis.length ? gecmis.map(satir).join('') : '<div class="ct-sub">İşlem yok.</div>'}${islemler.length > (sayfa + 1) * 20 ? `<button class="ct-btn w-full mt-2" onclick="location.hash='trader/${encodeURIComponent(t.adres)}/${sayfa + 1}'">Daha fazla</button>` : ''}</div><details class="card ct-card"><summary>Seçim ayrıntıları</summary><div class="ct-kv mt-3"><div><div class="k">Alfa t</div><div class="v">${fmt(t.alfa_t, 1)}</div></div><div><div class="k">Plasebo p</div><div class="v">${fmt(t.plasebo_p, 3)}</div></div></div></details></div>`;
-  }
-  function ayarRender() {
-    const a = tutarAyar();
-    $('ayarMain').innerHTML = `<div class="card ct-card ct-detay"><h2 class="text-sm font-bold text-white">Ayarlar</h2><label class="flex items-center gap-2 mt-3 text-sm"><input id="tutarAcik" type="checkbox" ${a.acik ? 'checked' : ''} onchange="tutarKaydet()"> Tutar hesaplayıcı</label><label class="ct-sub block mt-3">Bütçe ($)<input id="tutarButce" class="ks-select mt-1" inputmode="decimal" value="${esc(a.butce || '')}" ${a.acik ? '' : 'disabled'} onchange="tutarKaydet()"></label><p class="ct-sub mt-3">Bütçe yalnız bu tarayıcının localStorage alanında saklanır. Bilgi amaçlıdır; emir göndermez.</p></div>`;
-  }
-  function tutarKaydet() {
-    const acik = !!$('tutarAcik')?.checked, butce = Number($('tutarButce')?.value || 0);
-    try { localStorage.setItem(TUTAR_AYAR, JSON.stringify({ acik, butce: isFinite(butce) && butce > 0 ? butce : 0 })); } catch (e) { }
-    ayarRender(); ctRender(); ksRender();
-  }
 
-  // Kapanmış sanal sonucu olan olaylar (acilis/buyutme); sonuç = kopyalanan tutara göre maliyet sonrası net %, ortalaması alınır.
-  const ctKapali = (o) => o.sanal_sonuc && o.sanal_sonuc.durum === 'kapandi' && isNum(o.sanal_sonuc.net_yuzde);
-  const ctOrt = (l) => l.length ? l.reduce((t, o) => t + o.sanal_sonuc.net_yuzde, 0) / l.length : null;
-  function ctKarsilastir(olay) {
-    const kapali = olay.filter(ctKapali), karar = (o) => CTK.kayit[o.id] && CTK.kayit[o.id].karar;
-    const acti = kapali.filter((o) => karar(o) === 'acti'), atladi = kapali.filter((o) => karar(o) === 'atladi');
-    const n = acti.length + atladi.length, oa = ctOrt(acti), ot = ctOrt(kapali);
-    return { n, yeterli: n >= CT_YETERSIZ, tum: { n: kapali.length, ort: ot }, acti: { n: acti.length, ort: oa }, atladi: { n: atladi.length, ort: ctOrt(atladi) },
-      fark: isNum(oa) && isNum(ot) ? oa - ot : null };
-  }
-  function ctKarsilastirHtml(k) {
-    const kv = (a, v) => `<div><div class="k">${esc(a)}</div><div class="v">${v}</div></div>`;
-    if (!k.yeterli) return `<div class="ct-kv">${kv('Durum', '<span class="text-amber-300">yetersiz veri</span>')}${kv('Kapanmış + karar verilmiş', `${k.n} / ${CT_YETERSIZ}`)}${kv('Tüm olaylar', `${ctPs(k.tum.ort)} <span class="ct-sub">(${k.tum.n})</span>`)}</div>`;
-    return `<div class="ct-kv">${kv('Tüm olaylar (ort.)', `<span class="${cls(k.tum.ort)}">${ctPs(k.tum.ort)}</span> <span class="ct-sub">(${k.tum.n})</span>`)}${kv('Açtıklarım (ort.)', `<span class="${cls(k.acti.ort)}">${ctPs(k.acti.ort)}</span> <span class="ct-sub">(${k.acti.n})</span>`)}${kv('Fark', `<b class="${cls(k.fark)}">${ctPs(k.fark)}</b>`)}</div>`;
-  }
-  const ctSanalRozet = (o) => !o.sanal_sonuc ? '' : o.sanal_sonuc.durum === 'kapandi' && isNum(o.sanal_sonuc.net_yuzde)
-    ? ctRozet('sanal ' + ctPs(o.sanal_sonuc.net_yuzde), o.sanal_sonuc.net_yuzde >= 0 ? 'ct-b-ok' : 'ct-b-bad') : o.sanal_sonuc.durum === 'acik' ? ctRozet('sanal: açık', 'ct-b-mut') : '';
+  // ---------- sözlük: her teknik terimin yanında küçük "?" (dokununca kısa açıklama)
+  const SOZLUK = {
+    golge: ['Gölge ölçüm', "Gerçek para yok. Trader'ın işlemleri gecikmeyle ve maliyetle sanal olarak kopyalanır; yöntemimiz böyle ölçülür."],
+    hafta: ['Hafta x/12', 'Gölge ölçümün kaçıncı haftasındayız. Toplam sonuçlar 12 hafta dolmadan gösterilmez.'],
+    kilitli: ['Kilitli', 'Ön kayıt kuralı: sonuca bakarak seçimi değiştirmeyelim diye toplam sonuçlar süre dolana kadar gizli. Tek tek işlemler görünür.'],
+    kapi: ['Kapı', 'Geçmiş verilerle yapılan ön eleme. Kötü adresleri eler; kimin iyi olduğuna tek başına karar vermez.'],
+    kol: ['Kol', "Trader'ın ait olduğu grup: oda, aday, kontrol, taban ya da elle liste. Gruplar ileride birbiriyle kıyaslanır."],
+    oda: ['Oda', 'En seçkin küçük grup. Kopyalama kararı ancak burada verilir.'],
+    aday: ['Aday', 'Gölgede iyi görünen, odaya girmeyi bekleyen grup.'],
+    havuz: ['Havuz', "Ön elemeden geçip gölgede izlenen tüm adresler. Aday ve oda bunun içinden seçilir."],
+    kontrol: ['Kontrol', 'Puana bakmadan rastgele seçilen grup. Seçim yöntemimiz şansı yeniyor mu, buna bakılır.'],
+    taban: ['Taban', 'Leaderboard’da son 30 günde en çok kazananlar; ön eleme yok. Kapı bunu geçemezse kapıya gerek yoktur.'],
+    elle: ['Elle liste', 'Bizim elle yazdığımız kısa trader listesi.'],
+    tarz: ['Tarz', 'Intraday: işlemler saatler içinde kapanır. Swing: bir günden uzun tutulur. Scalp: çok kısa.'],
+    gecikme: ['Gecikme', "Trader işlem açtıktan sonra bizim girebileceğimiz an. Gölgede intraday için 30 dakika, swing için 2 saat varsayılır."],
+    bayrak: ['Kırmızı bayrak', 'Dikkat gerektiren işaret: çok yüksek kaldıraç, uzun süredir işlem yok, ani düşüş gibi.'],
+    kayma: ['Kayma', "Trader girdikten sonra fiyatın ne kadar uzaklaştığı. Çok kaydıysa geç kalmışız demektir."],
+    tazelik: ['Veri tazeliği', 'Verinin en son ne zaman güncellendiği. Eskiyse gördüğünüz durum geçmiş olabilir.'],
+    neden: ['Neden seçildi', 'Bu trader’ın listeye hangi kuralla girdiği.'],
+    ozet: ['Sanal kopya', 'Gerçek emir değil; trader’ın işlemini aynı anda açtığımızı varsaydığımız hesap.'],
+  };
+  const ip = (k) => SOZLUK[k] ? `<button type="button" class="ip" data-ip="${k}" aria-label="Açıklama: ${esc(SOZLUK[k][0])}">?</button>` : '';
+  document.addEventListener('click', (e) => {
+    const kutu = $('ipKutu'), b = e.target.closest('[data-ip]');
+    if (b && SOZLUK[b.dataset.ip]) { e.preventDefault(); const [ad, m] = SOZLUK[b.dataset.ip]; kutu.innerHTML = `<b>${esc(ad)}</b><span>${esc(m)}</span><button type="button" class="ct-btn" data-ip-kapat>Tamam</button>`; kutu.hidden = false; return; }
+    if (e.target.closest('[data-ip-kapat]') || !e.target.closest('#ipKutu')) kutu.hidden = true;
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('ipKutu').hidden = true; });
 
-  // Sıralama yalnız görünüm içindir: kırmızı en alta, kalanlar form skoruna göre (skoru olmayan sona).
-  function ctSirala(list) {
-    const sk = (t) => isNum(t.form && t.form.skor) ? t.form.skor : -Infinity;
-    return list.slice().sort((a, b) => (ctKirmizi(a) - ctKirmizi(b)) || (sk(b) - sk(a)));
-  }
+  // ---------- kollar (kol alanı veride henüz olmayabilir → "kol bilinmiyor", çökme yok)
+  const KOLLAR = ['oda', 'aday', 'kontrol', 'taban', 'elle'];
+  const KOL_AD = { oda: 'Oda', aday: 'Aday', kontrol: 'Kontrol', taban: 'Taban', elle: 'Elle liste' };
+  const kolOf = (t) => { const v = String((t && (t.kol ?? t.kol_adi)) ?? '').toLowerCase().trim(); return KOLLAR.includes(v) ? v : null; };
+  const kolRozet = (t) => { const k = kolOf(t); return k ? ctRozet(KOL_AD[k], 'ct-b-mut') : ctRozet('kol bilinmiyor', 'ct-b-warn'); };
+  const tarzAd = (t) => ({ intraday: 'Intraday', swing: 'Swing', scalp: 'Scalp' }[t && t.tarz] || 'tarz bilinmiyor');
+  const tarzRozet = (t) => ctRozet(tarzAd(t), 'ct-b-mut');
+  const golge = () => (CT && CT.golge) || {};
+  const haftaMetni = () => { const g = golge(); return `hafta ${isNum(g.hafta) ? g.hafta : '?'}/${isNum(g.hafta_toplam) ? g.hafta_toplam : 12}`; };
+  const kilitHtml = (ad) => `<div class="kilit" data-kilit>${ad ? `<span>${esc(ad)}</span>` : ''}<b>🔒 kilitli · ${haftaMetni()}</b>${ip('kilitli')}</div>`;
+  const ACIK = new Map();                                        // <details> açık/kapalı durumu yeniden çizimde korunur
+  const det = (id, baslik, ic, varsayilan = false) => `<details class="card ct-card det" data-d="${esc(id)}" ${(ACIK.has(id) ? ACIK.get(id) : varsayilan) ? 'open' : ''} ontoggle="ACIK.set(this.dataset.d, this.open)"><summary>${baslik}</summary><div class="mt-2">${ic}</div></details>`;
+  const bos = (m) => `<div class="card empty">${esc(m)}</div>`;
 
-  function ctSparkline(egri) {
-    const y = (egri || []).map((p) => p && p[1]).filter(isNum);
-    if (y.length < 2) return '<div class="ct-sub">kâr eğrisi yok</div>';
-    const mn = Math.min(...y), mx = Math.max(...y), r = mx - mn || 1;
-    const pts = y.map((v, i) => `${(i / (y.length - 1) * 100).toFixed(2)},${(28 - (v - mn) / r * 26 - 1).toFixed(2)}`).join(' ');
-    const c = y[y.length - 1] >= y[0] ? '#10b981' : '#ef4444';
-    return `<svg viewBox="0 0 100 28" preserveAspectRatio="none" class="w-full" style="height:36px" role="img" aria-label="Son 90 gün kâr eğrisi"><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>`;
+  function nedenSecildi(t) {
+    const k = t.kapi || {};
+    return t.neden_secildi || t.secim_nedeni || k.not || (k.sinif ? 'Kapı sonucu: ' + k.sinif : null);
   }
-
-  function ctSanalKopya(sk) {
-    if (!sk) return '<div class="ct-sub">sanal kopya: henüz veri yok</div>';
-    return `<div>sanal kopya: <b>${ctUsd(sk.baslangic_usd, 0)} → <span class="${cls(sk.getiri)}">${ctUsd(sk.bakiye_usd)}</span></b>
-      <span class="ct-sub">(t0'dan beri, ${isNum(sk.gecikme_dk) ? fmt(sk.gecikme_dk, 0) : '?'} dk gecikmeli)</span></div>`;
+  function bayrakListesi(t) {
+    if (Array.isArray(t.kirmizi_bayraklar)) return { bilinen: true, l: t.kirmizi_bayraklar.map(String), sinif: 'ct-b-bad' };
+    const s = t.saglik;
+    if (s && s.isik) return { bilinen: true, l: s.isik === 'yesil' ? [] : (s.nedenler || []).map(String), sinif: s.isik === 'kirmizi' ? 'ct-b-bad' : 'ct-b-warn' };
+    return { bilinen: false, l: [], sinif: 'ct-b-mut' };
   }
+  const bayrakHtml = (t) => { const b = bayrakListesi(t); return !b.bilinen ? '<span class="ct-sub">bayrak bilgisi yok</span>' : b.l.length ? b.l.map((x) => ctRozet(x, b.sinif)).join(' ') : '<span class="ct-sub">bayrak yok</span>'; };
 
-  // Kart özeti: coin, yön, kaldıraç, hesap payı, anlık K/Z. Giriş, büyüklük, açılış saati, Binance dokununca açılır (ayrıntı sayfasında açık gelir).
-  function ctPozisyon(p, acik) {
-    return `<details class="ct-pos"${acik ? ' open' : ''}><summary><div class="l1"><span><b class="text-white">${esc(p.coin)}</b> ${ctYonRozet(p.yon)} ${ctKaldirac(p.kaldirac)}</span>
-      <span><b class="${cls(p.anlik_kz_usd)}">${ctUsds(p.anlik_kz_usd)}</b> <span class="ok">›</span></span></div>
-      <div class="l2">hesabın ${ctP(p.hesap_payi)}</div></summary>
-      <div class="ek"><span>giriş ${ctFiyat(p.giris)}</span><span>${ctUsdA(p.buyukluk_usd)}</span><span>açılış ${esc(ctTarih(p.acilis))}</span><span class="ct-bn">${ctBinance(p.binance)} Binance</span></div></details>`;
+  // ---------- üst: tazelik ve sekmeler
+  function yasGoster() {
+    const yas = $('dataAge'), t0 = CT && ctDate(CT.uretildi), ok = t0 && !isNaN(t0);
+    const dk = ok ? Math.max(0, Math.round((Date.now() - t0.getTime()) / 60000)) : null;
+    yas.textContent = ok ? ctYas(dk) : '—'; yas.style.color = ok && dk > CT_ESKI_DK ? '#fcd34d' : '';
   }
-
-  function ctKart(t) {
-    const [em, ad] = ctIsik(t), poz = t.pozisyonlar || [], son = t.son_islem;
-    return `<a class="card ct-card tik" href="#trader/${encodeURIComponent(t.adres)}"><div class="ct-head"><span class="ct-name">${esc(t.takma_ad)}</span>${ksRozet(ksTarz(t), 'ct-b-mut')}<span title="${esc(ad)}">${em} ${esc(ad)}</span>${ctEskiVeri(t) ? ctRozet('eski / eksik veri', 'ct-b-warn') : ''}</div><div class="ct-kv mt-2"><div><div class="k">Açık işlem</div><div class="v">${poz.length}</div></div><div><div class="k">Son işlem</div><div class="v">${son?.kapanis ? ctTarih(son.kapanis) : '—'}</div></div><div><div class="k">Sanal kopya</div><div class="v ${cls(t.sanal_kopya?.getiri)}">${ctPs(t.sanal_kopya?.getiri)}</div></div></div></a>`;
+  function buildNav() {
+    $('nav').innerHTML = TABS.map(([id, label, icon]) => `<button data-nav="${id}" onclick="location.hash='${id}'" class="nav-btn"><i data-lucide="${icon}" class="w-4 h-4"></i><span>${label}</span></button>`).join('');
   }
-
-  // ---------- üst şerit (güncelleme zamanı + veri yaşı) ve hata mesajı
-  function ctSerit() {
-    const msg = document.querySelectorAll('.ct-msg'), bar = document.querySelectorAll('.ct-strip');
-    msg.forEach((el) => { el.classList.toggle('hidden', !ctHata); el.textContent = ctHata ? ctHata + (CT ? ' Son başarılı veri gösteriliyor.' : ' Gösterilecek veri yok; sahte veri kullanılmaz.') : ''; });
-    let html = '', eski = false;
-    if (CT) {
-      const tr = CT.traderlar || [], acik = tr.reduce((n, t) => n + (t.pozisyonlar || []).length, 0);
-      const sk = tr.map((t) => t.sanal_kopya).filter((k) => k && isNum(k.baslangic_usd) && isNum(k.bakiye_usd));
-      const b0 = sk.reduce((n, k) => n + k.baslangic_usd, 0), fark = sk.reduce((n, k) => n + k.bakiye_usd - k.baslangic_usd, 0);
-      const t = ctDate(CT.uretildi), gecerli = !isNaN(t), dk = gecerli ? Math.max(0, Math.round((Date.now() - t.getTime()) / 60000)) : null;
-      eski = !gecerli || dk > CT_ESKI_DK;
-      const satirlar = tr.flatMap((x) => (x.pozisyonlar || []).map((p) => {
-        const mid = Number(MIDS[p.coin]) || p.giris, fark = p.giris > 0 ? (mid - p.giris) / p.giris * (p.yon === 'short' ? -1 : 1) : null;
-        return { ...p, mid, fark, trader: x };
-      })).sort((a, b) => String(b.acilis).localeCompare(String(a.acilis)));
-      const acikSatir = (p) => `<a class="ct-open-row" href="#trader/${encodeURIComponent(p.trader.adres)}/coin/${encodeURIComponent(p.coin)}"><div class="ct-head"><b>${esc(p.acilis ? ctAcikSaat(p.acilis) : '—')}</b><span>${esc(p.trader.takma_ad)}</span>${ksRozet(ksTarz(p.trader), 'ct-b-mut')}<b>${esc(p.coin)}</b>${ctYonRozet(p.yon)}${kaymaRozeti(p, p.trader.tarz, ctOlaylar().filter((o) => o.trader === p.trader.id))}</div><div class="ct-sub mt-1">giriş ${ctFiyat(p.giris)} · şimdi ${ctFiyat(p.mid)} · <span class="${cls(p.fark)}">K/Z ${ctPs(p.fark, 2)}</span></div></a>`;
-      const tekrar = satirlar.length > 5 ? [...satirlar, ...satirlar] : satirlar;
-      const sonGuncel = midsZaman ? `${Math.max(0, Math.round((Date.now() - midsZaman) / 1000))} sn önce` : 'fiyat bekleniyor';
-      html = `<div class="ct-stat"><div><div class="k">Trader</div><div class="v">${tr.length}</div></div><div><div class="k">Açık poz.</div><div class="v">${acik}</div></div>
-          <div><div class="k">Sanal kopya (hepsi)</div><div class="v ${sk.length ? cls(fark) : ''}">${sk.length ? `${ctUsds(fark)} (${ctPs(b0 ? fark / b0 : null)})` : 'veri yok'}</div></div></div>
-        <div class="ct-age"><span>${eski ? '⚠ ' : ''}veri: ${gecerli ? esc(ctTarih(CT.uretildi)) + ' (' + esc(ctYas(dk)) + ')' : 'saati bilinmiyor'}</span>`
-        + (eski ? `<span>${CT_ESKI_DK} dk'dan eski!</span>` : '')
-        + (/^ornek/i.test(String(CT.kaynak || '')) ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '') + `</div><div class="ct-sec"><div class="flex justify-between gap-2"><b>Şu an açık işlemler</b><span class="ct-sub">Son güncelleme: ${sonGuncel}</span></div><div class="ct-open-strip${satirlar.length > 5 ? ' kayan' : ''}" onmouseenter="this.classList.add('pause')" onmouseleave="this.classList.remove('pause')" ontouchstart="this.classList.add('pause')"><div class="ct-open-list">${tekrar.map(acikSatir).join('') || '<div class="ct-sub mt-2">Açık işlem yok.</div>'}</div></div></div>`;
-    } else html = '<span>Veri yok.</span>';
-    bar.forEach((el) => { el.classList.toggle('stale', eski); el.innerHTML = html; });
-    const yas = $('dataAge'), t0 = CT && ctDate(CT.uretildi);
-    yas.textContent = t0 && !isNaN(t0) ? ctYas(Math.max(0, Math.round((Date.now() - t0.getTime()) / 60000))) : '—';
-    yas.style.color = eski ? '#fcd34d' : '';
+  function showTab(id) {
+    sekme = id;
+    document.querySelectorAll('.tab').forEach((s) => s.classList.toggle('hidden', s.dataset.tab !== id));
+    document.querySelectorAll('.nav-btn').forEach((b) => b.classList.toggle('active', b.dataset.nav === id));
   }
+  const hataKutusu = () => { const el = $('ctMsg'); el.classList.toggle('hidden', !ctHata); el.textContent = ctHata ? ctHata + (CT ? ' Son başarılı veri gösteriliyor.' : ' Gösterilecek veri yok; sahte veri kullanılmaz.') : ''; };
 
-  // ---------- ana ekran / ayrıntı
-  function ctRenderAna() {
-    const el = $('ctMain');
-    if (!CT) { el.innerHTML = '<div class="card empty">Henüz veri yok.</div>'; return; }
-    const tr = CT.traderlar || [];
-    if (traderAdres) {
-      const t = tr.find((x) => x.adres.toLowerCase() === traderAdres.toLowerCase()) || (KS?.adaylar || []).find((x) => x.adres.toLowerCase() === traderAdres.toLowerCase());
-      el.innerHTML = t ? traderSayfasi(t, ctOlaylar().filter((o) => o.trader === t.id)) : '<div class="card empty">Trader bulunamadı.</div>';
-      return;
-    }
-    if (ctSel) {
-      const t = tr.find((x) => x.id === ctSel);
-      el.innerHTML = t ? ctAyrinti(t) : `<a href="#" class="ct-btn inline-block mb-3">← Kartlar</a><div class="card empty">Bu trader veride yok (${esc(ctSel)}).</div>`;
-      return;
-    }
-    el.innerHTML = tr.length ? `<div class="ct-grid">${ctSirala(tr).map(ctKart).join('')}</div>` : '<div class="card empty">Henüz izlenen trader yok.</div>';
+  // ---------- 1) Özet
+  function eskiMi(iso) { const dk = ctYasDakika(iso); return dk == null || dk > CT_ESKI_DK; }
+  function tazelikSatiri(ad, iso, ek) { const eski = eskiMi(iso); return `<div class="taze${eski ? ' eski' : ''}"><span>${esc(ad)}</span><b>${eski ? '⚠ ' : ''}${esc(ctTazelik(iso))}</b>${ek ? `<span class="ct-sub">${ek}</span>` : ''}</div>`; }
+  function ozetHtml() {
+    if (!CT) return bos('Henüz veri yok.');
+    const tr = CT.traderlar || [], g = golge(), say = Object.fromEntries(KOLLAR.map((k) => [k, tr.filter((t) => kolOf(t) === k).length]));
+    const bilinmeyen = tr.filter((t) => !kolOf(t)).length, hicKolYok = bilinmeyen === tr.length;
+    const nOda = say.oda, kap = isNum(g.oda_kapasite) ? g.oda_kapasite : null;
+    const kv = (k, v, h) => `<div><div class="k">${esc(k)}${h ? ' ' + ip(h) : ''}</div><div class="v">${v}</div></div>`;
+    const kolChip = (k) => `<button type="button" class="chip" onclick="kolFiltre='${k}';location.hash='traderlar'"><span>${KOL_AD[k]}</span><b>${say[k]}</b></button>`;
+    const acikSay = tr.reduce((n, t) => n + (t.pozisyonlar || []).length, 0);
+    const taze = tazelikSatiri('Pano verisi', CT.uretildi, /^ornek/i.test(String(CT.kaynak || '')) ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '')
+      + (KS ? tazelikSatiri('Keşif verisi', KS.uretildi, ksKaynak?.ornek ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '') : '<div class="taze eski"><span>Keşif verisi</span><b>⚠ okunamadı</b></div>')
+      + `<div class="taze"><span>Fiyatlar</span><b>${midsZaman ? Math.max(0, Math.round((Date.now() - midsZaman) / 1000)) + ' sn önce' : 'bekleniyor'}</b></div>`;
+    const son5 = ctOlaylar().slice(0, 5);
+    return `<div class="card ct-card"><h2 class="bas">Gölge ölçüm ${ip('golge')}</h2>
+        <div class="ct-kv mt-2">${kv('Hafta', haftaMetni().replace('hafta ', ''), 'hafta')}${kv('Oda doluluğu', hicKolYok ? 'bilinmiyor' : `${nOda}${kap ? ' / ' + kap : ''} trader`, 'oda')}${kv('İzlenen trader', tr.length)}${kv('Açık işlem', acikSay)}</div>
+        <div class="mt-3">${kilitHtml('Sanal kopya (hepsi), kol toplamları, kohort ↔ kontrol')}</div></div>
+      <div class="card ct-card"><h2 class="bas">Kol başına trader ${ip('kol')}</h2>
+        <div class="chips mt-2">${KOLLAR.map(kolChip).join('')}${bilinmeyen ? `<button type="button" class="chip" onclick="kolFiltre='?';location.hash='traderlar'"><span>kol bilinmiyor</span><b>${bilinmeyen}</b></button>` : ''}</div>
+        ${hicKolYok && tr.length ? '<div class="ct-sub mt-2">Veride henüz <code>kol</code> alanı yok; gelince burada dolar.</div>' : ''}</div>
+      <div class="card ct-card"><h2 class="bas">Veri tazeliği ${ip('tazelik')}</h2><div class="mt-2">${taze}</div></div>
+      <div class="card ct-card"><h2 class="bas">Son 5 olay</h2>${son5.length ? son5.map((o) => ctOlayYuvarlak(o, true)).join('') : '<div class="ct-sub mt-2">Henüz olay yok.</div>'}</div>
+      ${det('akis', '<b>Tüm akış</b>', akisHtml())}
+      ${det('acik', `<b>Şu an açık işlemler (${acikSay})</b>`, acikIslemlerHtml())}
+      ${det('kararlar', '<b>Kararlarım değer kattı mı?</b>', kararHtml())}`;
   }
-
+  function acikIslemlerHtml() {
+    const satirlar = (CT.traderlar || []).flatMap((x) => (x.pozisyonlar || []).map((p) => {
+      const m = Number(MIDS[p.coin]), mid = isNum(m) ? m : NaN, fark = p.giris > 0 && isNum(mid) ? (mid - p.giris) / p.giris * (p.yon === 'short' ? -1 : 1) : null;
+      return { ...p, mid, fark, trader: x };
+    })).sort((a, b) => String(b.acilis).localeCompare(String(a.acilis)));
+    return satirlar.map((p) => `<a class="ct-open-row" href="#trader/${encodeURIComponent(p.trader.adres)}/coin/${encodeURIComponent(p.coin)}"><div class="ct-head"><b>${esc(p.acilis ? ctAcikSaat(p.acilis) : '—')}</b><span>${esc(p.trader.takma_ad)}</span><b>${esc(p.coin)}</b>${ctYonRozet(p.yon)}${kaymaRozeti(p, p.trader.tarz, ctOlaylar().filter((o) => o.trader === p.trader.id))}</div><div class="ct-sub mt-1">giriş ${ctFiyat(p.giris)} · şimdi ${ctFiyat(p.mid)} · K/Z ${ctPs(p.fark, 2)}</div></a>`).join('') || '<div class="ct-sub">Açık işlem yok.</div>';
+  }
+  function akisHtml() {
+    const tr = CT.traderlar || [], tum = ctOlaylar().filter((o) => !ctFiltre || o.trader === ctFiltre), goster = tum.slice(0, ctAkisN);
+    return `<label class="ct-sub block">Trader<select class="ks-select mt-1" onchange="ctFiltre=this.value;ctAkisN=${CT_AKIS_ADIM};render()"><option value="">Tüm trader'lar</option>${tr.map((t) => `<option value="${esc(t.id)}"${t.id === ctFiltre ? ' selected' : ''}>${esc(t.takma_ad)}</option>`).join('')}</select></label>
+      ${CTK.durum === 'hata' ? '<div class="ct-sub text-amber-300 mt-2">Karar kaydı okunamadı; karar durumları eksik olabilir.</div>' : CTK.durum === 'yok' ? '<div class="ct-sub mt-2">Henüz karar kaydı yok.</div>' : ''}
+      ${goster.length ? goster.map((o) => ctOlayYuvarlak(o, true)).join('') : '<div class="empty">Henüz olay yok.</div>'}
+      ${tum.length > goster.length ? `<button class="ct-btn w-full mt-2" onclick="ctAkisN+=${CT_AKIS_ADIM};render()">Daha fazla (${tum.length - goster.length})</button>` : ''}`;
+  }
+  // Kararlarım: sayılar ve nedenler görünür; "açtıklarım ↔ tümü" kıyası bir kol toplamıdır → kilitli (ön kayıt).
+  function kararSayilari(olay) {
+    const kr = olay.filter((o) => CTK.kayit[o.id]), acti = kr.filter((o) => CTK.kayit[o.id].karar === 'acti').length;
+    return { acti, atladi: kr.length - acti, cevapsiz: olay.filter((o) => o.tur === 'acilis' && !CTK.kayit[o.id]).length, kr: kr.map((o) => CTK.kayit[o.id]) };
+  }
+  const nedenHtml = (liste) => { const m = {}; liste.filter((k) => k.karar === 'atladi').forEach((k) => { const n = NEDEN[k.neden] || k.neden || 'belirtilmemiş'; m[n] = (m[n] || 0) + 1; }); const e = Object.entries(m).sort((a, b) => b[1] - a[1]); return e.length ? e.map(([k, v]) => ctRozet(`${k}: ${v}`, 'ct-b-mut')).join(' ') : '<span class="ct-sub">atlama yok</span>'; };
+  function kararHtml() {
+    const olay = ctOlaylar(), kayitlar = Object.values(CTK.kayit), s = kararSayilari(olay), kv = (k, v) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
+    return `<div class="ct-kv">${kv('Toplam karar', kayitlar.length)}${kv('Açtım', kayitlar.filter((k) => k.karar === 'acti').length)}${kv('Atladım', kayitlar.filter((k) => k.karar === 'atladi').length)}${kv('Cevapsız', s.cevapsiz)}</div>
+      <div class="ct-sec"><span class="ct-sub">Atlama nedenleri:</span> ${nedenHtml(kayitlar)}</div>
+      <div class="ct-sec">${kilitHtml('Açtıklarım ↔ tümü kıyası')}</div>
+      <div class="ct-sub mt-2">${CTK.durum === 'hata' ? 'Karar kaydı okunamadı. ' : CTK.durum === 'yok' ? 'Henüz karar kaydı yok. ' : ''}Karar kaydı Telegram’daki [Açtım]/[Atladım] düğmelerinden gelir.</div>`;
+  }
+  // olay satırı
+  const ctSanalRozet = (o) => !o.sanal_sonuc ? '' : o.sanal_sonuc.durum === 'kapandi' && isNum(o.sanal_sonuc.net_yuzde) ? ctRozet('sanal ' + ctPs(o.sanal_sonuc.net_yuzde), 'ct-b-mut') : o.sanal_sonuc.durum === 'acik' ? ctRozet('sanal: açık', 'ct-b-mut') : '';
   function ctKararRozet(o) {
     const k = CTK.kayit[o.id];
-    if (k) return k.karar === 'acti' ? ctRozet('Açtım', 'ct-b-ok') : ctRozet('Atladım' + (k.neden ? ' · ' + (NEDEN[k.neden] || k.neden) : ''), 'ct-b-mut');
+    if (k) return k.karar === 'acti' ? ctRozet('Açtım', 'ct-b-mut') : ctRozet('Atladım' + (k.neden ? ' · ' + (NEDEN[k.neden] || k.neden) : ''), 'ct-b-mut');
     if (o.tur !== 'acilis') return '';
     return CTK.durum === 'hata' ? ctRozet('karar kaydı okunamadı', 'ct-b-warn') : ctRozet('cevapsız', 'ct-b-warn');
   }
   function ctOlayMetin(o) {
     if (o.tur === 'isik') { const i = ISIK[o.not]; return i ? `ışık → ${i[0]} ${esc(i[1].toLowerCase())}` : 'ışık değişti'; }
-    return `<b class="text-white">${esc(o.coin)}</b> ${ctYonRozet(o.yon)} ${ctKaldirac(o.kaldirac)}`
-      + (isNum(o.fiyat) ? ` · fiyat ${ctFiyat(o.fiyat)}` : '') + (isNum(o.hesap_payi) ? ` · hesabın ${ctP(o.hesap_payi)}` : '');
+    return `<b class="text-white">${esc(o.coin)}</b> ${ctYonRozet(o.yon)} ${ctKaldirac(o.kaldirac)}` + (isNum(o.fiyat) ? ` · fiyat ${ctFiyat(o.fiyat)}` : '') + (isNum(o.hesap_payi) ? ` · hesabın ${ctP(o.hesap_payi)}` : '');
   }
   function ctOlayYuvarlak(o, adGoster) {
     const t = (CT.traderlar || []).find((x) => x.id === o.trader);
-    return `<div class="ct-row"><div class="flex flex-wrap items-center gap-x-2 gap-y-1"><span class="ct-sub">${esc(ctTarih(o.zaman))}</span>
-      ${adGoster ? `<b class="text-white">${esc(t ? t.takma_ad : o.trader)}</b>` : ''}${ctRozet(TUR[o.tur] || o.tur, 'ct-b-mut')}${ctKararRozet(o)}${ctSanalRozet(o)}</div>
+    return `<div class="ct-row"><div class="flex flex-wrap items-center gap-x-2 gap-y-1"><span class="ct-sub">${esc(ctTarih(o.zaman))}</span>${adGoster ? `<b class="text-white">${esc(t ? t.takma_ad : o.trader)}</b>` : ''}${ctRozet(TUR[o.tur] || o.tur, 'ct-b-mut')}${ctKararRozet(o)}${ctSanalRozet(o)}</div>
       <div class="mt-1">${ctOlayMetin(o)}${o.not && o.tur !== 'isik' ? ` <span class="ct-sub">· ${esc(o.not)}</span>` : ''}</div></div>`;
   }
   const ctOlaylar = () => ((CT && CT.olaylar) || []).slice().sort((a, b) => String(b.zaman).localeCompare(String(a.zaman)));
 
-  function ctAyrinti(t) {
-    const [em, ad] = ctIsik(t), olay = ctOlaylar().filter((o) => o.trader === t.id), sk = t.sanal_kopya, poz = t.pozisyonlar || [];
-    const sayfaSay = Math.max(1, Math.ceil(olay.length / CT_SAYFA)); ctSayfa = Math.min(ctSayfa, sayfaSay - 1);
-    const dilim = olay.slice(ctSayfa * CT_SAYFA, (ctSayfa + 1) * CT_SAYFA);
-    const kr = olay.filter((o) => CTK.kayit[o.id]), acti = kr.filter((o) => CTK.kayit[o.id].karar === 'acti').length, atladi = kr.length - acti;
-    const cevapsiz = olay.filter((o) => o.tur === 'acilis' && !CTK.kayit[o.id]).length;
-    const kv = (k, v) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
-    return `<a href="#" class="ct-btn inline-flex items-center gap-1 mb-3">← Kartlar</a>
-      <div class="space-y-4 ct-detay">
-      <div class="card ct-card"><div class="ct-head"><span class="ct-name text-lg">${esc(t.takma_ad)}</span><span aria-label="Sağlık: ${esc(ad)}">${em} ${esc(ad)}</span>${ctEskiVeri(t) ? ctRozet('eski / eksik veri', 'ct-b-warn') : ''}${ctKapiRozet(t.kapi)}
-          ${ctKirmizi(t) ? ctRozet('izlemede — kopyalama', 'ct-b-bad') : t.durum && t.durum !== 'kopyala' ? ctRozet(t.durum, 'ct-b-mut') : ''}</div>
-        <div class="ct-sub mt-1">${esc(ctAdr(t.adres))} · t0: ${esc(t.t0 || '—')} · hesap değeri ${ctUsdA(t.hesap_degeri)}</div>
-        <div class="ct-kv mt-3">${kv('Form skoru', isNum(t.form && t.form.skor) ? fmt(t.form.skor, 1) : '—')}${kv('30 gün', ctPs(t.form && t.form.getiri_30g))}${kv('90 gün', ctPs(t.form && t.form.getiri_90g))}</div></div>
-
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Sağlık ışığının nedenleri</h3>
-        ${(t.saglik && t.saglik.nedenler || []).length ? `<ul class="text-xs list-disc pl-5 space-y-0.5">${t.saglik.nedenler.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>` : '<div class="ct-sub">neden belirtilmemiş</div>'}
-        <h3 class="text-xs font-semibold text-slate-300 mt-3 mb-1">Kapı sonucu</h3>
-        <div class="text-xs">${ctKapiRozet(t.kapi)} <span class="ct-sub">${esc((t.kapi && t.kapi.tarih) || '')}${t.kapi && t.kapi.not ? ' · ' + esc(t.kapi.not) : ''}</span></div></div>
-
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Açık pozisyonlar</h3>
-        ${poz.length ? poz.map((p) => ctPozisyon(p, true)).join('') : '<div class="ct-sub">pozisyon yok</div>'}</div>
-
-      <div class="card ct-card">${hlDetayHtml(t, olay)}</div>
-
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Kâr eğrisi (son 90 gün)</h3>
-        ${(t.egri || []).some((p) => p && isNum(p[1])) ? '<div class="relative h-56"><canvas id="ctChEgri"></canvas></div>' : '<div class="ct-sub">kâr eğrisi yok</div>'}</div>
-
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Sanal kopya</h3>
-        ${sk ? `<div class="ct-kv">${kv('Başlangıç', ctUsd(sk.baslangic_usd, 0))}${kv('Bakiye', `<span class="${cls(sk.getiri)}">${ctUsd(sk.bakiye_usd)}</span>`)}${kv('Getiri', `<span class="${cls(sk.getiri)}">${ctPs(sk.getiri)}</span>`)}${kv('Düşüş', ctP(sk.dusus, 1))}${kv('Gecikme', isNum(sk.gecikme_dk) ? fmt(sk.gecikme_dk, 0) + ' dk' : '—')}${kv('t0', esc(sk.t0 || '—'))}</div>` : '<div class="ct-sub">henüz veri yok</div>'}
-        ${ctSkEgri(sk) ? '<div class="relative h-48 mt-3"><canvas id="ctChSanal"></canvas></div><div class="ct-sub">günlük sanal bakiye (t0\'dan beri)</div>' : '<div class="ct-sub mt-2">sanal kopya eğrisi: henüz veri yok</div>'}</div>
-
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">Açtıklarım ↔ tümü</h3>
-        <div class="ct-kv">${kv('Açtım', acti)}${kv('Atladım', atladi)}${kv('Cevapsız', cevapsiz)}</div>
-        <div class="mt-2">${ctKarsilastirHtml(ctKarsilastir(olay))}</div>
-        <div class="ct-sub mt-2">${CTK.durum === 'hata' ? 'Karar kaydı okunamadı. ' : CTK.durum === 'yok' ? 'Henüz karar kaydı yok. ' : ''}Sonuç: kapanmış olayların kopyalanan tutara göre maliyet sonrası net getirisinin ortalaması.</div></div>
-
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-1">İşlem geçmişi <span class="ct-sub font-normal">(${olay.length} olay; veride son 200 olay var)</span></h3>
-        ${dilim.length ? dilim.map((o) => ctOlayYuvarlak(o, false)).join('') : '<div class="ct-sub">bu trader için olay yok</div>'}
-        <div class="flex items-center justify-between mt-2"><button class="ct-btn" onclick="ctSayfaGit(-1)" ${ctSayfa === 0 ? 'disabled' : ''}>← Önceki</button>
-          <span class="ct-sub">${ctSayfa + 1} / ${sayfaSay}</span><button class="ct-btn" onclick="ctSayfaGit(1)" ${ctSayfa + 1 >= sayfaSay ? 'disabled' : ''}>Sonraki →</button></div></div>
-      </div>`;
+  // ---------- 2) Trader'lar
+  function traderlarHtml() {
+    if (traderAdres) {
+      const k = (x) => x.adres.toLowerCase() === traderAdres.toLowerCase();
+      const t = (CT?.traderlar || []).find(k) || (KS?.adaylar || []).find(k);
+      if (!CT && !KS) return bos('Henüz veri yok.');
+      return t ? traderSayfasi(t, ctOlaylar().filter((o) => o.trader === t.id)) : `<a href="#traderlar" class="ct-btn geri">← Trader'lar</a>${bos('Trader bulunamadı.')}`;
+    }
+    if (!CT) return bos('Henüz veri yok.');
+    const tr = CT.traderlar || [], sayilar = (k) => k === '' ? tr.length : k === '?' ? tr.filter((t) => !kolOf(t)).length : tr.filter((t) => kolOf(t) === k).length;
+    const sec = [['', 'Tümü'], ...KOLLAR.map((k) => [k, KOL_AD[k]]), ['?', 'kol bilinmiyor']];
+    const liste = tr.filter((t) => kolFiltre === '' || (kolFiltre === '?' ? !kolOf(t) : kolOf(t) === kolFiltre))
+      .sort((a, b) => (KOLLAR.indexOf(kolOf(a)) + 1 || 99) - (KOLLAR.indexOf(kolOf(b)) + 1 || 99) || String(a.takma_ad).localeCompare(String(b.takma_ad), 'tr'));   // sıralama nötr: kol sonra ad
+    return `<div class="chips" role="group" aria-label="Kol filtresi">${sec.map(([k, ad]) => `<button type="button" class="chip${kolFiltre === k ? ' on' : ''}" aria-pressed="${kolFiltre === k}" onclick="kolFiltre='${k}';render()"><span>${esc(ad)}</span><b>${sayilar(k)}</b></button>`).join('')}${ip('kol')}</div>
+      <div class="ct-grid mt-3">${liste.map(traderKart).join('') || bos('Bu kolda trader yok.')}</div>`;
   }
-  const ctSkEgri = (sk) => { const e = ((sk && sk.egri) || []).filter((p) => p && isNum(p[1])); return e.length >= 2 ? e : null; };
-  function ctSayfaGit(d) { ctSayfa = Math.max(0, ctSayfa + d); ctRender(); }
-
-  function ctCizim() {
-    if (!CT || !ctSel) { ['ctChEgri', 'ctChSanal'].forEach((k) => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } }); return; }
-    const t = (CT.traderlar || []).find((x) => x.id === ctSel); if (!t || !$('ctChEgri')) return;
-    const sg = ctSkEgri(t.sanal_kopya);
-    if (sg && $('ctChSanal')) chart('ctChSanal', { type: 'line', data: { labels: sg.map((p) => p[0]), datasets: [{ data: sg.map((p) => p[1]), borderColor: '#10b981', borderWidth: 2, pointRadius: 0, tension: 0.15 }] },
-      options: { ...base, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ctUsd(c.parsed.y) } } } } });
-    if (!$('ctChEgri')) return;
-    const pts = (t.egri || []).filter((p) => p && isNum(p[1]));
-    const opt = { ...base, scales: { ...axes, y: { ...axes.y, ticks: { ...axes.y.ticks, callback: (v) => '%' + fmt(v * 100, 0) } } },
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ctPs(c.parsed.y, 2) } } } };
-    chart('ctChEgri', { type: 'line', data: { labels: pts.map((p) => p[0]), datasets: [{ data: pts.map((p) => p[1]), borderColor: '#f5cb5c', borderWidth: 2, pointRadius: 0, tension: 0.15 }] }, options: opt });
+  function traderKart(t) {
+    const poz = (t.pozisyonlar || []).length, neden = nedenSecildi(t), a = esc(t.adres);
+    return `<div class="card ct-card tik" role="link" tabindex="0" onclick="kartTik(event,'${a}')" onkeydown="if(event.key==='Enter')kartTik(event,'${a}')">
+      <div class="ct-head"><a class="ct-name" href="#trader/${encodeURIComponent(t.adres)}">${esc(t.takma_ad || ctAdr(t.adres))}</a>${tarzRozet(t)}${kolRozet(t)}${ctEskiVeri(t) ? ctRozet('eski / eksik veri', 'ct-b-warn') : ''}</div>
+      <div class="ct-sub mt-2"><b>Neden seçildi:</b> ${neden ? esc(neden) : 'belirtilmemiş'}</div>
+      <div class="mt-2"><span class="ct-sub">Bayrak:</span> ${bayrakHtml(t)}</div>
+      <div class="ct-kv mt-2"><div><div class="k">Açık işlem</div><div class="v">${poz}</div></div><div><div class="k">Son işlem</div><div class="v">${t.son_islem?.kapanis ? ctTarih(t.son_islem.kapanis) : '—'}</div></div></div></div>`;
   }
+  function kartTik(e, adres) { if (e.target.closest('a,button')) return; location.hash = 'trader/' + encodeURIComponent(adres); }
 
-  // ---------- akış sekmesi
-  function ctRenderAkis() {
-    const el = $('ctAkis');
-    if (!CT) { el.innerHTML = '<div class="card empty">Henüz veri yok.</div>'; return; }
-    const tr = CT.traderlar || [], tum = ctOlaylar().filter((o) => !ctFiltre || o.trader === ctFiltre), goster = tum.slice(0, ctAkisN);
-    el.innerHTML = `<div class="card p-3 space-y-2"><div class="flex flex-wrap items-center justify-between gap-2"><h2 class="text-sm font-bold text-white">Akış <span class="ct-sub font-normal">(son olaylar, yeniden eskiye)</span></h2>
-      <select id="ctFiltreSel" class="bg-[#1c2a47] border border-[#243555] px-2.5 py-2 rounded text-slate-200 text-xs" onchange="ctFiltre=this.value;ctAkisN=${CT_AKIS_ADIM};ctRender()">
-        <option value="">Tüm traderlar</option>${tr.map((t) => `<option value="${esc(t.id)}"${t.id === ctFiltre ? ' selected' : ''}>${esc(t.takma_ad)}</option>`).join('')}</select></div>
-      ${CTK.durum === 'hata' ? '<div class="ct-sub text-amber-300">Karar kaydı okunamadı; karar durumları eksik olabilir.</div>' : CTK.durum === 'yok' ? '<div class="ct-sub">Henüz karar kaydı yok.</div>' : ''}
-      ${goster.length ? goster.map((o) => ctOlayYuvarlak(o, true)).join('') : '<div class="empty">Henüz olay yok.</div>'}
-      ${tum.length > goster.length ? `<button class="ct-btn w-full" onclick="ctAkisN+=${CT_AKIS_ADIM};ctRender()">Daha fazla (${tum.length - goster.length})</button>` : ''}</div>`;
+  // ---------- trader sayfası: kimlik, kol, neden, bayrak → açık pozisyonlar (tek liste) → kapalı geçmiş
+  function acikListe(t) {
+    const h = HL[t.adres], kayit = t.pozisyonlar || [], canli = h?.durum === 'hazir' ? h.pozisyonlar : null;
+    const kz = (x) => x.giris > 0 && isNum(x.mid) ? (x.mid - x.giris) / x.giris * (x.yon === 'short' ? -1 : 1) : null;
+    if (canli) {
+      const islemler = hlIslemler(h.dolumlar);
+      return canli.map((p) => { const isl = islemler.find((x) => !x.kapanis && x.coin === p.coin && x.yon === p.yon), k = kayit.find((x) => x.coin === p.coin && x.yon === p.yon);
+        return { coin: p.coin, yon: p.yon, kaldirac: p.kaldirac, giris: p.giris, mid: p.mid, acilis: isl?.acilis ?? (k && ctDate(k.acilis).getTime()) ?? null, bilinmiyorAcilis: !isl && !k, p, kz: kz({ ...p }) }; });
+    }
+    return kayit.map((p) => { const m = Number(MIDS[p.coin]), mid = isNum(m) ? m : NaN; return { coin: p.coin, yon: p.yon, kaldirac: p.kaldirac, giris: p.giris, mid, acilis: p.acilis ? ctDate(p.acilis).getTime() : null, p: { ...p, mid }, kz: kz({ giris: p.giris, mid, yon: p.yon }) }; });
   }
-
-  // ---------- istatistik sekmesi
-  function ctRenderIstat() {
-    const el = $('ctIstat');
-    if (!CT) { el.innerHTML = '<div class="card empty">Henüz veri yok.</div>'; return; }
-    const olay = ctOlaylar(), id2olay = Object.fromEntries(olay.map((o) => [o.id, o]));
-    const kayitlar = Object.values(CTK.kayit), toplamActi = kayitlar.filter((k) => k.karar === 'acti').length, toplamAtladi = kayitlar.filter((k) => k.karar === 'atladi').length;
-    const disarida = kayitlar.filter((k) => !id2olay[k.olay_id]).length;
-    const nedenSay = (liste) => { const m = {}; liste.filter((k) => k.karar === 'atladi').forEach((k) => { const n = NEDEN[k.neden] || k.neden || 'belirtilmemiş'; m[n] = (m[n] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
-    const nedenHtml = (liste) => { const n = nedenSay(liste); return n.length ? n.map(([k, v]) => ctRozet(`${k}: ${v}`, 'ct-b-mut')).join(' ') : '<span class="ct-sub">atlama yok</span>'; };
-    const kv = (k, v) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
-    const kartlar = ctSirala(CT.traderlar || []).map((t) => {
-      const o = olay.filter((x) => x.trader === t.id), kr = o.filter((x) => CTK.kayit[x.id]).map((x) => CTK.kayit[x.id]);
-      const acti = kr.filter((k) => k.karar === 'acti').length, cevapsiz = o.filter((x) => x.tur === 'acilis' && !CTK.kayit[x.id]).length;
-      const ks = ctKarsilastir(o);
-      return `<div class="card ct-card"><div class="ct-head"><span class="ct-name">${esc(t.takma_ad)}</span>${ctIsik(t)[0]}</div>
-        <div class="ct-kv mt-2">${kv('Sanal kopya getirisi', `<span class="${cls(t.sanal_kopya && t.sanal_kopya.getiri)}">${ctPs(t.sanal_kopya && t.sanal_kopya.getiri)}</span>`)}${kv('Olay', o.length)}${kv('Açtım', acti)}${kv('Atladım', kr.length - acti)}${kv('Cevapsız', cevapsiz)}</div>
-        <div class="ct-sec"><span class="ct-sub">Açtıklarım ↔ tümü:</span><div class="mt-1">${ctKarsilastirHtml(ks)}</div></div>
-        <div class="ct-sec"><span class="ct-sub">Atlama nedenleri:</span> ${nedenHtml(kr)}</div></div>`;
-    }).join('');
-    el.innerHTML = `<div class="card ct-card"><h2 class="text-sm font-bold text-white mb-2">Kararlarım değer kattı mı?</h2>
-        <div class="ct-kv">${kv('Toplam karar', kayitlar.length)}${kv('Açtım', toplamActi)}${kv('Atladım', toplamAtladi)}</div>
-        <div class="ct-sec">${ctKarsilastirHtml(ctKarsilastir(olay))}<div class="ct-sub mt-1">Fark = açtıklarımın ortalama sanal sonucu − tüm olayların. ${kayitlar.length ? '' : 'Henüz karar kaydı yok. '}${CTK.durum === 'hata' ? 'Karar kaydı okunamadı. ' : ''}Eşik: ${CT_YETERSIZ} kapanmış ve karar verilmiş olay.</div></div>
-        <div class="ct-sec"><span class="ct-sub">Atlama nedenleri (toplam):</span> ${nedenHtml(kayitlar)}</div>
-        ${disarida ? `<div class="ct-sub mt-1">${disarida} karar, veride artık bulunmayan eski olaylara ait (trader dağılımına girmez).</div>` : ''}</div>
-      <div class="ct-grid mt-3">${kartlar || '<div class="card empty">Henüz izlenen trader yok.</div>'}</div>`;
+  function traderSayfasi(t, olaylar) {
+    const h = HL[t.adres], [em, ad] = ctIsik(t), adr = encodeURIComponent(t.adres), ismi = t.takma_ad || ctAdr(t.adres);
+    const parcalar = location.hash.split('/'), sayfa = /^\d+$/.test(parcalar[2] || '') ? Number(parcalar[2]) : 0;
+    const neden = nedenSecildi(t), liste = acikListe(t), islemler = h?.durum === 'hazir' ? hlIslemler(h.dolumlar) : [], gecmis = islemler.slice(sayfa * 20, sayfa * 20 + 20);
+    const satir = (x) => `<div class="ct-trade"><div class="ct-head"><b>${esc(x.coin)}</b>${ctYonRozet(x.yon)}${x.kapanis ? ctRozet('⚪ Kapandı', 'ct-b-mut') : ctRozet('🟢 Açık', 'ct-b-ok')}</div><div class="ct-sub mt-1">açılış ${sureBaslangic(x.acilis)} · giriş ${ctFiyat(x.giris)} · ${x.kapanis ? `kapanış ${ctTarih(new Date(x.kapanis).toISOString())} · ${sure(x.acilis, x.kapanis)} · ${ctPs(x.sonuc, 2)}` : `devam ediyor · ${sure(x.acilis, Date.now())}`}</div></div>`;
+    const acikSatir = (x) => `<div class="ct-trade${traderCoin === x.coin ? ' vurgu' : ''}"><div class="ct-head"><b>${esc(x.coin)}</b>${ctYonRozet(x.yon)}${ctKaldirac(x.kaldirac)}${kaymaRozeti(x.p, t.tarz, olaylar)}</div><div class="ct-sub mt-1">açılış ${x.acilis ? sureBaslangic(x.acilis) : 'bilinmiyor'} · giriş ${ctFiyat(x.giris)} · şimdi ${ctFiyat(x.mid)} · K/Z ${ctPs(x.kz, 2)}</div>${tutarMetni({ hesap_payi: x.p.hesap_payi })}<a class="ct-link" target="_blank" rel="noopener" href="https://app.hyperliquid.xyz/trade/${encodeURIComponent(x.coin)}">${esc(x.coin)} için Hyperliquid’i aç</a></div>`;
+    const canliNot = !h || h.durum === 'yukleniyor' ? '<div class="ct-sub">Canlı veri yükleniyor… (şimdilik kayıttaki pozisyonlar)</div>' : h.durum === 'hata' ? `<div class="ct-sub text-amber-300">Canlı veri alınamadı (${esc(h.hata)}); kayıttaki pozisyonlar gösteriliyor.</div>` : '';
+    const n = olayN[t.adres] || 8, benim = olaylar.slice(0, n), s = kararSayilari(olaylar);
+    const sec = t.adimlar ? ksAyrintiGovde(t) : `<div class="ct-kv"><div><div class="k">Kapı sonucu</div><div class="v">${ctKapiRozet(t.kapi)}</div></div><div><div class="k">Kapı tarihi</div><div class="v">${esc(t.kapi?.tarih || '—')}</div></div><div><div class="k">t0</div><div class="v">${esc(t.t0 || '—')}</div></div><div><div class="k">Hesap değeri</div><div class="v">${ctUsdA(t.hesap_degeri)}</div></div></div>`;
+    return `<a href="#traderlar" class="ct-btn geri">← Trader'lar</a><div class="space-y-4 ct-detay">
+      <div class="card ct-card"><div class="ct-head"><span class="ct-name text-lg">${esc(ismi)}</span>${tarzRozet(t)}${kolRozet(t)} ${ip('kol')}${t.saglik ? `<span aria-label="Işık: ${esc(ad)}">${em} ${esc(ad)}</span>` : ''}${ctEskiVeri(t) ? ctRozet('eski / eksik veri', 'ct-b-warn') : ''}</div>
+        <div class="ct-sub mt-1 break-all">${esc(t.adres)}</div>
+        <div class="flex flex-wrap gap-2 mt-2"><a class="ct-link" target="_blank" rel="noopener" href="https://app.hyperliquid.xyz/explorer/${adr}">Hyperliquid ↗</a><a class="ct-link" target="_blank" rel="noopener" href="https://hyperdash.com/address/${adr}">Hyperdash ↗</a><button class="ct-btn" onclick="ksAdresiKopyala('${esc(t.adres)}')">Adresi kopyala</button><button class="ct-btn" onclick="hlDetayYukle('${esc(t.adres)}', true)">Yenile</button></div><div id="ksCopyNote" class="ks-copy-note"></div>
+        <div class="ct-sec"><b>Neden seçildi</b> ${ip('neden')}<div class="mt-1">${neden ? esc(neden) : '<span class="ct-sub">belirtilmemiş</span>'}</div></div>
+        <div class="ct-sec"><b>Kırmızı bayraklar</b> ${ip('bayrak')}<div class="mt-1">${bayrakHtml(t)}</div></div></div>
+      <div class="card ct-card"><h2 class="bas">Açık pozisyonlar (${liste.length})</h2>${canliNot}${liste.length ? liste.map(acikSatir).join('') : '<div class="ct-sub mt-1">Açık pozisyon yok.</div>'}</div>
+      ${(t.egri || []).length > 1 ? `<div class="card ct-card"><h2 class="bas">Trader’ın kâr eğrisi <span class="ct-sub font-normal">(kendi geçmişi, bizim sonucumuz değil)</span></h2>${ksEgrisi(t.egri)}</div>` : ''}
+      ${det('gecmis:' + t.adres, `<b>İşlem geçmişi</b> <span class="ct-sub">(son 30 gün${h?.durum === 'hazir' ? ', ' + islemler.length + ' işlem' : ''})</span>`, h?.durum === 'hazir' ? (gecmis.length ? gecmis.map(satir).join('') : '<div class="ct-sub">İşlem yok.</div>') + (islemler.length > (sayfa + 1) * 20 ? `<button class="ct-btn w-full mt-2" onclick="location.hash='trader/${adr}/${sayfa + 1}'">Daha fazla</button>` : '') : '<div class="ct-sub">Canlı veri gelince burada listelenir.</div>')}
+      ${olaylar.length || CT ? det('olay:' + t.adres, `<b>Bizim olaylar</b> <span class="ct-sub">(${olaylar.length})</span>`, benim.length ? benim.map((o) => ctOlayYuvarlak(o, false)).join('') + (olaylar.length > n ? `<button class="ct-btn w-full mt-2" onclick="olayN['${esc(t.adres)}']=${n + 8};render()">Daha fazla</button>` : '') : '<div class="ct-sub">Bu trader için olay yok.</div>') : ''}
+      ${det('karar:' + t.adres, '<b>Kararlarım</b>', `<div class="ct-kv"><div><div class="k">Açtım</div><div class="v">${s.acti}</div></div><div><div class="k">Atladım</div><div class="v">${s.atladi}</div></div><div><div class="k">Cevapsız</div><div class="v">${s.cevapsiz}</div></div></div><div class="ct-sec"><span class="ct-sub">Atlama nedenleri:</span> ${nedenHtml(s.kr)}</div>`)}
+      <div class="card ct-card"><h2 class="bas">Bizim sanal kopya ${ip('ozet')}</h2><div class="mt-2">${kilitHtml('Bu trader’ın gölge sonucu')}</div></div>
+      ${det('secim:' + t.adres, '<b>Seçim ayrıntıları</b>', sec)}
+    </div>`;
   }
+  const ctKapiRozet = (k) => { const s = k && k.sinif; return ctRozet(s || 'kapı yok', 'ct-b-mut'); };
+  const olayN = {};
 
-  function ctRender() { ctSerit(); ctRenderAna(); ctRenderAkis(); ctRenderIstat(); if (window.lucide) lucide.createIcons(); ctCizim(); }
-
-  // ---------- keşif (sg-arge docs/GOREV_TRADER_SECIMI.md, kesif.json v1)
-  const ksRozet = (metin, sinif) => ctRozet(metin, sinif);
-  const ksTarz = (a) => a.tarz === 'swing' ? 'Swing' : a.tarz === 'intraday' ? 'Intraday' : 'Scalp';
+  // ---------- 3) Huni: kapı ve keşif
+  const ksRozet = (m, s) => ctRozet(m, s);
   const ksKatman = (a) => a.katman === 'kopyalanabilir' ? ['Kopyalanabilir', 'ct-b-ok'] : ['İzleme adayı', 'ct-b-warn'];
   const ksDurum = (d) => d === 'Geçti' ? 'ct-b-ok' : d === 'Kaldı' ? 'ct-b-bad' : 'ct-b-warn';
   const ksPiyasa = (a) => Object.entries(a.piyasa_payi || {}).sort((x, y) => y[1] - x[1])[0]?.[0] || '';
@@ -609,59 +531,79 @@
     return `<div class="ks-share" aria-label="Piyasa payları">${['kripto', 'hisse', 'emtia'].map((k) => `<span style="width:${Math.max(0, p[k] || 0) * 100}%;background:${renk[k]}"></span>`).join('')}</div><div class="ct-sub mt-1">Kripto ${ctP(p.kripto)} · Hisse ${ctP(p.hisse)} · Emtia ${ctP(p.emtia)}</div>`;
   };
   function ksFiltrele() {
-    let l = (KS?.adaylar || []).filter((a) => (!ksFiltre.tarz || a.tarz === ksFiltre.tarz)
-      && (!ksFiltre.katman || a.katman === ksFiltre.katman)
-      && (!ksFiltre.piyasa || ksPiyasa(a) === ksFiltre.piyasa)
-      && (!ksFiltre.gecmis || a.gecmis_gun >= 365));
-    const deger = (a) => ksFiltre.sirala === 'g30' ? a.kopya?.g30 : ksFiltre.sirala === 'g120' ? a.kopya?.g120 : ksFiltre.sirala === 'tutma' ? a.medyan_tutma_sa : a.alfa_t;
-    return l.sort((a, b) => ((a.katman === 'kopyalanabilir') - (b.katman === 'kopyalanabilir')) * -1
-      || (a.genc_aday - b.genc_aday) || ((deger(b) ?? -Infinity) - (deger(a) ?? -Infinity)));
+    return (KS?.adaylar || []).filter((a) => (!ksFiltre.tarz || a.tarz === ksFiltre.tarz) && (!ksFiltre.katman || a.katman === ksFiltre.katman)
+      && (!ksFiltre.piyasa || ksPiyasa(a) === ksFiltre.piyasa) && (!ksFiltre.gecmis || a.gecmis_gun >= 365))
+      .sort((a, b) => ((b.katman === 'kopyalanabilir') - (a.katman === 'kopyalanabilir')) || (a.genc_aday - b.genc_aday) || ((b.alfa_t ?? -Infinity) - (a.alfa_t ?? -Infinity)));
   }
   function ksEgrisi(egri) {
     const y = (egri || []).map((p) => p?.[1]).filter(isNum);
-    if (y.length < 2) return '<div class="ct-sub">kâr eğrisi yok</div>';
+    if (y.length < 2) return '<div class="ct-sub">eğri yok</div>';
     const mn = Math.min(...y), mx = Math.max(...y), aralik = mx - mn || 1;
     const pts = y.map((v, i) => `${(i * 100 / (y.length - 1)).toFixed(2)},${(30 - ((v - mn) / aralik * 27)).toFixed(2)}`).join(' ');
-    const renk = y[y.length - 1] >= y[0] ? '#10b981' : '#ef4444';
-    return `<svg viewBox="0 0 100 32" preserveAspectRatio="none" class="w-full" role="img" aria-label="Haftalık kâr eğrisi"><polyline points="${pts}" fill="none" stroke="${renk}" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>`;
+    return `<svg viewBox="0 0 100 32" preserveAspectRatio="none" class="w-full" style="height:44px" role="img" aria-label="Eğri"><polyline points="${pts}" fill="none" stroke="#94a3b8" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>`;
   }
   function ksKart(a) {
     const [katman, renk] = ksKatman(a), once = a.tarz === 'swing' ? ['2 sa kopya', a.kopya?.g120] : ['30 dk kopya', a.kopya?.g30];
-    return `<a class="card ct-card ks-card" href="#trader/${encodeURIComponent(a.adres)}">
-      <div class="ks-card-head"><span class="ks-address">${esc(ctAdr(a.adres))}</span>${ksRozet(ksTarz(a), 'ct-b-mut')}${ksRozet(katman, renk)}${a.genc_aday ? ksRozet('Genç aday', 'ct-b-warn') : ''}</div>
-      <div class="ks-egr mt-2">${ksEgrisi(a.egri)}</div>
-      <div class="ct-kv mt-2"><div><div class="k">Medyan tutma</div><div class="v">${fmt(a.medyan_tutma_sa, 1)} sa</div></div><div><div class="k">Medyan kaldıraç</div><div class="v">${fmt(a.medyan_kaldirac, 1)}x</div></div><div><div class="k">${once[0]}</div><div class="v ${cls(once[1])}">${ctPs(once[1])}</div></div><div><div class="k">Diğer gecikme</div><div class="v ${cls(a.tarz === 'swing' ? a.kopya?.g30 : a.kopya?.g120)}">${ctPs(a.tarz === 'swing' ? a.kopya?.g30 : a.kopya?.g120)}</div></div><div><div class="k">Kârlı ay</div><div class="v">${ctP(a.karli_ay_orani)}</div></div><div><div class="k">Binance payı</div><div class="v">${ctP(a.binance_payi)}</div></div></div>
-      <div class="ct-sec">${ksPay(a)}</div></a>`;
+    return `<a class="card ct-card ks-card" href="#trader/${encodeURIComponent(a.adres)}"><div class="ks-card-head"><span class="ks-address">${esc(ctAdr(a.adres))}</span>${tarzRozet(a)}${ksRozet(katman, renk)}${a.genc_aday ? ksRozet('Genç aday', 'ct-b-warn') : ''}</div>
+      <div class="ct-kv mt-2"><div><div class="k">Medyan tutma</div><div class="v">${fmt(a.medyan_tutma_sa, 1)} sa</div></div><div><div class="k">Medyan kaldıraç</div><div class="v">${fmt(a.medyan_kaldirac, 1)}x</div></div><div><div class="k">${once[0]}</div><div class="v">${ctPs(once[1])}</div></div><div><div class="k">Kârlı ay</div><div class="v">${ctP(a.karli_ay_orani)}</div></div></div></a>`;
   }
+  const secenek = (v, ad, f) => `<option value="${v}"${f === v ? ' selected' : ''}>${ad}</option>`;
   function ksKontrol() {
-    const f = ksFiltre;
-    return `<div class="card ct-card"><div class="ks-controls"><label class="ct-sub">Tarz<select class="ks-select mt-1" onchange="ksFiltre.tarz=this.value;ksRender()"><option value="">Tümü</option><option value="intraday"${f.tarz === 'intraday' ? ' selected' : ''}>Intraday</option><option value="swing"${f.tarz === 'swing' ? ' selected' : ''}>Swing</option></select></label><label class="ct-sub">Katman<select class="ks-select mt-1" onchange="ksFiltre.katman=this.value;ksRender()"><option value="">Tümü</option><option value="kopyalanabilir"${f.katman === 'kopyalanabilir' ? ' selected' : ''}>Kopyalanabilir</option><option value="izleme_adayi"${f.katman === 'izleme_adayi' ? ' selected' : ''}>İzleme adayı</option></select></label><label class="ct-sub">Piyasa (ağırlık)<select class="ks-select mt-1" onchange="ksFiltre.piyasa=this.value;ksRender()"><option value="">Tümü</option><option value="kripto"${f.piyasa === 'kripto' ? ' selected' : ''}>Kripto</option><option value="hisse"${f.piyasa === 'hisse' ? ' selected' : ''}>Hisse</option><option value="emtia"${f.piyasa === 'emtia' ? ' selected' : ''}>Emtia</option></select></label><label class="ct-sub">Geçmiş<select class="ks-select mt-1" onchange="ksFiltre.gecmis=this.value;ksRender()"><option value="">Tümü</option><option value="12"${f.gecmis ? ' selected' : ''}>≥12 ay</option></select></label><label class="ct-sub">Sıralama<select class="ks-select mt-1" onchange="ksFiltre.sirala=this.value;ksRender()"><option value="alfa_t"${f.sirala === 'alfa_t' ? ' selected' : ''}>Alfa t</option><option value="g30"${f.sirala === 'g30' ? ' selected' : ''}>30 dk kopya</option><option value="g120"${f.sirala === 'g120' ? ' selected' : ''}>2 sa kopya</option><option value="tutma"${f.sirala === 'tutma' ? ' selected' : ''}>Tutma süresi</option></select></label></div></div>`;
+    const f = ksFiltre, sel = (etiket, alan, opts) => `<label class="ct-sub">${etiket}<select class="ks-select mt-1" onchange="ksFiltre.${alan}=this.value;render()">${opts.map(([v, ad]) => secenek(v, ad, f[alan])).join('')}</select></label>`;
+    return `<div class="card ct-card"><div class="ks-controls">${sel('Tarz', 'tarz', [['', 'Tümü'], ['intraday', 'Intraday'], ['swing', 'Swing']])}${sel('Katman', 'katman', [['', 'Tümü'], ['kopyalanabilir', 'Kopyalanabilir'], ['izleme_adayi', 'İzleme adayı']])}${sel('Piyasa (ağırlık)', 'piyasa', [['', 'Tümü'], ['kripto', 'Kripto'], ['hisse', 'Hisse'], ['emtia', 'Emtia']])}${sel('Geçmiş', 'gecmis', [['', 'Tümü'], ['12', '≥12 ay']])}</div></div>`;
   }
-  function ksAyrinti(a) {
-    const [katman, renk] = ksKatman(a), adimlar = Array.from({ length: 8 }, (_, i) => a.adimlar?.[String(i + 1)] || { durum: 'Yetersiz', neden: 'Veri yok.' });
+  function ksAyrintiGovde(a) {
+    const adimlar = Array.from({ length: 8 }, (_, i) => a.adimlar?.[String(i + 1)] || { durum: 'Yetersiz', neden: 'Veri yok.' });
     const kv = (k, v) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
-    return `<a href="#kesif" class="ct-btn inline-flex mb-3">← Adaylar</a><div class="space-y-4 ct-detay"><div class="card ct-card"><div class="ks-card-head"><span class="ct-name text-lg">${esc(ctAdr(a.adres))}</span>${ksRozet(ksTarz(a), 'ct-b-mut')}${ksRozet(katman, renk)}${a.genc_aday ? ksRozet('Genç aday', 'ct-b-warn') : ''}</div><div class="ct-sub mt-2 break-all">${esc(a.adres)}</div><div class="flex flex-wrap gap-2 mt-3"><button class="ct-btn" onclick="ksAdresiKopyala('${esc(a.adres)}')"><i data-lucide="copy" class="w-3.5 h-3.5 inline"></i> Adresi kopyala</button><span id="ksCopyNote" class="ks-copy-note self-center"></span></div></div>
-      <div class="card ct-card">${hlDetayHtml(a)}</div>
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-2">Kapı adımları</h3>${adimlar.map((x, i) => `<div class="ks-adim"><div>${ksRozet(`${i + 1}. ${x.durum}`, ksDurum(x.durum))}</div><div>${esc(x.neden || 'Neden belirtilmemiş.')}</div></div>`).join('')}</div>
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-2">Ölçüler</h3><div class="ct-kv">${kv('Geçmiş', `${fmt(a.gecmis_gun, 0)} gün`)}${kv('Kapanan işlem', fmt(a.kapanan_islem, 0))}${kv('Aktif ay', fmt(a.aktif_ay, 0))}${kv('Hesap değeri', ctUsd(a.hesap_degeri, 0))}${kv('Medyan tutma', `${fmt(a.medyan_tutma_sa, 1)} sa`)}${kv('Medyan kaldıraç', `${fmt(a.medyan_kaldirac, 1)}x`)}${kv('30 dk kopya', `<span class="${cls(a.kopya?.g30)}">${ctPs(a.kopya?.g30)}</span>`)}${kv('2 sa kopya', `<span class="${cls(a.kopya?.g120)}">${ctPs(a.kopya?.g120)}</span>`)}${kv('8 sa kopya', `<span class="${cls(a.kopya?.g480)}">${ctPs(a.kopya?.g480)}</span>`)}${kv('Kârlı ay', ctP(a.karli_ay_orani))}${kv('Plasebo p', fmt(a.plasebo_p, 3))}${kv('Alfa t', `${fmt(a.alfa_t, 1)} · ${esc(a.alfa_kiyas)}`)}</div></div>
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-2">Piyasa payları</h3>${ksPay(a)}<div class="ct-sub mt-2">Binance payı: ${ctP(a.binance_payi)}</div></div>
-      <div class="card ct-card"><h3 class="text-xs font-semibold text-slate-300 mb-2">İlişkili hesap notu</h3><div class="text-xs">${esc(a.iliskili_not || 'İlişkili hesap notu yok.')}</div></div></div>`;
+    return `<h3 class="alt">Kapı adımları ${ip('kapi')}</h3>${adimlar.map((x, i) => `<div class="ks-adim"><div>${ksRozet(`${i + 1}. ${x.durum}`, ksDurum(x.durum))}</div><div>${esc(x.neden || 'Neden belirtilmemiş.')}</div></div>`).join('')}
+      <h3 class="alt">Ölçüler</h3><div class="ct-kv">${kv('Geçmiş', `${fmt(a.gecmis_gun, 0)} gün`)}${kv('Kapanan işlem', fmt(a.kapanan_islem, 0))}${kv('Aktif ay', fmt(a.aktif_ay, 0))}${kv('Hesap değeri', ctUsd(a.hesap_degeri, 0))}${kv('Medyan tutma', `${fmt(a.medyan_tutma_sa, 1)} sa`)}${kv('Medyan kaldıraç', `${fmt(a.medyan_kaldirac, 1)}x`)}${kv('30 dk kopya ' , ctPs(a.kopya?.g30))}${kv('2 sa kopya', ctPs(a.kopya?.g120))}${kv('8 sa kopya', ctPs(a.kopya?.g480))}${kv('Kârlı ay', ctP(a.karli_ay_orani))}${kv('Plasebo p', fmt(a.plasebo_p, 3))}${kv('Alfa t', `${fmt(a.alfa_t, 1)} · ${esc(a.alfa_kiyas)}`)}</div>
+      <h3 class="alt">Piyasa payları</h3>${ksPay(a)}<div class="ct-sub mt-1">Binance payı: ${ctP(a.binance_payi)}</div>
+      <h3 class="alt">İlişkili hesap notu</h3><div class="text-xs">${esc(a.iliskili_not || 'İlişkili hesap notu yok.')}</div>`;
   }
-  function ksRender() {
-    const el = $('ksMain'), msg = $('ksMsg');
-    msg.classList.toggle('hidden', !ksHata); msg.textContent = ksHata || '';
-    if (!KS) { el.innerHTML = '<div class="card empty">Keşif verisi henüz okunamadı.</div>'; return; }
-    const adaylar = ksFiltrele(), secili = ksSel && KS.adaylar.find((a) => a.adres === ksSel);
-    const yas = ctYasDakika(KS.uretildi);
-    const bilgi = `<div class="card ct-card ks-bilgi">${ksKaynak?.ornek ? '⚠ Örnek veri gösteriliyor. Canlı Keşif verisi okunamadı.' : `Veri tarihi: ${esc(ksKaynak?.tarih || 'bilinmiyor')}`}<br><span class="${yas != null && yas > CT_ESKI_DK ? 'down' : ''}">${ctTazelik(KS.uretildi)}</span>${KS.durum === 'eksik' ? '<br><span class="down">⚠ Eksik koşu: aday listesi tam evreni temsil etmeyebilir.</span>' : ''}</div>`;
-    el.innerHTML = secili ? `${bilgi}${ksAyrinti(secili)}` : `${bilgi}${ksKontrol()}<div class="ct-sub">${adaylar.length} / ${KS.adaylar.length} aday · evren ${fmt(KS.evren, 0)} · işlenen ${fmt(KS.islenen, 0)}</div><div class="ct-grid">${adaylar.map(ksKart).join('') || '<div class="card empty">Bu filtrelerde aday yok.</div>'}</div>`;
-    if (window.lucide) lucide.createIcons();
+  function huniHtml() {
+    const tr = CT?.traderlar || [], g = golge();
+    const havuz = KS ? (isNum(KS.havuz) ? KS.havuz : isNum(KS.islenen) ? KS.islenen : null) : null;
+    const aday = KS ? (isNum(KS.aday_sayisi) ? KS.aday_sayisi : (KS.adaylar || []).length) : null;
+    const oda = isNum(g.oda_n) ? g.oda_n : tr.some((t) => kolOf(t)) ? tr.filter((t) => kolOf(t) === 'oda').length : null;
+    const kutu = (ad, v, h, alt) => `<div class="hk"><div class="k">${esc(ad)} ${ip(h)}</div><div class="v">${isNum(v) ? fmt(v, 0) : 'bilinmiyor'}</div><div class="ct-sub">${alt}</div></div>`;
+    const yas = KS ? ctYasDakika(KS.uretildi) : null, kapsam = KS && isNum(KS.evren) && KS.evren > 0 && isNum(KS.islenen) ? KS.islenen / KS.evren : null;
+    const tarama = !KS ? '<div class="ct-sub">Tarama verisi okunamadı.</div>' : `${tazelikSatiri('Son tarama', KS.uretildi, ksKaynak?.ornek ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : esc(ksKaynak?.tarih || ''))}
+      <div class="ct-kv mt-2"><div><div class="k">Taranan evren</div><div class="v">${fmt(KS.evren, 0)}</div></div><div><div class="k">İşlenen</div><div class="v">${fmt(KS.islenen, 0)}${kapsam != null ? ` <span class="ct-sub">(${ctP(kapsam)})</span>` : ''}</div></div><div><div class="k">Durum</div><div class="v">${KS.durum === 'eksik' ? '⚠ eksik koşu' : 'tamam'}</div></div></div>
+      ${KS.durum === 'eksik' ? '<div class="ct-sub text-amber-300 mt-1">Eksik koşu: aday listesi tam evreni temsil etmeyebilir.</div>' : ''}`;
+    const adaylar = ksFiltrele();
+    return `${ksHata ? `<div class="p-3 rounded border border-red-800 bg-red-950/40 text-xs text-red-200">${esc(ksHata)}</div>` : ''}
+      <div class="card ct-card"><h2 class="bas">Huni ${ip('kapi')}</h2><div class="huni mt-2">${kutu('Havuz', havuz, 'havuz', 'ön elemeye giren')}<span class="ok" aria-hidden="true">→</span>${kutu('Aday', aday, 'aday', 'kapıyı geçen')}<span class="ok" aria-hidden="true">→</span>${kutu('Oda', oda, 'oda', 'kopyalamaya yakın')}</div></div>
+      <div class="card ct-card"><h2 class="bas">Son tarama</h2><div class="mt-2">${tarama}</div></div>
+      ${det('adaylar', `<b>Adaylar</b> <span class="ct-sub">(${adaylar.length} / ${(KS?.adaylar || []).length})</span>`, KS ? `${ksKontrol()}<div class="ct-grid mt-3">${adaylar.map(ksKart).join('') || bos('Bu filtrelerde aday yok.')}</div>` : bos('Keşif verisi henüz okunamadı.'), false)}`;
   }
   async function ksAdresiKopyala(adres) {
     const not = $('ksCopyNote');
     try { await navigator.clipboard.writeText(adres); not.textContent = 'Adres panoya kopyalandı.'; }
     catch (e) { not.textContent = 'Panoya kopyalanamadı.'; }
   }
+
+  // ---------- 4) Ayarlar
+  function ayarHtml() {
+    const a = tutarAyar();
+    return `<div class="card ct-card ct-detay"><h2 class="bas">Tutar hesaplayıcı</h2><label class="flex items-center gap-2 mt-3 text-sm"><input id="tutarAcik" type="checkbox" ${a.acik ? 'checked' : ''} onchange="tutarKaydet()"> Açık</label><label class="ct-sub block mt-3">Bütçe ($)<input id="tutarButce" class="ks-select mt-1" inputmode="decimal" value="${esc(a.butce || '')}" ${a.acik ? '' : 'disabled'} onchange="tutarKaydet()"></label><p class="ct-sub mt-3">Bütçe yalnız bu tarayıcıda saklanır. Bilgi amaçlıdır; emir göndermez.</p></div>
+      <div class="card ct-card ct-detay"><h2 class="bas">Sözlük</h2>${Object.entries(SOZLUK).map(([k, [ad, m]]) => `<div class="ct-row"><b class="text-white">${esc(ad)}</b><div class="ct-sub">${esc(m)}</div></div>`).join('')}</div>`;
+  }
+  function tutarKaydet() {
+    const acik = !!$('tutarAcik')?.checked, butce = Number($('tutarButce')?.value || 0);
+    try { localStorage.setItem(TUTAR_AYAR, JSON.stringify({ acik, butce: isFinite(butce) && butce > 0 ? butce : 0 })); } catch (e) { }
+    const kutu = $('tutarButce'); if (kutu) kutu.disabled = !acik;   // odak ayar alanındayken o bölüm yeniden çizilmez
+    render();
+  }
+
+  // ---------- çizim
+  function render() {
+    hataKutusu(); yasGoster();
+    const yaz = (id, f) => { try { $(id).innerHTML = f(); } catch (e) { $(id).innerHTML = `<div class="card empty">Bu bölüm çizilemedi (${esc(e.message)}).</div>`; console.error(e); } };
+    yaz('ozMain', ozetHtml); yaz('trMain', traderlarHtml); yaz('huMain', huniHtml);
+    if (!document.activeElement?.closest?.('#ayarMain')) yaz('ayarMain', ayarHtml);   // yazarken yeniden çizme
+    if (window.lucide) lucide.createIcons();
+  }
+  const ctSerit = render;
 
   // ---------- yükleme
   async function ctYukle(elle) {
@@ -687,16 +629,9 @@
         CTK = { durum: Object.keys(kayit).length ? 'ok' : 'yok', kayit, bozuk };
       }
     } catch (e) { CTK = { durum: 'hata', kayit: {}, bozuk: 0 }; }
-    ctRender();
+    render();
     midsYenile();
-    if (ctSel && CT) {
-      const trader = (CT.traderlar || []).find((t) => t.id === ctSel);
-      if (trader) hlDetayYukle(trader.adres);
-    }
-    if (traderAdres && CT) {
-      const trader = (CT.traderlar || []).find((t) => t.adres.toLowerCase() === traderAdres.toLowerCase());
-      if (trader) hlDetayYukle(trader.adres);
-    }
+    yonlendir(); detayAc();
     if (ikon) setTimeout(() => ikon.classList.remove('animate-spin'), 400);
   }
   async function ksYukle() {
@@ -711,8 +646,7 @@
     try {
       const kok = await jsonOku(KESIF_KAYNAK);
       if (!Array.isArray(kok)) throw new Error('tarih klasörü listesi bekleniyordu');
-      const tarihler = kok.filter((x) => x?.type === 'dir' && /^\d{4}-\d{2}-\d{2}$/.test(x.name))
-        .map((x) => x.name).sort().reverse();
+      const tarihler = kok.filter((x) => x?.type === 'dir' && /^\d{4}-\d{2}-\d{2}$/.test(x.name)).map((x) => x.name).sort().reverse();
       let bulunan = null;
       for (const tarih of tarihler) {
         const klasor = await jsonOku(`${KESIF_KAYNAK.replace('?ref=', `/${tarih}?ref=`)}`);
@@ -734,50 +668,42 @@
         ksHata = `Keşif verisi okunamadı (${e.message}; örnek veri: ${ornekHata.message}).`;
       }
     }
-    if (!document.querySelector('[data-tab="kesif"]').classList.contains('hidden')) ksRender();
-    if (ksSel && KS) {
-      const aday = (KS.adaylar || []).find((a) => a.adres === ksSel);
-      if (aday) hlDetayYukle(aday.adres);
-    }
-    if (traderAdres && KS) {
-      const aday = (KS.adaylar || []).find((a) => a.adres.toLowerCase() === traderAdres.toLowerCase());
-      if (aday) hlDetayYukle(aday.adres);
-    }
+    render(); yonlendir(); detayAc();
+  }
+  // trader sayfası açıksa o adresin canlı verisini yükle
+  function detayAc() {
+    if (!traderAdres) return;
+    const k = (x) => x.adres.toLowerCase() === traderAdres.toLowerCase(), t = (CT?.traderlar || []).find(k) || (KS?.adaylar || []).find(k);
+    if (t) hlDetayYukle(t.adres);
+  }
+  // eski adresler yeni sekmelere gider: #ct/<id> ve #kesif/<adres> → trader sayfası; #ctakis, #ctistat → özet; #ct → trader'lar; #kesif → huni
+  function yonlendir() {
+    const h = location.hash;
+    let m = /^#ct\/(.+)$/.exec(h);
+    if (m && CT) { const t = (CT.traderlar || []).find((x) => x.id === decodeURIComponent(m[1])); if (t) { location.replace('#trader/' + encodeURIComponent(t.adres)); return; } }
+    m = /^#kesif\/(.+)$/.exec(h);
+    if (m) { location.replace('#trader/' + m[1]); }
   }
   function ctHash() {
-    const m = /^#ct\/(.+)$/.exec(location.hash);
-    ctSel = m ? decodeURIComponent(m[1]) : null; ctSayfa = 0;
-    const km = /^#kesif\/(.+)$/.exec(location.hash);
-    ksSel = km ? decodeURIComponent(km[1]) : null;
-    const tm = /^#trader\/([^/]+)(?:\/(\d+))?(?:\/coin\/([^/]+))?$/.exec(location.hash);
+    const h = location.hash;
+    const tm = /^#trader\/([^/]+)(?:\/(\d+))?(?:\/coin\/([^/]+))?$/.exec(h);
     traderAdres = tm ? decodeURIComponent(tm[1]) : null;
     traderCoin = tm?.[3] ? decodeURIComponent(tm[3]) : null;
-    if (m || tm) showTab('ct'); else if (km || location.hash === '#kesif') showTab('kesif');
-    if (CT !== null || ctHata) ctRender();
-    if (KS !== null || ksHata) ksRender();
-    if (m && CT) {
-      const trader = (CT.traderlar || []).find((t) => t.id === ctSel);
-      if (trader) hlDetayYukle(trader.adres);
-    }
-    if (km && KS) {
-      const aday = (KS.adaylar || []).find((a) => a.adres === ksSel);
-      if (aday) hlDetayYukle(aday.adres);
-    }
-    if (tm) {
-      const trader = (CT?.traderlar || []).find((t) => t.adres.toLowerCase() === traderAdres.toLowerCase()) || (KS?.adaylar || []).find((a) => a.adres.toLowerCase() === traderAdres.toLowerCase());
-      if (trader) hlDetayYukle(trader.adres);
-    }
+    const eski = { '#ctakis': 'ozet', '#ctistat': 'ozet', '#ct': 'traderlar', '#kesif': 'huni' }, ad = h.replace(/^#/, '');
+    if (tm || /^#(ct|kesif)\//.test(h)) showTab('traderlar');
+    else showTab(TABS.some((x) => x[0] === ad) ? ad : eski[h] || 'ozet');
+    yonlendir(); render(); detayAc();
+    if (!traderAdres) window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', ctHash);
 
   buildNav();
-  showTab('ct');
-  if (window.lucide) lucide.createIcons();
+  showTab('ozet');
   ctHash(); ctYukle();
   setInterval(ctYukle, 5 * 60 * 1000);
   setInterval(midsYenile, 60 * 1000);
-  setInterval(ctSerit, 60 * 1000);
-  setInterval(ksRender, 60 * 1000);
+  setInterval(render, 60 * 1000);
+
 </script>
 </body>
 </html>

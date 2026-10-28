@@ -3,7 +3,11 @@
 `sg-arge` copy trade izleme panosu. **Salt okunur; gerçek emir, para hareketi ve aracı kurum bağlantısı yok.**
 
 - Yayın: GitHub Pages (`main` / kök). Tek sayfa (`index.html`), erişim yöntemi değişmedi (ek hesap/şifre yok).
-- Sekmeler: **Copy trade** (kartlar + ayrıntı, `#ct/<id>`) · **Keşif** (`#kesif/<adres>`) · **CT akış** · **CT istatistik**. Sayfa Copy trade ile açılır.
+- Sekmeler (sürüm `pano-sade`): **Özet** (`#ozet`: hafta x/12, oda doluluğu, kol başına trader, veri tazeliği, son 5 olay; altında kapalı bölümler: tüm akış, açık işlemler, "Kararlarım değer kattı mı?") · **Trader'lar** (`#traderlar`: kol filtresi + kartlar; trader sayfası `#trader/<adres>`) · **Huni** (`#huni`: havuz → aday → oda, son tarama, aday listesi) · **Ayarlar** (`#ayarlar`: tutar hesaplayıcı, sözlük). Sayfa Özet ile açılır. Eski adresler yönlenir: `#ct/<id>`, `#kesif/<adres>` → trader sayfası; `#ctakis`, `#ctistat` → Özet; `#kesif` → Huni.
+- Telefon öncelikli, kısa Türkçe; her teknik terimin yanında "?" (dokununca açıklama; tam liste Ayarlar → Sözlük). "Araştırma / sanal, yatırım tavsiyesi değil" ibaresi sabit üst bantta her sekmede görünür.
+- **Performans körlüğü (ön kayıt):** canlı gölge süresince "sanal kopya (hepsi)", kol toplamları ve kohort ↔ kontrol kıyası gösterilmez; yerine "kilitli · hafta x/12" yazar. Tek tek işlem K/Z'si görünür. Kâr/zarar rengi, K/Z'ye göre sıralama, rozet ve seri yok.
+- **Veride isteğe bağlı yeni alanlar** (yoksa "bilinmiyor" yazar, çökmez): trader başına `kol` (`oda|aday|kontrol|taban|elle`), `neden_secildi`, `kirmizi_bayraklar[]` (yoksa `saglik` ışığı/nedenleri); üst düzey `golge: {hafta, hafta_toplam (varsayılan 12), oda_kapasite, oda_n}`; keşifte `havuz`, `aday_sayisi` (yoksa `islenen` ve aday sayısı).
+- Testler: `node test/pano.test.js` (ana pano, Playwright; ağ yakalanır, yalnız örnek veri).
 - Tanım: `sg-arge/docs/PANO_COPYTRADE.md`; veri biçimi: `sg-arge/docs/VERI_SOZLESMESI.md` (v1.1, `surum` 1; başka sürüm reddedilir).
 - Sayfa açıkken her 5 dakikada veriyi yeniden okur; üstteki **Yenile** düğmesi hemen okur.
 - Sahte veri yok: veri okunamazsa sayfa hata gösterir; olmayan alanlar "veri yok" der.
@@ -34,9 +38,11 @@ Keşif kaynağı `index.html` içindeki `KESIF_KAYNAK` sabitidir. GitHub API ile
 | Dosya | Görev |
 |---|---|
 | `index.html` | Pano (tek sayfa). |
+| `test/` | Ana pano testi (`pano.test.js`) ve ortak yardımcı (`pano_yardim.js`). |
+| `docs/pano_sade/` | Önce / sonra ekran görüntüleri ve kabul notu. |
 | `izleme/` | Test için sabit örnek durum (sahte veri); canlıda kullanılmaz. |
 | `kesif/` | Keşif sekmesi için v1 şemasına uygun sahte aday verisi. |
-| `vendor/` | Sabit sürümlü kütüphaneler: Chart.js 4.4.1 (ayrıntı grafikleri, MIT), Lucide 0.460.0 (ikonlar, ISC), Tailwind 3.4.17 ile derlenmiş CSS (MIT). Dış CDN kullanılmaz. |
+| `vendor/` | Sabit sürümlü kütüphaneler: Lucide 0.460.0 (ikonlar, ISC), Tailwind 3.4.17 ile derlenmiş CSS (MIT). Dış CDN kullanılmaz. |
 
 ## Tailwind CSS'i yeniden derleme (index.html'de yeni sınıf kullanılırsa)
 ```bash

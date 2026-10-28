@@ -1,3 +1,5 @@
+> **Not (2026-10-28, kullanıcı isteği `pano-sade`):** ana panonun sekmeleri **Özet · Trader'lar · Huni · Ayarlar** olarak yeniden düzenlendi; aşağıdaki "Hareketler · Traderlar · Adaylar" menüsü ve sanal kopya / kol toplamı gösterimleri bu isteğe göre geçersizdir. Ayrıntı: `docs/pano_sade/KABUL.md`.
+
 # Pano tasarımı v2 (kullanıcı onayı 2026-10-28) — bağlayıcı
 
 Bu belge ve `docs/tasarim/` resimleri panonun **tek** tasarım kaynağıdır. Burada olmayan özellik eklenmez; değişiklik
