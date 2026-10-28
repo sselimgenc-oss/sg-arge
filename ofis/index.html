@@ -9,29 +9,38 @@
 </head>
 <body>
 <a class="atla" href="#ofisTuval">Ofise geç</a>
-<header class="ust">
-  <h1 class="sr">SG Ofis: copy trade hattının animasyonlu ofis görünümü (örnek veri)</h1>
-  <a class="logo" href="../" aria-label="SG Pano'ya dön"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 2 2 8l10 6 10-6z" fill="#f5cb5c"/><path d="M2 8v9l10 5v-8z" fill="#c9962a"/><path d="M22 8v9l-10 5v-8z" fill="#8f6a17"/></svg><span>SG <b>OFİS</b></span></a>
-  <nav class="sekmeler" aria-label="Görünümler">
-    <button type="button" data-tab="genel" aria-pressed="true">Genel</button>
-    <button type="button" data-tab="havuz" aria-pressed="false">Havuz</button>
-    <button type="button" data-tab="aday" aria-pressed="false">Aday</button>
-    <button type="button" data-tab="oda" aria-pressed="false">Oda</button>
-    <button type="button" data-tab="kohort" aria-pressed="false">Kohort ↔ Kontrol</button>
-    <button type="button" data-tab="risk" aria-pressed="false">Risk</button>
-    <button type="button" data-tab="arsiv" aria-pressed="false">Arşiv</button>
-    <button type="button" data-tab="telegram" aria-pressed="false">Telegram</button>
-    <button type="button" data-tab="tamekran" aria-pressed="false">Ofis tam ekran</button>
-  </nav>
-  <div class="durum">
-    <span class="cip c-golge" id="cipGolge">GÖLGE · SİM</span>
-    <span class="cip c-tg" id="cipTg">TELEGRAM · AÇIK</span>
-    <span class="vardiya"><span id="vardiya">Gündüz vardiyası</span> <time id="saat">--:--:--</time></span>
-    <span class="cip c-ornek" id="ornekEtiket">ÖRNEK VERİ</span>
-  </div>
-</header>
 <noscript><p class="hata">Bu sayfa JavaScript gerektirir (piksel ofis kodla çizilir).</p></noscript>
 <p id="hata" class="hata" role="alert" hidden></p>
+<div class="kabuk">
+<nav class="ray" aria-label="Ofis gezinmesi">
+  <a class="marka" href="../" aria-label="SG Pano'ya dön"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5z" fill="#46d3c2"/><path d="M3 8v8l9 5v-8z" fill="#1f8a86"/><path d="M21 8v8l-9 5v-8z" fill="#14575b"/><path d="M9 14.5v3.2l3 1.6v-3.2z" fill="#ffb86b"/></svg><span>SG<b>ofis</b></span></a>
+  <h1 class="sr">SG Ofis: copy trade hattının animasyonlu ofis görünümü (örnek veri)</h1>
+  <div class="ray-ic" id="rayIc">
+    <p class="ray-bas">Bina</p>
+    <button type="button" data-tab="genel" aria-pressed="true"><i class="el"></i><span>Tüm ofis</span></button>
+    <p class="ray-bas">Hat</p>
+    <button type="button" data-oda="tarama" aria-pressed="false"><i class="el"></i><span>Tarama</span></button>
+    <button type="button" data-oda="kapi" aria-pressed="false"><i class="el"></i><span>Kapı</span></button>
+    <button type="button" data-oda="lab" aria-pressed="false"><i class="el"></i><span>Lab</span></button>
+    <button type="button" data-oda="aday" aria-pressed="false"><i class="el"></i><span>Aday</span></button>
+    <button type="button" data-oda="oda" aria-pressed="false"><i class="el"></i><span>Oda</span></button>
+    <button type="button" data-oda="kontrol" aria-pressed="false"><i class="el"></i><span>Kontrol grubu</span></button>
+    <p class="ray-bas">Destek</p>
+    <button type="button" data-oda="finans" aria-pressed="false"><i class="el"></i><span>Finans</span></button>
+    <button type="button" data-oda="risk" aria-pressed="false"><i class="el"></i><span>Risk</span></button>
+    <button type="button" data-oda="denetim" aria-pressed="false"><i class="el"></i><span>Denetim</span></button>
+    <button type="button" data-oda="arsiv" aria-pressed="false"><i class="el"></i><span>Arşiv</span></button>
+    <button type="button" data-oda="haberlesme" aria-pressed="false"><i class="el"></i><span>Haberleşme</span></button>
+    <button type="button" data-oda="sekreterlik" aria-pressed="false"><i class="el"></i><span>Sekreterlik</span></button>
+    <button type="button" data-oda="makam" aria-pressed="false"><i class="el"></i><span>Makam</span></button>
+    <button type="button" data-oda="cay" aria-pressed="false"><i class="el"></i><span>Çay ocağı</span></button>
+  </div>
+  <div class="ray-alt" role="group" aria-label="Sistem durumu">
+    <div class="plaka" id="plKayit"><i class="lamba"></i><span><small>kayıt kipi</small><b id="kayitDeger">gölge</b></span></div>
+    <div class="plaka" id="plHat"><i class="lamba ok"></i><span><small>haber hattı</small><b id="hatDeger">açık</b></span></div>
+    <div class="isik" title="Ofis ışığı gerçek saate göre"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="4" fill="currentColor"/><path d="M8 0v2.5M8 13.5V16M0 8h2.5M13.5 8H16M2.3 2.3l1.8 1.8M11.9 11.9l1.8 1.8M13.7 2.3l-1.8 1.8M4.1 11.9l-1.8 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span><small>ışık saati</small><time id="saat">--:--</time></span></div>
+  </div>
+</nav>
 <main class="ana">
   <aside class="sol" id="sol" aria-label="Pano özeti">
     <section class="kart" id="cKasa" aria-labelledby="hKasa">
@@ -86,25 +95,15 @@
       <p id="ofisAciklama" class="sr">Ofis yükleniyor.</p>
       <div class="ipucu" id="ipucu" role="tooltip" hidden></div>
       <div class="ust-sol">
-        <span class="cip c-ornek" id="ornekFlt">ÖRNEK VERİ · adresler uydurma</span>
-        <span class="lejant" aria-label="Kol renkleri"><i style="background:#f5cb5c"></i>kohort <i style="background:#6ea8ff"></i>kontrol <i style="background:#b8c2d4"></i>havuz</span>
-      </div>
-      <div class="ust-sag">
-        <details class="odalar">
-          <summary>Odalar</summary>
-          <div class="oda-liste">
-            <button type="button" data-oda="tarama">Tarama</button><button type="button" data-oda="kapi">Kapı</button><button type="button" data-oda="lab">Lab</button><button type="button" data-oda="kontrol">Kontrol grubu</button>
-            <button type="button" data-oda="aday">Aday</button><button type="button" data-oda="oda">Oda (kopya)</button><button type="button" data-oda="finans">Finans</button><button type="button" data-oda="risk">Risk</button>
-            <button type="button" data-oda="denetim">Denetim</button><button type="button" data-oda="arsiv">Arşiv</button><button type="button" data-oda="haberlesme">Haberleşme</button><button type="button" data-oda="sekreterlik">Sekreterlik</button>
-            <button type="button" data-oda="makam">Makam</button><button type="button" data-oda="cay">Çay ocağı</button>
-          </div>
-        </details>
+        <span class="serit" id="ornekFlt"><i></i>örnek veri · adresler uydurma</span>
+        <span class="lejant" aria-label="Kol işaretleri"><i style="background:#ffb86b"></i>kohort <i style="background:#7cc4ff"></i>kontrol <i style="background:#b7c4c9"></i>havuz</span>
       </div>
       <p class="perf" id="perf" hidden></p>
       <div class="zoom">
         <button type="button" id="zIn" aria-label="Yakınlaştır">+</button>
         <button type="button" id="zOut" aria-label="Uzaklaştır">−</button>
-        <button type="button" id="zFit" aria-label="Tüm ofis">⌂</button>
+        <button type="button" id="zFit" aria-label="Tüm ofisi sığdır">⌂</button>
+        <button type="button" id="zPanel" aria-label="Sol paneli gizle ya da göster" aria-pressed="false">◧</button>
       </div>
     </div>
     <section class="gozcu" aria-labelledby="hGozcu">
@@ -113,6 +112,7 @@
     </section>
   </section>
 </main>
+</div>
 <script src="px.js"></script>
 <script src="sprites.js"></script>
 <script src="kisiler.js"></script>

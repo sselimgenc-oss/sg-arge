@@ -6,44 +6,52 @@ indirilmedi ya da kopyalanmadı; bu yüzden üçüncü taraf lisans yükümlül�
 
 | Varlık | Kaynak | Lisans |
 |---|---|---|
-| Zemin dokuları (çim, ahşap, halı, fayans, taş, asfalt) | `sprites.js` içinde kodla üretilir (gürültü + desen kuralları) | Bu reponun kendi içeriği |
-| Duvar, cam bölme, pencere, giriş | `sprites.js` | Bu reponun kendi içeriği |
-| Mobilya (masa, monitör, raf, sunucu dolabı, kasa, tezgâh, vb.) | `sprites.js` | Bu reponun kendi içeriği |
+| Zemin dokuları (çim, balıksırtı parke, halı, fayans/seramik, metal ızgara, güverte, taş, su, asfalt) | `sprites.js` içinde kodla üretilir (gürültü + desen kuralları) | Bu reponun kendi içeriği |
+| Duvar, cam bölme (avluya bakan cam galeri dâhil), pencere, giriş | `sprites.js` | Bu reponun kendi içeriği |
+| Mobilya ve küçük işlev nesneleri (masa, monitör, raf, sunucu dolabı, kasa, tezgâh, semaver, koli, şezlong, şemsiye, vb.) | `sprites.js` | Bu reponun kendi içeriği |
 | Ağaçlar, çalılar, arabalar, park lambası, tabela | `sprites.js` | Bu reponun kendi içeriği |
 | Kişi figürleri, sandalye, balon simgeleri, zarf/para/kutu | `kisiler.js` | Bu reponun kendi içeriği |
 | Duvar ekranlarının içeriği (eğri, çubuklar) | `office.js` — çalışma anında veriden çizilir | Bu reponun kendi içeriği |
-| Arayüz simgeleri (logo, kilit) | Sayfa içinde elle yazılmış SVG yolları (`index.html`, `panel.js`) | Bu reponun kendi içeriği |
+| Arayüz simgeleri (logo, ışık simgesi, kilit) ve menü elmasları | Sayfa içinde elle yazılmış SVG yolları ve CSS `clip-path` (`index.html`, `ofis.css`, `panel.js`) | Bu reponun kendi içeriği |
+| Sıcak iç ışık, ortam ışığı, su altı ışığı | `main.js` — çalışma anında Canvas gradyanlarıyla (PNG yok) | Bu reponun kendi içeriği |
 | Yazı tipi | Sistem yazı tipleri (`ui-monospace` / `Segoe UI` / `Roboto` yığını); yazı tipi dosyası indirilmez | İşletim sistemine ait; dağıtılmaz |
 | Kütüphane | Yok (saf JavaScript + Canvas 2D). CDN kullanılmaz | — |
 
 Lisansı belirsiz varlık kullanılmadı. Telif konusunda şüphe doğarsa bu belgeye değil önce kodun ilgili işlevine bakın: her çizim
 `sprites.js` / `kisiler.js` içinde okunabilir hâldedir.
 
-## Etre V2 ile ilişki (kopya değil, aynı tarz)
-`sg-arge/arastirma/etre/` yalnız **tarz** referansı olarak okundu: izometrik piksel sanatı, oda düzeni fikri, yan panel yapısı.
-- Etre'nin hiçbir görseli, çizimi ya da ekran görüntüsü parçası bu repoya alınmadı, üzerinden çizilmedi, iz sürülmedi.
-- Oda sırası ve içerikleri Etre'den değil `sg-arge/docs/GOREV_D_YOLU.md` Roller tablosundan (14 oda) çıkarıldı; yerleşim, mobilya
-  seçimi, renkler, karakter tasarımı, ekran içerikleri bize aittir.
-- Kasıtlı farklar: bina 26×16 karo ve 15 bölgeli (hol dâhil); koltuk düzeni "koridor sütunlu" havuz/kat mantığına göre; sol panelde
-  Kohort ↔ Kontrol kartı (performans kilitli), risk tavanları, veri kalitesi, Telegram kartı; her sayıda zaman damgası / n; duvar ekranları
-  gerçek veriyle çizilir; ofis içinde kapı-turnike, Haberleşme zarfı, Risk alarm lambası gibi bize özgü olaylar vardır.
+## Etre V2 ve Taslak 1 ile ilişki (kopya değil, kendi tarzımız)
+`sg-arge/arastirma/etre/` yalnız **tarz** referansı olarak okundu. Etre'nin hiçbir görseli, çizimi ya da ekran görüntüsü parçası ofis sayfasına
+alınmadı, üzerinden çizilmedi, iz sürülmedi. (`kanit/karsilastirma_etre.png` yalnız lider karşılaştırması içindir; sayfanın parçası değildir,
+istenirse birleştirmeden önce silinir.) Oda sırası ve içerikleri `sg-arge/docs/GOREV_D_YOLU.md` Roller tablosundan (14 oda) çıkarıldı.
 
-## Varlık boyutu raporu (2026-10-28)
-Hedef: toplam varlık ≤ 15 MB. Gerçekleşen: **görsel varlık dosyası 0 bayt**; tüm sayfa (kod + stil + örnek veri) aşağıdaki gibidir.
+Adım 0 (özgünleştirme) ile bilinçli farklar:
+- **Bina biçimi:** tek dikdörtgen blok yerine, ortasında **avlu ve havuzlu bahçe** olan iki kanatlı yapı (kuzey kanat: Makam…Arşiv + Tarama/Çay/Lab/Kontrol; güney kanat: Aday, Oda, Kapı;
+  doğu ucu cam galeri duvarı, batı ucu çit). Kanatlar avludaki taş yollarla bağlanır; figürler yalnız bu yollardan yürür.
+- **Çevre:** sol altta açılı otopark yok. Otopark kuzeydoğuda, yola bitişik, düz ve kenara dik park yerleriyle; giriş doğuda yaya meydanı.
+- **Gezinme ve etiketler:** üst çubuk (sekmeler, "SİM/TELEGRAM AÇIK" çipleri, vardiya, "Ofis tam ekran") kaldırıldı; sol **dikey menü** (Bina / Hat / Destek grupları, oda renginde elmas simgeler),
+  durum plakaları ("kayıt kipi", "haber hattı", "ışık saati"), kesik köşeli koyu **plaka** etiketleri (krem kutular yok).
+- **Palet:** koyu deniz-yeşili arayüz, aqua vurgu, kayısı ikinci renk; zeminler ve duvarlar buna göre yeniden seçildi.
+- **Taslak 1'den (sg-pano #17) alınan fikirler** yalnız fikir olarak, kodla yeniden çizildi (Taslak 1'in PNG'si kullanılmadı): odalara **sıcak iç ışık**, **cam bölmeler**, **havuzlu bahçe**.
+- **Zemin ve nesne çeşitliliği:** Makam balıksırtı parke, Denetim metal ızgara + sunucu ışıkları, Çay ocağı fayans + semaver, Sekreterlik/Haberleşme'de koliler.
+- **Kaldırılan sahte hareket:** çaycı yürüyüşü ve ağaç sallanması. **Eklenmeyen oyunlaştırma:** kâr/zarar rengi, rozet, "en iyi" vurgusu yok.
+
+## Varlık boyutu raporu (2026-10-28, Adım 0 sonrası)
+Hedef: toplam varlık ≤ 15 MB. Gerçekleşen: **sayfanın görsel varlık dosyası 0 bayt**; tüm sayfa (kod + stil + örnek veri):
 
 | Dosya | Boyut (bayt) |
 |---|---:|
-| `sprites.js` | 33 802 |
-| `office.js` | 27 546 |
-| `main.js` | 25 627 |
-| `world.js` | 23 902 |
+| `sprites.js` | 37 607 |
+| `main.js` | 28 810 |
+| `world.js` | 28 250 |
+| `office.js` | 27 269 |
 | `ornek_durum.json` | 20 084 |
-| `ofis.css` | 13 782 |
-| `panel.js` | 13 519 |
+| `ofis.css` | 15 759 |
+| `panel.js` | 13 572 |
 | `kisiler.js` | 10 739 |
 | `px.js` | 9 171 |
-| `index.html` | 6 760 |
-| **Toplam (gzip öncesi)** | **≈ 185 KB** |
+| `index.html` | 7 550 |
+| **Toplam (gzip öncesi)** | **≈ 194 KB** |
 
-Çalışma belleğinde: zemin tuvali 1320×796 px (≈ 4 MB RAM) ve birkaç yüz küçük önbellekli sprite. Ağ üzerinden ≈ 56 KB (gzip).
-`kanit/` klasöründeki ekran görüntüsü ve kayıtlar sayfanın parçası değildir (yalnız PR kanıtı).
+Ağ üzerinden ≈ 58 KB (gzip). Çalışma belleğinde zemin tuvali 1520×900 px (≈ 5,5 MB RAM), ortam ve oda ışığı katmanları (her biri aynı boyutta) ve birkaç yüz küçük önbellekli sprite.
+`kanit/` klasörü (ekran görüntüleri, karşılaştırmalar, 15 sn kayıt; toplam ≈ 13.0 MB) sayfanın parçası değildir, yalnız PR kanıtıdır; toplam varlık bütçesi (15 MB) altındadır.

@@ -11,8 +11,8 @@
   const INK = '#2a2230';
 
   /* ================= ZEMİN ================= */
-  const GR = ['#5e9c46', '#67a94c', '#589440'].map(C);
-  const GRD = C('#4b8238'), GRL = C('#7bbb5b');
+  const GR = ['#5b9c4e', '#65a755', '#548f48'].map(C);
+  const GRD = C('#467c3d'), GRL = C('#79b863');
   function tileGrass(P, sx, sy, x, y) {
     const t = h2(x, y, 3), base = GR[t < 0.34 ? 0 : t < 0.67 ? 1 : 2];
     P.diamond(sx, sy, (px, py) => {
@@ -53,18 +53,43 @@
         return shade(base, 0.94 + 0.12 * h2(ci, rowi, 3));
       }
       case 'asph': return n < 0.15 ? shade(base, 0.9) : n > 0.93 ? shade(base, 1.1) : C(base);
+      case 'parquet': { // balıksırtı parke (Makam)
+        const u = gu * 3, v = gv * 3, i = Math.floor(u), j = Math.floor(v), fu = u - i, fv = v - j, a = (i + j) & 1, f = a ? fv : fu, strip = Math.floor(f * 2), fr = f * 2 - strip;
+        let c = shade(base, 0.88 + 0.24 * h2(i, j, strip + 3));
+        if (fr < 0.16 || (a ? fu : fv) < 0.08) c = shade(base, 0.66);
+        return n > 0.94 ? shade(c, 1.08) : c;
+      }
+      case 'grate': { // metal ızgara zemin (sunucu odası)
+        const u = gu * 4, v = gv * 4, fu = u - Math.floor(u), fv = v - Math.floor(v);
+        if (fu < 0.2 || fv < 0.2) return n > 0.9 ? shade(base, 1.55) : shade(base, 1.32);
+        return (fu > 0.45 && fv > 0.45) ? shade(base, 0.42) : shade(base, 0.62);
+      }
+      case 'fayans': { // çay ocağı: desenli seramik
+        const u = gu * 3, v = gv * 3, i = Math.floor(u), j = Math.floor(v), fu = u - i, fv = v - j;
+        if (fu < 0.07 || fv < 0.07) return shade(base, 0.8);
+        if ((i + j) & 1) return (Math.abs(fu - 0.5) + Math.abs(fv - 0.5) < 0.3) ? shade(base2, 1.12) : C(base2);
+        return n > 0.96 ? '#ffffff' : C(base);
+      }
+      case 'deck': { const pl = Math.floor(gv * 4), fr = gv * 4 - pl; if (fr < 0.1) return shade(base, 0.7); const sp = Math.floor(gu * 0.5 + h2(pl, 1, 9) * 3); return Math.abs(gu * 0.5 + h2(pl, 1, 9) * 3 - sp) < 0.04 ? shade(base, 0.74) : shade(base, 0.93 + 0.14 * h2(pl, sp, 4)); }
+      case 'water': {
+        const w = Math.sin((gu * 2.3 + gv * 1.1) * 3.1) + Math.sin((gu - gv * 1.7) * 4.3), t = (w + 2) / 4;
+        let c = mix(base, base2 || base, t < 0.5 ? 0.15 : t < 0.78 ? 0.5 : 0.85);
+        if (n > 0.975) c = C('#d8fbff');
+        return c;
+      }
       default: return C(base);
     }
   }
   S.floorTile = function (P, sx, sy, x, y, kind, base, base2, edge) {
     P.diamond(sx, sy, (px, py, u, v) => {
       let c = floorPx(kind, base, base2, x + u, y + v, px, py);
+      if (kind === 'water' && edge) { if (edge.n && v < 0.2) c = shade(c, 0.62); if (edge.w && u < 0.2) c = shade(c, 0.74); }
       P.set(px, py, c);
     });
   };
 
   /* ================= DUVAR / BÖLME ================= */
-  const WALL = '#efe6d2', WALLD = '#d9cfb8';
+  const WALL = '#e8eef0', WALLD = '#c9d4d8';
   /* arka duvar, u yönünde uzanır (v=0 çizgisi); yüzü sol yüz */
   S.wallBH = function (accent, deco, seed) {
     return memo('wBH' + accent + deco + seed, () => tspr(54, I => {
@@ -146,7 +171,7 @@
 
   /* iç bölme (cam / dolu) */
   S.partH = function (type, accent) { // u boyunca, çizgi v=0 (karonun üst kenarı)
-    return memo('pH' + type + accent, () => tspr(32, I => {
+    return memo('pH2' + type + accent, () => tspr(32, I => {
       const P = I.P;
       if (type === 'solid') {
         const m = mat('#d9cdb4');
@@ -156,19 +181,21 @@
         const c = I.p(0, -0.06, 26), d = I.p(1, -0.06, 26); P.line(c[0], c[1], d[0], d[1], shade('#d9cdb4', 0.7));
         P.line(a[0], a[1], c[0], c[1], INK); P.line(b[0], b[1], d[0], d[1], INK);
       } else {
-        const frame = mat('#e8edf3');
-        I.fl(0, 1, 0.05, 0, 14, C('#9fd0f244'));
-        I.fl(0.12, 0.2, 0.05, 3, 12, C('#ffffff55')); I.fl(0.3, 0.34, 0.05, 3, 12, C('#ffffff40'));
-        I.fl(0, 1, 0.05, 0, 2, '#dfe6ee'); I.fl(0, 1, 0.05, 12, 14, '#eef3f8');
-        const a = I.p(0, 0.05, 14), b = I.p(1, 0.05, 14); P.line(a[0], a[1], b[0], b[1], '#ffffff');
-        const t1 = I.p(0, -0.05, 14), t2 = I.p(1, -0.05, 14); P.line(t1[0], t1[1], t2[0], t2[1], '#b9c6d4');
-        const e1 = I.p(0, 0.05, 0), e2 = I.p(0, 0.05, 14); P.line(e1[0], e1[1], e2[0], e2[1], '#c3cedb');
-        const f1 = I.p(0, 0.05, 0), f2 = I.p(1, 0.05, 0); P.line(f1[0], f1[1], f2[0], f2[1], '#8794a6');
+        const accC = accent;
+        I.fl(0, 1, 0.05, 0, 20, C('#8fd0e044'));
+        I.fl(0, 1, 0.05, 0, 20, C('#b6eaf322'));
+        I.fl(0.1, 0.17, 0.05, 3, 18, C('#ffffff66')); I.fl(0.24, 0.27, 0.05, 3, 18, C('#ffffff48')); I.fl(0.62, 0.7, 0.05, 3, 18, C('#ffffff2a'));
+        I.fl(0, 1, 0.05, 0, 2, '#dfe6ee'); I.fl(0, 1, 0.05, 18, 20, shade(accC, 1.25)); I.fl(0, 1, 0.05, 20, 21, '#f4f8fb');
+        I.fl(0, 0.04, 0.05, 0, 21, '#e6edf3');
+        const a = I.p(0, 0.05, 21), b = I.p(1, 0.05, 21); P.line(a[0], a[1], b[0], b[1], '#ffffff');
+        const t1 = I.p(0, -0.05, 21), t2 = I.p(1, -0.05, 21); P.line(t1[0], t1[1], t2[0], t2[1], '#a9bccb');
+        const e1 = I.p(0, 0.05, 0), e2 = I.p(0, 0.05, 21); P.line(e1[0], e1[1], e2[0], e2[1], '#c3cedb');
+        const f1 = I.p(0, 0.05, 0), f2 = I.p(1, 0.05, 0); P.line(f1[0], f1[1], f2[0], f2[1], '#7e8c9e');
       }
     }));
   };
   S.partV = function (type, accent) { // v boyunca, çizgi u=0
-    return memo('pV' + type + accent, () => tspr(32, I => {
+    return memo('pV2' + type + accent, () => tspr(32, I => {
       const P = I.P;
       if (type === 'solid') {
         const m = mat('#d9cdb4');
@@ -178,13 +205,16 @@
         const c = I.p(-0.06, 0, 26), d = I.p(-0.06, 1, 26); P.line(c[0], c[1], d[0], d[1], shade('#d9cdb4', 0.7));
         P.line(a[0], a[1], c[0], c[1], INK); P.line(b[0], b[1], d[0], d[1], INK);
       } else {
-        I.fr(0.05, 0, 1, 0, 14, C('#9fd0f244'));
-        I.fr(0.05, 0.12, 0.2, 3, 12, C('#ffffff55')); I.fr(0.05, 0.6, 0.66, 3, 12, C('#ffffff40'));
-        I.fr(0.05, 0, 1, 0, 2, '#dfe6ee'); I.fr(0.05, 0, 1, 12, 14, '#eef3f8');
-        const a = I.p(0.05, 0, 14), b = I.p(0.05, 1, 14); P.line(a[0], a[1], b[0], b[1], '#ffffff');
-        const t1 = I.p(-0.05, 0, 14), t2 = I.p(-0.05, 1, 14); P.line(t1[0], t1[1], t2[0], t2[1], '#b9c6d4');
-        const e1 = I.p(0.05, 1, 0), e2 = I.p(0.05, 1, 14); P.line(e1[0], e1[1], e2[0], e2[1], '#c3cedb');
-        const f1 = I.p(0.05, 0, 0), f2 = I.p(0.05, 1, 0); P.line(f1[0], f1[1], f2[0], f2[1], '#8794a6');
+        const accC = accent;
+        I.fr(0.05, 0, 1, 0, 20, C('#8fd0e044'));
+        I.fr(0.05, 0, 1, 0, 20, C('#b6eaf322'));
+        I.fr(0.05, 0.1, 0.17, 3, 18, C('#ffffff66')); I.fr(0.05, 0.24, 0.27, 3, 18, C('#ffffff48')); I.fr(0.05, 0.62, 0.7, 3, 18, C('#ffffff2a'));
+        I.fr(0.05, 0, 1, 0, 2, '#dfe6ee'); I.fr(0.05, 0, 1, 18, 20, shade(accC, 1.25)); I.fr(0.05, 0, 1, 20, 21, '#f4f8fb');
+        I.fr(0.05, 0.96, 1, 0, 21, '#e6edf3');
+        const a = I.p(0.05, 0, 21), b = I.p(0.05, 1, 21); P.line(a[0], a[1], b[0], b[1], '#ffffff');
+        const t1 = I.p(-0.05, 0, 21), t2 = I.p(-0.05, 1, 21); P.line(t1[0], t1[1], t2[0], t2[1], '#a9bccb');
+        const e1 = I.p(0.05, 1, 0), e2 = I.p(0.05, 1, 21); P.line(e1[0], e1[1], e2[0], e2[1], '#c3cedb');
+        const f1 = I.p(0.05, 0, 0), f2 = I.p(0.05, 1, 0); P.line(f1[0], f1[1], f2[0], f2[1], '#7e8c9e');
       }
     }));
   };
@@ -271,6 +301,28 @@
       if (axis === 'u') { I.box(0.1, 0.25, 0.9, 0.35, 0, 6, d, { noedge: true }); I.box(0.05, 0.25, 0.95, 0.75, 6, 9, w); I.box(0.05, 0.22, 0.95, 0.3, 9, 16, w); }
       else { I.box(0.25, 0.1, 0.35, 0.9, 0, 6, d, { noedge: true }); I.box(0.25, 0.05, 0.75, 0.95, 6, 9, w); I.box(0.22, 0.05, 0.3, 0.95, 9, 16, w); }
     }));
+  };
+
+  /* avlu: şezlong ve şemsiye */
+  S.lounger = function (v) {
+    return memo('lounger' + v, () => tspr(22, I => {
+      const cush = mat(v === 'a' ? '#2fa3a0' : '#e08a4a'), fr = mat('#f3f5f7');
+      I.box(0.1, 0.18, 0.9, 0.82, 3, 5, fr, { noedge: true });
+      I.box(0.12, 0.2, 0.9, 0.8, 5, 8, cush);
+      I.box(0.08, 0.2, 0.3, 0.8, 8, 13, cush);
+      I.box(0.1, 0.18, 0.16, 0.26, 0, 3, fr, { noedge: true }); I.box(0.84, 0.74, 0.9, 0.82, 0, 3, fr, { noedge: true });
+    }));
+  };
+  S.parasol = function () {
+    return memo('parasol', () => tspr(54, I => {
+      const P = I.P;
+      I.box(0.46, 0.46, 0.54, 0.54, 0, 36, mat('#e8ecef'), { noedge: true });
+      const c = I.p(0.5, 0.5, 36), top = [c[0], c[1] - 14];
+      const ring = [[-18, -1], [0, -10], [18, -1], [0, 9]].map(q => [c[0] + q[0], c[1] + q[1]]);
+      const cols = ['#2fa3a0', '#f6f1e4', '#2fa3a0', '#f6f1e4'];
+      for (let i = 0; i < 4; i++) P.poly([top, ring[i], ring[(i + 1) % 4]], i === 0 ? shade(cols[i], 1.05) : i === 3 ? shade(cols[i], 0.78) : cols[i]);
+      P.outline('#2a2230');
+    }, { w: 56 }));
   };
 
   /* araba: u boyunca iki karo */
@@ -513,10 +565,16 @@
         I.box(0.06, 0.0, 0.94, 1.0, 12, 14, w);
         I.fr(0.92, 0.1, 0.9, 2, 11, '#6d4a2c');
       }
-      if (part === 'tea') {
-        const cx = I.p(0.5, 0.5, 14);
-        I.P.rect(cx[0] - 5, cx[1] - 9, 8, 7, '#c8cdd6'); I.P.rect(cx[0] - 5, cx[1] - 9, 8, 1, '#f1f4f8'); I.P.rect(cx[0] - 3, cx[1] - 13, 5, 4, '#aab1bd'); I.P.set(cx[0] - 1, cx[1] - 14, '#555'); I.P.rect(cx[0] + 3, cx[1] - 7, 2, 3, '#aab1bd');
-        I.P.rect(cx[0] + 5, cx[1] - 4, 3, 3, '#f4ede0'); I.P.rect(cx[0] + 5, cx[1] - 4, 3, 1, '#b4442c');
+      if (part === 'tea') { // semaver: pirinç gövde, musluk, kulplar, üstte demlik
+        const cx = I.p(0.5, 0.5, 14), P = I.P, x = cx[0], y = cx[1];
+        P.rect(x - 4, y - 14, 9, 11, '#d6a23a'); P.rect(x - 4, y - 14, 3, 11, '#f0ca68'); P.rect(x + 3, y - 14, 2, 11, '#a5771f');
+        P.rect(x - 5, y - 12, 1, 6, '#d6a23a'); P.rect(x + 5, y - 12, 1, 6, '#a5771f');
+        P.rect(x - 5, y - 15, 11, 2, '#c4922c'); P.rect(x - 4, y - 3, 9, 2, '#8a6218');
+        P.rect(x + 5, y - 8, 4, 2, '#cdd3dc'); P.rect(x + 8, y - 6, 1, 2, '#cdd3dc');
+        P.rect(x - 3, y - 20, 7, 5, '#f4f6f8'); P.rect(x - 3, y - 18, 7, 1, '#3b82c4'); P.rect(x - 1, y - 22, 3, 2, '#cdd3dc'); P.rect(x + 4, y - 19, 2, 1, '#f4f6f8');
+        P.set(x - 3, y - 12, '#fff2b8'); P.set(x - 3, y - 11, '#fff2b8');
+        P.rect(x + 9, y - 3, 3, 3, '#f4ede0'); P.rect(x + 9, y - 3, 3, 1, '#b4442c');
+        P.outline('#2a2230');
       }
     }));
   };

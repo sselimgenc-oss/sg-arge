@@ -10,8 +10,9 @@
 - Paper/strateji araştırması kapandı; ona ait pano, sekmeler ve `data.json` kaldırıldı.
 
 ## Ofis (animasyonlu görünüm)
-`ofis/` altında ayrı bir sayfa: izometrik piksel sanatı ofis + sol pano. **İlk sürüm örnek veriyle çalışır** (`ofis/ornek_durum.json`, üstte
-`ÖRNEK VERİ` etiketi); gerçek `durum.json`'a bağlanması D yolu Faz 5'tir. Derleme yok, kütüphane yok, görsel varlık yok (hepsi kodla çizilir).
+`ofis/` altında ayrı bir sayfa: izometrik piksel sanatı ofis + sol pano. **İlk sürüm örnek veriyle çalışır** (`ofis/ornek_durum.json`, ofiste
+`örnek veri` şeridi); gerçek `durum.json`'a bağlanması D yolu Faz 5'tir. Derleme yok, kütüphane yok, görsel varlık yok (hepsi kodla çizilir).
+- Düzen: ortasında avlu ve havuzlu bahçe olan iki kanatlı bina; sol dikey menü (Bina / Hat / Destek), durum plakaları, sol özet paneli (Adım 0 özgünleştirmesi, `ofis/LISANSLAR.md`).
 - Sayfa: `ofis/` (GitHub Pages'te `…/ofis/`). Belgeler: `ofis/SEMA.md` (veri), `ofis/OLAYLAR.md` (olay → animasyon), `ofis/LISANSLAR.md`.
 - Deneme parametreleri: `?saat=23:14` (gün ışığı), `?hiz=2`, `?etiket=0`, `?hareket=0`, `?perf=1` (ayrıntı `ofis/SEMA.md` §6).
 - Salt okunur; gerçek emir, para ve aracı kurum bağlantısı yok.

@@ -2,27 +2,27 @@
 (function () {
   'use strict';
   const O = window.OFIS, S = O.S, HW = O.HW, HH = O.HH, C = O.C, shade = O.shade;
-  const BX = 4, BY = 5, BW = 26, BH = 16, WW = 36, WH = 30;
+  const BX = 4, BY = 5, BW = 26, BH = 20, WW = 42, WH = 34;
   const OX = WH * HW, OY = 96;
   const CW = (WW + WH) * HW, CH = OY + (WW + WH) * HH + 44;
   const sx = (x, y) => OX + (x - y) * HW, sy = (x, y) => OY + (x + y) * HH;
 
   const ROOMS = [
-    { id: 'makam', ad: 'MAKAM', x: 0, y: 0, w: 4, h: 4, fl: ['wood', '#8f5d3b'], ac: '#6b3f2a', solid: true },
-    { id: 'sekreterlik', ad: 'SEKRETERLİK', x: 4, y: 0, w: 4, h: 4, fl: ['carpet', '#cdb99a'], ac: '#7a6a50' },
-    { id: 'finans', ad: 'FİNANS', x: 8, y: 0, w: 4, h: 4, fl: ['tile', '#d3e6d8', '#bdd6c6'], ac: '#2f7d5a' },
-    { id: 'haberlesme', ad: 'HABERLEŞME', x: 12, y: 0, w: 4, h: 4, fl: ['carpet', '#4a6694'], ac: '#2f4f86' },
-    { id: 'risk', ad: 'RİSK', x: 16, y: 0, w: 4, h: 4, fl: ['tile', '#ecdcc7', '#d9c2a2'], ac: '#b5472f' },
-    { id: 'denetim', ad: 'DENETİM', x: 20, y: 0, w: 3, h: 4, fl: ['concrete', '#a3acb6'], ac: '#4a5568', solid: true },
-    { id: 'arsiv', ad: 'ARŞİV', x: 23, y: 0, w: 3, h: 4, fl: ['wood', '#a67c4a'], ac: '#6b4a2a', solid: true },
-    { id: 'tarama', ad: 'TARAMA', x: 0, y: 4, w: 5, h: 5, fl: ['carpet', '#8570a8'], ac: '#5b4a82' },
-    { id: 'cay', ad: 'ÇAY OCAĞI', x: 5, y: 4, w: 3, h: 5, fl: ['tile', '#f0e3c6', '#dcc59d'], ac: '#b8803a' },
-    { id: 'lab', ad: 'LAB · HAVUZ', x: 8, y: 4, w: 10, h: 5, fl: ['tile', '#e2ecf4', '#d0dfec'], ac: '#3b82b8' },
-    { id: 'kontrol', ad: 'KONTROL GRUBU', x: 18, y: 4, w: 8, h: 5, fl: ['carpet', '#62809a'], ac: '#3f5f7a' },
-    { id: 'hol', ad: 'HOL', x: 0, y: 9, w: 26, h: 2, fl: ['wood', '#cfae7c'], ac: '#8a6a3e' },
-    { id: 'aday', ad: 'ADAY', x: 0, y: 11, w: 6, h: 5, fl: ['carpet', '#cf9556'], ac: '#a8682c' },
-    { id: 'oda', ad: 'ODA · KOPYA', x: 6, y: 11, w: 16, h: 5, fl: ['carpet', '#43558c'], ac: '#2c3a6b' },
-    { id: 'kapi', ad: 'KAPI', x: 22, y: 11, w: 4, h: 5, fl: ['stone', '#cfcac0'], ac: '#6a6a70' }
+    { id: 'makam', ad: 'MAKAM', x: 0, y: 0, w: 4, h: 4, fl: ['parquet', '#8a5a3a'], ac: '#7a4a32', solid: true },
+    { id: 'sekreterlik', ad: 'SEKRETERLİK', x: 4, y: 0, w: 4, h: 4, fl: ['carpet', '#a9bba4'], ac: '#5f7d68' },
+    { id: 'finans', ad: 'FİNANS', x: 8, y: 0, w: 4, h: 4, fl: ['tile', '#cfe6e0', '#b6d6cf'], ac: '#2a7f7a' },
+    { id: 'haberlesme', ad: 'HABERLEŞME', x: 12, y: 0, w: 4, h: 4, fl: ['carpet', '#566d93'], ac: '#3e5a8c' },
+    { id: 'risk', ad: 'RİSK', x: 16, y: 0, w: 4, h: 4, fl: ['tile', '#efd5c4', '#e0bca3'], ac: '#c4553a' },
+    { id: 'denetim', ad: 'DENETİM', x: 20, y: 0, w: 3, h: 4, fl: ['grate', '#58626d'], ac: '#4c5a6a', solid: true },
+    { id: 'arsiv', ad: 'ARŞİV', x: 23, y: 0, w: 3, h: 4, fl: ['wood', '#b48a54'], ac: '#7b5a34', solid: true },
+    { id: 'tarama', ad: 'TARAMA', x: 0, y: 4, w: 5, h: 5, fl: ['carpet', '#a56f88'], ac: '#8a4f6c' },
+    { id: 'cay', ad: 'ÇAY OCAĞI', x: 5, y: 4, w: 3, h: 5, fl: ['fayans', '#eef4f1', '#4fa6a6'], ac: '#2f8c8c' },
+    { id: 'lab', ad: 'LAB · HAVUZ', x: 8, y: 4, w: 10, h: 5, fl: ['tile', '#e4f0ec', '#d1e4de'], ac: '#2f8a76' },
+    { id: 'kontrol', ad: 'KONTROL GRUBU', x: 18, y: 4, w: 8, h: 5, fl: ['carpet', '#5f8f93'], ac: '#3d6f78' },
+    { id: 'bahce', ad: 'AVLU · HAVUZ', x: 0, y: 9, w: 26, h: 6, fl: ['grass', '#5e9c46'], ac: '#3f7a4a', out: true },
+    { id: 'aday', wall: 18, ad: 'ADAY', x: 0, y: 15, w: 6, h: 5, fl: ['carpet', '#d9a06c'], ac: '#b7733c' },
+    { id: 'oda', wall: 18, ad: 'ODA · KOPYA', x: 6, y: 15, w: 16, h: 5, fl: ['carpet', '#2f5d70'], ac: '#244a5c' },
+    { id: 'kapi', wall: 18, ad: 'KAPI', x: 22, y: 15, w: 4, h: 5, fl: ['stone', '#bcc1c6'], ac: '#59636e' }
   ];
   const roomAt = {}; // "lx,ly" → oda
   ROOMS.forEach(r => { r.cx = r.x + r.w / 2; r.cy = r.y + r.h / 2; for (let i = 0; i < r.w; i++) for (let j = 0; j < r.h; j++) roomAt[(r.x + i) + ',' + (r.y + j)] = r; });
@@ -74,28 +74,48 @@
   /* ---------- zemin ---------- */
   const type = {}; // "x,y" → { k: tür, ... }
   function T(x, y, v) { type[x + ',' + y] = v; }
+  const ROAD_X = WW - 3;                       // ana yol: sağ kenarda, y yönünde
+  const LOT = { x0: BX + BW + 4, x1: ROAD_X - 1, y0: BY + 1, y1: BY + 11 }; // otopark: binanın kuzeydoğusunda, dik/düz sıralı
+  // avlu (bahçe) yerleşimi: yerel koordinatlar (lx, ly); ly 9..14
+  const POOL = { x0: 9, x1: 16, y0: 11, y1: 12 };
+  const garden = { path: new Set(), pool: new Set() };
+  (function gardenPlan() {
+    const P = (x, y) => garden.path.add(x + ',' + y);
+    for (let x = 8; x <= 17; x++) for (let y = 10; y <= 13; y++) if (!(x >= POOL.x0 && x <= POOL.x1 && y >= POOL.y0 && y <= POOL.y1)) P(x, y); // havuz kenar taşı
+    for (let x = 0; x <= 7; x++) { P(x, 11); P(x, 12); }
+    for (let x = 18; x <= 25; x++) { P(x, 11); P(x, 12); }
+    [2, 6, 21, 24].forEach(x => { P(x, 9); P(x, 10); });
+    [11, 14].forEach(x => P(x, 9));
+    [1, 4, 23].forEach(x => { P(x, 13); P(x, 14); });
+    [9, 15].forEach(x => P(x, 14));
+    for (let x = POOL.x0; x <= POOL.x1; x++) for (let y = POOL.y0; y <= POOL.y1; y++) garden.pool.add(x + ',' + y);
+  })();
   function buildTypes() {
     for (let x = 0; x < WW; x++) for (let y = 0; y < WH; y++) T(x, y, { k: 'grass' });
-    // yaya yolu: kapıdan doğuya, sonra güneye otoparka
-    for (let x = BX + BW; x < BX + BW + 4; x++) for (let y = BY + 12; y <= BY + 13; y++) T(x, y, { k: 'stone', c: '#d2c6aa' });
-    for (let y = BY + 12; y < BY + 19; y++) for (let x = BX + BW + 2; x <= BX + BW + 3; x++) T(x, y, { k: 'stone', c: '#d2c6aa' });
-    // otopark
-    for (let x = BX + 2; x <= BX + 23; x++) for (let y = BY + 18; y <= BY + 24; y++) T(x, y, { k: 'asph', c: '#4d525c' });
-    // sürüş yolu otoparktan yola
-    for (let x = BX + 24; x < WW; x++) for (let y = BY + 21; y <= BY + 22; y++) T(x, y, { k: 'asph', c: '#4d525c' });
     // ana yol (sağ kenar, dikey)
-    for (let x = WW - 3; x < WW; x++) for (let y = 0; y < WH; y++) T(x, y, { k: 'asph', c: '#454a54', road: true });
-    // bina plazası (ön ve sağ kenar boyunca taş şerit)
-    for (let x = BX - 1; x < BX + BW + 1; x++) T(x, BY + BH, { k: 'stone', c: '#dcd3bf' });
-    for (let y = BY; y < BY + BH + 1; y++) if (!(y >= BY + 12 && y <= BY + 13)) T(BX + BW, y, { k: 'stone', c: '#dcd3bf' });
+    for (let x = ROAD_X; x < WW; x++) for (let y = 0; y < WH; y++) T(x, y, { k: 'asph', c: '#454a54', road: true });
+    // otopark (kuzeydoğu): düz, birbirine dik duran park yerleri
+    for (let x = LOT.x0; x <= LOT.x1; x++) for (let y = LOT.y0; y <= LOT.y1; y++) T(x, y, { k: 'asph', c: '#4d525c' });
+    // giriş meydanı ve yaya yolu (doğu kapısı → yol)
+    for (let x = BX + BW; x < BX + BW + 4; x++) for (let y = BY + 15; y <= BY + 18; y++) T(x, y, { k: 'stone', c: '#d7cdb6' });
+    for (let x = BX + BW + 4; x < ROAD_X; x++) for (let y = BY + 16; y <= BY + 17; y++) T(x, y, { k: 'stone', c: '#d7cdb6' });
+    // bina önü şeridi (güney)
+    for (let x = BX - 1; x < BX + BW + 1; x++) T(x, BY + BH, { k: 'stone', c: '#d9d2c0' });
     // oda zeminleri
     ROOMS.forEach(r => {
+      if (r.out) return;
       for (let i = 0; i < r.w; i++) for (let j = 0; j < r.h; j++) T(BX + r.x + i, BY + r.y + j, { k: r.fl[0], c: r.fl[1], c2: r.fl[2], room: r.id });
     });
-    // halı: Makam kırmızı, Hol şeridi, Kapı paspası, Oda orta kuşak
-    for (let i = 1; i <= 2; i++) for (let j = 1; j <= 3; j++) T(BX + i, BY + j, { k: 'carpet', c: j === 1 || j === 3 || i === 1 && false ? '#a3322f' : '#a3322f', rug: true, room: 'makam' });
-    for (let x = 2; x < 24; x++) T(BX + x, BY + 10, { k: 'carpet', c: '#6a4f7a', room: 'hol', rug: true });
-    T(BX + 25, BY + 12, { k: 'carpet', c: '#5a5f68', room: 'kapi', rug: true }); T(BX + 25, BY + 13, { k: 'carpet', c: '#5a5f68', room: 'kapi', rug: true });
+    // avlu: çim + taş yollar + havuz
+    for (let lx = 0; lx < BW; lx++) for (let ly = 9; ly <= 14; ly++) {
+      const key = lx + ',' + ly, x = BX + lx, y = BY + ly;
+      if (garden.pool.has(key)) T(x, y, { k: 'water', c: '#256f96', c2: '#4eb4d4', room: 'bahce', edge: { n: ly === POOL.y0, w: lx === POOL.x0 } });
+      else if (garden.path.has(key)) T(x, y, { k: 'stone', c: '#e0d6bf', room: 'bahce' });
+      else T(x, y, { k: 'grass', room: 'bahce' });
+    }
+    // halılar: Makam kırmızısı, Kapı paspası
+    for (let i = 1; i <= 2; i++) for (let j = 1; j <= 3; j++) T(BX + i, BY + j, { k: 'carpet', c: '#9c3a34', rug: true, room: 'makam' });
+    T(BX + 25, BY + 16, { k: 'carpet', c: '#4a525c', room: 'kapi', rug: true }); T(BX + 25, BY + 17, { k: 'carpet', c: '#4a525c', room: 'kapi', rug: true });
   }
   function buildGround() {
     const P = new O.Px(CW, CH);
@@ -104,31 +124,33 @@
       const y = s - x; if (y < 0 || y >= WH) continue;
       const t = type[x + ',' + y];
       const px = sx(x, y), py = sy(x, y);
-      if (t.k === 'grass') S.floorTile && drawGrass(P, px, py, x, y);
-      else S.floorTile(P, px, py, x, y, t.k, t.c, t.c2);
+      if (t.k === 'grass') drawGrass(P, px, py, x, y);
+      else S.floorTile(P, px, py, x, y, t.k, t.c, t.c2, t.edge);
     }
-    const I = new O.Iso(P, 0, 0);
     const wl = (a, b, c) => { const p = [sx(a[0], a[1]), sy(a[0], a[1])], q = [sx(b[0], b[1]), sy(b[0], b[1])]; P.line(p[0], p[1], q[0], q[1], c); };
-    // zemin çizgileri: rug kenarı, otopark çizgileri, yol şeridi
-    for (let x = BX + 2; x <= BX + 24; x++) {
-      for (const [y0, y1] of [[BY + 18, BY + 20], [BY + 22, BY + 24]]) wl([x, y0], [x, y1 + 1 - 1], '#e8eaee');
-    }
-    wl([BX + 2, BY + 20], [BX + 24, BY + 20], '#e8eaee'); wl([BX + 2, BY + 22], [BX + 24, BY + 22], '#e8eaee');
-    for (let y = 0; y < WH; y += 2) wl([WW - 2, y], [WW - 2, y + 1], '#e4c64a');
-    // yaya geçidi çizgileri
-    for (let y = BY + 20; y <= BY + 21; y++) for (let k = 0; k < 4; k++) wl([BX + 25, y + k * 0.25 + 0.1], [BX + 25, y + k * 0.25 + 0.2], '#e8eaee');
-    // arka duvar dibinde yumuşak gölge
+    // otopark çizgileri: park yerleri 2 karo genişliğinde, kenara dik
+    for (let y = LOT.y0; y <= LOT.y1 + 1; y += 2) wl([LOT.x0, y], [LOT.x0 + 3, y], '#e8eaee');
+    wl([LOT.x0, LOT.y0], [LOT.x0, LOT.y1 + 1], '#e8eaee');
+    // yol şeridi
+    for (let y = 0; y < WH; y += 2) wl([ROAD_X + 1, y + 0.2], [ROAD_X + 1, y + 1.2], '#e4c64a');
+    // yaya geçidi
+    for (let k = 0; k < 6; k++) wl([ROAD_X, BY + 15.6 + k * 0.5], [ROAD_X + 3, BY + 15.6 + k * 0.5], '#e8eaee');
+    // havuz kenarı: ince beyaz taş dudak
+    wl([BX + POOL.x0, BY + POOL.y1 + 1], [BX + POOL.x1 + 1, BY + POOL.y1 + 1], '#fbf6e8'); wl([BX + POOL.x1 + 1, BY + POOL.y0], [BX + POOL.x1 + 1, BY + POOL.y1 + 1], '#fbf6e8');
+    // arka duvar dibinde yumuşak gölge (avlu satırları hariç)
     const sh = (pts, a) => P.poly(pts.map(q => [sx(q[0], q[1]), sy(q[0], q[1])]), O.pk(20, 16, 30, a));
     [[0.12, 34], [0.28, 22], [0.48, 12]].forEach(b => {
       sh([[BX, BY], [BX + BW, BY], [BX + BW, BY + b[0]], [BX, BY + b[0]]], b[1] * 0.6);
-      sh([[BX, BY], [BX + b[0], BY], [BX + b[0], BY + BH], [BX, BY + BH]], b[1] * 0.6);
+      sh([[BX, BY], [BX + b[0], BY], [BX + b[0], BY + 9], [BX, BY + 9]], b[1] * 0.6);
+      sh([[BX, BY + 15], [BX + b[0], BY + 15], [BX + b[0], BY + BH], [BX, BY + BH]], b[1] * 0.6);
     });
-    // bina kaidesi (ön kenar kalınlığı)
-    const slab = (a, b, c, d, col) => P.poly([[sx(a, b), sy(a, b)], [sx(c, d), sy(c, d)], [sx(c, d), sy(c, d) + 7], [sx(a, b), sy(a, b) + 7]], col);
-    slab(BX, BY + BH, BX + BW, BY + BH, '#b7ad98');
-    slab(BX + BW, BY + BH, BX + BW, BY, '#9a917e');
-    P.line(sx(BX, BY + BH), sy(BX, BY + BH) + 7, sx(BX + BW, BY + BH), sy(BX + BW, BY + BH) + 7, '#6f6757');
-    P.line(sx(BX + BW, BY + BH), sy(BX + BW, BY + BH) + 7, sx(BX + BW, BY), sy(BX + BW, BY) + 7, '#6f6757');
+    // bina kaidesi: yalnız görünen (güney/doğu) yüzler
+    const slabH = (x0, x1, y, col, edge) => { P.poly([[sx(x0, y), sy(x0, y)], [sx(x1, y), sy(x1, y)], [sx(x1, y), sy(x1, y) + 7], [sx(x0, y), sy(x0, y) + 7]], col); P.line(sx(x0, y), sy(x0, y) + 7, sx(x1, y), sy(x1, y) + 7, edge); };
+    const slabV = (x, y0, y1, col, edge) => { P.poly([[sx(x, y1), sy(x, y1)], [sx(x, y0), sy(x, y0)], [sx(x, y0), sy(x, y0) + 7], [sx(x, y1), sy(x, y1) + 7]], col); P.line(sx(x, y1), sy(x, y1) + 7, sx(x, y0), sy(x, y0) + 7, edge); };
+    slabH(BX, BX + BW, BY + 9, '#aab3b9', '#6d767c');          // kuzey kanat, avluya bakan yüz
+    slabH(BX, BX + BW, BY + BH, '#b2bcc2', '#6d767c');          // güney kanat, ön yüz
+    slabV(BX + BW, BY, BY + 9, '#939ea6', '#6d767c');
+    slabV(BX + BW, BY + 15, BY + BH, '#939ea6', '#6d767c');
     W.ground = P.flush();
   }
   function drawGrass(P, px, py, x, y) { S.floorGrass(P, px, py, x, y); }
@@ -137,49 +159,53 @@
   function buildWalls() {
     const accAt = (lx, ly) => (roomAt[lx + ',' + ly] || { ac: '#6a5a40' }).ac;
     const decoH = { 0: 'pic', 1: 'win', 2: 'win', 3: 'pic', 4: 'win', 5: 'win', 11: 'pic', 15: 'win', 16: 'win', 19: 'pic' };
-    const decoV = { 3: 'win', 4: 'win', 7: 'win', 8: 'pic', 9: 'win', 10: 'win', 11: 'win', 12: 'pic', 13: 'win', 14: 'pic', 15: 'win' };
-    ent(BX + BY - 0.4, sx(BX, BY), sy(BX, BY), S.wallCorner('#6b3f2a'));
+    const decoV = { 3: 'win', 4: 'win', 7: 'win', 8: 'pic', 15: 'win', 16: 'pic', 17: 'win', 18: 'pic', 19: 'win' };
+    const garden = ly => ly >= 9 && ly <= 14;
+    ent(BX + BY - 0.4, sx(BX, BY), sy(BX, BY), S.wallCorner('#7a4a32'));
     for (let lx = 0; lx < BW; lx++) {
       const d = decoH[lx] || '';
-      const e = ent(BX + lx + BY + 0.4, sx(BX + lx, BY), sy(BX + lx, BY), S.wallBH(accAt(lx, 0), d, lx));
+      ent(BX + lx + BY + 0.4, sx(BX + lx, BY), sy(BX + lx, BY), S.wallBH(accAt(lx, 0), d, lx));
       if (d === 'win') W.wins.push({ side: 'L', e: ent(BX + lx + BY + 0.41, sx(BX + lx, BY), sy(BX + lx, BY), null) });
     }
     for (let ly = 0; ly < BH; ly++) {
+      wallV.add(BX + ',' + (BY + ly));
+      if (garden(ly)) continue;               // avluda batı kenarı açık (yalnız yürüme çiti)
       const d = decoV[ly] || '';
       ent(BX + BY + ly + 0.4, sx(BX, BY + ly), sy(BX, BY + ly), S.wallBV(accAt(0, ly), d, ly + 3));
       if (d === 'win') W.wins.push({ side: 'R', e: ent(BX + BY + ly + 0.41, sx(BX, BY + ly), sy(BX, BY + ly), null) });
-      wallV.add(BX + ',' + (BY + ly));
     }
     for (let lx = 0; lx < BW; lx++) wallH.add((BX + lx) + ',' + BY);
     // ön ve sağ alçak duvar (kesit); girişte boşluk
     for (let lx = 0; lx < BW; lx++) { ent(BX + lx + BY + BH + 0.57, sx(BX + lx, BY + BH - 1), sy(BX + lx, BY + BH - 1), S.curbH()); wallH.add((BX + lx) + ',' + (BY + BH)); }
     for (let ly = 0; ly < BH; ly++) {
-      if (ly === 12 || ly === 13) continue;
-      ent(BX + BW + BY + ly + 0.57, sx(BX + BW - 1, BY + ly), sy(BX + BW - 1, BY + ly), S.curbV());
+      if (ly === 16 || ly === 17) continue;
+      if (garden(ly)) ent(BX + BW + BY + ly + 0.5, sx(BX + BW, BY + ly), sy(BX + BW, BY + ly), S.partV('glass', '#3f7a4a'));   // avlunun doğu ucu cam galeri duvarı
+      else ent(BX + BW + BY + ly + 0.57, sx(BX + BW - 1, BY + ly), sy(BX + BW - 1, BY + ly), S.curbV());
       wallV.add((BX + BW) + ',' + (BY + ly));
     }
     // giriş kapı sütunları
-    ent(BX + BW + BY + 12 - 0.06 + 0.57, sx(BX + BW - 1, BY + 12), sy(BX + BW - 1, BY + 12), S.doorPost());
-    ent(BX + BW + BY + 14 - 0.06 + 0.57, sx(BX + BW - 1, BY + 14), sy(BX + BW - 1, BY + 14), S.doorPost());
+    ent(BX + BW + BY + 16 - 0.06 + 0.57, sx(BX + BW - 1, BY + 16), sy(BX + BW - 1, BY + 16), S.doorPost());
+    ent(BX + BW + BY + 18 - 0.06 + 0.57, sx(BX + BW - 1, BY + 18), sy(BX + BW - 1, BY + 18), S.doorPost());
 
-    /* iç bölmeler. kapılar (boşluklar) hâlinde. */
+    /* iç bölmeler. kapılar (boşluklar) hâlinde. Avluya bakan yüzler cam. */
     const kind = (a, b) => ((a && a.solid) || (b && b.solid)) ? 'solid' : 'glass';
     const ra = (lx, ly) => roomAt[lx + ',' + ly];
-    const gapsH = { 4: [1, 5, 11, 14, 17, 21, 24], 9: [2, 6, 11, 14, 21, 24], 11: [1, 4, 9, 15, 23] };
+    const gapsH = { 4: [1, 5, 11, 14, 17, 21, 24], 9: [2, 6, 11, 14, 21, 24], 15: [1, 4, 9, 15, 23] };
     Object.keys(gapsH).forEach(yy => {
       const y = +yy;
       for (let lx = 0; lx < BW; lx++) {
         if (gapsH[y].indexOf(lx) >= 0) continue;
         const a = ra(lx, y - 1), b = ra(lx, y); if (a === b) continue;
-        ent(BX + lx + BY + y + 0.5, sx(BX + lx, BY + y), sy(BX + lx, BY + y), S.partH(kind(a, b), (b && b.ac) || '#777'));
+        const k = (a && a.out) || (b && b.out) ? 'glass' : kind(a, b), room = a && a.out ? b : b && b.out ? a : b;
+        ent(BX + lx + BY + y + 0.5, sx(BX + lx, BY + y), sy(BX + lx, BY + y), S.partH(k, (room && room.ac) || '#777'));
         wallH.add((BX + lx) + ',' + (BY + y));
       }
     });
     const gapsV = {};
-    gapsV[6 + ',' + 13] = 1; gapsV[22 + ',' + 13] = 1; gapsV[8 + ',' + 6] = 1; gapsV[18 + ',' + 6] = 1;
+    gapsV[6 + ',' + 17] = 1; gapsV[22 + ',' + 17] = 1; gapsV[8 + ',' + 6] = 1; gapsV[18 + ',' + 6] = 1;
     for (let lx = 1; lx < BW; lx++) for (let ly = 0; ly < BH; ly++) {
       const a = ra(lx - 1, ly), b = ra(lx, ly); if (!a || !b || a === b) continue;
-      if (a.id === 'hol' || b.id === 'hol') continue;
+      if (a.out || b.out) continue;
       if (gapsV[lx + ',' + ly]) continue;
       ent(BX + lx + BY + ly + 0.5, sx(BX + lx, BY + ly), sy(BX + lx, BY + ly), S.partV(kind(a, b), b.ac));
       wallV.add((BX + lx) + ',' + (BY + ly));
@@ -216,7 +242,7 @@
     const sk = pod('sekreterlik', 5, 1, 2, '#c9a36a', 30, { kind: 'staff' });
     sk.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'sekreter', room: 'sekreterlik', seat: sk, pose: 'sit', look: O.look(911, 'sek', { shirt: '#c05a8a', hs: 'bun', hair: '#4a3322', acc: '' }) });
-    L(S.printer(), 7, 2); L(S.plant('tall'), 4, 3); L(S.cabinet('y'), 7, 3);
+    L(S.printer(), 7, 2); L(S.plant('tall'), 4, 3); L(S.cabinet('y'), 7, 3); L(S.box(3), 4, 2);
     /* --- FİNANS --- */
     L(S.safe(), 8, 0); L(S.coins(), 11, 1);
     const f1 = pod('finans', 10, 1, 2, '#d8d2c2', 40, { kind: 'staff' }); f1.scr.s = S.screen('y', 'staff');
@@ -229,7 +255,7 @@
     const h2 = pod('haberlesme', 15, 1, 2, '#9aa5b4', 51, { kind: 'staff' }); h2.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'haber1', room: 'haberlesme', seat: h1, pose: 'sit', look: O.look(931, 'hab', { acc: 'headset', shirt: '#3b6fb4' }) });
     W.staff.push({ id: 'haber2', room: 'haberlesme', seat: h2, pose: 'sit', look: O.look(932, 'hab', { acc: 'headset', shirt: '#2f9aa8', hs: 'long' }) });
-    L(S.mailbox(), 12, 3); L(S.plant('small'), 15, 3); L(S.cooler(), 14, 3);
+    L(S.mailbox(), 12, 3); L(S.plant('small'), 15, 3); L(S.cooler(), 14, 3); L(S.box(1), 12, 1); L(S.box(2), 12, 2);
     W.mailboxLocal = [12, 3];
     /* --- RİSK --- */
     const r1 = pod('risk', 17, 1, 2, '#c9b9a0', 60, { kind: 'staff' }); r1.scr.s = S.screen('y', 'staff');
@@ -255,29 +281,27 @@
     W.staff.push({ id: 'tarama1', room: 'tarama', seat: t1, pose: 'sit', look: O.look(971, 'tar', { shirt: '#6a4fa0', hs: 'short' }) });
     W.staff.push({ id: 'tarama2', room: 'tarama', seat: t2, pose: 'sit', look: O.look(972, 'tar', { shirt: '#2f9aa8', hs: 'long' }) });
     L(S.printer(), 0, 7); L(S.printer(), 0, 8); L(S.plant('tall'), 4, 8); L(S.plant('small'), 0, 4);
-    /* --- ÇAY OCAĞI --- */
-    L(S.counter('u', 'tea'), 6, 4); L(S.counter('u', ''), 7, 4); L(S.fridge('y'), 7, 5);
-    L(S.table('round'), 6, 7); L(S.stool(), 5, 7); L(S.plant('small'), 5, 8); L(S.vending(), 5, 5);
-    W.staff.push({ id: 'cayci', room: 'cay', tx: BX + 6, ty: BY + 5, pose: 'stand', dir: 'u', look: O.look(981, 'cay', { acc: 'apron', shirt: '#d9d4c8', hs: 'bun', hair: '#2b2118' }), cayci: true });
+    /* --- ÇAY OCAĞI --- (tezgâh arka sırada; önünü kapatacak uzun nesne yok, semaver görünür) */
+    L(S.counter('u', 'tea'), 6, 4); L(S.counter('u', ''), 7, 4); L(S.fridge('y'), 7, 6);
+    L(S.table('round'), 6, 7); L(S.stool(), 5, 7); L(S.plant('small'), 7, 8); L(S.vending(), 5, 8);
+    W.staff.push({ id: 'cayci', room: 'cay', tx: BX + 5, ty: BY + 5, pose: 'stand', dir: 'u', look: O.look(981, 'cay', { acc: 'apron', shirt: '#d9d4c8', hs: 'bun', hair: '#2b2118' }), cayci: true });
     /* --- LAB --- (koltuk sütunları arasında boş koridor sütunları: her koltuğa ulaşılır) */
     [9, 10, 12, 13, 15, 16].forEach((x, i) => { seats.lab.push(pod('lab', x, 4, 5, '#ccd6e0', 100 + i)); seats.lab.push(pod('lab', x, 7, 8, '#ccd6e0', 120 + i)); });
     L(S.cooler(), 8, 4); L(S.plant('tall'), 11, 4); L(S.board(), 17, 5); L(S.plant('tall'), 17, 4); L(S.plant('small'), 14, 4);
     /* --- KONTROL --- */
     [19, 20, 22, 23, 25].forEach((x, i) => { seats.kontrol.push(pod('kontrol', x, 4, 5, '#b9c4d2', 140 + i)); seats.kontrol.push(pod('kontrol', x, 7, 8, '#b9c4d2', 160 + i)); });
     L(S.dice(), 18, 4); L(S.plant('tall'), 21, 4); L(S.plant('tall'), 24, 4);
-    /* --- HOL --- */
-    L(S.plant('tall'), 0, 9); L(S.bench('u'), 4, 9); L(S.bench('u'), 8, 9); L(S.plant('tall'), 12, 9); L(S.cooler(), 16, 9); L(S.bench('u'), 18, 9); L(S.plant('tall'), 25, 9); L(S.plant('small'), 25, 10);
     /* --- ADAY --- */
-    [0, 2, 3, 5].forEach((x, i) => { seats.aday.push(pod('aday', x, 11, 12, '#d7b48a', 200 + i)); seats.aday.push(pod('aday', x, 14, 15, '#d7b48a', 220 + i)); });
-    L(S.plant('tall'), 1, 11, { block: false }); W.block(BX + 1, BY + 11); L(S.plant('small'), 4, 11);
+    [0, 2, 3, 5].forEach((x, i) => { seats.aday.push(pod('aday', x, 15, 16, '#d9b78e', 200 + i)); seats.aday.push(pod('aday', x, 18, 19, '#d9b78e', 220 + i)); });
+    L(S.plant('tall'), 1, 15, { block: false }); W.block(BX + 1, BY + 15); L(S.plant('small'), 4, 15);
     /* --- ODA --- */
-    [7, 8, 10, 11, 13, 14, 16, 17, 19, 20].forEach((x, i) => { seats.oda.push(pod('oda', x, 11, 12, '#a8b2cc', 300 + i)); seats.oda.push(pod('oda', x, 14, 15, '#a8b2cc', 330 + i)); });
-    [6, 12, 18, 21].forEach(x => L(S.plant('tall'), x, 11));
+    [7, 8, 10, 11, 13, 14, 16, 17, 19, 20].forEach((x, i) => { seats.oda.push(pod('oda', x, 15, 16, '#b4c2cc', 300 + i)); seats.oda.push(pod('oda', x, 18, 19, '#b4c2cc', 330 + i)); });
+    [6, 12, 18, 21].forEach(x => L(S.plant('tall'), x, 15));
     /* --- KAPI --- */
-    L(S.turnstile(), 24, 12); L(S.turnstile(), 24, 14);
-    const g = pod('kapi', 22, 14, 15, '#9aa5b4', 400, { kind: 'staff' }); g.scr.s = S.screen('y', 'staff');
+    L(S.turnstile(), 24, 16); L(S.turnstile(), 24, 18);
+    const g = pod('kapi', 22, 18, 19, '#9aa5b4', 400, { kind: 'staff' }); g.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'kapici', room: 'kapi', seat: g, pose: 'sit', look: O.look(991, 'kapi', { acc: 'cap', shirt: '#1f3a6e' }) });
-    L(S.plant('tall'), 22, 11); L(S.plant('tall'), 25, 11); L(S.plant('small'), 25, 15); L(S.bench('u'), 23, 15);
+    L(S.plant('tall'), 22, 15); L(S.plant('tall'), 25, 15); L(S.plant('small'), 25, 19); L(S.bench('u'), 23, 19);
   }
   W.sitDir = 'u';
 
@@ -285,50 +309,68 @@
   function buildOutside() {
     const taken = new Set();
     const ok = (x, y) => { const t = type[x + ',' + y]; return t && t.k === 'grass' && !taken.has(x + ',' + y); };
-    // otopark arabaları (v yönünde duran, ters çevrilmiş sprite)
-    const cols = ['#d4553b', '#3b82c4', '#e0a93a', '#3aa17a', '#8a63c9', '#e8e4da', '#2c3342', '#d86b8f', '#6b7a8f', '#c0683a'];
     const r = O.rng(77);
-    for (let lx = 2; lx <= 23; lx++) {
-      for (const row of [18, 22]) {
-        if (r() < 0.34) continue;
-        const c = cols[Math.floor(r() * cols.length)], x = BX + lx, y = BY + row;
-        const s = O.flip(S.car(c, lx * 7 + row));
-        ent(x + y + 1.5, sx(x, y), sy(x, y), s);
-        W.block(x, y); W.block(x, y + 1);
-      }
+    const take = (x, y) => { taken.add(x + ',' + y); W.block(x, y); };
+    // otopark: kuzeydoğuda, kenara dik duran düz sıra (açılı park yok)
+    const cols = ['#d4553b', '#3b82c4', '#e0a93a', '#3aa17a', '#8a63c9', '#e8e4da', '#2c3342', '#d86b8f', '#6b7a8f', '#c0683a'];
+    for (let y = LOT.y0; y <= LOT.y1; y += 2) {
+      if (r() < 0.38) continue;
+      const c = cols[Math.floor(r() * cols.length)], x = LOT.x0 + 1;
+      ent(x + y + 2.4, sx(x, y), sy(x, y), S.car(c, y * 7 + 3));
     }
-    // giriş süsleri: çiçek tavaları, bank, tabela
-    [[BX + BW, BY + 10, '#ff6b8a'], [BX + BW + 1, BY + 14, '#ffd24a'], [BX + BW, BY + 15, '#ffffff'], [BX + BW + 2, BY + 10, '#f5a3c0']].forEach((q, i) => {
-      if (!ok(q[0], q[1])) return; ent(q[0] + q[1] + 1, sx(q[0], q[1]), sy(q[0], q[1]) + HH + 2, S.bush(40 + i, q[2])); W.block(q[0], q[1]); taken.add(q[0] + ',' + q[1]);
+    // giriş meydanı: çiçek tavaları ve tabela
+    [[BX + BW, BY + 14, '#ff8fa8'], [BX + BW + 2, BY + 14, '#ffd24a'], [BX + BW, BY + 19, '#ffffff'], [BX + BW + 2, BY + 19, '#f5a3c0']].forEach((q, i) => {
+      if (!ok(q[0], q[1])) return; ent(q[0] + q[1] + 1, sx(q[0], q[1]), sy(q[0], q[1]) + HH + 2, S.bush(40 + i, q[2])); take(q[0], q[1]);
     });
-    ent(BX + BW + 3 + BY + 15 + 1, sx(BX + BW + 3, BY + 15), sy(BX + BW + 3, BY + 15) + HH, S.signpost()); W.block(BX + BW + 3, BY + 15); taken.add((BX + BW + 3) + ',' + (BY + 15));
-    // park lambaları
-    [[BX + 2, BY + 20], [BX + 12, BY + 20], [BX + 22, BY + 20]].forEach(p => { const e = ent(p[0] + p[1] + 1.1, sx(p[0], p[1]) , sy(p[0], p[1]) + HH, S.lamp()); W.lamps.push(e); });
-    // çalılar bina önünde
+    ent(BX + BW + 3 + BY + 19 + 1, sx(BX + BW + 3, BY + 19), sy(BX + BW + 3, BY + 19) + HH, S.signpost()); take(BX + BW + 3, BY + 19);
+    // park lambaları: otopark kenarı ve meydan
+    [[LOT.x0 - 1, LOT.y0 + 2], [LOT.x0 - 1, LOT.y1 - 1], [BX + BW + 1, BY + 20]].forEach(q => { const e = ent(q[0] + q[1] + 1.1, sx(q[0], q[1]), sy(q[0], q[1]) + HH, S.lamp()); W.lamps.push(e); });
+    // çalılar bina önünde (güney)
     for (let lx = 0; lx < 26; lx++) {
-      if (lx >= 21 && lx <= 25) continue;
       const x = BX + lx, y = BY + BH + 1;
-      if (r() < 0.75 && ok(x, y)) { ent(x + y + 1, sx(x, y), sy(x, y) + HH + 2, S.bush(lx, r() < 0.55 ? ['#ff6b8a', '#ffd24a', '#ffffff'][lx % 3] : null)); W.block(x, y); taken.add(x + ',' + y); }
+      if (r() < 0.7 && ok(x, y)) { ent(x + y + 1, sx(x, y), sy(x, y) + HH + 2, S.bush(lx, r() < 0.5 ? ['#ff8fa8', '#ffd24a', '#ffffff'][lx % 3] : null)); take(x, y); }
     }
+    buildGarden(take);
     // ağaçlar
     const kinds = ['g', 'g', 'o', 'pine', 'g', 'y', 'pine', 'o'];
-    for (let x = 0; x < WW - 3; x++) for (let y = 0; y < WH - 1; y++) {
+    for (let x = 0; x < ROAD_X; x++) for (let y = 0; y < WH - 1; y++) {
       const lx = x - BX, ly = y - BY;
       if (!ok(x, y)) continue;
-      const inBldg = lx >= -1 && lx <= BW + 1 && ly >= -1 && ly <= BH + 1;
-      if (inBldg) continue;
-      const near = (lx > BW - 2 && ly > BH - 6 && ly < BH + 8 && lx < BW + 5 && ly >= 8) ; // giriş yolu çevresi
-      if (near) continue;
-      const d = O.h2(x, y, 55);
-      const edge = (lx < -1 || ly < -1 || lx > BW + 1);
-      if (d < (edge ? 0.26 : 0.1) && O.h2(x, y, 56) > 0.2) {
+      if (lx >= -2 && lx <= BW + 2 && ly >= -2 && ly <= BH + 3) continue;               // bina çevresi boş
+      if (lx > BW - 2 && ly >= 12 && ly <= 22 && x < ROAD_X) continue;                   // giriş meydanı ve yolu
+      if (x >= LOT.x0 - 2 && x <= LOT.x1 + 1 && y >= LOT.y0 - 2 && y <= LOT.y1 + 2) continue;
+      const d = O.h2(x, y, 55), edge = (lx < -1 || ly < -1 || ly > BH + 1);
+      if (d < (edge ? 0.17 : 0.06) && O.h2(x, y, 56) > 0.2) {
         if (taken.has((x - 1) + ',' + y) || taken.has(x + ',' + (y - 1)) || taken.has((x - 1) + ',' + (y - 1))) continue;
         const k = kinds[Math.floor(O.h2(x, y, 57) * kinds.length)];
-        const e = ent(x + y + 1, sx(x, y), sy(x, y) + HH, S.tree(k, x * 31 + y));
-        e.sway = O.h2(x, y, 58) * 6.28; e.tree = true; W.trees.push(e);
-        W.block(x, y); taken.add(x + ',' + y);
+        ent(x + y + 1, sx(x, y), sy(x, y) + HH, S.tree(k, x * 31 + y)); take(x, y);
       }
     }
+  }
+
+  /* avlu: çim, çiçek tarhı, havuz çevresi, şezlong, bank, lamba. Yürünebilir yalnız taş yollar. */
+  function buildGarden(take) {
+    const lawn = (lx, ly) => { const t = type[(BX + lx) + ',' + (BY + ly)]; return t && t.k === 'grass'; };
+    const fl = ['#ff8fa8', '#ffd24a', '#ffffff', '#f5a3c0', '#ffb366'];
+    // şezlong güvertesi (havuzun kuzeydoğusu)
+    for (let lx = 18; lx <= 20; lx++) for (let ly = 9; ly <= 10; ly++) T(BX + lx, BY + ly, { k: 'deck', c: '#c9a06a', room: 'bahce' });
+    const reserved = new Set();
+    const put = (lx, ly, spr, dy, ko) => { const x = BX + lx, y = BY + ly; ent(x + y + 1 + (ko || 0), sx(x, y), sy(x, y) + (dy || 0), spr); reserved.add(lx + ',' + ly); };
+    put(18, 10, S.lounger('a'), 0); put(19, 10, S.lounger('b'), 0); put(20, 9, S.parasol(), 0, 0.2);
+    put(4, 10, S.bench('u'), 0); put(22, 13, S.bench('y'), 0);
+    [[7, 10], [18, 13], [7, 13], [25, 10]].forEach(q => { const x = BX + q[0], y = BY + q[1]; const e = ent(x + y + 1.1, sx(x, y), sy(x, y) + HH, S.lamp()); W.lamps.push(e); reserved.add(q[0] + ',' + q[1]); });
+    for (let lx = 0; lx < BW; lx++) for (let ly = 9; ly <= 14; ly++) {
+      const x = BX + lx, y = BY + ly, key = lx + ',' + ly, t = type[x + ',' + y];
+      if (garden.pool.has(key) || garden.path.has(key)) continue;
+      W.block(x, y);                                   // yürüme ağı yalnız taş yolları kullanır
+      if (reserved.has(key) || (t && t.k === 'deck')) continue;
+      const h = O.h2(x, y, 321);
+      const cornerTree = (lx <= 0 || lx >= 25) && (ly === 9 || ly === 14);
+      if (cornerTree) ent(x + y + 1, sx(x, y), sy(x, y) + HH, S.tree(h < 0.5 ? 'g' : 'o', x * 17 + y));
+      else if (h < 0.88) ent(x + y + 1, sx(x, y), sy(x, y) + HH + 2, S.bush(lx * 3 + ly, h < 0.6 ? fl[Math.floor(h * 25) % fl.length] : null));
+    }
+    // batı kenarında çit hattı (yürüme ağı dışında kalsın)
+    for (let ly = 9; ly <= 14; ly++) { const x = BX - 1, y = BY + ly; ent(x + y + 1, sx(x, y), sy(x, y) + HH + 2, S.bush(60 + ly, null)); take(x, y); }
   }
 
   function buildTVs() {
@@ -343,8 +385,12 @@
     buildTypes(); buildGround(); buildWalls(); buildTVs(); buildFurniture(); buildOutside();
     W.resort();
   };
+  W.poolPoly = function () {
+    const a = [BX + POOL.x0, BY + POOL.y0], b = [BX + POOL.x1 + 1, BY + POOL.y1 + 1], pts = [[sx(a[0], a[1]), sy(a[0], a[1])], [sx(b[0], a[1]), sy(b[0], a[1])], [sx(b[0], b[1]), sy(b[0], b[1])], [sx(a[0], b[1]), sy(a[0], b[1])]];
+    return { pts: pts, cx: (pts[0][0] + pts[2][0]) / 2, cy: (pts[0][1] + pts[2][1]) / 2, r: (pts[1][0] - pts[3][0]) * 0.6 };
+  };
   W.localToWorld = (lx, ly) => [BX + lx, BY + ly];
-  W.sign = function (r) { const yy = r.y + (r.y === 0 ? 0.9 : 0.5); return { x: sx(BX + r.cx, BY + yy), y: sy(BX + r.cx, BY + yy) - (r.y === 0 ? 40 : 26) }; };
+  W.sign = function (r) { if (r.id === 'bahce') { const q = W.poolPoly(); return { x: q.cx, y: q.cy - 4 }; } const yy = r.y + (r.y === 0 ? 0.9 : 0.5); return { x: sx(BX + r.cx, BY + yy), y: sy(BX + r.cx, BY + yy) - (r.y === 0 ? 40 : r.id === 'cay' ? 46 : 26) }; };
   /* oda çokgeni (zemin) ekran noktaları */
   W.roomPoly = function (r) { const a = [BX + r.x, BY + r.y], b = [BX + r.x + r.w, BY + r.y + r.h]; return [[sx(a[0], a[1]), sy(a[0], a[1])], [sx(b[0], a[1]), sy(b[0], a[1])], [sx(b[0], b[1]), sy(b[0], b[1])], [sx(a[0], b[1]), sy(a[0], b[1])]]; };
 })();

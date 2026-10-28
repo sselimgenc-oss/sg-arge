@@ -1,5 +1,5 @@
 /* Ofis · durum, aktörler, olay motoru, efektler, duvar ekranları.
-   Kural: her hareket bir olaydan doğar. Boşta sahte hareket yok; yalnız süs (çaycı, ağaç) ayrı işaretlidir. */
+   Kural: her hareket bir olaydan doğar. Boşta sahte hareket yok (çaycı yürüyüşü ve ağaç sallanması kaldırıldı). */
 (function () {
   'use strict';
   const O = window.OFIS, W = O.World, S = O.S, HW = O.HW, HH = O.HH;
@@ -35,7 +35,7 @@
       traders: {}, actors: [], actorById: {}, katlar: clone(data.katlar), acik: clone(data.acik_islemler), kapanan: clone(data.kapananlar),
       kasa: clone(data.kasa), ozet: clone(data.ozet), risk: clone(data.risk), vk: clone(data.veri_kalitesi), tg: clone(data.telegram), kk: clone(data.kohort_kontrol),
       tarama: clone(data.tarama), stale: {}, hl: {}, sel: null, alarm: false, denetim: 'tamam', boxN: 3, log: [], fx: [], flash: {},
-      scanUntil: 0, haberUntil: 0, kasaUntil: 0, cayT: 14, last: { kz: null }
+      scanUntil: 0, haberUntil: 0, kasaUntil: 0, last: { kz: null }
     };
     data.traderlar.forEach(t => (st.traders[t.id] = t));
     // Makam konuk sandalyeleri
@@ -138,7 +138,7 @@
   const roomOf = tid => { const k = tradeKat(tid); return k === 'lab' || k === 'aday' || k === 'oda' || k === 'kontrol' ? k : 'oda'; };
 
   /* ---------- olaylar ---------- */
-  const ENTRY = [BX + W.BW + 3, BY + 12], EXIT = [BX + W.BW + 3, BY + 13], GATE = [BX + 24, BY + 13];
+  const ENTRY = [BX + W.BW + 3, BY + 16], EXIT = [BX + W.BW + 3, BY + 17], GATE = [BX + 24, BY + 17];
   function move(tid, kimden, kime, e, ikon) {
     const a = st.actorById[tid]; if (!a) return;
     const seat = freeSeat(kime);
@@ -302,7 +302,7 @@
   }
   const beacon = [0, 1].map(b => O.tspr(44, I => { const c = I.p(0.5, 0.5, 26); I.P.disc(c[0], c[1] - 4, 5, 5, b ? '#ff3b3b' : '#a82020'); I.P.disc(c[0] - 1, c[1] - 5, 2, 2, b ? '#ffe0e0' : '#e06060'); I.P.outline('#2a2230'); }));
   const glowSpr = (col, r) => { const c = document.createElement('canvas'); c.width = c.height = r * 2; const x = c.getContext('2d'), g = x.createRadialGradient(r, r, 0, r, r, r); g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, r * 2, r * 2); return c; };
-  Off.glow = { red: glowSpr('rgba(255,70,70,0.9)', 30), warm: glowSpr('rgba(255,214,140,0.9)', 26), blue: glowSpr('rgba(120,190,255,0.9)', 22) };
+  Off.glow = { red: glowSpr('rgba(255,70,70,0.9)', 30), warm: glowSpr('rgba(255,214,140,0.9)', 26), blue: glowSpr('rgba(120,190,255,0.9)', 22), green: glowSpr('rgba(70,255,170,0.8)', 18), amber: glowSpr('rgba(255,200,70,0.8)', 18) };
 
   function refreshVisuals() {
     const t = now();
@@ -346,17 +346,6 @@
     if (st.evIdx >= evs.length && st.simT >= total) Off.reset();
     st.actors.forEach(a => stepActor(a, dt));
     for (let i = st.actors.length - 1; i >= 0; i--) if (st.actors[i].dead) { const a = st.actors[i]; delete st.actorById[a.id]; st.actors.splice(i, 1); }
-    // çaycı (süs): ara sıra çay ocağından holün bir ucuna yürür; veri göstermez
-    if (!Off.reduced) {
-      st.cayT -= dt;
-      if (st.cayT <= 0) {
-        const c = st.actorById['s:cayci'];
-        if (c && !c.path.length && !c.queue.length && !c.wait) {
-          st.cayT = 38;
-          c.queue = [{ go: [BX + 8, BY + 10] }, { wait: 1.2 }, { go: [BX + 3, BY + 10] }, { wait: 1.2 }, { go: [c.home[0], c.home[1]] }, { fn: a => { a.pose = 'stand'; a.dir = 'u'; } }];
-        } else st.cayT = 5;
-      }
-    }
     // biten efektler
     const t = now();
     st.fx = st.fx.filter(f => t - f.t0 < f.dur);

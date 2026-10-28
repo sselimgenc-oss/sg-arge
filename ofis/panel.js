@@ -26,7 +26,7 @@
     const v = (k.egri || []).map(p => p[1]);
     if (v.length >= 5) {
       const mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), W = 168, H = 54, pts = v.map((y, i) => [4 + (W - 8) * i / (v.length - 1), H - 6 - (H - 12) * (y - mn) / ((mx - mn) || 1)]);
-      const line = pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '), up = v[v.length - 1] >= v[0], c = up ? '#34d399' : '#f87171';
+      const line = pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' '), up = v[v.length - 1] >= v[0], c = '#46d3c2';
       spark = '<svg class="spark" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Gölge kasası eğrisi, ' + v.length + ' gün, ' + (up ? 'yukarı' : 'aşağı') + '"><polygon points="' + pts[0][0] + ',' + (H - 4) + ' ' + line + ' ' + pts[pts.length - 1][0] + ',' + (H - 4) + '" fill="' + c + '" fill-opacity=".14"/><polyline points="' + line + '" fill="none" stroke="' + c + '" stroke-width="2" stroke-linejoin="round"/><circle cx="' + pts[pts.length - 1][0] + '" cy="' + pts[pts.length - 1][1] + '" r="3" fill="' + c + '"/></svg>';
     } else spark = '<div class="spark bos">veri birikiyor<small>n=' + (k.gun_n == null ? '?' : k.gun_n) + ' gün; eğri 5 günden sonra</small></div>';
     el.innerHTML = '<div class="kasa-satir"><div><div class="kdeger">' + (k.deger_usd == null ? UNK : usd(k.deger_usd)) + '</div><div class="kalt">başlangıç ' + usd(k.baslangic_usd) + ' · <b class="' + cls(ch) + '">' + pct(ch, true, 2) + '</b></div></div>' + spark + '</div>' +
@@ -111,9 +111,11 @@
   }
   function top() {
     const ornek = String(O.data.kaynak || '').indexOf('ornek') === 0;
-    $('#ornekEtiket').hidden = !ornek; $('#ornekFlt').hidden = !ornek;
-    const c = O.data.cipler || {};
-    $('#cipGolge').textContent = c.golge || 'GÖLGE · SİM'; $('#cipTg').textContent = 'TELEGRAM · ' + (c.telegram || 'bilinmiyor');
+    $('#ornekFlt').hidden = !ornek;
+    const c = O.data.cipler || {}, low = v => String(v).toLocaleLowerCase('tr');
+    $('#kayitDeger').textContent = c.golge ? low(c.golge) : 'bilinmiyor';
+    $('#hatDeger').textContent = c.telegram ? low(c.telegram) : 'bilinmiyor';
+    $('#plHat .lamba').className = 'lamba ' + (low(c.telegram || '') === 'açık' ? 'ok' : 'wr');
   }
   function render() {
     raf = 0; st = Off.state(); if (!st) return;
@@ -131,9 +133,9 @@
     setInterval(() => {
       if (!st) return;
       const sl = Off.state(); sl.acik.forEach(x => { const c = document.querySelector('[data-sure="' + x.id + '"]'); if (c) c.textContent = dur(liveSec(x)); });
-      const sc = $('#saat'); if (sc) { const d = Off.clock(); sc.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()); }
+      const sc = $('#saat'); if (sc) { const d = Off.clock(); sc.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()); }
     }, Off.reduced ? 15000 : 1000);
     render();
-    const sc = $('#saat'); if (sc) { const d = Off.clock(); sc.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()); }
+    const sc = $('#saat'); if (sc) { const d = Off.clock(); sc.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()); }
   };
 })();

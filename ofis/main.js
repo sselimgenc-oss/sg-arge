@@ -32,10 +32,47 @@
     const day = hh >= 7.5 && hh <= 18;
     light = { bucket: bucket, h: hh, tint: tint, night: night, sky: { key: 'k' + bucket, top: sk.top, bot: sk.bot, orb: day ? '#fff2a8' : (night > 0.6 ? '#e8ecff' : '#ffd08a') } };
     W.wins.forEach(w => { w.e.s = S.windowGlass(w.side, light.sky); });
-    const aksam = hh >= 19 || hh < 7;
-    const el = $('#vardiya'); if (el) el.textContent = aksam ? 'Akşam vardiyası' : 'Gündüz vardiyası';
     return true;
   }
+
+  /* ---------- ortam ışığı ve odalara sıcak iç ışık (önceden çizilen katmanlar) ---------- */
+  const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+  let ambient = null, roomLight = null, roomLightKey = '';
+  function buildAmbient() {
+    // çarpım katmanı: ışık yönü (sol üstten) + kenarlara doğru hafif kararma
+    const c = mk(W.CW, W.CH), x = c.getContext('2d');
+    x.fillStyle = '#fff'; x.fillRect(0, 0, W.CW, W.CH);
+    x.globalCompositeOperation = 'multiply';
+    const g = x.createLinearGradient(0, 0, W.CW, W.CH); g.addColorStop(0, '#fffaf0'); g.addColorStop(0.55, '#f6f6f4'); g.addColorStop(1, '#dfe6ee');
+    x.fillStyle = g; x.fillRect(0, 0, W.CW, W.CH);
+    const b = W.roomPoly({ x: 0, y: 0, w: W.BW, h: W.BH }), mx = (b[0][0] + b[2][0]) / 2, my = (b[0][1] + b[2][1]) / 2 + 20, rad = Math.hypot(W.CW, W.CH) * 0.5;
+    const v = x.createRadialGradient(mx, my, rad * 0.32, mx, my, rad); v.addColorStop(0, '#fff'); v.addColorStop(1, '#bfc9d6');
+    x.fillStyle = v; x.fillRect(0, 0, W.CW, W.CH);
+    return c;
+  }
+  function roomPath(x, r, up) {
+    const p = W.roomPoly(r); x.beginPath(); x.moveTo(p[0][0], p[0][1] - (up || 0)); x.lineTo(p[1][0], p[1][1] - (up || 0)); x.lineTo(p[2][0], p[2][1]); x.lineTo(p[3][0], p[3][1]); x.closePath();
+  }
+  function buildRoomLight() {
+    // toplama (lighter) katmanı: her odada merkezden dışa sıcak ışık; havuzda gece su ışığı. Bayat odada ışık yok.
+    const c = mk(W.CW, W.CH), x = c.getContext('2d'), s = Off.state(), n = light.night;
+    const a = 0.13 + 0.42 * n;            // gündüz hafif, akşam/gece belirgin
+    W.ROOMS.forEach(r => {
+      if (r.out || (s && s.stale[r.id])) return;
+      const p = W.roomPoly(r), cx0 = (p[0][0] + p[2][0]) / 2, cy0 = (p[0][1] + p[2][1]) / 2, rad = Math.max(p[1][0] - p[3][0], (p[2][1] - p[0][1]) * 1.6) * 0.62;
+      const cool = r.id === 'denetim', col = cool ? '110,190,255' : r.id === 'makam' ? '255,160,90' : '255,188,118';
+      const g = x.createRadialGradient(cx0, cy0, 0, cx0, cy0, rad);
+      g.addColorStop(0, 'rgba(' + col + ',' + (a * (cool ? 0.8 : 1)).toFixed(3) + ')'); g.addColorStop(1, 'rgba(' + col + ',0)');
+      x.save(); roomPath(x, r, 30); x.clip(); x.fillStyle = g; x.fillRect(cx0 - rad, cy0 - rad, rad * 2, rad * 2); x.restore();
+    });
+    if (n > 0.05) {
+      const pl = W.poolPoly(), g = x.createRadialGradient(pl.cx, pl.cy, 0, pl.cx, pl.cy, pl.r);
+      g.addColorStop(0, 'rgba(90,220,235,' + (0.5 * n).toFixed(3) + ')'); g.addColorStop(1, 'rgba(90,220,235,0)');
+      x.save(); x.beginPath(); pl.pts.forEach((q, i) => (i ? x.lineTo(q[0], q[1]) : x.moveTo(q[0], q[1]))); x.closePath(); x.clip(); x.fillStyle = g; x.fillRect(pl.cx - pl.r, pl.cy - pl.r, pl.r * 2, pl.r * 2); x.restore();
+    }
+    return c;
+  }
+  function lightKey() { const s = Off.state(); return light.bucket + '|' + Object.keys(s.stale).filter(k => s.stale[k]).join(','); }
 
   /* ---------- tuval ve kamera ---------- */
   const cv = $('#tuval'), cx = cv.getContext('2d');
@@ -86,14 +123,11 @@
     ctx.drawImage(W.ground, 0, 0);
     const st = W.statics, dyn = Off.dyn();
     let j = 0;
-    const sway = reduced ? 0 : 1;
     for (let i = 0; i < st.length; i++) {
       const e = st[i];
       while (j < dyn.length && dyn[j].k <= e.k) { dyn[j].draw(ctx); j++; }
       if (!e.s) continue;
-      let ox = 0;
-      if (e.tree && sway) ox = Math.round(Math.sin(now / 1100 + e.sway) * 0.6);
-      ctx.drawImage(e.s.c, Math.round(e.px - e.s.ax) + ox, Math.round(e.py - e.s.ay));
+      ctx.drawImage(e.s.c, Math.round(e.px - e.s.ax), Math.round(e.py - e.s.ay));
     }
     while (j < dyn.length) { dyn[j].draw(ctx); j++; }
     // bayat odalar: renksiz
@@ -116,20 +150,25 @@
       ctx.lineWidth = 2; ctx.strokeStyle = h.sel ? 'rgba(255,255,255,0.95)' : 'rgba(255,214,90,' + (0.6 + 0.4 * h.pulse) + ')'; ctx.stroke();
       ctx.restore();
     });
-    // gün ışığı
+    // gün ışığı (çarpım) + ortam ışığı (çarpım) + odalara sıcak iç ışık (toplama)
     const t = light.tint;
     ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgb(' + t[0] + ',' + t[1] + ',' + t[2] + ')'; ctx.fillRect(0, 0, W.CW, W.CH);
-    ctx.globalCompositeOperation = 'lighter';
+    if (!ambient) ambient = buildAmbient();
+    ctx.drawImage(ambient, 0, 0);
+    const lk = lightKey(); if (!roomLight || lk !== roomLightKey) { roomLight = buildRoomLight(); roomLightKey = lk; }
+    ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 1;
+    ctx.drawImage(roomLight, 0, 0);
     if (light.night > 0.05) {
       const n = light.night;
-      ctx.globalAlpha = 0.16 * n; ctx.fillStyle = '#ffd29a';
-      const bp = [[W.BX, W.BY], [W.BX + W.BW, W.BY], [W.BX + W.BW, W.BY + W.BH], [W.BX, W.BY + W.BH]].map(q => [W.sx(q[0], q[1]), W.sy(q[0], q[1])]);
-      ctx.beginPath(); ctx.moveTo(bp[0][0], bp[0][1] - 30); ctx.lineTo(bp[1][0], bp[1][1] - 30); ctx.lineTo(bp[1][0], bp[1][1]); ctx.lineTo(bp[2][0], bp[2][1]); ctx.lineTo(bp[3][0], bp[3][1]); ctx.lineTo(bp[3][0], bp[3][1] - 30); ctx.closePath(); ctx.fill();
       ctx.globalAlpha = Math.min(1, n * 0.9);
       W.lamps.forEach(l => ctx.drawImage(Off.glow.warm, l.px - 26, l.py - 52 - 26));
       ctx.globalAlpha = Math.min(1, n * 0.5);
       W.wins.forEach(w => { const e = w.e; ctx.drawImage(Off.glow.blue, e.px - 22 + (w.side === 'L' ? 20 : -20), e.py - 22 - 20 + (w.side === 'L' ? 10 : 10)); });
     }
+    // sunucu ışıkları: denetim durumu veridir (yeşil = tamam, sarı = dikkat); gündüz de hafif görünür
+    ctx.globalAlpha = 0.35 + 0.4 * light.night;
+    const gl = s.denetim === 'tamam' ? Off.glow.green : Off.glow.amber;
+    Object.keys(W.leds).forEach(k => { const e = W.leds[k]; ctx.drawImage(gl, e.px - 18 + 6, e.py - 18 - 16); });
     if (s.alarm) {
       const k = reduced ? 1 : 0.5 + 0.5 * Math.sin(now / 180);
       ctx.globalAlpha = 0.85 * k; const b = W.beaconE; ctx.drawImage(Off.glow.red, b.px - 30, b.py - 30 - 24);
@@ -161,49 +200,50 @@
 
   /* ---------- etiketler (tuval üstünde keskin metin) ---------- */
   const FONT = '"SF Mono", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace';
-  function pill(x, y, text, bg, fg, size, pad) {
-    cx.font = '700 ' + size + 'px ' + FONT;
-    const w = cx.measureText(text).width + pad * 2, h = size + pad + 2;
-    cx.fillStyle = bg; rr(x - w / 2, y - h / 2, w, h, 3); cx.fill();
-    cx.fillStyle = fg; cx.textBaseline = 'middle'; cx.textAlign = 'center'; cx.fillText(text, x, y + 0.5);
+  const lighten = (hex, f) => { const c = O.unpack(O.mix(hex, '#ffffff', f)); return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; };
+  /* plaka: kesik köşeli koyu levha + sol şerit (oda rengi). Kendi etiket dilimiz. */
+  function plate(x, y, text, o) {
+    cx.font = '700 ' + o.size + 'px ' + FONT;
+    const tw = cx.measureText(text).width, pad = o.pad, st = o.stripe, h = o.size + pad * 2 - 1, w = tw + pad * 2 + st + 2, x0 = Math.round(x - w / 2), y0 = Math.round(y - h / 2), c = Math.max(2, Math.round(h * 0.28));
+    cx.save();
+    if (o.glow) { cx.shadowColor = o.glow; cx.shadowBlur = 9; }
+    cx.beginPath(); cx.moveTo(x0 + c, y0); cx.lineTo(x0 + w, y0); cx.lineTo(x0 + w, y0 + h - c); cx.lineTo(x0 + w - c, y0 + h); cx.lineTo(x0, y0 + h); cx.lineTo(x0, y0 + c); cx.closePath();
+    cx.fillStyle = o.bg; cx.fill(); cx.shadowBlur = 0;
+    cx.save(); cx.clip();
+    if (o.hatch) { cx.fillStyle = o.accent; cx.fillRect(x0, y0, st, h); cx.strokeStyle = 'rgba(15,26,32,.9)'; cx.lineWidth = 1.5; for (let k = -h; k < h; k += 4) { cx.beginPath(); cx.moveTo(x0 + k, y0 + h); cx.lineTo(x0 + k + h, y0); cx.stroke(); } }
+    else { cx.fillStyle = o.accent; cx.fillRect(x0, y0, st, h); }
+    cx.restore();
+    cx.lineWidth = 1; cx.strokeStyle = o.edge; cx.stroke();
+    cx.fillStyle = o.fg; cx.textBaseline = 'middle'; cx.textAlign = 'left'; cx.fillText(text, x0 + st + pad + 1, y0 + h / 2 + 0.5);
+    cx.restore();
     return w;
   }
-  function rr(x, y, w, h, r) { cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r); cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.closePath(); }
-  const KOLC = { kohort: '#f5cb5c', kontrol: '#6ea8ff', havuz: '#b8c2d4' };
+  const KOLC = { kohort: '#ffb86b', kontrol: '#7cc4ff', havuz: '#b7c4c9' };
   let hover = null, pinned = null, hoverRoom = null;
   function drawLabels() {
-    const s = Off.state(), z = cam.z, showSigns = z >= 0.42;
-    const fs = Math.max(6.5, Math.min(13, 5.8 + z * 3.4));
+    const s = Off.state(), z = cam.z, showSigns = z >= 0.3;
+    const fs = Math.max(6.5, Math.min(12.5, 5.6 + z * 3.2));
     drawTraderLabels();
     if (showSigns) {
       W.ROOMS.forEach(r => {
-        if (r.id === 'hol') return;
         const p = W.sign(r), v = toView(p.x, p.y);
-        if (v.x < -80 || v.y < -40 || v.x > view.w + 80 || v.y > view.h + 40) return;
-        const stale = s.stale[r.id], sel = s.sel === r.id || hoverRoom === r.id;
-        const txt = r.ad + (stale ? ' · BAYAT' : '');
-        const bg = stale ? '#7a5a00' : '#fdf6e3', fg = stale ? '#fff4c8' : '#1b2236';
-        cx.save(); if (sel) { cx.shadowColor = '#f5cb5c'; cx.shadowBlur = 8; }
-        pill(v.x, v.y, txt, bg, fg, fs, fs < 9 ? 3 : 5);
-        cx.restore();
-        cx.strokeStyle = 'rgba(27,34,54,0.9)'; cx.lineWidth = 1; cx.beginPath(); cx.moveTo(v.x - 0.5, v.y + fs / 2 + 4); cx.lineTo(v.x - 0.5, v.y + fs / 2 + 8); cx.stroke();
+        if (v.x < -90 || v.y < -40 || v.x > view.w + 90 || v.y > view.h + 40) return;
+        const stale = s.stale[r.id], sel = s.sel === r.id || hoverRoom === r.id, acc = lighten(r.ac, 0.32);
+        plate(v.x, v.y, r.ad + (stale ? ' · veri eski' : ''), { size: fs, pad: fs < 9 ? 3 : 4, stripe: fs < 9 ? 3 : 4, bg: 'rgba(12,22,28,' + (sel ? '0.97' : '0.88') + ')', fg: stale ? '#ffd98a' : '#eaf4f5', accent: stale ? '#f2b035' : acc, edge: sel ? 'rgba(255,255,255,.9)' : 'rgba(210,235,238,.28)', glow: sel ? acc : null, hatch: !!stale });
       });
     }
   }
   function drawTraderLabels() {
     const z = cam.z;
-    // trader etiketleri
     if (qs.get('etiket') === '0') return;
-    const labs = Off.labels(), showAll = z >= 0.9, fs2 = Math.max(7, Math.min(11, 5.6 + z * 2.2));
+    const labs = Off.labels(), showAll = z >= 0.9, fs2 = Math.max(7, Math.min(10.5, 5.5 + z * 2.1));
     labs.forEach(l => {
       const hov = hover === l.a || pinned === l.a;
       if (!showAll && !hov) return;
       const v = toView(l.x, l.y);
       if (v.x < -40 || v.y < -20 || v.x > view.w + 40 || v.y > view.h + 20) return;
       const t = l.t || {}, short = hov || z >= 2.0 ? (t.adres || l.a.id) : '…' + String(t.adres || l.a.id).slice(-4);
-      const w = pill(v.x + 4, v.y, short, 'rgba(14,20,38,' + (hov ? '0.95' : '0.7') + ')', hov ? '#ffe28a' : '#f1f5f9', fs2, 2);
-      cx.fillStyle = KOLC[t.kol] || '#b8c2d4'; cx.fillRect(v.x + 4 - w / 2 - 3, v.y - 3, 3, 6);
-      if (t.ornek) { /* "örnek" bilgisi ipucunda ve üst etiket çipinde */ }
+      plate(v.x + 4, v.y, short, { size: fs2, pad: 2, stripe: 2, bg: 'rgba(12,22,28,' + (hov ? '0.96' : '0.72') + ')', fg: hov ? '#ffd9a3' : '#eaf4f5', accent: KOLC[t.kol] || '#b7c4c9', edge: hov ? 'rgba(255,217,163,.8)' : 'rgba(0,0,0,0)' });
     });
   }
 
@@ -224,7 +264,7 @@
     let h = '<b>' + esc(t.adres || a.id) + '</b> <span class="ornek">örnek</span><div class="m">' + esc(KATAD[a.kat] || '—') + ' · kol: ' + esc(t.kol || 'bilinmiyor') + ' · tarz: ' + esc(t.tarz || 'bilinmiyor') + '</div>';
     h += '<div class="m">Etiket: ' + esc(t.etiket || 'bilinmiyor') + ' · gün n=' + (t.gun != null ? t.gun : 'bilinmiyor') + ' · işlem n=' + (t.islem_n != null ? t.islem_n : 'bilinmiyor') + '</div>';
     h += '<div class="m">Gölge puanı (bilgi): ' + (t.puan != null ? String(t.puan).replace('.', ',') : 'bilinmiyor') + '</div>';
-    if (tr.length) tr.forEach(x => { h += '<div class="t ' + (x.kz_usd >= 0 ? 'up' : 'dn') + '">' + esc(x.coin) + ' ' + (x.yon === 'long' ? 'LONG' : 'SHORT') + ' ' + x.kaldirac + 'x · ' + fmtUsd(x.kz_usd) + ' (' + fmtPct(x.kz_yuzde) + ') · lik. %' + String(x.lik_uzaklik).replace('.', ',') + '</div>'; });
+    if (tr.length) tr.forEach(x => { h += '<div class="t">' + esc(x.coin) + ' ' + (x.yon === 'long' ? 'LONG' : 'SHORT') + ' ' + x.kaldirac + 'x · ' + fmtUsd(x.kz_usd) + ' (' + fmtPct(x.kz_yuzde) + ') · lik. %' + String(x.lik_uzaklik).replace('.', ',') + '</div>'; });
     else h += '<div class="m">Açık gölge işlemi yok.</div>';
     return h;
   }
@@ -245,11 +285,11 @@
   function roomAtWorld(wx, wy) {
     // önce zemin (tam isabet); yoksa tavana kadar uzanan silüet (duvar bölgesi)
     let hit = null;
-    W.ROOMS.forEach(r => { if (r.id !== 'hol' && inPoly(W.roomPoly(r), wx, wy)) hit = r; });
+    W.ROOMS.forEach(r => { if (!r.out && inPoly(W.roomPoly(r), wx, wy)) hit = r; });
     if (hit) return hit;
     W.ROOMS.forEach(r => {
-      if (r.id === 'hol') return;
-      const p = W.roomPoly(r), up = 40;
+      if (r.out) return;
+      const p = W.roomPoly(r), up = r.wall || 40;
       if (inPoly([[p[0][0], p[0][1] - up], [p[1][0], p[1][1] - up], [p[1][0], p[1][1]], [p[2][0], p[2][1]], [p[3][0], p[3][1]], [p[3][0], p[3][1] - up]], wx, wy)) hit = r;
     });
     return hit;
@@ -302,7 +342,7 @@
   function zoomBy(f) { setCam({ cx: cam.cx, cy: cam.cy, z: Math.max(fitZ * 0.7, Math.min(4.2, cam.z * f)) }, true); }
   $('#zIn').addEventListener('click', () => zoomBy(1.35));
   $('#zOut').addEventListener('click', () => zoomBy(1 / 1.35));
-  $('#zFit').addEventListener('click', () => { selectRoom(null); setCam(fit(), true); setTab('genel', true); });
+  $('#zFit').addEventListener('click', () => setTab('genel'));
 
   function roomCenter(r) {
     const p = W.roomPoly(r), cxp = (p[0][0] + p[2][0]) / 2, cyp = (p[0][1] + p[2][1]) / 2;
@@ -314,30 +354,37 @@
     const c = roomCenter(r), z = Math.max(fitZ * 1.1, Math.min(3.4, Math.min(view.w / (c.w + 140), view.h / (c.h + 110))));
     setCam({ cx: c.cx, cy: c.cy, z: z }, true);
   }
-  function selectRoom(id, focus) { Off.select(id); if (id && focus) focusRoom(id); dirty = true; }
+  function selectRoom(id, focus) { Off.select(id); markRay(id); if (id && focus) focusRoom(id); dirty = true; }
   window.OFIS.focusRoom = id => selectRoom(id, true);
 
-  /* ---------- sekmeler ---------- */
-  const TABS = { genel: null, havuz: ['lab', '#cHuni'], aday: ['aday', '#cHuni'], oda: ['oda', '#cAcik'], kohort: ['kontrol', '#cKohort'], risk: ['risk', '#cRisk'], arsiv: ['arsiv', '#cVeri'], telegram: ['haberlesme', '#cTelegram'] };
-  function setTab(name, silent) {
-    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === name ? 'true' : 'false'));
-    if (silent) return;
-    const t = TABS[name];
-    if (!t) { selectRoom(null); setCam(fit(), true); const sol = $('#sol'); if (sol) sol.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); return; }
-    selectRoom(t[0], true);
-    const el = $(t[1]); if (el) { const sol = $('#sol'); if (window.matchMedia('(min-width: 900px)').matches && sol) sol.scrollTo({ top: el.offsetTop - 8, behavior: reduced ? 'auto' : 'smooth' }); else el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' }); el.classList.add('vurgu'); setTimeout(() => el.classList.remove('vurgu'), 1800); }
+  /* ---------- sol dikey menü ---------- */
+  const ODA_KART = { tarama: '#cHuni', kapi: '#cHuni', lab: '#cHuni', aday: '#cHuni', oda: '#cAcik', kontrol: '#cKohort', finans: '#cKasa', risk: '#cRisk', denetim: '#cVeri', arsiv: '#cVeri', haberlesme: '#cTelegram', sekreterlik: '#cOzet' };
+  function markRay(id) {
+    document.querySelectorAll('.ray [data-tab], .ray [data-oda]').forEach(b => b.setAttribute('aria-pressed', (id ? b.dataset.oda === id : b.dataset.tab === 'genel') ? 'true' : 'false'));
   }
-  document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => { const n = b.dataset.tab; if (n === 'tamekran') toggleFull(); else setTab(n); }));
-  function toggleFull() {
+  function goCard(sel) {
+    const el = sel && $(sel); if (!el) return;
+    const sol = $('#sol');
+    if (window.matchMedia('(min-width: 900px)').matches && sol) sol.scrollTo({ top: el.offsetTop - 8, behavior: reduced ? 'auto' : 'smooth' });
+    else el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+    el.classList.add('vurgu'); setTimeout(() => el.classList.remove('vurgu'), 1800);
+  }
+  function setTab(name) { // 'genel' = tüm ofis
+    if (name === 'genel') { selectRoom(null); setCam(fit(), true); const sol = $('#sol'); if (sol) sol.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); }
+  }
+  document.querySelectorAll('.ray [data-tab]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+  document.querySelectorAll('.ray [data-oda]').forEach(b => {
+    const r = W.roomById[b.dataset.oda]; if (r) b.style.setProperty('--c', lighten(r.ac, 0.28));
+    b.addEventListener('click', () => { selectRoom(b.dataset.oda, true); goCard(ODA_KART[b.dataset.oda]); });
+  });
+  function togglePanel() {
     const on = !document.body.classList.contains('tam');
     document.body.classList.toggle('tam', on);
-    const b = document.querySelector('[data-tab="tamekran"]'); if (b) b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    try { if (on && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); else if (!on && document.fullscreenElement) document.exitFullscreen(); } catch (e) { /* tam ekran izni yok: CSS düzeni yeterli */ }
-    setTimeout(() => { resize(); const c = fit(); setCam(c, false); }, 60);
+    const b = $('#zPanel'); if (b) b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    setTimeout(() => { resize(); setCam(fit(), false); }, 60);
   }
-  document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && document.body.classList.contains('tam')) toggleFull(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('tam')) toggleFull(); });
-  document.querySelectorAll('[data-oda]').forEach(b => b.addEventListener('click', () => { selectRoom(b.dataset.oda, true); setTab('genel', true); const i = Off.roomInfo(b.dataset.oda); }));
+  $('#zPanel').addEventListener('click', togglePanel);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('tam')) togglePanel(); });
   window.OFIS.setTab = setTab;
 
   /* ---------- ana döngü ---------- */

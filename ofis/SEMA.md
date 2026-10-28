@@ -8,7 +8,7 @@ Sayfa `surum` ≠ 1 ise veriyi reddeder ve "Sahte veri gösterilmiyor" der (sess
 - **Her sayının yanında zaman damgası ya da n vardır** (`zaman`, `gun_n`, `n`). Ekranda hep birlikte gösterilir.
 - **Veri yoksa "bilinmiyor"** yazılır, sıfır değil: alan `null` ya da hiç yok → panel "bilinmiyor" der. Örnekte
   `veri_kalitesi[gecikme].deger = null` bunu gösterir.
-- **Örnek veri işareti:** `kaynak` değeri `ornek` ile başlıyorsa üstte `ÖRNEK VERİ` etiketi, ofiste "adresler uydurma" çipi, her kartta `örnek`
+- **Örnek veri işareti:** `kaynak` değeri `ornek` ile başlıyorsa ofiste köşede "örnek veri · adresler uydurma" şeridi, her kartta `örnek`
   rozeti ve trader ipuçlarında `örnek` görünür. Gerçek veride `kaynak` `hyperliquid` vb. olur ve etiketler kalkar.
 - Örnekteki adresler uydurmadır (`0xAAAA…0031` biçimi); gerçek adres yoktur.
 - Para birimi USD; oranlar yüzde olarak (`kz_yuzde: 2.1` = %2,1), kasa payları 0–1 arası.
@@ -28,7 +28,8 @@ Sayfa `surum` ≠ 1 ise veriyi reddeder ve "Sahte veri gösterilmiyor" der (sess
   "olaylar": [...], "akis_suresi_sn": 156
 }
 ```
-Vardiya adı ve gün ışığı **gerçek saate** göre sayfada hesaplanır (`vardiya` yalnız sınırları verir); `?saat=SS:DD` ile denenebilir.
+Gün ışığı **gerçek saate** göre sayfada hesaplanır (arayüzde yalnız "ışık saati" görünür; `vardiya` alanı artık gösterilmez, şemada geriye dönük uyum için durur); `?saat=SS:DD` ile denenebilir.
+`cipler.golge` ve `cipler.telegram` değerleri sol menü altındaki durum plakalarında ("kayıt kipi", "haber hattı") küçük harfle gösterilir; yoksa "bilinmiyor".
 
 ## 3. Alanlar
 **`kasa`** (gölge kasası, sanal): `deger_usd`, `baslangic_usd`, `zaman`, `gun_n` (kaç günlük veri), `egri: [["2026-10-20", 1000.0], …]` günlük değer.
