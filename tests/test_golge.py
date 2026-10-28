@@ -3,7 +3,7 @@ from copytrade.golge import Gecikme, calistir, kirp_pozisyon, saglama, v2_sinir
 from copytrade.kurallar import load_rules
 import pytest
 import pandas as pd
-from copytrade.kollar import cikis, olay_yaz, sec, terfi
+from copytrade.kollar import adaylar, cikis, olay_yaz, sec, sentetik_gecer, terfi
 from copytrade.tarama import PublicClient
 
 T0 = 20_833 * DAY
@@ -154,12 +154,19 @@ def test_altin_kontrol_tohumu_ve_olay_arsivi_tekrarlanabilir(tmp_path):
     assert path.read_text().count("giris") == 1
 
 
-def test_altin_kol_terfi_ve_cikis_histerezisi():
-    sirali = ["a", "b", "c", "d", "e"]
-    assert terfi("b", sirali, 2)
-    assert not terfi("c", sirali, 2)
-    assert not cikis("d", sirali, 2)
-    assert cikis("e", sirali, 2)
+def test_altin_kol_terfi_ve_cikis_onkayittaki_kat_kuralidir():
+    havuz = [f"a{i}" for i in range(100)]
+    assert len(adaylar(havuz)) == 15
+    assert not terfi("a0", havuz, 20, 10) and not terfi("a0", havuz, 21, 9)
+    assert terfi("a9", havuz, 21, 10)
+    aday = [f"a{i}" for i in range(20)]
+    assert not cikis("a9", aday) and cikis("a10", aday)
+
+
+def test_sentetik_trader_enjekte_etkiyi_yakalar_sifir_etki_200_tohumda_yuzde_bes_gecer():
+    assert sentetik_gecer(0.01)  # enjekte edilmiş etki
+    null_p = [(seed + 0.5) / 200 for seed in range(200)]
+    assert sum(sentetik_gecer(value) for value in null_p) / len(null_p) == pytest.approx(0.05)
 
 
 def test_altin_10000_ustu_dolum_zaman_penceresiyle_sayfalanir():

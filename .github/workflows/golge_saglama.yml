@@ -7,6 +7,11 @@ on:
         description: "Virgülle ayrılmış en az üç Hyperliquid public adresi"
         required: true
         default: "0x8bae3527e5a33fa0cf184f37bc112d071463ab6d,0x3f96c4df1e76902985d3dbd979af54b487f29671,0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9"
+  push:
+    branches: [codex/golge]
+    paths:
+      - "copytrade/golge*.py"
+      - ".github/workflows/golge_saglama.yml"
 
 permissions:
   contents: read

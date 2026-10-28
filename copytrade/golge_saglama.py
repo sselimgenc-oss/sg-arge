@@ -7,6 +7,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from copytrade.golge import saglama
+from copytrade.defter import capital_scale
 from copytrade.kapi import CandleCache, account_history
 from copytrade.olcut import perp_fills
 from copytrade.tarama import PublicClient
@@ -26,8 +27,14 @@ def run(addresses: list[str], days: int = 30) -> list[dict]:
             report.append({"adres": address, "durum": "hesap_gecmisi_yok"})
             continue
         out = saglama(fills, cache.for_fills(fills), account, start, end)
+        scale = capital_scale(account)
+        trader_realized = sum(float(row.get("closedPnl", 0)) * scale(int(row["time"])) for row in fills)
+        shadow_realized = float(out["realized"])
+        fark = shadow_realized - trader_realized
         report.append({"adres": address, "durum": "tamam", "dolum": len(fills), "net": out["net"],
-                       "eksik": out["missing"]})
+                       "eksik": out["missing"], "trader_gerceklesen": trader_realized,
+                       "golge_gerceklesen": shadow_realized, "fark": fark,
+                       "goreli_hata": abs(fark) / abs(trader_realized) if trader_realized else None})
     return report
 
 

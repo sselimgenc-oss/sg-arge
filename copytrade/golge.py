@@ -80,7 +80,11 @@ def kirp_pozisyon(fill: dict, shadow_before: float, account: float, rules: dict 
 
 def _v2_esik_kontrolu(coin: str, state: tuple[float, float, int, int], until: int,
                       market: Market, style: str, rules: dict, v2: bool = True) -> tuple[int, float, str] | None:
-    """Son denetlenen mumdan ileri doğru ilk V2 eşiğini bulur."""
+    """Son denetlenen mumdan ileri doğru ilk V2/risk eşiğini bulur.
+
+    Likidasyon, gölgenin 1 birim ayrılmış sermayesi bittiğinde mum markında
+    tetiklenir. Gerçek bakım teminatından önce olmadığı için iyimser sınırdır.
+    """
     size, entry, opened, last_checked = state
     first = max((opened // HOUR + 1) * HOUR, ((last_checked // HOUR) + 1) * HOUR)
     for hour in range(first, until + 1, HOUR):
