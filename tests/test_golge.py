@@ -5,6 +5,7 @@ import pytest
 import pandas as pd
 from copytrade.kollar import adaylar, cikis, olay_yaz, sec, terfi
 from copytrade.tarama import PublicClient
+from copytrade.golge_saglama import pencere_ici_dolumlar
 
 T0 = 20_833 * DAY
 RULES = load_rules()
@@ -178,3 +179,11 @@ def test_altin_10000_ustu_dolum_zaman_penceresiyle_sayfalanir():
 
     rows = Client().fills("0xabc", T0)
     assert len(rows) == 10_001 and rows[-1]["tid"] == 10_000
+
+
+def test_altin_pencere_oncesi_acik_pozisyon_kapanisi_saglama_kiyasindan_cikar():
+    old_close = fill(0, "A", 10, 10, 90, 1) | {"closedPnl": "-100"}
+    opening = fill(10, "B", 10, 0, 100, 2) | {"closedPnl": "0"}
+    closing = fill(20, "A", 10, 10, 110, 3) | {"closedPnl": "100"}
+    assert pencere_ici_dolumlar([old_close, opening, closing]) == [opening, closing]
+    assert pencere_ici_dolumlar([opening]) == []  # pencere sonunda hâlâ açık: ikinci kıyasa girmez

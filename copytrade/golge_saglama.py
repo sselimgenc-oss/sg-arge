@@ -13,6 +13,43 @@ from copytrade.olcut import perp_fills
 from copytrade.tarama import PublicClient
 
 
+def pencere_ici_dolumlar(fills: list[dict]) -> list[dict]:
+    """Pencere öncesinden taşınan pozisyonun kapanışını sağlama kıyasından çıkarır.
+
+    Defter, bu pozisyonu bilinçli olarak sıfırdan başlatır; trader'ın eski
+    girişe ait ``closedPnl``'ini onunla karşılaştırmak geçerli bir sağlama değildir.
+    """
+    blocked: set[str] = set()
+    seen: set[str] = set()
+    buffers: dict[str, list[dict]] = {}
+    out: list[dict] = []
+    for row in sorted(fills, key=lambda item: int(item["time"])):
+        coin = str(row["coin"])
+        before = float(row.get("startPosition", 0))
+        signed = (-1 if row["side"] in {"A", "Sell", "sell"} else 1) * float(row["sz"])
+        if coin in blocked or (coin not in seen and before != 0):
+            blocked.add(coin)
+            if abs(before + signed) < 1e-12:
+                blocked.discard(coin)
+                seen.add(coin)
+            continue
+        seen.add(coin)
+        buffers.setdefault(coin, []).append(row)
+        if abs(before + signed) < 1e-12:
+            out.extend(buffers.pop(coin))
+    return out
+
+
+def _summary(fills: list[dict], candles: dict[str, list[dict]], account, start: int, end: int) -> dict:
+    out = saglama(fills, candles, account, start, end)
+    scale = capital_scale(account)
+    trader = sum(float(row.get("closedPnl", 0)) * scale(int(row["time"])) for row in fills)
+    shadow = float(out["realized"])
+    diff = shadow - trader
+    return {"dolum": len(fills), "trader_gerceklesen": trader, "golge_gerceklesen": shadow,
+            "fark": diff, "goreli_hata": abs(diff) / abs(trader) if trader else None, "eksik": out["missing"]}
+
+
 def run(addresses: list[str], days: int = 30) -> list[dict]:
     client, now = PublicClient(), datetime.now(UTC)
     start = int((now - timedelta(days=days)).timestamp() * 1000)
@@ -26,15 +63,18 @@ def run(addresses: list[str], days: int = 30) -> list[dict]:
         if account is None or account.empty:
             report.append({"adres": address, "durum": "hesap_gecmisi_yok"})
             continue
-        out = saglama(fills, cache.for_fills(fills), account, start, end)
-        scale = capital_scale(account)
-        trader_realized = sum(float(row.get("closedPnl", 0)) * scale(int(row["time"])) for row in fills)
-        shadow_realized = float(out["realized"])
-        fark = shadow_realized - trader_realized
-        report.append({"adres": address, "durum": "tamam", "dolum": len(fills), "net": out["net"],
-                       "eksik": out["missing"], "trader_gerceklesen": trader_realized,
-                       "golge_gerceklesen": shadow_realized, "fark": fark,
-                       "goreli_hata": abs(fark) / abs(trader_realized) if trader_realized else None})
+        all_candles = cache.for_fills(fills)
+        full = _summary(fills, all_candles, account, start, end)
+        inside = pencere_ici_dolumlar(fills)
+        closed_inside = _summary(inside, {coin: all_candles[coin] for coin in {x["coin"] for x in inside}}, account, start, end)
+        coins = {}
+        for coin in sorted({str(row["coin"]) for row in fills}):
+            rows = [row for row in fills if str(row["coin"]) == coin]
+            coins[coin] = {**_summary(rows, {coin: all_candles[coin]}, account, start, end),
+                           "ilk_start_position": float(rows[0].get("startPosition", 0)),
+                           "pencere_oncesi_acik": float(rows[0].get("startPosition", 0)) != 0}
+        report.append({"adres": address, "durum": "tamam", "tum_dolumlar": full,
+                       "pencerede_acilip_kapanan": closed_inside, "coinler": coins})
     return report
 
 
@@ -48,7 +88,7 @@ def main() -> None:
         raise SystemExit("en az üç adres gerekli")
     report = run(addresses)
     Path(args.output).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    if any(item["durum"] != "tamam" or item["eksik"] for item in report):
+    if any(item["durum"] != "tamam" or item["tum_dolumlar"]["eksik"] for item in report):
         raise SystemExit("gölge sağlama tamamlanmadı")
 
 
