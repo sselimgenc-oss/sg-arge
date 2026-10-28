@@ -10,7 +10,7 @@ Görev: `docs/GOREV_D_YOLU.md`. Aşağıdaki "Trader seçimi" adımı bu belgeyl
 
 **Sıradaki iş: Faz 0** — `claude/kapi-v1-1` dalını (`defter.py`, altın örnekler, akıl sağlığı kapısı) gözden geçirip `main`'e
 almak. Açık PR yok; hesap sürümü d ile final hızlı koşu veri dalında yok (son: c).
-Kullanıcı kararı bekleyenler: durdurma kriterleri, canlı gölge süresi, tarama altyapısı (Worker planı).
+Kullanıcı kararı bekleyenler (K1–K11): `docs/KARARLAR_D.md`.
 
 ## Geçmiş (2026-10-27)
 **Kullanıcı kararı 2026-10-27: proje copy trade'e geçti.** Strateji araştırması kapandı ve silindi: strateji kodları,
