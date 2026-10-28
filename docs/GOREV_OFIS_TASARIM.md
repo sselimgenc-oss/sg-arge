@@ -113,3 +113,44 @@ işi bitmeden buna geçmez. Sürüm 1'in bütün kuralları (açık lisans, kopy
 - Ad değiştirme: sayfa yenilenince korunur; dışa/içe aktarma çalışır.
 - Masaüstü + telefon ekran görüntüleri, 30 sn ekran kaydı (bina → oda → kişiye tıklama → iletişim işareti).
 - `LISANSLAR.md` ticari kullanım sütunuyla.
+
+## Sürüm 2 — araştırma sentezi (2026-10-28, lider; kaynak `arastirma/ofis/`)
+Üç bağımsız emsal raporu (AI Town, Generative Agents, Pixel Agents, Agent Pixel Office, Kairosoft, Two Point Hospital vb.).
+
+**Teknik karar:** seçilen taslağın mevcut teknolojisinde kalınır (yeniden yazma yok). PixiJS'e geçiş ancak gerçek cihazda
+ölçülmüş 60 fps sorunu varsa. Panel, bilgi kutusu, tooltip HTML/CSS katmanında (erişilebilirlik).
+
+**Varlık:** varsayılan kendi çizimimiz. Dış varlık yalnız lisansı kaynak sayfasından doğrulanıp `LISANSLAR.md`'ye ticari kullanım
+sütunuyla yazılırsa. Sanatı ticari olmayan paketler (ör. Star Office UI sanatı) ve LimeZu gibi lisansı belirsizler kullanılmaz.
+
+**Alınanlar (sürüm 2 kabulüne eklenir):**
+- Odaya giriş aynı tuvalde kamera yakınlaşmasıyla; diğer odalar soluklaşır, seçili odanın duvar/çatısı kalkar. Adres `#oda/<ad>`.
+- Telefonda iki seviye (bina / oda), bilgi alttan çekmece, dokunma hedefi ≥ 44 px, hover'a bağlı işlev yok.
+- Ortak bilgi kutusu üç bölüm: **Kimlik** · **Gerçek veri** (zaman, n, geçerlilik) · **Replik** (ayrı görünüm, "ofis esprisi" etiketi).
+- **"Neden burada?"**: her figür/ekran için o durumu doğuran olay, kural ve tarih; olay işaretine tıklayınca `olay_id` ve zaman.
+- Olay çekmecesi: oda/trader/olay türü filtresi; olaya tıklayınca kamera o odaya gider.
+- Olay kuyruğu: olaylar hızlı gelirse animasyon hızlanır ya da figür doğrudan yeni yerine geçer; pano hiçbir zaman eski bir
+  animasyon yüzünden yanlış durum göstermez.
+- Bayatlık: her ekran köşesinde "X dk önce"; veri bayatsa oda sislenir + açık `VERİ ESKİ` etiketi.
+- Ad değiştirme yalnız etiketi değiştirir; bilgi kutusunda trader'ın gerçek adresi (kısaltılmış) ve kaşif bağlantısı sabit kalır.
+- Süs repliklerinde rakam, adres, oran yasak — bunu denetleyen otomatik test.
+- Olay yokken çizim döngüsü durur (pil ve sahte hareket).
+- Sekreterlikte **ön kayıt kasası** (sürüm, commit, dondurma tarihi); her odada "bu birim ne yapar / ne yapmaz" kartı.
+- Günlük özet yalnız olay günlüğünden ("dün: 3 terfi, 1 çıkış, 2 bildirim"; boş günde "değişiklik yok").
+- Ses varsayılan kapalı, yalnız olay başına bir ton.
+
+**Alınmayanlar (gerekçe):**
+- Kâr/zarara göre renk değiştiren zemin, kâr rozetleri, "en çok kazandıran" manşeti, düşüşte "patron teftişi", seri (streak):
+  performansı oyunlaştırır ve ön kayıttaki **performans körlüğünü** bozar.
+- Trader pozisyonlarını espriye çeviren "dedikodu tahtası": veri ile süsü karıştırır.
+- Ofis içine canlı fiyat grafiği: kapsam dışı.
+
+**Performans körlüğü (ön kayıt "Ölçüm"):** canlı gölge süresince kohort ↔ kontrol karşılaştırması ve kol toplam getirileri
+ofiste **kilitli** (yalnız "hafta x/12"). Tek tek işlem K/Z'si Telegram'daki kadar görünür; toplanmış kol performansı gösterilmez.
+Ofisten hiçbir seçim/oda kararı verilmez.
+
+**Ürünleşme:** veri bağdaştırıcısı + sürümlü şema (`surum`), salt-okunur paylaşım (`?durum=URL`), tema/düzen dışa-içe aktarma.
+Her ekranda "araştırma/sanal, yatırım tavsiyesi değil" ibaresi; gerçek parayla kopyalamaya yönlendiren düğme yok.
+
+**İlk 5 iş (sıralı):** 1) Lab odasında oda içi görünüm prototipi; 2) ortak bilgi kutusu (masaüstü panel / telefon çekmece);
+3) `replikler.json` + süs repliği rakam testi; 4) `OLAYLAR.md`'ye zarf/not/ok eşlemesi; 5) ad değiştirme ayarları + dışa/içe aktarma.
