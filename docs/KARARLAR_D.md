@@ -1,6 +1,8 @@
 # D yolu — kullanıcı kararı bekleyen konular (2026-10-28, lider)
 
-Her madde: ne, neden önemli, seçenekler, lider önerisi, karar verilmezse ne olur. Karar verildikçe tarih ve seçim buraya yazılır.
+**Karar (kullanıcı, 2026-10-28): K1–K11'de lider önerilerinin hepsi onaylandı.** Sayısal değerler `docs/ONKAYIT_D.md`'de dondurulur.
+
+Her madde: ne, neden önemli, seçenekler, lider önerisi.
 Görev: `docs/GOREV_D_YOLU.md`.
 
 ## Hemen gerekenler (iş bunlarsız başlamaz)

@@ -10,7 +10,18 @@ Görev: `docs/GOREV_D_YOLU.md`. Aşağıdaki "Trader seçimi" adımı bu belgeyl
 
 **Sıradaki iş: Faz 0** — `claude/kapi-v1-1` dalını (`defter.py`, altın örnekler, akıl sağlığı kapısı) gözden geçirip `main`'e
 almak. Açık PR yok; hesap sürümü d ile final hızlı koşu veri dalında yok (son: c).
-Kullanıcı kararı bekleyenler (K1–K11): `docs/KARARLAR_D.md`.
+Kararlar K1–K11: lider önerileri onaylandı (`docs/KARARLAR_D.md`, ön kayıt `docs/ONKAYIT_D.md`).
+
+**Ekip (kullanıcı kararı 2026-10-28):** Claude = lider, denetçi, kalite; yalnız yönetir, kod yazmaz, haftalık kullanım sınırını
+gözetir. İşçiler: **Sonnet** (ayrı Claude Pro hesabı), **Codex**, **Argon** (Gemini; GitHub'a bağlanamaz — görevi kullanıcı elle
+verir, çıktıyı elle getirir; lider `arastirma/`'ya koyar).
+
+| Faz | Kim | Görev | Durum |
+|---|---|---|---|
+| 0 kapı v1.1 → main + tam koşu | lider | denetim, birleştirme | sürüyor |
+| A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | R2 kurulumunu bekliyor (kullanıcı) |
+| altyapı sınırları araştırması | Argon | `docs/GOREV_ARGON_ALTYAPI.md` | verilecek (kullanıcı elle) |
+| 2–3 gölge motoru + geçmiş prova | Sonnet | `docs/GOREV_GOLGE.md` | Faz 0 bitince |
 
 ## Geçmiş (2026-10-27)
 **Kullanıcı kararı 2026-10-27: proje copy trade'e geçti.** Strateji araştırması kapandı ve silindi: strateji kodları,
