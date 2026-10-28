@@ -35,8 +35,10 @@ function kollu() {                                   // kol alanı olan varyant
 
   /* ---- 1) sekmeler ve yasal ibare ---- */
   let { ctx, pg } = await ac();
-  const sek = await pg.$$eval('.nav-btn', (l) => l.map((x) => x.textContent.trim()));
+  const sek = await pg.$$eval('button.nav-btn', (l) => l.map((x) => x.textContent.trim()));
   ok('4 sekme, bu sırayla: Özet · Trader\'lar · Huni · Ayarlar', JSON.stringify(sek) === JSON.stringify(['Özet', "Trader'lar", 'Huni', 'Ayarlar']), JSON.stringify(sek));
+  const ol = await pg.$eval('#ofisLink', (e) => ({ href: e.getAttribute('href'), txt: e.textContent.trim(), cls: e.className, h: e.getBoundingClientRect().height }));
+  ok('üst menüde "Ofis" bağlantısı: göreli yol ofis/, sekmelerle aynı stil', ol.href === 'ofis/' && ol.txt === 'Ofis' && /nav-btn/.test(ol.cls) && ol.h >= 44, JSON.stringify(ol));
   ok('açılışta Özet sekmesi aktif', await pg.$eval('.nav-btn.active', (e) => e.dataset.nav) === 'ozet');
   for (const t of ['ozet', 'traderlar', 'huni', 'ayarlar']) {
     await pg.click(`[data-nav=${t}]`); await sleep(300);
@@ -174,6 +176,8 @@ function kollu() {                                   // kol alanı olan varyant
 
   /* ---- 12) telefon ---- */
   ({ ctx, pg } = await ac({ durum: kollu(), dokunmatik: true }, { width: 390, height: 844 }));
+  const ofisGor = await pg.evaluate(() => { const r = document.getElementById('ofisLink').getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= innerWidth && r.height >= 44; });
+  ok('telefon: "Ofis" bağlantısı ekranda, tam görünür, ≥ 44 px', ofisGor);
   for (const h of ['ozet', 'traderlar', 'huni', 'ayarlar']) {
     await pg.click(`[data-nav=${h}]`); await sleep(250);
     const g = await pg.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: innerWidth }));
