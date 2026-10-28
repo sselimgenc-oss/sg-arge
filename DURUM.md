@@ -23,6 +23,7 @@ verir, çıktıyı elle getirir; lider `arastirma/`'ya koyar).
 | A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | R2 kurulumunu bekliyor (kullanıcı) |
 | altyapı sınırları araştırması | Argon | `docs/GOREV_ARGON_ALTYAPI.md` | verilecek (kullanıcı elle) |
 | 2–3 gölge motoru + geçmiş prova | Sonnet | `docs/GOREV_GOLGE.md` | 0b ve tam koşu bitince |
+| ofis görünümü (sg-pano, örnek veri) | atanacak | `docs/GOREV_OFIS_TASARIM.md` | verilecek (kullanıcı) |
 
 ## Geçmiş (2026-10-27)
 **Kullanıcı kararı 2026-10-27: proje copy trade'e geçti.** Strateji araştırması kapandı ve silindi: strateji kodları,
