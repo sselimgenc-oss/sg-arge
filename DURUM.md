@@ -1,8 +1,29 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-27 akşam, lider.
+Son güncelleme: 2026-10-28, lider (Claude).
 
 ## Şu an
+**Kullanıcı kararı 2026-10-28: proje yeniden açıldı (sg-arge + sg-pano), lider Claude. Yeni yol: D** —
+geçmiş kapı ön eleme olur, trader'ı ileriye dönük gölge ölçümü seçer (kohort ↔ rastgele kontrol, sürekli keşif).
+Görev: `docs/GOREV_D_YOLU.md`. Aşağıdaki "Trader seçimi" adımı bu belgeyle değişti; 9 adreslik ön izleme listesi
+"elle liste" kolu olarak kalır.
+
+**Sıradaki iş: Faz 0** — `claude/kapi-v1-1` dalını (`defter.py`, altın örnekler, akıl sağlığı kapısı) gözden geçirip `main`'e
+almak. Açık PR yok; hesap sürümü d ile final hızlı koşu veri dalında yok (son: c).
+Kararlar K1–K11: lider önerileri onaylandı (`docs/KARARLAR_D.md`, ön kayıt `docs/ONKAYIT_D.md`).
+
+**Ekip (kullanıcı kararı 2026-10-28):** Claude = lider, denetçi, kalite; yalnız yönetir, kod yazmaz, haftalık kullanım sınırını
+gözetir. İşçiler: **Sonnet** (ayrı Claude Pro hesabı), **Codex**, **Argon** (Gemini; GitHub'a bağlanamaz — görevi kullanıcı elle
+verir, çıktıyı elle getirir; lider `arastirma/`'ya koyar).
+
+| Faz | Kim | Görev | Durum |
+|---|---|---|---|
+| 0 kapı v1.1 → main + tam koşu | lider | denetim, birleştirme | sürüyor |
+| A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | R2 kurulumunu bekliyor (kullanıcı) |
+| altyapı sınırları araştırması | Argon | `docs/GOREV_ARGON_ALTYAPI.md` | verilecek (kullanıcı elle) |
+| 2–3 gölge motoru + geçmiş prova | Sonnet | `docs/GOREV_GOLGE.md` | Faz 0 bitince |
+
+## Geçmiş (2026-10-27)
 **Kullanıcı kararı 2026-10-27: proje copy trade'e geçti.** Strateji araştırması kapandı ve silindi: strateji kodları,
 TV-2/U7 koşucuları, motor, paper kitapları ve iş akışı, sonuçlar, veri, strateji belgeleri. Geçmiş git tarihçesinde
 durur (son strateji hâli: `faz1-son` dalı ve bu temizlikten önceki `main`).
