@@ -74,3 +74,11 @@ otomatik kontroller aldı), sonuç görüldükten sonra konan p10/PF eşikleri. 
 4. Yorumlayıcı paritesi: katmanlı örneklemle (her aile/tf'den) TradingView çıktısıyla karşılaştırma.
 5. A ailesinin tüm test edilenleri (~530) ve B ailesinin 119'u Actions'ta.
 6. Sonuç tablosu → kullanıcı kararı (paper'da kim kalır/girer/çıkar). Paper bu süreçte aynen sürer (kullanıcı 2026-10-26).
+
+## Sürüm 3.1 (geriye dönük kayıt, 2026-10-29)
+- 2026-10-27 kullanıcı kararı: kârlı ay eşiği %60 → aşama 1'de %44 (`asama1_min_karli_ay_orani`), adım 4'te %49
+  (`adim4_min_karli_ay_orani`). Karar o günkü sonuçlar görülerek verildi; bu yüzden ayrı sürümdür. v3.0 sonuçlarıyla birleştirilmez
+  (hesap sürümü `v1.1-2026-10-27d` bunu zaten ayırır).
+- Uygulamadaki pencere: mum ve kopya defteri `mum_pencere_gun` = 200 gün; adım 6 alfası da fiilen bu 200 günlük veriden hesaplanır
+  (`alfa_pencere_gun` 365 üst sınırdır). Adım 2'nin "≥ 1 yıl" şartı geçmiş uzunluğuna (`min_history_days`) değil, sınama verisine
+  bakar; bu fark bilinçli kabul edildi ve raporlarda belirtilir.

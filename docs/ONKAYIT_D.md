@@ -49,3 +49,40 @@ Sayılar uygulamada yalnız `copytrade/kurallar.yaml`'dan okunur; bu belge ↔ y
   oranlanır ve her saatlik mumda denetlenir. Neden: işlem başı teminat (trader'ın pozisyon kaldıracı) dolum kayıtlarında yok;
   geçmiş prova ile canlı gölge aynı kuralla ölçülsün. Eşik sayıları değişmedi.
 - Faz 3 evreni: geçmiş leaderboard kaynağı yok (Dune ücretli); bugünkü leaderboard kullanılır, sonuç "iyimser üst sınır".
+
+## Sürüm 1.3 (2026-10-29, kullanıcı yetki devri: "sen karar ver")
+Gölge verisi henüz yok; değişiklikler veri görülmeden yapıldı. Gerekçe: beş bağımsız denetim (`docs/DENETIM_GENEL_2026-10-29.md` ve
+Argon raporları) — seçim kapının risk adımlarını atlıyor, kontrol odayla örtüşüyor, 12 hafta oda↔kontrol farkı için güçsüz.
+Yeni sayılar `kurallar.yaml`'a girer; aşağıdaki sayılar ilk değerlerdir.
+
+**Rol:** Canlı gölge bir rotasyon sistemidir; ilk seçimin doğru olması beklenmez. İlk 12 hafta *pilot*tur: amaç seçim kuralının
+havuz genelinde ileri getiriyi taşıyıp taşımadığını öğrenmek ve yapıyı sınamaktır. Gerçek paraya geçiş ayrı karar ve ayrı fazdır.
+
+1. **Havuz:** adım 1 ve 2 Geçti, tarz intraday/swing **ve** adım 3'ün statik koşulları: kısa işlem payı ≤ `kisa_islem_payi_max`,
+   medyan kaldıraç ≤ `kapi_max_medyan_kaldirac`, en yüksek kaldıraç ≤ `kapi_max_kaldirac`. (Ön kayıttaki "kaldıraç ön elemesi" artık uygulanır.)
+2. **Kontrol:** odayla ayrık (havuz − oda). Dilim = tarz × en yüksek kaldıraç (havuz medyanının altı/üstü). Her oda üyesi için aynı
+   dilimden bir kontrol, puana bakmadan, `sha256(secim-<sürüm>-<kapı tarihi>-<adres>)` sırasıyla. Dilim boşsa aynı tarzın diğer dilimi.
+   Havuzun oda dışı tamamı **ikincil kontrol**dür. Tohum kapı koşusunun tarihine bağlıdır (seçim yeniden koşsa da aynı kontrol).
+3. **Seçim kimliği ve rotasyon:** Her seçim bir sürümdür (`secim_surumu`, kapı tarihi, kod ve kurallar hash'i). Yayımlanan sürümün
+   üzerine yazılmaz. Oda giriş/çıkışları tarih, sürüm ve nedenle geçiş kaydına yazılır, silinmez. Kohort ölçümü **ITT**: her sürümün
+   odası, etiket gününden itibaren tüm günleriyle izlenir (sonradan çıkan dahil). Odadan çıkış için en az 2 ardışık haftalık değerlendirme.
+4. **Ölçüm hiyerarşisi:**
+   - **Birincil:** havuzun tamamında seçim puanı ↔ sonraki 12 haftanın maliyet sonrası net getirisi, Spearman ρ (tek yönlü).
+   - **İkincil:** oda ↔ eşleştirilmiş kontrol günlük farkı, **BTC betası düzeltilmiş**; haftalık (7 gün) blok bootstrap %95.
+     Not: küçük örneklemde MBB aralığı iyimserdir (kapama ~%83); tablolarda belirtilir.
+   - **Tanımlayıcı (karar dışı):** ham fark, V1/V2, taban, elle, aday katı, rejim kırılımı, kırpılmış (her trader'ın dönem getirisi
+     %5–%95 winsorize) fark, intraday için 2× maliyet duyarlılığı.
+5. **Üç sonuç** (12. hafta; belirsizse bir kez 24. hafta):
+   - **İşe yarıyor:** birincil ρ > 0 ve p < 0,05, ikincil fark nokta tahmini > 0, oda maliyet sonrası mutlak getirisi > 0.
+   - **İşe yaramıyor:** birincil ρ'nun iki yönlü %90 güven aralığı üst sınırı < 0,10 (pratik eşik δρ = 0,10).
+   - **Sınanamadı:** diğer her durum. 24. haftada da sınanamadıysa "bu ölçekte sınanamadı" yazılır; rotasyon sürer, sonuç gerçek
+     paraya geçiş kanıtı sayılmaz.
+   Her analiz raporu saptanabilir en küçük farkı (MDE) ve varsayımlarını yazar.
+6. **Ara bakış:** Performansa yalnız 12. ve 24. haftada bakılır. 4. haftada yalnız σ ve trader arası ρ ölçülüp MDE güncellenir
+   (performans değil). Haftalık geri bildirim raporu (puan ↔ ileri getiri) **rotasyon içindir**, karar analizi değildir; kol
+   bazında getiri farkı haftalık raporda yer almaz (körlük).
+7. **Kenar durumlar:** oda < 10 ("kisa") ise seçim yine başlar; ikincil fark tanımlayıcıya düşer, birincil etkilenmez. Bir haftada
+   oda veya kontrol dolum/işaret eksikliği > %5 ise o hafta "veri eksik" işaretlenir ve raporda ayrıca gösterilir.
+8. **Faz 3** (geçmiş prova, bugünkü leaderboard → iyimser üst sınır) yalnız **durdurabilir**; başlatma kanıtı sayılmaz.
+9. **Dondurma:** Bu sürümün commit hash'i ve ilk v1.3 seçiminin kimliği `DURUM.md`'ye yazılır. Birincil ve ikincil analiz kodu
+   altın örnekleriyle gölge verisi görülmeden yazılır ve aynı dondurmaya girer.
