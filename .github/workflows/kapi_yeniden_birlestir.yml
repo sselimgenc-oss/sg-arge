@@ -1,0 +1,52 @@
+name: CT-Kapı tam koşu yeniden birleştir
+
+on:
+  push:
+    branches: [codex/kapi-birlestir]
+    paths:
+      - copytrade/kapi.py
+      - .github/workflows/kapi_yeniden_birlestir.yml
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 40711594322
+          github-token: ${{ github.token }}
+          pattern: stage1-*
+          path: shards
+      - name: Veri dalındaki aynı günün sonuçlarını getir
+        run: |
+          if git ls-remote --exit-code --heads origin refs/heads/copytrade-kapi >/dev/null 2>&1; then
+            git fetch --depth=1 origin copytrade-kapi
+            git archive FETCH_HEAD copytrade/kapi kesif | tar -x || git archive FETCH_HEAD copytrade/kapi | tar -x
+          fi
+      - name: Birleştir ve eksik sonucu yayımla
+        id: birlestir
+        run: |
+          find shards -name sonuc.csv | grep -q .
+          day=2026-10-28
+          python -m copytrade.kapi --root copytrade --birlestir shards --beklenen-parca 32 --mod tam
+          status=$(python3 -c "import json; print(json.load(open('copytrade/kapi/' + '$day' + '/durum.json'))['durum'])")
+          echo "durum=$status" >> "$GITHUB_OUTPUT"
+          cat "copytrade/kapi/$day/durum.json"
+      - name: Veri dalına yaz
+        if: ${{ !cancelled() && steps.birlestir.outcome == 'success' }}
+        run: |
+          export DAY=2026-10-28
+          export MOD=tam
+          bash .github/scripts/kapi_yayimla.sh
