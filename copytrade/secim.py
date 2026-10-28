@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import math
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -185,7 +186,9 @@ def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manu
             "hesap_surumu": row.get("hesap") if isinstance(row.get("hesap"), str) else None}
         if address in sira and bayrak_fn is not None:
             value = _num(row.get("hesap_degeri_bugun")) or _num(row.get("account_value")) or 0.0
+            started = time.monotonic()
             entries[address].update(bayrak_fn(address, value))
+            print(f"bayrak {address} {time.monotonic() - started:.0f} sn", flush=True)
     counts = {t: {"havuz": sum(r["tarz"] == t for r in pool), "puansiz": sum(r["tarz"] == t and r["puan"] is None for r in pool),
                   "aday": sum(r["tarz"] == t for r in candidates), "oda": sum(r["tarz"] == t for r in oda)} for t in TARZLAR}
     return {"surum": 1, "tarih": date, "tohum": tohum(date), "tohum_dizgesi": f"secim-v1-{date}",

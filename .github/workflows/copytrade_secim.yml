@@ -20,7 +20,7 @@ concurrency:
 jobs:
   secim:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 150  # aday katı kırmızı bayrakları 365 gün dolum/funding çeker; 20 dk run 1'de yetmedi
     steps:
       - uses: actions/checkout@v4
         with:
