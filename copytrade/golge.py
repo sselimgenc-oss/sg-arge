@@ -79,7 +79,7 @@ def kirp_pozisyon(fill: dict, shadow_before: float, account: float, rules: dict 
 
 
 def _v2_esik_kontrolu(coin: str, state: tuple[float, float, int, int], until: int,
-                      market: Market, style: str, rules: dict) -> tuple[int, float, str] | None:
+                      market: Market, style: str, rules: dict, v2: bool = True) -> tuple[int, float, str] | None:
     """Son denetlenen mumdan ileri doğru ilk V2 eşiğini bulur."""
     size, entry, opened, last_checked = state
     first = max((opened // HOUR + 1) * HOUR, ((last_checked // HOUR) + 1) * HOUR)
@@ -87,7 +87,10 @@ def _v2_esik_kontrolu(coin: str, state: tuple[float, float, int, int], until: in
         mark = market.mark(coin, hour)
         if mark is None:
             continue
-        reason = v2_sinir(style, (hour - opened) / 86_400_000, size * (mark - entry), rules)
+        getiri = size * (mark - entry)
+        # Gölgenin kendi ayrılmış 1 birim sermayesi biterse, trader'ın
+        # hesabından bağımsız olarak o mumun mark fiyatında tasfiye edilir.
+        reason = "likidasyon" if getiri <= -1.0 else (v2_sinir(style, (hour - opened) / 86_400_000, getiri, rules) if v2 else None)
         if reason:
             return hour, mark, reason
     return None
@@ -106,7 +109,7 @@ def _v2_signed(fill: dict, own: float, scale: Any) -> float:
 
 
 def v2_cikislari(fills: list[dict], market: Market, account: Any, style: str, delay: int,
-                 end_ms: int, rules: dict) -> tuple[list[dict], list[dict], list[dict]]:
+                 end_ms: int, rules: dict, v2: bool = True) -> tuple[list[dict], list[dict], list[dict]]:
     """V2'yi pozisyon başına, her mumda simüle eder ve deftere girecek kaynakları döndürür.
 
     ``getiri``, gölgenin trader için ayırdığı 1 birim sermayeye oranlı K/Z'dir.
@@ -132,14 +135,14 @@ def v2_cikislari(fills: list[dict], market: Market, account: Any, style: str, de
             continue
         when, price = execution
         if coin in held:
-            hit = _v2_esik_kontrolu(coin, held[coin], when, market, style, rules)
+            hit = _v2_esik_kontrolu(coin, held[coin], when, market, style, rules, v2)
             if hit:
                 hour, mark, reason = hit
                 size, _, _, _ = held.pop(coin)
                 exits.append({"time": hour, "coin": coin, "side": "A" if size > 0 else "B",
                               "sz": str(abs(size) / scale(hour)), "startPosition": str(size / scale(hour)),
                               "px": str(mark), "_execution_time": hour, "_execution_price": mark})
-                events.append({"durum": "v2_cikis", "neden": reason, "coin": coin, "zaman_ms": hour})
+                events.append({"durum": "likidasyon" if reason == "likidasyon" else "v2_cikis", "neden": reason, "coin": coin, "zaman_ms": hour})
                 suppressed.add(coin)
                 events.append({"durum": "atlandi_v2", "coin": coin, "dolum": fill,
                                "neden": "zorunlu_cikistan_sonra"})
@@ -158,20 +161,21 @@ def v2_cikislari(fills: list[dict], market: Market, account: Any, style: str, de
             held[coin] = (after, price, when, when)
         allowed.append(fill)
     for coin, state in list(held.items()):
-        hit = _v2_esik_kontrolu(coin, state, end_ms, market, style, rules)
+        hit = _v2_esik_kontrolu(coin, state, end_ms, market, style, rules, v2)
         if hit:
             hour, mark, reason = hit
             size, _, _, _ = state
             exits.append({"time": hour, "coin": coin, "side": "A" if size > 0 else "B",
                           "sz": str(abs(size) / scale(hour)), "startPosition": str(size / scale(hour)),
                           "px": str(mark), "_execution_time": hour, "_execution_price": mark})
-            events.append({"durum": "v2_cikis", "neden": reason, "coin": coin, "zaman_ms": hour})
+            events.append({"durum": "likidasyon" if reason == "likidasyon" else "v2_cikis", "neden": reason, "coin": coin, "zaman_ms": hour})
     return allowed, exits, events
 
 
 def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *, style: str,
              etiket_ms: int, end_ms: int, funding: list[dict] | None = None,
-             variant: str = "V0", rules: dict | None = None, delay_min: int | None = None) -> dict:
+             variant: str = "V0", rules: dict | None = None, delay_min: int | None = None,
+             gecikmeler: dict[int, Gecikme] | None = None) -> dict:
     """Etiketten sonraki dolumları tek defterden çalıştırır.
 
     V0 birebir; V1 fiyat bandı; V2 açık her pozisyonu her mumda teminatına
@@ -200,10 +204,7 @@ def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *,
         shadow[coin] = before + sign * float(row["sz"]) * account_scale(int(row["time"]))
         if event:
             cap_events.append(event)
-    if variant == "V2":
-        capped, v2_exits, v2_events = v2_cikislari(capped, market, account, style, delay, end_ms, rules)
-    else:
-        v2_exits, v2_events = [], []
+    capped, v2_exits, v2_events = v2_cikislari(capped, market, account, style, delay, end_ms, rules, variant == "V2")
     ledger = copy_ledger(capped + v2_exits, market, account, delay, etiket_ms, end_ms, FundingRates(funding), rules, daily=True)
     events = list(skipped) + cap_events
     if ledger.get("missing", 0):
@@ -218,8 +219,14 @@ def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *,
         if later_close:
             events.append({"durum": "kacirildi", "dolum": fill})
     events.extend(v2_events)
+    zincir = []
+    for row in source:
+        record = (gecikmeler or {}).get(int(row.get("tid", row["time"])))
+        zincir.append({"trader_ms": int(row["time"]), "tespit_ms": record.tespit_ms if record else None,
+                       "telegram_ms": record.telegram_ms if record else None, "acti_ms": record.acti_ms if record else None,
+                       "neden": None if record else "karar_kaydi_yok"})
     return {"varyant": variant, "gecikme_dk": delay, "defter": ledger, "olaylar": events,
-            "gecikme_zinciri": [{"trader_ms": int(row["time"])} for row in source]}
+            "gecikme_zinciri": zincir}
 
 
 def saglama(fills: list[dict], candles: dict[str, list[dict]], account: Any, start_ms: int, end_ms: int,

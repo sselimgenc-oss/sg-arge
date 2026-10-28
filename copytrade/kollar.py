@@ -12,6 +12,16 @@ def sec(adresler: list[str], puan: dict[str, float], n: int, tohum: str) -> dict
     return {"kohort": kohort, "kontrol": kontrol, "tohum": tohum}
 
 
+def terfi(adres: str, sirali_adresler: list[str], n: int) -> bool:
+    """Ön kayıttaki kat/kol girişi: adres ilk ``n`` aday içindeyse terfi eder."""
+    return adres in list(sirali_adresler)[:n]
+
+
+def cikis(adres: str, sirali_adresler: list[str], n: int) -> bool:
+    """Histerezis: mevcut kol, ancak ilk ``2n`` dışına düşünce çıkar."""
+    return adres not in list(sirali_adresler)[: 2 * n]
+
+
 def olay_yaz(path: Path, olay: dict) -> None:
     """Arşiv `olay` türü için yalnız eklemeli JSONL ara kaydı."""
     path.parent.mkdir(parents=True, exist_ok=True)

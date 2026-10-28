@@ -1,9 +1,10 @@
 from copytrade.defter import DAY, HOUR
-from copytrade.golge import calistir, kirp_pozisyon, saglama, v2_sinir
+from copytrade.golge import Gecikme, calistir, kirp_pozisyon, saglama, v2_sinir
 from copytrade.kurallar import load_rules
 import pytest
 import pandas as pd
-from copytrade.kollar import olay_yaz, sec
+from copytrade.kollar import cikis, olay_yaz, sec, terfi
+from copytrade.tarama import PublicClient
 
 T0 = 20_833 * DAY
 RULES = load_rules()
@@ -100,6 +101,22 @@ def test_altin_v2_intraday_eksi50_cikar():
     assert any(x["durum"] == "v2_cikis" and x["neden"] == "zarar_kes" for x in out["olaylar"])
 
 
+def test_altin_likidasyon_golgenin_kendi_teminat_ve_markiyla_cikar():
+    rows = [fill(0, "B", 10, 0, 100)]
+    out = calistir(rows, candles(100, 0), 1_000, style="intraday", etiket_ms=T0, end_ms=T0 + HOUR,
+                   variant="V0", delay_min=0)
+    assert any(x["durum"] == "likidasyon" and x["zaman_ms"] == T0 + HOUR for x in out["olaylar"])
+
+
+def test_altin_gecikme_zinciri_kayit_yoksa_nedenle_bos_kalir_ve_kayitla_dolar():
+    rows = [fill(0, "B", 1, 0, 100, 44)]
+    empty = calistir(rows, candles(100), 1_000, style="intraday", etiket_ms=T0, end_ms=T0, delay_min=0)
+    assert empty["gecikme_zinciri"] == [{"trader_ms": T0, "tespit_ms": None, "telegram_ms": None, "acti_ms": None, "neden": "karar_kaydi_yok"}]
+    filled = calistir(rows, candles(100), 1_000, style="intraday", etiket_ms=T0, end_ms=T0, delay_min=0,
+                      gecikmeler={44: Gecikme(T0, T0 + 1, T0 + 2, T0 + 3)})
+    assert filled["gecikme_zinciri"][0] == {"trader_ms": T0, "tespit_ms": T0 + 1, "telegram_ms": T0 + 2, "acti_ms": T0 + 3, "neden": None}
+
+
 def test_altin_v2_cikis_sonrasi_kapanis_atlanir_yeni_acilis_kopyalanir():
     rows = [fill(0, "B", 10, 0, 100), fill(9 * 24 * 60, "A", 10, 10, 69, 2),
             fill(10 * 24 * 60, "B", 10, 0, 70, 3)]
@@ -135,3 +152,28 @@ def test_altin_kontrol_tohumu_ve_olay_arsivi_tekrarlanabilir(tmp_path):
     path = tmp_path / "tur=olay" / "olaylar.jsonl"
     olay_yaz(path, {"durum": "giris", "adres": "a"})
     assert path.read_text().count("giris") == 1
+
+
+def test_altin_kol_terfi_ve_cikis_histerezisi():
+    sirali = ["a", "b", "c", "d", "e"]
+    assert terfi("b", sirali, 2)
+    assert not terfi("c", sirali, 2)
+    assert not cikis("d", sirali, 2)
+    assert cikis("e", sirali, 2)
+
+
+def test_altin_10000_ustu_dolum_zaman_penceresiyle_sayfalanir():
+    class Client:
+        fills = PublicClient.fills
+
+        def info(self, payload, weight=20):
+            start = int(payload["startTime"])
+            page_no = (start - T0) // 2_000
+            if page_no >= 6:
+                return []
+            count = 2_000 if page_no < 5 else 1
+            return [{"tid": page_no * 2_000 + i, "time": T0 + page_no * 2_000 + i, "coin": "BTC", "sz": "1"}
+                    for i in range(count)]
+
+    rows = Client().fills("0xabc", T0)
+    assert len(rows) == 10_001 and rows[-1]["tid"] == 10_000
