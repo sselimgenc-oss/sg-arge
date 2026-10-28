@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from copytrade.defter import FundingRates, Market, copy_ledger
+from copytrade.defter import HOUR, FundingRates, Market, capital_scale, copy_ledger
 from copytrade.kurallar import load_rules
 
 
@@ -75,6 +75,57 @@ def kirp_pozisyon(fill: dict, shadow_before: float, account: float, rules: dict 
     return clipped, {"durum": "kirpildi", "eski_sz": str(fill["sz"]), "yeni_sz": clipped["sz"], "tavan_usd": cap}
 
 
+def v2_cikislari(fills: list[dict], market: Market, account: Any, style: str, delay: int, end_ms: int, rules: dict) -> tuple[list[dict], list[dict]]:
+    """Yalnız risk olayı üretir; PnL/maliyet yine tek ``copy_ledger``da hesaplanır."""
+    scale = capital_scale(account)
+    held: dict[str, tuple[float, float, int]] = {}
+    exits, events, ignored = [], [], set()
+    for fill in sorted(fills, key=lambda x: int(x["time"])):
+        coin = str(fill["coin"])
+        if coin in ignored:
+            continue
+        target = int(fill["time"]) + delay * 60_000
+        execution = market.execution(coin, target) if delay else (int(fill["time"]), float(fill["px"]))
+        if execution is None:
+            continue
+        when, price = execution
+        # Her sonraki mumda açık pozisyonun kendi teminata oranlı K/Z'sini denetle.
+        if coin in held:
+            size, entry, opened = held[coin]
+            for hour in range((opened // HOUR + 1) * HOUR, when + 1, HOUR):
+                mark = market.mark(coin, hour)
+                if mark is None:
+                    continue
+                reason = v2_sinir(style, (hour - opened) / 86_400_000, size * (mark - entry))
+                if reason:
+                    exits.append({"time": hour, "coin": coin, "side": "A" if size > 0 else "B", "sz": str(abs(size) / scale(hour)),
+                                  "startPosition": str(size / scale(hour)), "px": str(mark), "_execution_time": hour, "_execution_price": mark})
+                    events.append({"durum": "v2_cikis", "neden": reason, "coin": coin, "zaman_ms": hour})
+                    ignored.add(coin); held.pop(coin); break
+        if coin in ignored:
+            continue
+        sign = -1 if fill["side"] in {"A", "Sell", "sell"} else 1
+        amount = sign * float(fill["sz"]) * scale(int(fill["time"]))
+        before = held.get(coin, (0.0, price, when))[0]
+        after = before + amount
+        if before == 0 or before * amount > 0:
+            entry = (held.get(coin, (0.0, price, when))[1] * abs(before) + price * abs(amount)) / abs(after)
+            held[coin] = (after, entry, held.get(coin, (0.0, price, when))[2])
+        elif after == 0:
+            held.pop(coin, None)
+        else:
+            held[coin] = (after, price, when)
+    # Son açık pozisyonu pencere sonuna kadar mum mum denetle.
+    for coin, (size, entry, opened) in held.items():
+        for hour in range((opened // HOUR + 1) * HOUR, end_ms + 1, HOUR):
+            mark = market.mark(coin, hour)
+            if mark is not None and (reason := v2_sinir(style, (hour-opened)/86_400_000, size*(mark-entry), rules)):
+                exits.append({"time":hour,"coin":coin,"side":"A" if size>0 else "B","sz":str(abs(size)/scale(hour)),"startPosition":str(size/scale(hour)),"px":str(mark),"_execution_time":hour,"_execution_price":mark})
+                events.append({"durum":"v2_cikis","neden":reason,"coin":coin,"zaman_ms":hour})
+                break
+    return exits, events
+
+
 def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *, style: str,
              etiket_ms: int, end_ms: int, funding: list[dict] | None = None,
              variant: str = "V0", rules: dict | None = None, delay_min: int | None = None) -> dict:
@@ -97,16 +148,18 @@ def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *,
     capped = []
     cap_events = []
     shadow = {}
+    account_scale = capital_scale(account)
     for row in source:
         coin = str(row["coin"])
         before = shadow.get(coin, 0.0)
-        row, event = kirp_pozisyon(row, before, float(account), rules)
+        row, event = kirp_pozisyon(row, before, 1.0 / account_scale(int(row["time"])), rules)
         capped.append(row)
         sign = -1 if row["side"] in {"A", "Sell", "sell"} else 1
         shadow[coin] = before + sign * float(row["sz"]) / float(account)
         if event:
             cap_events.append(event)
-    ledger = copy_ledger(capped, market, account, delay, etiket_ms, end_ms, FundingRates(funding), rules, daily=True)
+    v2_exits, v2_events = v2_cikislari(capped, market, account, style, delay, end_ms, rules) if variant == "V2" else ([], [])
+    ledger = copy_ledger(capped + v2_exits, market, account, delay, etiket_ms, end_ms, FundingRates(funding), rules, daily=True)
     events = list(skipped) + cap_events
     if ledger.get("missing", 0):
         events.append({"durum": "eksik", "sayi": ledger["missing"]})
@@ -119,10 +172,7 @@ def calistir(fills: list[dict], candles: dict[str, list[dict]], account: Any, *,
                           for other in trader_source)
         if later_close:
             events.append({"durum": "kacirildi", "dolum": fill})
-    if variant == "V2" and ledger.get("net") is not None:
-        reason = v2_sinir(style, (end_ms - etiket_ms) / 86_400_000, float(ledger["net"]), rules)
-        if reason:
-            events.append({"durum": reason, "varyant": "V2"})
+    events.extend(v2_events)
     return {"varyant": variant, "gecikme_dk": delay, "defter": ledger, "olaylar": events,
             "gecikme_zinciri": [{"trader_ms": int(row["time"])} for row in source]}
 

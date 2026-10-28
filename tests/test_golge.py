@@ -55,6 +55,15 @@ def test_altin_3x_asan_ekleme_kirpilir():
     assert event["durum"] == "kirpildi" and event["tavan_usd"] == 3.0
 
 
+def test_altin_v2_8_gunde_eksi31_mumda_maliyetli_cikar():
+    rows = [fill(10, "B", 1_000, 0, 100)]
+    market = {"BTC": [{"t": T0 + h * HOUR, "o": 100 if h < 8 * 24 else 69, "c": 100 if h < 8 * 24 else 69}
+                      for h in range(8 * 24 + 2)]}
+    out = calistir(rows, market, 1_000, style="swing", etiket_ms=T0, end_ms=T0 + 9 * 24 * HOUR, variant="V2", delay_min=0)
+    assert any(event["durum"] == "v2_cikis" for event in out["olaylar"])
+    assert out["defter"]["costs"] > 0
+
+
 def test_altin_kontrol_tohumu_ve_olay_arsivi_tekrarlanabilir(tmp_path):
     assert sec(["a", "b", "c"], {"a": 2, "b": 1}, 1, "2026-10-28") == sec(["a", "b", "c"], {"a": 2, "b": 1}, 1, "2026-10-28")
     path = tmp_path / "tur=olay" / "olaylar.jsonl"
