@@ -8,7 +8,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from copytrade.golge import saglama
-from copytrade.defter import capital_scale
+from copytrade.defter import Market, capital_scale
 from copytrade.kapi import CandleCache, account_history
 from copytrade.olcut import perp_fills
 from copytrade.tarama import PublicClient
@@ -77,6 +77,43 @@ def pozisyon_dokumu(fills: list[dict]) -> dict[str, dict]:
     return out
 
 
+def _trader_unrealized_end(fills: list[dict], candles: dict[str, list[dict]], scale, end: int) -> tuple[float, int]:
+    """Trader'ın kendi pencere sonu açık K/Z'si: kaynak pozisyon × aynı mum işareti × pencere sonu ölçeği.
+
+    Bu hesap kopya defterinden bağımsızdır. Pencere öncesinden taşınan ve giriş
+    fiyatı dolumlardan yeniden kurulamayan bir pozisyon işaretlenmemiş sayılır;
+    flip ile pencere içinde oluşan yeni yönün giriş fiyatı ise flip fiyatıdır.
+    """
+    positions: dict[str, Decimal] = {}
+    entries: dict[str, Decimal] = {}
+    for row in sorted(fills, key=lambda item: int(item["time"])):
+        coin = str(row["coin"])
+        before = Decimal(str(row.get("startPosition", 0)))
+        signed = (-1 if row["side"] in {"A", "Sell", "sell"} else 1) * Decimal(str(row["sz"]))
+        after = before + signed
+        price = Decimal(str(row.get("px", 0)))
+        if before == 0:
+            entries[coin] = price
+        elif before * signed > 0 and coin in entries and after != 0:
+            entries[coin] = ((entries[coin] * abs(before)) + (price * abs(signed))) / abs(after)
+        elif before * signed < 0:
+            if after == 0:
+                entries.pop(coin, None)
+            elif before * after < 0:       # ters yönün pencere içi yeni girişi
+                entries[coin] = price
+        positions[coin] = after
+    market, total, unknown = Market(candles), 0.0, 0
+    for coin, position in positions.items():
+        if position == 0:
+            continue
+        mark = market.mark(coin, end)
+        if mark is None or coin not in entries:
+            unknown += 1
+            continue
+        total += float(position * (Decimal(str(mark)) - entries[coin])) * scale(end)
+    return total, unknown
+
+
 def _summary(fills: list[dict], candles: dict[str, list[dict]], account, start: int, end: int,
              fixed_scale: bool = False) -> dict:
     used_account = 1.0 if fixed_scale else account
@@ -85,7 +122,8 @@ def _summary(fills: list[dict], candles: dict[str, list[dict]], account, start: 
     trader = sum(float(row.get("closedPnl", 0)) * scale(int(row["time"])) for row in fills)
     shadow = float(out["realized"])
     diff = shadow - trader
-    trader_total = trader + float(out.get("unrealized_end", 0.0))
+    trader_unrealized, trader_mark_missing = _trader_unrealized_end(fills, candles, scale, end)
+    trader_total = trader + trader_unrealized
     shadow_total = float(out["net"])
     total_diff = shadow_total - trader_total
     mark_missing = int(out.get("mark_missing", 0))
@@ -93,7 +131,8 @@ def _summary(fills: list[dict], candles: dict[str, list[dict]], account, start: 
             "fark": diff, "goreli_hata": abs(diff) / abs(trader) if trader else None,
             "trader_toplam_net": trader_total, "golge_toplam_net": shadow_total,
             "toplam_net_fark": total_diff, "toplam_net_goreli_hata": abs(total_diff) / abs(trader_total) if trader_total else None,
-            "mark_missing": mark_missing, "not": "eksik işaretleme" if mark_missing else None,
+            "mark_missing": mark_missing, "trader_mark_missing": trader_mark_missing,
+            "not": "eksik işaretleme" if mark_missing or trader_mark_missing else None,
             "eksik": out["missing"]}
 
 

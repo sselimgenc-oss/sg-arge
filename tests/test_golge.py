@@ -216,6 +216,17 @@ def test_altin_saglama_toplam_net_ve_eksik_isaretleme_notu():
     assert summary["toplam_net_fark"] == pytest.approx(0.0)
 
 
+def test_altin_trader_toplam_net_golge_unrealizedini_kullanmaz():
+    """Trader 10 BTC @100 açar; pencere sonunda hesap 2000 $, işaret 110. Trader açık K/Z = 10·10/2000=0,05.
+    Gölge ise giriş anındaki 1000 $ ölçekle 0,10 taşır; trader toplamı gölgenin 0,10'u değil kendi 0,05'i olmalıdır."""
+    account = pd.Series([1_000.0, 2_000.0], index=pd.to_datetime([T0, T0 + HOUR], unit="ms"))
+    rows = [fill(0, "B", 10, 0, 100, 1) | {"closedPnl": "0"}]
+    summary = _summary(rows, candles(100, 110), account, T0, T0 + HOUR)
+    assert summary["trader_toplam_net"] == pytest.approx(0.05)
+    assert summary["golge_toplam_net"] == pytest.approx(0.1)
+    assert summary["toplam_net_fark"] == pytest.approx(0.05)
+
+
 def test_altin_kapanir_yeniden_acilir_ve_sonda_acik_kalir_ilk_tur_saglamaya_girer():
     rows = [fill(0, "B", "0.1", 0, 100, 1), fill(10, "A", "0.1", "0.1", 110, 2),
             fill(20, "B", "0.2", 0, 100, 3)]
