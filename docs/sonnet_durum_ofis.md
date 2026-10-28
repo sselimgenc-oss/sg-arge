@@ -48,3 +48,10 @@ Not: #18 (Adım 0) bu dalı açarken henüz birleşmemişti; dal `sonnet/ofis-ta
 - Düzeltme (testle bulundu): terfi eden trader'ın `kat_olay` kaydı eski (Kapı) kuralında kalıyordu; artık olaydan güncelleniyor.
 - Kanıt: `ofis/kanit/v2b/` (masaüstü + telefon ekran görüntüleri, 20 sn kayıt: çekmece → filtre → olaya tıkla → kamera odaya → bayat oda sisi). v2'nin gif kopyası alan açmak için silindi (mp4 duruyor).
 - Testler: `node ofis/test/replik.test.js`, `node ofis/test/ui.test.js` (86 kontrol) — hepsi geçti.
+
+## Ofis paneli (dal `claude/ofis-panel`, 2026-10-28)
+- [x] Kart sütunu masaüstünde varsayılan gizli; tuval tüm genişlik. [x] Sol menü → kamera + açılır panel (tek eşleme tablosu `PANEL_ESLE`). [x] Kapatma yolları (×, Esc, boş alan, ikinci tıklama, Tüm ofis). [x] Günlük özet şeridi. [x] Gözcü kaydı yerinde, telefon düzeni aynı.
+- Karar: Kontrol → Kohort ↔ Kontrol kartı ve Oda → +Son kapananlar eklendi (aksi halde bu kartlar masaüstünde erişilemez olurdu); `PANEL_ESLE` tek satırla değişir.
+- Eski testlerde Esc davranışı: menüden açılan panel varsa ilk Esc paneli kapatır (Lab testi güncellendi).
+- Kanıt: `ofis/kanit/panel/` (önce/sonra, 1440 ve 1920). `ofis/kanit` boyutu 15 MB sınırı için v2 PNG'leri palet sıkıştırmasına çevrildi (≈ 10 MB).
+- Testler: `ui.test.js` bölüm Q (panel aç/kapa; 112 kontrol), `replik.test.js` geçti.

@@ -27,6 +27,7 @@
     const g = (O.Names.kadro().ozet_gruplari || []), r = Off.gunlukOzet(g);
     $('#gunIcerik').innerHTML = '<p class="gun-satir"><b>' + esc(r.dun) + '</b></p><p class="gun-satir gun-alt">' + esc(r.bugun) + '</p>';
     $('#gunMeta').innerHTML = 'kaynak: olay günlüğü (n=' + r.n + ') · ' + ORN;
+    const sr = $('#gunSeritMetin'); if (sr) sr.textContent = r.dun + ' · ' + r.bugun;
   }
   function kasa() {
     // ön kayıt: toplanmış performans (kasa değeri, eğri, % değişim) ofiste gösterilmez

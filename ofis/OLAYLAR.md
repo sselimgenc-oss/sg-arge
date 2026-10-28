@@ -99,3 +99,6 @@ Performansı oyunlaştıran öğe de yoktur: işlem K/Z'si yalnız işaretli say
 - **Ses**: varsayılan kapalı (Ayarlar → "Olay sesi"), olay başına tek kısa ton (WebAudio, frekans `kadro.json` `olay_turleri[tur].ton`), dosya yok; olay yağmurunda en çok birkaç ton; tercih `sgofis.ses.v1`.
 - **Kural metni** her yerde olaydaki `kural` alanından gelir (terfi: "gölgede ≥ 3 hafta ve ≥ 10 kapanmış işlem", ön kayıtla aynı); kodda veya replikte sabit sayı yoktur (test denetler).
 - **Oda ayrıntıları:** Risk alarm paneli (tavan doluluğu, alarmda yanar), Haberleşme büyük ekran + zarf rafı (bugünkü bildirim sayısı, en çok 12 zarf), Sekreterlik ön kayıt kasası (sürüm, commit, dondurma tarihi), Oda trader masaları; her odanın bilgi kutusunda "Bu birim ne yapar / ne yapmaz" kartı.
+
+## Ofis paneli (sol menü → açılan panel)
+Masaüstünde kart sütunu gizlidir; sol menü öğesi odaya gider ve eşlenen kartları ofisin üstünde panel olarak açar (`PANEL_ESLE`): Finans → Gölge kasası · Risk → Risk tavanları · Oda → Açık gölge işlemleri + Son kapananlar · Arşiv → Veri kalitesi · Haberleşme → Telegram · Kontrol → Kohort ↔ Kontrol (kilitli) · Tarama/Kapı/Lab/Aday → Özet + Huni · diğerleri → oda bilgisi kartı. Kapatma: ×, Esc (önce panel, sonra oda), boş alan, aynı menüye ikinci tıklama, "Tüm ofis". Olay çekmecesi açılınca panel kapanır. Performans körlüğü kartların içeriğinde aynen geçerlidir.
