@@ -119,10 +119,13 @@ async function accumulatedOrderEvents(env, trader, rows, account) {
   return events;
 }
 
+function isNotified(trader) { return trader.kol === "oda"; }
+
 async function runCron(env, fetcher = fetch) {
   let status;
   try { status = await currentStatus(fetcher); } catch { return; }
-  for (const trader of status.traderlar || []) {
+  // Bildirim yalnız kol = oda için; kontrol/taban/elle kolları sessiz izlenir (Worker onlar için Hyperliquid'e de gitmez).
+  for (const trader of (status.traderlar || []).filter(isNotified)) {
     const stored = await env.DB.prepare("SELECT son_dolum FROM imlec WHERE trader = ?").bind(trader.id).first();
     if (!stored) {
       await env.DB.prepare("INSERT INTO imlec(trader, son_dolum) VALUES (?, ?)").bind(trader.id, Date.now()).run();
@@ -198,4 +201,4 @@ export default {
   },
 };
 
-export { accumulatedOrderEvents, callbackData, decision, formatEvent, handleTelegram, mergeFills, runCron, sendOnce };
+export { accumulatedOrderEvents, callbackData, decision, formatEvent, handleTelegram, isNotified, mergeFills, runCron, sendOnce };

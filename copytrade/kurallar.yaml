@@ -112,3 +112,10 @@ saglik_bos_olabilir: [plasebo_hata, plasebo_not, hata, not, plasebo_gercek_skor,
 # Arşiv kapsamı: beklenen yoklamaların en çok %5'i boş kalabilir; üstü veri kalitesi hatasıdır.
 arsiv_bosluk_carpani: 3
 arsiv_bosluk_esigi: 0.10
+# Seçim v1 (docs/GOREV_SECIM_V1.md, kullanıcı onaylı 2026-10-28): aday = tarz başına puanı > 0 olanların en iyi %15'i (yukarı yuvarla);
+# oda aday katından en çok 20, en az 10 (aday < 10 ise oda = tüm aday, RAPOR'da yazılır).
+secim_aday_orani: 0.15
+secim_oda_min: 10
+secim_oda_max: 20
+# Seçim yalnız tam koşuda çalışır: durum.json kapsamı (işlenen / evren) bunun altındaysa (ör. hızlı koşu) durur. (Uygulayıcı ek güvenliği, lider onayı bekler.)
+secim_min_kapsam: 0.5

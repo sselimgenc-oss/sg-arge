@@ -31,7 +31,7 @@ test("ilk cron imleci şimdiye koyar, geçmiş bildirimi göndermez", async () =
     first: async () => undefined,
     run: async () => { writes.push([sql, args]); return { meta: { changes: 1 } }; },
   }; } }; } } };
-  const fetcher = async () => new Response(JSON.stringify({ uretildi: new Date().toISOString(), traderlar: [{ id: "T1", adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, pozisyonlar: [], saglik: { isik: "yesil" } }] }));
+  const fetcher = async () => new Response(JSON.stringify({ uretildi: new Date().toISOString(), traderlar: [{ id: "T1", kol: "oda", adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, pozisyonlar: [], saglik: { isik: "yesil" } }] }));
   await runCron(env, fetcher);
   assert.equal(writes.length, 1);
   assert.match(writes[0][0], /INSERT INTO imlec/);
@@ -45,7 +45,7 @@ test("ilk görülen kırmızı ışık bildirim üretmez; yeşilden kırmızıya
   }; } }; } } };
   let colour = "kirmizi", n = 0;
   const fetcher = async (url, init) => {
-    if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: `2026-10-27T12:0${n++}:00Z`, traderlar: [{ id: "T1", adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, saglik: { isik: colour } }] }));
+    if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: `2026-10-27T12:0${n++}:00Z`, traderlar: [{ id: "T1", kol: "oda", adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, saglik: { isik: colour } }] }));
     if (String(url).includes("api.hyperliquid.xyz")) return new Response(JSON.stringify([]));
     sent.push(JSON.parse(init.body)); return new Response(JSON.stringify({ ok: true }));
   };
@@ -119,7 +119,7 @@ test("tarz durum.json'dan okunur: cron mesajı etiketli gider", async () => {
   }; } }; } } };
   const fill = { coin: "BTC", side: "B", sz: "1", px: "100", time: 5, oid: 7, tid: 1, startPosition: "0" };
   const fetcher = async (url, init) => {
-    if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: new Date().toISOString(), traderlar: [{ id: "T1", adres: "0x1", takma_ad: "Test", tarz: "swing", hesap_degeri: 1000, pozisyonlar: [], saglik: { isik: "yesil" } }] }));
+    if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: new Date().toISOString(), traderlar: [{ id: "T1", kol: "oda", adres: "0x1", takma_ad: "Test", tarz: "swing", hesap_degeri: 1000, pozisyonlar: [], saglik: { isik: "yesil" } }] }));
     if (String(url).includes("api.hyperliquid.xyz")) return new Response(JSON.stringify([fill]));
     sent.push(JSON.parse(init.body).text);
     return new Response(JSON.stringify({ ok: true }));
@@ -127,4 +127,25 @@ test("tarz durum.json'dan okunur: cron mesajı etiketli gider", async () => {
   await runCron(env, fetcher);
   assert.equal(sent.length, 1);
   assert.match(sent[0], /Test \[Swing\] · BTC LONG açtı/);
+});
+
+test("bildirim yalnız kol = oda için: kontrol, taban, elle ve kolsuz trader sessiz", async () => {
+  const fill = { coin: "BTC", side: "B", sz: "1", px: "100", time: 5, oid: 7, tid: 1, startPosition: "0" };
+  const run = async kol => {
+    const sent = [], hyperliquid = [];
+    const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB: { prepare(sql) { return { bind() { return {
+      first: async () => (/FROM imlec/.test(sql) ? { son_dolum: 0 } : undefined),
+      run: async () => ({ meta: { changes: 1 } }),
+    }; } }; } } };
+    const fetcher = async (url, init) => {
+      if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: new Date().toISOString(), traderlar: [{ id: "T1", ...(kol ? { kol } : {}), adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, pozisyonlar: [], saglik: { isik: "yesil" } }] }));
+      if (String(url).includes("api.hyperliquid.xyz")) { hyperliquid.push(1); return new Response(JSON.stringify([fill])); }
+      sent.push(JSON.parse(init.body).text);
+      return new Response(JSON.stringify({ ok: true }));
+    };
+    await runCron(env, fetcher);
+    return { sent: sent.length, hyperliquid: hyperliquid.length };
+  };
+  assert.deepEqual(await run("oda"), { sent: 1, hyperliquid: 1 });
+  for (const kol of ["kontrol", "taban", "elle", undefined]) assert.deepEqual(await run(kol), { sent: 0, hyperliquid: 0 }, String(kol));
 });
