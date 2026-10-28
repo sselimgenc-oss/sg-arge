@@ -13,6 +13,8 @@ indirilmedi ya da kopyalanmadı; bu yüzden üçüncü taraf lisans yükümlül�
 | Kişi figürleri, sandalye, balon simgeleri, zarf/para/kutu | `kisiler.js` | Bu reponun kendi içeriği |
 | Duvar ekranlarının içeriği (eğri, çubuklar) | `office.js` — çalışma anında veriden çizilir | Bu reponun kendi içeriği |
 | Arayüz simgeleri (logo, ışık simgesi, kilit) ve menü elmasları | Sayfa içinde elle yazılmış SVG yolları ve CSS `clip-path` (`index.html`, `ofis.css`, `panel.js`) | Bu reponun kendi içeriği |
+| Bilgi kutusu, ayarlar penceresi, oda içi geçiş, iletişim işaretleri (zarf, not, ok, bayrak, gülümseme balonu) | `bilgi.js`, `ad.js`, `iletisim.js`, `kisiler.js`, `ofis.css` — hepsi kodla (CSS + Canvas); simge dosyası yok | Bu reponun kendi içeriği |
+| Replik ve ad metinleri (`replikler.json`, `kadro.json`) | Bu iş için yazıldı; sahte/uydurma örnek içerik | Bu reponun kendi içeriği |
 | Sıcak iç ışık, ortam ışığı, su altı ışığı | `main.js` — çalışma anında Canvas gradyanlarıyla (PNG yok) | Bu reponun kendi içeriği |
 | Yazı tipi | Sistem yazı tipleri (`ui-monospace` / `Segoe UI` / `Roboto` yığını); yazı tipi dosyası indirilmez | İşletim sistemine ait; dağıtılmaz |
 | Kütüphane | Yok (saf JavaScript + Canvas 2D). CDN kullanılmaz | — |
@@ -22,8 +24,7 @@ Lisansı belirsiz varlık kullanılmadı. Telif konusunda şüphe doğarsa bu be
 
 ## Etre V2 ve Taslak 1 ile ilişki (kopya değil, kendi tarzımız)
 `sg-arge/arastirma/etre/` yalnız **tarz** referansı olarak okundu. Etre'nin hiçbir görseli, çizimi ya da ekran görüntüsü parçası ofis sayfasına
-alınmadı, üzerinden çizilmedi, iz sürülmedi. (`kanit/karsilastirma_etre.png` yalnız lider karşılaştırması içindir; sayfanın parçası değildir,
-istenirse birleştirmeden önce silinir.) Oda sırası ve içerikleri `sg-arge/docs/GOREV_D_YOLU.md` Roller tablosundan (14 oda) çıkarıldı.
+alınmadı, üzerinden çizilmedi, iz sürülmedi. (Etre karşılaştırma görseli yalnız #18 dalında, lider karşılaştırması içindir; sayfanın parçası değildir.) Oda sırası ve içerikleri `sg-arge/docs/GOREV_D_YOLU.md` Roller tablosundan (14 oda) çıkarıldı.
 
 Adım 0 (özgünleştirme) ile bilinçli farklar:
 - **Bina biçimi:** tek dikdörtgen blok yerine, ortasında **avlu ve havuzlu bahçe** olan iki kanatlı yapı (kuzey kanat: Makam…Arşiv + Tarama/Çay/Lab/Kontrol; güney kanat: Aday, Oda, Kapı;
@@ -36,22 +37,27 @@ Adım 0 (özgünleştirme) ile bilinçli farklar:
 - **Zemin ve nesne çeşitliliği:** Makam balıksırtı parke, Denetim metal ızgara + sunucu ışıkları, Çay ocağı fayans + semaver, Sekreterlik/Haberleşme'de koliler.
 - **Kaldırılan sahte hareket:** çaycı yürüyüşü ve ağaç sallanması. **Eklenmeyen oyunlaştırma:** kâr/zarar rengi, rozet, "en iyi" vurgusu yok.
 
-## Varlık boyutu raporu (2026-10-28, Adım 0 sonrası)
-Hedef: toplam varlık ≤ 15 MB. Gerçekleşen: **sayfanın görsel varlık dosyası 0 bayt**; tüm sayfa (kod + stil + örnek veri):
+## Varlık boyutu raporu (2026-10-28, sürüm 2 ilk 5 iş sonrası)
+Hedef: toplam varlık ≤ 15 MB. Gerçekleşen: **sayfanın görsel varlık dosyası 0 bayt**; tüm sayfa (kod + stil + veri):
 
 | Dosya | Boyut (bayt) |
 |---|---:|
 | `sprites.js` | 37 607 |
-| `main.js` | 28 810 |
-| `world.js` | 28 250 |
-| `office.js` | 27 269 |
-| `ornek_durum.json` | 20 084 |
-| `ofis.css` | 15 759 |
-| `panel.js` | 13 572 |
-| `kisiler.js` | 10 739 |
+| `main.js` | 34 838 |
+| `office.js` | 30 886 |
+| `world.js` | 30 164 |
+| `ornek_durum.json` | 28 865 |
+| `ofis.css` | 22 894 |
+| `bilgi.js` | 19 981 |
+| `panel.js` | 12 873 |
+| `kisiler.js` | 11 391 |
+| `iletisim.js` | 10 189 |
+| `index.html` | 9 519 |
+| `kadro.json` | 9 450 |
 | `px.js` | 9 171 |
-| `index.html` | 7 550 |
-| **Toplam (gzip öncesi)** | **≈ 194 KB** |
+| `replikler.json` | 6 685 |
+| `ad.js` | 6 361 |
+| **Toplam (gzip öncesi)** | **≈ 274 KB** |
 
-Ağ üzerinden ≈ 58 KB (gzip). Çalışma belleğinde zemin tuvali 1520×900 px (≈ 5,5 MB RAM), ortam ve oda ışığı katmanları (her biri aynı boyutta) ve birkaç yüz küçük önbellekli sprite.
-`kanit/` klasörü (ekran görüntüleri, karşılaştırmalar, 15 sn kayıt; toplam ≈ 13.0 MB) sayfanın parçası değildir, yalnız PR kanıtıdır; toplam varlık bütçesi (15 MB) altındadır.
+Ağ üzerinden ≈ 80 KB (gzip). `kanit/` klasörü (sürüm 2 ekran görüntüleri ve 30 sn kayıt `kanit/v2/`, sürüm 1'in önce/sonra karşılaştırmaları; toplam ≈ 13.0 MB) sayfanın parçası değildir, yalnız PR kanıtıdır;
+15 MB bütçesinin altındadır. (Etre karşılaştırma görseli #18 dalındadır; sürüm 2 dalına alınmadı.) Testler (`test/`) sayfayla yüklenmez.

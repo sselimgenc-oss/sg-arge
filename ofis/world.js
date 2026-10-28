@@ -28,7 +28,7 @@
   ROOMS.forEach(r => { r.cx = r.x + r.w / 2; r.cy = r.y + r.h / 2; for (let i = 0; i < r.w; i++) for (let j = 0; j < r.h; j++) roomAt[(r.x + i) + ',' + (r.y + j)] = r; });
   const roomById = {}; ROOMS.forEach(r => (roomById[r.id] = r));
 
-  const W = (O.World = { BX, BY, BW, BH, WW, WH, OX, OY, CW, CH, sx, sy, ROOMS, roomById, roomAt, statics: [], seats: { lab: [], aday: [], oda: [], kontrol: [] }, staff: [], tvs: {}, wins: [], leds: {}, screens: [], trees: [], lamps: [], boxSlots: [], doors: [] });
+  const W = (O.World = { BX, BY, BW, BH, WW, WH, OX, OY, CW, CH, sx, sy, ROOMS, roomById, roomAt, statics: [], seats: { lab: [], aday: [], oda: [], kontrol: [] }, staff: [], objects: [], tvs: {}, wins: [], leds: {}, screens: [], trees: [], lamps: [], boxSlots: [], doors: [] });
 
   /* ---------- yürüme ağı ---------- */
   const blocked = new Set(), wallH = new Set(), wallV = new Set();
@@ -68,7 +68,8 @@
   function ent(k, px, py, s) { const e = { k: k, px: px, py: py, s: s }; W.statics.push(e); return e; }
   W.ent = ent;
   const putT = (s, tx, ty, ko) => ent(tx + ty + 1 + (ko || 0), sx(tx, ty), sy(tx, ty), s);
-  const L = (s, lx, ly, o) => { o = o || {}; const e = putT(s, BX + lx, BY + ly, o.k); if (o.block !== false) W.block(BX + lx, BY + ly); return e; };
+  const L = (s, lx, ly, o) => { o = o || {}; const e = putT(s, BX + lx, BY + ly, o.k); if (o.block !== false) W.block(BX + lx, BY + ly); if (o.obj) W.objects.push({ id: o.obj, room: o.obj.split('.')[0], e: e }); return e; };
+  const OBJ = (id, e) => W.objects.push({ id: id, room: id.split('.')[0], e: e });
   W.putT = putT;
 
   /* ---------- zemin ---------- */
@@ -159,19 +160,19 @@
   function buildWalls() {
     const accAt = (lx, ly) => (roomAt[lx + ',' + ly] || { ac: '#6a5a40' }).ac;
     const decoH = { 0: 'pic', 1: 'win', 2: 'win', 3: 'pic', 4: 'win', 5: 'win', 11: 'pic', 15: 'win', 16: 'win', 19: 'pic' };
-    const decoV = { 3: 'win', 4: 'win', 7: 'win', 8: 'pic', 15: 'win', 16: 'pic', 17: 'win', 18: 'pic', 19: 'win' };
+    const decoV = { 3: 'win', 4: 'win', 7: 'win', 8: 'pic', 15: 'win', 16: 'pic', 19: 'win' };
     const garden = ly => ly >= 9 && ly <= 14;
-    ent(BX + BY - 0.4, sx(BX, BY), sy(BX, BY), S.wallCorner('#7a4a32'));
+    ent(BX + BY - 0.4, sx(BX, BY), sy(BX, BY), S.wallCorner('#7a4a32')).wall = ['makam'];
     for (let lx = 0; lx < BW; lx++) {
       const d = decoH[lx] || '';
-      ent(BX + lx + BY + 0.4, sx(BX + lx, BY), sy(BX + lx, BY), S.wallBH(accAt(lx, 0), d, lx));
+      ent(BX + lx + BY + 0.4, sx(BX + lx, BY), sy(BX + lx, BY), S.wallBH(accAt(lx, 0), d, lx)).wall = [roomAt[lx + ',0'].id];
       if (d === 'win') W.wins.push({ side: 'L', e: ent(BX + lx + BY + 0.41, sx(BX + lx, BY), sy(BX + lx, BY), null) });
     }
     for (let ly = 0; ly < BH; ly++) {
       wallV.add(BX + ',' + (BY + ly));
       if (garden(ly)) continue;               // avluda batı kenarı açık (yalnız yürüme çiti)
       const d = decoV[ly] || '';
-      ent(BX + BY + ly + 0.4, sx(BX, BY + ly), sy(BX, BY + ly), S.wallBV(accAt(0, ly), d, ly + 3));
+      ent(BX + BY + ly + 0.4, sx(BX, BY + ly), sy(BX, BY + ly), S.wallBV(accAt(0, ly), d, ly + 3)).wall = [roomAt['0,' + ly].id];
       if (d === 'win') W.wins.push({ side: 'R', e: ent(BX + BY + ly + 0.41, sx(BX, BY + ly), sy(BX, BY + ly), null) });
     }
     for (let lx = 0; lx < BW; lx++) wallH.add((BX + lx) + ',' + BY);
@@ -191,23 +192,25 @@
     const kind = (a, b) => ((a && a.solid) || (b && b.solid)) ? 'solid' : 'glass';
     const ra = (lx, ly) => roomAt[lx + ',' + ly];
     const gapsH = { 4: [1, 5, 11, 14, 17, 21, 24], 9: [2, 6, 11, 14, 21, 24], 15: [1, 4, 9, 15, 23] };
+    W.gapsH = gapsH;
     Object.keys(gapsH).forEach(yy => {
       const y = +yy;
       for (let lx = 0; lx < BW; lx++) {
         if (gapsH[y].indexOf(lx) >= 0) continue;
         const a = ra(lx, y - 1), b = ra(lx, y); if (a === b) continue;
         const k = (a && a.out) || (b && b.out) ? 'glass' : kind(a, b), room = a && a.out ? b : b && b.out ? a : b;
-        ent(BX + lx + BY + y + 0.5, sx(BX + lx, BY + y), sy(BX + lx, BY + y), S.partH(k, (room && room.ac) || '#777'));
+        const pe = ent(BX + lx + BY + y + 0.5, sx(BX + lx, BY + y), sy(BX + lx, BY + y), S.partH(k, (room && room.ac) || '#777')); if (k === 'solid') pe.wall = [a.id, b.id];
         wallH.add((BX + lx) + ',' + (BY + y));
       }
     });
     const gapsV = {};
     gapsV[6 + ',' + 17] = 1; gapsV[22 + ',' + 17] = 1; gapsV[8 + ',' + 6] = 1; gapsV[18 + ',' + 6] = 1;
+    W.gapsV = gapsV;
     for (let lx = 1; lx < BW; lx++) for (let ly = 0; ly < BH; ly++) {
       const a = ra(lx - 1, ly), b = ra(lx, ly); if (!a || !b || a === b) continue;
       if (a.out || b.out) continue;
       if (gapsV[lx + ',' + ly]) continue;
-      ent(BX + lx + BY + ly + 0.5, sx(BX + lx, BY + ly), sy(BX + lx, BY + ly), S.partV(kind(a, b), b.ac));
+      const pv = ent(BX + lx + BY + ly + 0.5, sx(BX + lx, BY + ly), sy(BX + lx, BY + ly), S.partV(kind(a, b), b.ac)); if (kind(a, b) === 'solid') pv.wall = [a.id, b.id];
       wallV.add((BX + lx) + ',' + (BY + ly));
     }
   }
@@ -231,48 +234,48 @@
   function buildFurniture() {
     const seats = W.seats;
     /* --- MAKAM --- */
-    L(S.bigDesk('a'), 1, 1); L(S.bigDesk('b'), 2, 1);
-    L(S.shelf('x', 'tall', 11), 0, 1); L(S.shelf('x', 'tall', 12), 0, 2);
-    L(S.globe(), 3, 0); L(S.plant('tall'), 3, 3); L(S.plant('small'), 0, 3); L(S.floorLamp(), 3, 2);
+    L(S.bigDesk('a'), 1, 1, { obj: 'makam.masa' }); L(S.bigDesk('b'), 2, 1, { obj: 'makam.masa' });
+    L(S.shelf('x', 'tall', 11), 0, 1, { obj: 'makam.kitaplik' }); L(S.shelf('x', 'tall', 12), 0, 2, { obj: 'makam.kitaplik' });
+    L(S.globe(), 3, 0, { obj: 'makam.kure' }); L(S.plant('tall'), 3, 3); L(S.plant('small'), 0, 3); L(S.floorLamp(), 3, 2);
     W.staff.push({ id: 'makam', room: 'makam', tx: BX + 1, ty: BY, pose: 'sitF', look: O.look(901, 'makam', { acc: 'tie', shirt: '#2c3342', pants: '#1f2430', hs: 'short', hair: '#d9d4c8', chair: '#7a2f2f', skin: '#e5b88e' }), blockSeat: true });
     W.block(BX + 1, BY); W.block(BX + 2, BY);
     W.emptyChairs = [{ tx: BX + 1, ty: BY + 2, c: '#7a2f2f' }, { tx: BX + 2, ty: BY + 2, c: '#7a2f2f' }];
     /* --- SEKRETERLİK --- */
-    L(S.shelf('y', 'tall', 21), 6, 0); L(S.shelf('y', 'tall', 22), 7, 0); L(S.shelf('y', 'low', 23), 4, 0);
+    L(S.shelf('y', 'tall', 21), 6, 0, { obj: 'sekreterlik.kural_rafi' }); L(S.shelf('y', 'tall', 22), 7, 0, { obj: 'sekreterlik.kural_rafi' }); L(S.shelf('y', 'low', 23), 4, 0);
     const sk = pod('sekreterlik', 5, 1, 2, '#c9a36a', 30, { kind: 'staff' });
     sk.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'sekreter', room: 'sekreterlik', seat: sk, pose: 'sit', look: O.look(911, 'sek', { shirt: '#c05a8a', hs: 'bun', hair: '#4a3322', acc: '' }) });
-    L(S.printer(), 7, 2); L(S.plant('tall'), 4, 3); L(S.cabinet('y'), 7, 3); L(S.box(3), 4, 2);
+    L(S.printer(), 7, 2, { obj: 'sekreterlik.yazici' }); L(S.plant('tall'), 4, 3); L(S.cabinet('y'), 7, 3, { obj: 'sekreterlik.dosya_dolabi' }); L(S.box(3), 4, 2);
     /* --- FİNANS --- */
-    L(S.safe(), 8, 0); L(S.coins(), 11, 1);
+    L(S.safe(), 8, 0, { obj: 'finans.kasa' }); L(S.coins(), 11, 1, { obj: 'finans.para' }); OBJ('finans.tv', W.tvs.finans.e); OBJ('haberlesme.tv', W.tvs.haber.e); OBJ('risk.tv', W.tvs.risk.e); OBJ('tarama.tv', W.tvs.tarama.e); OBJ('aday.tv', W.tvs.aday.e);
     const f1 = pod('finans', 10, 1, 2, '#d8d2c2', 40, { kind: 'staff' }); f1.scr.s = S.screen('y', 'staff');
     const f2 = pod('finans', 8, 2, 3, '#d8d2c2', 41, { kind: 'staff' }); f2.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'finans1', room: 'finans', seat: f1, pose: 'sit', look: O.look(921, 'fin', { acc: 'visor', shirt: '#e9e4d2' }) });
     W.staff.push({ id: 'finans2', room: 'finans', seat: f2, pose: 'sit', look: O.look(922, 'fin', { shirt: '#3b82c4', hs: 'long' }) });
-    L(S.plant('tall'), 11, 3);
+    L(S.plant('tall'), 11, 2);
     /* --- HABERLEŞME --- */
     const h1 = pod('haberlesme', 13, 1, 2, '#9aa5b4', 50, { kind: 'staff' }); h1.scr.s = S.screen('y', 'staff');
     const h2 = pod('haberlesme', 15, 1, 2, '#9aa5b4', 51, { kind: 'staff' }); h2.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'haber1', room: 'haberlesme', seat: h1, pose: 'sit', look: O.look(931, 'hab', { acc: 'headset', shirt: '#3b6fb4' }) });
     W.staff.push({ id: 'haber2', room: 'haberlesme', seat: h2, pose: 'sit', look: O.look(932, 'hab', { acc: 'headset', shirt: '#2f9aa8', hs: 'long' }) });
-    L(S.mailbox(), 12, 3); L(S.plant('small'), 15, 3); L(S.cooler(), 14, 3); L(S.box(1), 12, 1); L(S.box(2), 12, 2);
+    L(S.mailbox(), 12, 3, { obj: 'haberlesme.posta' }); L(S.plant('small'), 15, 3); L(S.cooler(), 14, 1, { obj: 'haberlesme.sebil' }); L(S.box(1), 12, 1, { obj: 'haberlesme.koli' }); L(S.box(2), 12, 2, { obj: 'haberlesme.koli' });
     W.mailboxLocal = [12, 3];
     /* --- RİSK --- */
     const r1 = pod('risk', 17, 1, 2, '#c9b9a0', 60, { kind: 'staff' }); r1.scr.s = S.screen('y', 'staff');
     const r2 = pod('risk', 19, 1, 2, '#c9b9a0', 61, { kind: 'staff' }); r2.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'risk1', room: 'risk', seat: r1, pose: 'sit', look: O.look(941, 'risk', { acc: 'vest', shirt: '#f28c28' }) });
     W.staff.push({ id: 'risk2', room: 'risk', seat: r2, pose: 'sit', look: O.look(942, 'risk', { shirt: '#b5472f', acc: 'glasses' }) });
-    L(S.beacon(), 16, 0); W.beaconE = ent(BX + 16 + BY + 0 + 1.02, sx(BX + 16, BY), sy(BX + 16, BY), null);
-    L(S.cabinet('y'), 16, 3); L(S.plant('small'), 19, 3);
+    L(S.beacon(), 16, 0, { obj: 'risk.fener' }); W.beaconE = ent(BX + 16 + BY + 0 + 1.02, sx(BX + 16, BY), sy(BX + 16, BY), null);
+    L(S.cabinet('y'), 16, 3, { obj: 'risk.dolap' }); L(S.plant('small'), 19, 3);
     /* --- DENETİM --- */
-    ['20', '21', '22'].forEach(x => { L(S.rack('y'), +x, 0); W.leds['rack' + x] = ent(BX + +x + BY + 1.02, sx(BX + +x, BY), sy(BX + +x, BY), null); });
+    ['20', '21', '22'].forEach((x, i) => { L(S.rack('y'), +x, 0, { obj: ['denetim.sunucu1', 'denetim.sunucu2', 'denetim.sunucu3'][i] }); W.leds['rack' + x] = ent(BX + +x + BY + 1.02, sx(BX + +x, BY), sy(BX + +x, BY), null); });
     const d1 = pod('denetim', 21, 2, 3, '#aeb8c6', 70, { kind: 'staff' }); d1.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'denetim', room: 'denetim', seat: d1, pose: 'sit', look: O.look(951, 'den', { acc: 'glasses', shirt: '#6b7a8f' }) });
-    L(S.cabinet('y'), 22, 2); L(S.plant('small'), 20, 3, { block: false });
+    L(S.cabinet('y'), 22, 2, { obj: 'denetim.dolap' }); L(S.plant('small'), 20, 3, { block: false });
     /* --- ARŞİV --- */
-    ['23', '24', '25'].forEach((x, i) => L(S.shelf('y', 'tall', 31 + i), +x, 0));
-    L(S.shelf('y', 'arsiv', 36), 24, 2);
-    L(S.box(1), 25, 2); W.boxSlots = [[25, 3], [25, 3], [25, 3], [25, 3], [25, 3]];
+    ['23', '24', '25'].forEach((x, i) => L(S.shelf('y', 'tall', 31 + i), +x, 0, { obj: ['arsiv.raf1', 'arsiv.raf2', 'arsiv.raf3'][i] }));
+    L(S.shelf('y', 'arsiv', 36), 24, 2, { obj: 'arsiv.dolap' });
+    L(S.box(1), 25, 2, { obj: 'arsiv.kutu' }); W.boxSlots = [[25, 3], [25, 3], [25, 3], [25, 3], [25, 3]];
     W.block(BX + 25, BY + 3);
     W.staff.push({ id: 'arsivci', room: 'arsiv', tx: BX + 24, ty: BY + 3, pose: 'stand', dir: 'u', look: O.look(961, 'ars', { shirt: '#9a6b3b', acc: 'glasses', hs: 'bald' }) });
     /* --- TARAMA --- */
@@ -280,28 +283,30 @@
     const t2 = pod('tarama', 4, 5, 6, '#b9a9d0', 81, { kind: 'staff' }); t2.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'tarama1', room: 'tarama', seat: t1, pose: 'sit', look: O.look(971, 'tar', { shirt: '#6a4fa0', hs: 'short' }) });
     W.staff.push({ id: 'tarama2', room: 'tarama', seat: t2, pose: 'sit', look: O.look(972, 'tar', { shirt: '#2f9aa8', hs: 'long' }) });
-    L(S.printer(), 0, 7); L(S.printer(), 0, 8); L(S.plant('tall'), 4, 8); L(S.plant('small'), 0, 4);
+    L(S.printer(), 0, 7, { obj: 'tarama.yazici1' }); L(S.printer(), 0, 8, { obj: 'tarama.yazici2' }); L(S.plant('tall'), 4, 8); L(S.plant('small'), 0, 4);
     /* --- ÇAY OCAĞI --- (tezgâh arka sırada; önünü kapatacak uzun nesne yok, semaver görünür) */
-    L(S.counter('u', 'tea'), 6, 4); L(S.counter('u', ''), 7, 4); L(S.fridge('y'), 7, 6);
-    L(S.table('round'), 6, 7); L(S.stool(), 5, 7); L(S.plant('small'), 7, 8); L(S.vending(), 5, 8);
+    L(S.counter('u', 'tea'), 6, 4, { obj: 'cay.semaver' }); L(S.counter('u', ''), 7, 4); L(S.fridge('y'), 7, 8, { obj: 'cay.buzdolabi' });
+    L(S.table('round'), 6, 7, { obj: 'cay.masa' }); L(S.stool(), 5, 7); L(S.plant('small'), 5, 6); L(S.vending(), 5, 8, { obj: 'cay.otomat' });
     W.staff.push({ id: 'cayci', room: 'cay', tx: BX + 5, ty: BY + 5, pose: 'stand', dir: 'u', look: O.look(981, 'cay', { acc: 'apron', shirt: '#d9d4c8', hs: 'bun', hair: '#2b2118' }), cayci: true });
     /* --- LAB --- (koltuk sütunları arasında boş koridor sütunları: her koltuğa ulaşılır) */
     [9, 10, 12, 13, 15, 16].forEach((x, i) => { seats.lab.push(pod('lab', x, 4, 5, '#ccd6e0', 100 + i)); seats.lab.push(pod('lab', x, 7, 8, '#ccd6e0', 120 + i)); });
-    L(S.cooler(), 8, 4); L(S.plant('tall'), 11, 4); L(S.board(), 17, 5); L(S.plant('tall'), 17, 4); L(S.plant('small'), 14, 4);
+    L(S.cooler(), 8, 4, { obj: 'lab.sebil' }); L(S.plant('tall'), 12, 6); L(S.cabinet('y'), 15, 6, { obj: 'lab.kayit_dolabi' }); L(S.board(), 17, 5, { obj: 'lab.pano' }); L(S.plant('small'), 13, 6);   // kapı boşlukları (y=4, x=11/14/17) açık
     /* --- KONTROL --- */
     [19, 20, 22, 23, 25].forEach((x, i) => { seats.kontrol.push(pod('kontrol', x, 4, 5, '#b9c4d2', 140 + i)); seats.kontrol.push(pod('kontrol', x, 7, 8, '#b9c4d2', 160 + i)); });
-    L(S.dice(), 18, 4); L(S.plant('tall'), 21, 4); L(S.plant('tall'), 24, 4);
+    L(S.dice(), 18, 4, { obj: 'kontrol.zar' }); L(S.plant('tall'), 25, 6, { obj: 'kontrol.bitki1' });   // kapı boşlukları (21 ve 24, y=4) açık kalır
+    seats.kontrol.forEach(sk => W.objects.push({ id: 'kontrol.masa', room: 'kontrol', e: sk.deskE }));
     /* --- ADAY --- */
     [0, 2, 3, 5].forEach((x, i) => { seats.aday.push(pod('aday', x, 15, 16, '#d9b78e', 200 + i)); seats.aday.push(pod('aday', x, 18, 19, '#d9b78e', 220 + i)); });
-    L(S.plant('tall'), 1, 15, { block: false }); W.block(BX + 1, BY + 15); L(S.plant('small'), 4, 15);
+    L(S.plant('tall'), 0, 17, { obj: 'aday.bitki1' });
+    seats.aday.forEach(sk => W.objects.push({ id: 'aday.masa', room: 'aday', e: sk.deskE }));
     /* --- ODA --- */
     [7, 8, 10, 11, 13, 14, 16, 17, 19, 20].forEach((x, i) => { seats.oda.push(pod('oda', x, 15, 16, '#b4c2cc', 300 + i)); seats.oda.push(pod('oda', x, 18, 19, '#b4c2cc', 330 + i)); });
-    [6, 12, 18, 21].forEach(x => L(S.plant('tall'), x, 15));
+    [6, 12, 18, 21].forEach((x, i) => L(S.plant('tall'), x, 15, i < 3 ? { obj: ['oda.bitki1', 'oda.bitki2', 'oda.bitki3'][i] } : {}));
     /* --- KAPI --- */
-    L(S.turnstile(), 24, 16); L(S.turnstile(), 24, 18);
+    L(S.turnstile(), 24, 16, { obj: 'kapi.turnike1' }); L(S.turnstile(), 24, 18, { obj: 'kapi.turnike2' });
     const g = pod('kapi', 22, 18, 19, '#9aa5b4', 400, { kind: 'staff' }); g.scr.s = S.screen('y', 'staff');
     W.staff.push({ id: 'kapici', room: 'kapi', seat: g, pose: 'sit', look: O.look(991, 'kapi', { acc: 'cap', shirt: '#1f3a6e' }) });
-    L(S.plant('tall'), 22, 15); L(S.plant('tall'), 25, 15); L(S.plant('small'), 25, 19); L(S.bench('u'), 23, 19);
+    L(S.plant('tall'), 22, 15); L(S.plant('tall'), 25, 15); L(S.plant('small'), 25, 19); L(S.bench('u'), 23, 19, { obj: 'kapi.bank' });
   }
   W.sitDir = 'u';
 
@@ -322,7 +327,7 @@
     [[BX + BW, BY + 14, '#ff8fa8'], [BX + BW + 2, BY + 14, '#ffd24a'], [BX + BW, BY + 19, '#ffffff'], [BX + BW + 2, BY + 19, '#f5a3c0']].forEach((q, i) => {
       if (!ok(q[0], q[1])) return; ent(q[0] + q[1] + 1, sx(q[0], q[1]), sy(q[0], q[1]) + HH + 2, S.bush(40 + i, q[2])); take(q[0], q[1]);
     });
-    ent(BX + BW + 3 + BY + 19 + 1, sx(BX + BW + 3, BY + 19), sy(BX + BW + 3, BY + 19) + HH, S.signpost()); take(BX + BW + 3, BY + 19);
+    OBJ('kapi.tabela', ent(BX + BW + 3 + BY + 19 + 1, sx(BX + BW + 3, BY + 19), sy(BX + BW + 3, BY + 19) + HH, S.signpost())); take(BX + BW + 3, BY + 19);
     // park lambaları: otopark kenarı ve meydan
     [[LOT.x0 - 1, LOT.y0 + 2], [LOT.x0 - 1, LOT.y1 - 1], [BX + BW + 1, BY + 20]].forEach(q => { const e = ent(q[0] + q[1] + 1.1, sx(q[0], q[1]), sy(q[0], q[1]) + HH, S.lamp()); W.lamps.push(e); });
     // çalılar bina önünde (güney)
@@ -378,7 +383,7 @@
       const x = BX + lx, y = BY + ly, k = side === 'L' ? (x + span - 1) + y + 0.43 : x + (y + span - 1) + 0.43;
       W.tvs[id] = { side: side, span: span, e: ent(k, sx(x, y), sy(x, y), null) };
     };
-    tv('finans', 'L', 9, 0, 2); tv('haber', 'L', 12, 0, 3); tv('risk', 'L', 17, 0, 2); tv('tarama', 'R', 0, 5, 2);
+    tv('finans', 'L', 9, 0, 2); tv('haber', 'L', 12, 0, 3); tv('risk', 'L', 17, 0, 2); tv('tarama', 'R', 0, 5, 2); tv('aday', 'R', 0, 17, 2);
   }
   W.resort = function () { W.statics.sort((a, b) => a.k - b.k); };
   W.build = function () {
