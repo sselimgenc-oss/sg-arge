@@ -8,9 +8,9 @@ geçmiş kapı ön eleme olur, trader'ı ileriye dönük gölge ölçümü seçe
 Görev: `docs/GOREV_D_YOLU.md`. Aşağıdaki "Trader seçimi" adımı bu belgeyle değişti; 9 adreslik ön izleme listesi
 "elle liste" kolu olarak kalır.
 
-**Sıradaki iş: Faz 0** — `claude/kapi-v1-1` dalını (`defter.py`, altın örnekler, akıl sağlığı kapısı) gözden geçirip `main`'e
-almak. Açık PR yok; hesap sürümü d ile final hızlı koşu veri dalında yok (son: c).
-Kararlar K1–K11: lider önerileri onaylandı (`docs/KARARLAR_D.md`, ön kayıt `docs/ONKAYIT_D.md`).
+**Tek odak (kullanıcı kararı 2026-10-28): trader seçimini oturtmak.** Kritik yol: kapı düzeltmesi (#317) → tam koşu →
+Seçim v1 (`docs/GOREV_SECIM_V1.md`: havuz, aday, oda, kontrol) → kullanıcı oda onayı → canlı izleme (ön kayıt sürüm 1.1:
+geçmiş prova paralel). Arşiv ve ofis ikinci planda.
 
 **Ekip (kullanıcı kararı 2026-10-28):** Claude = lider, denetçi, kalite; yalnız yönetir, kod yazmaz, haftalık kullanım sınırını
 gözetir. İşçiler: **Sonnet** (ayrı Claude Pro hesabı), **Codex**, **Argon** (Gemini; GitHub'a bağlanamaz — görevi kullanıcı elle

@@ -34,3 +34,9 @@ Sayılar uygulamada yalnız `copytrade/kurallar.yaml`'dan okunur; bu belge ↔ y
 ## Durdurma
 1. Faz 3 (geçmiş prova) pencerelerinin yarısından fazlasında kohort kontrolü geçemiyorsa canlı gölge başlamaz.
 2. Hiçbir kol gecikme ve maliyet sonrası > 0 değilse "bu yöntemle işe yaramıyor" sonucu sunulur.
+
+## Sürüm 1.1 (2026-10-28, kullanıcı onayı)
+- Sıra değişti: canlı izleme, düzeltilmiş kapının tam koşusundan çıkan **Seçim v1** ile hemen başlar (`docs/GOREV_SECIM_V1.md`);
+  Faz 3 geçmiş prova paralel yürür. Durdurma 1 aynen geçerli: prova geçemezse canlı izleme durdurulur.
+- Seçim v1 başlangıç etiketidir (gölge motoru yokken puan = kapının tarz gecikmeli kopya getirisi). Gölge motoru gelince katlar
+  ön kayıttaki terfi/çıkış kurallarıyla haftalık güncellenir; v1 etiketleri silinmez.
