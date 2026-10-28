@@ -171,3 +171,10 @@ def test_secim_isi_bayrak_cekimi_icin_yeterli_sure_tanir():
     # Run 1 (22 aday) 20 dk'da iptal oldu: aday başına 365 günlük dolum/funding çekimi.
     minutes = int(re.search(r"timeout-minutes: (\d+)", WORKFLOW.read_text(encoding="utf-8")).group(1))
     assert minutes >= 120
+
+
+def test_secim_yayimi_seçimle_ayni_gunu_kullanir():
+    # Gece yarısını geçen koşu: yayım adımı günü yeniden hesaplarsa secim/<gün> bulunamaz (denetim B24).
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+    assert "--tarih \"$day\"" in workflow and "day=${{ steps.secim.outputs.day }}" in workflow
+    assert "actions/upload-artifact" in workflow
