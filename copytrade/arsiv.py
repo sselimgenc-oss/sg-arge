@@ -1,70 +1,169 @@
-"""R2'ye senkronlanan, yalnız eklemeli halka açık Hyperliquid arşivi."""
+"""Yalnız eklemeli, R2 imleçli halka açık Hyperliquid arşivi."""
 from __future__ import annotations
-import argparse, hashlib, json, time
+
+import argparse
+import hashlib
+import json
+import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
 import pandas as pd
+
 from copytrade.izleme_motoru import load_list
 from copytrade.kurallar import load_rules
 from copytrade.tarama import PublicClient
+
 SEMA_SURUMU = 1
-def _day(now): return now.astimezone(UTC).date().isoformat()
-def _key(t,r):
-    if t=="dolum": return f"{r.get('adres')}:{r.get('tid')}"
-    if t=="funding": return f"{r.get('adres')}:{r.get('time')}:{r.get('hash')}"
-    if t=="mum_1dk": return f"{r.get('coin')}:{r.get('t',r.get('time'))}"
-    return hashlib.sha256(json.dumps(r,sort_keys=True,default=str).encode()).hexdigest()
+FIFTEEN_MINUTES = 15 * 60 * 1000
+ONE_HOUR = 60 * 60 * 1000
+
+
+def day(now: datetime) -> str:
+    return now.astimezone(UTC).date().isoformat()
+
+
+def key(kind: str, row: dict) -> str:
+    if kind == "dolum":
+        return f"{row.get('adres')}:{row.get('tid')}"
+    if kind == "funding":
+        return f"{row.get('adres')}:{row.get('time')}:{row.get('hash')}"
+    if kind == "mum_1dk":
+        return f"{row.get('coin')}:{row.get('t', row.get('time'))}"
+    return hashlib.sha256(json.dumps(row, sort_keys=True, default=str).encode()).hexdigest()
+
+
 class Arsiv:
- def __init__(self,root,now=None): self.root,self.now=Path(root),now or datetime.now(UTC)
- def _folder(self,t): return self.root/f"tur={t}"/f"gun={_day(self.now)}"
- def start(self,t,s,fallback):
-  p=self.root/f"tur={t}"/"son.json"; return (json.loads(p.read_text()).get(s) if p.exists() else None) or fallback
- def append(self,t,rows,subject=None,cursor=None):
-  folder=self._folder(t);folder.mkdir(parents=True,exist_ok=True);known=set()
-  for p in self.root.glob(f"tur={t}/gun=*/*.parquet"): known.update(pd.read_parquet(p,columns=["_anahtar"])["_anahtar"].astype(str))
-  out=[]
-  for raw in rows:
-   r=dict(raw);r["sema_surumu"]=SEMA_SURUMU;r.setdefault("alindi_ms",int(self.now.timestamp()*1000));k=_key(t,r)
-   if k not in known: known.add(k);out.append({"_anahtar":k,"sema_surumu":SEMA_SURUMU,"alindi_ms":r["alindi_ms"],"veri":json.dumps(r,sort_keys=True,default=str)})
-  if out: pd.DataFrame(out).to_parquet(folder/f"parca-{time.time_ns()}.parquet",index=False,compression="zstd")
-  if subject and cursor is not None:
-   p=self.root/f"tur={t}"/"son.json";p.parent.mkdir(parents=True,exist_ok=True);d=json.loads(p.read_text()) if p.exists() else {};d[subject]=int(cursor);p.write_text(json.dumps(d,sort_keys=True))
-  return len(out)
- def empty_schema(self,t):
-  p=self._folder(t)/"sema.parquet";p.parent.mkdir(parents=True,exist_ok=True)
-  if not p.exists(): pd.DataFrame(columns=["_anahtar","sema_surumu","alindi_ms","veri"]).to_parquet(p,index=False,compression="zstd")
- def yoklama(self,t,s,interval):
-  p=self.root/"tur=kapsam"/f"gun={_day(self.now)}"/"yoklamalar.json";p.parent.mkdir(parents=True,exist_ok=True);d=json.loads(p.read_text()) if p.exists() else [];d.append({"tur":t,"ozne":s,"zaman_ms":int(self.now.timestamp()*1000),"aralik_ms":interval});p.write_text(json.dumps(d))
- def kapsam(self):
-  p=self.root/"tur=kapsam"/f"gun={_day(self.now)}"/"yoklamalar.json";d=json.loads(p.read_text()) if p.exists() else []; gaps=expected=0
-  for _,r in pd.DataFrame(d).groupby(["tur","ozne"]) if d else []:
-   r=r.sort_values("zaman_ms");i=int(r.iloc[0].aralik_ms);ts=list(r.zaman_ms);expected+=len(ts);gaps+=sum(max(0,(b-a)//i-1) for a,b in zip(ts,ts[1:]) if b-a>int(load_rules()["arsiv_bosluk_carpani"])*i)
-  x={"yoklama":expected,"bosluk":gaps,"oran":gaps/max(1,expected)};(p.parent/"ozet.json").write_text(json.dumps(x,ensure_ascii=False,indent=2))
-  if x["oran"]>float(load_rules()["arsiv_bosluk_esigi"]):raise RuntimeError("Arşiv boşluk oranı eşiği aşıldı")
-  return x
-def havuz(root,kapi_root=None):
- out={x["adres"].lower() for x in load_list(Path(root)/"copytrade/izleme_listesi.yaml")}
- for f in (Path(kapi_root) if kapi_root else Path("/olmayan")).glob("*/sonuc.csv"):
-  for _,r in pd.read_csv(f).iterrows():
-   if str(r.get("adim1"))=="Geçti" and str(r.get("adim2"))=="Geçti":out.add(str(r.get("address",r.get("adres",""))).lower())
- return sorted(x for x in out if x.startswith("0x"))
-def collect(root,out,kinds,kapi_root=None,client=None,now=None):
- now=now or datetime.now(UTC);a=Arsiv(out,now);c=client or PublicClient();pool=havuz(root,kapi_root);start=lambda t,s:a.start(t,s,int((now-timedelta(hours=1)).timestamp()*1000));coins=set()
- for ad in pool:
-  if "dolum" in kinds:
-   rows=[dict(x,adres=ad) for x in c.fills(ad,start("dolum",ad))];coins|={str(x.get("coin")) for x in rows if x.get("coin")};a.append("dolum",rows,ad,int(now.timestamp()*1000));a.yoklama("dolum",ad,3600000)
-  if "funding" in kinds:
-   rows=[dict(x,adres=ad) for x in c.info({"type":"userFunding","user":ad,"startTime":start("funding",ad)})];a.append("funding",rows,ad,int(now.timestamp()*1000));a.yoklama("funding",ad,3600000)
-  if "pozisyon" in kinds:a.append("pozisyon",[{"adres":ad,"durum":c.info({"type":"clearinghouseState","user":ad},weight=2)}]);a.yoklama("pozisyon",ad,900000)
- if "mum_1dk" in kinds:
-  for p in a.root.glob("tur=dolum/gun=*/*.parquet"):
-   coins|={json.loads(x).get("coin") for x in pd.read_parquet(p)["veri"]}
-  coins.discard(None)
-  for coin in coins:a.append("mum_1dk",c.candles(coin,start("mum_1dk",coin),int(now.timestamp()*1000),"1m"),coin,int(now.timestamp()*1000));a.yoklama("mum_1dk",coin,900000)
- if "leaderboard" in kinds:a.append("leaderboard",c.leaderboard());a.yoklama("leaderboard","tum",604800000)
- if "olay" in kinds:a.empty_schema("olay")
- summary,olcum=a.kapsam(),{"havuz":len(pool),"istek_agirligi":getattr(c.limiter,"weight_used",0)}
- (a.root/"tur=kapsam"/f"gun={_day(now)}"/"k8.json").write_text(json.dumps(olcum,ensure_ascii=False,indent=2))
- return summary,olcum
-if __name__=="__main__":
- p=argparse.ArgumentParser();p.add_argument("--root",type=Path,default=Path("."));p.add_argument("--output",type=Path,default=Path("arsiv"));p.add_argument("--kapi-root",type=Path);p.add_argument("--tur",default="dolum,funding,pozisyon");x=p.parse_args();print(collect(x.root,x.output,set(x.tur.split(",")),x.kapi_root))
+    def __init__(self, root: Path, now: datetime | None = None):
+        self.root = Path(root)
+        self.now = now or datetime.now(UTC)
+
+    def folder(self, kind: str) -> Path:
+        return self.root / f"tur={kind}" / f"gun={day(self.now)}"
+
+    def cursor_start(self, kind: str, subject: str, fallback: int) -> int:
+        path = self.root / f"tur={kind}" / "son.json"
+        if not path.exists():
+            return fallback
+        return int(json.loads(path.read_text()).get(subject, fallback))
+
+    def set_cursor(self, kind: str, subject: str, value: int) -> None:
+        path = self.root / f"tur={kind}" / "son.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        saved = json.loads(path.read_text()) if path.exists() else {}
+        saved[subject] = int(value)
+        path.write_text(json.dumps(saved, sort_keys=True), encoding="utf-8")
+
+    def append(self, kind: str, rows: list[dict], *, subject: str | None = None, cursor: int | None = None) -> int:
+        """Imleç aralığı çakışmadığı için eski parquet parçalarını okumadan ekle."""
+        self.folder(kind).mkdir(parents=True, exist_ok=True)
+        captured = int(self.now.timestamp() * 1000)
+        values = []
+        for raw in rows:
+            row = dict(raw)
+            row.update(sema_surumu=SEMA_SURUMU, alindi_ms=captured)
+            values.append({"_anahtar": key(kind, row), "sema_surumu": SEMA_SURUMU, "alindi_ms": captured,
+                           "veri": json.dumps(row, sort_keys=True, default=str)})
+        if values:
+            pd.DataFrame(values).drop_duplicates("_anahtar").to_parquet(
+                self.folder(kind) / f"parca-{time.time_ns()}.parquet", index=False, compression="zstd")
+        if subject is not None and cursor is not None:
+            self.set_cursor(kind, subject, cursor)
+        return len(values)
+
+    def empty_schema(self, kind: str) -> None:
+        path = self.folder(kind) / "sema.parquet"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if not path.exists():
+            pd.DataFrame(columns=["_anahtar", "sema_surumu", "alindi_ms", "veri"]).to_parquet(path, index=False, compression="zstd")
+
+    def poll(self, kind: str, subject: str, interval_ms: int) -> None:
+        path = self.root / "tur=kapsam" / f"gun={day(self.now)}" / "yoklamalar.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        polls = json.loads(path.read_text()) if path.exists() else []
+        polls.append({"tur": kind, "ozne": subject, "zaman_ms": int(self.now.timestamp() * 1000), "aralik_ms": interval_ms})
+        path.write_text(json.dumps(polls), encoding="utf-8")
+
+    def summary(self) -> dict:
+        path = self.root / "tur=kapsam" / f"gun={day(self.now)}" / "yoklamalar.json"
+        polls = json.loads(path.read_text()) if path.exists() else []
+        gaps = expected = 0
+        for _, group in pd.DataFrame(polls).groupby(["tur", "ozne"]) if polls else []:
+            group = group.sort_values("zaman_ms")
+            interval = int(group.iloc[0].aralik_ms)
+            timestamps = list(group.zaman_ms)
+            expected += len(timestamps)
+            gaps += sum(max(0, (later - earlier) // interval - 1)
+                        for earlier, later in zip(timestamps, timestamps[1:])
+                        if later - earlier > int(load_rules()["arsiv_bosluk_carpani"]) * interval)
+        result = {"yoklama": expected, "bosluk": gaps, "oran": gaps / max(1, expected)}
+        (path.parent / "ozet.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        if result["oran"] > float(load_rules()["arsiv_bosluk_esigi"]):
+            raise RuntimeError("Arşiv boşluk oranı eşiği aşıldı")
+        return result
+
+
+def pool(root: Path, gate_root: Path | None) -> list[str]:
+    addresses = {row["adres"].lower() for row in load_list(root / "copytrade/izleme_listesi.yaml")}
+    if gate_root:
+        for result in gate_root.glob("*/sonuc.csv"):
+            for _, row in pd.read_csv(result).iterrows():
+                if str(row.get("adim1")) == "Geçti" and str(row.get("adim2")) == "Geçti":
+                    addresses.add(str(row.get("address", row.get("adres", ""))).lower())
+    return sorted(address for address in addresses if address.startswith("0x"))
+
+
+def next_cursor(rows: list[dict], fallback: int) -> int:
+    times = [int(row.get("time", row.get("t", -1))) for row in rows]
+    return max(times) + 1 if times and max(times) >= 0 else fallback
+
+
+def collect(root: Path, output: Path, kinds: set[str], *, gate_root: Path | None = None, client=None, now=None):
+    now = now or datetime.now(UTC)
+    archive, api = Arsiv(output, now), client or PublicClient()
+    fallback = int((now - timedelta(hours=1)).timestamp() * 1000)
+    coins, addresses = set(), pool(root, gate_root)
+    for address in addresses:
+        if "dolum" in kinds:
+            rows = [dict(row, adres=address) for row in api.fills(address, archive.cursor_start("dolum", address, fallback))]
+            coins.update(str(row["coin"]) for row in rows if row.get("coin"))
+            archive.append("dolum", rows, subject=address, cursor=next_cursor(rows, int(now.timestamp() * 1000)))
+            archive.poll("dolum", address, ONE_HOUR)
+        if "funding" in kinds:
+            start = archive.cursor_start("funding", address, fallback)
+            rows = [dict(row, adres=address) for row in api.info({"type": "userFunding", "user": address, "startTime": start})]
+            archive.append("funding", rows, subject=address, cursor=next_cursor(rows, int(now.timestamp() * 1000)))
+            archive.poll("funding", address, ONE_HOUR)
+        if "pozisyon" in kinds:
+            state = api.info({"type": "clearinghouseState", "user": address}, weight=2)
+            archive.append("pozisyon", [{"adres": address, "durum": state}])
+            for position in state.get("assetPositions", []) if isinstance(state, dict) else []:
+                coin = position.get("position", {}).get("coin")
+                if coin:
+                    coins.add(str(coin))
+            archive.poll("pozisyon", address, FIFTEEN_MINUTES)
+    if "mum_1dk" in kinds:
+        for coin in sorted(coins):
+            start = archive.cursor_start("mum_1dk", coin, fallback)
+            rows = api.candles(coin, start, int(now.timestamp() * 1000), "1m")
+            archive.append("mum_1dk", rows, subject=coin, cursor=next_cursor(rows, int(now.timestamp() * 1000)))
+            archive.poll("mum_1dk", coin, FIFTEEN_MINUTES)
+    if "leaderboard" in kinds:
+        archive.append("leaderboard", api.leaderboard())
+        archive.poll("leaderboard", "tum", 7 * 24 * ONE_HOUR)
+    if "olay" in kinds:
+        archive.empty_schema("olay")
+    summary = archive.summary()
+    measurement = {"havuz": len(addresses), "istek_agirligi": getattr(api.limiter, "weight_used", 0)}
+    (archive.root / "tur=kapsam" / f"gun={day(now)}" / "k8.json").write_text(json.dumps(measurement, ensure_ascii=False, indent=2), encoding="utf-8")
+    return summary, measurement
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument("--output", type=Path, default=Path("arsiv"))
+    parser.add_argument("--kapi-root", type=Path)
+    parser.add_argument("--tur", default="dolum,funding,pozisyon")
+    args = parser.parse_args()
+    print(collect(args.root, args.output, set(args.tur.split(",")), gate_root=args.kapi_root))
