@@ -25,3 +25,11 @@
 - Bayrak hesapları: `bayrak_rol` = `vault` | `subAccount:<master>` | diğer rol adı; funding payı = 365 gün `userFunding` toplamı / aynı dönem `closedPnl` toplamı
   (PnL 0 ise boş); vault oranı ve hacim oranı paydası kapı satırındaki güncel hesap değeri; hacim = `portfolio` `month` penceresi `vlm`;
   alt hesap kontrolü master'ın alt hesapları + (alt hesapsa) master'ın kendi pozisyonları.
+
+## Seçim v1.3 — iş paketi A (`docs/GOREV_SECIM_V13.md`)
+- [x] Havuz: adım 3 statik koşulları (kısa işlem payı, medyan ve en yüksek kaldıraç; `kapi.py` ile aynı eksik-veri kuralı)
+- [x] Kontrol: odayla ayrık, tarz × en yüksek kaldıraç dilimi eşleştirmeli; `ikincil_kontrol` = havuz − oda; tohum = `secim-<sürüm>-<kapı tarihi>`
+- [x] Seçim kimliği (`secim_surumu`, `kapi_tarihi`, `kurallar_sha256`, `secim_sha256`); aynı sürüm + kapı tarihi üzerine yazılmaz (kod + iş akışı)
+- [x] Çıktı klasörü `secim/<tarih>-<sürüm>/`; bayraklar ayrı iş (`--bayrak` → `bayrak.json`), seçimi beklemez
+- [x] RAPOR: "geçmiş getiri sıralaması (adım 1–3 süzgeçli)" açıklaması + oda ↔ kontrol dilim tablosu
+- [ ] B (geçiş kaydı), C (analiz kodu), D (haftalık geri bildirim): ayrı PR'lar
