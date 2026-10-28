@@ -26,8 +26,9 @@ Hyperliquid'in sınırlı verdiği ve sonradan alınamayan verileri bugünden, a
    **Boşluk tanımı ve eşik (kullanıcı kararı 2026-10-28):** ardışık iki kayıt arası > 3 × hedef aralık ise boşluk
    (`arsiv_bosluk_carpani: 3`); bir günde beklenen kayıtların > %10'u boşluğa düşerse iş kırmızı (`arsiv_bosluk_esigi: 0.10`).
    İkisi yalnız `kurallar.yaml`'da; altın örnek: 15 dk hedefte 44 dk ara boşluk değil, 46 dk boşluk.
-7. **Tarama altyapısı ölçümü (K8):** 300 adresi Worker ücretsiz planında dönüşümlü taramanın süresini ve Hyperliquid istek
-   ağırlığını ölç; sonucu durum dosyasına yaz. Worker'a taşıma bu görevde yok, yalnız ölçüm ve öneri.
+7. **Tarama ölçümü (K8):** Worker ücretsiz planı yetmiyor (`arastirma/copytrade/argon_altyapi_sinirlari.md`); ölçme. Bunun yerine
+   Actions koşusunda havuzun `clearinghouseState` taramasının süresini ve harcanan istek ağırlığını (dakikada ≤ 1.200) durum dosyasına
+   yaz. Not: 1 dk mumlar yalnız ~3,5 gün geriye alınabilir; mum çekimi bundan seyrek olamaz.
 
 ## Kabul
 - Altın örnek testleri: tekilleştirme (aynı dolum iki kez gelir → bir satır), sınır işareti, boşluk sayımı, yol yapısı.
