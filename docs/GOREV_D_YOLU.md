@@ -69,6 +69,26 @@ Plasebo, alfa, BHY ve istikrar ölçütleri **bilgi sütunu** olarak kalır; kar
 - **Faz 5 — Oda ve ofis:** ön kayıtlı kural geçerse Telegram bildirimleri odaya bağlanır. Pano ofis görünümü ilk canlı veriden sonra
   (her sayı gerçek veriye bağlı, yanında n ve zaman damgası; veri yoksa "bilinmiyor").
 
+## Roller (Etre'deki ajanların karşılığı)
+Etre'de her iş bir LLM "ajanı"; bizde her rol **deterministik bir modül ya da kural**dır (kararı oylama değil kural verir).
+Karakterler yalnız pano ofis görünümünde, modülün gerçek durumunu gösterir.
+
+| Etre rolü | Bizdeki karşılığı | Durum |
+|---|---|---|
+| Patron (oylama, son söz) | Kullanıcı karar verir; lider denetler, birleştirir | var |
+| Lab müdürleri (gölge) | Gölge defter + kollar (Faz 2–4) | yeni |
+| İşlem şefleri (kopyalama kuralları) | Oda kuralları: fiyat kayması toleransı aşılınca "atla", stop, kademeli kâr alma önerisi; Telegram v2 | Faz 5 |
+| Finans (kasa, işlem büyüklüğü) | Sanal kasa ve işlem başı tutar kuralı (`kurallar.yaml`); gölge ve oda aynı kuralı kullanır | yeni |
+| Risk (yoğunlaşma) | Trader başı ve coin başı tavan, toplam açık risk tavanı, likidasyon mesafesi; aşılırsa bildirim "atla" der | yeni |
+| Gözcü (giriş-çıkış kaydı) | Kollara/odaya her giriş-çıkış gerekçesiyle `olaylar.jsonl`'a yazılır; silinmez | yeni |
+| Denetçi (veri kalitesi, API, gecikme) | Akıl sağlığı kapısı + gölge sağlaması + gecikme zinciri; bozulunca yayım durur, Telegram uyarır | kısmen var |
+| Sekreter (kural kitabı, kararlar) | `kurallar.yaml`, `DURUM.md`, ön kayıt hash'i, git tarihçesi | var |
+| Arşivci (eski veri) | Veri dalları (`copytrade-kapi`, `copytrade-izleme`), eski hesap ayrımı | var |
+| Haber şefi (Telegram) | Worker: anlık bildirim, `/durum`; eklenecek: gün sonu özeti | kısmen var |
+| Çaycı | Yalnız ofis süsü; veri gibi görünmez | Faz 5 |
+
+Veto karşılığı: Risk, Finans ve Denetçi kuralları sağlanmazsa bildirim gönderilmez ya da "atla" işaretlenir. Bunu bir ajan değil kural yapar.
+
 ## Durdurma kriterleri (öneri; kullanıcı onayı gerekli)
 1. Faz 3'te pencerelerin yarısından fazlasında kohort kontrolü geçemiyorsa canlı teste başlanmaz.
 2. Hiçbir kol 30 dk / 2 sa gecikme ve maliyet sonrası > 0 değilse "Hyperliquid copy trade bu yöntemle işe yaramıyor" sonucu
