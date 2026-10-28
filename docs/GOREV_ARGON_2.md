@@ -140,3 +140,59 @@ Görev — yalnız resmi kaynaktan (Hyperliquid docs / API belgesi / resmi duyur
 Bulamadığın ya da resmi kaynakta olmayan maddeye "resmi kaynakta yok" yaz; ikincil kaynaktan geldiyse ayrıca belirt.
 Çıktı: madde başına kısa cevap + bağlantı + erişim tarihi.
 ```
+
+---
+
+## Kod görevleri (2026-10-28, kullanıcı onayı: "lider denetlemesi şartıyla")
+Argon kendi başına çalışan, saf Python modülü + pytest testi yazar; kullanıcı dosyaları lidere getirir, lider denetleyip
+`copytrade/` altına koyar (PR, tam test paketi). Kurallar kutulara dahil: yalnız Python 3.12 + pandas + numpy (scipy yok);
+ağ, dosya okuma/yazma, rastgelelik tohumsuz yok; eşik sayıları koda yazılmaz, fonksiyona parametre olarak gelir
+(lider `kurallar.yaml`'a taşır); her fonksiyon için elle hesaplanmış **altın örnek** testi (girdi + beklenen sayı).
+
+## A8 — Piyasa rejimi sınıflandırıcısı (araştırma + kod)
+
+```
+Bağlam: Hyperliquid copy trade araştırması. Faz 3'te geçmiş pencerelerde "kopya getirisini piyasa rejimine göre kır"
+istiyoruz (bilgi amaçlı, karar ölçütü değil). Rejim BTC günlük kapanışlarından çıkar: yükseliş / düşüş / yatay / şok.
+
+Bölüm 1 — araştırma (kısa): kripto ve hisse literatüründe basit rejim tanımları (ör. 30 gün getiri eşiği, gerçekleşmiş
+oynaklık yüzdeliği, 200 gün ortalama). Kaynak bağlantısı + erişim tarihi zorunlu; açamadığına "doğrulanamadı" yaz.
+Önerdiğin eşikleri ve gerekçesini yaz (ör. getiri_esik=0,10; sok_oynaklik_yuzdelik=0,90). Uydurma kaynak yazma.
+
+Bölüm 2 — kod: tek dosya `rejim.py`
+- def rejim_etiketle(kapanis: pd.Series, pencere_gun: int, getiri_esik: float, sok_yuzdelik: float,
+                    yuzdelik_pencere_gun: int) -> pd.Series
+  Girdi: tarih indeksli günlük kapanış (UTC, artan, boşluksuz olmayabilir). Çıktı: aynı indeksle "yukselis" | "dusus" |
+  "yatay" | "sok" | None (yeterli geçmiş yoksa). Kural: pencere_gun getirisi > getiri_esik → yükseliş, < −getiri_esik →
+  düşüş, arası → yatay; ama pencere_gun gerçekleşmiş oynaklığı (günlük log getirilerin std'si) son yuzdelik_pencere_gun
+  içindeki dağılımın sok_yuzdelik yüzdeliğinin üstündeyse → şok (öncelikli). Yalnız o güne kadarki veriyi kullan
+  (geleceğe bakma yok).
+- def rejim_ozeti(etiket: pd.Series, getiri: pd.Series) -> pd.DataFrame: rejim başına gün sayısı, getirinin ortalaması,
+  medyanı (getiri aynı indeksli günlük seri).
+Testler `test_rejim.py` (pytest): elle hesaplanmış altın örnekler: (1) 10 günlük düz artan seri → beklenen etiketler,
+(2) sabit seri → yatay, (3) tek günlük büyük sıçrama → şok, (4) geçmiş yetersizken None, (5) geleceğe bakmama testi:
+seriye sonradan gün eklemek önceki etiketleri değiştirmez. Her testte beklenen değerin elle hesabı yorum olarak yazılsın.
+Çıktı: araştırma notu + iki dosyanın tam içeriği.
+```
+
+## A9 — Kalıcılık ölçümü (araştırma + kod)
+
+```
+Bağlam: Trader'ları bir T gününe kadarki veriyle puanlıyoruz; sonraki 60 günde kopya getirisi ile puan arasında sıra
+korelasyonu (Spearman) var mı diye 2 haftada bir kayan pencerelerde bakacağız. Her pencerede ~100–2.000 trader var.
+
+Bölüm 1 — araştırma (kısa): trader performansının kalıcılığı üzerine gerçek, açılabilen çalışmalar (fon yöneticileri:
+Carhart 1997 vb.; sosyal trading / eToro / kripto). Her biri için: örneklem, dönem, bulunan etki büyüklüğü, bağlantı.
+Daha önce bir raporda "Dennim89 kalıcılık çalışması" gibi doğrulanamayan kaynak çıktı; yalnız açıp gördüğünü yaz.
+
+Bölüm 2 — kod: tek dosya `kalicilik.py`
+- def spearman(x: pd.Series, y: pd.Series) -> float  (ortak indeks, NaN'ler atılır, eşit değerlerde ortalama sıra;
+  scipy yok, pandas rank ile)
+- def pencere_kaliciligi(puan: pd.DataFrame, getiri: pd.DataFrame) -> pd.DataFrame
+  puan ve getiri: satır = pencere başlangıç tarihi, sütun = adres. Çıktı: pencere başına n (ortak adres), spearman.
+- def blok_bootstrap_ortalama(degerler: pd.Series, blok: int, tekrar: int, tohum: int, alfa: float) -> dict
+  Pencereler arası ortalama Spearman için hareketli blok bootstrap güven aralığı: {"ortalama", "alt", "ust", "n"}.
+Testler `test_kalicilik.py`: (1) elle hesaplı 5 elemanlı Spearman (eşitlik dahil) altın örneği, (2) tam ters sıra → −1,
+(3) ortak adres < 3 olan pencere NaN döner, (4) aynı tohumla aynı aralık, (5) sabit seride aralık = ortalama.
+Çıktı: araştırma notu + iki dosyanın tam içeriği.
+```
