@@ -21,8 +21,11 @@ Sayılar uygulamada yalnız `copytrade/kurallar.yaml`'dan okunur; bu belge ↔ y
 ## Kopya kuralı varyantları (aynı sinyaller, paralel gölge)
 - V0 birebir (tarz gecikmesi: intraday 30 dk, swing 120 dk).
 - V1 fiyat bandı: giriş, trader girişinden intraday ≤ %1, swing ≤ %2 uzaksa; atlananlar ayrıca izlenir.
-- V2 zarar/süre çıkışı: teminatın %50'si zararda çık; swing'de 7. ve 14. günde zarar/kâr sınırı daralır (ayrıntı Faz 2'de
-  `kurallar.yaml`'a yazılır, Faz 3'ten önce donar).
+- V2 zarar/süre çıkışı (sayılar kullanıcı onayı 2026-10-28, **dondu**). Teminat = gölgenin o işleme ayırdığı para.
+  - Intraday: teminatın −%50'si zararda çık.
+  - Swing: 0–7. gün zarar −%50, kâr sınırı yok; 7. günden sonra −%30 / +%60; 14. günden sonra −%20 / +%40.
+- Gölge pozisyon üst sınırı (tüm varyantlar, **dondu**): tek pozisyonun büyüklüğü o trader'a ayrılan gölge parasının en çok 3 katı;
+  aşan ekleme kırpılır, olay `kirpildi` diye kaydedilir.
 
 ## Ölçüm
 - Birincil: eşit ağırlıklı, sabit sermayeli kohort ve kontrol portföylerinin günlük net getiri farkı (V0).
