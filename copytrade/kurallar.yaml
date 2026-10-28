@@ -117,5 +117,5 @@ arsiv_bosluk_esigi: 0.10
 secim_aday_orani: 0.15
 secim_oda_min: 10
 secim_oda_max: 20
-# Seçim yalnız tam koşuda çalışır: durum.json kapsamı (işlenen / evren) bunun altındaysa (ör. hızlı koşu) durur. (Uygulayıcı ek güvenliği, lider onayı bekler.)
-secim_min_kapsam: 0.5
+# Seçim yalnız tam koşuda çalışır: durum.json kapsamı (işlenen / evren) bunun altındaysa (ör. hızlı koşu) durur. (Kullanıcı kararı 2026-10-28: 0,95.)
+secim_min_kapsam: 0.95

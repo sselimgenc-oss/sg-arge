@@ -1,14 +1,15 @@
 # Durum: Seçim v1 (dal `claude/secim-v1`)
 
 - [x] `copytrade/secim.py` (havuz, puan, aday, oda, kontrol, taban, elle, RAPOR, `--izleme-listesi`)
-- [x] `kurallar.yaml`: `secim_aday_orani`, `secim_oda_min/max`, `secim_min_kapsam` (son biri uygulayıcı güvenliği; lider onayı gerekir)
+- [x] `kurallar.yaml`: `secim_aday_orani`, `secim_oda_min/max`, `secim_min_kapsam` (0,95: kullanıcı kararı 2026-10-28)
 - [x] Altın örnekler `tests/test_secim.py` (12 satır); Worker testi `worker/test/events.test.js` (`kol = oda` bildirir, diğerleri sessiz)
 - [x] `izleme_motoru`: `kol`, `kollar` alanları kabul edilir ve `durum.json`'a taşınır (`docs/VERI_SOZLESMESI.md` v1.5)
 - [x] İş akışı `copytrade_secim.yml` (elle; veri dalına `secim/<tarih>/`)
 - [ ] **Gerçek RAPOR bekliyor: veri dalındaki son koşu HIZLI koşudur (92 satır, kapsam 0,0067); tam koşu yok.** Seçim yalnız `durum = tamam` ve
-      kapsam ≥ 0,5 ile çalışır; tam koşu bitince `CT-Seçim v1` iş akışı elle tetiklenir, RAPOR özeti PR açıklamasına eklenir.
+      kapsam ≥ 0,95 ile çalışır; tam koşu bitince `CT-Seçim v1` iş akışı elle tetiklenir, RAPOR özeti PR açıklamasına eklenir.
 
 ## Kararlar / varsayımlar (belgede yazmıyordu; lider denetlesin)
+- `secim_min_kapsam` = 0,95 (kullanıcı kararı 2026-10-28; lider denetimi).
 - Havuz ayrıca `tarz ∈ {intraday, swing}` ister (scalp tarz kovasına girmez).
 - Aday sayısı = ceil(0,15 × tarzdaki puanı > 0 sayısı). Eşitlikte adres sırası.
 - Oda boyutu = min(20, ilişki elemesinden sonra kalan aday); tarz kotası ilişki elemesinden ÖNCEKİ aday payıyla (en büyük kalan yöntemi);

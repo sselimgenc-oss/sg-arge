@@ -145,10 +145,13 @@ def test_tam_kosu_degilse_durur(tmp_path: Path):
     (day / "durum.json").write_text(json.dumps({"durum": "tamam", "kapsam": 0.0067}), encoding="utf-8")
     with pytest.raises(SystemExit, match="tam koşu değil"):
         secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28", "--taban-dosyasi", str(tmp_path / "x")])
+    (day / "durum.json").write_text(json.dumps({"durum": "tamam", "kapsam": 0.94}), encoding="utf-8")
+    with pytest.raises(SystemExit, match="tam koşu değil"):                                   # 0,94 < 0,95 → dur
+        secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28", "--taban-dosyasi", str(tmp_path / "x")])
     (day / "durum.json").write_text(json.dumps({"durum": "eksik", "kapsam": 1.0}), encoding="utf-8")
     with pytest.raises(SystemExit, match="tamam değil"):
         secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28"])
-    (day / "durum.json").write_text(json.dumps({"durum": "tamam", "kapsam": 1.0, "hesap": "v1.1-test"}), encoding="utf-8")
+    (day / "durum.json").write_text(json.dumps({"durum": "tamam", "kapsam": 0.95, "hesap": "v1.1-test"}), encoding="utf-8")     # 0,95 → çalışır
     (tmp_path / "board.json").write_text("[]", encoding="utf-8")
     secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28", "--taban-dosyasi", str(tmp_path / "board.json")])
     assert json.loads((tmp_path / "secim/2026-10-28/secim.json").read_text())["sayilar"]["oda"] == 2

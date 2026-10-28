@@ -3,7 +3,7 @@
 Yapan: lider atar. Dal: `<işçi>/secim-v1`. Tek PR, `main`'e; lider birleştirir. Önce `DURUM.md`, `docs/GOREV_D_YOLU.md`,
 `docs/ONKAYIT_D.md` (sürüm 1.1). Ağ: Hyperliquid'e bulut oturumundan erişim yok → koşular GitHub Actions'ta.
 **Tek odak:** trader seçimini oturtmak (kullanıcı kararı 2026-10-28). Girdi: düzeltilmiş kapının **tam koşusu** (`copytrade-kapi`
-veri dalı, en son tarihli `sonuc.csv`, `durum.json` `durum = tamam` olmalı; değilse dur).
+veri dalı, en son tarihli `sonuc.csv`, `durum.json` `durum = tamam` olmalı; değilse dur). **Kapsam şartı (kullanıcı kararı 2026-10-28):** `durum.json` kapsamı ≥ `secim_min_kapsam: 0.95` olmalı (0,94 durur, 0,95 çalışır); hızlı koşu üzerinde seçim yapılmaz.
 
 ## 1. Seçim (`copytrade/secim.py`)
 Her satır kapı sonucundan; hiçbir eşik koda gömülmez, yeni sayılar `kurallar.yaml`'a.
