@@ -10,5 +10,9 @@
 - İlk Actions koşusundan 24 saat sonra tür başına satır/adres/boşluk ile sütun min/medyan/max özeti eklenecek.
 - K8'in 300-adres Worker ölçümü canlı istek ağırlığı gerektirir; Worker'a taşıma yapılmadı.
 
+## 2026-10-28 ikinci düzeltme
+- Önceki iki `arsiv.yml` koşusu başarısız oldu; R2'de ilk 24 saate ait güvenilir kapsam verisi yok. Özet uydurulmadı.
+- Yeni iş akışı koşuları tek `arsiv` eşzamanlılık grubunda sıraya alır; yalnız imleçler ve günün kapsam dosyaları indirilir.
+
 ## Ortam notu
 - Ağ erişimi onaylandı. Güncel `origin/main` (`0652652`) üzerine yeniden tabanlama yapıldı. İzole ortamda `python -m pytest -q`: **201 geçti** (1086 mevcut uyarı).
