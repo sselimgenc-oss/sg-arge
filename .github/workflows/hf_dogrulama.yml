@@ -30,6 +30,8 @@ jobs:
           git fetch --depth=1 origin copytrade-kapi
           git archive FETCH_HEAD copytrade/kapi | tar -x
       - name: Doğrulama
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}     # isteğe bağlı: tanımlıysa HF hız sınırı yükselir
         run: python -m copytrade.hf_dogrulama --root copytrade --output hf_dogrulama.json
       - name: Özet (JSON'dan, günlük kapsam hariç)
         if: ${{ !cancelled() }}

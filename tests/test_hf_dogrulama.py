@@ -14,6 +14,8 @@ def test_tarih_yolu():
     assert hf.tarih_yolu(hf.BASE, "account_values", "2025-08-09") == \
         "hf://datasets/ProbioticFarmer/hyperliquid-augmented-copytrading/account_values/date=2025-08-09/*.parquet"
     assert hf.tarih_yolu("/x", "fills") == "/x/fills/date=*/*.parquet"
+    assert hf.HFKaynak().url("account_values/date=2025-08-09/0.parquet") == \
+        "hf://datasets/ProbioticFarmer/hyperliquid-augmented-copytrading/account_values/date=2025-08-09/0.parquet"
 
 
 def test_tarih_bolumleri_ve_bosluklar():
@@ -66,15 +68,52 @@ def hive(tmp_path: Path) -> Path:
     return tmp_path
 
 
+def by_day(kaynak) -> dict[str, list[str]]:
+    out: dict[str, list[str]] = {}
+    for f in hf.parquet_dosyalari(kaynak.agac("account_values")):
+        out.setdefault(f["gun"], []).append(kaynak.url(f["path"]))
+    return out
+
+
 def test_duckdb_kapsam_satir_ve_degerler(tmp_path: Path):
-    base = str(hive(tmp_path))
+    kaynak = hf.YerelKaynak(hive(tmp_path))
     con = hf.baglan()
-    glob = hf.tarih_yolu(base, "account_values")
-    assert hf.gunluk_kapsam(con, glob) == [{"gun": "2025-08-01", "satir": 3, "adres": 2}, {"gun": "2025-08-03", "satir": 3, "adres": 3}]
-    assert hf.satir_sayisi(con, glob) == 6
-    assert [c["ad"] for c in hf.sutunlar(con, glob)][:4] == ["user", "dex", "collateral_token", "account_value"]
-    values = hf.hf_degerleri(con, hf.tarih_yolu(base, "account_values", "2025-08-01"), [A, B, C])
+    days = by_day(kaynak)
+    urls = [u for d in sorted(days) for u in days[d]]
+    assert hf.gunluk_kapsam(con, days) == [{"gun": "2025-08-01", "satir": 3, "adres": 2}, {"gun": "2025-08-03", "satir": 3, "adres": 3}]
+    assert hf.satir_sayisi(con, urls) == 6
+    assert [c["ad"] for c in hf.sutunlar(con, urls)][:4] == ["user", "dex", "collateral_token", "account_value"]
+    values = hf.hf_degerleri(con, days["2025-08-01"], [A, B, C])
     assert values == {A: {"account_value": 150.0, "satir": 2}, B: {"account_value": 200.0, "satir": 1}}     # A: 100 + 50, büyük/küçük harf birleşir
+    assert hf.hf_degerleri(con, [], [A]) == {}
+
+
+def test_agac_parquet_dosyalari_ve_uzantilar():
+    tree = [{"path": "n/a.ipynb", "type": "file"}, {"path": "s/date=2025-08-02/1.parquet", "type": "file", "size": 5},
+            {"path": "s/date=2025-08-01/0.parquet", "type": "file", "size": 3}, {"path": "s/date=2025-08-01", "type": "directory"}, {"path": "s/x.json", "type": "file"}]
+    files = hf.parquet_dosyalari(tree)
+    assert [(f["gun"], f["size"]) for f in files] == [("2025-08-01", 3), ("2025-08-02", 5)]
+    assert hf.uzantilar([r for r in tree if not r["path"].endswith(".parquet")]) == {"ipynb": 1, "json": 1}      # dizin kayıtları sayılmaz
+    assert hf.dosya_gunu("account_values/date=2025-08-09/part-0.parquet") == "2025-08-09" and hf.dosya_gunu("asset_ctxs/x.parquet") is None
+
+
+def test_yeniden_429_te_bekleyip_dener_digerinde_hemen_firlatir():
+    waits, calls = [], []
+
+    def flaky():
+        calls.append(1)
+        if len(calls) < 3:
+            raise RuntimeError("HTTP Error: HTTP GET error on 'https://huggingface.co/api/…' (HTTP 429)")
+        return "ok"
+
+    assert hf.yeniden(flaky, sleep=waits.append) == "ok" and waits == [5.0, 10.0]                   # 5 · 2^0, 5 · 2^1
+    with pytest.raises(ValueError):
+        hf.yeniden(lambda: (_ for _ in ()).throw(ValueError("kalıcı")), sleep=waits.append)
+    assert waits == [5.0, 10.0]                                                                      # geçici olmayan hatada bekleme yok
+    n = []
+    with pytest.raises(RuntimeError):
+        hf.yeniden(lambda: n.append(1) or (_ for _ in ()).throw(RuntimeError("HTTP 429")), tries=3, sleep=lambda s: None)
+    assert len(n) == 3                                                                               # son denemede hata fırlar
 
 
 class FakeClient:
@@ -94,8 +133,7 @@ class FakeClient:
 
 
 def test_capraz_altin_ornek(tmp_path: Path):
-    base = str(hive(tmp_path))
-    out = hf.capraz(hf.baglan(), base, FakeClient(), [A], "2025-08-03", ["2025-08-01"], now_ms=hf.gun_ms("2025-08-03") + 86_400_000)
+    out = hf.capraz(hf.baglan(), by_day(hf.YerelKaynak(hive(tmp_path))), FakeClient(), [A], "2025-08-03", ["2025-08-01"], now_ms=hf.gun_ms("2025-08-03") + 86_400_000)
     latest, past = out["tarihler"]["2025-08-03"], out["tarihler"]["2025-08-01"]
     assert latest["portfolio"]["n"] == 1 and latest["portfolio"]["medyan"] == pytest.approx(0.2)         # |120 − 100| / 100
     assert past["portfolio"]["medyan"] == 0.0 and "clearinghouse_ana" not in past                        # 150 ↔ 150; geçmişte yalnız portfolio
@@ -115,15 +153,20 @@ def test_kapi_adresleri(tmp_path: Path):
 
 def test_calistir_uctan_uca_yerel_ve_hata_kirmizi(tmp_path: Path, monkeypatch):
     base = str(hive(tmp_path / "hf"))
+    (tmp_path / "hf" / "notebooks").mkdir()
+    (tmp_path / "hf" / "notebooks" / "a.ipynb").write_text("{}")
     day = tmp_path / "kapi" / "2026-10-28"
     day.mkdir(parents=True)
     pd.DataFrame({"address": [A], "hesap_degeri_bugun": [150.0]}).to_csv(day / "sonuc.csv", index=False)
     output = tmp_path / "o.json"
     monkeypatch.setattr(hf, "baglan", hf.baglan)
-    args = hf.argparse.Namespace(root=tmp_path, base=base, alt_kume=["account_values"], output=output)
+    args = hf.argparse.Namespace(root=tmp_path, base=base, alt_kume=None, output=output)
     result = hf.calistir(args, client=FakeClient())
     assert result["hatalar"] == {}
-    assert result["adimlar"]["envanter"]["account_values"]["satir"] == 6 and result["adimlar"]["envanter"]["account_values"]["gun_sayisi"] == 2
+    envanter = result["adimlar"]["envanter"]
+    assert envanter["alt_kumeler"] == ["account_values", "notebooks"]
+    assert envanter["account_values"]["satir"] == 6 and envanter["account_values"]["gun_sayisi"] == 2 and envanter["account_values"]["dosya"] == 2
+    assert envanter["notebooks"]["parquet_disi"] == {"ipynb": 1} and "satir" not in envanter["notebooks"]            # parquet yok → hata değil, bilgi
     assert result["adimlar"]["kapsam"]["bosluklar"] == ["2025-08-02"] and result["adimlar"]["kapsam"]["adres_max"] == 3
     assert "yok" in result["adimlar"]["ledger"]["sonuc"]
     json.dumps(result, allow_nan=False)

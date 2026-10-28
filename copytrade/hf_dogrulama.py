@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import statistics
 import time
@@ -91,34 +92,104 @@ def gun_ms(day: str) -> int:
     return int(datetime.fromisoformat(day).replace(tzinfo=UTC).timestamp() * 1000) + DAY_MS // 2
 
 
-# ----------------------------------------------------------------------------------------------- Hugging Face listeleme
-def hf_ls(path: str = "", session: requests.Session | None = None) -> list[dict[str, Any]]:
-    """HF API ağaç listesi (sayfalı: ``Link: next``). ``path`` boş = kök."""
-    session = session or requests.Session()
-    url, rows = HF_API + (f"/{path}" if path else ""), []
-    while url:
-        response = session.get(url, timeout=60)
-        response.raise_for_status()
-        rows.extend(response.json())
-        url = response.links.get("next", {}).get("url")
-    return rows
+# ----------------------------------------------------------------------------------------------- kaynaklar (HF ya da yerel dizin)
+def dosya_gunu(path: str) -> str | None:
+    m = re.search(r"date=(\d{4}-\d{2}-\d{2})", path)
+    return m.group(1) if m else None
 
 
-def alt_kumeler(session: requests.Session | None = None) -> list[str]:
-    return sorted(r["path"] for r in hf_ls("", session) if r.get("type") == "directory" and not r["path"].startswith("."))
+def parquet_dosyalari(tree: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Ağaç listesinden ``.parquet`` dosyaları: ``{path, size, gun}`` (yola göre sıralı)."""
+    return sorted(({"path": r["path"], "size": int(r.get("size") or 0), "gun": dosya_gunu(r["path"])}
+                   for r in tree if r.get("type", "file") == "file" and r["path"].endswith(".parquet")), key=lambda r: r["path"])
 
 
-def veri_karti(session: requests.Session | None = None) -> str:
-    response = (session or requests.Session()).get(HF_CARD, timeout=60)
-    response.raise_for_status()
-    return response.text
+def uzantilar(tree: list[dict[str, Any]]) -> dict[str, int]:
+    """Parquet dışı dosyaların uzantı sayımı (ör. ``notebooks`` ``.ipynb``)."""
+    out: dict[str, int] = {}
+    for r in tree:
+        if r.get("type", "file") == "file":
+            ext = r["path"].rsplit(".", 1)[-1] if "." in r["path"].rsplit("/", 1)[-1] else "(uzantısız)"
+            out[ext] = out.get(ext, 0) + 1
+    return dict(sorted(out.items()))
+
+
+def yeniden(call, tries: int = 6, base_wait: float = 5.0, sleep=time.sleep):
+    """HTTP 429/5xx (HF hız sınırı) için üstel bekleme ile yeniden dene; başka hata ya da son deneme olduğu gibi fırlatılır."""
+    for attempt in range(tries):
+        try:
+            return call()
+        except Exception as exc:                                   # noqa: BLE001
+            text = str(exc)
+            transient = isinstance(exc, requests.HTTPError) and exc.response is not None and exc.response.status_code in (429, 500, 502, 503, 504) \
+                or any(code in text for code in ("HTTP 429", "HTTP 500", "HTTP 502", "HTTP 503", "HTTP 504", "429 Too Many"))
+            if not transient or attempt == tries - 1:
+                raise
+            sleep(base_wait * 2 ** attempt)
+
+
+class HFKaynak:
+    """Hugging Face: alt kümeler ve dosya ağacı ``recursive`` API'siyle (alt küme başına birkaç sayfa); DuckDB'ye açık dosya URL'leri verilir
+    (``date=*`` joker karakteri DuckDB'nin her dizini ayrı API çağrısıyla listelemesine ve 429'a yol açıyordu)."""
+    ad = BASE
+
+    def __init__(self, session: requests.Session | None = None, token: str | None = None):
+        self.session = session or requests.Session()
+        if token:
+            self.session.headers["Authorization"] = f"Bearer {token}"
+
+    def _get(self, url: str):
+        def call():
+            response = self.session.get(url, timeout=120)
+            response.raise_for_status()
+            return response
+        return yeniden(call)
+
+    def alt_kumeler(self) -> list[str]:
+        return sorted(r["path"] for r in self._get(HF_API).json() if r.get("type") == "directory" and not r["path"].startswith("."))
+
+    def agac(self, subset: str) -> list[dict[str, Any]]:
+        url, rows = f"{HF_API}/{subset}?recursive=true", []
+        while url:
+            response = self._get(url)
+            rows.extend(response.json())
+            url = response.links.get("next", {}).get("url")
+        return rows
+
+    def url(self, path: str) -> str:
+        return f"{BASE}/{path}"
+
+    def veri_karti(self) -> str:
+        return self._get(HF_CARD).text
+
+
+class YerelKaynak:
+    """Yerel dizin (test): aynı arayüz."""
+    def __init__(self, root: str | Path):
+        self.root = Path(root)
+        self.ad = str(self.root)
+
+    def alt_kumeler(self) -> list[str]:
+        return sorted(p.name for p in self.root.iterdir() if p.is_dir())
+
+    def agac(self, subset: str) -> list[dict[str, Any]]:
+        return [{"path": p.relative_to(self.root).as_posix(), "size": p.stat().st_size, "type": "file"}
+                for p in sorted((self.root / subset).rglob("*")) if p.is_file()]
+
+    def url(self, path: str) -> str:
+        return str(self.root / path)
+
+    def veri_karti(self) -> str:
+        return ""
 
 
 # ----------------------------------------------------------------------------------------------- DuckDB
-def baglan():
+def baglan(token: str | None = None):
     import duckdb
     con = duckdb.connect()
     con.execute("SET enable_progress_bar=false")
+    if token:
+        con.execute(f"CREATE SECRET hf_gizli (TYPE HUGGINGFACE, TOKEN {_sql_str(token)})")
     return con
 
 
@@ -126,29 +197,45 @@ def _sql_str(value: str) -> str:
     return "'" + value.replace("'", "''") + "'"
 
 
-def sutunlar(con, glob: str) -> list[dict[str, str]]:
-    return [{"ad": r[0], "tur": r[1]} for r in con.execute(f"DESCRIBE SELECT * FROM read_parquet({_sql_str(glob)}, hive_partitioning=true)").fetchall()]
+def _liste(urls: list[str]) -> str:
+    return "[" + ", ".join(_sql_str(u) for u in urls) + "]"
 
 
-def satir_sayisi(con, glob: str) -> int:
+PARCA = 100      # tek sorguda en çok bu kadar dosya (bellek/URL boyutu sınırı; eşik değil)
+
+
+def sutunlar(con, urls: list[str]) -> list[dict[str, str]]:
+    return [{"ad": r[0], "tur": r[1]} for r in
+            con.execute(f"DESCRIBE SELECT * FROM read_parquet({_liste(urls[-1:])}, hive_partitioning=true)").fetchall()]
+
+
+def satir_sayisi(con, urls: list[str]) -> int:
     """Parquet altbilgilerinden toplam satır (veri okunmaz)."""
-    return int(con.execute(f"SELECT coalesce(sum(num_rows), 0) FROM parquet_file_metadata({_sql_str(glob)})").fetchone()[0])
+    return sum(int(con.execute(f"SELECT coalesce(sum(num_rows), 0) FROM parquet_file_metadata({_liste(urls[i:i + PARCA])})").fetchone()[0])
+               for i in range(0, len(urls), PARCA))
 
 
-def gunluk_kapsam(con, glob: str) -> list[dict[str, Any]]:
-    """Gün başına satır ve ayrık adres sayısı (``user`` sütunu; bölüm sütunu ``date``)."""
-    rows = con.execute(f"SELECT CAST(date AS VARCHAR), count(*), count(DISTINCT lower(user)) "
-                       f"FROM read_parquet({_sql_str(glob)}, hive_partitioning=true) GROUP BY 1 ORDER BY 1").fetchall()
-    return [{"gun": d, "satir": int(n), "adres": int(a)} for d, n, a in rows]
+def gunluk_kapsam(con, by_day: dict[str, list[str]]) -> list[dict[str, Any]]:
+    """Gün başına satır ve ayrık adres sayısı (``user``). Bir günün tüm dosyaları aynı sorguda (ayrık sayım toplanamaz); sorgu başına ~``PARCA`` dosya."""
+    days, out, i = sorted(by_day), [], 0
+    while i < len(days):
+        chunk, files = [], 0
+        while i < len(days) and (not chunk or files + len(by_day[days[i]]) <= PARCA):
+            chunk.append(days[i]); files += len(by_day[days[i]]); i += 1
+        urls = [u for d in chunk for u in by_day[d]]
+        rows = con.execute(f"SELECT CAST(date AS VARCHAR), count(*), count(DISTINCT lower(user)) "
+                           f"FROM read_parquet({_liste(urls)}, hive_partitioning=true) GROUP BY 1 ORDER BY 1").fetchall()
+        out += [{"gun": d, "satir": int(n), "adres": int(a)} for d, n, a in rows]
+    return out
 
 
-def hf_degerleri(con, glob: str, addresses: list[str]) -> dict[str, dict[str, Any]]:
-    """Bir gün bölümünde adres başına ``account_value`` toplamı (tüm dex ve teminat satırları) ve satır sayısı."""
-    if not addresses:
+def hf_degerleri(con, urls: list[str], addresses: list[str]) -> dict[str, dict[str, Any]]:
+    """Bir gün bölümünün dosyalarında adres başına ``account_value`` toplamı (tüm dex ve teminat satırları) ve satır sayısı."""
+    if not addresses or not urls:
         return {}
     listed = ", ".join(_sql_str(a.lower()) for a in addresses)
-    rows = con.execute(f"SELECT lower(user), sum(account_value), count(*) FROM read_parquet({_sql_str(glob)}, hive_partitioning=true) "
-                       f"WHERE lower(user) IN ({listed}) GROUP BY 1").fetchall()
+    rows = con.execute(f"SELECT user, sum(v), sum(n) FROM (SELECT lower(user) AS user, sum(account_value) AS v, count(*) AS n "
+                       f"FROM read_parquet({_liste(urls)}, hive_partitioning=true) WHERE lower(user) IN ({listed}) GROUP BY 1) GROUP BY 1").fetchall()
     return {u: {"account_value": float(v), "satir": int(n)} for u, v, n in rows}
 
 
@@ -176,7 +263,7 @@ def kapi_adresleri(root: Path, count: int = 30) -> list[str]:
     return sorted(set(table["address"]))[:count]
 
 
-def capraz(con, base: str, client: Any, addresses: list[str], latest: str, past: list[str], now_ms: int | None = None) -> dict[str, Any]:
+def capraz(con, day_urls: dict[str, list[str]], client: Any, addresses: list[str], latest: str, past: list[str], now_ms: int | None = None) -> dict[str, Any]:
     """HF ``account_value`` ↔ Hyperliquid: en son tarihte güncel ``clearinghouseState`` parçaları (ana / +HIP-3 / +spot) ve ``portfolio`` geçmişinin
     aynı güne en yakın noktası; geçmiş tarihlerde yalnız ``portfolio``. Her karşılaştırma için göreli fark dağılımı."""
     from copytrade.kapi import _portfolio_history, account_value_parts, hip3_dex_names
@@ -196,7 +283,7 @@ def capraz(con, base: str, client: Any, addresses: list[str], latest: str, past:
 
     report: dict[str, Any] = {"adres_sayisi": len(addresses), "dex": dexes, "hatalar": errors, "tarihler": {}}
     for day in [latest, *past]:
-        hf = hf_degerleri(con, tarih_yolu(base, ACCOUNT_SUBSET, day), addresses)
+        hf = yeniden(lambda: hf_degerleri(con, day_urls.get(day, []), addresses))
         entry: dict[str, Any] = {"hf_adres": len(hf), "hf_eksik_adres": [a for a in addresses if a not in hf]}
         pairs = []
         for address, value in hf.items():
@@ -222,7 +309,9 @@ def capraz(con, base: str, client: Any, addresses: list[str], latest: str, past:
 
 
 # ----------------------------------------------------------------------------------------------- koşu
-def calistir(args: argparse.Namespace, client: Any | None = None) -> dict[str, Any]:
+def calistir(args: argparse.Namespace, client: Any | None = None, kaynak: Any | None = None) -> dict[str, Any]:
+    token = os.environ.get("HF_TOKEN") or None
+    kaynak = kaynak or (HFKaynak(token=token) if args.base == BASE else YerelKaynak(args.base))
     result: dict[str, Any] = {"surum": 1, "uretildi": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"), "kaynak": REPO,
                               "adimlar": {}, "hatalar": {}}
 
@@ -234,41 +323,48 @@ def calistir(args: argparse.Namespace, client: Any | None = None) -> dict[str, A
             result["hatalar"][name] = f"{type(exc).__name__}: {exc}"[:500]
         result.setdefault("sure_sn", {})[name] = round(time.time() - started, 1)
 
-    con = baglan()
-    base = args.base
-    session = requests.Session()
-    subsets: list[str] = []
+    con = baglan(token)
     columns: dict[str, list[dict[str, str]]] = {}
+    files: dict[str, list[dict[str, Any]]] = {}
 
     def envanter():
-        nonlocal subsets
-        subsets = args.alt_kume or alt_kumeler(session)
-        out: dict[str, Any] = {}
+        subsets = args.alt_kume or yeniden(kaynak.alt_kumeler)
+        out: dict[str, Any] = {"alt_kume_sayisi": len(subsets), "alt_kumeler": subsets}
         for subset in subsets:
             info: dict[str, Any] = {}
             try:
-                days = tarih_bolumleri([r["path"] for r in hf_ls(subset, session)]) if base == BASE else \
-                    tarih_bolumleri([p.name for p in (Path(base) / subset).iterdir()])
-                info.update(gun_sayisi=len(days), ilk=days[0] if days else None, son=days[-1] if days else None)
-                glob = tarih_yolu(base, subset, days[-1]) if days else f"{base}/{subset}/**/*.parquet"
-                columns[subset] = info["sutunlar"] = sutunlar(con, glob)
-                info["satir"] = satir_sayisi(con, tarih_yolu(base, subset) if days else f"{base}/{subset}/**/*.parquet")
+                tree = kaynak.agac(subset)
+                files[subset] = parquet_dosyalari(tree)
+                days = sorted({f["gun"] for f in files[subset] if f["gun"]})
+                info.update(dosya=len(files[subset]), boyut_gb=round(sum(f["size"] for f in files[subset]) / 1e9, 2),
+                            parquet_disi=uzantilar([r for r in tree if not r["path"].endswith(".parquet")]),
+                            gun_sayisi=len(days), ilk=days[0] if days else None, son=days[-1] if days else None)
+                if files[subset]:
+                    urls = [kaynak.url(f["path"]) for f in files[subset]]
+                    columns[subset] = info["sutunlar"] = yeniden(lambda: sutunlar(con, urls))
+                    info["satir"] = yeniden(lambda: satir_sayisi(con, urls))
             except Exception as exc:                                # noqa: BLE001
                 info["hata"] = f"{type(exc).__name__}: {exc}"[:300]
                 result["hatalar"][f"envanter/{subset}"] = info["hata"]
             out[subset] = info
         try:
-            out["_veri_karti"] = veri_karti(session)[:20000] if base == BASE else ""
+            out["_veri_karti"] = yeniden(kaynak.veri_karti)[:20000]
         except Exception as exc:                                    # noqa: BLE001
             result["hatalar"]["veri_karti"] = f"{type(exc).__name__}: {exc}"[:300]
         return out
 
     step("envanter", envanter)
+    day_urls: dict[str, list[str]] = {}
     days: list[str] = []
 
     def kapsam():
         nonlocal days
-        rows = gunluk_kapsam(con, tarih_yolu(base, ACCOUNT_SUBSET))
+        if ACCOUNT_SUBSET not in files:
+            files[ACCOUNT_SUBSET] = parquet_dosyalari(yeniden(lambda: kaynak.agac(ACCOUNT_SUBSET)))
+        for f in files[ACCOUNT_SUBSET]:
+            if f["gun"]:
+                day_urls.setdefault(f["gun"], []).append(kaynak.url(f["path"]))
+        rows = yeniden(lambda: gunluk_kapsam(con, day_urls))
         days = [r["gun"] for r in rows]
         counts = [r["adres"] for r in rows]
         return {"ilk": days[0], "son": days[-1], "gun_sayisi": len(days), "bosluklar": bosluklar(days),
@@ -280,11 +376,12 @@ def calistir(args: argparse.Namespace, client: Any | None = None) -> dict[str, A
         if not days:
             raise RuntimeError("kapsam adımı gün listesi üretmedi")
         from copytrade.tarama import PublicClient
-        return capraz(con, base, client or PublicClient(), kapi_adresleri(args.root), days[-1], gecmis_tarihler(days[-1], days))
+        return capraz(con, day_urls, client or PublicClient(), kapi_adresleri(args.root), days[-1], gecmis_tarihler(days[-1], days))
 
     step("capraz", capraz_dogrulama)
-    step("ledger", lambda: {"aday_alt_kume_ve_sutunlar": ledger_adaylari(columns),
-                            "sonuc": "var" if ledger_adaylari(columns) else "yok: hiçbir alt küme/sütun adı yatırma-çekme-transfer içermiyor",
+    found = ledger_adaylari(columns)
+    step("ledger", lambda: {"aday_alt_kume_ve_sutunlar": found,
+                            "sonuc": "var" if found else "yok: hiçbir alt küme/sütun adı yatırma-çekme-transfer içermiyor",
                             "taranan_alt_kume": sorted(columns)})
     return result
 

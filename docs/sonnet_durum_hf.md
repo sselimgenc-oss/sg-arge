@@ -5,7 +5,8 @@
       ve `portfolio` en yakın nokta; ledger/yatırma-çekme sütunu taraması. Çıktı `hf_dogrulama.json`.
 - [x] `.github/workflows/hf_dogrulama.yml` (kendi dalında push tetiği + elle); hata iş akışını kırmızı yapar, JSON yine yüklenir.
 - [x] Testler `tests/test_hf_dogrulama.py`: yol üretimi, boşluk sayımı, göreli fark (elle hesaplı), yerel hive parquet üstünde DuckDB sorguları, çapraz doğrulama altın örneği.
-- [ ] **Canlı Actions koşusu**: sonuç PR açıklamasına eklenecek. Tolerans/"kullanılır" kararı yok; sayılar raporlanır.
+- [x] Koşu 1 ([40722531503](https://github.com/sselimgenc-oss/sg-arge/actions/runs/40722531503)) kırmızı: HF `date=*` joker listelemesi 429 verdi (DuckDB her dizini ayrı API çağrısıyla listeliyor); gerçek alt kümeler 11 (görev 9 demişti): account_values, asset_ctxs, candles_1s, liquidations, notebooks, orderbook_1m, outcome_fills, perp_fills_all, snapshots_perp, snapshots_spot, spot_fills. Düzeltme: alt küme başına tek `recursive` ağaç listesi, DuckDB'ye açık dosya URL'leri, 429/5xx için üstel bekleme, parquet olmayan alt kümeler (notebooks) bilgi olarak raporlanır, isteğe bağlı `HF_TOKEN`.
+- [ ] **Canlı Actions koşusu (2.)**: sonuç PR açıklamasına eklenecek. Tolerans/"kullanılır" kararı yok; sayılar raporlanır.
 
 ## Varsayımlar (belgede yazmıyordu)
 - Bölüm düzeni `<alt küme>/date=YYYY-MM-DD/*.parquet`, `account_values` için `user` ve `account_value` sütunları (Argon notu). Farklı çıkarsa ilgili adım
