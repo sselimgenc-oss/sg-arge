@@ -5,7 +5,7 @@ import pytest
 import pandas as pd
 from copytrade.kollar import adaylar, cikis, olay_yaz, sec, terfi
 from copytrade.tarama import PublicClient
-from copytrade.golge_saglama import _summary, pencere_ici_dolumlar
+from copytrade.golge_saglama import _summary, pencere_ici_dolumlar, pozisyon_dokumu
 
 T0 = 20_833 * DAY
 RULES = load_rules()
@@ -205,3 +205,12 @@ def test_altin_sabit_olcekli_saglama_hesap_buyumesinden_bagimsizdir():
     market = candles(100, 110)
     assert _summary(rows, market, account, T0, T0 + HOUR)["fark"] == pytest.approx(0.05)
     assert _summary(rows, market, account, T0, T0 + HOUR, fixed_scale=True)["fark"] == pytest.approx(0.0)
+
+
+def test_altin_kapanir_yeniden_acilir_ve_sonda_acik_kalir_ilk_tur_saglamaya_girer():
+    rows = [fill(0, "B", "0.1", 0, 100, 1), fill(10, "A", "0.1", "0.1", 110, 2),
+            fill(20, "B", "0.2", 0, 100, 3)]
+    selected = pencere_ici_dolumlar(rows)
+    assert selected == rows[:2]
+    diag = pozisyon_dokumu(rows)["BTC"]
+    assert diag == {"son_pozisyon": "0.2", "en_kucuk_mutlak_pozisyon": "0.0", "sifira_donus_sayisi": 1}

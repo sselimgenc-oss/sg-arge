@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from decimal import Decimal
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -25,12 +26,14 @@ def pencere_ici_dolumlar(fills: list[dict]) -> list[dict]:
     out: list[dict] = []
     for row in sorted(fills, key=lambda item: int(item["time"])):
         coin = str(row["coin"])
-        before = float(row.get("startPosition", 0))
-        signed = (-1 if row["side"] in {"A", "Sell", "sell"} else 1) * float(row["sz"])
+        # API'nin ondalık miktarları ikilik kayan noktayla toplandığında sıfır
+        # dönüşü kaçabilir; döngü sınırı için kaynak miktarını aynen kullan.
+        before = Decimal(str(row.get("startPosition", 0)))
+        signed = (-1 if row["side"] in {"A", "Sell", "sell"} else 1) * Decimal(str(row["sz"]))
         after = before + signed
         if coin in blocked or (coin not in seen and before != 0):
             blocked.add(coin)
-            if abs(after) < 1e-12:
+            if after == 0:
                 blocked.discard(coin)
                 seen.add(coin)
             elif before * after < 0:
@@ -45,8 +48,26 @@ def pencere_ici_dolumlar(fills: list[dict]) -> list[dict]:
             buffers[coin] = [dict(row, sz=str(abs(after)), startPosition="0", closedPnl="0")]
         else:
             buffers.setdefault(coin, []).append(row)
-        if abs(after) < 1e-12:
+        if after == 0:
             out.extend(buffers.pop(coin))
+    return out
+
+
+def pozisyon_dokumu(fills: list[dict]) -> dict[str, dict]:
+    """Sağlama ayıklamasının coin bazında pozisyon tanısı (API ondalıklarıyla)."""
+    out: dict[str, dict] = {}
+    for row in sorted(fills, key=lambda item: int(item["time"])):
+        coin = str(row["coin"])
+        before = Decimal(str(row.get("startPosition", 0)))
+        signed = (-1 if row["side"] in {"A", "Sell", "sell"} else 1) * Decimal(str(row["sz"]))
+        after = before + signed
+        item = out.setdefault(coin, {"son_pozisyon": "0", "en_kucuk_mutlak_pozisyon": None, "sifira_donus_sayisi": 0})
+        item["son_pozisyon"] = str(after)
+        magnitude = abs(after)
+        if item["en_kucuk_mutlak_pozisyon"] is None or magnitude < Decimal(item["en_kucuk_mutlak_pozisyon"]):
+            item["en_kucuk_mutlak_pozisyon"] = str(magnitude)
+        if after == 0:
+            item["sifira_donus_sayisi"] += 1
     return out
 
 
@@ -82,11 +103,16 @@ def run(addresses: list[str], days: int = 30) -> list[dict]:
         closed_inside = _summary(inside, inside_candles, account, start, end)
         fixed_inside = _summary(inside, inside_candles, account, start, end, fixed_scale=True)
         coins = {}
+        diagnostics = pozisyon_dokumu(fills)
         for coin in sorted({str(row["coin"]) for row in fills}):
             rows = [row for row in fills if str(row["coin"]) == coin]
+            coin_inside = pencere_ici_dolumlar(rows)
+            coin_inside_candles = {coin: all_candles[coin]} if coin_inside else {}
             coins[coin] = {**_summary(rows, {coin: all_candles[coin]}, account, start, end),
                            "ilk_start_position": float(rows[0].get("startPosition", 0)),
-                           "pencere_oncesi_acik": float(rows[0].get("startPosition", 0)) != 0}
+                           "pencere_oncesi_acik": float(rows[0].get("startPosition", 0)) != 0,
+                           **diagnostics[coin],
+                           "sabit_olcekli_pencere_ici": _summary(coin_inside, coin_inside_candles, account, start, end, fixed_scale=True)}
         report.append({"adres": address, "durum": "tamam", "tum_dolumlar": full,
                        "pencerede_acilip_kapanan": closed_inside, "sabit_olcekli_pencere_ici": fixed_inside,
                        "coinler": coins})
