@@ -21,7 +21,12 @@ jobs:
       - name: Güncel kapı havuzunu al
         run: git fetch --depth=1 origin copytrade-kapi && mkdir -p guncel-kapi && git archive FETCH_HEAD copytrade/kapi | tar -x -C guncel-kapi
       - name: R2 imleç ve bugünün kapsamını indir
-        env: {AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}, AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}, AWS_DEFAULT_REGION: auto, R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}, R2_BUCKET: ${{ secrets.R2_BUCKET }}}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: aws s3 sync "s3://${R2_BUCKET}/" arsiv --exclude "*" --include "tur=*/son.json" --include "tur=kapsam/gun=$(date -u +%F)/*" --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" --no-progress
       - name: 15 dk pozisyon ve mum
         if: github.event_name == 'workflow_dispatch' || github.event.schedule == '*/15 * * * *'
@@ -33,5 +38,10 @@ jobs:
         if: github.event.schedule == '13 2 * * 0'
         run: python -m copytrade.arsiv --root . --output arsiv --kapi-root guncel-kapi/copytrade/kapi --tur leaderboard
       - name: R2'ye ekle
-        env: {AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}, AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}, AWS_DEFAULT_REGION: auto, R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}, R2_BUCKET: ${{ secrets.R2_BUCKET }}}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
         run: aws s3 sync arsiv "s3://${R2_BUCKET}/" --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" --no-progress
