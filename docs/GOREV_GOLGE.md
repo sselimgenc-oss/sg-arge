@@ -18,6 +18,8 @@ Yapan: **Codex** (2026-10-28, lider; Sonnet seçimde). Dal: `codex/golge`. Başl
 - T anına kadarki veriyle etiketle (katlar + kollar), sonraki 60 günü gölge motoruyla ölç, pencereyi 2 haftada bir kaydır.
 - Kollar: kohort, kontrol, taban, elle liste; varyantlar V0–V2; ek kol: çok alanlı puan.
 - Çıktı: pencere başına kol farkı + bootstrap aralığı; güç hesabı (gerçek varyansla); durdurma kriteri 1'in sonucu.
+- Ek bilgi çıktıları (lider 2026-10-28, `arastirma/copytrade/dunya_pratikleri/`): pencere başına **kalıcılık** (etiket puanı ↔ sonraki
+  60 gün kopya getirisi, Spearman) ve **rejim kırılımı** (BTC 30 gün getiri/oynaklığına göre yükseliş/düşüş/yatay/şok). Karar ölçütü değil.
 - **Evren (hayatta kalan yanlılığı):** Dune yok (ücretli). Aday kaynak: Hugging Face günlük hesap değerleri
   (`docs/GOREV_HF_DOGRULAMA.md`); doğrulanıp lider/kullanıcı onaylarsa T günü evreni buradan. Yoksa bugünkü leaderboard;
   o zaman sonuç "iyimser üst sınır" diye raporlanır. Hangi kaynağın kullanıldığı RAPOR'da yazılır.

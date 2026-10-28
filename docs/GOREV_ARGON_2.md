@@ -98,3 +98,25 @@ Görev:
 
 Çıktı: puan tablosu + birleştirme planı + eksikler listesi.
 ```
+
+## A6 — Açık kaynak copy trade araçlarının doğrulanması (hemen)
+
+```
+Bağlam: Hyperliquid'de trader seçip gecikmeli kopyayı simüle eden bir araştırma yapıyoruz (kapı: gecikme+maliyet sonrası
+kopya getirisi, Deflated Sharpe, plasebo; ileriye dönük gölge ölçüm, rastgele kontrol grubu, ön kayıt). Başka modellerin
+raporları aşağıdaki açık kaynak projeleri önerdi; hiçbirini biz açıp doğrulamadık.
+
+Projeler (GitHub'da ara; adları yaklaşık olabilir):
+1. Dennim89/hyperliquid-copytrade-study — 389 hesap, ön kayıtlı kalıcılık çalışması (sıralama korelasyonu +0,54 / 0 / −0,44)
+2. winterchill-trading/copy-backtest — canlı motorla aynı kodla backtest; canlı-backtest farkını kalemlere ayırıyor
+3. winterchill-trading/hl-leaderboard — 34 metrik, wash trade / hesaplar arası işlem / küme bütünlük bayrakları
+4. hl-copy-core — puan: getiri × (1 − MDD) × (0,5 + 0,5 × tutarlılık) × min(1, işlem/20); boyutlandırma modları
+5. YieldFund "Is Copy Trading Profitable? 90-day multi-exchange study" (1.486 lider, %97 / %43,6)
+
+Her biri için: gerçekten var mı (bağlantı), son güncelleme tarihi, lisans, yöntem özeti (veri kaynağı, örneklem, dönem,
+ön kayıt var mı), bizim için alınabilecek somut parça (ör. bütünlük bayrağının tanımı ve eşiği, kalıcılık testinin
+tasarımı), bilinen zayıflıklar. Kalıcılık çalışmasının ön kayıt dosyasını ve sonuç tablosunu ayrıca özetle.
+Bulamadığın ya da açamadığın için "doğrulanamadı" yaz; uydurma.
+
+Çıktı: tablo (proje | var mı | lisans | yöntem | alınacak parça | zayıflık | bağlantı) + kalıcılık çalışması özeti.
+```
