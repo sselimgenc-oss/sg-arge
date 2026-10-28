@@ -22,7 +22,7 @@ verir, çıktıyı elle getirir; lider `arastirma/`'ya koyar).
 | 0b kapı düzeltmesi | Sonnet | `docs/GOREV_KAPI_DUZELTME.md` | verilecek (kullanıcı) |
 | A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | durdu: Codex ortamında internet yok (kullanıcı açacak); boşluk eşiği karara bağlandı |
 | altyapı sınırları araştırması | Argon | `docs/GOREV_ARGON_ALTYAPI.md` | verilecek (kullanıcı elle) |
-| 2–3 gölge motoru + geçmiş prova | Sonnet | `docs/GOREV_GOLGE.md` | 0b ve tam koşu bitince |
+| 2–3 gölge motoru + geçmiş prova | Codex | `docs/GOREV_GOLGE.md` | 0b ve tam koşu bitince |
 | ofis görünümü (sg-pano, örnek veri) | atanacak | `docs/GOREV_OFIS_TASARIM.md` | verilecek (kullanıcı) |
 
 ## Geçmiş (2026-10-27)

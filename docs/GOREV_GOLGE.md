@@ -1,6 +1,6 @@
 # Görev: Gölge motoru + geçmiş prova (Faz 2–3, 2026-10-28, lider; kullanıcı onaylı)
 
-Yapan: **Sonnet**. Dal: `claude/golge`. Başlama koşulu: Faz 0 bitti (`defter.py` `main`'de). Önce `DURUM.md`,
+Yapan: **Codex** (2026-10-28, lider; Sonnet seçimde). Dal: `codex/golge`. Başlama koşulu: `defter.py` `main`'de (var). Arşiv (`copytrade/arsiv.py`) dolum/mum verisini sağlar; geçmiş prova API'den çeker. Önce `DURUM.md`,
 `docs/GOREV_D_YOLU.md`, `docs/ONKAYIT_D.md`. Ağ: Hyperliquid'e oturumdan erişim yok → koşular Actions'ta.
 
 ## Faz 2 — Gölge motoru (`copytrade/golge.py`)
