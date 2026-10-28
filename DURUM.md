@@ -20,7 +20,7 @@ verir, çıktıyı elle getirir; lider `arastirma/`'ya koyar).
 |---|---|---|---|
 | 0 kapı v1.1 → main + tam koşu | lider | #309 birleşti; hızlı koşu 24 akıl sağlığı kapısında durdu (`binance_payi` boş) | engel |
 | 0b kapı düzeltmesi | Sonnet | `docs/GOREV_KAPI_DUZELTME.md` | verilecek (kullanıcı) |
-| A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | R2 hazır (Secrets eklendi, 2026-10-28); verilecek |
+| A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | durdu: Codex ortamında internet yok (kullanıcı açacak); boşluk eşiği karara bağlandı |
 | altyapı sınırları araştırması | Argon | `docs/GOREV_ARGON_ALTYAPI.md` | verilecek (kullanıcı elle) |
 | 2–3 gölge motoru + geçmiş prova | Sonnet | `docs/GOREV_GOLGE.md` | 0b ve tam koşu bitince |
 | ofis görünümü (sg-pano, örnek veri) | atanacak | `docs/GOREV_OFIS_TASARIM.md` | verilecek (kullanıcı) |
