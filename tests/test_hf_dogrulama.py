@@ -173,3 +173,18 @@ def test_calistir_uctan_uca_yerel_ve_hata_kirmizi(tmp_path: Path, monkeypatch):
     # veri yoksa hata JSON'a yazılır ve süreç sıfırdan farklı çıkar (|| true ile örtülmez)
     code = hf.main(["--root", str(tmp_path), "--base", str(tmp_path / "yok"), "--alt-kume", "account_values", "--output", str(output)])
     assert code == 1 and json.loads(output.read_text())["hatalar"]
+
+
+def test_butce_dolunca_kismi_sonuc(tmp_path: Path):
+    """Süre bütçesi bitince parçalar arasında durulur; taranan/toplam sayısı raporlanır (sessiz kesme yok)."""
+    day_urls = by_day(hf.YerelKaynak(hive(tmp_path)))
+    urls = [u for d in sorted(day_urls) for u in day_urls[d]]
+    con = hf.baglan()
+    ilerleme: dict = {}
+    assert hf.satir_sayisi(con, urls, bitis=1.0, ilerleme=ilerleme) == 0          # bitiş geçmişte: hiç parça taranmaz
+    assert ilerleme == {"taranan_dosya": 0, "toplam_dosya": len(urls)}
+    ilerleme = {}
+    assert hf.gunluk_kapsam(con, day_urls, bitis=1.0, ilerleme=ilerleme) == []
+    assert ilerleme == {"taranan_gun": 0, "toplam_gun": len(day_urls)}
+    full: dict = {}
+    assert len(hf.gunluk_kapsam(con, day_urls, ilerleme=full)) == len(day_urls) and full["taranan_gun"] == full["toplam_gun"]

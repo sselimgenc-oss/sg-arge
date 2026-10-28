@@ -14,3 +14,8 @@
 - HF `account_value` bir adresin tüm dex/teminat satırlarının TOPLAMI alınır; karşılaştırma üç canlı toplamla (ana, ana+HIP-3, ana+HIP-3+spot USDC) ayrı ayrı raporlanır.
 - Geçmiş tarihler en son günden 30/90/180 gün önceye en yakın mevcut bölüm günüdür; HF günü için karşılaştırma anı o günün UTC öğle vaktidir.
 - `duckdb==1.3.2` `requirements.txt`'e eklendi (tüm iş akışlarının pip kurulumuna girer).
+
+## Koşu 2 ([40728025308](https://github.com/sselimgenc-oss/sg-arge/actions/runs/40728025308)): iptal (iş zaman aşımı)
+- Kuyrukta beklemedi: 16:39'da başladı, `Doğrulama` adımı 3 saat sessizce çalıştı (günlükte hiç çıktı yok) ve 180 dk iş zaman aşımında (19:39) iptal edildi; JSON üretilemedi. Neden büyük olasılıkla alt küme başına tüm parquet altbilgilerinin (satır sayımı) tek tek uzaktan okunması: bilinmiyor, günlük olmadığı için doğrulanamadı.
+- Düzeltme: anlık ilerleme günlüğü (`python -u`, stderr), adım başına süre bütçesi (`--butce-envanter/-kapsam/-capraz`; bütçe dolunca parçalar arasında durur, **kısmi sonuç açıkça işaretlenir**: `satir_kismi`, `kismi`), her adımdan sonra kısmi JSON yazımı, `Doğrulama` adımına 150 dk sınırı (özet + artefakt yine çalışır), güvenlik ağı olarak bütçe+300 sn sonra DuckDB sorgusu kesilir. Yöntem aynı; yalnız süre yönetimi.
+- [ ] Koşu 3 sonucu PR açıklamasına eklenecek.

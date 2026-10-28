@@ -11,6 +11,8 @@ import json
 import os
 import re
 import statistics
+import sys
+import threading
 import time
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -26,6 +28,12 @@ ACCOUNT_SUBSET = "account_values"
 LEDGER_WORDS = re.compile(r"ledger|deposit|withdraw|transfer|nonfunding|non_funding|flow", re.I)
 ADDRESS = re.compile(r"^0x[0-9a-fA-F]{40}$")
 DAY_MS = 86_400_000
+T0 = time.time()
+
+
+def log(message: str) -> None:
+    """İlerleme satırı (stderr, anında): uzun koşuda iş akışı günlüğü boş kalmasın."""
+    print(f"[{time.time() - T0:7.0f} sn] {message}", file=sys.stderr, flush=True)
 
 
 # ----------------------------------------------------------------------------------------------- saf hesaplar
@@ -153,6 +161,7 @@ class HFKaynak:
         while url:
             response = self._get(url)
             rows.extend(response.json())
+            log(f"  ağaç {subset}: {len(rows)} kayıt")
             url = response.links.get("next", {}).get("url")
         return rows
 
@@ -209,16 +218,28 @@ def sutunlar(con, urls: list[str]) -> list[dict[str, str]]:
             con.execute(f"DESCRIBE SELECT * FROM read_parquet({_liste(urls[-1:])}, hive_partitioning=true)").fetchall()]
 
 
-def satir_sayisi(con, urls: list[str]) -> int:
-    """Parquet altbilgilerinden toplam satır (veri okunmaz)."""
-    return sum(int(con.execute(f"SELECT coalesce(sum(num_rows), 0) FROM parquet_file_metadata({_liste(urls[i:i + PARCA])})").fetchone()[0])
-               for i in range(0, len(urls), PARCA))
+def satir_sayisi(con, urls: list[str], bitis: float | None = None, ilerleme: dict[str, Any] | None = None) -> int:
+    """Parquet altbilgilerinden toplam satır (veri okunmaz). ``bitis`` (epoch sn) aşılırsa parçalar arasında durur; taranan dosya sayısı ``ilerleme``ye yazılır."""
+    total, done = 0, 0
+    for i in range(0, len(urls), PARCA):
+        if bitis and time.time() > bitis:
+            break
+        part = urls[i:i + PARCA]
+        total += int(con.execute(f"SELECT coalesce(sum(num_rows), 0) FROM parquet_file_metadata({_liste(part)})").fetchone()[0])
+        done += len(part)
+        log(f"  satır sayımı: {done}/{len(urls)} dosya")
+    if ilerleme is not None:
+        ilerleme.update(taranan_dosya=done, toplam_dosya=len(urls))
+    return total
 
 
-def gunluk_kapsam(con, by_day: dict[str, list[str]]) -> list[dict[str, Any]]:
-    """Gün başına satır ve ayrık adres sayısı (``user``). Bir günün tüm dosyaları aynı sorguda (ayrık sayım toplanamaz); sorgu başına ~``PARCA`` dosya."""
+def gunluk_kapsam(con, by_day: dict[str, list[str]], bitis: float | None = None, ilerleme: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    """Gün başına satır ve ayrık adres sayısı (``user``). Bir günün tüm dosyaları aynı sorguda (ayrık sayım toplanamaz); sorgu başına ~``PARCA`` dosya.
+    ``bitis`` (epoch sn) aşılırsa parçalar arasında durur (kısmi sonuç); ``ilerleme`` taranan/toplam gün sayısını taşır."""
     days, out, i = sorted(by_day), [], 0
     while i < len(days):
+        if bitis and time.time() > bitis:
+            break
         chunk, files = [], 0
         while i < len(days) and (not chunk or files + len(by_day[days[i]]) <= PARCA):
             chunk.append(days[i]); files += len(by_day[days[i]]); i += 1
@@ -226,6 +247,9 @@ def gunluk_kapsam(con, by_day: dict[str, list[str]]) -> list[dict[str, Any]]:
         rows = con.execute(f"SELECT CAST(date AS VARCHAR), count(*), count(DISTINCT lower(user)) "
                            f"FROM read_parquet({_liste(urls)}, hive_partitioning=true) GROUP BY 1 ORDER BY 1").fetchall()
         out += [{"gun": d, "satir": int(n), "adres": int(a)} for d, n, a in rows]
+        log(f"  kapsam: {len(out)}/{len(days)} gün")
+    if ilerleme is not None:
+        ilerleme.update(taranan_gun=len(out), toplam_gun=len(days))
     return out
 
 
@@ -315,23 +339,42 @@ def calistir(args: argparse.Namespace, client: Any | None = None, kaynak: Any | 
     result: dict[str, Any] = {"surum": 1, "uretildi": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"), "kaynak": REPO,
                               "adimlar": {}, "hatalar": {}}
 
+    con = baglan(token)
+    budgets = {"envanter": getattr(args, "butce_envanter", 2400), "kapsam": getattr(args, "butce_kapsam", 3000),
+               "capraz": getattr(args, "butce_capraz", 1800)}
+    output = getattr(args, "output", None)
+
     def step(name: str, call):
         started = time.time()
+        log(f"adım başladı: {name} (bütçe {budgets.get(name, '-')} sn)")
+        # bütçe parçalar arasında kontrol edilir; tek bir takılan sorgu için güvenlik ağı: bütçe + 300 sn sonra DuckDB sorgusu kesilir
+        watchdog = threading.Timer(budgets.get(name, 3600) + 300, con.interrupt)
+        watchdog.daemon = True
+        watchdog.start()
         try:
             result["adimlar"][name] = call()
         except Exception as exc:                                    # noqa: BLE001 — hata JSON'a yazılır, süreç sonunda kırmızı çıkar
             result["hatalar"][name] = f"{type(exc).__name__}: {exc}"[:500]
+            log(f"adım HATA: {name}: {result['hatalar'][name]}")
+        finally:
+            watchdog.cancel()
         result.setdefault("sure_sn", {})[name] = round(time.time() - started, 1)
+        log(f"adım bitti: {name} ({result['sure_sn'][name]} sn)")
+        if output:                                                  # kısmi sonuç: koşu iptal olsa da o ana kadarki ölçümler dosyada kalır
+            Path(output).write_text(json.dumps(result, ensure_ascii=False, indent=1, allow_nan=False, default=str) + "\n", encoding="utf-8")
 
-    con = baglan(token)
     columns: dict[str, list[dict[str, str]]] = {}
     files: dict[str, list[dict[str, Any]]] = {}
 
     def envanter():
         subsets = args.alt_kume or yeniden(kaynak.alt_kumeler)
         out: dict[str, Any] = {"alt_kume_sayisi": len(subsets), "alt_kumeler": subsets}
-        for subset in subsets:
+        started = time.time()
+        for n, subset in enumerate(subsets):
             info: dict[str, Any] = {}
+            log(f"envanter: {subset} ({n + 1}/{len(subsets)})")
+            # kalan bütçe kalan alt kümelere eşit bölünür (en az 60 sn)
+            deadline = time.time() + max(60.0, (budgets["envanter"] - (time.time() - started)) / (len(subsets) - n))
             try:
                 tree = kaynak.agac(subset)
                 files[subset] = parquet_dosyalari(tree)
@@ -342,7 +385,10 @@ def calistir(args: argparse.Namespace, client: Any | None = None, kaynak: Any | 
                 if files[subset]:
                     urls = [kaynak.url(f["path"]) for f in files[subset]]
                     columns[subset] = info["sutunlar"] = yeniden(lambda: sutunlar(con, urls))
-                    info["satir"] = yeniden(lambda: satir_sayisi(con, urls))
+                    progress: dict[str, Any] = {}
+                    info["satir"] = yeniden(lambda: satir_sayisi(con, urls, deadline, progress))
+                    if progress["taranan_dosya"] < progress["toplam_dosya"]:
+                        info["satir_kismi"] = progress          # bütçe doldu: satır yalnız taranan dosyalar için (alt sınır)
             except Exception as exc:                                # noqa: BLE001
                 info["hata"] = f"{type(exc).__name__}: {exc}"[:300]
                 result["hatalar"][f"envanter/{subset}"] = info["hata"]
@@ -364,10 +410,13 @@ def calistir(args: argparse.Namespace, client: Any | None = None, kaynak: Any | 
         for f in files[ACCOUNT_SUBSET]:
             if f["gun"]:
                 day_urls.setdefault(f["gun"], []).append(kaynak.url(f["path"]))
-        rows = yeniden(lambda: gunluk_kapsam(con, day_urls))
+        progress: dict[str, Any] = {}
+        deadline = time.time() + budgets["kapsam"]
+        rows = yeniden(lambda: gunluk_kapsam(con, day_urls, deadline, progress))
         days = [r["gun"] for r in rows]
         counts = [r["adres"] for r in rows]
-        return {"ilk": days[0], "son": days[-1], "gun_sayisi": len(days), "bosluklar": bosluklar(days),
+        partial = {"kismi": progress} if progress["taranan_gun"] < progress["toplam_gun"] else {}
+        return {**partial, "ilk": days[0], "son": days[-1], "gun_sayisi": len(days), "bosluklar": bosluklar(days),
                 "adres_min": min(counts), "adres_medyan": statistics.median(counts), "adres_max": max(counts), "gunluk": rows}
 
     step("kapsam", kapsam)
@@ -391,6 +440,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=Path("copytrade"), help="kapı sonuçlarının kökü (copytrade/kapi/*/sonuc.csv)")
     parser.add_argument("--base", default=BASE, help="hf://… ya da yerel dizin (test)")
     parser.add_argument("--alt-kume", action="append", default=None, help="yalnız bu alt küme(ler)")
+    parser.add_argument("--butce-envanter", type=int, default=2400, help="envanter adımı süre bütçesi (sn)")
+    parser.add_argument("--butce-kapsam", type=int, default=3000, help="kapsam adımı süre bütçesi (sn)")
+    parser.add_argument("--butce-capraz", type=int, default=1800, help="çapraz doğrulama süre bütçesi (sn; güvenlik ağı)")
     parser.add_argument("--output", type=Path, default=Path("hf_dogrulama.json"))
     args = parser.parse_args(argv)
     result = calistir(args)

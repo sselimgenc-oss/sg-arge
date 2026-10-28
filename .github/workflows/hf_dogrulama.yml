@@ -30,9 +30,10 @@ jobs:
           git fetch --depth=1 origin copytrade-kapi
           git archive FETCH_HEAD copytrade/kapi | tar -x
       - name: Doğrulama
+        timeout-minutes: 150                  # iş zaman aşımından önce biter: özet ve artefakt (kısmi JSON) yine yazılır
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}     # isteğe bağlı: tanımlıysa HF hız sınırı yükselir
-        run: python -m copytrade.hf_dogrulama --root copytrade --output hf_dogrulama.json
+        run: python -u -m copytrade.hf_dogrulama --root copytrade --output hf_dogrulama.json
       - name: Özet (JSON'dan, günlük kapsam hariç)
         if: ${{ !cancelled() }}
         run: |
