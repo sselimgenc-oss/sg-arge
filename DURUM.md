@@ -18,10 +18,11 @@ verir, çıktıyı elle getirir; lider `arastirma/`'ya koyar).
 
 | Faz | Kim | Görev | Durum |
 |---|---|---|---|
-| 0 kapı v1.1 → main + tam koşu | lider | denetim, birleştirme | sürüyor |
+| 0 kapı v1.1 → main + tam koşu | lider | #309 birleşti; hızlı koşu 24 akıl sağlığı kapısında durdu (`binance_payi` boş) | engel |
+| 0b kapı düzeltmesi | Sonnet | `docs/GOREV_KAPI_DUZELTME.md` | verilecek (kullanıcı) |
 | A arşiv + tarama altyapısı | Codex | `docs/GOREV_ARSIV.md` | R2 kurulumunu bekliyor (kullanıcı) |
 | altyapı sınırları araştırması | Argon | `docs/GOREV_ARGON_ALTYAPI.md` | verilecek (kullanıcı elle) |
-| 2–3 gölge motoru + geçmiş prova | Sonnet | `docs/GOREV_GOLGE.md` | Faz 0 bitince |
+| 2–3 gölge motoru + geçmiş prova | Sonnet | `docs/GOREV_GOLGE.md` | 0b ve tam koşu bitince |
 
 ## Geçmiş (2026-10-27)
 **Kullanıcı kararı 2026-10-27: proje copy trade'e geçti.** Strateji araştırması kapandı ve silindi: strateji kodları,
