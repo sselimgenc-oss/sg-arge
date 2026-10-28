@@ -507,6 +507,17 @@ const srv = http.createServer((q, r) => {
   ok('telefon: menüye dokununca panel açılmaz, kartlar sütunda kalır', await pg.evaluate(() => document.getElementById('kartPanel').hidden && document.querySelectorAll('#sol > .kart').length === 10));
   await ctx.close();
 
+
+  /* ---------- R. gezinme: ofisten ana panoya bağlantı (göreli yol, telefonda da görünür) ---------- */
+  ({ ctx, pg } = await open());
+  const ap = await pg.evaluate(() => { const e = document.getElementById('anaPanoLink'), r = e.getBoundingClientRect(); return { href: e.getAttribute('href'), txt: e.textContent.trim(), gor: r.width > 0 && r.height > 0 && r.left >= 0 && r.right <= innerWidth && r.top >= 0 }; });
+  ok('ofis: "Ana pano" bağlantısı göreli yol ../ ile, görünür', ap.href === '../' && /Ana pano/.test(ap.txt) && ap.gor, JSON.stringify(ap));
+  await ctx.close();
+  ({ ctx, pg } = await open('?saat=15:40', { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }));
+  const apt = await pg.evaluate(() => { const e = document.getElementById('anaPanoLink'), r = e.getBoundingClientRect(); return { gor: r.width > 0 && r.left >= 0 && r.right <= innerWidth, h: r.height }; });
+  ok('telefon: "Ana pano" bağlantısı ekranda ve ≥ 44 px', apt.gor && apt.h >= 43.5, JSON.stringify(apt));
+  await ctx.close();
+
   ok('sayfa/konsol hatası yok', errs.length === 0, errs.slice(0, 3).join(' | '));
   console.log(bad ? '\n' + bad + ' test başarısız' : '\nhepsi geçti');
   await b.close(); srv.close(); process.exit(bad ? 1 : 0);

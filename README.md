@@ -51,3 +51,10 @@ printf '@tailwind base;\n@tailwind components;\n@tailwind utilities;\n' > in.css
 echo "module.exports = { darkMode: 'class', content: ['index.html'], theme: { extend: {} } };" > tailwind.config.js
 npx tailwindcss -c tailwind.config.js -i in.css -o vendor/tailwind.3.4.17.css --minify
 ```
+
+## Önbellek (Pages) ve sürüm sorgusu
+`ofis/index.html` yerel CSS/JS dosyalarını `?v=<sürüm>` ile çağırır (Pages önbelleği yeni sürümü geç gösteriyordu). Kök `index.html` yalnız adında sürüm olan `vendor/` dosyalarını çağırır ve kodu sayfanın içindedir; damgalanacak yerel dosyası yoktur. **Ofis dosyalarını değiştiren her PR'da** (birleşmeden önce):
+```bash
+node tools/surum.js        # git kısa sha'sı; ya da: node tools/surum.js 20261028a
+node test/surum.test.js
+```
