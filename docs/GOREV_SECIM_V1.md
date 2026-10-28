@@ -39,3 +39,13 @@ Her satır kapı sonucundan; hiçbir eşik koda gömülmez, yeni sayılar `kural
 - Worker testi: `kol = oda` bildirim gider, `kontrol` gitmez.
 - Tam test paketi; gerçek tam koşu sonucuyla üretilmiş RAPOR özeti PR açıklamasında.
 - Durum: `docs/codex_durum_secim.md`.
+
+## Ek: kırmızı bayraklar (2026-10-28; kaynak `arastirma/copytrade/argon_kirmizi_bayrak.md`)
+Yalnız **aday katı** için hesaplanır (istek yükü küçük kalsın); **bilgi sütunudur, kimseyi elemez** — oda kararını değiştirmez.
+Lider oda tablosunu kullanıcıya sunarken bayraklı adresleri ayrıca gösterir; eleme kuralına çevirmek kullanıcı kararıdır.
+- `bayrak_rol`: `userRole` (`vault` | `subAccount` + `master`).
+- `bayrak_vault_orani`: `userVaultEquities` toplamı / hesap değeri.
+- `bayrak_funding_payi`: 365 gün `userFunding` toplamı / aynı dönem gerçekleşen PnL (işaretli).
+- `bayrak_alt_hesap_ters`: master'ın diğer alt hesaplarında aynı coinde ters yönlü açık pozisyon var mı (evet/hayır/kontrol edilemedi).
+- `bayrak_hacim_orani`: 30 gün hacim / hesap değeri (`portfolio`).
+- Altın örnekler: her sütun için elle hesaplanmış bir örnek; istek düşerse değer boş ve `bayrak_not` = "kontrol edilemedi: …".
