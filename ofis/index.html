@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SG Ofis · animasyonlu pano</title>
+  <meta name="description" content="sg-arge copy trade hattının animasyonlu izometrik ofis görünümü. Örnek veriyle çalışır; gerçek emir yok.">
+  <link rel="stylesheet" href="ofis.css">
+</head>
+<body>
+<a class="atla" href="#ofisTuval">Ofise geç</a>
+<header class="ust">
+  <h1 class="sr">SG Ofis: copy trade hattının animasyonlu ofis görünümü (örnek veri)</h1>
+  <a class="logo" href="../" aria-label="SG Pano'ya dön"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 2 2 8l10 6 10-6z" fill="#f5cb5c"/><path d="M2 8v9l10 5v-8z" fill="#c9962a"/><path d="M22 8v9l-10 5v-8z" fill="#8f6a17"/></svg><span>SG <b>OFİS</b></span></a>
+  <nav class="sekmeler" aria-label="Görünümler">
+    <button type="button" data-tab="genel" aria-pressed="true">Genel</button>
+    <button type="button" data-tab="havuz" aria-pressed="false">Havuz</button>
+    <button type="button" data-tab="aday" aria-pressed="false">Aday</button>
+    <button type="button" data-tab="oda" aria-pressed="false">Oda</button>
+    <button type="button" data-tab="kohort" aria-pressed="false">Kohort ↔ Kontrol</button>
+    <button type="button" data-tab="risk" aria-pressed="false">Risk</button>
+    <button type="button" data-tab="arsiv" aria-pressed="false">Arşiv</button>
+    <button type="button" data-tab="telegram" aria-pressed="false">Telegram</button>
+    <button type="button" data-tab="tamekran" aria-pressed="false">Ofis tam ekran</button>
+  </nav>
+  <div class="durum">
+    <span class="cip c-golge" id="cipGolge">GÖLGE · SİM</span>
+    <span class="cip c-tg" id="cipTg">TELEGRAM · AÇIK</span>
+    <span class="vardiya"><span id="vardiya">Gündüz vardiyası</span> <time id="saat">--:--:--</time></span>
+    <span class="cip c-ornek" id="ornekEtiket">ÖRNEK VERİ</span>
+  </div>
+</header>
+<noscript><p class="hata">Bu sayfa JavaScript gerektirir (piksel ofis kodla çizilir).</p></noscript>
+<p id="hata" class="hata" role="alert" hidden></p>
+<main class="ana">
+  <aside class="sol" id="sol" aria-label="Pano özeti">
+    <section class="kart" id="cKasa" aria-labelledby="hKasa">
+      <header><h2 id="hKasa">Gölge kasası <small>sanal</small></h2><span class="rozet">SİM</span></header>
+      <div id="kasaIcerik"></div>
+    </section>
+    <section class="kart" id="cOzet" aria-labelledby="hOzet">
+      <header><h2 id="hOzet">Özet</h2></header>
+      <div class="kutular" id="ozetIcerik"></div>
+      <p class="meta" id="ozetMeta"></p>
+    </section>
+    <section class="kart" id="cAcik" aria-labelledby="hAcik">
+      <header><h2 id="hAcik">Açık gölge işlemleri</h2><span class="say" id="acikN">0</span></header>
+      <div id="acikIcerik"></div>
+      <p class="meta" id="acikMeta"></p>
+    </section>
+    <section class="kart" id="cKap" aria-labelledby="hKap">
+      <header><h2 id="hKap">Son kapananlar</h2></header>
+      <div id="kapIcerik"></div>
+      <p class="meta" id="kapMeta"></p>
+    </section>
+    <section class="kart" id="cHuni" aria-labelledby="hHuni">
+      <header><h2 id="hHuni">Huni <small>havuz → aday → oda</small></h2></header>
+      <div id="huniIcerik"></div>
+      <p class="meta" id="huniMeta"></p>
+    </section>
+    <section class="kart" id="cKohort" aria-labelledby="hKoh">
+      <header><h2 id="hKoh">Kohort ↔ Kontrol</h2></header>
+      <div id="kohIcerik"></div>
+      <p class="meta" id="kohMeta"></p>
+    </section>
+    <section class="kart" id="cVeri" aria-labelledby="hVeri">
+      <header><h2 id="hVeri">Veri kalitesi</h2></header>
+      <div id="veriIcerik"></div>
+      <p class="meta" id="veriMeta"></p>
+    </section>
+    <section class="kart" id="cRisk" aria-labelledby="hRisk">
+      <header><h2 id="hRisk">Risk tavanları</h2></header>
+      <div id="riskIcerik"></div>
+      <p class="meta" id="riskMeta"></p>
+    </section>
+    <section class="kart" id="cTelegram" aria-labelledby="hTg">
+      <header><h2 id="hTg">Telegram</h2></header>
+      <div id="tgIcerik"></div>
+      <p class="meta" id="tgMeta"></p>
+    </section>
+    <p class="alt-not">Salt okunur. Gerçek para, emir ve aracı kurum bağlantısı yok. Bu sayfa şimdilik <b>örnek veriyle</b> çalışır; adresler uydurmadır.</p>
+  </aside>
+  <section class="ofis" aria-label="Ofis görünümü">
+    <div class="tuval-kap" id="ofisTuval">
+      <canvas id="tuval" tabindex="0" role="img" aria-label="İzometrik ofis binası" aria-describedby="ofisAciklama"></canvas>
+      <p id="ofisAciklama" class="sr">Ofis yükleniyor.</p>
+      <div class="ipucu" id="ipucu" role="tooltip" hidden></div>
+      <div class="ust-sol">
+        <span class="cip c-ornek" id="ornekFlt">ÖRNEK VERİ · adresler uydurma</span>
+        <span class="lejant" aria-label="Kol renkleri"><i style="background:#f5cb5c"></i>kohort <i style="background:#6ea8ff"></i>kontrol <i style="background:#b8c2d4"></i>havuz</span>
+      </div>
+      <div class="ust-sag">
+        <details class="odalar">
+          <summary>Odalar</summary>
+          <div class="oda-liste">
+            <button type="button" data-oda="tarama">Tarama</button><button type="button" data-oda="kapi">Kapı</button><button type="button" data-oda="lab">Lab</button><button type="button" data-oda="kontrol">Kontrol grubu</button>
+            <button type="button" data-oda="aday">Aday</button><button type="button" data-oda="oda">Oda (kopya)</button><button type="button" data-oda="finans">Finans</button><button type="button" data-oda="risk">Risk</button>
+            <button type="button" data-oda="denetim">Denetim</button><button type="button" data-oda="arsiv">Arşiv</button><button type="button" data-oda="haberlesme">Haberleşme</button><button type="button" data-oda="sekreterlik">Sekreterlik</button>
+            <button type="button" data-oda="makam">Makam</button><button type="button" data-oda="cay">Çay ocağı</button>
+          </div>
+        </details>
+      </div>
+      <p class="perf" id="perf" hidden></p>
+      <div class="zoom">
+        <button type="button" id="zIn" aria-label="Yakınlaştır">+</button>
+        <button type="button" id="zOut" aria-label="Uzaklaştır">−</button>
+        <button type="button" id="zFit" aria-label="Tüm ofis">⌂</button>
+      </div>
+    </div>
+    <section class="gozcu" aria-labelledby="hGozcu">
+      <h2 id="hGozcu">Gözcü kaydı <small>zaman · oda · olay</small></h2>
+      <ul id="gozcuListe" role="log" aria-live="off"></ul>
+    </section>
+  </section>
+</main>
+<script src="px.js"></script>
+<script src="sprites.js"></script>
+<script src="kisiler.js"></script>
+<script src="world.js"></script>
+<script src="office.js"></script>
+<script src="panel.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,1149 @@
+{
+ "surum": 1,
+ "uretildi": "2026-10-28T14:20:00Z",
+ "kaynak": "ornek (sahte veri; adresler gerçek değil)",
+ "vardiya": {
+  "gunduz_baslangic": "07:00",
+  "aksam_baslangic": "19:00"
+ },
+ "cipler": {
+  "golge": "GÖLGE · SİM",
+  "telegram": "AÇIK"
+ },
+ "kasa": {
+  "deger_usd": 1012.4,
+  "baslangic_usd": 1000.0,
+  "zaman": "2026-10-28T14:20:00Z",
+  "gun_n": 9,
+  "egri": [
+   [
+    "2026-10-20",
+    1000.0
+   ],
+   [
+    "2026-10-21",
+    1001.8
+   ],
+   [
+    "2026-10-22",
+    999.4
+   ],
+   [
+    "2026-10-23",
+    1003.9
+   ],
+   [
+    "2026-10-24",
+    1008.2
+   ],
+   [
+    "2026-10-25",
+    1006.5
+   ],
+   [
+    "2026-10-26",
+    1010.1
+   ],
+   [
+    "2026-10-27",
+    1011.3
+   ],
+   [
+    "2026-10-28",
+    1012.4
+   ]
+  ]
+ },
+ "ozet": {
+  "islem_basi_usd": 20.0,
+  "bugun_kz_usd": -0.62,
+  "bugun_acilan_n": 7,
+  "bugun_kapanan_n": 5,
+  "zaman": "2026-10-28T14:20:00Z"
+ },
+ "katlar": {
+  "havuz": {
+   "n": 126,
+   "masa": 12,
+   "zaman": "2026-10-28T13:40:00Z"
+  },
+  "aday": {
+   "n": 18,
+   "masa": 8,
+   "zaman": "2026-10-28T14:00:00Z"
+  },
+  "oda": {
+   "n": 14,
+   "kapasite": 20,
+   "masa": 20,
+   "zaman": "2026-10-28T14:20:00Z"
+  },
+  "kontrol": {
+   "n": 10,
+   "masa": 10,
+   "zaman": "2026-10-28T14:00:00Z"
+  }
+ },
+ "traderlar": [
+  {
+   "id": "T001",
+   "adres": "0xAAAA…0001",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "swing",
+   "etiket": "2026-10-22",
+   "gun": 6,
+   "islem_n": 51,
+   "puan": 0.43,
+   "ornek": true
+  },
+  {
+   "id": "T002",
+   "adres": "0xAAAA…0002",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "intraday",
+   "etiket": "2026-10-06",
+   "gun": 22,
+   "islem_n": 49,
+   "puan": 0.46,
+   "ornek": true
+  },
+  {
+   "id": "T003",
+   "adres": "0xAAAA…0003",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "swing",
+   "etiket": "2026-10-21",
+   "gun": 7,
+   "islem_n": 44,
+   "puan": 0.63,
+   "ornek": true
+  },
+  {
+   "id": "T004",
+   "adres": "0xAAAA…0004",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "intraday",
+   "etiket": "2026-10-12",
+   "gun": 16,
+   "islem_n": 17,
+   "puan": 0.48,
+   "ornek": true
+  },
+  {
+   "id": "T005",
+   "adres": "0xAAAA…0005",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "swing",
+   "etiket": "2026-10-13",
+   "gun": 15,
+   "islem_n": 14,
+   "puan": 0.86,
+   "ornek": true
+  },
+  {
+   "id": "T006",
+   "adres": "0xAAAA…0006",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "intraday",
+   "etiket": "2026-10-21",
+   "gun": 7,
+   "islem_n": 42,
+   "puan": 0.46,
+   "ornek": true
+  },
+  {
+   "id": "T007",
+   "adres": "0xAAAA…0007",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "swing",
+   "etiket": "2026-10-25",
+   "gun": 3,
+   "islem_n": 30,
+   "puan": 0.49,
+   "ornek": true
+  },
+  {
+   "id": "T008",
+   "adres": "0xAAAA…0008",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "intraday",
+   "etiket": "2026-10-22",
+   "gun": 6,
+   "islem_n": 30,
+   "puan": 0.94,
+   "ornek": true
+  },
+  {
+   "id": "T009",
+   "adres": "0xAAAA…0009",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "swing",
+   "etiket": "2026-10-15",
+   "gun": 13,
+   "islem_n": 48,
+   "puan": 0.94,
+   "ornek": true
+  },
+  {
+   "id": "T010",
+   "adres": "0xAAAA…0010",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "intraday",
+   "etiket": "2026-10-21",
+   "gun": 7,
+   "islem_n": 15,
+   "puan": 0.89,
+   "ornek": true
+  },
+  {
+   "id": "T011",
+   "adres": "0xAAAA…0011",
+   "kat": "lab",
+   "kol": "havuz",
+   "tarz": "swing",
+   "etiket": "2026-10-09",
+   "gun": 19,
+   "islem_n": 37,
+   "puan": 0.76,
+   "ornek": true
+  },
+  {
+   "id": "T014",
+   "adres": "0xAAAA…0014",
+   "kat": "aday",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-10",
+   "gun": 18,
+   "islem_n": 98,
+   "puan": 0.49,
+   "ornek": true
+  },
+  {
+   "id": "T015",
+   "adres": "0xAAAA…0015",
+   "kat": "aday",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-04",
+   "gun": 24,
+   "islem_n": 36,
+   "puan": 0.47,
+   "ornek": true
+  },
+  {
+   "id": "T016",
+   "adres": "0xAAAA…0016",
+   "kat": "aday",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-09",
+   "gun": 19,
+   "islem_n": 101,
+   "puan": 0.76,
+   "ornek": true
+  },
+  {
+   "id": "T017",
+   "adres": "0xAAAA…0017",
+   "kat": "aday",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-16",
+   "gun": 12,
+   "islem_n": 86,
+   "puan": 0.67,
+   "ornek": true
+  },
+  {
+   "id": "T018",
+   "adres": "0xAAAA…0018",
+   "kat": "aday",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-10",
+   "gun": 18,
+   "islem_n": 35,
+   "puan": 0.7,
+   "ornek": true
+  },
+  {
+   "id": "T019",
+   "adres": "0xAAAA…0019",
+   "kat": "aday",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-13",
+   "gun": 15,
+   "islem_n": 45,
+   "puan": 0.57,
+   "ornek": true
+  },
+  {
+   "id": "T020",
+   "adres": "0xAAAA…0020",
+   "kat": "aday",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-17",
+   "gun": 11,
+   "islem_n": 74,
+   "puan": 0.81,
+   "ornek": true
+  },
+  {
+   "id": "T031",
+   "adres": "0xAAAA…0031",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-03",
+   "gun": 25,
+   "islem_n": 87,
+   "puan": 0.45,
+   "ornek": true
+  },
+  {
+   "id": "T032",
+   "adres": "0xAAAA…0032",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-06",
+   "gun": 22,
+   "islem_n": 147,
+   "puan": 0.92,
+   "ornek": true
+  },
+  {
+   "id": "T033",
+   "adres": "0xAAAA…0033",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-02",
+   "gun": 26,
+   "islem_n": 124,
+   "puan": 0.75,
+   "ornek": true
+  },
+  {
+   "id": "T034",
+   "adres": "0xAAAA…0034",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-07",
+   "gun": 21,
+   "islem_n": 62,
+   "puan": 0.54,
+   "ornek": true
+  },
+  {
+   "id": "T035",
+   "adres": "0xAAAA…0035",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-01",
+   "gun": 27,
+   "islem_n": 64,
+   "puan": 0.8,
+   "ornek": true
+  },
+  {
+   "id": "T036",
+   "adres": "0xAAAA…0036",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-02",
+   "gun": 26,
+   "islem_n": 93,
+   "puan": 0.92,
+   "ornek": true
+  },
+  {
+   "id": "T037",
+   "adres": "0xAAAA…0037",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-07",
+   "gun": 21,
+   "islem_n": 65,
+   "puan": 0.39,
+   "ornek": true
+  },
+  {
+   "id": "T038",
+   "adres": "0xAAAA…0038",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-05",
+   "gun": 23,
+   "islem_n": 85,
+   "puan": 0.75,
+   "ornek": true
+  },
+  {
+   "id": "T039",
+   "adres": "0xAAAA…0039",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-04",
+   "gun": 24,
+   "islem_n": 53,
+   "puan": 0.65,
+   "ornek": true
+  },
+  {
+   "id": "T040",
+   "adres": "0xAAAA…0040",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-08",
+   "gun": 20,
+   "islem_n": 133,
+   "puan": 0.65,
+   "ornek": true
+  },
+  {
+   "id": "T041",
+   "adres": "0xAAAA…0041",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-07",
+   "gun": 21,
+   "islem_n": 109,
+   "puan": 0.82,
+   "ornek": true
+  },
+  {
+   "id": "T042",
+   "adres": "0xAAAA…0042",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-01",
+   "gun": 27,
+   "islem_n": 94,
+   "puan": 0.45,
+   "ornek": true
+  },
+  {
+   "id": "T043",
+   "adres": "0xAAAA…0043",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "swing",
+   "etiket": "2026-10-04",
+   "gun": 24,
+   "islem_n": 71,
+   "puan": 0.63,
+   "ornek": true
+  },
+  {
+   "id": "T044",
+   "adres": "0xAAAA…0044",
+   "kat": "oda",
+   "kol": "kohort",
+   "tarz": "intraday",
+   "etiket": "2026-10-06",
+   "gun": 22,
+   "islem_n": 99,
+   "puan": 0.49,
+   "ornek": true
+  },
+  {
+   "id": "T045",
+   "adres": "0xAAAA…0045",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "swing",
+   "etiket": "2026-10-17",
+   "gun": 11,
+   "islem_n": 16,
+   "puan": 0.61,
+   "ornek": true
+  },
+  {
+   "id": "T046",
+   "adres": "0xAAAA…0046",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "intraday",
+   "etiket": "2026-10-01",
+   "gun": 27,
+   "islem_n": 47,
+   "puan": 0.61,
+   "ornek": true
+  },
+  {
+   "id": "T047",
+   "adres": "0xAAAA…0047",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "swing",
+   "etiket": "2026-10-02",
+   "gun": 26,
+   "islem_n": 79,
+   "puan": 0.9,
+   "ornek": true
+  },
+  {
+   "id": "T048",
+   "adres": "0xAAAA…0048",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "intraday",
+   "etiket": "2026-10-04",
+   "gun": 24,
+   "islem_n": 61,
+   "puan": 0.75,
+   "ornek": true
+  },
+  {
+   "id": "T049",
+   "adres": "0xAAAA…0049",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "swing",
+   "etiket": "2026-10-16",
+   "gun": 12,
+   "islem_n": 43,
+   "puan": 0.59,
+   "ornek": true
+  },
+  {
+   "id": "T050",
+   "adres": "0xAAAA…0050",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "intraday",
+   "etiket": "2026-10-01",
+   "gun": 27,
+   "islem_n": 28,
+   "puan": 0.72,
+   "ornek": true
+  },
+  {
+   "id": "T051",
+   "adres": "0xAAAA…0051",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "swing",
+   "etiket": "2026-10-15",
+   "gun": 13,
+   "islem_n": 52,
+   "puan": 0.87,
+   "ornek": true
+  },
+  {
+   "id": "T052",
+   "adres": "0xAAAA…0052",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "intraday",
+   "etiket": "2026-10-04",
+   "gun": 24,
+   "islem_n": 24,
+   "puan": 0.44,
+   "ornek": true
+  },
+  {
+   "id": "T053",
+   "adres": "0xAAAA…0053",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "swing",
+   "etiket": "2026-10-12",
+   "gun": 16,
+   "islem_n": 36,
+   "puan": 0.83,
+   "ornek": true
+  },
+  {
+   "id": "T054",
+   "adres": "0xAAAA…0054",
+   "kat": "kontrol",
+   "kol": "kontrol",
+   "tarz": "intraday",
+   "etiket": "2026-10-16",
+   "gun": 12,
+   "islem_n": 72,
+   "puan": 0.65,
+   "ornek": true
+  },
+  {
+   "id": "T061",
+   "adres": "0xAAAA…0061",
+   "kat": "disari",
+   "kol": "havuz",
+   "tarz": "swing",
+   "etiket": "2026-10-23",
+   "gun": 5,
+   "islem_n": 7,
+   "puan": 0.89,
+   "ornek": true
+  },
+  {
+   "id": "T062",
+   "adres": "0xAAAA…0062",
+   "kat": "disari",
+   "kol": "havuz",
+   "tarz": "intraday",
+   "etiket": "2026-10-22",
+   "gun": 6,
+   "islem_n": 6,
+   "puan": 0.59,
+   "ornek": true
+  }
+ ],
+ "acik_islemler": [
+  {
+   "id": "x1",
+   "trader": "T031",
+   "coin": "BTC",
+   "yon": "long",
+   "kaldirac": 3,
+   "yas_dk": 13,
+   "kz_usd": 0.42,
+   "kz_yuzde": 2.1,
+   "lik_uzaklik": 31.0,
+   "teminat_usd": 20.0
+  },
+  {
+   "id": "x2",
+   "trader": "T033",
+   "coin": "ETH",
+   "yon": "short",
+   "kaldirac": 4,
+   "yas_dk": 134,
+   "kz_usd": -1.88,
+   "kz_yuzde": -9.4,
+   "lik_uzaklik": 14.2,
+   "teminat_usd": 20.0
+  },
+  {
+   "id": "x3",
+   "trader": "T036",
+   "coin": "SOL",
+   "yon": "long",
+   "kaldirac": 5,
+   "yas_dk": 47,
+   "kz_usd": -0.31,
+   "kz_yuzde": -1.6,
+   "lik_uzaklik": 16.5,
+   "teminat_usd": 20.0
+  },
+  {
+   "id": "x4",
+   "trader": "T038",
+   "coin": "HYPE",
+   "yon": "long",
+   "kaldirac": 3,
+   "yas_dk": 312,
+   "kz_usd": 1.12,
+   "kz_yuzde": 5.6,
+   "lik_uzaklik": 29.4,
+   "teminat_usd": 20.0
+  },
+  {
+   "id": "x5",
+   "trader": "T040",
+   "coin": "SUI",
+   "yon": "short",
+   "kaldirac": 5,
+   "yas_dk": 22,
+   "kz_usd": 0.05,
+   "kz_yuzde": 0.2,
+   "lik_uzaklik": 17.8,
+   "teminat_usd": 20.0
+  },
+  {
+   "id": "x6",
+   "trader": "T043",
+   "coin": "TAO",
+   "yon": "long",
+   "kaldirac": 5,
+   "yas_dk": 58,
+   "kz_usd": -1.1,
+   "kz_yuzde": -5.5,
+   "lik_uzaklik": 15.1,
+   "teminat_usd": 20.0
+  },
+  {
+   "id": "x7",
+   "trader": "T016",
+   "coin": "DOGE",
+   "yon": "long",
+   "kaldirac": 2,
+   "yas_dk": 205,
+   "kz_usd": 0.64,
+   "kz_yuzde": 3.2,
+   "lik_uzaklik": 44.0,
+   "teminat_usd": 20.0
+  },
+  {
+   "id": "x8",
+   "trader": "T018",
+   "coin": "BTC",
+   "yon": "short",
+   "kaldirac": 3,
+   "yas_dk": 77,
+   "kz_usd": 0.0,
+   "kz_yuzde": 0.0,
+   "lik_uzaklik": 32.5,
+   "teminat_usd": 20.0
+  },
+  {
+   "id": "x9",
+   "trader": "T007",
+   "coin": "AVAX",
+   "yon": "long",
+   "kaldirac": 3,
+   "yas_dk": 27,
+   "kz_usd": -0.12,
+   "kz_yuzde": -0.6,
+   "lik_uzaklik": 30.2,
+   "teminat_usd": 20.0
+  }
+ ],
+ "kapananlar": [
+  {
+   "coin": "DOPE",
+   "yon": "long",
+   "neden": "trader_kapatti",
+   "sure_dk": 102,
+   "kz_usd": 0.26,
+   "kz_yuzde": 4.1,
+   "trader": "T032"
+  },
+  {
+   "coin": "WIF",
+   "yon": "long",
+   "neden": "zarar_kesme",
+   "sure_dk": 12,
+   "kz_usd": -0.55,
+   "kz_yuzde": -9.9,
+   "trader": "T035"
+  },
+  {
+   "coin": "ENA",
+   "yon": "long",
+   "neden": "trader_kapatti",
+   "sure_dk": 105,
+   "kz_usd": -0.87,
+   "kz_yuzde": -15.2,
+   "trader": "T037"
+  },
+  {
+   "coin": "ARB",
+   "yon": "short",
+   "neden": "sure",
+   "sure_dk": 1440,
+   "kz_usd": 0.18,
+   "kz_yuzde": 0.9,
+   "trader": "T041"
+  },
+  {
+   "coin": "BTC",
+   "yon": "long",
+   "neden": "trader_kapatti",
+   "sure_dk": 221,
+   "kz_usd": -0.18,
+   "kz_yuzde": -1.5,
+   "trader": "T039"
+  }
+ ],
+ "kohort_kontrol": {
+  "hafta": 5,
+  "hafta_toplam": 12,
+  "performans_kilitli": true,
+  "kollar": [
+   {
+    "ad": "Kohort",
+    "n": 10
+   },
+   {
+    "ad": "Kontrol (rastgele)",
+    "n": 10
+   },
+   {
+    "ad": "Taban (leaderboard)",
+    "n": 10
+   },
+   {
+    "ad": "Elle liste",
+    "n": 9
+   }
+  ],
+  "onkayit": "ön kayıtlı analiz tarihi: hafta 12 sonu",
+  "zaman": "2026-10-28T14:00:00Z"
+ },
+ "veri_kalitesi": [
+  {
+   "anahtar": "tarama",
+   "ad": "Tarama",
+   "durum": "tamam",
+   "deger": "126 adres",
+   "zaman": "2026-10-28T13:40:00Z"
+  },
+  {
+   "anahtar": "lab",
+   "ad": "Gölge defteri",
+   "durum": "tamam",
+   "deger": "n=1.482 dolum",
+   "zaman": "2026-10-28T14:18:00Z"
+  },
+  {
+   "anahtar": "arsiv",
+   "ad": "Arşiv yazımı",
+   "durum": "tamam",
+   "deger": "48.210 satır",
+   "zaman": "2026-10-28T14:10:00Z"
+  },
+  {
+   "anahtar": "denetim",
+   "ad": "Sağlama (gölge ↔ trader PnL)",
+   "durum": "tamam",
+   "deger": "geçti, n=24",
+   "zaman": "2026-10-28T14:05:00Z"
+  },
+  {
+   "anahtar": "gecikme",
+   "ad": "Gecikme zinciri p95",
+   "durum": "bilinmiyor",
+   "deger": null,
+   "zaman": null
+  },
+  {
+   "anahtar": "mum",
+   "ad": "1 dk mum boşluğu",
+   "durum": "tamam",
+   "deger": "0 / 1.440 dk",
+   "zaman": "2026-10-28T14:19:00Z"
+  }
+ ],
+ "risk": {
+  "zaman": "2026-10-28T14:20:00Z",
+  "tavanlar": [
+   {
+    "anahtar": "toplam",
+    "ad": "Toplam açık risk",
+    "kullanim": 0.61,
+    "tavan": 0.8,
+    "birim": "kasa payı"
+   },
+   {
+    "anahtar": "trader",
+    "ad": "Trader başı",
+    "kullanim": 0.08,
+    "tavan": 0.12,
+    "birim": "kasa payı"
+   },
+   {
+    "anahtar": "coin",
+    "ad": "Coin başı",
+    "kullanim": 0.66,
+    "tavan": 1.0,
+    "birim": "tavan payı"
+   },
+   {
+    "anahtar": "kaldirac",
+    "ad": "Kaldıraç",
+    "kullanim": 0.8,
+    "tavan": 1.0,
+    "birim": "5x üst sınır"
+   }
+  ]
+ },
+ "telegram": {
+  "bugun_n": 14,
+  "zaman": "2026-10-28T14:19:00Z",
+  "son": [
+   "T031 · BTC LONG açtı · 3x",
+   "T036 · SOL LONG açtı · 5x",
+   "T035 · WIF LONG zarar kesme ile kapandı"
+  ]
+ },
+ "tarama": {
+  "puanlar": [
+   0.91,
+   0.84,
+   0.78,
+   0.71,
+   0.66,
+   0.58
+  ],
+  "zaman": "2026-10-28T13:40:00Z"
+ },
+ "olaylar": [
+  {
+   "t": 2,
+   "tur": "yeni_adres",
+   "trader": "T061",
+   "adres": "0xAAAA…0061",
+   "oda": "tarama",
+   "metin": "Tarama: yeni adres bulundu"
+  },
+  {
+   "t": 6,
+   "tur": "kapi_gecti",
+   "trader": "T061",
+   "oda": "kapi",
+   "metin": "Kapı: ön eleme geçti → Lab"
+  },
+  {
+   "t": 11,
+   "tur": "islem_acildi",
+   "id": "y1",
+   "trader": "T033",
+   "coin": "BTC",
+   "yon": "long",
+   "kaldirac": 3,
+   "teminat_usd": 20.0,
+   "kz_usd": 0.0,
+   "kz_yuzde": 0.0,
+   "lik_uzaklik": 31.5,
+   "oda": "oda",
+   "metin": "T033 · BTC LONG 3x açıldı"
+  },
+  {
+   "t": 14,
+   "tur": "bildirim",
+   "kanal": "telegram",
+   "oda": "haberlesme",
+   "metin": "T033 · BTC LONG açtı · 3x"
+  },
+  {
+   "t": 19,
+   "tur": "terfi",
+   "trader": "T004",
+   "kimden": "lab",
+   "kime": "aday",
+   "oda": "aday",
+   "metin": "Lab → Aday (kural: en az 14 gün, 20 işlem)"
+  },
+  {
+   "t": 27,
+   "tur": "risk_tavan",
+   "kalem": "coin",
+   "deger": 1.0,
+   "oda": "risk",
+   "metin": "Risk: coin başı tavan doldu (BTC)"
+  },
+  {
+   "t": 31,
+   "tur": "islem_kapandi",
+   "id": "x2",
+   "neden": "trader_kapatti",
+   "kz_usd": -1.88,
+   "kz_yuzde": -9.4,
+   "oda": "finans",
+   "metin": "T033 · ETH SHORT trader kapattı"
+  },
+  {
+   "t": 35,
+   "tur": "bildirim",
+   "kanal": "telegram",
+   "oda": "haberlesme",
+   "metin": "T033 · ETH SHORT kapandı"
+  },
+  {
+   "t": 40,
+   "tur": "veri_bayat",
+   "oda": "lab",
+   "yas_dk": 95,
+   "metin": "Lab verisi bayat (95 dk)"
+  },
+  {
+   "t": 45,
+   "tur": "denetim",
+   "sonuc": "uyari",
+   "oda": "denetim",
+   "metin": "Denetim: Lab verisi bayat, yayım durdu"
+  },
+  {
+   "t": 54,
+   "tur": "veri_taze",
+   "oda": "lab",
+   "metin": "Lab verisi yenilendi"
+  },
+  {
+   "t": 56,
+   "tur": "denetim",
+   "sonuc": "tamam",
+   "oda": "denetim",
+   "metin": "Denetim: sağlama geçti"
+  },
+  {
+   "t": 60,
+   "tur": "risk_normal",
+   "kalem": "coin",
+   "deger": 0.66,
+   "oda": "risk",
+   "metin": "Risk: coin başı tavan altına indi"
+  },
+  {
+   "t": 65,
+   "tur": "arsiv_yazildi",
+   "satir": 48210,
+   "oda": "arsiv",
+   "metin": "Arşiv: 1.050 satır yazıldı"
+  },
+  {
+   "t": 71,
+   "tur": "terfi",
+   "trader": "T020",
+   "kimden": "aday",
+   "kime": "oda",
+   "oda": "oda",
+   "metin": "Aday → Oda (ön kayıtlı kural geçti)"
+  },
+  {
+   "t": 79,
+   "tur": "islem_acildi",
+   "id": "y2",
+   "trader": "T020",
+   "coin": "ETH",
+   "yon": "long",
+   "kaldirac": 3,
+   "teminat_usd": 20.0,
+   "kz_usd": 0.0,
+   "kz_yuzde": 0.0,
+   "lik_uzaklik": 30.1,
+   "oda": "oda",
+   "metin": "T020 · ETH LONG 3x açıldı"
+  },
+  {
+   "t": 83,
+   "tur": "kasa_guncelle",
+   "deger_usd": 1013.1,
+   "oda": "finans",
+   "neden": "funding",
+   "metin": "Kasa: funding işlendi"
+  },
+  {
+   "t": 88,
+   "tur": "kural_kitabi",
+   "oda": "sekreterlik",
+   "metin": "Sekreterlik: kurallar.yaml sürümü kaydedildi (hash a1b2c3d)"
+  },
+  {
+   "t": 96,
+   "tur": "kat_dusur",
+   "trader": "T020",
+   "kimden": "oda",
+   "kime": "aday",
+   "neden": "zarar kesme",
+   "oda": "aday",
+   "metin": "Oda → Aday (histerezis: ilk 2N dışına düştü)"
+  },
+  {
+   "t": 101,
+   "tur": "islem_kapandi",
+   "id": "y2",
+   "neden": "zarar_kesme",
+   "kz_usd": -0.55,
+   "kz_yuzde": -9.9,
+   "oda": "finans",
+   "metin": "T020 · ETH LONG zarar kesme"
+  },
+  {
+   "t": 106,
+   "tur": "yeni_adres",
+   "trader": "T062",
+   "adres": "0xAAAA…0062",
+   "oda": "tarama",
+   "metin": "Tarama: yeni adres bulundu"
+  },
+  {
+   "t": 111,
+   "tur": "kapi_elendi",
+   "trader": "T062",
+   "neden": "hesap değeri tabanın altında",
+   "oda": "kapi",
+   "metin": "Kapı: elendi (hesap değeri tabanın altında)"
+  },
+  {
+   "t": 118,
+   "tur": "havuzdan_cikar",
+   "trader": "T061",
+   "oda": "lab",
+   "metin": "Lab → çıkış (30 gün işlem yok)"
+  },
+  {
+   "t": 124,
+   "tur": "kat_dusur",
+   "trader": "T004",
+   "kimden": "aday",
+   "kime": "lab",
+   "neden": "histerezis",
+   "oda": "lab",
+   "metin": "Aday → Lab (histerezis)"
+  },
+  {
+   "t": 131,
+   "tur": "kullanici_karari",
+   "oda": "makam",
+   "metin": "Makam: kullanıcı kararı kaydedildi (ön kayıt değerleri)"
+  },
+  {
+   "t": 137,
+   "tur": "veri_yenile",
+   "oda": "finans",
+   "metin": "Saatlik veri yenilendi",
+   "guncellemeler": [
+    {
+     "id": "x1",
+     "kz_usd": 0.61,
+     "kz_yuzde": 3.0,
+     "lik_uzaklik": 31.2
+    },
+    {
+     "id": "x4",
+     "kz_usd": 0.93,
+     "kz_yuzde": 4.7,
+     "lik_uzaklik": 29.6
+    },
+    {
+     "id": "x6",
+     "kz_usd": -1.4,
+     "kz_yuzde": -7.0,
+     "lik_uzaklik": 13.9
+    }
+   ]
+  },
+  {
+   "t": 142,
+   "tur": "bildirim",
+   "kanal": "telegram",
+   "oda": "haberlesme",
+   "metin": "Gün sonu özeti gönderildi"
+  },
+  {
+   "t": 150,
+   "tur": "denetim",
+   "sonuc": "tamam",
+   "oda": "denetim",
+   "metin": "Denetim: sağlama geçti (n=25)"
+  }
+ ],
+ "akis_suresi_sn": 156
+}
