@@ -153,6 +153,11 @@ onkayit_p_max: 0.05
 onkayit_blok_gun: 7
 onkayit_veri_eksik_max: 0.05
 maliyet_duyarlilik_carpani_intraday: 2.0
+# Maliyet duyarlılık raporu (copytrade/maliyet_rapor.py; yalnız rapor, karar kodu bunları OKUMAZ): sınıf ayrımı ve A17 §8.2 sınıf maliyetleri
+# (taker + kayma, tek yön, alt uç: büyük %0,055, küçük %0,125, HIP-3 standart %0,34); senaryo (c): HIP-3 taker ücreti bu çarpanla
+maliyet_buyuk_coinler: [BTC, ETH, SOL]
+maliyet_sinif_alt_uc: {buyuk: 0.00055, kucuk: 0.00125, hip3: 0.0034}
+maliyet_hip3_ucret_carpani: 2.0
 # MDE ve ikincil aralık: güç, ikincil GA düzeyi, bootstrap tekrarı; Spearman SE çarpanı (Fieller–Hartley–Pearson: √(1,06 / (n − 3)))
 onkayit_guc: 0.80
 onkayit_ci_ikincil: 0.95
