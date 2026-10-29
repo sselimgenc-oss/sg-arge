@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from copytrade.defter import DAY, HOUR, FundingRates, Market, copy_ledger
+from copytrade.defter import DAY, HOUR, FundingRates, Market, copy_ledger, delayed_execution_quality
 from copytrade.kurallar import load_rules
 
 T0 = 20_833 * DAY                  # UTC gece yarısı
@@ -76,6 +76,25 @@ def test_golden_5_open_position_is_marked_daily_and_at_the_end():
     assert out["max_drawdown"] == pytest.approx(0.0)
     # pencere T0 − 1 gün başlar; pozisyon 10:00'da açılır → gün −1: 0, gün 0: 14/24 (10:00–24:00), gün 1: 1
     assert out["exposure"].round(4).tolist() == [0.0, round(14 / 24, 4), 1.0]
+
+
+def test_golden_open_position_information_columns_are_end_marked():
+    """10 BTC @100, hesap 1000 → kopya 0,01 BTC; son işaret 120: açık 1, notional 1,2 ve gerçekleşmemiş K/Z 0,2.
+    Bunlar rapor bilgisidir; netin (maliyet dahil) hesaplanışını değiştirmez."""
+    out = run([fill(60, "B", 10, 0, 100)], candles({0: 100, 1: 100, 2: 120}), end_hours=2)
+    assert out["acik_pozisyon_sayisi"] == 1
+    assert out["acik_pozisyon_notional"] == pytest.approx(1.2)
+    assert out["unrealized_end"] == pytest.approx(0.2)
+    assert out["mark_missing"] == 0
+
+
+def test_golden_delayed_execution_quality_is_direction_aware():
+    """Alış 100→90 iyi (−1000 bp), satış 100→120 iyi (−2000 bp), alış 100→110 kötü (+1000 bp): iyi 2/3, kötü 1/3, ort. −666,67 bp."""
+    market = Market(candles({1: 90, 2: 120, 3: 110}))
+    rows = [fill(10, "B", 1, 0, 100), fill(70, "A", 1, 1, 100), fill(130, "B", 1, 0, 100)]
+    quality = delayed_execution_quality(rows, market, 30, T0, T0 + 4 * HOUR)
+    assert quality == {"yonlu_dolum_sayisi": 3, "yonlu_dolum_iyi_orani": pytest.approx(2 / 3),
+                       "yonlu_dolum_kotu_orani": pytest.approx(1 / 3), "yonlu_dolum_ortalama_bp": pytest.approx(-2000 / 3)}
 
 
 def test_golden_6_funding_comes_from_the_copy_position_and_rate_not_from_the_trader_payment():

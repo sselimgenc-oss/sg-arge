@@ -281,13 +281,18 @@ def calculate_metrics(fills: list[dict[str, Any]], funding: list[dict[str, Any]]
     liquid_share = (float(volumes[volumes.index.isin(liquid_coins or set())].sum()) / total_volume if total_volume else 0.0)
     ratio, additions = martingale_ratio(fills, martingale_min_adverse)
     lev_median, lev_max, lev_dropped = effective_leverage_detail(fills, account_history if account_history is not None else denominator)
+    history_days = int((data.time.iloc[-1] - data.time.iloc[0]).total_seconds() // 86400)
     return {
-        "history_days": int((data.time.iloc[-1] - data.time.iloc[0]).total_seconds() // 86400),
+        "history_days": history_days,
         "closed_trades": len(rounds), "profitable_month_ratio": float((daily.resample("MS").sum() > 0).mean()),
         "sortino": sortino, "calmar": (cagr / mdd if cagr is not None and mdd else None),
         "ulcer_index": float(math.sqrt((drawdown.pow(2)).mean())),
         "largest_trade_share": (max(wins) / sum(wins) if sum(wins) else None),
         "profit_factor_without_best": (sum(x for x in without_best if x > 0) / gross_loss if gross_loss else None),
+        # Bilgi sütunları: kapı eşiği/puanı bunları kullanmaz. Getiri, kapalı işlemlerin hesabın temsilî değerine oranıdır;
+        # sıklık ise kapanmış tur sayısının gözlenen takvim günlerine bölümüdür (tek gün için payda 1).
+        "en_iyi_islem_haric_getiri": sum(without_best) / denominator,
+        "gunluk_islem_sikligi": len(rounds) / max(1, history_days + 1),
         "median_holding_hours": (float(pd.Series(held).median()) if (held := [x["holding_hours"] for x in rounds
                                   if x["holding_hours"] is not None]) else None),
         "median_leverage": lev_median, "max_leverage": lev_max, "kaldirac_supheli_ornek": lev_dropped,

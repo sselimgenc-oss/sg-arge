@@ -54,3 +54,7 @@
 - [x] E3: etiketten önceki (miras) pozisyonu kapatan dolum `ZeroDivisionError` vermez (V0/V1/V2)
 - [x] E4: `Market.mark_at` işaret yaşı sınırı (`isaret_yas_max_dk` 120); aşılırsa `mark_missing`, canlı sonuç "eksik işaretleme" notu taşır
 - [x] E6: `bayrak.json` sürümlü önbellek (kod hash + seçim sürümü + kapı tarihi), her adresten sonra checkpoint, iş akışı önceki/kısmi sonucu veri dalından geri yükler ve zaman aşımında da yazar
+
+## Ek 2 bilgi sütunları (#350'den taşındı)
+- [x] Kapı/seçim çıktısı: `acik_pozisyon_sayisi`, `unrealized_end`, `mark_missing`, `acik_pozisyon_notional` (kanonik defter `copy_ledger`; E1 ile aynı kaynak), yönlü dolum farkı (`yonlu_dolum_*`; sıfır gecikmede üretilmez), `en_iyi_islem_haric_getiri`, `medyan_tutma_saat`, `gunluk_islem_sikligi`
+- [x] Gölge sağlaması: trader'ın kendi açık K/Z'si ve toplam net kıyası (`trader_toplam_net`, `golge_toplam_net`, `toplam_net_fark`), eksik işaretleme notu
