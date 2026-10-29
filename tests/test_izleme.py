@@ -669,17 +669,24 @@ def test_canli_kosu_acik_pozisyonu_son_dakika_mumuyla_isaretler(tmp_path):
     assert client.mark_reads == 1
 
 
-def test_health_blind_in_pilot_ignores_performance(monkeypatch):
-    """K-6: pilotta (varsayılan yaml false) kötü getiri/düşüş/CUSUM ışığı değiştirmez ve neden sızdırmaz."""
+def test_health_blind_mode_ignores_performance(monkeypatch):
+    """K-6 kör mod (saglik_performans_konisi false): kötü getiri/düşüş/CUSUM ışığı değiştirmez ve neden sızdırmaz."""
     h = history([-.05, -.05])
     monkeypatch.setattr(m, 'blok_bootstrap', lambda *a, **kw: {'p5': [1], 'p20': [1]})
-    result = m.health(h, h.index[-2], NOW, 1, False, m.millis(NOW))
+    result = m.health(h, h.index[-2], NOW, 1, False, m.millis(NOW), performans_konisi=False)
     assert result == {'isik': 'yesil', 'nedenler': ['kaldıraç normal']}
-    assert m.load_rules()['saglik_performans_konisi'] is False
+
+
+def test_health_cone_on_by_default_after_onkayit_1_5(monkeypatch):
+    """Ön kayıt 1.5: körlük kalktı; yaml varsayılanıyla koni yeniden çalışır."""
+    assert m.load_rules()['saglik_performans_konisi'] is True
+    h = history([-.05, -.05])
+    monkeypatch.setattr(m, 'blok_bootstrap', lambda *a, **kw: {'p5': [1], 'p20': [1]})
+    assert 'koni %5 altında' in m.health(h, h.index[-2], NOW, 1, False, m.millis(NOW))['nedenler']
 
 
 def test_health_blind_keeps_leverage_and_staleness():
     h = history([-.05])
-    result = m.health(h, h.index[-1], NOW, 10.01, False, m.millis(NOW) - 30 * m.DAY)
+    result = m.health(h, h.index[-1], NOW, 10.01, False, m.millis(NOW) - 30 * m.DAY, performans_konisi=False)
     assert result['isik'] == 'kirmizi'
     assert result['nedenler'] == ['gerçek kaldıraç > 10x', 'son 30 günde işlem yok']

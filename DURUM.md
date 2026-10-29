@@ -17,18 +17,18 @@ Son güncelleme: 2026-10-29, lider (Claude).
 - Bayraklar (`bayrak.json`) bilgi amaçlı; kimse elenmedi. Dikkat: f208 (%100 tek coin), 84d7 (%90 tek coin, derin ekleme),
   86d2 (%88), 582e (%65); 50e2 vault.
 
-**Körlük (K‑6), lider kararı:** (c) mevcut hâl bilinçli kabul. `secim.json` kollarıyla zaten açık veri dalında, bu yüzden
-(a) anlamsız. Kural: hiçbir ajan görevi ve haftalık rapor kol bazında getiri hesaplamaz; analiz yalnız 12./24. haftada.
-(b) sağlık ışığından performans konisinin çıkarılması ayrı iş (açık).
+**Körlük kalktı — ön kayıt 1.5 (kullanıcı kararı 2026-10-29):** pano, ofis ve Telegram kâr/zararı ve oda ↔ kontrolü her an
+gösterir; oda kullanıcı kararıyla değişebilir (gerekçeli geçiş kaydı). Seçim v1.3 odası + kontrolü **sabit referans** olarak
+değiştirilmeden izlenir ("Kararlarım değer kattı mı?" = yönetilen oda ↔ sabit referans). K‑6 (c) geçersiz.
 
 **Maliyet (K‑5), kullanıcı kararı 2026-10-29 ("tamam"):** ana karar maliyeti (`maliyet_taker` + `maliyet_kayma`, tek oran)
 pilot boyunca değişmez. Coin sınıfı ve saate göre maliyet yalnız bilgi amaçlı duyarlılık raporunda (`maliyet_rapor.py`); HIP‑3
 büyüme/standart mod ve seans içi/dışı ayrımı eklenecek (Argon A20, `arastirma/copytrade/argon_a20_hip3_maliyet.md`).
 
-**Açık işler (2026-10-29):** Sonnet: `docs/GOREV_KORLUK.md` (K‑6 b), sonra `docs/GOREV_PILOT_VERI.md` (haftalık veri hattı +
-12. hafta analiz koşucusu), sonra `docs/GOREV_FAZ3.md` (geçmiş prova, Durdurma 1; hiç koşmamıştı), sonra `docs/GOREV_OFIS_CANLI.md`. Argon: `docs/GOREV_ARGON_3.md` (A20 HIP‑3 maliyeti, A21 API geri alma sınırları). Codex/Sonnet:
-`gunluk.csv.gz` kapı koşusunda yayımlanmıyor (yoğunlaşma bölümü boş); maliyet duyarlılığı gerçek veriyle; R2 arşivi
-2026-10-29'da yeşile döndü (kullanıcı anahtarları düzeltti).
+**Açık işler (2026-10-29 akşam):** Sonnet: #393 (§5) çakışması, sonra `docs/GOREV_FAZ3.md` (geçmiş prova). Codex:
+`docs/GOREV_OFIS_CANLI.md` (körlük kalktı, bütün odalar aktif, ana pano kilitleri, sabit referans kolu), sonra
+`docs/GOREV_CODEX_TEMIZLIK.md` (gunluk.csv.gz, B21–B23, B29). Bitti: KORLUK (#387), PILOT_VERI (#389), Argon A20/A21 (#388),
+Telegram kuruldu. Bekleyen: ilk 61 traderlı izleme koşusu, pilot boşluk doldurma (arşiv dolum yoklamasından sonra).
 
 ## Önceki (2026-10-28)
 **Kullanıcı kararı 2026-10-28: proje yeniden açıldı (sg-arge + sg-pano), lider Claude. Yeni yol: D** —

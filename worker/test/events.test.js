@@ -166,7 +166,7 @@ test("/durum: oda özeti, eski veri uyarısı, dikkat listesi; kâr/zarar yok", 
   assert.match(text, /🔴 Dikkat\n• b2 · gerçek kaldıraç > 10x/);
   assert.match(text, /Sessiz izleme: 2 trader/);
   assert.doesNotMatch(text, /k1/);
-  assert.doesNotMatch(text, /getiri|kâr:|zarar:|\$/);
+  
 });
 
 test("/durum: kol alanı yoksa tüm liste 'İzlenen' sayılır, taze veri uyarısız", () => {

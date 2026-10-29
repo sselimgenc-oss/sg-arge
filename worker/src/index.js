@@ -190,7 +190,7 @@ const PANO = "https://sselimgenc-oss.github.io/sg-pano/";
 const ESKI_DK = 90;
 const LIGHT = { yesil: "🟢", sari: "🟡", kirmizi: "🔴" };
 
-// /durum: yalnız oda (bildirimli kol) ayrıntılı; diğer kollar sayı. Körlük: kâr/zarar ve kol karşılaştırması yok.
+// /durum: yalnız oda (bildirimli kol) ayrıntılı; diğer kollar sayı.
 function formatStatus(status, nowMs = Date.now()) {
   const all = status.traderlar || [];
   const hasArms = all.some(t => t.kol);
@@ -216,7 +216,6 @@ function formatStatus(status, nowMs = Date.now()) {
   }
   lines.push("");
   if (hasArms) lines.push(`👀 Sessiz izleme: ${all.length - room.length} trader (kontrol, taban, elle)`);
-  lines.push("🔒 Kâr/zarar karşılaştırması 12. haftaya kadar kilitli");
   lines.push(`Pano: ${PANO}`);
   return lines.join("\n");
 }

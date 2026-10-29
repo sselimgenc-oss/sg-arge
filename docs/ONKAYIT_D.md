@@ -104,3 +104,17 @@ Gölge verisi henüz yok. Gerekçe: Argon A18 (odadan çıkarma kuralları; Goya
    - zarardaki pozisyonu uzun tutma: zarardaki açık pozisyonun yaşı, trader'ın medyan tutma süresinin `risk_tutma_anomali_kat` (3) katını aşarsa.
    Bu işaretler performans içermez (körlükle uyumlu). Bir işaretin çıkışa dönüşmesi ayrı kullanıcı kararıdır.
 3. Karantina/sermaye kesintisi, tarz kayması tespiti ve günlük kayıp soğuması gerçek işlem fazına bırakıldı (`docs/FIKIRLER.md`).
+
+## Sürüm 1.5 (2026-10-29, kullanıcı kararı: "Evet diyorum başlayalım")
+Pilotun ilk günü; gölge sonucu henüz görülmedi. Gerekçe (kullanıcı): proje haftalarca yolda gelişecek; trader kararları kullanıcıda
+olmalı, 12 hafta beklemek kabul görmüyor.
+
+1. **Körlük kalkar.** Pano, ofis ve Telegram kâr/zararı, kasayı ve oda ↔ kontrol karşılaştırmasını her an gösterir. Sağlık ışığı
+   performans konisini yeniden kullanır (`saglik_performans_konisi: true`). Madde 6'daki "performansa yalnız 12./24. haftada bakılır"
+   ve K‑6 (c) kuralı kaldırıldı.
+2. **Oda kullanıcı kararıyla her an değişebilir.** Her değişiklik yeni seçim sürümü ya da tarih + gerekçeli geçiş kaydıyla yapılır
+   (`gecis.py` kaydı; silme yok). v1.4 çıkış kuralı otomatik öneri olarak kalır; son karar kullanıcıda.
+3. **Sabit referans kolu.** Seçim v1.3 odası (18) ve eşleştirilmiş kontrolü (18), oda sonradan değişse de 2026-10-29'dan itibaren
+   değiştirilmeden izlenir (`referans_oda`, `referans_kontrol`). "Kararlarım değer kattı mı?" = yönetilen oda ↔ sabit referans oda.
+4. **Analiz.** 12. hafta (2027-01-21) birincil/ikincil hesabı yine yapılır ama artık "kör test" değildir; raporda bu yazılır.
+   Ara bakışlar serbesttir.
