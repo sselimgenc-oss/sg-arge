@@ -5,12 +5,15 @@
 
 **Körlük (ön kayıt madde 6):** hiçbir çıktıda ya da günlükte kol bazında getiri yoktur. Adres başına ileri getiri yalnız ``getiri.json``'a yazılır
 (``haftalik_rapor``'un puan ↔ ileri getiri bölümü okur). Günlük satırları yalnız sayı (adres/eksik/dolum) taşır.
-Boşluk: arşiv ilk koşusundan (``son.json`` imleçleri) önceki dolum/funding/saatlik mumlar API'den tamamlanır (``bosluk_baslangici``).
+Boşluk: arşivin ilk yoklamasından önceki aralık (etiket → ilk yoklama) **bir kez** ``--bosluk-doldur`` ile API'den arşive yazılır; haftalık koşu
+API'ye gitmez, yalnız arşivi okur. API yalnız son ``api_dolum_pencere_siniri`` dolumu verir: pencere dolup en eski dolum etiketten sonraysa adres
+``pencere_disi`` (eksik) yazılır ve haftalık koşuda getiriden çıkar; sessiz sıfır yoktur.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -29,19 +32,26 @@ def ms(day: str) -> int:
     return int(datetime.fromisoformat(day).replace(tzinfo=UTC).timestamp() * 1000)
 
 
-def oku(root: Path, kind: str) -> list[dict]:
-    """``tur=<kind>/gun=*/parca-*.parquet`` satırları (``veri`` JSON'u açılır), ``_anahtar``a göre tekilleştirilir."""
+def oku(root: Path, kind: str, *, gun_baslangic: str | None = None, adresler: set[str] | None = None) -> list[dict]:
+    """``tur=<kind>/gun=*/parca-*.parquet`` satırları (``veri`` JSON'u açılır), tekilleştirilir. ``gun_baslangic`` (YYYY-MM-DD) öncesi günler okunmaz;
+    ``adresler`` verilirse JSON açılmadan önce metin süzgeciyle yalnız o adresler okunur (sütun bazlı, ``iterrows`` yok)."""
     rows: dict[str, dict] = {}
+    pattern = "|".join(sorted(a.lower() for a in adresler)) if adresler else None
     for part in sorted((Path(root) / f"tur={kind}").glob("gun=*/parca-*.parquet")):
-        for _, item in pd.read_parquet(part).iterrows():
-            row = json.loads(item["veri"])
-            rows.setdefault(_anahtar(kind, row, str(item["_anahtar"])), row)
+        if gun_baslangic and part.parent.name.removeprefix("gun=") < gun_baslangic:
+            continue
+        frame = pd.read_parquet(part, columns=["_anahtar", "veri"])
+        if pattern is not None:
+            frame = frame[frame["veri"].str.lower().str.contains(pattern, regex=True)]
+        for key, raw in zip(frame["_anahtar"].tolist(), frame["veri"].tolist()):
+            row = json.loads(raw)
+            rows.setdefault(_anahtar(kind, row, str(key)), row)
     return list(rows.values())
 
 
 def _anahtar(kind: str, row: dict, stored: str) -> str:
     """Eski mum satırlarının ``_anahtar``ı coin içermiyordu (``None:<t>``): coin'ler birbirini ezmesin diye mumda anahtar içerikten kurulur."""
-    if kind == "mum_1dk":
+    if kind in {"mum_1dk", "mum_1sa"}:
         return f"{row.get('coin', row.get('s'))}:{row.get('t')}"
     return stored
 
@@ -73,39 +83,74 @@ def _tid(row: dict) -> str:
     return str(row.get("tid", row.get("hash", row.get("time"))))
 
 
-def birlestir(arsiv: list[dict], api: list[dict], sinir: int | None) -> list[dict]:
-    """Arşiv + (``sinir``dan önceki) API satırları; ``tid``/``hash``/zaman tekilleştirmesi. Arşiv öncelikli."""
-    seen, out = set(), []
-    for row in arsiv + [r for r in api if sinir is not None and int(r["time"]) < sinir]:
-        key = (str(row.get("coin")), int(row["time"]), _tid(row))
-        if key not in seen:
-            seen.add(key)
-            out.append(row)
-    return sorted(out, key=lambda r: int(r["time"]))
-
-
-def adres_verisi(adres: str, etiket_ms: int, dolum: list[dict], funding: list[dict], client, sinir: int | None) -> tuple[list[dict], list[dict]]:
+def adres_verisi(adres: str, dolum: list[dict], funding: list[dict]) -> tuple[list[dict], list[dict]]:
     mine = [r for r in dolum if str(r.get("adres", "")).lower() == adres]
     fund = [r for r in funding if str(r.get("adres", "")).lower() == adres]
-    if client is not None and (sinir is None or sinir > etiket_ms):
-        end = sinir if sinir is not None else None
-        mine = birlestir(mine, [r for r in client.fills(adres, etiket_ms)], end if end is not None else 1 << 62)
-        fund = birlestir(fund, [r for r in client.info({"type": "userFunding", "user": adres, "startTime": etiket_ms}) if "time" in r],
-                         end if end is not None else 1 << 62)
     return perp_fills(sorted(mine, key=lambda r: int(r["time"]))), fund
 
 
-def mumlar(coins: set[str], arsiv_mum: list[dict], client, etiket_ms: int, sinir: int | None) -> dict[str, list[dict]]:
-    out = saatlik(arsiv_mum)
-    if client is not None and (sinir is None or sinir > etiket_ms):
-        end = (sinir if sinir is not None else int(datetime.now(UTC).timestamp() * 1000))
-        for coin in sorted(coins):
-            have = {c["t"] for c in out.get(coin, [])}
-            rows = [{"t": int(c["t"]), "o": float(c["o"]), "h": float(c["h"]), "l": float(c["l"]), "c": float(c["c"])}
-                    for c in client.candles(coin, etiket_ms // HOUR * HOUR, end, "1h") if int(c["t"]) not in have and int(c["t"]) < end]
-            if rows:
-                out[coin] = sorted(out.get(coin, []) + rows, key=lambda c: c["t"])
+def mumlar(arsiv_dk: list[dict], arsiv_sa: list[dict]) -> dict[str, list[dict]]:
+    """Saatlik mum: 1 dk arşivinden türetilen saatler öncelikli; boşluk dolumunun saatlik mumları (``mum_1sa``) yalnız eksik saatleri tamamlar."""
+    out = saatlik(arsiv_dk)
+    for coin, rows in saatlik(arsiv_sa).items():
+        have = {c["t"] for c in out.get(coin, [])}
+        extra = [c for c in rows if c["t"] not in have]
+        if extra:
+            out[coin] = sorted(out.get(coin, []) + extra, key=lambda c: c["t"])
     return out
+
+
+def bosluk_yolu(root: Path) -> Path:
+    return Path(root) / "tur=bosluk" / "bosluk.json"
+
+
+def bosluk_doldur(arsiv_root: Path, result: dict, client, *, now: datetime | None = None, rules: dict | None = None) -> dict:
+    """Etiketten arşivin ilk yoklamasına kadar olan aralığı API'den arşive yazar (TEK SEFER; haftalık koşu API'ye gitmez).
+    Dolum penceresi dolup (``api_dolum_pencere_siniri``) en eski dolum etiketten sonraysa adres ``pencere_disi`` olarak kaydedilir ve günlüğe yazılır."""
+    from copytrade.arsiv import Arsiv
+    rules = rules or load_rules()
+    now = now or datetime.now(UTC)
+    etiket_ms = ms(result["tarih"])
+    sinir = bosluk_baslangici(arsiv_root)
+    if sinir is None:
+        raise RuntimeError("Arşivde dolum yoklaması yok: boşluk sınırı belirlenemedi (arşiv hiç koşmamış).")
+    kayit = {"etiket_ms": etiket_ms, "sinir_ms": sinir, "pencere_disi": [], "adres": 0, "dolum": 0, "funding": 0, "mum_1sa": 0}
+    limit = int(rules["api_dolum_pencere_siniri"])
+    archive = Arsiv(arsiv_root, now)
+    addresses = sorted({a.lower() for a, e in result["adresler"].items() if _uye(e) or "oda" in e.get("kollar", [])})
+    coins: set[str] = set()
+    if sinir > etiket_ms:
+        for adres in addresses:
+            fills = [dict(r, adres=adres) for r in client.fills(adres, etiket_ms, end_ms=sinir)]
+            if len(fills) >= limit and min(int(r["time"]) for r in fills) > etiket_ms:
+                kayit["pencere_disi"].append(adres)
+                print(f"UYARI pencere dışı: {adres[:6]}…{adres[-4:]} (API son {limit} dolumu verdi; boşluğun başı erişilemez)")
+            fund = [dict(r, adres=adres) for r in client.info({"type": "userFunding", "user": adres, "startTime": etiket_ms, "endTime": sinir}) if "time" in r]
+            kayit["dolum"] += archive.append("dolum", fills)
+            kayit["funding"] += archive.append("funding", fund)
+            coins.update(str(r["coin"]) for r in fills if r.get("coin"))
+            kayit["adres"] += 1
+        for coin in sorted(coins):
+            rows = [dict(c, coin=coin) for c in client.candles(coin, etiket_ms // HOUR * HOUR, sinir, "1h") if int(c["t"]) < sinir]
+            kayit["mum_1sa"] += archive.append("mum_1sa", rows)
+    path = bosluk_yolu(arsiv_root)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(kayit, ensure_ascii=False, indent=1, sort_keys=True), encoding="utf-8")
+    return {k: (len(v) if isinstance(v, list) else v) for k, v in kayit.items()}
+
+
+def bosluk_kontrol(arsiv_root: Path, etiket_ms: int) -> set[str]:
+    """Haftalık koşu: arşiv etiketten sonra başladıysa boşluk dolumu yapılmış olmalı; yoksa koşu KIRMIZI biter. ``pencere_disi`` adresleri döner."""
+    sinir = bosluk_baslangici(arsiv_root)
+    if sinir is None:
+        raise RuntimeError("Arşivde dolum yoklaması yok: getiri hesaplanamaz.")
+    if sinir <= etiket_ms:
+        return set()
+    path = bosluk_yolu(arsiv_root)
+    if not path.exists():
+        raise RuntimeError("Arşiv etiketten sonra başladı ve boşluk doldurulmadı: önce `python -m copytrade.pilot_veri --bosluk-doldur` çalıştırın.")
+    kayit = json.loads(path.read_text(encoding="utf-8"))
+    return {a.lower() for a in kayit.get("pencere_disi", [])}
 
 
 def _uye(entry: dict) -> bool:
@@ -170,23 +215,29 @@ def risk(adres: str, entry: dict, bayrak: dict, fills: list[dict], pozisyon: lis
     return {"etiket": {k: v for k, v in etiket.items() if v is not None}, "son": son}
 
 
-def uret(arsiv_root: Path, result: dict, bayrak: dict, tarih: str, cikti: Path, *, client=None, now: datetime | None = None,
+def uret(arsiv_root: Path, result: dict, bayrak: dict, tarih: str, cikti: Path, *, now: datetime | None = None,
          rules: dict | None = None) -> dict[str, int]:
+    """Yalnız arşivi okur (API yok). Süre ve satır sayıları ``cikti/ozet.json``'a yazılır (kol bazında getiri yok)."""
+    baslangic = time.monotonic()
     rules = rules or load_rules()
     now = now or datetime.now(UTC)
     etiket_ms = ms(result["tarih"])
     end_ms = min(int(now.timestamp() * 1000), ms(tarih) + DAY - 1)
-    sinir = bosluk_baslangici(arsiv_root)
-    dolum, funding, mum, pozisyon = (oku(arsiv_root, k) for k in ("dolum", "funding", "mum_1dk", "pozisyon"))
+    pencere_disi = bosluk_kontrol(arsiv_root, etiket_ms)
     members = {a.lower(): e for a, e in result["adresler"].items() if _uye(e)}
     oda = {a.lower(): e for a, e in result["adresler"].items() if "oda" in e.get("kollar", [])}
-    data = {a: adres_verisi(a, etiket_ms, dolum, funding, client, sinir) for a in sorted(set(members) | set(oda))}
-    coins = {str(f["coin"]) for fills, _ in data.values() for f in fills}
-    candles = mumlar(coins, mum, client, etiket_ms, sinir)
+    week_day = datetime.fromtimestamp((end_ms - int(rules["onkayit_blok_gun"]) * DAY) / 1000, UTC).date().isoformat()
+    dolum = oku(arsiv_root, "dolum", gun_baslangic=result["tarih"])
+    funding = oku(arsiv_root, "funding", gun_baslangic=result["tarih"])
+    mum = oku(arsiv_root, "mum_1dk", gun_baslangic=result["tarih"])
+    mum_sa = oku(arsiv_root, "mum_1sa")
+    pozisyon = oku(arsiv_root, "pozisyon", gun_baslangic=week_day, adresler=set(oda))
+    data = {a: adres_verisi(a, dolum, funding) for a in sorted(set(members) | set(oda))}
+    candles = mumlar(mum, mum_sa)
     ileri, kapanmis, riskler, eksik = {}, {}, {}, 0
     for adres in sorted(members):
         fills, fund = data[adres]
-        value, miss, total = getiri(fills, fund, candles, members[adres], etiket_ms, end_ms, rules)
+        value, miss, total = (None, 0, 0) if adres in pencere_disi else getiri(fills, fund, candles, members[adres], etiket_ms, end_ms, rules)
         if value is None:
             eksik += 1
         else:
@@ -198,7 +249,10 @@ def uret(arsiv_root: Path, result: dict, bayrak: dict, tarih: str, cikti: Path, 
     cikti.mkdir(parents=True, exist_ok=True)
     for name, value in (("getiri", ileri), ("kapanmis_islem", kapanmis), ("risk", riskler)):
         (cikti / f"{name}.json").write_text(json.dumps(value, ensure_ascii=False, indent=1, sort_keys=True, default=str), encoding="utf-8")
-    return {"havuz": len(members), "getiri": len(ileri), "eksik": eksik, "oda_risk": len(riskler)}
+    sonuc = {"havuz": len(members), "getiri": len(ileri), "eksik": eksik, "pencere_disi": len(pencere_disi & set(members)), "oda_risk": len(riskler)}
+    ozet = dict(sonuc, sure_sn=round(time.monotonic() - baslangic, 1), satir={"dolum": len(dolum), "funding": len(funding), "mum_1dk": len(mum), "pozisyon": len(pozisyon)})
+    (cikti / "ozet.json").write_text(json.dumps(ozet, ensure_ascii=False, indent=1, sort_keys=True), encoding="utf-8")
+    return sonuc
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -206,17 +260,19 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--arsiv", type=Path, required=True, help="R2'den indirilmiş arşiv kökü (tur=*/gun=*/parca-*.parquet)")
     parser.add_argument("--secim", type=Path, required=True)
     parser.add_argument("--bayrak", type=Path, default=None)
-    parser.add_argument("--tarih", required=True)
+    parser.add_argument("--tarih", help="hafta etiketi (YYYY-MM-DD); haftalık koşuda zorunlu")
     parser.add_argument("--cikti", type=Path, default=Path("pilot_veri"))
-    parser.add_argument("--api-yok", action="store_true", help="boşluğu API'den tamamlama (varsayılan: tamamlar)")
+    parser.add_argument("--bosluk-doldur", action="store_true", help="TEK SEFER: etiket → arşivin ilk yoklaması aralığını API'den arşive yaz (haftalık koşu API'ye gitmez)")
     args = parser.parse_args(argv)
     result = json.loads(args.secim.read_text(encoding="utf-8"))
-    bayrak = json.loads(args.bayrak.read_text(encoding="utf-8")) if args.bayrak and args.bayrak.exists() else {}
-    client = None
-    if not args.api_yok:
+    if args.bosluk_doldur:
         from copytrade.tarama import PublicClient
-        client = PublicClient()
-    print(uret(args.arsiv, result, bayrak, args.tarih, args.cikti, client=client))
+        print(bosluk_doldur(args.arsiv, result, PublicClient()))
+        return
+    if not args.tarih:
+        parser.error("--tarih gerekir")
+    bayrak = json.loads(args.bayrak.read_text(encoding="utf-8")) if args.bayrak and args.bayrak.exists() else {}
+    print(uret(args.arsiv, result, bayrak, args.tarih, args.cikti))
 
 
 if __name__ == "__main__":

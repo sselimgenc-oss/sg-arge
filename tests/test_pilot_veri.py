@@ -28,7 +28,14 @@ def secim(oda=(A,)):
     return {"tarih": "2026-10-29", "adresler": {A: e(0.1, ["oda", "havuz"]), B: e(0.2, ["havuz"])}}
 
 
+def yoklama(tmp_path, zaman_ms):
+    gun = tmp_path / "arsiv/tur=kapsam/gun=2026-10-29"
+    gun.mkdir(parents=True, exist_ok=True)
+    (gun / "yoklamalar.json").write_text(json.dumps([{"tur": "dolum", "ozne": A, "zaman_ms": zaman_ms, "aralik_ms": H}]))
+
+
 def kur(tmp_path, ilk_saat=0, cos=("BTC",)):
+    yoklama(tmp_path, T0 + ilk_saat * H)
     arc = Arsiv(tmp_path / "arsiv", NOW)
     rows = []
     for hour, price in ((0, 100), (1, 100), (2, 100), (3, 100), (4, 100), (5, 110), (6, 110)):
@@ -50,30 +57,72 @@ def test_altin_ornek_ileri_getiri_kapanmis_islem_ve_pasif_adres(tmp_path):
     assert getiri[A] == pytest.approx(BEKLENEN, abs=1e-12)
     assert getiri[B] == 0.0                                       # pasif adres sıfır getirili, paydada kalır
     assert json.loads((tmp_path / "c/kapanmis_islem.json").read_text()) == {A: 1, B: 0}
-    assert sonuc == {"havuz": 2, "getiri": 2, "eksik": 0, "oda_risk": 1}
+    assert sonuc == {"havuz": 2, "getiri": 2, "eksik": 0, "pencere_disi": 0, "oda_risk": 1}
 
 
-def test_altin_ornek_arsiv_oncesi_bosluk_apiden_tamamlanir_ve_cift_sayilmaz(tmp_path):
+class Api:
+    """Sahte istemci; ``kapasite`` gerçek API'nin yalnız son N dolumu vermesini taklit eder."""
+
+    def __init__(self, dolumlar, kapasite=10_000):
+        self.dolumlar, self.kapasite, self.istek = dolumlar, kapasite, 0
+
+    def fills(self, adres, start, max_rows=None, end_ms=None):
+        self.istek += 1
+        rows = [{k: v for k, v in f.items() if k != "adres"} for f in self.dolumlar if f["adres"] == adres and start <= f["time"] <= (end_ms or 1 << 62)]
+        return rows[-self.kapasite:]
+
+    def info(self, body, weight=1):
+        return []
+
+    def candles(self, coin, start, end, interval):
+        assert interval == "1h"
+        return [{"s": coin, "t": T0 + h * H, "o": "100", "h": "100", "l": "100", "c": "100"} for h in range(0, 3) if T0 + h * H < end]
+
+
+def test_altin_ornek_bosluk_bir_kez_arsive_yazilir_haftalik_koşu_apiye_gitmez(tmp_path):
     arc = kur(tmp_path, ilk_saat=3)
-    arc.append("dolum", [GOLD[1]])                                 # arşiv yalnız 04:10 dolumunu görmüş
-    gun = tmp_path / "arsiv/tur=kapsam/gun=2026-10-29"
-    gun.mkdir(parents=True)
-    (gun / "yoklamalar.json").write_text(json.dumps([{"tur": "dolum", "ozne": A, "zaman_ms": T0 + 3 * H, "aralik_ms": H}]))
-
-    class Api:
-        def fills(self, adres, start):
-            return [{k: v for k, v in f.items() if k != "adres"} for f in GOLD if f["adres"] == adres]
-
-        def info(self, body, weight=1):
-            return []
-
-        def candles(self, coin, start, end, interval):
-            assert interval == "1h"
-            return [{"s": coin, "t": T0 + h * H, "o": "100", "h": "100", "l": "100", "c": "100"} for h in range(0, 3)]
-
-    pilot_veri.uret(tmp_path / "arsiv", secim(), {}, "2026-10-29", tmp_path / "c", client=Api(), now=NOW)
+    arc.append("dolum", [GOLD[1]])                                 # arşiv yalnız 04:10 dolumunu görmüş; 01:10 dolumu boşlukta
+    with pytest.raises(RuntimeError, match="boşluk doldurulmadı"):
+        pilot_veri.uret(tmp_path / "arsiv", secim(), {}, "2026-10-29", tmp_path / "c", now=NOW)      # doldurmadan haftalık koşu KIRMIZI
+    api = Api(GOLD)
+    sonuc = pilot_veri.bosluk_doldur(tmp_path / "arsiv", secim(), api, now=NOW)
+    assert sonuc["pencere_disi"] == 0 and sonuc["dolum"] == 1 and api.istek == 2        # yalnız boşluk dolumu (01:10); iki adres
+    pilot_veri.uret(tmp_path / "arsiv", secim(), {}, "2026-10-29", tmp_path / "c", now=NOW)           # API istemcisi parametresi bile yok
     assert json.loads((tmp_path / "c/getiri.json").read_text())[A] == pytest.approx(BEKLENEN, abs=1e-12)
     assert json.loads((tmp_path / "c/kapanmis_islem.json").read_text())[A] == 1
+
+
+def test_altin_ornek_api_pencere_siniri_dolarsa_adres_pencere_disi_eksik_sayilir(tmp_path, capsys):
+    """Sahte istemci yalnız son 10.000 dolumu verir; boşlukta 12.000 dolum var → en eski dolum etiketten sonra → sessiz sıfır değil, eksik."""
+    kur(tmp_path, ilk_saat=3)
+    cok = [fill(A, "BTC", "B", 1, 100, 0, 0, 0, 0) | {"time": T0 + 1000 + i, "tid": i} for i in range(12_000)]
+    sonuc = pilot_veri.bosluk_doldur(tmp_path / "arsiv", secim(), Api(cok), now=NOW)
+    assert sonuc["pencere_disi"] == 1
+    assert "pencere dışı" in capsys.readouterr().out
+    kayit = json.loads(pilot_veri.bosluk_yolu(tmp_path / "arsiv").read_text())
+    assert kayit["pencere_disi"] == [A]
+    out = pilot_veri.uret(tmp_path / "arsiv", secim(), {}, "2026-10-29", tmp_path / "c", now=NOW)
+    assert A not in json.loads((tmp_path / "c/getiri.json").read_text())
+    assert out["pencere_disi"] == 1 and out["eksik"] == 1
+
+
+def test_altin_ornek_pencere_dolu_degilse_ya_da_basi_etikette_ise_pencere_disi_degil(tmp_path):
+    kur(tmp_path, ilk_saat=3)
+    az = [fill(A, "BTC", "B", 1, 100, 0, 0, 0, 0) | {"time": T0 + 1000 + i, "tid": i} for i in range(9_999)]
+    assert pilot_veri.bosluk_doldur(tmp_path / "arsiv", secim(), Api(az), now=NOW)["pencere_disi"] == 0
+    tam = [fill(A, "BTC", "B", 1, 100, 0, 0, 0, 0) | {"time": T0 + i, "tid": i} for i in range(10_000)]     # ilk dolum tam etikette: başı erişilmiş
+    assert pilot_veri.bosluk_doldur(tmp_path / "arsiv", secim(), Api(tam), now=NOW)["pencere_disi"] == 0
+
+
+def test_oku_gun_ve_adres_suzgeci_ve_ozet_dosyasi(tmp_path):
+    arc = kur(tmp_path)
+    arc.append("pozisyon", [{"adres": A, "durum": {"x": 1}}, {"adres": B, "durum": {"x": 2}}])
+    assert [r["adres"] for r in pilot_veri.oku(tmp_path / "arsiv", "pozisyon", adresler={A})] == [A]
+    assert pilot_veri.oku(tmp_path / "arsiv", "pozisyon", gun_baslangic="2026-10-30") == []
+    arc.append("dolum", GOLD)
+    pilot_veri.uret(tmp_path / "arsiv", secim(), {}, "2026-10-29", tmp_path / "c", now=NOW)
+    ozet = json.loads((tmp_path / "c/ozet.json").read_text())
+    assert ozet["sure_sn"] >= 0 and ozet["satir"]["dolum"] == 2 and set(ozet) == {"havuz", "getiri", "eksik", "pencere_disi", "oda_risk", "sure_sn", "satir"}   # kol getirisi yok
 
 
 def test_altin_ornek_mum_eksikse_adres_getiriden_cikar_ve_eksik_sayilir(tmp_path):
