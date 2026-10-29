@@ -425,7 +425,7 @@ def bayrak_hesapla(result: dict[str, Any], bayrak_fn, onbellek: dict[str, Any] |
     return body
 
 
-def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: str) -> list[dict[str, Any]]:
+def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: str, havuz_adet: int = 0) -> list[dict[str, Any]]:
     """``secim.json``'dan izleme listesi: oda + kontrol + taban + elle.
 
     Seçim kolundaki (oda/kontrol/taban) bir adres listede zaten varsa ve satırı bu seçim sürümünün etiketini (``secim`` =
@@ -462,6 +462,30 @@ def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: s
         row["kol"], row["kollar"] = kollar[0], kollar
         rows.append(row)
     kept = {r["adres"].lower() for r in rows}
+    # İleriye dönük ölçüm (K-8): seçim havuzunun liste dışındaki üyeleri ``havuz`` kolunda sessiz izlenir; listede olan havuz satırı korunur,
+    # yenileri sha256(adres) sırasıyla (sabit, sonuca bakmayan) havuz kolu toplamı ``havuz_adet``e ulaşana dek eklenir (yeniden üretim
+    # idempotent). t0 = ekleme günü; oda/kontrol değişmez.
+    havuz = sorted((a for a, e in result["adresler"].items() if "havuz" in e["kollar"] and a not in kept),
+                   key=lambda a: hashlib.sha256(a.encode()).hexdigest())
+    eklenen = sum(1 for a in havuz if by_address.get(a) is not None and "havuz" in (by_address[a].get("kollar") or [by_address[a].get("kol")]))
+    for address in havuz:
+        old = by_address.get(address)
+        if old is not None and "havuz" in (old.get("kollar") or [old.get("kol")]):
+            rows.append(old)
+        elif old is None and eklenen < havuz_adet:
+            eklenen += 1
+            n = 1
+            while f"H{n:03d}" in used:
+                n += 1
+            used.add(f"H{n:03d}")
+            row = {"id": f"H{n:03d}", "adres": address, "takma_ad": address[2:6], "durum": "izlemede", "t0": t0,
+                   "secim": label, "kol": "havuz", "kollar": ["havuz"]}
+            if result["adresler"][address].get("tarz") in TARZLAR:
+                row["tarz"] = result["adresler"][address]["tarz"]
+            rows.append(row)
+        else:
+            continue
+        kept.add(address)
     # Yeni seçim eski odayı değiştirse bile ilk seçimin ITT referansı sessizce
     # izlenir. Eski t0/id aynen kalır; geçmiş yeniden oynatılmaz.
     for address, old in by_address.items():
@@ -482,7 +506,7 @@ def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: s
 
 def yaz_izleme_listesi(rows: list[dict[str, Any]], path: Path) -> None:
     header = ("# İZLEME LİSTESİ — `python -m copytrade.secim --izleme-listesi` ile secim.json'dan üretilir; ELLE YAZILMAZ.\n"
-              "# kol: oda (Telegram bildirimi var) | kontrol | taban | elle (sessiz izleme). kollar: adresin bulunduğu tüm kollar.\n")
+              "# kol: oda (Telegram bildirimi var) | kontrol | taban | elle | havuz (sessiz izleme). kollar: adresin bulunduğu tüm kollar.\n")
     path.write_text(header + yaml.safe_dump({"traderlar": rows}, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
 
@@ -503,6 +527,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--bayrak", action="store_true", help="--secim (varsayılan: en son) secim.json'daki aday katı için bayrak.json üret (ağ isteği)")
     parser.add_argument("--izleme-listesi", action="store_true", help="secim.json'dan copytrade/izleme_listesi.yaml üret")
     parser.add_argument("--secim", type=Path, default=None, help="--izleme-listesi için secim.json (varsayılan: en son)")
+    parser.add_argument("--havuz-adet", type=int, default=0, help="--izleme-listesi: havuz kolunun hedef toplamı (sessiz izleme, K-8); var olanlar korunur")
     args = parser.parse_args(argv)
     date = args.tarih or datetime.now(UTC).strftime("%Y-%m-%d")
     list_path = args.root / "izleme_listesi.yaml"
@@ -510,7 +535,7 @@ def main(argv: list[str] | None = None) -> None:
         source = args.secim or latest(args.output, "*/secim.json")
         existing = yaml.safe_load(list_path.read_text(encoding="utf-8")) if list_path.exists() else []
         existing = existing["traderlar"] if isinstance(existing, dict) else existing or []
-        rows = izleme_listesi(json.loads(source.read_text(encoding="utf-8")), existing, date)
+        rows = izleme_listesi(json.loads(source.read_text(encoding="utf-8")), existing, date, args.havuz_adet)
         yaz_izleme_listesi(rows, list_path)
         print(f"İzleme listesi: {len(rows)} satır ({source}).")
         return

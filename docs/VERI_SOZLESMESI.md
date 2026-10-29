@@ -57,7 +57,7 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - **Olay kimliği (v1.2):** `{trader}-{oid}-{tur}` (ör. `T1-123456789-acilis`); ışık olayı `{trader}-{ms}-isik`.
   Olaylar **emir (`oid`) düzeyinde** üretilir: aynı emrin dolumları birleştirilir (tek açılış sahte büyütmeler doğurmaz).
   Saatlik motor ve Cloudflare Worker aynı kuralla aynı kimliği üretir.
-- `traderlar[].kol` (v1.5, ek alan; `surum` 1 kalır): `oda` | `kontrol` | `taban` | `elle` | `referans_oda` | `referans_kontrol`; `kollar` adresin bulunduğu tüm kollar. İzleme listesinden
+- `traderlar[].kol` (v1.5, ek alan; `surum` 1 kalır): `oda` | `kontrol` | `taban` | `elle` | `referans_oda` | `referans_kontrol` | `cikarilan` | `havuz` (K-8, sessiz ileri ölçüm); `kollar` adresin bulunduğu tüm kollar. İzleme listesinden
   aynen taşınır; Telegram Worker bildirimi yalnız `kol = oda` için gönderir (diğerleri sessiz izlenir).
 - `traderlar[].secim` (v1.8, isteğe bağlı): izleme listesindeki değişmez seçim etiketi
   (`<secim_surumu>@<kapı tarihi>`). Tüketici, aynı etiketi en son `secim.json` ile
