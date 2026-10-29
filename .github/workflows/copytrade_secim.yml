@@ -67,7 +67,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch origin copytrade-kapi
           git checkout -f -B copytrade-kapi FETCH_HEAD
-          test ! -e "secim/$name/secim.json"   # yayımlı seçimin üzerine yazılmaz
+          # Yayımlı seçimin üzerine yazılmaz. Veri dalının kendisine bakılır: çalışma ağacında bu koşunun kendi çıktısı (secim/) durur.
+          if git cat-file -e "HEAD:secim/$name/secim.json" 2>/dev/null; then echo "secim/$name zaten yayımlı" >&2; exit 1; fi
           cp -r "$archive"/. .
           python3 son_yaz.py son.json secim "$name"     # pano/ofis en son seçim klasörünü buradan okur (API çağrısı gerekmez)
           rm son_yaz.py
