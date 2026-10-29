@@ -7,9 +7,10 @@
   else { root.OFIS = root.OFIS || {}; root.OFIS.Gercek = api; }
 })(typeof window !== 'undefined' ? window : globalThis, function () {
   'use strict';
-  const REPO = 'sselimgenc-oss/sg-arge', DAL = 'copytrade-kapi';
+  const REPO = 'sselimgenc-oss/sg-arge', DAL = 'copytrade-kapi', IZLEME_DALI = 'copytrade-izleme';
   const AGAC = 'https://api.github.com/repos/' + REPO + '/git/trees/' + DAL + '?recursive=1';   // kimliksiz API: tek çağrı
   const HAM = 'https://raw.githubusercontent.com/' + REPO + '/' + DAL + '/';
+  const IZLEME_HAM = 'https://raw.githubusercontent.com/' + REPO + '/' + IZLEME_DALI + '/izleme/durum.json';
   const ESIK_DK = 7 * 1440;                                   // seçim ve kapı haftalık/günlük üretilir: bir haftadan eskiyse VERİ ESKİ
   const GRI = 'paper izleme başlamadı';
   const TARIH = /^\d{4}-\d{2}-\d{2}/;
@@ -54,11 +55,27 @@
     const kapsam = durum && sayi(durum.kapsam) != null ? '%' + Math.round(durum.kapsam * 100) : null;
     const vk = (anahtar, ad, durumu, deger, zaman) => ({ anahtar: anahtar, ad: ad, durum: durumu, deger: deger, zaman: zaman, esik_dk: ESIK_DK });
     const kapiTamam = durum && durum.durum === 'tamam';
+    const live = opt.izleme || null, etiket = surum + '@' + (opt.kapiTarihi || tarih);
+    const eslesmis = live && Array.isArray(live.traderlar) ? live.traderlar.filter(t => t.secim === etiket) : [];
+    const onaylandi = eslesmis.length > 0;
+    const canli = Object.fromEntries(eslesmis.map(t => [String(t.adres).toLowerCase(), t]));
+    const liveRows = onaylandi ? girdi.filter(e => canli[e.adres]).map((e, i) => {
+      const t = canli[e.adres], ks = t.kollar || [t.kol];
+      const kat = ks.indexOf('oda') >= 0 || ks.indexOf('referans_oda') >= 0 ? 'oda' : (ks.indexOf('kontrol') >= 0 || ks.indexOf('referans_kontrol') >= 0 ? 'kontrol' : ks.indexOf('taban') >= 0 ? 'lab' : 'aday');
+      return Object.assign(olustur(e, kat, t.id.slice(0, 1), i), { id: t.id, adres: kisa(t.adres), takma_ad: t.takma_ad, kat: kat, kol: t.kol, saglik: t.saglik, sanal_kopya: t.sanal_kopya || null, veri_zamani: t.veri_zamani || live.uretildi });
+    }) : traderlar;
+    const copies = eslesmis.map(t => t.sanal_kopya).filter(Boolean);
+    const total = key => copies.reduce((x, c) => x + (sayi(c[key]) || 0), 0);
+    const kol = name => eslesmis.filter(t => (t.kollar || []).indexOf(name) >= 0).map(t => t.sanal_kopya).filter(Boolean);
+    const getiri = name => { const a = kol(name); return a.length ? a.reduce((x, c) => x + (sayi(c.getiri) || 0), 0) / a.length : null; };
+    const hafta = onaylandi ? Math.max(1, Math.floor((simdi.getTime() - Date.parse(tarih + 'T00:00:00Z')) / 604800000) + 1) : 0;
+    const gecmis = (live && live.olaylar || []).map(e => ({ id: e.id, zaman: e.zaman, tur: e.tur === 'acilis' ? 'islem_acildi' : e.tur === 'kapanis' ? 'islem_kapandi' : e.tur, oda: (liveRows.find(t => t.id === e.trader) || {}).kat || 'oda', trader: e.trader, metin: e.trader + ' · ' + e.coin + ' · ' + e.tur })).filter(e => e.tur === 'islem_acildi' || e.tur === 'islem_kapandi');
+    const maxLev = eslesmis.filter(t => (t.kollar || []).indexOf('oda') >= 0).reduce((x, t) => Math.max(x, ...(t.pozisyonlar || []).map(p => sayi(p.kaldirac) || 0)), 0);
     return {
       surum: 1, uretildi: simdi.toISOString(), kaynak: 'hyperliquid-kapi (veri dalı ' + DAL + ', seçim ' + surum + ' ' + tarih + ')',
-      secim: { surum: surum, tarih: tarih, kapi_tarihi: opt.kapiTarihi || null, onaylandi: false },
-      cipler: { golge: GRI, telegram: null },
-      kasa: { deger_usd: null, baslangic_usd: null, zaman: null, gun_n: null, egri: [] },
+      secim: { surum: surum, tarih: tarih, kapi_tarihi: opt.kapiTarihi || null, onaylandi: onaylandi },
+      cipler: { golge: onaylandi ? 'açık' : GRI, telegram: null },
+      kasa: { deger_usd: onaylandi ? total('bakiye_usd') : null, baslangic_usd: onaylandi ? total('baslangic_usd') : null, zaman: live && live.uretildi || null, gun_n: onaylandi ? hafta * 7 : null, egri: [] },
       ozet: { islem_basi_usd: null, bugun_kz_usd: null, bugun_acilan_n: null, bugun_kapanan_n: null, zaman: null },
       katlar: {
         havuz: { n: kolSayi('havuz'), masa: 0, zaman: z, esik_dk: ESIK_DK },
@@ -66,18 +83,18 @@
         oda: { n: kolSayi('oda'), kapasite: null, masa: odaListe.length, zaman: z, esik_dk: ESIK_DK },
         kontrol: { n: kolSayi('kontrol'), masa: 0, zaman: z, esik_dk: ESIK_DK }
       },
-      traderlar: traderlar, acik_islemler: [], kapananlar: [], olaylar: [], gecmis_olaylar: [], akis_suresi_sn: 0,
+      traderlar: liveRows, acik_islemler: [], kapananlar: [], olaylar: [], gecmis_olaylar: gecmis, akis_suresi_sn: 0,
       kohort_kontrol: {
-        hafta: 0, hafta_toplam: 12, performans_kilitli: true,
-        kollar: [{ ad: 'Oda (kohort)', n: kolSayi('oda') }, { ad: 'Kontrol (ofiste yer almaz)', n: kolSayi('kontrol') }, { ad: 'Taban (leaderboard)', n: kolSayi('taban') }, { ad: 'Elle liste', n: kolSayi('elle') }],
-        onkayit: 'Seçim ' + surum + ' ön izleme, onaylanmadı; paper izleme başlamadı', zaman: z, esik_dk: ESIK_DK
+        hafta: hafta, hafta_toplam: 12, performans_kilitli: false,
+        kollar: [{ ad: 'Oda (yönetilen)', n: onaylandi ? kol('oda').length : kolSayi('oda'), getiri: getiri('oda') }, { ad: 'Kontrol (sabit)', n: onaylandi ? kol('kontrol').length : kolSayi('kontrol'), getiri: getiri('kontrol') }, { ad: 'Taban', n: onaylandi ? kol('taban').length : kolSayi('taban'), getiri: getiri('taban') }, { ad: 'Elle liste', n: kolSayi('elle') }],
+        onkayit: 'Pilot; yönetilen oda sabit referans kontrol koluyla izlenir', zaman: live && live.uretildi || z, esik_dk: ESIK_DK
       },
       veri_kalitesi: [
         vk('tarama', 'Tarama (kapı koşusu)', durum ? (kapiTamam ? 'tamam' : 'uyari') : 'bilinmiyor', durum ? 'evren ' + trSayi(evren) + ' · işlenen ' + trSayi(islenen) + (kapsam ? ' · kapsam ' + kapsam : '') : null, durum ? kapiZ : null),
-        vk('lab', 'Gölge defteri', 'bilinmiyor', null, null), vk('arsiv', 'Arşiv yazımı', 'bilinmiyor', null, null),
+        vk('lab', 'Gölge defteri', onaylandi ? 'tamam' : 'bilinmiyor', onaylandi ? 'izlenen ' + eslesmis.length + ' trader' : null, live && live.uretildi || null), vk('arsiv', 'Arşiv yazımı', 'bilinmiyor', null, null),
         vk('denetim', 'Sağlama (gölge ↔ trader PnL)', 'bilinmiyor', null, null), vk('gecikme', 'Gecikme zinciri p95', 'bilinmiyor', null, null), vk('mum', '1 dk mum boşluğu', 'bilinmiyor', null, null)
       ],
-      risk: { zaman: null, tavanlar: [] }, telegram: { bugun_n: null, son: [], zaman: null },
+      risk: { zaman: live && live.uretildi || null, tavanlar: onaylandi ? [{ anahtar: 'kaldirac', ad: 'Oda en yüksek kaldıraç', kullanim: maxLev, tavan: 10, birim: 'x' }] : [] }, telegram: { bugun_n: null, son: [], zaman: null },
       tarama: { puanlar: [], zaman: durum ? kapiZ : null, esik_dk: ESIK_DK },
       kapi: { bugun_gecen_n: null, bugun_elenen_n: null, zaman: z, esik_dk: ESIK_DK },
       arsiv: { turler: [], zaman: null }, onkayit_kasasi: { surum: null, commit: null, dondurma_tarihi: null, zaman: null },
@@ -85,8 +102,8 @@
         tarama: durum ? [['Evren', evren], ['İşlenen', islenen], ['Kapsam', kapsam], ['Hesap sürümü', durum.hesap || null]] : [],
         kapi: [['Havuz', kolSayi('havuz')], ['Aday', kolSayi('aday')], ['Oda', kolSayi('oda')]]
       },
-      oda_durum: { lab: { gri: true, metin: GRI }, finans: { gri: true, metin: GRI }, risk: { gri: true, metin: GRI }, kontrol: { gizli: true } },
-      oda_kaynak: { lab: ['katlar:havuz'], aday: ['katlar:aday'], oda: ['katlar:oda'], tarama: ['veri_kalitesi:tarama', 'tarama'], kapi: ['kapi'], sekreterlik: ['kohort_kontrol'] },
+      oda_durum: onaylandi ? {} : { lab: { gri: true, metin: GRI }, finans: { gri: true, metin: GRI }, risk: { gri: true, metin: GRI }, kontrol: { gizli: true } },
+      oda_kaynak: { lab: ['veri_kalitesi:lab'], aday: ['katlar:aday'], oda: ['katlar:oda'], kontrol: ['kohort_kontrol'], finans: ['kasa', 'kohort_kontrol'], risk: ['risk'], tarama: ['veri_kalitesi:tarama', 'tarama'], kapi: ['kapi'], sekreterlik: ['kohort_kontrol'] },
       ekran_kaynak: { 'tarama.tv': 'tarama', 'aday.tv': 'katlar:aday' }
     };
   }
@@ -109,8 +126,10 @@
     const secim = await oku(HAM + 'secim/' + secimKlasor + '/secim.json');
     const kt = sonJ && sonJ.secim ? (secim.kapi_tarihi || sonJ.kapi || null) : kapiTarihi(secim, durumlar);
     const durum = kt ? await oku(HAM + 'copytrade/kapi/' + kt + '/durum.json') : null;
-    return cevir(secim, durum, { simdi: opt.simdi, kapiTarihi: kt });
+    let izleme = null;
+    try { izleme = await oku(IZLEME_HAM); } catch (e) { izleme = null; }
+    return cevir(secim, durum, { simdi: opt.simdi, kapiTarihi: kt, izleme: izleme });
   }
 
-  return { AGAC: AGAC, HAM: HAM, GRI: GRI, enSon: enSon, kapiTarihi: kapiTarihi, cevir: cevir, yukle: yukle };
+  return { AGAC: AGAC, HAM: HAM, IZLEME_HAM: IZLEME_HAM, GRI: GRI, enSon: enSon, kapiTarihi: kapiTarihi, cevir: cevir, yukle: yukle };
 });

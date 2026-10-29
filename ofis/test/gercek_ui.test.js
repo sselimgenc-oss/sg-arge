@@ -40,9 +40,9 @@ const srv = http.createServer((q, r) => {
 
   /* ---------- A. varsayılan: gerçek veri ---------- */
   let { ctx, pg } = await open();
-  ok('varsayılan açılış ağ yolundan veri alır (son.json 404 → 1 API + 2 ham dosya, örnek dosya yok)', istek.length === 4 && istek[0] === G.HAM + 'son.json' && istek[1] === G.AGAC, istek.join(' | '));
+  ok('varsayılan açılış ağ yolundan veri alır (son.json 404 → API, kapı ve canlı izleme; örnek yok)', istek.length === 5 && istek[0] === G.HAM + 'son.json' && istek[1] === G.AGAC && istek[4] === G.IZLEME_HAM, istek.join(' | '));
   const sera = await pg.evaluate(() => ({ on: !document.getElementById('onizlemeFlt').hidden, t: document.getElementById('onizlemeMetin').textContent, o: !document.getElementById('ornekFlt').hidden, r: document.getElementById('onizlemeFlt').getBoundingClientRect() }));
-  ok('üst şerit: "Seçim v1 — ön izleme, onaylanmadı (2026-10-28)"', sera.on && sera.t === 'Seçim v1 — ön izleme, onaylanmadı (2026-10-28)', sera.t);
+  ok('canlı etiket eşleşmezse üst şerit veri yok der', sera.on && sera.t === 'Seçim v1 — veri yok (2026-10-28)', sera.t);
   ok('şerit ekranın içinde ve görünür', sera.r.width > 100 && sera.r.top >= 0 && sera.r.top < 120);
   ok('örnek veri şeridi yok', !sera.o);
   const durum = await pg.evaluate(() => { const s = OFIS.Office.state(), n = k => s.actors.filter(a => a.kind === 'trader' && a.kat === k).length; return { oda: n('oda'), aday: n('aday'), lab: n('lab'), kontrol: n('kontrol'), gri: ['lab', 'finans', 'risk', 'oda', 'aday'].map(r => OFIS.Office.gri(r)), gizli: !!OFIS.World.roomById.kontrol.gizli, out: !!OFIS.World.roomById.kontrol.out, kaynak: OFIS.data.kaynak }; });
@@ -53,7 +53,7 @@ const srv = http.createServer((q, r) => {
   ok('sol panel: kasa/risk "paper izleme başlamadı"', (t.match(/paper izleme başlamadı/g) || []).length >= 7, String((t.match(/paper izleme başlamadı/g) || []).length));
   ok('"örnek" rozeti ve "örnek veri" yazısı yok', !/örnek/i.test(t.replace(/Örnek veri yalnız[^\n]*/i, '')), (t.match(/.{20}örnek.{20}/i) || [''])[0]);
   ok('körlük: para birimi ($), K/Z, "puan" yok', !/\$\d/.test(t) && !/K\/Z/.test(t) && !/puan/i.test(t), (t.match(/.{15}(\$\d|K\/Z|puan).{15}/i) || [''])[0]);
-  ok('kontrol kolu yalnız bir yerde sayı olarak geçer: "Kontrol (ofiste yer almaz) N=5"', /Kontrol \(ofiste yer almaz\)\s*N=5/i.test(t) && (t.match(/KONTROL GRUBU/gi) || []).length === 0 && !/Kontrol masalar/i.test(await pg.evaluate(() => document.getElementById('ofisAciklama').textContent)), (t.match(/.{10}ontrol.{20}/g) || []).join(' | '));
+  ok('etiket eşleşmezse kontrol veri yoktur; örnek kontrol figürü yok', /Kontrol \(sabit\)\s*N=5/i.test(t) && (t.match(/KONTROL GRUBU/gi) || []).length === 0, (t.match(/.{10}ontrol.{20}/g) || []).join(' | '));
   ok('sol panelde Oda/Aday/Havuz sayıları gerçek: 6, 9, 30', /Oda\s*6/i.test(t) && /Aday\s*9/i.test(t) && /Havuz\s*30/i.test(t));
   /* oda bilgileri */
   const bilgi = await pg.evaluate(() => ['tarama', 'kapi', 'lab', 'finans', 'risk', 'oda'].map(r => OFIS.Office.roomInfo(r).lines.join(' ')));
@@ -75,7 +75,7 @@ const srv = http.createServer((q, r) => {
   /* ---------- A2. son.json varsa API çağrılmaz ---------- */
   istek.length = 0;
   ({ ctx, pg } = await open('?saat=15:40', { son: true }));
-  ok('son.json işaretçisi: GitHub API hiç çağrılmaz (3 ham istek)', istek.length === 3 && !istek.some(u => /api\.github\.com/.test(u)), istek.join(' | '));
+  ok('son.json işaretçisi: GitHub API hiç çağrılmaz (4 ham istek)', istek.length === 4 && !istek.some(u => /api\.github\.com/.test(u)), istek.join(' | '));
   await ctx.close();
 
   /* ---------- A3. telefon: rozet, yakın açılış, gece konturu ---------- */
@@ -85,6 +85,7 @@ const srv = http.createServer((q, r) => {
   ok('telefon: açılışta kamera sığdırmadan %12 yakın', Math.abs(yak.oran - 1.12) < 0.01, JSON.stringify(yak));
   const rozet = await pg.evaluate(() => { const s = OFIS.Office.state(); return ['oda', 'aday'].map(id => s.actors.some(a => a.kind === 'trader' && a.kat === id) + ':' + s.katlar[id].n); });
   ok('telefon: dolu masalı odalarda rozet verisi (Oda 6, Aday 9)', rozet.join() === 'true:6,true:9', rozet.join());
+  await pg.screenshot({ path: path.join(__dirname, '..', '..', 'docs', 'ofis_gercek_veri_telefon.png') });
   ok('gündüz: figür konturu çizilmez', (await pg.evaluate(() => OFIS.Office.konturN || 0)) === 0);
   await ctx.close();
   ({ ctx, pg } = await open('?saat=23:30', { vp: { width: 390, height: 844 } }));

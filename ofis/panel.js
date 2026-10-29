@@ -34,10 +34,9 @@
     const sr = $('#gunSeritMetin'); if (sr) sr.textContent = r.dun + ' · ' + r.bugun;
   }
   function kasa() {
-    // ön kayıt: toplanmış performans (kasa değeri, eğri, % değişim) ofiste gösterilmez
     if (Off.gri('finans')) { $('#kasaIcerik').innerHTML = '<p class="bos">' + GRIN + '</p>'; return; }
     const k = st.kasa, el = $('#kasaIcerik'), tem = st.acik.reduce((sum, x) => sum + (x.teminat_usd || 0), 0), kk = st.kk;
-    el.innerHTML = '<div class="kilit" role="note"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7zm2 0h4V5a2 2 0 0 0-4 0z" fill="currentColor"/></svg><div><b>Kasa değeri kilitli</b><div class="ks">Toplanmış performans ön kayıt gereği gösterilmez (hafta ' + kk.hafta + '/' + kk.hafta_toplam + ').</div></div></div>' +
+    el.innerHTML = '<div class="kasa-satir ks2"><div><span class="kl">kasa</span><div class="kv">' + usd(k.deger_usd) + '</div></div><div><span class="kl">getiri</span><div class="kv ' + cls(k.deger_usd == null || !k.baslangic_usd ? 0 : k.deger_usd / k.baslangic_usd - 1) + '">' + pct(k.deger_usd == null || !k.baslangic_usd ? null : (k.deger_usd / k.baslangic_usd - 1) * 100, true) + '</div></div></div>' +
       '<div class="kasa-satir ks2"><div><span class="kl">başlangıç</span><div class="kv">' + usd(k.baslangic_usd) + '</div></div><div><span class="kl">açık işlem teminatı</span><div class="kv">' + usd(tem) + '</div></div></div>' +
       '<p class="meta">n=' + (k.gun_n == null ? 'bilinmiyor' : k.gun_n + ' gün') + ' · veri ' + hm(k.zaman) + ' · ' + ORN + '</p>';
   }
@@ -90,8 +89,8 @@
   function kohort() {
     const k = st.kk, pr = Math.max(0, Math.min(1, k.hafta / k.hafta_toplam));
     $('#kohIcerik').innerHTML = '<div class="hafta"><span>hafta <b>' + k.hafta + '/' + k.hafta_toplam + '</b></span><div class="hb"><i style="width:' + (pr * 100).toFixed(0) + '%;background:#46d3c2"></i></div></div>' +
-      '<ul class="kollar">' + k.kollar.map(c => '<li><span>' + esc(c.ad) + '</span><b>N=' + c.n + '</b></li>').join('') + '</ul>' +
-      (k.performans_kilitli ? '<div class="kilit" role="note"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M4 7V5a4 4 0 0 1 8 0v2h1v8H3V7zm2 0h4V5a2 2 0 0 0-4 0z" fill="currentColor"/></svg><div><b>Performans kilitli</b><div class="ks">' + esc(k.onkayit) + '. Kâr görüldükçe trader, eşik ya da süre değiştirilmez.</div></div></div>' : '<p class="bos">Performans: bilinmiyor.</p>');
+      '<ul class="kollar">' + k.kollar.map(c => '<li><span>' + esc(c.ad) + '</span><b>N=' + c.n + (c.getiri == null ? '' : ' · ' + pct(c.getiri * 100, true)) + '</b></li>').join('') + '</ul>' +
+      '<p class="meta">' + esc(k.onkayit || 'Kohort verisi yok') + '</p>';
     $('#kohMeta').innerHTML = 'veri ' + hm(k.zaman) + ' · ' + ORN;
   }
   function veri() {
@@ -128,9 +127,9 @@
     const ornek = P.ornekMi(), d = O.data, sc = d.secim;
     $('#ornekFlt').hidden = !ornek;
     $('#onizlemeFlt').hidden = ornek || !sc;
-    if (sc) $('#onizlemeMetin').textContent = 'Seçim ' + sc.surum + ' — ön izleme, onaylanmadı (' + sc.tarih + ')';
+    if (sc) $('#onizlemeMetin').textContent = 'Seçim ' + sc.surum + (sc.onaylandi ? ' — pilot, hafta ' + st.kk.hafta + '/' + st.kk.hafta_toplam : ' — veri yok') + ' (' + sc.tarih + ')';
     Object.keys(d.oda_durum || {}).forEach(id => { if (d.oda_durum[id].gizli) document.querySelectorAll('.ray [data-oda=' + id + ']').forEach(b => { b.hidden = true; }); });   // gizli oda sol menüde de yok
-    const lk = $('#lejKontrol'); if (lk) lk.hidden = !ornek;                 // gerçek veride kontrol kolu ofiste yer almaz
+    const lk = $('#lejKontrol'); if (lk) lk.hidden = false;
     const an = $('#altNot'); if (an && ornek) an.innerHTML = 'Bu sayfa <b>örnek veriyle</b> çalışır (<code>?durum=ornek</code>); adresler uydurmadır.';
     const c = d.cipler || {}, low = v => String(v).toLocaleLowerCase('tr');
     $('#kayitDeger').textContent = c.golge ? low(c.golge) : 'bilinmiyor';

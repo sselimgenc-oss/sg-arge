@@ -16,7 +16,7 @@
   Off.clock = () => new Date(Date.now() + Off.timeOffsetMs);
   /* Performans körlüğü (ön kayıt): toplanmış performans (kasa değeri/eğrisi, günlük toplam K/Z, kol getirisi) ofiste gösterilmez.
      Tek tek işlem K/Z'si Telegram'daki kadar görünür kalır. */
-  Off.KILIT = true;
+  Off.KILIT = false;
   const evHooks = [];
   /* ---------- örnek saat, veri yaşı ve bayatlık (eşikler veride: her kaynakta esik_dk) ---------- */
   const TOP = { kasa: 'kasa', ozet: 'ozet', risk: 'risk', telegram: 'tg', kohort_kontrol: 'kk', arsiv: 'arsiv', kapi: 'kapi', tarama: 'tarama', onkayit_kasasi: 'onkayit' };

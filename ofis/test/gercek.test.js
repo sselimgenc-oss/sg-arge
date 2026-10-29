@@ -29,7 +29,7 @@ const metin = JSON.stringify(d);
 ok('körlük: hiçbir trader puan taşımaz', d.traderlar.every(t => !('puan' in t)));
 ok('körlük: kasa/özet/işlem/olay boş, K/Z yok', d.kasa.deger_usd === null && d.ozet.bugun_kz_usd === null && d.acik_islemler.length === 0 && d.kapananlar.length === 0 && d.olaylar.length === 0 && d.gecmis_olaylar.length === 0);
 ok('körlük: seçimdeki puan değeri (0.123456) hiçbir yerde yok', !/0\.123456|0\.9[0-9]?\b/.test(metin.replace(/"tohum":\d+/, '')));
-ok('körlük: performans kilitli', d.kohort_kontrol.performans_kilitli === true && d.tarama.puanlar.length === 0);
+ok('pilot görünümü: performans kilitli değil, tarama puanı taşınmaz', d.kohort_kontrol.performans_kilitli === false && d.tarama.puanlar.length === 0);
 /* sayılar */
 ok('katlar: havuz 30 · aday 9 · oda 6 · kontrol sayısı 5', d.katlar.havuz.n === 30 && d.katlar.aday.n === 9 && d.katlar.oda.n === 6 && d.katlar.kontrol.n === 5);
 ok('masa: lab 0, aday 3, oda 6, kontrol 0', d.katlar.havuz.masa === 0 && d.katlar.aday.masa === 3 && d.katlar.oda.masa === 6 && d.katlar.kontrol.masa === 0);
@@ -42,6 +42,10 @@ ok('verisi olmayan kalite satırları "bilinmiyor", sıfır değil', d.veri_kali
 ok('seçim sürümü v1 (secim.json sürüm vermiyorsa), tarih', d.secim.surum === 'v1' && d.secim.tarih === '2026-10-28' && d.secim.onaylandi === false);
 const d13 = G.cevir(F.secim('2026-10-28', 'v1.3'), null, { simdi: SIMDI });
 ok('v1.3: sürüm etiketi; kapı durumu yoksa tarama satırı bilinmiyor', d13.secim.surum === 'v1.3' && d13.veri_kalitesi[0].durum === 'bilinmiyor' && d13.oda_sayilar.tarama.length === 0);
+const sCanli = F.secim('2026-10-28', 'v1.3'), aCanli = Object.keys(sCanli.adresler)[0];
+const izleme = { uretildi: '2026-10-29T12:00:00Z', traderlar: [{ id: 'O01', adres: aCanli, takma_ad: 'a001', secim: 'v1.3@2026-10-28', kol: 'oda', kollar: ['oda'], saglik: { isik: 'yesil', nedenler: [] }, pozisyonlar: [], sanal_kopya: { baslangic_usd: 1000, bakiye_usd: 1012, getiri: .012 }}], olaylar: [{ id: 'O01-1-acilis', zaman: '2026-10-29T11:00:00Z', trader: 'O01', tur: 'acilis', coin: 'BTC', yon: 'long' }] };
+const canli = G.cevir(sCanli, F.durum, { simdi: SIMDI, kapiTarihi: '2026-10-28', izleme: izleme });
+ok('altın örnek: eşleşen seçim etiketi onay, kasa, olay ve aktif oda üretir', canli.secim.onaylandi && canli.kasa.deger_usd === 1012 && canli.traderlar[0].id === 'O01' && canli.gecmis_olaylar[0].tur === 'islem_acildi' && !canli.oda_durum.lab, JSON.stringify(canli.secim));
 
 /* canlı yol sözleşmesi: tek ağaç çağrısı + iki ham dosya, doğru adreslerle */
 (async () => {
@@ -59,7 +63,7 @@ ok('v1.3: sürüm etiketi; kapı durumu yoksa tarama satırı bilinmiyor', d13.s
   ok('sözleşme: ağaç adresi git/trees/copytrade-kapi?recursive=1 (kimliksiz tek çağrı)', istek[1] === 'https://api.github.com/repos/sselimgenc-oss/sg-arge/git/trees/copytrade-kapi?recursive=1', istek[1]);
   ok('sözleşme: ham adresler raw.githubusercontent.com/…/copytrade-kapi/secim/<tarih>/secim.json ve copytrade/kapi/<tarih>/durum.json',
     istek[2] === 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/secim/2026-10-28/secim.json' && istek[3] === 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/copytrade/kapi/2026-10-28/durum.json', istek.join(' | '));
-  ok('sözleşme: son.json yoksa 4 istek (işaretçi 404 + 1 API + 2 ham dosya)', istek.length === 4 && istek[0] === G.HAM + 'son.json' && g.traderlar.length === 9);
+ok('sözleşme: canlı izleme de okunur; yoksa sahte veriye düşmez', istek.length === 5 && istek[4] === G.IZLEME_HAM && g.traderlar.length === 9);
   /* son.json işaretçisi varsa API hiç çağrılmaz */
   const istek2 = [];
   const g2 = await G.yukle(async (url) => {
@@ -70,7 +74,7 @@ ok('v1.3: sürüm etiketi; kapı durumu yoksa tarama satırı bilinmiyor', d13.s
     if (url === G.HAM + 'copytrade/kapi/2026-10-28/durum.json') return yanit(F.durum);
     return { ok: false, status: 404, json: async () => ({}) };
   }, { simdi: SIMDI });
-  ok('son.json varsa: 3 ham dosya, API çağrısı yok', istek2.length === 3 && !istek2.some(u => /api\.github\.com/.test(u)) && g2.traderlar.length === 9, istek2.join(' | '));
+ok('son.json varsa: 4 ham dosya, API çağrısı yok', istek2.length === 4 && !istek2.some(u => /api\.github\.com/.test(u)) && g2.traderlar.length === 9, istek2.join(' | '));
   let hata = null;
   try { await G.yukle(async () => ({ ok: false, status: 403, json: async () => ({}) }), { simdi: SIMDI }); } catch (e) { hata = e.message; }
   ok('API sınırı (403) → açık hata, sessiz örnek yok', /HTTP 403/.test(hata || ''), hata);
