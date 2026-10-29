@@ -1,3 +1,5 @@
+> **ASKIDA (K‑7b, 2026-10-30):** canlı tarihi iptal; önce veri. Kullanıcı yeniden açana dek başlanmaz.
+
 # Görev — Kopya botu, aşama 1: emir GÖNDERMEYEN karar + kayıt motoru (Codex, 2026-10-30, lider)
 
 Dayanak: K‑7 / K‑7a (`docs/KARARLAR_D.md`): 1.12.2026 küçük tutarla otomatik canlı. Bu aşamada **hiçbir emir gönderilmez, hiçbir anahtar
