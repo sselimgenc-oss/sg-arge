@@ -22,6 +22,7 @@ from typing import Any
 import numpy as np
 
 from copytrade.kurallar import load_rules
+from copytrade.mum_saglik import mum_kontrol
 
 HOUR = 3_600_000
 DAY = 86_400_000
@@ -81,7 +82,7 @@ class Market:
         limit = max_intervals if max_intervals is not None else int(load_rules()["mum_uzaklik_max_aralik"])
         self.interval, self.max_distance = interval_ms, interval_ms * limit
         self.mark_max_age = int(load_rules()["isaret_yas_max_dk"]) * 60_000
-        self._raw, self._lists, self._cum = candles, {}, {}
+        self._raw, self._lists, self._cum, self._bad = candles, {}, {}, {}
 
     def lists(self, coin: str) -> tuple[list[int], list[float], list[float]]:
         if coin not in self._lists:
@@ -111,9 +112,24 @@ class Market:
         yok sayılır (``None``): bayat fiyatla açık pozisyon işaretlenmez, çağıran ``mark_missing`` sayar (E4)."""
         times, opens, _ = self.lists(coin)
         index = bisect_right(times, at_ms) - 1
+        bad = self._bad_times(coin)
+        while index >= 0 and times[index] in bad:           # bozuk / sıçrama / boşluk / hacimsiz mumla işaretlenmez (A15)
+            index -= 1
         if index < 0 or at_ms - times[index] > self.mark_max_age:
             return None
         return times[index], opens[index]
+
+    def _bad_times(self, coin: str) -> set[int]:
+        """``mum_saglik`` ile geçersiz sayılan mum zamanları. Tam OHLC taşımayan mumlar (canlı yürütme/işaret mumları yalnız t, o) kontrol edilmez."""
+        if coin not in self._bad:
+            rows = self._raw.get(coin, [])
+            if rows and all(isinstance(c, dict) and "h" in c and "l" in c and "c" in c for c in rows):
+                rules = load_rules()
+                checked = mum_kontrol(list(rows), float(rules["mum_sicrama_kat"]), int(rules["mum_medyan_pencere"]))
+                self._bad[coin] = {int(r["t"]) for r in checked if not r["gecerli"] and r["t"] is not None}
+            else:
+                self._bad[coin] = set()
+        return self._bad[coin]
 
     def funding_cum(self, coin: str, rates: FundingRates) -> tuple[list[int], list[float]]:
         """Saat başına (açılış fiyatı × funding oranı) kümülatif toplamı: bir pozisyonun funding'i = −adet × (cum[j] − cum[i])."""

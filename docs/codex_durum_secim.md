@@ -64,3 +64,7 @@
 ## Argon A13 — pozisyon mutabakatı (`copytrade/pozisyon_mutabakat.py`)
 - [x] Defter ↔ `clearinghouseState` (uyumlu / yetim / eksik / yon_farki / boy_farki); `borsa_pozisyonlari` ve `mutabakat` bozuk satır sayısını dönüş değerinde verir; eşikler `kurallar.yaml` (`mutabakat_*_tolerans`)
 - [x] İzleme motoru her koşuda oda üyeleri için çalıştırır, sonucu `veri_kalitesi.mutabakat` alanına yazar; yalnız rapor (otomatik kapatma yok)
+## Argon A15 — mum akıl sağlığı (`copytrade/mum_saglik.py`)
+- [x] bozuk / sıçrama / boşluk / hacimsiz; sıçrama **oranla** (`max(o/medyan, medyan/o) >= mum_sicrama_kat`, çöküşler de yakalanır), medyana yalnız geçerli mumların kapanışı girer
+- [x] `defter.Market.mark_at`: bozuk/sıçrama mumla işaretlenmez, işaret yaşı son **geçerli** mumdan ölçülür; `isaret_yas_max_dk` aşılırsa `mark_missing` (E4 ile birleşik)
+- [x] Kapı satırında `mum_*` sütunları; RAPOR.md "Mum sağlığı (A15)" bölümü ve `durum.json` `mum_ozeti`
