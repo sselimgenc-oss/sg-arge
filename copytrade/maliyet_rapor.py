@@ -13,7 +13,8 @@ from __future__ import annotations
 import argparse
 import json
 import statistics
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, time, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from typing import Any
 
@@ -78,6 +79,113 @@ def sinif_defterleri(fills: list[dict], market: Market, kapital: Any, gecikme: i
     return out
 
 
+# ------------------------------------------------------------------ HIP-3 alt sınıfları (K-5): büyüme / standart, seans içi / dışı
+ALT_SINIFLAR = ("buyume_seans_ici", "buyume_seans_disi", "standart")
+ALT_AD = {"buyume_seans_ici": "Büyüme modu · ABD seansı içi", "buyume_seans_disi": "Büyüme modu · seans dışı (gece/hafta sonu)", "standart": "Standart mod"}
+
+
+def dex_ayarlari(client) -> dict[str, dict[str, Any]]:
+    """API ``perpDexs`` → her dex için ``meta`` (``universe[].growthMode``, ``deployerFeeScale``); ``{coin: {"buyume": bool, "olcek": float}}``.
+    Okunamayan dex atlanır (o dex'in coin'leri ``standart`` sayılır: üst uç, temkinli)."""
+    out: dict[str, dict[str, Any]] = {}
+    for dex in client.info({"type": "perpDexs"}) or []:
+        if not dex or not dex.get("name"):
+            continue
+        meta = client.info({"type": "meta", "dex": dex["name"]})
+        for asset in (meta or {}).get("universe", []):
+            out[str(asset["name"])] = {"buyume": str(asset.get("growthMode", "")).lower() == "enabled", "olcek": float(asset.get("deployerFeeScale", 1.0))}
+    return out
+
+
+def taker_ucreti(ayar: dict[str, Any], rules: dict) -> float:
+    """Protokol baz taker ücreti × deployer çarpanı (ölçek < 1: ölçek + 1; değilse ölçek × 2) × (büyüme modunda ``maliyet_buyume_ucret_olcegi``)."""
+    olcek = float(ayar["olcek"])
+    carpan = olcek + 1.0 if olcek < 1.0 else olcek * 2.0
+    return float(rules["maliyet_taker"]) * carpan * (float(rules["maliyet_buyume_ucret_olcegi"]) if ayar["buyume"] else 1.0)
+
+
+def seans_ici(zaman_ms: int, rules: dict) -> bool:
+    """ABD hisse seansı (yerel saat; hafta içi, açılış dahil, kapanış hariç). Yaz/kış saati ``zoneinfo`` ile."""
+    cfg = rules["maliyet_us_seans"]
+    yerel = datetime.fromtimestamp(zaman_ms / 1000, ZoneInfo(cfg["zaman_dilimi"]))
+    acilis, kapanis = (time.fromisoformat(cfg[k]) for k in ("acilis", "kapanis"))
+    return yerel.weekday() < 5 and acilis <= yerel.time() < kapanis
+
+
+def hip3_alt_sinif(coin: str, zaman_ms: int, ayarlar: dict[str, dict[str, Any]], rules: dict) -> str:
+    """HIP-3 dolumunun alt sınıfı. Dex ayarı bilinmeyen coin ``standart`` (üst uç)."""
+    ayar = ayarlar.get(str(coin))
+    if not ayar or not ayar["buyume"]:
+        return "standart"
+    return "buyume_seans_ici" if seans_ici(zaman_ms, rules) else "buyume_seans_disi"
+
+
+def alt_sinif_defterleri(fills: list[dict], market: Market, kapital: Any, gecikme: int, bas_ms: int, bitis_ms: int,
+                         rates: FundingRates, rules: dict, ayarlar: dict[str, dict[str, Any]]) -> dict[str, float | None]:
+    """HIP-3 dolumlarını alt sınıfa bölüp her biri için maliyet toplamı (mevcut oranla); alt sınıf toplamı HIP-3 sınıf maliyetine eşittir (doğrusal)."""
+    kaynak = [f for f in perp_fills(fills) if coin_sinifi(f["coin"], rules) == "hip3"]
+    out: dict[str, float | None] = {}
+    for alt in ALT_SINIFLAR:
+        parca = [f for f in kaynak if hip3_alt_sinif(f["coin"], int(f["time"]), ayarlar, rules) == alt]
+        sonuc = copy_ledger(parca, market, kapital, gecikme, bas_ms, bitis_ms, rates, rules) if parca else {"net": 0.0, "costs": 0.0}
+        out[alt] = sonuc.get("costs", 0.0) if sonuc["net"] is not None else None
+    return out
+
+
+def alt_hacim_payi(fills: list[dict], rules: dict, ayarlar: dict[str, dict[str, Any]]) -> dict[str, float | None]:
+    """Perp hacminde HIP-3 alt sınıf payları (``px × sz``); hacim yoksa ``None``."""
+    hacim = {alt: 0.0 for alt in ALT_SINIFLAR}
+    toplam = 0.0
+    for f in perp_fills(fills):
+        v = abs(float(f.get("px", 0)) * float(f.get("sz", 0)))
+        toplam += v
+        if coin_sinifi(f.get("coin", ""), rules) == "hip3":
+            hacim[hip3_alt_sinif(f["coin"], int(f["time"]), ayarlar, rules)] += v
+    return {alt: (hacim[alt] / toplam if toplam else None) for alt in ALT_SINIFLAR}
+
+
+def alt_puani(puan: float | None, alt_maliyet: dict[str, float | None], rules: dict) -> float | None:
+    """Senaryo (d): kapı puanı − Σ alt sınıf maliyeti × (üst uç oranı / mevcut oran − 1). Alt sınıf maliyeti eksikse ``None``."""
+    if puan is None or any(v is None for v in alt_maliyet.values()):
+        return None
+    taban = cost_rate(rules)
+    uc = rules["maliyet_hip3_alt_uc"]
+    return puan - sum(float(alt_maliyet[a]) * (float(uc[a]) / taban - 1.0) for a in ALT_SINIFLAR)
+
+
+def alt_bolumu(veri: dict[str, Any], rules: dict, kume_a: list[str], taban_oda: list[str]) -> list[str]:
+    """Rapor bölümü 4: HIP-3 alt sınıf duyarlılığı (senaryo d). Ham veride alt sınıf maliyeti yoksa bunu söyler (sayı uydurmaz)."""
+    L = ["", "## 4. HIP-3 alt sınıf duyarlılığı (K-5, senaryo d)", ""]
+    satirlar = veri["havuz"]
+    var = [r for r in satirlar if r.get("alt_maliyet")]
+    if len(var) != len(satirlar):
+        return L + [f"- Ham veride alt sınıf maliyeti {len(var)} / {len(satirlar)} adreste var; bölüm üretilmedi (veriyi `--ham` dosyasını silip yeniden toplayın)."]
+    uc = rules["maliyet_hip3_alt_uc"]
+    kim = {r["address"]: r for r in satirlar}
+    puan_d = {r["address"]: alt_puani(r["puan"], r["alt_maliyet"], rules) for r in satirlar}
+    # (d): HIP-3 dışındaki sınıflar mevcut maliyette kalır; yalnız HIP-3 alt sınıf oranları değişir
+    kume = oda_kumeleri([{**r, "puan": r["puan"]} for r in satirlar], puan_d, rules)
+    d = degisim(taban_oda, kume["oda"])
+    L += ["Oranlar (tek yön, A20 §4 tablosunun üst ucu): " + ", ".join(f"{ALT_AD[a]} {_ondalik(100 * float(uc[a]), 3)} %" for a in ALT_SINIFLAR) + ".",
+          "Seans: ABD hisse seansı (hafta içi 09:30–16:00 New York; resmî tatiller ayrılmadı). Mod ve ücret ölçeği API `perpDexs`/`meta` yanıtından (`growthMode`, `deployerFeeScale`).", "",
+          "| Alt sınıf | Oda medyan hacim payı | Havuz medyan hacim payı |", "|---|---:|---:|"]
+    for a in ALT_SINIFLAR:
+        oda_p = [kim[x]["alt_hacim_payi"][a] for x in kume_a if kim[x]["alt_hacim_payi"][a] is not None]
+        havuz_p = [r["alt_hacim_payi"][a] for r in satirlar if r["alt_hacim_payi"][a] is not None]
+        L.append(f"| {ALT_AD[a]} | {_yuzde(statistics.median(oda_p) if oda_p else None)} | {_yuzde(statistics.median(havuz_p) if havuz_p else None)} |")
+    L += ["", f"- Senaryo (d): aday {kume['aday']}, oda {len(kume['oda'])}, a'ya göre {len(d['giren'])} giren, {len(d['cikan'])} çıkan.", ""]
+    if d["giren"] or d["cikan"]:
+        L += ["| Yön | Adres | Tarz | Puan (a) | Puan (d) |", "|---|---|---|---:|---:|"]
+        for yon, adresler in (("giren", d["giren"]), ("çıkan", d["cikan"])):
+            for x in adresler:
+                L.append(f"| {yon} | `{x[:6]}…{x[-4:]}` | {kim[x]['tarz']} | {_ondalik(kim[x]['puan'])} | {_ondalik(puan_d[x])} |")
+    ozet = veri.get("dex_ozet")
+    if ozet:
+        L += ["", "Dex ayarları (API): " + "; ".join(f"{k}: {v['coin']} coin, büyüme {v['buyume']}" for k, v in sorted(ozet.items())) + "."]
+    L.append("- Ana karar maliyeti değişmedi; bu yalnız rapordur.")
+    return L
+
+
 def oda_kumeleri(havuz_satirlari: list[dict[str, Any]], puanlar: dict[str, float | None], rules: dict) -> dict[str, Any]:
     """Puanlar değiştirilmiş havuzla seçim v1.3 aday + oda adımları (aynı kod); döner oda adresleri ve aday sayısı."""
     satirlar = [{**r, "puan": puanlar.get(r["address"])} for r in havuz_satirlari]
@@ -130,7 +238,7 @@ def rapor(veri: dict[str, Any], rules: dict) -> str:
           f"- Mevcut oran (taker + kayma): {_ondalik(100 * cost_rate(rules), 3)} % tek yön.",
           "- Senaryo (b) A17 §8.2'nin **alt uç** tek yön maliyetleri: " + ", ".join(f"{SINIF_AD[s]} {_ondalik(100 * oranlar['b'][s], 3)} %" for s in SINIFLAR) + ".",
           f"- Senaryo (c): HIP-3 taker ücreti ×{rules['maliyet_hip3_ucret_carpani']:g} (HIP-3 oranı {_ondalik(100 * oranlar['c']['hip3'], 3)} %), diğer sınıflar mevcut.",
-          "- A17 §8.2'deki HIP-3 Growth Mode satırı kullanılmadı: dolumlardan hangi piyasanın o modda olduğu bilinmiyor (HIP-3 hepsi standart sayıldı).",
+          "- (b) ve (c)'de HIP-3 hepsi tek sınıf sayıldı; büyüme/standart ve seans ayrımı bölüm 4'te (senaryo d).",
           f"- Pencere: son {rules['mum_pencere_gun']} gün dolumları, kapıdaki gibi. Doğrulama: yürütülen dolum sayısı kapı sütunuyla {veri['dolum_eslesme'][0]} / {veri['dolum_eslesme'][1]} adreste aynı.",
           "- Funding çekilmedi (maliyet funding'e bağlı değil); puan her senaryoda kapının yayımladığı değerden başlar.", ""]
     L += ["## 1. Coin sınıfına göre makas (A16, saatlik mumlar)", "",
@@ -166,6 +274,7 @@ def rapor(veri: dict[str, Any], rules: dict) -> str:
             for a in adresler:
                 r = kim[a]
                 L.append(f"| {yon} | `{a[:6]}…{a[-4:]}` | {r['tarz']} | {_ondalik(puanlar['a'][a])} | {_ondalik(puanlar[s][a])} | {_yuzde(r['hacim_payi']['hip3'])} |")
+    L += alt_bolumu(veri, rules, kume["a"]["oda"], kume["a"]["oda"])
     L += ["", "## Okuma", ""]
     for s in ("b", "c"):
         d = degisim(kume["a"]["oda"], kume[s]["oda"])
@@ -194,6 +303,12 @@ def topla(sonuc_csv: Path, kapi_tarihi: str, cikis: Path, rules: dict | None = N
     bas_200 = int((now - timedelta(days=int(rules["mum_pencere_gun"]))).timestamp() * 1000)
     client = PublicClient(limiter=RateLimiter(1000))
     cache = CandleCache(client, bas_200, now_ms)
+    ayarlar = dex_ayarlari(client)
+    dex_ozet: dict[str, dict[str, int]] = {}
+    for coin, ayar in ayarlar.items():
+        o = dex_ozet.setdefault(coin.split(":")[0], {"coin": 0, "buyume": 0})
+        o["coin"] += 1
+        o["buyume"] += int(ayar["buyume"])
     onceki = json.loads(cikis.read_text(encoding="utf-8")) if cikis.exists() else {"havuz": []}
     satirlar = onceki["havuz"]
     yapilan = {r["address"] for r in satirlar}
@@ -211,14 +326,16 @@ def topla(sonuc_csv: Path, kapi_tarihi: str, cikis: Path, rules: dict | None = N
         satirlar.append({"address": adres, "tarz": r["tarz"], "puan": r["puan"], "gecikme_dk": gecikme,
                          "maliyet": {s: v["costs"] for s, v in siniflar.items()},
                          "yurutulen": yurutulen, "kapi_yurutulen": kapi_satir[adres].get(f"gecikme_{gecikme}dk_dolum"),
-                         "hacim_payi": hip3_hacim_payi(fills, rules)})
+                         "hacim_payi": hip3_hacim_payi(fills, rules),
+                         "alt_maliyet": alt_sinif_defterleri(fills, market, kapital, gecikme, bas_200, now_ms, None, rules, ayarlar),
+                         "alt_hacim_payi": alt_hacim_payi(fills, rules, ayarlar)})
         log(f"{i}/{len(havuz)} {adres[:10]} gecikme {gecikme} dk, {len(fills)} dolum", flush=True)
         if len(satirlar) % 5 == 0:
             cikis.write_text(json.dumps({"havuz": satirlar}, ensure_ascii=False), encoding="utf-8")
     coinler = {coin: coin_makas_ozeti(cache.get(coin), (50,), rules) for coin in sorted(cache.items) if cache.get(coin)}
     esles = [r["yurutulen"] == r["kapi_yurutulen"] for r in satirlar if r["kapi_yurutulen"] is not None]
     veri = {"kapi_tarihi": kapi_tarihi, "uretildi": now.isoformat(), "havuz": satirlar, "makas": sinif_makas(coinler, rules),
-            "dolum_eslesme": [sum(esles), len(esles)]}
+            "dolum_eslesme": [sum(esles), len(esles)], "dex_ozet": dex_ozet}
     cikis.write_text(json.dumps(veri, ensure_ascii=False), encoding="utf-8")
     return veri
 

@@ -25,6 +25,7 @@ from copytrade.yogunlasma import korelasyon_matrisi, kumele, yari_tutarliligi, y
 TARZLAR = ("intraday", "swing")
 KOLLAR = ("oda", "elle", "taban", "kontrol", "aday", "havuz")     # ``kol`` = bu sıradaki ilk (bildirim yalnız ``oda``)
 LISTE_KOLLARI = ("oda", "elle", "taban", "kontrol")
+REFERANS_KOLLARI = ("referans_oda", "referans_kontrol")
 ONEK = {"oda": "O", "kontrol": "K", "taban": "B", "elle": "E"}
 
 
@@ -461,7 +462,21 @@ def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: s
         row["kol"], row["kollar"] = kollar[0], kollar
         rows.append(row)
     kept = {r["adres"].lower() for r in rows}
-    rows += [{**r, "kol": r.get("kol", "elle")} for a, r in by_address.items() if a not in kept]     # listede olup seçimde çıkmayan (korunur)
+    # Yeni seçim eski odayı değiştirse bile ilk seçimin ITT referansı sessizce
+    # izlenir. Eski t0/id aynen kalır; geçmiş yeniden oynatılmaz.
+    for address, old in by_address.items():
+        if address in kept:
+            continue
+        old_kollar = set(old.get("kollar") or [old.get("kol", "elle")])
+        referans = []
+        if "oda" in old_kollar:
+            referans.append("referans_oda")
+        if "kontrol" in old_kollar:
+            referans.append("referans_kontrol")
+        if referans and old.get("secim") and old.get("secim") != label:
+            rows.append({**old, "kol": referans[0], "kollar": referans})
+        else:
+            rows.append({**old, "kol": old.get("kol", "elle")})
     return rows
 
 

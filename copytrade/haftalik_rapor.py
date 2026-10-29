@@ -97,6 +97,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--getiri", type=Path, default=None, help="{adres: ileri getiri} JSON (yoksa rapor 'ileri getiri verisi yok' der)")
     parser.add_argument("--kapanmis-islem", type=Path, default=None, help="{adres: etiketten bu yana kapanmış işlem} JSON (v1.4 çıkış kuralı; yoksa çıkış değerlendirilemez)")
     parser.add_argument("--risk", type=Path, default=None, help="{adres: {etiket: {...}, son: {...}}} JSON (v1.4 risk işaretleri; yalnız bilgi)")
+    parser.add_argument("--arsiv-kesinti", type=Path, default=None, help="arsiv_alarm özet JSON: arşiv kesintisi rapora yazılır (alarmda kırmızı işaret)")
     parser.add_argument("--ozet", type=Path, default=None, help="pilot_veri ozet.json: koşu süresi ve satır sayıları rapora yazılır (kol bazında getiri içermez)")
     parser.add_argument("--tarih", required=True)
     parser.add_argument("--cikti", type=Path, default=Path("rotasyon"))
@@ -115,6 +116,10 @@ def main(argv: list[str] | None = None) -> None:
     if args.ozet and args.ozet.exists():
         o = json.loads(args.ozet.read_text(encoding="utf-8"))
         metin = metin.rstrip("\n") + f"\n\n## Veri hattı\n\n- Koşu süresi {o['sure_sn']} sn · okunan satır {o['satir']} · pencere dışı {o['pencere_disi']} · eksik {o['eksik']}.\n"
+    if args.arsiv_kesinti and args.arsiv_kesinti.exists():
+        from copytrade import arsiv_alarm
+        k = json.loads(args.arsiv_kesinti.read_text(encoding="utf-8"))
+        metin = metin.rstrip("\n") + "\n\n## Arşiv kesintisi\n\n- " + ("🔴 **ALARM** — " if k["alarm"] else "🟢 ") + arsiv_alarm.mesaj(k) + "\n"
     (args.cikti / f"haftalik_{args.tarih}.md").write_text(metin, encoding="utf-8")
     print(f"Rapor: {args.cikti / f'haftalik_{args.tarih}.md'}")
 

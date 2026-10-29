@@ -242,6 +242,25 @@ def test_izleme_listesi_mevcut_satirlari_korur_ve_dogrulanir(tmp_path: Path):
     assert secim.elle_liste(path) == [addr("d")]                  # elle kolu yeniden okunur; oda/kontrol okunmaz
 
 
+def test_izleme_listesi_eski_secimi_sabit_referans_olarak_korur(tmp_path: Path):
+    """Altın örnek: oda değişince eski üye aynı t0/id ile referans kolunda kalır."""
+    result = secim.sec(TABLE, "2026-10-29", [], [], RULES, kapi_tarihi="2026-10-29")
+    existing = [
+        {"id": "O01", "adres": addr("f"), "takma_ad": "ffff", "durum": "izlemede", "t0": "2026-10-29",
+         "secim": "v1.3@2026-10-28", "kol": "oda", "kollar": ["oda"]},
+        {"id": "K01", "adres": addr("e"), "takma_ad": "eeee", "durum": "izlemede", "t0": "2026-10-29",
+         "secim": "v1.3@2026-10-28", "kol": "kontrol", "kollar": ["kontrol"]},
+    ]
+    rows = secim.izleme_listesi(result, existing, "2026-10-29")
+    by = {r["adres"]: r for r in rows}
+    assert by[addr("f")]["id"] == "O01" and by[addr("f")]["t0"] == "2026-10-29"
+    assert by[addr("f")]["kollar"] == ["referans_oda"]
+    assert by[addr("e")]["kollar"] == ["referans_kontrol"]
+    path = tmp_path / "liste.yaml"
+    secim.yaz_izleme_listesi(rows, path)
+    assert {r["kol"] for r in load_list(path)} >= {"referans_oda", "referans_kontrol"}
+
+
 def test_tam_kosu_degilse_durur(tmp_path: Path):
     day = tmp_path / "kapi" / "2026-10-28"
     day.mkdir(parents=True)
