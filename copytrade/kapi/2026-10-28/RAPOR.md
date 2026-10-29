@@ -27,10 +27,10 @@ Hatalı adres: 197/13767 (hata sütunu; sınıf Yetersiz).
 
 ## Dondurma (kurallar ve kod özeti)
 
-- `kurallar.yaml` SHA-256: `aa037fc2ca06bc3368ceb02ea1b3e94afb6209d8e573428e795785f36a592a8b`
-- `kapi.py` SHA-256: `c787c00878fcdf9a975abc718db89838abbe0135abd98b4e6bb06b845f7d3437`
+- `kurallar.yaml` SHA-256: `8319f56be91036a27503092bd2cb432f56c09152ce70ebe7f55a670a7536d794`
+- `kapi.py` SHA-256: `a0a0bd8aaa3a8cf5d5d52e16b37a1d1d511e4c849f7883804295b1c198fbde6d`
 - `olcut.py` SHA-256: `fc6d1923aad8e25a643a5f27861b1a8d8c186d9b90f2090f0b29b5cc24ee98c4`
-- `defter.py` SHA-256: `39dd44739efe5c0ebc5fb32cc3d9129009aa0de839cd1bc8b903470b9d655df2`
+- `defter.py` SHA-256: `6f13ede90f23f536b4f505d3a9338f1bae9aca6dd92b46c579704818c33f96a3`
 - Aday listesi (87 adres: kopyalanabilir + izleme_adayi) özeti: `0bab42d9c22821704b0faf3772e34ae47d72cb65f6488d0ee79b417a83a5d14f`
 
 ## Adım 2'yi geçenler (alfa t'ye göre ilk 15)
