@@ -323,15 +323,37 @@ def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) ->
     return "\n".join(lines) + "\n"
 
 
-def bayrak_hesapla(result: dict[str, Any], bayrak_fn) -> dict[str, Any]:
-    """Aday katı (``aday`` kolundaki adresler) için kırmızı bayraklar; ``bayrak.json`` gövdesi. Seçimi değiştirmez, ``secim.json``'a dokunmaz."""
-    out = {}
+def bayrak_surumu() -> str:
+    """Bayrak hesabının kod kimliği (``bayrak.py`` sha256'sı): kod değişince önbellek geçersiz olur."""
+    return _sha256_dosya(Path(__file__).with_name("bayrak.py"))
+
+
+def bayrak_hesapla(result: dict[str, Any], bayrak_fn, onbellek: dict[str, Any] | None = None, kaydet=None) -> dict[str, Any]:
+    """Aday katı (``aday`` kolundaki adresler) için kırmızı bayraklar; ``bayrak.json`` gövdesi. Seçimi değiştirmez, ``secim.json``'a dokunmaz.
+
+    ``onbellek``: önceki (kısmi olabilir) ``bayrak.json`` gövdesi; ``bayrak_surumu`` (kod hash'i), ``secim_surumu`` ve ``kapi_tarihi`` aynıysa o adresin
+    sonucu yeniden hesaplanmaz (E6: yeniden koşu tüm ağ çağrılarını tekrarlamaz). ``kaydet(gövde)``: her yeni adresten sonra (``tamam: False``) ve
+    sonda (``tamam: True``) çağrılır; zaman aşımı/hata kısmi sonucu korur."""
+    body: dict[str, Any] = {"secim_surumu": result["secim_surumu"], "kapi_tarihi": result["kapi_tarihi"], "bayrak_surumu": bayrak_surumu(),
+                            "tamam": False, "bayraklar": {}}
+    reusable = {}
+    if onbellek and all(onbellek.get(k) == body[k] for k in ("secim_surumu", "kapi_tarihi", "bayrak_surumu")):
+        reusable = dict(onbellek.get("bayraklar", {}))
     for address, e in sorted(result["adresler"].items()):
-        if "aday" in e["kollar"]:
-            started = time.monotonic()
-            out[address] = bayrak_fn(address, e["hesap_degeri"] or 0.0)
-            print(f"bayrak {address} {time.monotonic() - started:.0f} sn", flush=True)
-    return {"secim_surumu": result["secim_surumu"], "kapi_tarihi": result["kapi_tarihi"], "bayraklar": out}
+        if "aday" not in e["kollar"]:
+            continue
+        if address in reusable:
+            body["bayraklar"][address] = reusable[address]
+            continue
+        started = time.monotonic()
+        body["bayraklar"][address] = bayrak_fn(address, e["hesap_degeri"] or 0.0)
+        print(f"bayrak {address} {time.monotonic() - started:.0f} sn", flush=True)
+        if kaydet:
+            kaydet(body)
+    body["tamam"] = True
+    if kaydet:
+        kaydet(body)
+    return body
 
 
 def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: str) -> list[dict[str, Any]]:
@@ -414,8 +436,14 @@ def main(argv: list[str] | None = None) -> None:
         from copytrade.tarama import PublicClient
         source = args.secim or latest(args.output, "*/secim.json")
         client = PublicClient()
-        body = bayrak_hesapla(json.loads(source.read_text(encoding="utf-8")), lambda address, value: bayrak.hesapla(client, address, value))
-        (source.parent / "bayrak.json").write_text(json.dumps(body, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")
+        target = source.parent / "bayrak.json"
+        previous = json.loads(target.read_text(encoding="utf-8")) if target.exists() else None      # önceki (kısmi) sonuç = önbellek
+
+        def write(body):                                                                              # her adresten sonra checkpoint
+            temporary = target.with_suffix(".json.tmp")
+            temporary.write_text(json.dumps(body, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")
+            temporary.replace(target)
+        body = bayrak_hesapla(json.loads(source.read_text(encoding="utf-8")), lambda address, value: bayrak.hesapla(client, address, value), previous, write)
         print(f"Bayrak: {len(body['bayraklar'])} adres ({source.parent}).")
         return
     path = latest(args.root, "kapi/*/sonuc.csv")

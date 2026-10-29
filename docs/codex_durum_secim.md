@@ -48,3 +48,9 @@
 - [x] `copytrade/haftalik_rapor.py`: havuz genelinde puan ↔ ileri getiri Spearman'ı + tarz / kaldıraç dilimi kırılımı; **kol bazında getiri yazılmaz** (körlük testi); `--gecis` ile `gecis.haftalik` aynı çalışmada
 - [x] `.github/workflows/copytrade_haftalik.yml`: elle çalışır (zamanlama yok), veri dalındaki en son seçimi okur, `rotasyon/` altına yazar
 - Bekleyen: gölge ileri getiri dosyası (`--getiri`) gölge defteri yayımlanınca bağlanır; o güne dek rapor "ileri getiri verisi yok" der
+
+## Seçim v1.3 — iş paketi E2–E4, E6 (motor düzeltmeleri)
+- [x] E2: V1 atlanan ekleme sonrası kapanış gölgedeki pozisyona uygulanır (yetim yok); V2 kısmi azaltmada giriş ve pozisyon yaşı korunur; flip = çıkış + yeni giriş, yeni parça tavana tabi
+- [x] E3: etiketten önceki (miras) pozisyonu kapatan dolum `ZeroDivisionError` vermez (V0/V1/V2)
+- [x] E4: `Market.mark_at` işaret yaşı sınırı (`isaret_yas_max_dk` 120); aşılırsa `mark_missing`, canlı sonuç "eksik işaretleme" notu taşır
+- [x] E6: `bayrak.json` sürümlü önbellek (kod hash + seçim sürümü + kapı tarihi), her adresten sonra checkpoint, iş akışı önceki/kısmi sonucu veri dalından geri yükler ve zaman aşımında da yazar

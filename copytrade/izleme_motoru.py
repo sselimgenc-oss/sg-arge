@@ -406,8 +406,9 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
             # hesap değerine oranlı kesirler: gerçekleşmiş (maliyet + funding dahil), açık (işaretlenmiş) ve toplam; son işaret zamanı
             'gerceklesen': ledger['realized'] + funding_frac, 'acik': ledger['unrealized_end'], 'toplam': ledger['net'] + funding_frac,
             'son_isaret': at_ms(ledger['mark_time']) if ledger['mark_time'] is not None else None, 'isaret_eksik': int(ledger['mark_missing'])}
-    if approximate:
-        result['not'] = 'yaklaşık fiyat'
+    notes = (['yaklaşık fiyat'] if approximate else []) + (['eksik işaretleme'] if ledger['mark_missing'] else [])
+    if notes:
+        result['not'] = ', '.join(notes)
     return result
 
 

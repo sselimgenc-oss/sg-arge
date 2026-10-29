@@ -158,3 +158,5 @@ onkayit_guc: 0.80
 onkayit_ci_ikincil: 0.95
 onkayit_bootstrap_tekrar: 2000
 onkayit_spearman_varyans_carpani: 1.06
+# İşaret yaşı (E4): açık pozisyon bundan eski bir mumla işaretlenmez (mark_missing; sonuç "eksik işaretleme" notu taşır). 1 saatlik mum + tolerans.
+isaret_yas_max_dk: 120

@@ -44,6 +44,7 @@ class Market:
         # Yürütme mumu hedeften en çok ``mum_uzaklik_max_aralik`` (kurallar.yaml; kullanıcı kararı: 1) mum aralığı uzakta olabilir.
         limit = max_intervals if max_intervals is not None else int(load_rules()["mum_uzaklik_max_aralik"])
         self.interval, self.max_distance = interval_ms, interval_ms * limit
+        self.mark_max_age = int(load_rules()["isaret_yas_max_dk"]) * 60_000
         self._raw, self._lists, self._cum = candles, {}, {}
 
     def lists(self, coin: str) -> tuple[list[int], list[float], list[float]]:
@@ -70,10 +71,13 @@ class Market:
         return (self.mark_at(coin, at_ms) or (None, None))[1]
 
     def mark_at(self, coin: str, at_ms: int) -> tuple[int, float] | None:
-        """``mark`` ile aynı, mumun zamanı da döner (işaret yaşı için)."""
+        """``mark`` ile aynı, mumun zamanı da döner (işaret yaşı için). Mum ``isaret_yas_max_dk`` (kurallar.yaml) dakikadan eskiyse işaret
+        yok sayılır (``None``): bayat fiyatla açık pozisyon işaretlenmez, çağıran ``mark_missing`` sayar (E4)."""
         times, opens, _ = self.lists(coin)
         index = bisect_right(times, at_ms) - 1
-        return (times[index], opens[index]) if index >= 0 else None
+        if index < 0 or at_ms - times[index] > self.mark_max_age:
+            return None
+        return times[index], opens[index]
 
     def funding_cum(self, coin: str, rates: FundingRates) -> tuple[list[int], list[float]]:
         """Saat başına (açılış fiyatı × funding oranı) kümülatif toplamı: bir pozisyonun funding'i = −adet × (cum[j] − cum[i])."""
