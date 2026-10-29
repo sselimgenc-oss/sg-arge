@@ -62,13 +62,16 @@ jobs:
           name=${{ steps.secim.outputs.name }}
           archive=$(mktemp -d)
           cp -r yayim/. "$archive"
+          cp .github/scripts/son_yaz.py "$archive/son_yaz.py"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch origin copytrade-kapi
           git checkout -f -B copytrade-kapi FETCH_HEAD
           test ! -e "secim/$name/secim.json"   # yayımlı seçimin üzerine yazılmaz
           cp -r "$archive"/. .
-          git add -f "secim/$name"
+          python3 son_yaz.py son.json secim "$name"     # pano/ofis en son seçim klasörünü buradan okur (API çağrısı gerekmez)
+          rm son_yaz.py
+          git add -f "secim/$name" son.json
           git diff --cached --quiet && exit 0
           git commit -m "copytrade: Seçim $name"
           for attempt in 1 2 3; do
