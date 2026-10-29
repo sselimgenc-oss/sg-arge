@@ -29,7 +29,7 @@ def key(kind: str, row: dict) -> str:
     if kind == "funding":
         return f"{row.get('adres')}:{row.get('time')}:{row.get('hash')}"
     if kind == "mum_1dk":
-        return f"{row.get('coin')}:{row.get('t', row.get('time'))}"
+        return f"{row.get('coin', row.get('s'))}:{row.get('t', row.get('time'))}"
     return hashlib.sha256(json.dumps(row, sort_keys=True, default=str).encode()).hexdigest()
 
 
@@ -103,8 +103,16 @@ class Arsiv:
         return result
 
 
-def pool(root: Path, gate_root: Path | None) -> list[str]:
-    addresses = {row["adres"].lower() for row in load_list(root / "copytrade/izleme_listesi.yaml")}
+def secim_havuzu(secim: Path | None) -> set[str]:
+    """``secim.json`` havuz katı (v1.3: 185 adres). Kapı sonuçlarından bağımsız garanti: birincil analiz havuzun tamamını ister."""
+    if secim is None:
+        return set()
+    result = json.loads(Path(secim).read_text(encoding="utf-8"))
+    return {a.lower() for a, e in result["adresler"].items() if "havuz" in e.get("kollar", [])}
+
+
+def pool(root: Path, gate_root: Path | None, secim: Path | None = None) -> list[str]:
+    addresses = {row["adres"].lower() for row in load_list(root / "copytrade/izleme_listesi.yaml")} | secim_havuzu(secim)
     if gate_root:
         for result in gate_root.glob("*/sonuc.csv"):
             for _, row in pd.read_csv(result).iterrows():
@@ -118,11 +126,11 @@ def next_cursor(rows: list[dict], fallback: int) -> int:
     return max(times) + 1 if times and max(times) >= 0 else fallback
 
 
-def collect(root: Path, output: Path, kinds: set[str], *, gate_root: Path | None = None, client=None, now=None):
+def collect(root: Path, output: Path, kinds: set[str], *, gate_root: Path | None = None, client=None, now=None, secim: Path | None = None):
     now = now or datetime.now(UTC)
     archive, api = Arsiv(output, now), client or PublicClient()
     fallback = int((now - timedelta(hours=1)).timestamp() * 1000)
-    coins, addresses = set(), pool(root, gate_root)
+    coins, addresses = set(), pool(root, gate_root, secim)
     for address in addresses:
         if "dolum" in kinds:
             rows = [dict(row, adres=address) for row in api.fills(address, archive.cursor_start("dolum", address, fallback))]
@@ -164,6 +172,7 @@ if __name__ == "__main__":
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--output", type=Path, default=Path("arsiv"))
     parser.add_argument("--kapi-root", type=Path)
+    parser.add_argument("--secim", type=Path, help="secim.json: havuz katı arşive her zaman girer")
     parser.add_argument("--tur", default="dolum,funding,pozisyon")
     args = parser.parse_args()
-    print(collect(args.root, args.output, set(args.tur.split(",")), gate_root=args.kapi_root))
+    print(collect(args.root, args.output, set(args.tur.split(",")), gate_root=args.kapi_root, secim=args.secim))

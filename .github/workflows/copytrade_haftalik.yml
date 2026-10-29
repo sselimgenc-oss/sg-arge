@@ -1,8 +1,11 @@
 name: CT-Haftalık
 
-# Elle çalışır (zamanlama yok: gölge ileri getirisi hazır olunca zamanlama kararı kullanıcıda). En son seçimi veri dalından alır, haftalık geri bildirim
-# raporunu (rotasyon içindir; kol bazında getiri yazılmaz) ve geçiş kaydını `rotasyon/` altına yazar. Aynı hafta yeniden koşmak yeni olay üretmez.
+# Her Perşembe (etiket günü) ve elle. Önce `pilot_veri` arşivi R2'den okuyup üç girdiyi üretir (getiri, kapanmış işlem, risk), sonra haftalık rapor ve
+# geçiş kaydı `rotasyon/` altına yazılır (rotasyon içindir; kol bazında getiri yazılmaz). Aynı hafta yeniden koşmak yeni olay üretmez.
+# Hata yutulmaz: girdi üretilemezse koşu kırmızı biter.
 on:
+  schedule:
+    - cron: "23 6 * * 4"
   workflow_dispatch:
     inputs:
       tarih:
@@ -21,7 +24,7 @@ concurrency:
 jobs:
   haftalik:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,10 +44,33 @@ jobs:
           mkdir -p veri/secim/"$name"
           git show "FETCH_HEAD:secim/$name/secim.json" > "veri/secim/$name/secim.json"
           if [ -n "$(git ls-tree --name-only FETCH_HEAD rotasyon)" ]; then git archive FETCH_HEAD rotasyon | tar -x; fi
+      - name: Bayrak dosyası (varsa)
+        run: |
+          path="secim/${{ steps.veri.outputs.name }}/bayrak.json"
+          if git cat-file -e "FETCH_HEAD:$path" 2>/dev/null; then git show "FETCH_HEAD:$path" > "veri/$path"; else echo "bayrak.json yok: martingale işareti 'veri yok' olur"; fi
+      - name: Arşivi R2'den indir
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: aws s3 sync "s3://${R2_BUCKET}/" arsiv --exclude "*" --include "tur=dolum/*" --include "tur=funding/*" --include "tur=mum_1dk/*" --include "tur=pozisyon/*" --include "tur=kapsam/*" --include "tur=bosluk/*" --include "tur=mum_1sa/*" --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" --no-progress
+      - name: Arşiv kesinti durumu (bilgi; rapora yazılır)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p pilot_veri
+          gh api "repos/${{ github.repository }}/actions/workflows/arsiv.yml/runs?per_page=50" > runs.json
+          python -m copytrade.arsiv_alarm --runs runs.json --yaz pilot_veri/arsiv_kesinti.json --bilgi
+      - name: Pilot veri hattı (getiri, kapanmış işlem, risk)
+        run: |
+          day="${{ inputs.tarih }}"; day="${day:-$(date -u +%F)}"
+          python -m copytrade.pilot_veri --arsiv arsiv --secim "veri/secim/${{ steps.veri.outputs.name }}/secim.json" --bayrak "veri/secim/${{ steps.veri.outputs.name }}/bayrak.json" --tarih "$day" --cikti pilot_veri
       - name: Haftalık rapor ve geçiş kaydı
         run: |
           day="${{ inputs.tarih }}"; day="${day:-$(date -u +%F)}"
-          python -m copytrade.haftalik_rapor --secim "veri/secim/${{ steps.veri.outputs.name }}/secim.json" --tarih "$day" --cikti rotasyon --gecis
+          python -m copytrade.haftalik_rapor --secim "veri/secim/${{ steps.veri.outputs.name }}/secim.json" --tarih "$day" --cikti rotasyon --gecis --getiri pilot_veri/getiri.json --kapanmis-islem pilot_veri/kapanmis_islem.json --risk pilot_veri/risk.json --ozet pilot_veri/ozet.json --arsiv-kesinti pilot_veri/arsiv_kesinti.json
       - name: Veri dalına yaz
         run: |
           archive=$(mktemp -d)
