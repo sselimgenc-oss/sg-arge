@@ -283,6 +283,16 @@ def test_related_accounts_flags_from_fixed_responses():
     assert kesif.counterparties([{"delta": {"type": "withdraw", "user": PAL}}], ME) == []
 
 
+def test_related_pool_uses_all_gate_pool_not_only_layers():
+    """Altın örnek: katmanı yok adres de adım 1–2 havuzunda bağlantı için taranır."""
+    frame = pd.DataFrame([
+        {"address": "0xa", "adim1": "Geçti", "adim2": "Geçti", "katman": "yok"},
+        {"address": "0xb", "adim1": "Geçti", "adim2": "Geçti", "katman": "izleme_adayi"},
+        {"address": "0xc", "adim1": "Yetersiz", "adim2": "Geçti", "katman": "yok"},
+    ])
+    assert kesif.related_pool(frame) == ["0xa", "0xb"]
+
+
 def test_link_candidates_shared_agent_and_transfer():
     a, b = "0x" + "a" * 40, "0x" + "b" * 40
     info = {a: {"adresler": [], "ajanlar": [AGENT], "transfer": [b], "not": ""},
