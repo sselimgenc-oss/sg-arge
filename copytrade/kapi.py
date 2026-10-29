@@ -278,6 +278,16 @@ def write_binance_universe(root: Path, now: datetime | None = None, get=requests
         return None, type(exc).__name__
 
 
+def read_binance_universe(path: Path) -> tuple[set[str] | None, str]:
+    """Plan işinin dondurduğu listeyi oku; engelli kaynak tüm parçalarda yoktur."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or not lines[0].startswith("# "):
+        raise ValueError(f"Geçersiz Binance anlık görüntüsü: {path}")
+    if "erişim " in lines[0]:
+        return None, lines[0].rsplit(": ", 1)[-1]
+    return {line.strip() for line in lines[1:] if line.strip()}, "dondurulmuş"
+
+
 def binance_availability(coin: str, symbols: set[str] | None) -> str:
     if binance_symbol(coin) == "yok":
         return "yok"
@@ -846,7 +856,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
     bakmadan hesaplar (hızlı koşu; satırın adım değerleri yine kurallara göre kalır). Her aşamanın süresi günlüğe yazılır."""
     address = leader["address"]
     row: dict[str, Any] = {"address": address, "account_value": leader["accountValue"], "kaynak": leader.get("kaynak", "leaderboard"),
-                           "hesap": HESAP_SURUMU}
+                           "hesap": HESAP_SURUMU, "kod_hash": HESAP_KOD_HASH, "now_ms": int(now.timestamp() * 1000)}
     progress = Progress(address[:10] + "…" + address[-4:], client, cache, *([log] if log else []))
     outcome = "tamam"
     try:
@@ -868,7 +878,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
             row.update({"asama1": "Kaldı", "neden": "hesap değeri tabanı"})
             outcome = row["neden"]
             return row
-        account, now_ms = float(leader["accountValue"]), int(now.timestamp() * 1000)
+        account, now_ms = float(leader["accountValue"]), row["now_ms"]
         fills = client.fills(address, start)
         row["sure_dolum_sayisi"] = len(fills)
         progress.stage("fills", f"{len(fills)} dolum")
@@ -1001,6 +1011,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--adres", action="append", default=[], help="kapıya zorla eklenen adres (dis_aday); tekrarlanabilir")
     parser.add_argument("--evren-yaz", type=Path, help="yalnız ortak evren anlık görüntüsünü yazıp çık")
     parser.add_argument("--evren-dosyasi", type=Path, help="plan işinin ortak evren anlık görüntüsünü kullan")
+    parser.add_argument("--binance-dosyasi", type=Path, help="plan işinin ortak Binance vadeli listesi")
     args = parser.parse_args(argv)
     if args.birlestir:
         merge_shards(args.birlestir, args.root, args.beklenen_parca, args.mod, evren_addresses(args.evren_dosyasi) if args.evren_dosyasi else None)
@@ -1029,7 +1040,11 @@ def main(argv: list[str] | None = None) -> None:
     if args.eksikleri_tamamla:
         leaders = missing_addresses(leaders, pd.read_csv(previous_path, low_memory=False) if previous_path.exists() else None, rules)
     leaders = shard_universe(leaders, args.shard_index, args.shard_count)
-    symbols, binance_note = write_binance_universe(out, now)
+    if args.binance_dosyasi:
+        symbols, binance_note = read_binance_universe(args.binance_dosyasi)
+        (out / "binance_vadeli.txt").write_bytes(args.binance_dosyasi.read_bytes())
+    else:
+        symbols, binance_note = write_binance_universe(out, now)
     start = int((now - timedelta(days=int(rules["fills_lookback_days"]))).timestamp() * 1000)
     start_200 = int((now - timedelta(days=int(rules["mum_pencere_gun"]))).timestamp() * 1000)
     cache = CandleCache(client, start_200, int(now.timestamp() * 1000))
@@ -1245,6 +1260,7 @@ def freeze_report(table: pd.DataFrame) -> str:
 # Hesap sürümü: satırın hangi hesap koduyla üretildiğini gösterir. Veri dalındaki eski sonuç dosyasında bu sütun yoksa ya da farklıysa
 # satır "eski_hesap"tır: yeni sonuca karışmaz, akıl sağlığı kapısına girmez, ayrı dosyaya yazılır (sonuc_eski_hesap.csv.gz).
 HESAP_SURUMU = "v1.1-2026-10-27d"
+HESAP_KOD_HASH = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 
 RATIO_COLUMNS = ("profitable_month_ratio", "max_drawdown", "largest_trade_share", "kisa_islem_payi", "gece_payi", "pay_kripto", "pay_hisse",
                  "pay_endeks", "pay_emtia", "binance_payi", "candle_coverage", "plasebo_p", "bhy_q", "kopya_eksik_orani")
@@ -1435,6 +1451,9 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
             combined.to_csv(output / "gunluk.csv.gz", compression="gzip")
         status["eski_hesap_satir"] = int(len(legacy))
         status["hesap"] = HESAP_SURUMU
+        hashes = sorted(str(value) for value in table.get("kod_hash", pd.Series(dtype=str)).dropna().unique())
+        status["kod_hashler"] = hashes
+        status["kod_hash_farkli"] = len(hashes) > 1
         status["satir_kaynagi"] = table["satir_kaynagi"].value_counts().to_dict()
         status["kapi_sorunlari"] = []
         statuses[date] = status
@@ -1453,6 +1472,7 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
         banner += f"Hatalı adres: {failed}/{len(table)} (hata sütunu; sınıf Yetersiz).\n\n"
         banner += mum_rapor(status.get("mum_ozeti"))
         (output / "RAPOR.md").write_text("# CT-Kapı v1.1\n\n" + banner + funnel_report(table, evren.get(date))
+                                         + "\n\n## Kod özeti\n\n" + ("- Tek hash: `" + hashes[0] + "`" if len(hashes) == 1 else "- Farklı kod hash'leri: " + (", ".join("`" + h + "`" for h in hashes) if hashes else "yok"))
                                          + "\n\n" + freeze_report(table) + "\n\n## Adım 2'yi geçenler (alfa t'ye göre ilk 15)\n\n" + _md(near)
                                          + "\n\nGecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.\n", encoding="utf-8")
     return statuses

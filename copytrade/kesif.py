@@ -239,6 +239,14 @@ def build_kesif(table: pd.DataFrame, now: datetime, evren: int | None, curves: d
     return {"surum": 1, "uretildi": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "evren": evren, "islenen": int(len(table)), "adaylar": entries}
 
 
+def related_pool(table: pd.DataFrame) -> list[str]:
+    """İlişkili hesap işareti aday katmanından önceki kapı havuzunun tamamında çalışır."""
+    needed = {"address", "adim1", "adim2"}
+    if not needed <= set(table):
+        return []
+    return table.loc[(table["adim1"] == "Geçti") & (table["adim2"] == "Geçti"), "address"].astype(str).tolist()
+
+
 def run(root: Path, output: Path, client: PublicClient, now: datetime | None = None) -> dict[str, Any]:
     now = now or datetime.now(UTC)
     rules = load_rules()
@@ -254,11 +262,14 @@ def run(root: Path, output: Path, client: PublicClient, now: datetime | None = N
     chosen = table[table["katman"].isin(list(RANK))]
     curves: dict[str, list[list]] = {}
     related: dict[str, dict[str, Any]] = {}
+    # Eğriler yalnız yayımlanan adaylar içindir; ilişkili hesap keşfi ise kapı
+    # havuzunun tamamındadır. Böylece katman eşiği bağlantı kanıtını gizlemez.
     for address in chosen["address"]:
         try:
             curves[address] = weekly_curve(client.portfolio(address))
         except (RateLimitError, requests.RequestException, ValueError, TypeError, KeyError):
             curves[address] = []
+    for address in related_pool(table):
         related[address] = related_accounts(client, address, now)
     link_candidates(related)
     table["iliskili_adresler"] = table["address"].map(lambda a: ";".join(related[a]["adresler"]) if a in related else "")
