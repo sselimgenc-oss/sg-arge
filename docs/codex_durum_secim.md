@@ -33,3 +33,8 @@
 - [x] Çıktı klasörü `secim/<tarih>-<sürüm>/`; bayraklar ayrı iş (`--bayrak` → `bayrak.json`), seçimi beklemez
 - [x] RAPOR: "geçmiş getiri sıralaması (adım 1–3 süzgeçli)" açıklaması + oda ↔ kontrol dilim tablosu
 - [ ] B (geçiş kaydı), C (analiz kodu), D (haftalık geri bildirim): ayrı PR'lar
+## Seçim v1.3 — iş paketi B (geçiş kaydı)
+- [x] `copytrade/gecis.py`: yalnız eklemeli `kayit.jsonl` (`tarih, adres, kol, olay giris|cikis, neden, secim_surumu, kapi_tarihi`) ve `degerlendirme.jsonl`; silme/güncelleme yolu yok; aynı olay iki kez yazılmaz
+- [x] Çıkış: `secim_cikis_ardisik_hafta` (2) ardışık haftalık uygunsuz değerlendirme; araya uygun ya da atlanmış hafta sayacı sıfırlar
+- [x] `copytrade/kollar.py` (ikinci aday/kontrol/terfi uygulaması) kaldırıldı; tek kaynak `secim.py`; ona ait eski testler silindi (kod yok)
+- Not: `golge_terfi_*` anahtarları artık kodda kullanılmıyor (kural belgelerinde duruyor; temizlik ayrı karar)

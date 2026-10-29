@@ -3,7 +3,6 @@ from copytrade.golge import Gecikme, calistir, kirp_pozisyon, saglama, v2_sinir
 from copytrade.kurallar import load_rules
 import pytest
 import pandas as pd
-from copytrade.kollar import adaylar, cikis, olay_yaz, sec, terfi
 from copytrade.tarama import PublicClient
 from copytrade.golge_saglama import _summary, pencere_ici_dolumlar, pozisyon_dokumu
 
@@ -146,22 +145,6 @@ def test_altin_tavan_hesap_serisi_dolum_anindaki_olcekle_buyur():
     # İlk dolum 3x tavana tam gelir; iki kat hesaptaki ikinci ekleme de aynı 3x gölge tavanına göre kırpılır.
     clipped = [x for x in out["olaylar"] if x["durum"] == "kirpildi"]
     assert clipped and float(clipped[0]["yeni_sz"]) == pytest.approx(0.0)
-
-
-def test_altin_kontrol_tohumu_ve_olay_arsivi_tekrarlanabilir(tmp_path):
-    assert sec(["a", "b", "c"], {"a": 2, "b": 1}, 1, "2026-10-28") == sec(["a", "b", "c"], {"a": 2, "b": 1}, 1, "2026-10-28")
-    path = tmp_path / "tur=olay" / "olaylar.jsonl"
-    olay_yaz(path, {"durum": "giris", "adres": "a"})
-    assert path.read_text().count("giris") == 1
-
-
-def test_altin_kol_terfi_ve_cikis_onkayittaki_kat_kuralidir():
-    havuz = [f"a{i}" for i in range(100)]
-    assert len(adaylar(havuz)) == 15
-    assert not terfi("a0", havuz, 20, 10) and not terfi("a0", havuz, 21, 9)
-    assert terfi("a9", havuz, 21, 10)
-    aday = [f"a{i}" for i in range(20)]
-    assert not cikis("a9", aday) and cikis("a10", aday)
 
 
 def test_altin_10000_ustu_dolum_zaman_penceresiyle_sayfalanir():

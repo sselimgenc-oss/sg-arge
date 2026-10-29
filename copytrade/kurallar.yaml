@@ -145,3 +145,5 @@ secim_min_kapsam: 0.95
 # Seçim v1.3 (docs/GOREV_SECIM_V13.md, ön kayıt D sürüm 1.3): seçim sürümü kimlik/tohum dizgesine girer; havuz adım 3 statik koşulları
 # (kisa_islem_payi_max, kapi_max_medyan_kaldirac, kapi_max_kaldirac) kapıyla aynı anahtarlardan okunur.
 secim_surumu: "v1.3"
+# Geçiş kaydı (ön kayıt D v1.3 madde 3, copytrade/gecis.py): odadan çıkış için ardışık haftalık uygunsuz değerlendirme sayısı
+secim_cikis_ardisik_hafta: 2
