@@ -39,12 +39,15 @@ jobs:
         run: python -m copytrade.arsiv --root . --output arsiv --kapi-root guncel-kapi/copytrade/kapi --secim "$SECIM" --tur pozisyon,mum_1dk,olay
       - name: Saatlik dolum ve funding
         # Elle tetiklemede de çalışır: GitHub zamanlayıcısı bu repoda saatlik koşuları sık atlıyor (2026-10-29: 12:24'ten sonra tek zamanlı koşu).
-        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '7 * * * *'
+        # always(): 15 dk adımı boşluk eşiğiyle kırmızı olsa bile dolum toplanır (2026-10-29: atlanan cron'lar yüzünden hep atlanıyordu).
+        if: always() && (github.event_name == 'workflow_dispatch' || github.event.schedule == '7 * * * *')
         run: python -m copytrade.arsiv --root . --output arsiv --kapi-root guncel-kapi/copytrade/kapi --secim "$SECIM" --tur dolum,funding
       - name: Haftalık leaderboard
-        if: github.event.schedule == '13 2 * * 0'
+        if: always() && github.event.schedule == '13 2 * * 0'
         run: python -m copytrade.arsiv --root . --output arsiv --kapi-root guncel-kapi/copytrade/kapi --secim "$SECIM" --tur leaderboard
       - name: R2'ye ekle
+        # Toplanan veri, boşluk eşiği aşılsa da (iş yine kırmızı biter) R2'ye yazılır; yoksa o günün verisi kaybolur.
+        if: always()
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
