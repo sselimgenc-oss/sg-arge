@@ -31,7 +31,7 @@ from pano.saglik import CUSUM_YELLOW, _cusum, _mdd, blok_bootstrap
 MINUTE = 60_000
 DAY = 86_400_000
 STYLES = {'intraday', 'swing'}
-KOLLAR = {'oda', 'kontrol', 'taban', 'elle', 'referans_oda', 'referans_kontrol'}
+KOLLAR = {'oda', 'kontrol', 'taban', 'elle', 'referans_oda', 'referans_kontrol', 'cikarilan'}
 
 
 def timestamp(value) -> pd.Timestamp:
@@ -64,8 +64,8 @@ def load_list(path: Path) -> list[dict]:
     ids, addresses = set(), set()
     for row in rows:
         required = {'id', 'adres', 'takma_ad', 'durum', 't0'}
-        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {'tarz', 'kol', 'kollar', 'secim'}:
-            raise ValueError('İzleme satırında yalnız id, adres, takma_ad, durum, t0 (ve isteğe bağlı tarz, kol, kollar, secim) olmalı.')
+        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {'tarz', 'kol', 'kollar', 'secim', 'cikarilma_tarihi'}:
+            raise ValueError('İzleme satırında yalnız id, adres, takma_ad, durum, t0 (ve isteğe bağlı tarz, kol, kollar, secim, cikarilma_tarihi) olmalı.')
         if 'kol' in row and row['kol'] not in KOLLAR:
             raise ValueError('Geçersiz kol.')
         if 'tarz' in row and row['tarz'] not in STYLES:
@@ -450,13 +450,29 @@ def defter_pozisyonlari(fills: list[dict]) -> dict[str, float]:
     return {coin: size for coin, (_, size) in last.items()}
 
 
-def mutabakat_raporu(fills: list[dict], states: list[dict], now: pd.Timestamp, rules: dict | None = None) -> dict:
+def mutabakat_raporu(fills: list[dict], states: list[dict], now: pd.Timestamp, rules: dict | None = None,
+                      onceki_hesap_degeri: float | None = None, hesap_degeri: float | None = None) -> dict:
     """Oda üyesi için defter ↔ ``clearinghouseState`` mutabakatı (A13): yalnız rapor; hiçbir pozisyon kapatılmaz, defter değişmez.
     ``veri_kalitesi.mutabakat``: durum sayıları, ``uyumsuz_oran``, ``yetim_coinler``, atlanan bozuk satır, zaman."""
     rules = rules or load_rules()
     exchange = {'assetPositions': [item for state in states for item in state.get('assetPositions', [])]}
     rows, broken = mutabakat(defter_pozisyonlari(fills), exchange, float(rules['mutabakat_goreli_tolerans']), float(rules['mutabakat_mutlak_tolerans']))
-    return {**ozet(rows), 'yetim_coinler': [r['coin'] for r in rows if r['durum'] == 'yetim'],
+    summary = ozet(rows)
+    jump = (abs(hesap_degeri / onceki_hesap_degeri - 1) if onceki_hesap_degeri and hesap_degeri else 0.0)
+    # Kırmızı nedenler sarıdan önce gelir: sıçrama, yetim pozisyonu gizlememeli.
+    if summary['yetim']:
+        health = {'isik': 'kirmizi', 'neden': 'yetim pozisyon'}
+    elif summary['uyumsuz_oran'] >= float(rules['mutabakat_saglik_kirmizi_uyumsuz_oran']):
+        health = {'isik': 'kirmizi', 'neden': 'pozisyon oranı uyumsuz'}
+    elif jump >= float(rules['mutabakat_saglik_hesap_degeri_sicrama_oran']):
+        health = {'isik': 'sari', 'neden': 'hesap değeri sıçraması (yatırma/çekme şüphesi)'}
+    elif summary['uyumsuz_oran'] >= float(rules['mutabakat_saglik_sari_uyumsuz_oran']):
+        health = {'isik': 'sari', 'neden': 'kaçırılmış dolum olasılığı'}
+    elif broken:
+        health = {'isik': 'sari', 'neden': 'bozuk mutabakat satırı'}
+    else:
+        health = {'isik': 'yesil', 'neden': 'mutabakat uyumlu'}
+    return {**summary, 'saglik': health, 'hesap_degeri_sicramasi': jump, 'yetim_coinler': [r['coin'] for r in rows if r['durum'] == 'yetim'],
             'sorunlu': [r for r in rows if r['durum'] != 'uyumlu'], 'bozuk_satir': broken, 'zaman': iso(now)}
 
 
@@ -617,7 +633,8 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
               'hesap_degeri': account, 'pozisyonlar': positions, 'son_islem': last_trade,
               'egri': [[str(day.date()), float(value)] for day, value in recent.items()], 'sanal_kopya': paper}
     if row.get('kol') == 'oda':
-        trader['veri_kalitesi'] = {'mutabakat': mutabakat_raporu(fills, states, now)}
+        trader['veri_kalitesi'] = {'mutabakat': mutabakat_raporu(fills, states, now, onceki_hesap_degeri=saved.get('son_hesap_degeri'), hesap_degeri=account)}
+    saved['son_hesap_degeri'] = account
     saved['son_trader'] = trader
     return trader
 

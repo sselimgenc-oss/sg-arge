@@ -239,6 +239,12 @@ degisim_tavan_gun: 28
 degisim_tavan_adet: 2
 degisim_tavan_disi: [kaldirac_ihlali, veri_sorunu]
 cikarilan_izleme_gun: 56
+# Sabit referans kolunun seçim etiketi (ön kayıt 1.5 madde 3): bu etiketli oda üyesi çıkarılsa da süresiz izlenir
+referans_secim: "v1.3@2026-10-28"
+# Mutabakat sağlık ışığı (ön kayıt 1.6): yalnız pano/rapor uyarısı, kapı veya seçim kararı değildir.
+mutabakat_saglik_sari_uyumsuz_oran: 0.01
+mutabakat_saglik_kirmizi_uyumsuz_oran: 0.10
+mutabakat_saglik_hesap_degeri_sicrama_oran: 0.25
 
 # Kalıcılık keşif testi (copytrade/kalicilik.py; docs/GOREV_KALICILIK.md): pilotu/seçimi/kapıyı değiştirmez, yalnız rapor
 # T anları: son kalicilik_gecmis_gun gün, kalicilik_adim_gun günde bir (son T = bugün − en uzun ileri pencere)
