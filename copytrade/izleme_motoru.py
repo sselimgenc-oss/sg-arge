@@ -25,6 +25,7 @@ from copytrade.kapi import (SLIPPAGE, TAKER, binance_availability, delayed_copy,
 from copytrade.pozisyon_mutabakat import mutabakat, ozet
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
 from copytrade.tarama import PublicClient, RateLimiter
+from copytrade import oda_risk
 from copytrade.kurallar import load_rules
 from pano.saglik import CUSUM_YELLOW, _cusum, _mdd, blok_bootstrap
 
@@ -557,6 +558,30 @@ def unavailable_trader(root: Path, row: dict, error: Exception) -> dict:
                             'gecikme_dk': delay_for_style(style), 't0': str(timestamp(row['t0']).date()), 'egri': []}}
 
 
+def yonsuz_guncelle(client, address: str, saved: dict, states: list[dict], fills: list[dict], now: pd.Timestamp) -> dict:
+    """Oda ve kontrol üyesi için ``yonsuz_bayrak`` (A26): funding geliri ve spot bakiyesi günde bir kez çekilip ``motor.json``'da önbelleğe alınır; maker payı ve spot↔perp örtüşmesi
+    her saat eldeki dolum ve pozisyonlardan hesaplanır. Okunamayan kaynak ``None`` olur ve ``hata`` alanına yazılır (gizlenmez, o gün önbelleğe girmez → sonraki saat yeniden dener)."""
+    rules, gun, hatalar = load_rules(), str(now.date()), []
+    onbellek = saved.get('yonsuz_onbellek')
+    if not onbellek or onbellek.get('gun') != gun:
+        onbellek = {'gun': gun, 'funding_usd': None, 'spot': None}
+        try:
+            start = millis(now) - int(rules['yonsuz_pencere_gun']) * DAY
+            onbellek['funding_usd'] = sum(_funding_amount(row) for row in funding_since(client, address, start, millis(now)))
+        except Exception as error:
+            hatalar.append(f'funding: {data_error_reason(error)}')
+        try:
+            spot = client.info({'type': 'spotClearinghouseState', 'user': address}, weight=2)
+            onbellek['spot'] = {str(b['coin']): float(b['total']) for b in spot.get('balances', []) if float(b.get('total', 0))}
+        except Exception as error:
+            hatalar.append(f'spot: {data_error_reason(error)}')
+        if not hatalar:
+            saved['yonsuz_onbellek'] = onbellek
+    perp = {item['position']['coin']: float(item['position']['szi']) for state in states for item in state['assetPositions'] if float(item['position']['szi'])}
+    return oda_risk.yonsuz_bayrak(onbellek['funding_usd'], oda_risk.toplam_kar(saved.get('portfolio') or [], millis(now), rules), onbellek['spot'], perp, fills, millis(now), rules,
+                                  '; '.join(hatalar) or None)
+
+
 def update_trader(root: Path, client, dexes: list[str], state: dict, all_events: dict,
                   row: dict, now: pd.Timestamp, symbols: set[str] | None) -> dict:
     ident, address, t0 = row['id'], row['adres'], timestamp(row['t0'])
@@ -632,6 +657,8 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
                        'getiri_30g': ret30, 'getiri_90g': float(recent.iloc[-1] - recent.iloc[0]) if len(recent) else 0.0},
               'hesap_degeri': account, 'pozisyonlar': positions, 'son_islem': last_trade,
               'egri': [[str(day.date()), float(value)] for day, value in recent.items()], 'sanal_kopya': paper}
+    if row.get('kol') in oda_risk.YONSUZ_KOLLAR:
+        trader['yonsuz_bayrak'] = yonsuz_guncelle(client, address, saved, states, fills, now)
     if row.get('kol') == 'oda':
         trader['veri_kalitesi'] = {'mutabakat': mutabakat_raporu(fills, states, now, onceki_hesap_degeri=saved.get('son_hesap_degeri'), hesap_degeri=account)}
     saved['son_hesap_degeri'] = account
@@ -676,6 +703,9 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
         raise RuntimeError('Tüm trader verileri hatalı; önceki durum yayımlanmadı.')
     result = {'surum': 1, 'uretildi': iso(now), 'kaynak': 'hyperliquid', 'traderlar': traders,
               'olaylar': sorted(all_events.values(), key=lambda e: (e['zaman'], e['id']), reverse=True)[:200]}
+    oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']
+    if oda_uyeleri:
+        result['kalabalik'] = {**oda_risk.kalabalik([t for t in oda_uyeleri if t.get('gecerli') and t.get('hesap_degeri')]), 'zaman': iso(now)}
     # Serialize both before replacing either; API/validation/NaN errors leave the archive untouched.
     payloads = {name: json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + '\n'
                 for name, value in [('motor.json', state), ('durum.json', result)]}
