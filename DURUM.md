@@ -4,6 +4,13 @@ Son güncelleme: 2026-10-29, lider (Claude).
 
 ## Şu an (2026-10-29): canlı gölge pilotu başladı
 
+**Gün sonu özeti (2026-10-29 19:30 TR; limitler azaldı → yavaş tempo, yalnız önemli işler):**
+- Açık sorun: 61 trader'lık izleme yayımlanamıyordu (motor.json 267 MB > 100 MB) → #414 ile R2'ye taşındı; doğrulama koşusu (run 40911015820) sürüyor.
+- Koşuyor/kuyrukta: arşiv (#20), Faz 3 gerçek prova, kalıcılık testi, pilot boşluk doldur (#6). Boşluk doldur #5 yeşil.
+- Bugün biten: ön kayıt 1.5 (körlük kalktı) ve 1.6 (değişim kuralları); değişim kaydı + mutabakat ışığı; referans kolu; kasa sekmesi;
+  oda risk bayrakları (yönsüz, kalabalık); Faz 3 ve kalıcılık kodu (sentetik doğrulama geçti); Argon A20–A29 (denetimli).
+- Sıradaki (öncelik): 1) izleme yeşil + pano 61 trader; 2) Faz 3 sonucu → kullanıcı kararı; 3) kalıcılık sonucu; 4) pano sadeleştirme (A29).
+
 **Ön kayıt 1.6 (kullanıcı "evet"):** oda değişikliği gerekçe kodu, 28 günde en çok 2 çıkış, çıkan 56 gün izlenir. Görev: Codex `docs/GOREV_DEGISIM_VE_SAGLIK.md`. Dış görüş özeti: `arastirma/fikir_gorusleri/OZET.md`.
 **Kullanıcı onayı 2026-10-29: Seçim v1.3 odası onaylandı ("onaylıyorum").** Pilot başlangıcı (t0) = 2026-10-29; analiz 12. ve
 24. haftada (ön kayıt madde 6).
