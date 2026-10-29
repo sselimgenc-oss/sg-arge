@@ -252,16 +252,25 @@ dialog#ayarlar::backdrop { background: rgba(0, 0, 0, .62); }
 .izo-kap { position: absolute; inset: 0; overflow: hidden; background: #f4f6f4; z-index: 2; touch-action: none; }
 .izo-kap[hidden] { display: none; }
 /* genişlik/yükseklik tema.js'de contain-fit olarak hesaplanır (ekranı mümkün olduğunca doldurur, görsel kırpılmaz/uzamaz) */
-.izo-sahne { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.izo-sahne { position: absolute; left: 0; top: 0; }
 .izo-sahne.izo-anim { transition: transform .32s cubic-bezier(.2, .75, .2, 1); }
 .izo-sahne picture, .izo-sahne img { display: block; width: 100%; height: 100%; -webkit-user-select: none; user-select: none; pointer-events: none; }
 .izo-bolgeler, .izo-rozetler { position: absolute; inset: 0; }
-.izo-rozetler { pointer-events: none; }
+.izo-rozetler, .izo-parlak, .izo-balonlar { pointer-events: none; }
 .izo-bolge { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; background: transparent; border: 0; cursor: pointer; }
 .izo-bolge:hover, .izo-bolge:focus-visible { background: rgba(255, 255, 255, .16); }
+/* canlılık: olay olan odanın yumuşak parlaması (Off.highlights() ile aynı veri, klasik temadaki vurguyla eşdeğer) */
+.izo-bolge-glow { position: absolute; inset: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at center, rgba(255, 214, 90, .9) 0%, rgba(255, 214, 90, 0) 72%); opacity: 0; }
 .izo-rozet { position: absolute; transform: translate(-50%, -50%); font: 700 10.5px var(--mono); white-space: nowrap; color: #eaf4f5; background: rgba(12, 22, 28, .88); border: 1px solid rgba(210, 235, 238, .3); border-left: 3px solid var(--accent); padding: 2px 7px; border-radius: 0 3px 3px 0; box-shadow: 0 2px 8px rgba(0, 0, 0, .35); }
 .izo-rozet.ok { border-left-color: var(--ok); } .izo-rozet.wr { border-left-color: var(--warn); } .izo-rozet.dn { border-left-color: var(--danger); }
 .izo-rozet.gri, .izo-rozet.bil { color: #c3ccd0; border-left-color: #6d777b; font-style: italic; }
+/* canlılık: sağlıklı rozette sürekli yavaş nabız (yalnız CSS; iş yükü yok) — "canlı ekosistem" hissi */
+.izo-rozet.ok::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; background: var(--ok); vertical-align: middle; animation: izoNabiz 2.2s ease-in-out infinite; }
+@keyframes izoNabiz { 0%, 100% { opacity: .45; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.15); } }
+/* canlılık: olaydan olaya bir odadan diğerine uçan küçük simge (terfi, kapı geçişi, kasa güncellemesi…) */
+.izo-balon { position: absolute; transform: translate(-50%, -50%); font-size: 20px; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .5)); transition: left .9s cubic-bezier(.3, .6, .3, 1), top .9s cubic-bezier(.3, .6, .3, 1), opacity .9s ease .2s; opacity: 1; z-index: 4; }
+.izo-balon.izo-balon-git { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .izo-balon { transition: none; display: none; } .izo-rozet.ok::before { animation: none; } }
 .izo-zoom { position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 3; }
 .izo-zoom button { width: 34px; height: 34px; background: rgba(10, 21, 25, .92); border: 1px solid #2f5260; border-left: 3px solid var(--accent); color: #eaf4f5; border-radius: 0 3px 3px 0; font: 700 16px var(--mono); }
 .izo-zoom button:hover { background: #1b3540; }

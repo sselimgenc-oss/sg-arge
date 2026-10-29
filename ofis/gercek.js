@@ -59,9 +59,18 @@
     const eslesmis = live && Array.isArray(live.traderlar) ? live.traderlar.filter(t => t.secim === etiket) : [];
     const onaylandi = eslesmis.length > 0;
     const canli = Object.fromEntries(eslesmis.map(t => [String(t.adres).toLowerCase(), t]));
+    const acikIslemler = [];
     const liveRows = onaylandi ? girdi.filter(e => canli[e.adres]).map((e, i) => {
       const t = canli[e.adres], ks = t.kollar || [t.kol];
       const kat = ks.indexOf('referans_oda') >= 0 || ks.indexOf('referans_kontrol') >= 0 ? 'referans' : (ks.indexOf('oda') >= 0 ? 'oda' : (ks.indexOf('kontrol') >= 0 ? 'kontrol' : ks.indexOf('taban') >= 0 ? 'lab' : 'aday'));
+      if (kat === 'oda') (t.pozisyonlar || []).forEach((p, j) => {
+        const acilisMs = p.acilis ? Date.parse(p.acilis) : NaN, veriMs = live.uretildi ? Date.parse(live.uretildi) : simdi.getTime();
+        acikIslemler.push({
+          id: t.id + '-' + p.coin + '-' + j, trader: t.id, coin: p.coin || 'bilinmiyor', yon: p.yon === 'short' ? 'short' : 'long',
+          kaldirac: sayi(p.kaldirac), yas_dk: isNaN(acilisMs) ? null : Math.max(0, (veriMs - acilisMs) / 60000),
+          kz_usd: sayi(p.anlik_kz_usd), kz_yuzde: null, lik_uzaklik: null, teminat_usd: null   // yalnız durum.json'da gerçekten olan alanlar; sahte yüzde/teminat/likidasyon uydurulmaz
+        });
+      });
       return Object.assign(olustur(e, kat, t.id.slice(0, 1), i), { id: t.id, adres: kisa(t.adres), takma_ad: t.takma_ad, kat: kat, kol: t.kol, saglik: t.saglik, sanal_kopya: t.sanal_kopya || null, veri_zamani: t.veri_zamani || live.uretildi });
     }) : traderlar;
     const copies = eslesmis.map(t => t.sanal_kopya).filter(Boolean);
@@ -83,7 +92,7 @@
         oda: { n: kolSayi('oda'), kapasite: null, masa: odaListe.length, zaman: z, esik_dk: ESIK_DK },
         kontrol: { n: kolSayi('kontrol'), masa: 0, zaman: z, esik_dk: ESIK_DK }
       },
-      traderlar: liveRows, acik_islemler: [], kapananlar: [], olaylar: [], gecmis_olaylar: gecmis, akis_suresi_sn: 0,
+      traderlar: liveRows, acik_islemler: acikIslemler, kapananlar: [], olaylar: [], gecmis_olaylar: gecmis, akis_suresi_sn: 0,
       kohort_kontrol: {
         hafta: hafta, hafta_toplam: 12, performans_kilitli: false,
         kollar: [{ ad: 'Oda (yönetilen)', n: onaylandi ? kol('oda').length : kolSayi('oda'), getiri: getiri('oda') }, { ad: 'Referans oda', n: onaylandi ? kol('referans_oda').length : 0, getiri: getiri('referans_oda') }, { ad: 'Kontrol (sabit)', n: onaylandi ? kol('kontrol').length : kolSayi('kontrol'), getiri: getiri('kontrol') }, { ad: 'Referans kontrol', n: onaylandi ? kol('referans_kontrol').length : 0, getiri: getiri('referans_kontrol') }, { ad: 'Taban', n: onaylandi ? kol('taban').length : kolSayi('taban'), getiri: getiri('taban') }, { ad: 'Elle liste', n: kolSayi('elle') }],

@@ -11,10 +11,13 @@
   const pad = n => (n < 10 ? '0' : '') + n;
   const turAd = t => (((Names.kadro().olay_turleri || {})[t]) || {}).ad || t;
   const odaAd = id => { const r = W.roomById[id]; return r ? Names.room(id, r.ad) : (id || '—'); };
+  /* Taban kolundaki traderlar ofiste Lab/havuz katında oturur (ayrı oda çizilmiyor), ama "taban" kontrol kümesi
+     Lab'daki gölge izleme akışından kavramsal olarak ayrıdır — olay etiketi karıştırmasın diye "Taban" yazılır. */
+  const odaAdOlay = e => { const t = e.trader && Off.state().traders[e.trader]; return t && t.kol === 'taban' ? 'Taban' : odaAd(e.oda); };
   const traderAd = id => { const t = Off.state().traders[id] || {}; return Names.trader(id) || t.adres || id; };
   function entries() {
     const st = Off.state(), list = st.log.map(l => ({ iso: l.iso, ts: l.ts, oda: l.oda, tur: l.tur, trader: l.trader, metin: l.metin, id: l.olay_id, gecmis: false }));
-    st.gecmis.forEach(g => { const d = new Date(g.zaman); list.push({ iso: g.zaman, ts: pad(d.getUTCDate()) + '.' + pad(d.getUTCMonth() + 1) + ' ' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()), oda: g.oda || '', tur: g.tur, trader: g.trader || null, metin: g.metin || g.tur, id: g.id, gecmis: true }); });
+    st.gecmis.forEach(g => { const p = Off.trParts(g.zaman); list.push({ iso: g.zaman, ts: pad(p.day) + '.' + pad(p.mo + 1) + ' ' + pad(p.h) + ':' + pad(p.m), oda: g.oda || '', tur: g.tur, trader: g.trader || null, metin: g.metin || g.tur, id: g.id, gecmis: true }); });
     return list.filter(e => e.tur !== 'sistem').sort((a, b) => (a.iso < b.iso ? 1 : a.iso > b.iso ? -1 : 0));
   }
   C.entries = entries;
@@ -31,8 +34,9 @@
     const all = entries(), list = all.filter(e => (!F.oda || e.oda === F.oda) && (!F.trader || e.trader === F.trader) && (!F.tur || e.tur === F.tur));
     options(all);
     $('#cSay').textContent = 'n=' + list.length + (list.length !== all.length ? ' / ' + all.length : '');
-    $('#cListe').innerHTML = list.slice(0, 250).map((e, i) => '<li><button type="button" data-i="' + i + '"' + (e.gecmis ? ' class="gecmis"' : '') + '><time>' + esc(e.ts) + '</time><i class="oc">' + esc(odaAd(e.oda)) + '</i><b class="tur">' + esc(turAd(e.tur)) + (e.trader ? ' · ' + esc(traderAd(e.trader)) : '') + '</b><span>' + esc(e.metin) + '</span><code>' + esc(e.id || '') + '</code></button></li>').join('') || '<li class="bos">Bu filtreyle olay yok.</li>';
+    $('#cListe').innerHTML = list.slice(0, 250).map((e, i) => '<li><button type="button" data-i="' + i + '"' + (e.gecmis ? ' class="gecmis"' : '') + '><time>' + esc(e.ts) + '</time><i class="oc">' + esc(odaAdOlay(e)) + '</i><b class="tur">' + esc(turAd(e.tur)) + (e.trader ? ' · ' + esc(traderAd(e.trader)) : '') + '</b><span>' + esc(e.metin) + '</span><code>' + esc(e.id || '') + '</code></button></li>').join('') || '<li class="bos">Bu filtreyle olay yok.</li>';
     C._list = list.slice(0, 250);
+    const orn = $('#cekmeceOrnek'); if (orn) orn.hidden = !(O.Panel && O.Panel.ornekMi());
   }
   const schedule = () => { if (!raf && open) raf = requestAnimationFrame(render); };
   C.isOpen = () => open;

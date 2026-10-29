@@ -12,7 +12,21 @@ function secim(tarih, surum) {
   return s;
 }
 const durum = { durum: 'tamam', parca_beklenen: 32, parca_biten: 32, islenen: 13767, evren: 13710, kapsam: 1.0042, neden: '', hesap: 'v1.1-2026-10-27d' };
+/* copytrade-izleme/izleme/durum.json biçiminde "onaylı" (secim etiketiyle eşleşen) canlı veri — UYDURMA.
+   traders: [{id, adresIndex(kol harfi+sayı), kol, kollar, saglik, sanal_kopya, pozisyonlar}]; her biri secim.json'daki
+   aynı adres(a1..a6=oda, b1..b3=aday, d1..d4=taban)'a eşlenir ki gercek.js onu secim satırıyla birleştirsin. */
+function izleme(etiket, traders, olaylar) {
+  return {
+    surum: 1, uretildi: '2026-10-28T14:20:00Z', kaynak: 'hyperliquid-izleme (test)',
+    traderlar: traders.map(t => Object.assign({
+      id: t.id, adres: t.adresTam, takma_ad: t.adresTam.slice(2, 6), durum: 'izlemede', t0: '2026-10-28',
+      kol: t.kol, kollar: t.kollar, tarz: t.tarz || 'intraday', veri_zamani: '2026-10-28T14:18:00Z', gecerli: true,
+      secim: etiket, saglik: t.saglik || null, sanal_kopya: t.sanal_kopya || null, pozisyonlar: t.pozisyonlar || []
+    })),
+    kasa_egri: [], olaylar: olaylar || [], kalabalik: { n_oda: traders.filter(t => t.kollar.includes('oda')).length, uyari: false, uyari_metni: null }
+  };
+}
 const agac = (secimler, kapilar) => ({ sha: 'x', truncated: false, tree: [].concat(
   secimler.map(d => ({ path: 'secim/' + d + '/secim.json', type: 'blob' })), secimler.map(d => ({ path: 'secim/' + d + '/RAPOR.md', type: 'blob' })),
   kapilar.map(d => ({ path: 'copytrade/kapi/' + d + '/durum.json', type: 'blob' })), [{ path: 'secim', type: 'tree' }, { path: 'kesif/kesif.json', type: 'blob' }]) });
-module.exports = { adres, secim, durum, agac };
+module.exports = { adres, secim, durum, agac, izleme };

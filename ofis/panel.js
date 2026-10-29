@@ -13,7 +13,7 @@
   const cls = v => (v > 0 ? 'up' : v < 0 ? 'dn' : 'fl');
   const pad = n => (n < 10 ? '0' : '') + n;
   function hm(iso) { if (!iso) return 'bilinmiyor'; if (/^\d{4}-\d{2}-\d{2}T00:00:00Z$/.test(iso)) return iso.slice(0, 10); const d = new Date(iso);   // yalnız gün bilinen kaynaklar tarih olarak yazılır
- if (isNaN(d)) return 'bilinmiyor'; return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+ if (isNaN(d)) return 'bilinmiyor'; return Off.trHM(d); }
   function dur(sec) { sec = Math.max(0, Math.round(sec)); const m = Math.floor(sec / 60); if (m < 1) return sec + ' sn'; if (m < 60) return m + ' dk'; const h = Math.floor(m / 60); if (h < 24) return h + ' sa ' + pad(m % 60) + ' dk'; return Math.floor(h / 24) + ' g ' + (h % 24) + ' sa'; }
   const NEDEN = { trader_kapatti: 'trader kapattı', zarar_kesme: 'zarar kesme', sure: 'süre doldu' };
   const KATAD = { lab: 'Lab', aday: 'Aday', oda: 'Oda', kontrol: 'Kontrol' };
@@ -114,8 +114,11 @@
     $('#tgIcerik').innerHTML = '<div class="tgs"><b>' + (st.tg.bugun_n == null ? UNK : st.tg.bugun_n) + '</b><span>bildirim bugün</span></div><ul class="tgl">' + st.tg.son.slice(0, 3).map(s => '<li>' + esc(s) + '</li>').join('') + '</ul>';
     $('#tgMeta').innerHTML = 'son ' + hm(st.tg.zaman) + ' · ' + ORN;
   }
+  /* Taban kolundaki traderlar Lab/havuz katında oturur (ayrı oda çizilmiyor) ama "taban" kontrol kümesi kavramsal
+     olarak Lab'dan ayrıdır — olay etiketi karıştırmasın diye "Taban" yazılır (SEMA.md: traderlar[].kol). */
+  const odaAdOlay = l => { const t = l.trader && st.traders[l.trader]; return t && t.kol === 'taban' ? 'Taban' : ODA_AD(l.oda); };
   function gozcu() {
-    $('#gozcuListe').innerHTML = st.log.slice(0, 7).map(l => '<li><button data-oda="' + esc(l.oda) + '"><time>' + l.ts + '</time><i class="oc" data-o="' + esc(l.oda) + '">' + esc(ODA_AD(l.oda)) + '</i><span>' + esc(l.metin) + '</span></button></li>').join('') || '<li class="bos">' + (P.ornekMi() ? 'Henüz olay yok (örnek akış başlıyor).' : 'Henüz olay yok — paper izleme başlamadı.') + '</li>';
+    $('#gozcuListe').innerHTML = st.log.slice(0, 7).map(l => '<li><button data-oda="' + esc(l.oda) + '"><time>' + l.ts + '</time><i class="oc" data-o="' + esc(l.oda) + '">' + esc(odaAdOlay(l)) + '</i><span>' + esc(l.metin) + '</span></button></li>').join('') || '<li class="bos">' + (P.ornekMi() ? 'Henüz olay yok (örnek akış başlıyor).' : 'Henüz olay yok — paper izleme başlamadı.') + '</li>';
   }
   function aciklama() {
     const k = st.katlar, ac = Object.keys(st.stale).filter(x => st.stale[x]).map(ODA_AD);
@@ -154,9 +157,9 @@
     setInterval(() => {
       if (!st) return;
       const sl = Off.state(); sl.acik.forEach(x => { const c = document.querySelector('[data-sure="' + x.id + '"]'); if (c) c.textContent = dur(liveSec(x)); });
-      const sc = $('#saat'); if (sc) { const d = Off.clock(); sc.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+      const sc = $('#saat'); if (sc) sc.textContent = Off.trHM(Off.clock());
     }, Off.reduced ? 15000 : 1000);
     render();
-    const sc = $('#saat'); if (sc) { const d = Off.clock(); sc.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+    const sc = $('#saat'); if (sc) sc.textContent = Off.trHM(Off.clock());
   };
 })();

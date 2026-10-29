@@ -1,9 +1,11 @@
 /* Ofis · tema seçimi (Klasik / İzometrik). Çizici arayüzü: ciz(data), odaSec(anahtar), temizle().
    Klasik tema mevcut piksel kodu (main.js/office.js/world.js) hiç değişmeden sarar; bu dosya yalnız
-   dışarıdan onu seçer/bırakır. Oda içi görünüm, panel ve olay çekmecesi her iki temada da ortaktır:
-   İzometrik tema yalnızca "binanın tümü" görünümünü değiştirir (referans görsel + tıklanabilir bölge
-   + canlı rozet); bir odaya girilince mevcut piksel oda-içi sahnesi aynen açılır. Referans görsel
-   yalnız İzometrik ilk kez gösterildiğinde yüklenir (klasik temada hiç istek gitmez). */
+   dışarıdan onu seçer/bırakır. Panel, bilgi kutusu ve olay çekmecesi her iki temada da aynı veriden,
+   aynı sol menü/PANEL_ESLE mantığıyla çalışır (ortak). Ama GÖRSEL ayrıdır: klasik temada bir odaya
+   girmek kendi piksel kamerasını (#tuval) yakınlaştırır; izometrik temada aynı tıklama kendi
+   referans görselini (#izoKap) o odaya yakınlaştırır — izometrik temadayken #tuval hiç görünmez,
+   odaya girildiğinde "diğer temaya" geçilmez. Referans görsel yalnız İzometrik ilk gösterildiğinde
+   yüklenir (klasik temada hiç istek gitmez). */
 (function () {
   'use strict';
   const O = window.OFIS;
@@ -23,19 +25,28 @@
     mevcut = v; yazLS(v); uygula();
   };
 
-  /* ---------- görünürlük: oda içindeyken (body.oda-ici) her zaman ortak piksel sahnesi; binanın tümünde temaya göre ---------- */
-  function odaIcindeMi() { return document.body.classList.contains('oda-ici'); }
+  /* mevcut oda (varsa) main.js'in dışarı verdiği debug.mode'dan okunur — main.js'e dokunulmadan. */
+  function aktifOda() { const m = O.debug && O.debug.mode; return m && m.active ? m.room : null; }
+
+  /* ---------- görünürlük: izometrik temadayken binanın tümünde de, oda içindeyken de #izoKap görünür;
+     #tuval (klasik piksel sahnesi) izometrik temada hiç açılmaz — iki görsel birbirine karışmaz. ---------- */
   function uygula() {
     document.body.classList.toggle('tema-izo', mevcut === 'izometrik');
     const kap = $('#izoKap'); if (!kap) return;
-    const goster = mevcut === 'izometrik' && !odaIcindeMi();
+    const goster = mevcut === 'izometrik';
     kap.hidden = !goster;
     const tuval = $('#tuval'); if (tuval) tuval.style.visibility = goster ? 'hidden' : 'visible';
     const sec = $('#temaSec'); if (sec && sec.value !== mevcut) sec.value = mevcut;
-    if (goster) { gorselYukle(); sigdir(false); oturt(); }
+    if (goster) { gorselYukle(); odaOdaklaSync(true); }
     rozetleriCiz();
   }
-  new MutationObserver(uygula).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  /* oda girişi/çıkışı body.oda-ici sınıfıyla main.js'te değişir: burada izlenip kendi yakınlaşmamız uygulanır. */
+  function odaOdaklaSync(animate) {
+    if (mevcut !== 'izometrik') return;
+    const id = aktifOda();
+    if (id) odaOdakla(id, animate); else sigdir(animate);
+  }
+  new MutationObserver(() => { uygula(); }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
   /* ---------- referans görsel: yalnız İzometrik ilk gösterildiğinde (data-src/data-srcset → src/srcset) ---------- */
   let gorselYuklendi = false;
@@ -141,8 +152,8 @@
     return { x0, y0, x1, y1 };
   }
   function izoCiz() {
-    const bk = $('#izoBolgeler'), rk = $('#izoRozetler'); if (!bk || !rk) return;
-    bk.innerHTML = ''; rk.innerHTML = '';
+    const bk = $('#izoBolgeler'), rk = $('#izoRozetler'), pk = $('#izoParlak'); if (!bk || !rk) return;
+    bk.innerHTML = ''; rk.innerHTML = ''; if (pk) pk.innerHTML = '';
     BOLGELER.forEach(b => {
       const clip = 'polygon(' + b.poli.map(p => (p[0] * 100).toFixed(2) + '% ' + (p[1] * 100).toFixed(2) + '%').join(',') + ')';
       const btn = document.createElement('button');
@@ -150,6 +161,7 @@
       btn.style.clipPath = clip; btn.setAttribute('aria-label', (O.Names ? O.Names.room(b.oda, b.ad) : b.ad) + ': oda içine gir');
       btn.addEventListener('click', () => bolgeTik(b.oda));
       bk.appendChild(btn);
+      if (pk) { const g = document.createElement('div'); g.className = 'izo-bolge-glow'; g.dataset.oda = b.oda; g.style.clipPath = clip; pk.appendChild(g); }
       if (ROZET[b.oda]) {
         const bx = bbox(b.poli), cx = (bx.x0 + bx.x1) / 2, cy = bx.y0 + (bx.y1 - bx.y0) * 0.14;
         const d = document.createElement('div');
@@ -169,46 +181,109 @@
     });
   }
   const mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
+
+  /* ---------- canlılık: klasik temadaki "her hareket bir olaydan doğar" ilkesinin izometrik karşılığı.
+     Figür yürütmek için fotoğrafik görselde oda içi koordinat yok (sürüm 2'nin işi); bunun yerine aynı olay
+     motorundan (office.js) beslenen oda düzeyinde canlılık: olay olan oda yumuşakça parlar (Off.highlights()),
+     birimler arası olaylarda (terfi, kapı geçişi, kasa güncellemesi…) küçük bir simge bir odadan diğerine uçar. ---------- */
+  function rozetKonum(oda) {
+    const b = BOLGELER.find(x => x.oda === oda); if (!b) return null;
+    const bx = bbox(b.poli); return { x: ((bx.x0 + bx.x1) / 2) * 100, y: ((bx.y0 + bx.y1) / 2) * 100 };
+  }
+  const OLAY_IKON = {
+    yeni_adres: { ikon: '🔍', oda: 'kapi' }, kapi_gecti: { ikon: '✅', oda: 'kapi' }, kapi_elendi: { ikon: '❌', oda: 'kapi' },
+    terfi: { ikon: '⬆️' }, kat_dusur: { ikon: '⬇️' }, havuzdan_cikar: { ikon: '🚪', oda: 'lab' },
+    islem_acildi: { ikon: '📈', oda: 'oda' }, islem_kapandi: { ikon: '💰', oda: 'oda' },
+    risk_tavan: { ikon: '⚠️', oda: 'risk' }, risk_normal: { ikon: '✅', oda: 'risk' }, arsiv_yazildi: { ikon: '📦', oda: 'arsiv' },
+    kasa_guncelle: { ikon: '💵', oda: 'finans' }, kirmizi_bayrak: { ikon: '🚩', oda: 'oda' }, bayrak_kalkti: { ikon: '✅', oda: 'oda' },
+    kural_kitabi: { ikon: '📘', oda: 'sekreterlik' }, kullanici_karari: { ikon: '🗳️', oda: 'makam' }, veri_yenile: { ikon: '🔄', oda: 'finans' }
+  };
+  function olayBalonu(e) {
+    if (mevcut !== 'izometrik' || mq.matches) return;
+    const info = OLAY_IKON[e.tur]; if (!info) return;
+    const kPos = rozetKonum(e.kimden || info.oda), hPos = rozetKonum(e.kime || info.oda), bas = kPos || hPos;
+    if (!bas) return;
+    const rk = $('#izoBalonlar'); if (!rk) return;
+    const el = document.createElement('div');
+    el.className = 'izo-balon'; el.textContent = info.ikon;
+    el.style.left = bas.x + '%'; el.style.top = bas.y + '%';
+    rk.appendChild(el);
+    requestAnimationFrame(() => {
+      if (hPos && kPos && hPos.x !== kPos.x) { el.style.left = hPos.x + '%'; el.style.top = hPos.y + '%'; }
+      el.classList.add('izo-balon-git');
+    });
+    setTimeout(() => el.remove(), 1100);
+  }
+  /* odada olay oldukça yumuşak parlama (Off.highlights() zaten klasik temada da aynı veriyi besliyor) — yalnız
+     bir şey parlarken kare ister, boşta durur (uygulamanın "boşta kare çizilmez" kuralına uyar). */
+  let canliRaf = 0;
+  function canliTick() {
+    canliRaf = 0;
+    const o = off(); if (mevcut !== 'izometrik' || !o || !o.highlights) return;
+    const map = {}; o.highlights().forEach(h => { map[h.room] = h; });
+    let aktif = false;
+    document.querySelectorAll('#izoParlak .izo-bolge-glow').forEach(d => {
+      const h = map[d.dataset.oda], op = h ? h.a * h.pulse * 0.4 : 0;
+      d.style.opacity = op.toFixed(2); if (h) aktif = true;
+    });
+    if (aktif) canliRaf = requestAnimationFrame(canliTick);
+  }
+  function canliUyandir() { if (!canliRaf && mevcut === 'izometrik' && !mq.matches) canliRaf = requestAnimationFrame(canliTick); }
+  /* bölgeye tıklama: sol menüdeki aynı odanın düğmesini tetikler (adres, panel/bilgi kutusu, "aynı menüye ikinci
+     tıklama kapatır" gibi tüm kurallar main.js'te zaten var — burada yalnız tetiklenir). Kamera/yakınlaşma tarafı
+     body.oda-ici değişince odaOdaklaSync() ile ayrıca, kendi görselimiz üstünde yapılır (main.js'e dokunmadan). */
   function bolgeTik(id) {
     if (Date.now() - sonSurukleBitti < 150) return;   // sürükleme bittikten hemen sonraki sahte tıklama yok sayılır
-    if (!mq.matches) { animasyonlu(true); setTimeout(() => animasyonlu(false), 260); }
-    const git = () => { const b = document.querySelector('.ray [data-oda="' + id + '"]'); if (b) b.click(); };
-    mq.matches ? git() : setTimeout(git, 140);
+    const b = document.querySelector('.ray [data-oda="' + id + '"]'); if (b) b.click();
   }
 
-  /* ---------- oturtma (contain-fit, her yeniden boyutlandırmada JS'le hesaplanır: görsel ekranı mümkün olduğunca doldurur) ---------- */
+  /* ---------- oturtma/yakınlaşma: taban (contain-fit) boyut + odak noktası (0..1) + ölçek — tamamı JS'de hesaplanır.
+     Görsel her zaman mevcut konteyneri mümkün olduğunca doldurur (ekranı doldursun kuralı); odaya girince aynı
+     mantıkla (klasik temadaki kamera yakınlaşmasıyla birebir aynı fikir) kendi görseli üstünde yakınlaşır. ---------- */
   const ORAN = 1536 / 1024;
-  let scale = 1, panX = 0, panY = 0;
+  let baseW = 0, baseH = 0, scale = 1, focusX = 0.5, focusY = 0.5, sonSurukleBitti = 0;
   function animasyonlu(on) { const s = $('#izoSahne'); if (s) s.classList.toggle('izo-anim', on); }
   function oturt() {
-    const kap = $('#izoKap'), sahne = $('#izoSahne'); if (!kap || !sahne) return;
+    const kap = $('#izoKap'); if (!kap) return;
     const r = kap.getBoundingClientRect();
     let w = r.width, h = w / ORAN;
     if (h > r.height) { h = r.height; w = h * ORAN; }
-    sahne.style.width = Math.max(1, w) + 'px'; sahne.style.height = Math.max(1, h) + 'px';
+    baseW = Math.max(1, w); baseH = Math.max(1, h);
     uygulaDonusum(false);
   }
   function uygulaDonusum(animate) {
-    const sahne = $('#izoSahne'); if (!sahne) return;
+    const kap = $('#izoKap'), sahne = $('#izoSahne'); if (!kap || !sahne || !baseW) return;
     animasyonlu(!!animate && !mq.matches);
-    sahne.style.transform = 'translate(-50%, -50%) translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
+    const rw = baseW * scale, rh = baseH * scale;
+    sahne.style.width = rw + 'px'; sahne.style.height = rh + 'px';
+    const left = kap.clientWidth / 2 - focusX * rw, top = kap.clientHeight / 2 - focusY * rh;
+    sahne.style.transform = 'translate(' + left.toFixed(1) + 'px, ' + top.toFixed(1) + 'px)';
   }
   function siniraCek() {
-    const kap = $('#izoKap'); if (!kap) return;
-    const maxX = kap.clientWidth * (scale - 1) / 2, maxY = kap.clientHeight * (scale - 1) / 2;
-    panX = Math.max(-maxX, Math.min(maxX, panX)); panY = Math.max(-maxY, Math.min(maxY, panY));
+    const kap = $('#izoKap'); if (!kap || !baseW) return;
+    const rw = baseW * scale, rh = baseH * scale;
+    const mx = Math.min(0.5, (kap.clientWidth / 2) / rw), my = Math.min(0.5, (kap.clientHeight / 2) / rh);
+    focusX = Math.max(mx, Math.min(1 - mx, focusX)); focusY = Math.max(my, Math.min(1 - my, focusY));
   }
   function zoomBy(f) { scale = Math.max(1, Math.min(3, scale * f)); siniraCek(); uygulaDonusum(true); }
-  function sigdir(animate) { scale = 1; panX = 0; panY = 0; uygulaDonusum(animate !== false); }
+  function sigdir(animate) { scale = 1; focusX = 0.5; focusY = 0.5; uygulaDonusum(animate !== false); }
+  /* bir odaya "kamerayı" (odak + ölçek) yakınlaştır — klasik temanın interiorCam() mantığının izometrik karşılığı */
+  function odaOdakla(id, animate) {
+    const b = BOLGELER.find(x => x.oda === id); if (!b) { sigdir(animate); return; }
+    const bx = bbox(b.poli), w = Math.max(0.02, bx.x1 - bx.x0), h = Math.max(0.02, bx.y1 - bx.y0), PAD = 1.3;
+    scale = Math.max(1, Math.min(3, Math.min(1 / (w * PAD), 1 / (h * PAD))));
+    focusX = (bx.x0 + bx.x1) / 2; focusY = (bx.y0 + bx.y1) / 2;
+    siniraCek(); uygulaDonusum(animate !== false);
+  }
   if (window.ResizeObserver) { const ro = new ResizeObserver(() => oturt()); const kap0 = document.getElementById('izoKap'); if (kap0) ro.observe(kap0); }
 
   /* tek parmak/işaretçi sürükleme (yalnız yakınlaşmışken); çift işaretçi (parmakla) kabaca yakınlaştırır */
-  let surukle = null, sonSurukleBitti = 0; const isaretciler = new Map();
+  let surukle = null; const isaretciler = new Map();
   function surukleBagla() {
     const kap = $('#izoKap'); if (!kap) return;
     /* yakalama (setPointerCapture) yalnız gerçek sürükleme başladığında alınır; basit dokunma/tıklama altındaki
        bölge düğmesine (clip-path) değmeden ulaşsın diye — erken yakalama tıklamayı üst öğeye kaydırabiliyor. */
-    kap.addEventListener('pointerdown', e => { isaretciler.set(e.pointerId, { x: e.clientX, y: e.clientY }); surukle = { id: e.pointerId, x: e.clientX, y: e.clientY, px: panX, py: panY, moved: false, captured: false }; });
+    kap.addEventListener('pointerdown', e => { isaretciler.set(e.pointerId, { x: e.clientX, y: e.clientY }); surukle = { id: e.pointerId, x: e.clientX, y: e.clientY, fx: focusX, fy: focusY, moved: false, captured: false }; });
     kap.addEventListener('pointermove', e => {
       if (!isaretciler.has(e.pointerId)) return;
       isaretciler.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -222,7 +297,7 @@
       if (!surukle) return;
       const dx = e.clientX - surukle.x, dy = e.clientY - surukle.y;
       if (!surukle.moved && Math.abs(dx) + Math.abs(dy) > 6) { surukle.moved = true; if (scale > 1 && !surukle.captured) { try { kap.setPointerCapture(e.pointerId); } catch (err) { /* yoksay */ } surukle.captured = true; } }
-      if (surukle.moved && scale > 1) { panX = surukle.px + dx; panY = surukle.py + dy; siniraCek(); uygulaDonusum(false); }
+      if (surukle.moved && scale > 1 && baseW) { focusX = surukle.fx - dx / (baseW * scale); focusY = surukle.fy - dy / (baseH * scale); siniraCek(); uygulaDonusum(false); }
     });
     const biten = e => { isaretciler.delete(e.pointerId); if (surukle && surukle.moved) sonSurukleBitti = Date.now(); if (isaretciler.size < 2 && surukle) delete surukle.pinchD; if (!isaretciler.size) surukle = null; };
     kap.addEventListener('pointerup', biten); kap.addEventListener('pointercancel', biten); kap.addEventListener('pointerleave', biten);
@@ -236,13 +311,14 @@
     const inb = $('#izoIn'), outb = $('#izoOut'), fitb = $('#izoSigdir');
     if (inb) inb.addEventListener('click', () => zoomBy(1.35));
     if (outb) outb.addEventListener('click', () => zoomBy(1 / 1.35));
-    if (fitb) fitb.addEventListener('click', () => sigdir(true));
-    surukleBagla();
+    if (fitb) fitb.addEventListener('click', () => odaOdaklaSync(true));
+    surukleBagla(); oturt();
     veriYukle().then(uygula);
-    if (O.Office && O.Office.on) O.Office.on(rozetleriCiz);
+    if (O.Office && O.Office.on) O.Office.on(() => { rozetleriCiz(); canliUyandir(); });
+    if (O.Office && O.Office.onEvent) O.Office.onEvent(olayBalonu);
     if (O.Names && O.Names.onChange) O.Names.onChange(izoCiz);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
-  T.debug = { get bolgeler() { return BOLGELER; }, rozet: id => { const s = st(); return s && ROZET[id] ? ROZET[id](s) : null; }, get scale() { return scale; } };
+  T.debug = { get bolgeler() { return BOLGELER; }, rozet: id => { const s = st(); return s && ROZET[id] ? ROZET[id](s) : null; }, get scale() { return scale; }, get focus() { return { x: focusX, y: focusY }; } };
 })();

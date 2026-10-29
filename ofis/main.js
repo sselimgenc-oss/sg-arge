@@ -25,7 +25,7 @@
   }
   let light = { h: 12, tint: [255, 250, 242], night: 0, sky: null };
   function updateLight() {
-    const c = Off.clock(), h = c.getHours() + c.getMinutes() / 60;
+    const c = Off.trParts(Off.clock()), h = c.h + c.m / 60;
     const bucket = Math.round(h * 6);
     if (light.bucket === bucket) return false;
     const hh = bucket / 6, tint = kf(TINT, hh, false), sk = kf(SKY, hh, true);
@@ -667,7 +667,13 @@
     catch (err) { if (req) throw err; return null; }
   }
   async function boot() {
-    if (qs.get('saat')) { const m = /^(\d{1,2}):(\d{2})$/.exec(qs.get('saat')); if (m) { const d = new Date(); d.setHours(+m[1], +m[2], 0, 0); Off.timeOffsetMs = d.getTime() - Date.now(); } }
+    if (qs.get('saat')) {
+      const m = /^(\d{1,2}):(\d{2})$/.exec(qs.get('saat'));
+      if (m) {   // Türkiye saati (UTC+3) olarak yorumlanır — tarayıcının yerel saat dilimine bağlı değil
+        const p = Off.trParts(new Date()), hedefUtc = Date.UTC(p.y, p.mo, p.day, +m[1] - 3, +m[2], 0, 0);
+        Off.timeOffsetMs = hedefUtc - Date.now();
+      }
+    }
     const durumPar = qs.get('durum');
     let data;
     try {

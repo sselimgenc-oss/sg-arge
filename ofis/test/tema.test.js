@@ -87,28 +87,31 @@ const srv = http.createServer((q, r) => {
   ok('Klasik\'e geri dönüş de kalıcı olur', t.tema === 'klasik' && t.izo && t.ls === 'klasik', JSON.stringify(t));
   await ctx.close();
 
-  /* ---------- C. bölge → oda eşleşmesi ve oda içi görünüm/panel (iki temada ortak) ---------- */
+  /* ---------- C. bölge → oda eşleşmesi: panel ortak veriden, ama görsel kendi temasında kalır (klasik piksel
+     sahnesine geçilmez) — izometrik temada odaya girince #izoKap açık ve o odaya yakınlaşmış kalır, #tuval gizli. */
   ({ ctx, pg } = await open('?saat=15:40&durum=ornek&tema=izometrik'));
+  const fitScale = await pg.evaluate(() => OFIS.Tema.debug.scale);
   for (const id of ['finans', 'risk', 'lab', 'arsiv', 'kapi', 'oda', 'makam']) {
     await bolgeyeTikla(pg, id); await sleep(700);
-    const s = await pg.evaluate(() => ({ h: location.hash, active: OFIS.debug.mode.active, room: OFIS.debug.mode.room, izoHidden: document.getElementById('izoKap').hidden, tuvalVis: document.getElementById('tuval').style.visibility, kartGorunur: !document.getElementById('kartPanel').hidden || !document.getElementById('bilgi').hidden }));
-    ok('bölge "' + id + '": doğru odayı açar, ortak oda içi görünüm (tuval) + panel görünür, izometrik kutu gizlenir', s.room === id && s.active && s.h === '#oda/' + id && s.izoHidden && s.tuvalVis === 'visible' && s.kartGorunur, JSON.stringify(s));
+    const s = await pg.evaluate(() => ({ h: location.hash, active: OFIS.debug.mode.active, room: OFIS.debug.mode.room, izoHidden: document.getElementById('izoKap').hidden, tuvalVis: document.getElementById('tuval').style.visibility, scale: OFIS.Tema.debug.scale, kartGorunur: !document.getElementById('kartPanel').hidden || !document.getElementById('bilgi').hidden }));
+    ok('bölge "' + id + '": doğru odayı açar, panel görünür, görsel KENDİ temasında kalır (izometrik açık+yakınlaşmış, piksel tuval gizli)', s.room === id && s.active && s.h === '#oda/' + id && !s.izoHidden && s.tuvalVis === 'hidden' && s.scale > fitScale && s.kartGorunur, JSON.stringify(s));
     await pg.click('#geriBtn'); await sleep(700);
-    const back = await pg.evaluate(() => ({ active: OFIS.debug.mode.active, izoHidden: document.getElementById('izoKap').hidden }));
-    ok('bölge "' + id + '" sonrası "← Bina" ile geri dönüş: izometrik kutu tekrar görünür', !back.active && !back.izoHidden, JSON.stringify(back));
+    const back = await pg.evaluate(() => ({ active: OFIS.debug.mode.active, izoHidden: document.getElementById('izoKap').hidden, scale: OFIS.Tema.debug.scale }));
+    ok('bölge "' + id + '" sonrası "← Bina" ile geri dönüş: izometrik görsel sığdırmaya döner (temalar karışmaz)', !back.active && !back.izoHidden && back.scale === 1, JSON.stringify(back));
   }
   await ctx.close();
 
-  /* ---------- D. geri dönüş: Esc ve tarayıcı geri tuşu da izometrik kutuyu geri getirir ---------- */
+  /* ---------- D. geri dönüş: Esc ve tarayıcı geri tuşu da izometrik görseli sığdırmaya döndürür (tuval hiç açılmaz) ---------- */
   ({ ctx, pg } = await open('?saat=15:40&durum=ornek&tema=izometrik'));
   await bolgeyeTikla(pg, 'lab'); await sleep(700);
+  let tuvalHepGizliKaldi = (await pg.evaluate(() => document.getElementById('tuval').style.visibility)) === 'hidden';
   await pg.keyboard.press('Escape'); await sleep(200); await pg.keyboard.press('Escape'); await sleep(700);
-  t = await pg.evaluate(() => ({ active: OFIS.debug.mode.active, izoHidden: document.getElementById('izoKap').hidden, h: location.hash }));
-  ok('Esc ile binaya dönüş izometrik kutuyu geri getirir', !t.active && !t.izoHidden && t.h === '', JSON.stringify(t));
+  t = await pg.evaluate(() => ({ active: OFIS.debug.mode.active, izoHidden: document.getElementById('izoKap').hidden, tuvalVis: document.getElementById('tuval').style.visibility, scale: OFIS.Tema.debug.scale, h: location.hash }));
+  ok('Esc ile binaya dönüş: izometrik görsel görünür kalır, sığdırmaya döner, tuval hiç açılmadı', !t.active && !t.izoHidden && t.tuvalVis === 'hidden' && t.scale === 1 && t.h === '' && tuvalHepGizliKaldi, JSON.stringify(t));
   await bolgeyeTikla(pg, 'oda'); await sleep(700);
   await pg.goBack(); await sleep(700);
-  t = await pg.evaluate(() => ({ active: OFIS.debug.mode.active, izoHidden: document.getElementById('izoKap').hidden }));
-  ok('tarayıcı geri tuşu da izometrik kutuyu geri getirir', !t.active && !t.izoHidden, JSON.stringify(t));
+  t = await pg.evaluate(() => ({ active: OFIS.debug.mode.active, izoHidden: document.getElementById('izoKap').hidden, scale: OFIS.Tema.debug.scale }));
+  ok('tarayıcı geri tuşu da aynı şekilde izometrik görseli sığdırmaya döndürür', !t.active && !t.izoHidden && t.scale === 1, JSON.stringify(t));
   await ctx.close();
 
   /* ---------- E. rozet verisi (sentetik fikstür: ornek_durum.json; ilk durum, olay işlenmeden önce) ---------- */
@@ -143,7 +146,20 @@ const srv = http.createServer((q, r) => {
   ok('Oda rozeti: gerçek sağlık verisi (saglik.isik) geldiğinde onu kullanır, likidasyona dönmez', /🔴1/.test(saglikSonuc.t) && /🟡1/.test(saglikSonuc.t), JSON.stringify(saglikSonuc));
   await ctx.close();
 
-  /* ---------- F. iki tema arasında geçiş sırasında JS hatası yok ---------- */
+  /* ---------- F. canlılık: örnek akıştaki olaylar odaları yumuşakça parlatır ve odalar arası balon uçurur
+     (aynı olay motoru office.js'den; figür yürütme yok — bu sürüm 1'in kapsamı dışında, ayrıca not düşülür).
+     Balon kısa ömürlü olduğundan doğrudan "şu an var" yerine MutationObserver ile "en az bir kez görüldü" izlenir. */
+  ({ ctx, pg } = await open('?saat=15:40&durum=ornek&tema=izometrik&hiz=8'));   // akışı hızlandır, olay çabuk gelsin
+  await pg.evaluate(() => {
+    window.__balon = 0;
+    new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.classList && n.classList.contains('izo-balon')) window.__balon++; }))).observe(document.getElementById('izoBalonlar'), { childList: true });
+  });
+  await sleep(4500);
+  const balonSayisi = await pg.evaluate(() => window.__balon);
+  ok('canlılık: örnek akıştaki olaylar (kapı geçişi, terfi, bildirim…) oda-arası balon olarak görünür', balonSayisi > 0, 'n=' + balonSayisi);
+  await ctx.close();
+
+  /* ---------- G. iki tema arasında geçiş sırasında JS hatası yok ---------- */
   ok('konsol/sayfa hatası yok', errs.length === 0, errs.join(' | '));
 
   await b.close(); srv.close();

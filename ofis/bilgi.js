@@ -15,7 +15,7 @@
   const ROL = { yeni_adres: ['tarama', 'kapici'], kapi_gecti: ['kapici'], kapi_elendi: ['kapici'], havuzdan_cikar: ['kapici'], islem_acildi: ['finans'], islem_kapandi: ['finans'], bildirim: ['haber'], risk_tavan: ['risk'], risk_normal: ['risk'], veri_bayat: ['denetim'], veri_taze: ['denetim'], denetim: ['denetim'], arsiv_yazildi: ['arsivci'], kasa_guncelle: ['finans'], kural_kitabi: ['sekreter'], kullanici_karari: ['makam'], veri_yenile: ['finans'], kirmizi_bayrak: ['denetim'], bayrak_kalkti: ['denetim'] };
   const usd = v => (v == null ? null : (v < 0 ? '−' : v > 0 ? '+' : '') + '$' + Math.abs(v).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
   const pct = v => (v == null ? null : (v < 0 ? '−' : v > 0 ? '+' : '') + '%' + Math.abs(v).toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
-  const fmtDate = d => pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  const fmtDate = d => Off.trDDMMYYYYHM(d);   // Türkiye saati (UTC+3); tarayıcının yerel saat dilimine bağlı değil
   function ago(iso) {
     const st = Off.state(); if (!iso || !st.data.uretildi) return 'bilinmiyor';
     const m = Math.round(Off.ageMin(iso));
@@ -92,7 +92,7 @@
   }
   function traderRows(t, st) {
     const u = ago(st.data.uretildi), tr = st.acik.filter(x => x.trader === t.id), list = [];
-    list.push(row('Kat', esc(KATAD[(st.actorById[t.id] || {}).kat] || KATAD[t.kat] || '—'), 'veri ' + u));
+    list.push(row('Kat', t.kol === 'taban' ? 'Taban' : esc(KATAD[(st.actorById[t.id] || {}).kat] || KATAD[t.kat] || '—'), 'veri ' + u));
     list.push(row('Kol', esc(t.kol || 'bilinmiyor')), row('Tarz', esc(t.tarz || 'bilinmiyor')));
     if (O.Panel.ornekMi()) list.push(row('Gün', t.gun == null ? null : 'n=' + t.gun), row('İşlem', t.islem_n == null ? null : 'n=' + t.islem_n), row('Gölge puanı (bilgi)', t.puan == null ? null : String(t.puan).replace('.', ',')));
     else {                                                  // gerçek veri: körlük — puan, kâr/zarar yok; yalnız kat, sıra, tarz, kaldıraç
@@ -147,7 +147,7 @@
         replik = replikHTML(veriReplik(rol, r, st), susReplik(rol, 'p:' + id));
       } else {
         const t = st.traders[a.id] || {}, al = Names.trader(a.id);
-        title = al || t.adres || a.id; sub = 'trader · ' + (KATAD[a.kat] || '—'); edit = { kind: 'trader', id: a.id, cur: al, ph: t.adres || a.id };
+        title = al || t.adres || a.id; sub = 'trader · ' + (t.kol === 'taban' ? 'Taban' : (KATAD[a.kat] || '—')); edit = { kind: 'trader', id: a.id, cur: al, ph: t.adres || a.id };
         kimlik = rows([row('Ad', esc(title)), row('Gerçek adres', '<code>' + esc(t.adres || a.id) + '</code>' + (O.Panel.ornekMi() ? ' <span class="ornek">örnek</span>' : ''), 'kısaltılmış; takma ad değişse de sabit')]);
         const r = rec[a.id];
         veri = rows(traderRows(Object.assign({ id: a.id }, t), st)) + (r ? whyFromEv(r) : t.kat_olay ? why({ id: t.kat_olay.id, kural: t.kat_olay.kural, tarih: fmtDate(new Date(t.kat_olay.zaman)) }) : whyStatic(O.Panel.ornekMi() ? 'başlangıç durumu (örnek veri)' : 'başlangıç durumu (veri dalındaki seçim)'));

@@ -14,6 +14,19 @@
   Off.reduced = false;
   Off.timeOffsetMs = 0;
   Off.clock = () => new Date(Date.now() + Off.timeOffsetMs);
+  /* Türkiye saati (UTC+3, DST yok) — ekranda hep bu gösterilir; ziyaretçinin tarayıcı saat dilimine bağlı
+     DEĞİLDİR (getHours()/getMinutes() tarayıcının yerel ayarına göre değişir, bu yüzden kullanılmaz). */
+  const trPad = n => (n < 10 ? '0' : '') + n;
+  const TR_MS = 3 * 3600 * 1000;
+  Off.trParts = function (d) {
+    const ms = d instanceof Date ? d.getTime() : (typeof d === 'number' ? d : Date.parse(d));
+    const t = new Date(ms + TR_MS);
+    return { y: t.getUTCFullYear(), mo: t.getUTCMonth(), day: t.getUTCDate(), h: t.getUTCHours(), m: t.getUTCMinutes(), s: t.getUTCSeconds() };
+  };
+  Off.trHM = d => { const p = Off.trParts(d); return trPad(p.h) + ':' + trPad(p.m); };
+  Off.trHMS = d => { const p = Off.trParts(d); return trPad(p.h) + ':' + trPad(p.m) + ':' + trPad(p.s); };
+  Off.trTarihHM = d => { const p = Off.trParts(d); return trPad(p.day) + '.' + trPad(p.mo + 1) + ' ' + trPad(p.h) + ':' + trPad(p.m); };
+  Off.trDDMMYYYYHM = d => { const p = Off.trParts(d); return trPad(p.day) + '.' + trPad(p.mo + 1) + '.' + p.y + ' ' + trPad(p.h) + ':' + trPad(p.m); };
   /* Performans körlüğü (ön kayıt): toplanmış performans (kasa değeri/eğrisi, günlük toplam K/Z, kol getirisi) ofiste gösterilmez.
      Tek tek işlem K/Z'si Telegram'daki kadar görünür kalır. */
   Off.KILIT = false;
@@ -162,7 +175,7 @@
   function log(e) {
     const c = Off.clock();
     const iso = Off.simISO();
-    st.log.unshift({ ts: pad(c.getHours()) + ':' + pad(c.getMinutes()) + ':' + pad(c.getSeconds()), iso: iso, oda: e.oda || '', tur: e.tur, trader: e.trader || null, metin: e.metin || e.tur, olay_id: e.id || null, n: ++logN });
+    st.log.unshift({ ts: Off.trHMS(c), iso: iso, oda: e.oda || '', tur: e.tur, trader: e.trader || null, metin: e.metin || e.tur, olay_id: e.id || null, n: ++logN });
     if (st.log.length > 400) st.log.length = 400;
     if (e.tur !== 'sistem') st.oturum.push({ tur: e.tur, iso: iso });
   }
@@ -414,14 +427,14 @@
   Off.update = function (dt, real) {
     if (!st) return;
     if (real == null) real = dt;
-    const evs = st.data.olaylar, total = st.data.akis_suresi_sn || 120;
+    const evs = st.data.olaylar, total = st.data.akis_suresi_sn != null ? st.data.akis_suresi_sn : 120;
     st.simT += real * st.speed;
     const due = [];
     while (st.evIdx < evs.length && evs[st.evIdx].t <= st.simT) { due.push(evs[st.evIdx]); st.evIdx++; }
     // olay kuyruğu: çok olay birden gelirse (sekme uykudan döndü, hız yüksek) animasyonlar atlanır; durum her olayda anında güncellenir
     if (due.length >= 3) st.fastUntil = now() + 4000;
     due.forEach(e => Off.applyEvent(e));
-    if (st.evIdx >= evs.length && st.simT >= total) Off.reset();
+    if (evs.length && st.evIdx >= evs.length && st.simT >= total) Off.reset();   // olay yoksa (gerçek veri) örnek akış asla döngüye girmez
     updateStale();
     let walkers = 0; st.actors.forEach(a => { if (a.path.length) walkers++; });
     const k = walkers > 8 ? 3 : walkers > 4 ? 2 : 1;       // çok yürüyen varsa yürüyüş hızlanır
@@ -449,8 +462,10 @@
   /* sonraki örnek olaya kalan ms (döngü uyurken zamanlayıcı bununla uyanır) */
   Off.nextEventMs = function () {
     if (!st) return 5000;
-    const evs = st.data.olaylar, total = st.data.akis_suresi_sn || 120, nxt = st.evIdx < evs.length ? evs[st.evIdx].t : total;
-    let ms = (nxt - st.simT) / st.speed * 1000;
+    const evs = st.data.olaylar, total = st.data.akis_suresi_sn != null ? st.data.akis_suresi_sn : 120;
+    let ms;
+    if (evs.length === 0) ms = 30000;   // olay yoksa (gerçek veri) sabit bekleme — döngüye gerek yok
+    else { const nxt = st.evIdx < evs.length ? evs[st.evIdx].t : total; ms = (nxt - st.simT) / st.speed * 1000; }
     Object.keys(st.data.oda_kaynak || {}).forEach(r => srcOfRoom(r).forEach(o => { const a = Off.ageMin(o.zaman); if (a != null && o.esik_dk != null && a <= o.esik_dk) ms = Math.min(ms, (o.esik_dk - a) * 60000 + 50); }));
     return Math.max(20, ms);
   };

@@ -116,4 +116,5 @@ Kaynak (varsayılan; `?durum` yoksa): `sg-arge` veri dalı `copytrade-kapi`.
 | `secim` | `{surum, tarih, kapi_tarihi, onaylandi:false}`; üst şerit: "Seçim <sürüm> — ön izleme, onaylanmadı (<tarih>)" |
 
 Yeni alanlar (yalnız ekleme, `surum` hâlâ 1): `oda_durum: {oda: {gri, metin} | {gizli}}` — `gri` oda gri çizilir, köşede metin ("paper izleme başlamadı") yazar, bilgi kutusu aynı metni söyler, sol panel kartı sayı yerine bu metni gösterir; `gizli` oda (kontrol) ofiste çizilmez, tıklanamaz, sol menüde yoktur. `oda_sayilar: {oda: [[ad, değer], …]}` oda bilgisi satırı. `secim`.
-Gerçek veride: **kasa, özet, risk, telegram, açık/kapanan işlem, olaylar boştur**; Lab, Finans, Risk gri; "örnek" rozetleri yoktur. Körlük: kâr/zarar, kol karşılaştırması, puan hiçbir yerde yer almaz.
+Gerçek veride: **kasa, özet, risk, telegram, kapanan işlem, olaylar boştur**; Lab, Finans, Risk gri; "örnek" rozetleri yoktur. Körlük: kâr/zarar, kol karşılaştırması, puan hiçbir yerde yer almaz.
+**Açık işlemler** istisnadır: seçim etiketi onaylıysa (`secim.onaylandi`), yalnız Oda üyelerinin (`kollar` içinde `oda`) `copytrade-izleme/izleme/durum.json`'daki `pozisyonlar[]` listesinden gelir (`coin`, `yon`, `kaldirac`, `kz_usd`, `yas_dk`: açılıştan veri üretim anına kadar). Kaynakta olmayan `kz_yuzde`, `lik_uzaklik`, `teminat_usd` uydurulmaz, `null` kalır (panelde "bilinmiyor").
