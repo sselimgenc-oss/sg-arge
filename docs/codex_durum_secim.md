@@ -54,3 +54,8 @@
 - [x] E3: etiketten önceki (miras) pozisyonu kapatan dolum `ZeroDivisionError` vermez (V0/V1/V2)
 - [x] E4: `Market.mark_at` işaret yaşı sınırı (`isaret_yas_max_dk` 120); aşılırsa `mark_missing`, canlı sonuç "eksik işaretleme" notu taşır
 - [x] E6: `bayrak.json` sürümlü önbellek (kod hash + seçim sürümü + kapı tarihi), her adresten sonra checkpoint, iş akışı önceki/kısmi sonucu veri dalından geri yükler ve zaman aşımında da yazar
+
+## Argon A15 — mum akıl sağlığı (`copytrade/mum_saglik.py`)
+- [x] bozuk / sıçrama / boşluk / hacimsiz; sıçrama **oranla** (`max(o/medyan, medyan/o) >= mum_sicrama_kat`, çöküşler de yakalanır), medyana yalnız geçerli mumların kapanışı girer
+- [x] `defter.Market.mark_at`: bozuk/sıçrama mumla işaretlenmez, işaret yaşı son **geçerli** mumdan ölçülür; `isaret_yas_max_dk` aşılırsa `mark_missing` (E4 ile birleşik)
+- [x] Kapı satırında `mum_*` sütunları; RAPOR.md "Mum sağlığı (A15)" bölümü ve `durum.json` `mum_ozeti`

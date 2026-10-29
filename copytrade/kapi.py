@@ -24,6 +24,7 @@ import requests
 from copytrade.defter import DAY as DAY_MS
 from copytrade.defter import FundingRates, Market, copy_ledger
 from copytrade.kurallar import load_rules
+from copytrade.mum_saglik import mum_kontrol, ozet as mum_ozet
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
 from copytrade.tarama import PublicClient, RateLimitError, RateLimiter, _address, prefilter
 from kapi.istatistik import deflated_sharpe_ratio, nw_alpha
@@ -375,6 +376,7 @@ class CandleCache:
     def __init__(self, client: PublicClient, start_ms: int, end_ms: int):
         self.client, self.start_ms, self.end_ms, self.items = client, start_ms, end_ms, {}
         self.requests = 0  # bu koşuda gerçekten çekilen coin sayısı (önbellek isabeti sayılmaz)
+        self._health: dict[str, dict[str, int]] = {}
 
     def get(self, coin: str) -> list[dict]:
         if coin not in self.items:
@@ -384,6 +386,16 @@ class CandleCache:
 
     def for_fills(self, fills: list[dict]) -> dict[str, list[dict]]:
         return {coin: self.get(coin) for coin in {str(row.get("coin")) for row in perp_fills(fills)}}
+
+    def saglik(self, coin: str) -> dict[str, int]:
+        """Coinin mum akıl sağlığı sayıları (``mum_saglik``; A15). Coin başına bir kez hesaplanır, adresler paylaşır."""
+        if coin not in self._health:
+            rules = load_rules()
+            checked = mum_kontrol(self.get(coin), float(rules["mum_sicrama_kat"]), int(rules["mum_medyan_pencere"]))
+            counts = mum_ozet(checked)
+            self._health[coin] = {"mum_sayisi": len(checked), "mum_bozuk": counts["bozuk"], "mum_sicrama": counts["sicrama"], "mum_bosluk": counts["bosluk"],
+                                  "mum_hacimsiz": counts["hacimsiz"], "mum_gecerli": sum(r["gecerli"] for r in checked)}
+        return self._health[coin]
 
 
 def place_ms(templates: list[dict], start_ms: int, end_ms: int, seed: int = 0, notes: list[str] | None = None) -> list[tuple[dict, int]]:
@@ -550,6 +562,8 @@ def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: f
                                 martingale_min_additions=int(rules["martingale_min_additions"]),
                                 martingale_min_adverse=float(rules["martingale_min_adverse"]))
     metrics["active_months"] = active_months
+    for name in ("mum_sayisi", "mum_bozuk", "mum_sicrama", "mum_bosluk", "mum_hacimsiz", "mum_gecerli"):      # A15: adresin kullandığı coinlerin mum sağlığı (bilgi sütunu)
+        metrics[name] = sum(cache.saglik(coin)[name] for coin in candles)
     metrics["candle_coverage"] = candle_coverage(recent, candles)
     metrics["complete_data"] = metrics["candle_coverage"] >= rules["mum_kapsami_min"]
     nets: dict[int, float | None] = {}
@@ -1318,6 +1332,24 @@ def run_status(finished: int, expected: int | None, processed: int, universe: in
             "islenen": processed, "evren": universe, "kapsam": round(coverage, 4) if coverage is not None else None, "neden": "; ".join(reasons)}
 
 
+def mum_ozeti(table: pd.DataFrame) -> dict[str, float] | None:
+    """Kapı tablosunun mum sağlığı toplamları (adres başına kullandığı coinlerin mumları toplanır) ve geçerli oran; sütun yoksa ``None``."""
+    names = ("mum_sayisi", "mum_bozuk", "mum_sicrama", "mum_bosluk", "mum_hacimsiz", "mum_gecerli")
+    if not set(names) <= set(table.columns) or not table["mum_sayisi"].notna().any():
+        return None
+    totals = {name: int(pd.to_numeric(table[name], errors="coerce").fillna(0).sum()) for name in names}
+    return {**totals, "gecerli_orani": totals["mum_gecerli"] / totals["mum_sayisi"] if totals["mum_sayisi"] else 0.0}
+
+
+def mum_rapor(ozet: dict[str, float] | None) -> str:
+    """RAPOR.md akıl sağlığı bölümü (A15)."""
+    if not ozet:
+        return ""
+    ratio = f"%{100 * ozet['gecerli_orani']:.1f}".replace(".", ",")
+    return (f"## Mum sağlığı (A15)\n\nToplam {ozet['mum_sayisi']} mum (adres başına kullanılan coinlerin toplamı): bozuk {ozet['mum_bozuk']} · sıçrama {ozet['mum_sicrama']} · "
+            f"boşluk {ozet['mum_bosluk']} · hacimsiz {ozet['mum_hacimsiz']} · geçerli oran {ratio}. Bilgi bölümüdür; kapı kararını değiştirmez.\n\n")
+
+
 def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str = "tam", universe: set[str] | None = None) -> dict[str, dict]:
     """Merge partial artifacts even if some timeout jobs produced no CSV.
 
@@ -1368,6 +1400,9 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
                             len(universe) if universe is not None else evren.get(date), mod, load_rules())
         if covered is not None:
             status.update({"islenen": int(len(table)), "kapsanan": covered, "evren_disi_satir": int(len(table)) - covered})
+        mum = mum_ozeti(table)
+        if mum:
+            status["mum_ozeti"] = mum
         status["eski_hesap_satir"] = int(len(legacy))
         status["hesap"] = HESAP_SURUMU
         status["satir_kaynagi"] = table["satir_kaynagi"].value_counts().to_dict()
@@ -1386,6 +1421,7 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
                   else f"Durum: tamam (parça {status['parca_biten']}/{status['parca_beklenen']}).\n\n" if expected is not None else "")
         failed = int(table["hata"].notna().sum()) if "hata" in table else 0
         banner += f"Hatalı adres: {failed}/{len(table)} (hata sütunu; sınıf Yetersiz).\n\n"
+        banner += mum_rapor(status.get("mum_ozeti"))
         (output / "RAPOR.md").write_text("# CT-Kapı v1.1\n\n" + banner + funnel_report(table, evren.get(date))
                                          + "\n\n" + freeze_report(table) + "\n\n## Adım 2'yi geçenler (alfa t'ye göre ilk 15)\n\n" + _md(near)
                                          + "\n\nGecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.\n", encoding="utf-8")
