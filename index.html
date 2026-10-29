@@ -349,8 +349,8 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('ipKutu').hidden = true; });
 
   // ---------- kollar (kol alanı veride henüz olmayabilir → "kol bilinmiyor", çökme yok)
-  const KOLLAR = ['oda', 'cikarilan', 'referans_oda', 'kontrol', 'referans_kontrol', 'aday', 'taban', 'elle'];
-  const KOL_AD = { oda: 'Oda', cikarilan: 'Çıkarılan (izlemede)', referans_oda: 'Referans oda', kontrol: 'Kontrol', referans_kontrol: 'Referans kontrol', aday: 'Aday', taban: 'Taban', elle: 'Elle liste' };
+  const KOLLAR = ['oda', 'cikarilan', 'referans_oda', 'kontrol', 'referans_kontrol', 'aday', 'taban', 'elle', 'havuz'];
+  const KOL_AD = { oda: 'Oda', cikarilan: 'Çıkarılan (izlemede)', referans_oda: 'Referans oda', kontrol: 'Kontrol', referans_kontrol: 'Referans kontrol', aday: 'Aday', taban: 'Taban', elle: 'Elle liste', havuz: 'Havuz (ileri ölçüm)' };
   const kolOf = (t) => { const v = String((t && (t.kol ?? t.kol_adi)) ?? '').toLowerCase().trim(); return KOLLAR.includes(v) ? v : null; };
   const kolRozet = (t) => { const k = kolOf(t); return k ? ctRozet(KOL_AD[k], 'ct-b-mut') : ctRozet('kol bilinmiyor', 'ct-b-warn'); };
   const tarzAd = (t) => ({ intraday: 'Intraday', swing: 'Swing', scalp: 'Scalp' }[t && t.tarz] || 'tarz bilinmiyor');
