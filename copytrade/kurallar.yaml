@@ -270,3 +270,19 @@ kalicilik_tohum: 20261029
 # Kopya notu: üst dilimden örnek büyüklüğü ve gecikmeler (dk)
 kalicilik_kopya_ornek: 100
 kalicilik_kopya_gecikme_dk: [30, 120]
+
+# Oda risk bayrakları (copytrade/oda_risk.py; docs/GOREV_ODA_RISK.md, Argon A26/A27 + lider notları). YALNIZ bilgi/uyarı: seçim, kapı, oda ve eşik kararı değişmez; otomatik işlem yok.
+# Eşikler SEZGİSEL (Argon da belirtiyor; gerçek veriyle kalibre edilmedi). Yönsüz bayrak (oda + kontrol): funding geliri / toplam kâr, spot↔perp ters pozisyon örtüşmesi, maker payı
+yonsuz_pencere_gun: 90
+yonsuz_funding_payi_esik: 0.50
+yonsuz_spot_perp_esik: 0.80
+yonsuz_maker_payi_esik: 0.90
+# Toplam kâr paydası |PnL| bunun altındaysa bunun kullanılır (sıfıra bölme; A26 epsilon)
+yonsuz_pnl_taban_usd: 1.0
+# Spot token adı → perp coin (Hyperliquid'de spot sarmalanmış adlar farklıdır); listede olmayan token aynı adlı perp'e eşlenir
+yonsuz_spot_esleme: {UBTC: BTC, UETH: ETH, USOL: SOL}
+# Kalabalıklaşma (oda): coin başına net yön payı (kaldıraç ikinci kez çarpılmaz), aynı yöndeki oda üyesi sayısı. A27 eşikleri
+kalabalik_net_pay_esik: 0.35
+kalabalik_min_trader: 6
+kalabalik_cakisma_esik: 0.80
+kalabalik_ayni_yon_sayi: 10

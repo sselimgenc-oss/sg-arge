@@ -190,6 +190,15 @@ const PANO = "https://sselimgenc-oss.github.io/sg-pano/";
 const ESKI_DK = 90;
 const LIGHT = { yesil: "🟢", sari: "🟡", kirmizi: "🔴" };
 
+// Oda risk bayrakları (GOREV_ODA_RISK): yalnız uyarı varsa tek satır; bilgi amaçlı, otomasyon yok.
+function riskLine(status, room) {
+  const parts = [];
+  if (status.kalabalik?.uyari && status.kalabalik.uyari_metni) parts.push(status.kalabalik.uyari_metni);
+  const flagged = room.filter(t => t.yonsuz_bayrak?.bayrak).map(t => t.takma_ad);
+  if (flagged.length) parts.push(`yönsüz bayrak: ${flagged.slice(0, 3).join(", ")}${flagged.length > 3 ? ` +${flagged.length - 3}` : ""}`);
+  return parts.length ? `⚠️ ${parts.join(" · ")}` : "";
+}
+
 // /durum: yalnız oda (bildirimli kol) ayrıntılı; diğer kollar sayı.
 function formatStatus(status, nowMs = Date.now()) {
   const all = status.traderlar || [];
@@ -214,6 +223,8 @@ function formatStatus(status, nowMs = Date.now()) {
     for (const t of rows.slice(0, 5)) lines.push(`• ${t.takma_ad} · ${(t.saglik.nedenler || []).join(", ") || LIGHT[colour]}`);
     if (rows.length > 5) lines.push(`• +${rows.length - 5} trader daha (panoda)`);
   }
+  const risk = riskLine(status, room);
+  if (risk) lines.push("", risk);
   lines.push("");
   if (hasArms) lines.push(`👀 Sessiz izleme: ${all.length - room.length} trader (kontrol, taban, elle)`);
   lines.push(`Pano: ${PANO}`);
