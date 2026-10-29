@@ -1,8 +1,30 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-28 (akşam), lider (Claude).
+Son güncelleme: 2026-10-29, lider (Claude).
 
-## Şu an
+## Şu an (2026-10-29): canlı gölge pilotu başladı
+**Kullanıcı onayı 2026-10-29: Seçim v1.3 odası onaylandı ("onaylıyorum").** Pilot başlangıcı (t0) = 2026-10-29; analiz 12. ve
+24. haftada (ön kayıt madde 6).
+
+**Dondurma (ön kayıt madde 9):**
+- Ön kayıt: `docs/ONKAYIT_D.md` sürüm 1.4, commit `c3c372a722d3dcc5d207754e4e690098ce21387c`.
+- İlk v1.3 seçimi: `copytrade-kapi` dalı `secim/2026-10-29-v1.3/` (kapı 2026-10-28, tohum `secim-v1.3-2026-10-28`,
+  kurallar sha256 `7624e1d96c23ad813585aeaacc97f4399c98f76c4fd4db9cbf07f662f5f1a817`,
+  secim.py sha256 `578cc5aa254864ae44f2973ca4552832880ba8abed769f0053c9da1f5ae7899b`). Oda 18, kontrol 18, taban 18, ikincil 167.
+- İzleme listesi `copytrade/izleme_listesi.yaml` bu seçimden üretildi (`--izleme-listesi`, 61 satır: oda 18, kontrol 18
+  (`kollar`), taban 18, elle 8).
+- Bayraklar (`bayrak.json`) bilgi amaçlı; kimse elenmedi. Dikkat: f208 (%100 tek coin), 84d7 (%90 tek coin, derin ekleme),
+  86d2 (%88), 582e (%65); 50e2 vault.
+
+**Körlük (K‑6), lider kararı:** (c) mevcut hâl bilinçli kabul. `secim.json` kollarıyla zaten açık veri dalında, bu yüzden
+(a) anlamsız. Kural: hiçbir ajan görevi ve haftalık rapor kol bazında getiri hesaplamaz; analiz yalnız 12./24. haftada.
+(b) sağlık ışığından performans konisinin çıkarılması ayrı iş (açık).
+
+**Açık işler:** birincil/ikincil analiz kodu + altın örnekler gölge verisi görülmeden yazılıp dondurmaya eklenecek (madde 9);
+`gunluk.csv.gz` kapı koşusunda yayımlanmıyor (yoğunlaşma bölümü boş); maliyet duyarlılığı gerçek veriyle; R2 arşivi
+2026-10-29'da yeşile döndü (kullanıcı anahtarları düzeltti).
+
+## Önceki (2026-10-28)
 **Kullanıcı kararı 2026-10-28: proje yeniden açıldı (sg-arge + sg-pano), lider Claude. Yeni yol: D** —
 geçmiş kapı ön eleme olur, trader'ı ileriye dönük gölge ölçümü seçer (kohort ↔ rastgele kontrol, sürekli keşif).
 Görev: `docs/GOREV_D_YOLU.md`. Aşağıdaki "Trader seçimi" adımı bu belgeyle değişti; 9 adreslik ön izleme listesi

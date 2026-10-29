@@ -1,61 +1,591 @@
-# İzleme listesi (veri sözleşmesi §2). Lider/kullanıcı doldurur; motor okur.
-# 2026-10-27: ÖN İZLEME (kullanıcı kararı) — 11 aday: CT-Kapı (eski hesap) + bağımsız seçimlerde en çok anılanlar
-# (arastirma/copytrade/bagimsiz_secim/KARSILASTIRMA.md). Kopyalama kararı DEĞİLDİR; 3 aylık ölçüm başlamadı.
-# Düzeltilmiş kapı koşusu bitince liste ve t0 yeniden belirlenir. T11 (0x1404) sonuç çelişkisini doğrulamak için.
-# 2026-10-27: T3 (69b0) ve T8 (79bf) çıkarıldı — hesap değeri 0 (para çekilmiş), kullanıcı kararı.
-# tarz: medyan elde tutma (≥ 24 sa swing, 1–24 sa intraday). takma_ad = adresin ilk 4 hanesi (Hyperdash'te karşılaştırma için).
+# İZLEME LİSTESİ — `python -m copytrade.secim --izleme-listesi` ile secim.json'dan üretilir; ELLE YAZILMAZ.
+# kol: oda (Telegram bildirimi var) | kontrol | taban | elle (sessiz izleme). kollar: adresin bulunduğu tüm kollar.
 traderlar:
-  - id: T1
-    adres: "0x8bae3527e5a33fa0cf184f37bc112d071463ab6d"
-    takma_ad: "8bae"
-    tarz: swing
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T2
-    adres: "0x3f96c4df1e76902985d3dbd979af54b487f29671"
-    takma_ad: "3f96"
-    tarz: intraday
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T4
-    adres: "0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9"
-    takma_ad: "3e68"
-    tarz: swing
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T5
-    adres: "0x29754d7a9f9f344327158e2d01508efa415bd558"
-    takma_ad: "2975"
-    tarz: swing
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T6
-    adres: "0x9312e0a61f21affbd5be821f436f8fdf6b6f6663"
-    takma_ad: "9312"
-    tarz: swing
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T7
-    adres: "0x09d70eac3bbebf727218b81b7f6384249826ab24"
-    takma_ad: "09d7"
-    tarz: intraday
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T9
-    adres: "0xe5731d975d84c7222ebfd0ce8239f04ea3164e55"
-    takma_ad: "e573"
-    tarz: intraday
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T10
-    adres: "0x4c921317a8301044a2287dfa34b18c37005b42db"
-    takma_ad: "4c92"
-    tarz: intraday
-    durum: izlemede
-    t0: "2026-10-28"
-  - id: T11
-    adres: "0x1404109f8cd4a79a0447365edbb7a13acd0b2f27"
-    takma_ad: "1404"
-    tarz: intraday
-    durum: izlemede
-    t0: "2026-10-28"
+- id: T7
+  adres: '0x09d70eac3bbebf727218b81b7f6384249826ab24'
+  takma_ad: 09d7
+  tarz: intraday
+  durum: izlemede
+  t0: '2026-10-28'
+  kol: elle
+  kollar:
+  - elle
+- id: B01
+  adres: '0x0b8aa35c28b7c6ab18f11dc168f437a8a69fd4f8'
+  takma_ad: 0b8a
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: T11
+  adres: '0x1404109f8cd4a79a0447365edbb7a13acd0b2f27'
+  takma_ad: '1404'
+  tarz: intraday
+  durum: izlemede
+  t0: '2026-10-28'
+  kol: elle
+  kollar:
+  - elle
+- id: O01
+  adres: '0x183c6497814803574c23866c7662dea4c044d0f9'
+  takma_ad: 183c
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: K01
+  adres: '0x1fbe7279da134c53fa521f5ee65891948e775e17'
+  takma_ad: 1fbe
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: K02
+  adres: '0x221284041f07f1e9af30beadbd08bb14f5e5838c'
+  takma_ad: '2212'
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: K03
+  adres: '0x22dfa5d3751aa194a119a4eaebce903cc5a635b5'
+  takma_ad: 22df
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: O02
+  adres: '0x2888be6982957103ea88ac10f4179df0a294e877'
+  takma_ad: '2888'
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: T5
+  adres: '0x29754d7a9f9f344327158e2d01508efa415bd558'
+  takma_ad: '2975'
+  tarz: swing
+  durum: izlemede
+  t0: '2026-10-28'
+  kol: elle
+  kollar:
+  - elle
+- id: K04
+  adres: '0x2c9632dd4adbffe07cd311c82e6738537e6195ae'
+  takma_ad: 2c96
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: K05
+  adres: '0x2fcb6898d5a0623de19c3691904927685014c4d8'
+  takma_ad: 2fcb
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: O03
+  adres: '0x34246e62e88dec68f57bf21ca16d8c773d26c507'
+  takma_ad: '3424'
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: K06
+  adres: '0x378defc39d5dcdfbecd4f1673a5e228f992fc08e'
+  takma_ad: 378d
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: K07
+  adres: '0x398433dd94502cb28814d145a4fb8e98deba601b'
+  takma_ad: '3984'
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: B02
+  adres: '0x3a98be4692cae9eee26ecf73b4be7b8961ebf4b8'
+  takma_ad: 3a98
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: O04
+  adres: '0x3d5f1ad033c4e7c6a6d433d50d694c488dcaebcf'
+  takma_ad: 3d5f
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: B03
+  adres: '0x3dc908374e11623d8eb9f07dfc7a2e5e803a54b0'
+  takma_ad: 3dc9
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: T4
+  adres: '0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9'
+  takma_ad: 3e68
+  tarz: swing
+  durum: izlemede
+  t0: '2026-10-28'
+  kol: elle
+  kollar:
+  - elle
+- id: T2
+  adres: '0x3f96c4df1e76902985d3dbd979af54b487f29671'
+  takma_ad: 3f96
+  tarz: intraday
+  durum: izlemede
+  t0: '2026-10-28'
+  kol: elle
+  kollar:
+  - elle
+- id: K08
+  adres: '0x44e044712a7f32ad47b4ff74dbe7e99c4c8b5a73'
+  takma_ad: 44e0
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: O05
+  adres: '0x452ea0373056462c8e3b301c996ecfab3511d712'
+  takma_ad: 452e
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: B04
+  adres: '0x45d26f28196d226497130c4bac709d808fed4029'
+  takma_ad: 45d2
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: B05
+  adres: '0x484bc1608211d0604bf70bae72792a56884562f8'
+  takma_ad: 484b
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: O06
+  adres: '0x4860d039cbc7cffb0267f86e63f4b4442b71505e'
+  takma_ad: '4860'
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: T10
+  adres: '0x4c921317a8301044a2287dfa34b18c37005b42db'
+  takma_ad: 4c92
+  tarz: intraday
+  durum: izlemede
+  t0: '2026-10-28'
+  kol: elle
+  kollar:
+  - elle
+- id: O07
+  adres: '0x50e2fe552727a4b8692c192b4f96d1a6b0d44394'
+  takma_ad: 50e2
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: O08
+  adres: '0x582e0cbcf29b1a86be93c0f5105345546214db9a'
+  takma_ad: 582e
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: O09
+  adres: '0x58d70b61a2837fe764c2456d6dad26c266a8ac02'
+  takma_ad: 58d7
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: B06
+  adres: '0x5b5d51203a0f9079f8aeb098a6523a13f298c060'
+  takma_ad: 5b5d
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: B07
+  adres: '0x659ddde484fd9dc313917d5de92a52b6a74a9d63'
+  takma_ad: 659d
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: K09
+  adres: '0x66d1f704749ced8c60df03cd0ccfce05c5d87fae'
+  takma_ad: 66d1
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: K10
+  adres: '0x7cb42a9fd91d7f2b506de9205254e41bede28439'
+  takma_ad: 7cb4
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: K11
+  adres: '0x7eb9026d0183942458bd4660371c3cc0a2df3beb'
+  takma_ad: 7eb9
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: B08
+  adres: '0x7fdafde5cfb5465924316eced2d3715494c517d1'
+  takma_ad: 7fda
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: O10
+  adres: '0x84d76e64be483a615e2447ccf3b52e938cb40688'
+  takma_ad: 84d7
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: O11
+  adres: '0x86d2161a18a6eb5be550d5253496e5a161cdf731'
+  takma_ad: 86d2
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: B09
+  adres: '0x87f9cd15f5050a9283b8896300f7c8cf69ece2cf'
+  takma_ad: 87f9
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: O12
+  adres: '0x888e000c78b8f1aada5b3c99f880794907b76d77'
+  takma_ad: 888e
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: E01
+  adres: '0x8bae3527e5a33fa0cf184f37bc112d071463ab6d'
+  takma_ad: 8bae
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: elle
+  kollar:
+  - elle
+  - kontrol
+- id: O13
+  adres: '0x909eb3d5ff0ac0df12c81f8495860cfccf1e7ea9'
+  takma_ad: 909e
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: O14
+  adres: '0x9312e0a61f21affbd5be821f436f8fdf6b6f6663'
+  takma_ad: '9312'
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+  - elle
+- id: B10
+  adres: '0x936cf4fb95c30ce83f658b5bbb247e4bb381bb0f'
+  takma_ad: 936c
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: O15
+  adres: '0xa1d4fc32f21d9d77a4c20a6ac4b748815912c07c'
+  takma_ad: a1d4
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: K12
+  adres: '0xb16395a96326a115102335ffb4da07ee2a90a72f'
+  takma_ad: b163
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: B11
+  adres: '0xb695651daa495f59dd2725c6fe98322d8b51a92d'
+  takma_ad: b695
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: B12
+  adres: '0xb83de012dba672c76a7dbbbf3e459cb59d7d6e36'
+  takma_ad: b83d
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: K13
+  adres: '0xcab90bb2b3a2f57f40326093de037c655c7fa8ae'
+  takma_ad: cab9
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: K14
+  adres: '0xd750d35610fa0c07190169e0003160574368827b'
+  takma_ad: d750
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: B13
+  adres: '0xdd53c5297309130ab5fe5623dc905752e3342b13'
+  takma_ad: dd53
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: B14
+  adres: '0xdf954bbe619273a56e0cfa90dad8382195dc7d72'
+  takma_ad: df95
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: K15
+  adres: '0xe0afe5de6831901db80d7ca9d17475f78b1a870c'
+  takma_ad: e0af
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: T9
+  adres: '0xe5731d975d84c7222ebfd0ce8239f04ea3164e55'
+  takma_ad: e573
+  tarz: intraday
+  durum: izlemede
+  t0: '2026-10-28'
+  kol: elle
+  kollar:
+  - elle
+- id: O16
+  adres: '0xe63d6f9d856cb10b44e892291612d2385f273f53'
+  takma_ad: e63d
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: K16
+  adres: '0xe9c2df5b14c7f476e8a5895d5b0c6b015e87bf2e'
+  takma_ad: e9c2
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
+- id: B15
+  adres: '0xecb63caa47c7c4e77f60f1ce858cf28dc2b82b00'
+  takma_ad: ecb6
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: O17
+  adres: '0xf208ff0e4d31aa30def8af97348e9dee9b38dba9'
+  takma_ad: f208
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: O18
+  adres: '0xf53cab0c6f25f48f985d1e2c40e03fc7c1963364'
+  takma_ad: f53c
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: swing
+  secim: v1.3@2026-10-28
+  kol: oda
+  kollar:
+  - oda
+- id: B16
+  adres: '0xfc27136e42af1732ddc9ce2605ea9bff1b959d9d'
+  takma_ad: fc27
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: B17
+  adres: '0xfc667adba8d4837586078f4fdcdc29804337ca06'
+  takma_ad: fc66
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: B18
+  adres: '0xfe7ce058edc7cfcde9ef8262ba51f8d4796ab7ae'
+  takma_ad: fe7c
+  durum: izlemede
+  t0: '2026-10-29'
+  secim: v1.3@2026-10-28
+  kol: taban
+  kollar:
+  - taban
+- id: K17
+  adres: '0xfeca598e3909b1c5574b4d77828d40a75cc57fd4'
+  takma_ad: feca
+  durum: izlemede
+  t0: '2026-10-29'
+  tarz: intraday
+  secim: v1.3@2026-10-28
+  kol: kontrol
+  kollar:
+  - kontrol
