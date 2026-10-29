@@ -81,16 +81,27 @@ def placebo_distribution(
     return totals
 
 
-def nw_alpha(strategy: pd.Series, benchmark: pd.Series, lags: int = 5, periods: int = 252) -> dict[str, float]:
-    """Annualised OLS alpha/beta and Newey-West t statistic for alpha."""
+def nw_alpha(strategy: pd.Series, benchmark: pd.Series, lags: int = 5, periods: int = 252,
+             min_artik_varyans: float | None = None) -> dict[str, float | str]:
+    """Annualised OLS alpha/beta and Newey-West t statistic for alpha.
+
+    Regresyon artık varyansı ``min_artik_varyans``'ın (verilmezse ``kurallar.yaml`` ``alfa_min_artik_varyans``) altındaysa — birebir kopya ya da
+    deterministik ilişki — t kayan nokta gürültüsüdür: ``nw_t`` NaN ve ``durum`` "yetersiz" döner, alfa ne olursa olsun (alfa bilgi olarak kalır).
+    """
     frame = pd.concat([strategy.rename("y"), benchmark.rename("x")], axis=1).dropna()
     if len(frame) < 8 or frame.x.var() == 0:
-        return {"beta": np.nan, "alfa_yillik": np.nan, "nw_t": np.nan}
+        return {"beta": np.nan, "alfa_yillik": np.nan, "nw_t": np.nan, "durum": "yetersiz"}
+    if min_artik_varyans is None:
+        from copytrade.kurallar import load_rules
+        min_artik_varyans = float(load_rules()["alfa_min_artik_varyans"])
     x = np.column_stack([np.ones(len(frame)), frame.x.to_numpy()])
     y = frame.y.to_numpy()
     inv = np.linalg.inv(x.T @ x)
     coef = inv @ x.T @ y
     residual = y - x @ coef
+    out = {"beta": float(coef[1]), "alfa_yillik": float(coef[0] * periods)}
+    if float(np.var(residual)) < float(min_artik_varyans):
+        return {**out, "nw_t": np.nan, "durum": "yetersiz"}
     meat = np.zeros((2, 2))
     for lag in range(min(lags, len(frame) - 1) + 1):
         weight = 1.0 if lag == 0 else 1 - lag / (lags + 1)
@@ -101,7 +112,7 @@ def nw_alpha(strategy: pd.Series, benchmark: pd.Series, lags: int = 5, periods: 
             term = term + term.T
         meat += weight * term
     se = math.sqrt(max(float((inv @ meat @ inv)[0, 0]), 0.0))
-    return {"beta": float(coef[1]), "alfa_yillik": float(coef[0] * periods), "nw_t": float(coef[0] / se) if se else np.nan}
+    return {**out, "nw_t": float(coef[0] / se) if se else np.nan, "durum": "gecerli" if se else "yetersiz"}
 
 
 def neff_clusters(series: dict[str, pd.Series], threshold: float = 0.9) -> int:

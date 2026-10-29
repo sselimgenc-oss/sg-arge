@@ -71,3 +71,7 @@
 ## Argon A14 — oda yoğunlaşması ve puan tutarlılığı (`copytrade/yogunlasma.py`)
 - [x] Ortalama bağlantılı kümeleme, etkin küme sayısı, yarı tutarlılığı (sıra korelasyonu `analiz_d` ile tek uygulama); eşikler `kurallar.yaml` (`yogunlasma_min_ortak_gun` 10, `yogunlasma_kume_esik` 0,5)
 - [x] Kapı, adım 1–2'yi geçenlerin günlük kopya getirisini `gunluk.csv.gz` olarak yayımlar (parçalar + önceki dosya birleşir); seçim RAPOR'unda "Oda yoğunlaşması ve puan tutarlılığı (bilgi)" bölümü ve `secim.json` `yogunlasma`; seçimi değiştirmez
+## Argon A19 — mevcut kodda üç düzeltme (`tests/test_a19.py`)
+- [x] Alfa (`kapi/istatistik.py` `nw_alpha`): artık varyans < `alfa_min_artik_varyans` (kurallar.yaml, 1e-12) → `nw_t` NaN, `durum` "yetersiz", alfa ne olursa olsun; kapı adım 6 "Yetersiz"
+- [x] Gölge likidasyonu (`copytrade/golge.py`): trader'ın açık pozisyonlarının toplam K/Z'si `golge_likidasyon_esigi` (-1,0) altına inerse hepsi tasfiye; tekil likidasyon ve V2 sınırları aynen; eski testler geçiyor
+- [x] Sayfalama (`copytrade/tarama.py` `PublicClient.fills`): imleç `newest` (sınırdaki aynı-ms dolumlar kaybolmaz); sayfanın tamamı aynı ms ise 1 ms ilerleyip devam; sayfa boyutu `api_sayfa_boyutu_dolum`

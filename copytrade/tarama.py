@@ -89,20 +89,27 @@ class PublicClient:
         return self._request("POST", INFO, payload=payload, weight=weight)
 
     def fills(self, address: str, start_ms: int, max_rows: int | None = None) -> list[dict]:
-        # Official endpoint pages with the cursor timestamp; dedupe by tid.
+        # Resmî uç nokta imleç zaman damgasıyla sayfalar; tid ile tekilleştirilir. İmleç `newest` (newest + 1 değil): sayfa sınırında aynı ms'ye düşen
+        # sonraki dolumlar kaybolmaz. Sayfanın tamamı aynı ms'deyse ya da yeni dolum gelmediyse imleç 1 ms ilerler (A19).
+        page_size = int(load_rules()["api_sayfa_boyutu_dolum"])
         result, cursor, seen = [], start_ms, set()
         while True:
             page = self.info({"type": "userFillsByTime", "user": address, "startTime": cursor, "endTime": int(time.time() * 1000)})
             if not page:
                 break
+            fresh = 0
             for fill in page:
                 key = str(fill.get("tid", (fill.get("time"), fill.get("coin"), fill.get("sz"))))
                 if key not in seen:
-                    seen.add(key); result.append(fill)
-            newest = max(int(x.get("time", 0)) for x in page)
-            if len(page) < 2000 or newest <= cursor or (max_rows is not None and len(result) >= max_rows):
-                break
-            cursor = newest + 1
+                    seen.add(key); result.append(fill); fresh += 1
+            times = [int(x.get("time", 0)) for x in page]
+            newest, oldest = max(times), min(times)
+            if len(page) < page_size or newest < cursor or (max_rows is not None and len(result) >= max_rows):
+                break                                  # son sayfa; sunucu imleci yok saydı (eski veri); hedef doldu
+            if oldest == newest or not fresh:
+                cursor = newest + 1                    # tüm sayfa aynı ms ya da yeni dolum yok: 1 ms ilerle
+            else:
+                cursor = newest
         return result
 
     def portfolio(self, address: str) -> list[dict]:
