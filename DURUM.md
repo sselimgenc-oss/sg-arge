@@ -4,6 +4,10 @@ Son güncelleme: 2026-10-29, lider (Claude).
 
 ## Şu an (2026-10-29): canlı gölge pilotu başladı
 
+**Kural (kullanıcı kararı 2026-10-29): önce veri.** Faz 4 verisi oturmadan (düzenli tetiklenen, doğru, ofis↔pano tutarlı) görünüm/tema işi
+yok; yeni fikir önce `docs/FIKIRLER.md`'ye. Tema Sürüm 1.1 ve Sürüm 2 bekliyor (`docs/GOREV_OFIS_TEMA.md`). Sıra: 1) Worker ile saatlik
+tetikleme, 2) izleme ve pano veri doğruluğu, 3) Telegram sadeleştirme (işlem bildirimleri kapalı; günlük özet + uyarı), 4) Faz 3 ve kalıcılık sonuçları.
+
 **Gün sonu özeti (2026-10-29 19:30 TR; limitler azaldı → yavaş tempo, yalnız önemli işler):**
 - Açık sorun: 61 trader'lık izleme yayımlanamıyordu (motor.json 267 MB > 100 MB) → #414 ile R2'ye taşındı; doğrulama koşusu (run 40911015820) sürüyor.
 - Koşuyor/kuyrukta: arşiv (#20), Faz 3 gerçek prova, kalıcılık testi, pilot boşluk doldur (#6). Boşluk doldur #5 yeşil.
