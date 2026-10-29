@@ -61,3 +61,13 @@
 ## Ek 2 bilgi sütunları (#350'den taşındı)
 - [x] Kapı/seçim çıktısı: `acik_pozisyon_sayisi`, `unrealized_end`, `mark_missing`, `acik_pozisyon_notional` (kanonik defter `copy_ledger`; E1 ile aynı kaynak), yönlü dolum farkı (`yonlu_dolum_*`; sıfır gecikmede üretilmez), `en_iyi_islem_haric_getiri`, `medyan_tutma_saat`, `gunluk_islem_sikligi`
 - [x] Gölge sağlaması: trader'ın kendi açık K/Z'si ve toplam net kıyası (`trader_toplam_net`, `golge_toplam_net`, `toplam_net_fark`), eksik işaretleme notu
+## Argon A13 — pozisyon mutabakatı (`copytrade/pozisyon_mutabakat.py`)
+- [x] Defter ↔ `clearinghouseState` (uyumlu / yetim / eksik / yon_farki / boy_farki); `borsa_pozisyonlari` ve `mutabakat` bozuk satır sayısını dönüş değerinde verir; eşikler `kurallar.yaml` (`mutabakat_*_tolerans`)
+- [x] İzleme motoru her koşuda oda üyeleri için çalıştırır, sonucu `veri_kalitesi.mutabakat` alanına yazar; yalnız rapor (otomatik kapatma yok)
+## Argon A15 — mum akıl sağlığı (`copytrade/mum_saglik.py`)
+- [x] bozuk / sıçrama / boşluk / hacimsiz; sıçrama **oranla** (`max(o/medyan, medyan/o) >= mum_sicrama_kat`, çöküşler de yakalanır), medyana yalnız geçerli mumların kapanışı girer
+- [x] `defter.Market.mark_at`: bozuk/sıçrama mumla işaretlenmez, işaret yaşı son **geçerli** mumdan ölçülür; `isaret_yas_max_dk` aşılırsa `mark_missing` (E4 ile birleşik)
+- [x] Kapı satırında `mum_*` sütunları; RAPOR.md "Mum sağlığı (A15)" bölümü ve `durum.json` `mum_ozeti`
+## Argon A14 — oda yoğunlaşması ve puan tutarlılığı (`copytrade/yogunlasma.py`)
+- [x] Ortalama bağlantılı kümeleme, etkin küme sayısı, yarı tutarlılığı (sıra korelasyonu `analiz_d` ile tek uygulama); eşikler `kurallar.yaml` (`yogunlasma_min_ortak_gun` 10, `yogunlasma_kume_esik` 0,5)
+- [x] Kapı, adım 1–2'yi geçenlerin günlük kopya getirisini `gunluk.csv.gz` olarak yayımlar (parçalar + önceki dosya birleşir); seçim RAPOR'unda "Oda yoğunlaşması ve puan tutarlılığı (bilgi)" bölümü ve `secim.json` `yogunlasma`; seçimi değiştirmez

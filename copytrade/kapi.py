@@ -24,6 +24,7 @@ import requests
 from copytrade.defter import DAY as DAY_MS
 from copytrade.defter import FundingRates, Market, copy_ledger, delayed_execution_quality
 from copytrade.kurallar import load_rules
+from copytrade.mum_saglik import mum_kontrol, ozet as mum_ozet
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
 from copytrade.tarama import PublicClient, RateLimitError, RateLimiter, _address, prefilter
 from kapi.istatistik import deflated_sharpe_ratio, nw_alpha
@@ -375,6 +376,7 @@ class CandleCache:
     def __init__(self, client: PublicClient, start_ms: int, end_ms: int):
         self.client, self.start_ms, self.end_ms, self.items = client, start_ms, end_ms, {}
         self.requests = 0  # bu koşuda gerçekten çekilen coin sayısı (önbellek isabeti sayılmaz)
+        self._health: dict[str, dict[str, int]] = {}
 
     def get(self, coin: str) -> list[dict]:
         if coin not in self.items:
@@ -384,6 +386,16 @@ class CandleCache:
 
     def for_fills(self, fills: list[dict]) -> dict[str, list[dict]]:
         return {coin: self.get(coin) for coin in {str(row.get("coin")) for row in perp_fills(fills)}}
+
+    def saglik(self, coin: str) -> dict[str, int]:
+        """Coinin mum akıl sağlığı sayıları (``mum_saglik``; A15). Coin başına bir kez hesaplanır, adresler paylaşır."""
+        if coin not in self._health:
+            rules = load_rules()
+            checked = mum_kontrol(self.get(coin), float(rules["mum_sicrama_kat"]), int(rules["mum_medyan_pencere"]))
+            counts = mum_ozet(checked)
+            self._health[coin] = {"mum_sayisi": len(checked), "mum_bozuk": counts["bozuk"], "mum_sicrama": counts["sicrama"], "mum_bosluk": counts["bosluk"],
+                                  "mum_hacimsiz": counts["hacimsiz"], "mum_gecerli": sum(r["gecerli"] for r in checked)}
+        return self._health[coin]
 
 
 def place_ms(templates: list[dict], start_ms: int, end_ms: int, seed: int = 0, notes: list[str] | None = None) -> list[tuple[dict, int]]:
@@ -550,6 +562,8 @@ def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: f
                                 martingale_min_additions=int(rules["martingale_min_additions"]),
                                 martingale_min_adverse=float(rules["martingale_min_adverse"]))
     metrics["active_months"] = active_months
+    for name in ("mum_sayisi", "mum_bozuk", "mum_sicrama", "mum_bosluk", "mum_hacimsiz", "mum_gecerli"):      # A15: adresin kullandığı coinlerin mum sağlığı (bilgi sütunu)
+        metrics[name] = sum(cache.saglik(coin)[name] for coin in candles)
     metrics["candle_coverage"] = candle_coverage(recent, candles)
     metrics["complete_data"] = metrics["candle_coverage"] >= rules["mum_kapsami_min"]
     nets: dict[int, float | None] = {}
@@ -826,7 +840,8 @@ def shard_universe(leaders: list[dict], index: int, count: int) -> list[dict]:
 
 
 def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now: datetime, start: int, start_200: int,
-                     symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None, dexes: list[str] | None = None) -> dict[str, Any]:
+                     symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None, dexes: list[str] | None = None,
+                     gunluk: dict | None = None) -> dict[str, Any]:
     """Tek adres için 1. aşama + adım 1–6 (adım 7 ve katman birleştirmede). ``yalniz_adim5``: plaseboyu adım 3–4'e
     bakmadan hesaplar (hızlı koşu; satırın adım değerleri yine kurallara göre kalır). Her aşamanın süresi günlüğe yazılır."""
     address = leader["address"]
@@ -920,6 +935,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
                  else basket_returns(candles, sorted({str(f.get("coin")) for f in perp_fills(recent)})))
         alpha = matched_btc_alpha(own, bench, exposure) if own is not None and len(bench) else None
         statuses = gate_status(metrics, actual, p_value, alpha, rules)
+        gunluk_kaydet(gunluk, address, statuses, own)
         progress.stage("alfa", f"kıyas {kind}, t={alpha['nw_t'] if alpha else None}")
         row.update(metrics)
         row.update(shares)
@@ -1025,12 +1041,18 @@ def main(argv: list[str] | None = None) -> None:
     rows = previous_rows
     print(f"Koşu: evren {evren}, bu parçada {len(leaders)} adres (parça {args.shard_index}/{args.shard_count})", flush=True)
     dexes = hip3_dex_names(client)       # hesap değeri tabanı için bir kez (görev 27)
+    gunluk: dict[str, pd.Series] = {}
+    if args.devam and (out / "gunluk.csv.gz").exists():        # kesilen koşu devam ederken önceki günlük getiriler korunur
+        previous_daily = pd.read_csv(out / "gunluk.csv.gz", index_col=0, parse_dates=True)
+        gunluk.update({column: previous_daily[column].dropna() for column in previous_daily})
     for number, leader in enumerate(leaders, 1):
         if leader["address"] in done:
             continue
         print(f"[{number}/{len(leaders)}] {leader['address']}", flush=True)
-        rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5 and leader.get("kaynak") != "dis_aday", dexes=dexes))
+        rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5 and leader.get("kaynak") != "dis_aday", dexes=dexes, gunluk=gunluk))
         pd.DataFrame(rows).to_csv(out / "sonuc.csv", index=False)  # partial results survive a time limit
+        if gunluk:
+            pd.DataFrame(gunluk).to_csv(out / "gunluk.csv.gz", compression="gzip")
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
     passed = sum(r.get("asama1") == "Geçti" for r in rows)
     (out / "RAPOR.md").write_text(
@@ -1328,6 +1350,28 @@ def run_status(finished: int, expected: int | None, processed: int, universe: in
             "islenen": processed, "evren": universe, "kapsam": round(coverage, 4) if coverage is not None else None, "neden": "; ".join(reasons)}
 
 
+def mum_ozeti(table: pd.DataFrame) -> dict[str, float] | None:
+    """Kapı tablosunun mum sağlığı toplamları (adres başına kullandığı coinlerin mumları toplanır) ve geçerli oran; sütun yoksa ``None``."""
+    names = ("mum_sayisi", "mum_bozuk", "mum_sicrama", "mum_bosluk", "mum_hacimsiz", "mum_gecerli")
+    if not set(names) <= set(table.columns) or not table["mum_sayisi"].notna().any():
+        return None
+    totals = {name: int(pd.to_numeric(table[name], errors="coerce").fillna(0).sum()) for name in names}
+    return {**totals, "gecerli_orani": totals["mum_gecerli"] / totals["mum_sayisi"] if totals["mum_sayisi"] else 0.0}
+
+
+def mum_rapor(ozet: dict[str, float] | None) -> str:
+    """RAPOR.md akıl sağlığı bölümü (A15)."""
+    if not ozet:
+        return ""
+    ratio = f"%{100 * ozet['gecerli_orani']:.1f}".replace(".", ",")
+    return (f"## Mum sağlığı (A15)\n\nToplam {ozet['mum_sayisi']} mum (adres başına kullanılan coinlerin toplamı): bozuk {ozet['mum_bozuk']} · sıçrama {ozet['mum_sicrama']} · "
+            f"boşluk {ozet['mum_bosluk']} · hacimsiz {ozet['mum_hacimsiz']} · geçerli oran {ratio}. Bilgi bölümüdür; kapı kararını değiştirmez.\n\n")
+def gunluk_kaydet(gunluk: dict | None, address: str, statuses: dict, daily: pd.Series | None) -> None:
+    """Adım 1 ve 2'yi geçen adresin günlük kopya net getirisini (gecikmesiz defter) toplar; seçim raporu (A14) oda yoğunlaşması ve puan tutarlılığı için okur."""
+    if gunluk is not None and daily is not None and len(daily) and statuses.get("adim1") == "Geçti" and statuses.get("adim2") == "Geçti":
+        gunluk[address] = daily
+
+
 def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str = "tam", universe: set[str] | None = None) -> dict[str, dict]:
     """Merge partial artifacts even if some timeout jobs produced no CSV.
 
@@ -1378,6 +1422,17 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
                             len(universe) if universe is not None else evren.get(date), mod, load_rules())
         if covered is not None:
             status.update({"islenen": int(len(table)), "kapsanan": covered, "evren_disi_satir": int(len(table)) - covered})
+        mum = mum_ozeti(table)
+        if mum:
+            status["mum_ozeti"] = mum
+        daily_files = [path for path in shards.rglob("gunluk.csv.gz") if path.parent.name == date]
+        if daily_files or (output / "gunluk.csv.gz").exists():
+            # Günlük kopya getirisi (A14): önceki dosya (veri dalı) + bu koşunun parçaları; yeniden hesaplanan adres öncekini geçersiz kılar.
+            parts = ([pd.read_csv(output / "gunluk.csv.gz", index_col=0, parse_dates=True)] if (output / "gunluk.csv.gz").exists() else [])
+            parts += [pd.read_csv(path, index_col=0, parse_dates=True) for path in sorted(daily_files)]
+            combined = pd.concat(parts, axis=1)
+            combined = combined.loc[:, ~combined.columns.duplicated(keep="last")].sort_index()
+            combined.to_csv(output / "gunluk.csv.gz", compression="gzip")
         status["eski_hesap_satir"] = int(len(legacy))
         status["hesap"] = HESAP_SURUMU
         status["satir_kaynagi"] = table["satir_kaynagi"].value_counts().to_dict()
@@ -1396,6 +1451,7 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
                   else f"Durum: tamam (parça {status['parca_biten']}/{status['parca_beklenen']}).\n\n" if expected is not None else "")
         failed = int(table["hata"].notna().sum()) if "hata" in table else 0
         banner += f"Hatalı adres: {failed}/{len(table)} (hata sütunu; sınıf Yetersiz).\n\n"
+        banner += mum_rapor(status.get("mum_ozeti"))
         (output / "RAPOR.md").write_text("# CT-Kapı v1.1\n\n" + banner + funnel_report(table, evren.get(date))
                                          + "\n\n" + freeze_report(table) + "\n\n## Adım 2'yi geçenler (alfa t'ye göre ilk 15)\n\n" + _md(near)
                                          + "\n\nGecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.\n", encoding="utf-8")

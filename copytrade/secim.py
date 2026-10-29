@@ -20,6 +20,7 @@ import pandas as pd
 import yaml
 
 from copytrade.kurallar import load_rules
+from copytrade.yogunlasma import korelasyon_matrisi, kumele, yari_tutarliligi, yogunlasma_ozeti
 
 TARZLAR = ("intraday", "swing")
 KOLLAR = ("oda", "elle", "taban", "kontrol", "aday", "havuz")     # ``kol`` = bu sıradaki ilk (bildirim yalnız ``oda``)
@@ -206,8 +207,25 @@ def elle_liste(path: Path) -> list[str]:
     return [str(r["adres"]).lower() for r in rows or [] if r.get("kol", "elle") == "elle"]
 
 
+def yogunlasma_bilgisi(oda: list[str], havuz_adresleri: list[str], gunluk: pd.DataFrame | None, rules: dict) -> dict[str, Any] | None:
+    """Bilgi bölümü (A14; seçimi değiştirmez): oda üyelerinin günlük kopya getirisinden ikili korelasyon → ortalama bağlantılı kümeleme → küme sayısı,
+    en büyük küme payı, etkin küme sayısı; havuzda puan (yarı toplam net getiri) yarı tutarlılığı (Spearman). Günlük getiri dosyası yoksa ``None``."""
+    if gunluk is None or gunluk.empty:
+        return None
+    members = [a for a in oda if a in gunluk.columns]
+    out: dict[str, Any] = {"oda": None, "puan_tutarliligi": None}
+    if len(members) >= 2:
+        groups = kumele(korelasyon_matrisi(gunluk[members], int(rules["yogunlasma_min_ortak_gun"])), float(rules["yogunlasma_kume_esik"]))
+        out["oda"] = {"n": len(members), **yogunlasma_ozeti(groups)}
+    pool = [a for a in havuz_adresleri if a in gunluk.columns]
+    if len(pool) >= 2:
+        half = yari_tutarliligi(gunluk[pool], lambda frame: frame.sum())
+        out["puan_tutarliligi"] = {"n": half["n"], "rho": half["rho"]}
+    return out
+
+
 def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manual: list[str], rules: dict | None = None,
-        bayrak_fn=None, kapi_tarihi: str | None = None) -> dict[str, Any]:
+        bayrak_fn=None, kapi_tarihi: str | None = None, gunluk: pd.DataFrame | None = None) -> dict[str, Any]:
     """``bayrak_fn(adres, hesap_degeri) -> {bayrak_*: …}``: yalnız aday katı için çağrılır; bilgi sütunudur, seçimi değiştirmez.
     Komut satırı bayrakları seçimde değil ayrı işte hesaplar (``bayrak_hesapla``); ``kapi_tarihi`` yoksa ``date``."""
     rules = rules or load_rules()
@@ -276,6 +294,7 @@ def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manu
                         "kontrol": len(control), "ikincil_kontrol": len(kontrol_sonuc["ikincil"]), "taban": len(base), "elle": len(manual), "tarz": counts},
             "oda_kisa": room["kisa"], "oda_kota": room["kota"],
             "kontrol": kontrol_sonuc["kontrol"], "eslesme": kontrol_sonuc["eslesme"], "eslesmeyen": kontrol_sonuc["eslesmeyen"],
+            "yogunlasma": yogunlasma_bilgisi([r["address"] for r in oda], [r["address"] for r in pool], gunluk, rules),
             "ikincil_kontrol": kontrol_sonuc["ikincil"], "dilim_esigi": esik, "dilim_tablosu": dict(sorted(dilim_tablosu.items())),
             "adresler": entries}
 
@@ -319,6 +338,19 @@ def bayrak_raporu(result: dict[str, Any], body: dict[str, Any]) -> str:
     return "\n".join(head + bayrak_tablosu(items)) + "\n"
 
 
+def yogunlasma_rapor(info: dict[str, Any] | None) -> list[str]:
+    if info is None:
+        return ["Günlük getiri dosyası yok (`gunluk.csv.gz`: kapı koşusu yayımlamadı); bu bölüm hesaplanamadı. Seçimi değiştirmez."]
+    lines = ["Seçimi değiştirmez, kimseyi elemez (günlük kopya net getirisi, gecikmesiz defter; ikili korelasyon ≥ `yogunlasma_kume_esik` ortalama bağlantılı kümeleme)."]
+    oda = info.get("oda")
+    lines.append("- Oda: " + (f"{oda['n']} üye → küme sayısı {oda['kume_sayisi']} · en büyük küme payı {oda['en_buyuk_kume_payi']:.2f} · etkin küme sayısı {oda['etkin_kume_sayisi']:.2f}"
+                              if oda else "korelasyon için yeterli günlük getirisi olan oda üyesi yok (< 2)"))
+    half = info.get("puan_tutarliligi")
+    lines.append("- Puan yarı tutarlılığı (havuz, ilk/son yarı toplam net getirinin Spearman sırası): " +
+                 (f"n = {half['n']} · ρ = {_fmt(half['rho'])}" if half else "hesaplanamadı (havuzda < 2 adresin günlük getirisi var)"))
+    return lines
+
+
 def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) -> str:
     n = result["sayilar"]
     lines = [f"# Seçim {result['secim_surumu']} — {result['tarih']} (kapı tarihi {result['kapi_tarihi']})", "",
@@ -344,6 +376,7 @@ def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) ->
     dropped = [(a, e["iliskili_not"]) for a, e in sorted(result["adresler"].items()) if e["iliskili_not"].startswith("ilişkili hesap")]
     if dropped:
         lines += ["", "## İlişkili hesap nedeniyle odaya girmeyenler", ""] + [f"- `{a}`: {note}" for a, note in dropped]
+    lines += ["", "## Oda yoğunlaşması ve puan tutarlılığı (bilgi)", ""] + yogunlasma_rapor(result.get("yogunlasma"))
     lines += ["", "## Oda ↔ kontrol dilim dağılımı", "",
               f"Dilim = tarz × en yüksek kaldıraç (havuz medyanı {_fmt(result['dilim_esigi'], 2)}; alt = medyan ve altı). Kontrol odayla ayrıktır.", "",
               "| dilim | havuz | oda | kontrol |", "|---|---|---|---|"]
@@ -501,7 +534,9 @@ def main(argv: list[str] | None = None) -> None:
     else:
         from copytrade.tarama import PublicClient
         board = PublicClient().leaderboard()
-    result = sec(table, date, board, elle_liste(list_path), rules, None, kapi_tarihi)
+    daily_path = path.parent / "gunluk.csv.gz"
+    gunluk = pd.read_csv(daily_path, index_col=0, parse_dates=True) if daily_path.exists() else None
+    result = sec(table, date, board, elle_liste(list_path), rules, None, kapi_tarihi, gunluk)
     out.mkdir(parents=True, exist_ok=True)
     (out / "secim.json").write_text(json.dumps(result, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")
     (out / "RAPOR.md").write_text(rapor(result, table, durum), encoding="utf-8")
