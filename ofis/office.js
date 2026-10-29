@@ -34,11 +34,13 @@
     srcOfRoom(room).forEach(o => { const i = Off.srcInfo(o); if (!i) return; if (!w || (i.stale && !w.stale) || (i.stale === w.stale && i.dk > w.dk)) w = i; });
     return w;
   };
+  /* henüz verisi olmayan oda (oda_durum[oda].gri): "paper izleme başlamadı" metni ya da null. Oda gri çizilir, sahte sayı gösterilmez. */
+  Off.gri = room => { const d = st && st.data.oda_durum && st.data.oda_durum[room]; return d && d.gri ? (d.metin || 'veri yok') : null; };
   Off.screenAge = id => { const p = (st.data.ekran_kaynak || {})[id]; return p ? Off.srcInfo(srcObj(p)) : null; };
   Off.srcObj = srcObj;
   function updateStale() {
     let ch = false;
-    Object.keys(st.data.oda_kaynak || {}).forEach(r => { const i = Off.ageInfo(r), v = !!(i && i.stale); if (!!st.stale[r] !== v) { st.stale[r] = v; ch = true; } });
+    Object.keys(st.data.oda_kaynak || {}).concat(Object.keys(st.data.oda_durum || {})).forEach(r => { const i = Off.ageInfo(r), v = !!(i && i.stale) || !!Off.gri(r); if (!!st.stale[r] !== v) { st.stale[r] = v; ch = true; } });
     if (ch) emit();
   }
   Off.onEvent = f => evHooks.push(f);
@@ -549,11 +551,14 @@
   Off.roomInfo = function (id) {
     const r = W.roomById[id]; if (!r || !st) return null;
     const k = st.katlar, lines = [];
-    const stale = !!st.stale[id];
+    const stale = !!st.stale[id] && !Off.gri(id);
+    const g = Off.gri(id), say = (st.data.oda_sayilar || {})[id];
+    if (g) return { ad: r.ad, lines: [g + '.'], stale: false, gri: true };
+    if (say && say.length) return { ad: r.ad, lines: [say.map(x => x[0] + ': ' + (x[1] == null ? 'bilinmiyor' : typeof x[1] === 'number' ? x[1].toLocaleString('tr-TR') : x[1])).join(' · ') + '.'], stale: stale };
     switch (id) {
       case 'lab': lines.push('Havuz gölgede izleniyor: n=' + k.havuz.n + ' adres; ' + k.havuz.masa + ' masa görünür.'); break;
       case 'aday': lines.push('Aday katı: n=' + k.aday.n + ' (' + k.aday.masa + ' masa görünür).'); break;
-      case 'oda': lines.push('Oda: ' + k.oda.n + '/' + k.oda.kapasite + ' trader; açık gölge işlemi ' + st.acik.length + '.'); break;
+      case 'oda': lines.push('Oda: ' + (k.oda.kapasite == null ? 'n=' + k.oda.n : k.oda.n + '/' + k.oda.kapasite) + ' trader' + (st.data.oda_durum ? '' : '; açık gölge işlemi ' + st.acik.length) + '.'); break;
       case 'kontrol': lines.push('Kontrol: aynı havuzdan rastgele N=' + (st.kk.kollar[1] || {}).n + ' adres (sabit tohum).'); break;
       case 'risk': lines.push('Risk tavanları: ' + st.risk.tavanlar.map(x => x.ad + ' %' + Math.round(x.kullanim / x.tavan * 100)).join(' · ')); break;
       case 'finans': lines.push('Sanal kasa değeri ve eğrisi kilitli (hafta ' + st.kk.hafta + '/' + st.kk.hafta_toplam + ').'); break;

@@ -122,6 +122,19 @@
 
   /* ---------- sahne ---------- */
   lo.width = W.CW; lo.height = W.CH;
+  let grassCache = null;
+  function grassColor() {                 // avlu zemininin ortalama çim rengi (su ve yol pikselleri atlanır): gizli odanın örtüsü çevreye uysun
+    if (grassCache) return grassCache;
+    const r = W.roomById.bahce, p = W.roomPoly(r), g = W.ground.getContext('2d');
+    let R = 0, G = 0, B = 0, n = 0;
+    for (let i = 1; i < 12; i++) for (let j = 1; j < 6; j++) {
+      const u = i / 12, v = j / 6, x = Math.round(p[0][0] + (p[1][0] - p[0][0]) * u + (p[3][0] - p[0][0]) * v), y = Math.round(p[0][1] + (p[1][1] - p[0][1]) * u + (p[3][1] - p[0][1]) * v);
+      const d = g.getImageData(x, y, 1, 1).data;
+      if (d[3] > 200 && d[1] > d[0] + 25 && d[1] > d[2] + 30) { R += d[0]; G += d[1]; B += d[2]; n++; }
+    }
+    grassCache = n ? 'rgb(' + Math.round(R / n) + ',' + Math.round(G / n) + ',' + Math.round(B / n) + ')' : 'rgb(94,156,70)';
+    return grassCache;
+  }
   function drawScene(now) {
     const ctx = lc;
     ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; ctx.imageSmoothingEnabled = false;
@@ -139,8 +152,16 @@
       ctx.drawImage(e.s.c, Math.round(e.px - e.s.ax), Math.round(e.py - e.s.ay));
     }
     while (j < dyn.length) { dyn[j].draw(ctx); j++; }
-    // bayat odalar: renksiz
     const s = Off.state();
+    // gizli oda (kontrol kolu): ofiste ayrı yer olarak görünmez; zemin ve mobilya avlu çimiyle örtülür (yalnız sayısı panelde yazar)
+    W.ROOMS.forEach(r => {
+      if (!r.gizli) return;
+      const p = W.roomPoly(r), up = 46;
+      ctx.save(); ctx.beginPath();
+      ctx.moveTo(p[0][0], p[0][1] - up); ctx.lineTo(p[1][0], p[1][1] - up); ctx.lineTo(p[1][0], p[1][1]); ctx.lineTo(p[2][0], p[2][1]); ctx.lineTo(p[3][0], p[3][1]); ctx.lineTo(p[3][0], p[3][1] - up); ctx.closePath();
+      ctx.fillStyle = grassColor(); ctx.fill(); ctx.restore();
+    });
+    // bayat odalar: renksiz
     Object.keys(s.stale).forEach(id => {
       if (!s.stale[id]) return;
       const r = W.roomById[id], p = W.roomPoly(r), up = 46;
@@ -245,11 +266,12 @@
     drawAgeChips();
     if (showSigns) {
       W.ROOMS.forEach(r => {
+        if (r.gizli) return;
         const p = W.sign(r), v = toView(p.x, p.y);
         if (v.x < -90 || v.y < -40 || v.x > view.w + 90 || v.y > view.h + 40) return;
-        const stale = s.stale[r.id], sel = s.sel === r.id || hoverRoom === r.id, acc = lighten(r.ac, 0.32);
+        const gri = Off.gri(r.id), stale = s.stale[r.id] && !gri, sel = s.sel === r.id || hoverRoom === r.id, acc = lighten(r.ac, 0.32);
         cx.globalAlpha = mode.room && r.id !== mode.room ? 1 - 0.68 * roomT : 1;
-        plate(v.x, v.y, Names.room(r.id, r.ad) + (stale ? ' · VERİ ESKİ' : ''), { size: fs, pad: fs < 9 ? 3 : 4, stripe: fs < 9 ? 3 : 4, bg: 'rgba(12,22,28,' + (sel ? '0.97' : '0.88') + ')', fg: stale ? '#ffd98a' : '#eaf4f5', accent: stale ? '#f2b035' : acc, edge: sel ? 'rgba(255,255,255,.9)' : 'rgba(210,235,238,.28)', glow: sel ? acc : null, hatch: !!stale });
+        plate(v.x, v.y, Names.room(r.id, r.ad) + (stale ? ' · VERİ ESKİ' : ''), { size: fs, pad: fs < 9 ? 3 : 4, stripe: fs < 9 ? 3 : 4, bg: 'rgba(12,22,28,' + (sel ? '0.97' : '0.88') + ')', fg: stale ? '#ffd98a' : gri ? '#aab5b8' : '#eaf4f5', accent: stale ? '#f2b035' : gri ? '#6d777b' : acc, edge: sel ? 'rgba(255,255,255,.9)' : 'rgba(210,235,238,.28)', glow: sel ? acc : null, hatch: !!stale });
         cx.globalAlpha = 1;
       });
     }
@@ -259,6 +281,14 @@
     const z = cam.z, s = Off.state(), fs = Math.max(6.5, Math.min(11, 5.6 + z * 2.4));
     W.ROOMS.forEach(r => {
       if (r.out) return;
+      const g = Off.gri(r.id);
+      if (g) {                                         // henüz verisi olmayan oda: gri, sahte sayı yok
+        const p0 = W.roomPoly(r), v0 = toView(p0[3][0] + 6, p0[3][1] - 4);
+        if (v0.x < -80 || v0.y < -30 || v0.x > view.w + 80 || v0.y > view.h + 30) return;
+        cx.globalAlpha = mode.room && r.id !== mode.room ? 1 - 0.6 * roomT : 1;
+        plate(v0.x + 56, v0.y - 8, g, { size: fs - 0.5, pad: 2, stripe: 2, bg: 'rgba(38,44,48,.88)', fg: '#c3ccd0', accent: '#6d777b', edge: 'rgba(0,0,0,0)' });
+        cx.globalAlpha = 1; return;
+      }
       const inf = Off.ageInfo(r.id); if (!inf) return;
       if (!inf.stale && z < 1.15) return;
       const p = W.roomPoly(r), v = toView(p[3][0] + 6, p[3][1] - 4);
@@ -286,7 +316,7 @@
       if (!showAll && !hov) return;
       const v = toView(l.x, l.y);
       if (v.x < -40 || v.y < -20 || v.x > view.w + 40 || v.y > view.h + 20) return;
-      const t = l.t || {}, al = Names.trader(l.a.id), short = al || (hov || z >= 2.0 ? (t.adres || l.a.id) : '…' + String(t.adres || l.a.id).slice(-4));
+      const t = l.t || {}, al = Names.trader(l.a.id), short = al || (hov || z >= 2.0 ? (t.adres || l.a.id) : t.takma_ad || '…' + String(t.adres || l.a.id).slice(-4));
       cx.globalAlpha = mode.room && l.a.kat !== mode.room ? 1 - 0.6 * roomT : 1;
       plate(v.x + 4, v.y, short, { size: fs2, pad: 2, stripe: 2, bg: 'rgba(12,22,28,' + (hov ? '0.96' : '0.72') + ')', fg: hov ? '#ffd9a3' : '#eaf4f5', accent: KOLC[t.kol] || '#b7c4c9', edge: hov ? 'rgba(255,217,163,.8)' : 'rgba(0,0,0,0)' });
       cx.globalAlpha = 1;
@@ -622,14 +652,19 @@
   }
   async function boot() {
     if (qs.get('saat')) { const m = /^(\d{1,2}):(\d{2})$/.exec(qs.get('saat')); if (m) { const d = new Date(); d.setHours(+m[1], +m[2], 0, 0); Off.timeOffsetMs = d.getTime() - Date.now(); } }
-    const url = qs.get('durum') || 'ornek_durum.json';
+    const durumPar = qs.get('durum');
     let data;
-    try { data = await getJSON(url, true); if (data.surum !== 1) throw new Error('desteklenmeyen şema sürümü: ' + data.surum); }
+    try {
+      if (!durumPar) data = await O.Gercek.yukle((u, o) => fetch(u, o));            // varsayılan: veri dalındaki gerçek seçim + kapı durumu
+      else data = await getJSON(durumPar === 'ornek' ? 'ornek_durum.json' : durumPar, true);   // ?durum=ornek → örnek veri; ?durum=URL → başka dosya
+      if (data.surum !== 1) throw new Error('desteklenmeyen şema sürümü: ' + data.surum);
+    }
     catch (err) { $('#hata').hidden = false; $('#hata').textContent = 'Veri okunamadı (' + err.message + '). Sahte veri gösterilmiyor.'; return; }
     const kadro = await getJSON('kadro.json'), replik = await getJSON('replikler.json');
     if (!kadro || !replik) { $('#hata').hidden = false; $('#hata').textContent = 'kadro.json ya da replikler.json okunamadı; varsayılan adlar ve replikler kullanılamıyor (veri etkilenmez).'; }
     Names.init(kadro || { odalar: {}, calisanlar: {}, nesneler: {} });
     W.build();
+    Object.keys(data.oda_durum || {}).forEach(id => { if (data.oda_durum[id].gizli && W.roomById[id]) { W.roomById[id].out = true; W.roomById[id].gizli = true; } });   // gizli oda: etkileşim, etiket ve ışık dışı; yalnız sayısı panelde
     Off.init(data, { reduced: reduced, speed: parseFloat(qs.get('hiz')) || 1 });
     window.OFIS.data = data;
     updateLight(); resize();

@@ -295,3 +295,7 @@ dialog#ayarlar::backdrop { background: rgba(0, 0, 0, .62); }
   .bilgi, .cekmece { top: 40px; }
 }
 @media (max-width: 899px) { .gun-serit, .kart-panel { display: none !important; } }
+.serit.uyari { background: repeating-linear-gradient(135deg, #ffd27a 0 8px, #f5bd55 8px 16px); }
+.gri-not { color: #9aa7ab; font-style: italic; }
+.serit[hidden], .lejant [hidden] { display: none; }
+.ray [hidden] { display: none !important; }

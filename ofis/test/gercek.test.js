@@ -1,0 +1,69 @@
+/* Gerçek veri uyarlayıcı testleri:  node ofis/test/gercek.test.js   (ağ yok; elle hesaplanmış altın değerler) */
+'use strict';
+const G = require('../gercek.js'), F = require('./fixture.js');
+let bad = 0;
+const ok = (n, c, x) => { if (!c) bad++; console.log((c ? 'OK   ' : 'FAIL ') + n + (x !== undefined && x !== '' ? ' → ' + x : '')); };
+const SIMDI = new Date('2026-10-29T12:00:00Z');
+
+/* ağaç: tek API çağrısı; en son seçim klasörü adla sıralanır ("<tarih>-v1.3" aynı günkü "<tarih>"ten sonra gelir) */
+const son = G.enSon(F.agac(['2026-10-27', '2026-10-28', '2026-10-28-v1.3'], ['2026-10-27', '2026-10-28']));
+ok('en son seçim klasörü: 2026-10-28-v1.3', son.secim === '2026-10-28-v1.3', son.secim);
+ok('kapı tarihleri sıralı', son.durumlar.join() === '2026-10-27,2026-10-28');
+ok('seçim yoksa null', G.enSon(F.agac([], ['2026-10-28'])).secim === null);
+ok('kapı tarihi: secim.json kapi_tarihi varsa o', G.kapiTarihi({ kapi_tarihi: '2026-10-27', tarih: '2026-10-28' }, son.durumlar) === '2026-10-27');
+ok('kapı tarihi: yoksa seçim tarihinden önceki/aynı en son', G.kapiTarihi({ tarih: '2026-10-28' }, ['2026-10-27', '2026-10-28', '2026-10-30']) === '2026-10-28');
+
+const d = G.cevir(F.secim('2026-10-28', null), F.durum, { simdi: SIMDI, kapiTarihi: '2026-10-28' });
+const ids = k => d.traderlar.filter(t => t.kat === k).map(t => t.id);
+ok('şema sürümü 1, kaynak ornek değil', d.surum === 1 && !/^ornek/.test(d.kaynak), d.kaynak);
+ok('uretildi = verilen şimdi (veri yaşları gerçek saate göre)', d.uretildi === '2026-10-29T12:00:00.000Z');
+ok('oda: 6 gerçek trader (O01..O06), sıra: aday sırası sonra tarz', ids('oda').join() === 'O01,O02,O03,O04,O05,O06');
+ok('aday: yalnız odada olmayan 3 aday (A01..A03)', ids('aday').join() === 'A01,A02,A03');
+ok('kontrol, taban, havuz figürü yok', d.traderlar.length === 9 && !d.traderlar.some(t => ['kontrol', 'lab'].includes(t.kat)));
+const o1 = d.traderlar[0];
+ok('takma ad = adresin ilk 4 hanesi, tarz, kaldırıcı, sıra', o1.takma_ad === 'a01a' && o1.tarz === 'intraday' && o1.en_yuksek_kaldirac === 3 && o1.sira === 1, JSON.stringify(o1));
+ok('kısa adres 0x…son4', /^0x[0-9a-f]{4}…[0-9a-f]{4}$/.test(o1.adres), o1.adres);
+ok('genç aday işareti taşınır', d.traderlar.find(t => t.id === 'O06').genc_aday === true && o1.genc_aday === false);
+/* körlük: puan, kâr/zarar, kol karşılaştırması taşınmaz */
+const metin = JSON.stringify(d);
+ok('körlük: hiçbir trader puan taşımaz', d.traderlar.every(t => !('puan' in t)));
+ok('körlük: kasa/özet/işlem/olay boş, K/Z yok', d.kasa.deger_usd === null && d.ozet.bugun_kz_usd === null && d.acik_islemler.length === 0 && d.kapananlar.length === 0 && d.olaylar.length === 0 && d.gecmis_olaylar.length === 0);
+ok('körlük: seçimdeki puan değeri (0.123456) hiçbir yerde yok', !/0\.123456|0\.9[0-9]?\b/.test(metin.replace(/"tohum":\d+/, '')));
+ok('körlük: performans kilitli', d.kohort_kontrol.performans_kilitli === true && d.tarama.puanlar.length === 0);
+/* sayılar */
+ok('katlar: havuz 30 · aday 9 · oda 6 · kontrol sayısı 5', d.katlar.havuz.n === 30 && d.katlar.aday.n === 9 && d.katlar.oda.n === 6 && d.katlar.kontrol.n === 5);
+ok('masa: lab 0, aday 3, oda 6, kontrol 0', d.katlar.havuz.masa === 0 && d.katlar.aday.masa === 3 && d.katlar.oda.masa === 6 && d.katlar.kontrol.masa === 0);
+ok('tarama odası: evren, işlenen, kapsam, hesap sürümü', JSON.stringify(d.oda_sayilar.tarama) === JSON.stringify([['Evren', 13710], ['İşlenen', 13767], ['Kapsam', '%100'], ['Hesap sürümü', 'v1.1-2026-10-27d']]), JSON.stringify(d.oda_sayilar.tarama));
+ok('kapı odası: havuz, aday, oda', JSON.stringify(d.oda_sayilar.kapi) === JSON.stringify([['Havuz', 30], ['Aday', 9], ['Oda', 6]]));
+ok('kontrol kolu: yalnız sayı, kohort kartında (n=5)', d.kohort_kontrol.kollar.some(k => /Kontrol/.test(k.ad) && k.n === 5) && d.oda_durum.kontrol.gizli === true);
+ok('finans, risk, lab gri: "paper izleme başlamadı"', ['lab', 'finans', 'risk'].every(r => d.oda_durum[r].gri && d.oda_durum[r].metin === 'paper izleme başlamadı'));
+ok('tarama veri kalitesi satırı durum.json sayılarını taşır', d.veri_kalitesi[0].deger === 'evren 13.710 · işlenen 13.767 · kapsam %100', d.veri_kalitesi[0].deger);
+ok('verisi olmayan kalite satırları "bilinmiyor", sıfır değil', d.veri_kalitesi.slice(1).every(v => v.durum === 'bilinmiyor' && v.deger === null && v.zaman === null));
+ok('seçim sürümü v1 (secim.json sürüm vermiyorsa), tarih', d.secim.surum === 'v1' && d.secim.tarih === '2026-10-28' && d.secim.onaylandi === false);
+const d13 = G.cevir(F.secim('2026-10-28', 'v1.3'), null, { simdi: SIMDI });
+ok('v1.3: sürüm etiketi; kapı durumu yoksa tarama satırı bilinmiyor', d13.secim.surum === 'v1.3' && d13.veri_kalitesi[0].durum === 'bilinmiyor' && d13.oda_sayilar.tarama.length === 0);
+
+/* canlı yol sözleşmesi: tek ağaç çağrısı + iki ham dosya, doğru adreslerle */
+(async () => {
+  const istek = [];
+  const sahteFetch = async (url) => {
+    istek.push(url);
+    const yanit = b => ({ ok: true, status: 200, json: async () => b });
+    if (url === G.AGAC) return yanit(F.agac(['2026-10-28'], ['2026-10-27', '2026-10-28']));
+    if (url === G.HAM + 'secim/2026-10-28/secim.json') return yanit(F.secim('2026-10-28', null));
+    if (url === G.HAM + 'copytrade/kapi/2026-10-28/durum.json') return yanit(F.durum);
+    return { ok: false, status: 404, json: async () => ({}) };
+  };
+  const g = await G.yukle(sahteFetch, { simdi: SIMDI });
+  ok('sözleşme: ağaç adresi git/trees/copytrade-kapi?recursive=1 (kimliksiz tek çağrı)', istek[0] === 'https://api.github.com/repos/sselimgenc-oss/sg-arge/git/trees/copytrade-kapi?recursive=1', istek[0]);
+  ok('sözleşme: ham adresler raw.githubusercontent.com/…/copytrade-kapi/secim/<tarih>/secim.json ve copytrade/kapi/<tarih>/durum.json',
+    istek[1] === 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/secim/2026-10-28/secim.json' && istek[2] === 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/copytrade/kapi/2026-10-28/durum.json', istek.join(' | '));
+  ok('sözleşme: toplam 3 istek (1 API + 2 ham dosya)', istek.length === 3 && g.traderlar.length === 9);
+  let hata = null;
+  try { await G.yukle(async () => ({ ok: false, status: 403, json: async () => ({}) }), { simdi: SIMDI }); } catch (e) { hata = e.message; }
+  ok('API sınırı (403) → açık hata, sessiz örnek yok', /HTTP 403/.test(hata || ''), hata);
+  try { hata = null; await G.yukle(async () => ({ ok: true, status: 200, json: async () => ({ truncated: true, tree: [] }) }), { simdi: SIMDI }); } catch (e) { hata = e.message; }
+  ok('kesilmiş ağaç → açık hata', /truncated/.test(hata || ''), hata);
+  console.log(bad ? '\n' + bad + ' test başarısız' : '\nhepsi geçti');
+  process.exit(bad ? 1 : 0);
+})();

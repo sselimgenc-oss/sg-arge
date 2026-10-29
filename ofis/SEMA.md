@@ -1,7 +1,7 @@
 # Ofis veri şeması (v1, 2026-10-28; sürüm 2 alanları eklendi, `surum` hâlâ 1: yalnız ekleme, geriye dönük uyumlu)
 
 Tek giriş dosyası: `ofis/ornek_durum.json`. Biçim `sg-arge/docs/VERI_SOZLESMESI.md` tarzındadır (`surum`, `uretildi`, `kaynak`).
-İlk sürüm **örnek veriyle** çalışır; D yolu Faz 5'te aynı biçim gerçek `durum.json`'dan (ve gölge defteri çıktısından) üretilir.
+Varsayılan kaynak **gerçek veridir** (§9: `ofis/gercek.js`); örnek veri yalnız `?durum=ornek` ile açılır.
 Sayfa `surum` ≠ 1 ise veriyi reddeder ve "Sahte veri gösterilmiyor" der (sessizce örnek göstermez).
 
 ## 1. Kurallar
@@ -80,7 +80,7 @@ için akış döngü içinde tutarlıdır). Gerçek veride akış yeniden oynat�
 Eksik kaynak → alan `null` → ekranda "bilinmiyor"; sayfa hiçbir zaman eksiği sıfırla doldurmaz.
 
 ## 6. Adres parametreleri (denemek için)
-`?durum=URL` başka veri dosyası · `?saat=SS:DD` gün ışığı · `?hiz=2` örnek akış hızı · `?etiket=0` trader etiketlerini gizler ·
+`?durum=ornek` örnek veri (örnek şeridiyle) · `?durum=URL` başka veri dosyası · `?saat=SS:DD` gün ışığı · `?hiz=2` örnek akış hızı · `?etiket=0` trader etiketlerini gizler ·
 `?hareket=0` hareketi kapatır (`prefers-reduced-motion` açıkken zaten kapalıdır) · `?oda=lab` açılışta odaya yaklaşır · `?perf=1` kare süresi · `#oda/<id>` adresi odanın iç görünümünü açar (`?oda=lab` aynısına çevrilir).
 
 ## 7. Kadro ve replikler (sürüm 2)
@@ -97,3 +97,23 @@ Eksik kaynak → alan `null` → ekranda "bilinmiyor"; sayfa hiçbir zaman eksi�
 - `gecmis_olaylar[]`: `{id, zaman, tur, oda, trader?, metin, kural?}`; olay çekmecesi ve günlük özet bunu kullanır.
 - Olaylarda `kural` zorunludur ve metin olaydan okunur; trader `kat_olay` kaydı terfi/kat düşürme olayında olaydan güncellenir.
 - `kadro.json`: `olay_turleri[tur] = {ad, ton}`, `ozet_gruplari`, yeni nesneler (`risk.alarm`, `haberlesme.zarf_rafi`, `sekreterlik.onkayit_kasasi`, `oda.masa`).
+
+## 9. Gerçek veri uyarlayıcı (`ofis/gercek.js`)
+Kaynak (varsayılan; `?durum` yoksa): `sg-arge` veri dalı `copytrade-kapi`.
+- Ağaç: `https://api.github.com/repos/sselimgenc-oss/sg-arge/git/trees/copytrade-kapi?recursive=1` (tek kimliksiz çağrı; `truncated` ise açık hata).
+- En son seçim: `secim/<klasör>/secim.json` yolları klasör adına göre sıralanır (`<tarih>-v1.3`, aynı günkü `<tarih>`'ten sonra gelir).
+- Kapı durumu: `secim.json`'da `kapi_tarihi` varsa o gün (v1.3), yoksa seçim tarihinden önceki/aynı en son `copytrade/kapi/<tarih>/durum.json`.
+- Ham dosyalar `https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/<yol>`.
+- Öneri (yayıncı): veri dalı köküne `son.json` `{"secim": "<klasör>", "kapi": "<tarih>"}` yazılırsa ağaç çağrısı gerekmez.
+
+| Ofis alanı | Kaynak |
+|---|---|
+| `traderlar` (kat `oda`, `aday`) | `secim.json` `adresler`: `oda` kolundakiler → Oda (`O01…`); `aday` kolunda olup odada olmayanlar → Aday (`A01…`). Sıra: aday sırası, tarz, adres. Alanlar: `takma_ad` (adresin ilk 4 hanesi), `tarz`, `sira`, `medyan_kaldirac`, `en_yuksek_kaldirac`, `gun`, `genc_aday`. **`puan` taşınmaz.** |
+| `katlar.*.n` | `secim.json` `sayilar` (havuz, aday, oda, kontrol); `masa` = çizilen figür sayısı (Lab 0, Kontrol 0) |
+| `oda_sayilar.tarama` | `durum.json`: evren, işlenen, kapsam, hesap sürümü |
+| `oda_sayilar.kapi` | `secim.json` `sayilar`: havuz, aday, oda |
+| `kohort_kontrol.kollar` | oda, kontrol, taban, elle sayıları (kontrol kolu ofiste **yalnız burada** sayı olarak görünür) |
+| `secim` | `{surum, tarih, kapi_tarihi, onaylandi:false}`; üst şerit: "Seçim <sürüm> — ön izleme, onaylanmadı (<tarih>)" |
+
+Yeni alanlar (yalnız ekleme, `surum` hâlâ 1): `oda_durum: {oda: {gri, metin} | {gizli}}` — `gri` oda gri çizilir, köşede metin ("paper izleme başlamadı") yazar, bilgi kutusu aynı metni söyler, sol panel kartı sayı yerine bu metni gösterir; `gizli` oda (kontrol) ofiste çizilmez, tıklanamaz, sol menüde yoktur. `oda_sayilar: {oda: [[ad, değer], …]}` oda bilgisi satırı. `secim`.
+Gerçek veride: **kasa, özet, risk, telegram, açık/kapanan işlem, olaylar boştur**; Lab, Finans, Risk gri; "örnek" rozetleri yoktur. Körlük: kâr/zarar, kol karşılaştırması, puan hiçbir yerde yer almaz.

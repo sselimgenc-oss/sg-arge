@@ -94,10 +94,15 @@
     const u = ago(st.data.uretildi), tr = st.acik.filter(x => x.trader === t.id), list = [];
     list.push(row('Kat', esc(KATAD[(st.actorById[t.id] || {}).kat] || KATAD[t.kat] || '—'), 'veri ' + u));
     list.push(row('Kol', esc(t.kol || 'bilinmiyor')), row('Tarz', esc(t.tarz || 'bilinmiyor')));
-    list.push(row('Gün', t.gun == null ? null : 'n=' + t.gun), row('İşlem', t.islem_n == null ? null : 'n=' + t.islem_n), row('Gölge puanı (bilgi)', t.puan == null ? null : String(t.puan).replace('.', ',')));
+    if (O.Panel.ornekMi()) list.push(row('Gün', t.gun == null ? null : 'n=' + t.gun), row('İşlem', t.islem_n == null ? null : 'n=' + t.islem_n), row('Gölge puanı (bilgi)', t.puan == null ? null : String(t.puan).replace('.', ',')));
+    else {                                                  // gerçek veri: körlük — puan, kâr/zarar yok; yalnız kat, sıra, tarz, kaldıraç
+      list.push(row('Aday sırası', t.sira == null ? null : '#' + t.sira + ' (tarz içinde)'), row('Geçmiş', t.gun == null ? null : 'n=' + t.gun + ' gün'));
+      list.push(row('Medyan kaldıraç', t.medyan_kaldirac == null ? null : String(Math.round(t.medyan_kaldirac * 10) / 10).replace('.', ',') + 'x'), row('En yüksek kaldıraç', t.en_yuksek_kaldirac == null ? null : String(Math.round(t.en_yuksek_kaldirac * 10) / 10).replace('.', ',') + 'x'));
+      if (t.genc_aday) list.push(row('Not', 'genç aday (geçmişi kısa)'));
+    }
     if (t.bayrak) list.push(row('Kırmızı bayrak', esc(t.bayrak.neden), 'Denetim notu'));
     if (tr.length) tr.forEach(x => list.push(row(x.coin + ' ' + (x.yon === 'long' ? 'LONG' : 'SHORT') + ' ' + x.kaldirac + 'x', usd(x.kz_usd) + ' (' + pct(x.kz_yuzde) + ')', 'lik. uzaklık %' + String(x.lik_uzaklik).replace('.', ',') + ' · açık işlem')));
-    else list.push(row('Açık gölge işlem', 'yok'));
+    else list.push(row('Açık gölge işlem', O.Panel.ornekMi() ? 'yok' : 'paper izleme başlamadı'));
     return list;
   }
   function objRows(id, st) {
@@ -126,7 +131,7 @@
     }
   }
 
-  const eskiRow = room => { const i = room ? Off.ageInfo(room) : null; if (!i) return ''; return row('Veri yaşı', (i.stale ? '<span class="eski-etiket">VERİ ESKİ</span> ' : '') + O.Panel.ageTxt(i), i.esik != null ? 'eşik ' + O.Panel.dkTxt(i.esik) + ' (veri kaynağına göre)' : ''); };
+  const eskiRow = room => { if (room && Off.gri(room)) return row('Durum', Off.gri(room)); const i = room ? Off.ageInfo(room) : null; if (!i) return ''; return row('Veri yaşı', (i.stale ? '<span class="eski-etiket">VERİ ESKİ</span> ' : '') + O.Panel.ageTxt(i), i.esik != null ? 'eşik ' + O.Panel.dkTxt(i.esik) + ' (veri kaynağına göre)' : ''); };
   /* ---------- seçime göre içerik ---------- */
   function build(sel, st) {
     const kad = Names.kadro();
@@ -143,9 +148,9 @@
       } else {
         const t = st.traders[a.id] || {}, al = Names.trader(a.id);
         title = al || t.adres || a.id; sub = 'trader · ' + (KATAD[a.kat] || '—'); edit = { kind: 'trader', id: a.id, cur: al, ph: t.adres || a.id };
-        kimlik = rows([row('Ad', esc(title)), row('Gerçek adres', '<code>' + esc(t.adres || a.id) + '</code> <span class="ornek">örnek</span>', 'kısaltılmış; takma ad değişse de sabit')]);
+        kimlik = rows([row('Ad', esc(title)), row('Gerçek adres', '<code>' + esc(t.adres || a.id) + '</code>' + (O.Panel.ornekMi() ? ' <span class="ornek">örnek</span>' : ''), 'kısaltılmış; takma ad değişse de sabit')]);
         const r = rec[a.id];
-        veri = rows(traderRows(Object.assign({ id: a.id }, t), st)) + (r ? whyFromEv(r) : t.kat_olay ? why({ id: t.kat_olay.id, kural: t.kat_olay.kural, tarih: fmtDate(new Date(t.kat_olay.zaman)) }) : whyStatic('başlangıç durumu (örnek veri)'));
+        veri = rows(traderRows(Object.assign({ id: a.id }, t), st)) + (r ? whyFromEv(r) : t.kat_olay ? why({ id: t.kat_olay.id, kural: t.kat_olay.kural, tarih: fmtDate(new Date(t.kat_olay.zaman)) }) : whyStatic(O.Panel.ornekMi() ? 'başlangıç durumu (örnek veri)' : 'başlangıç durumu (veri dalındaki seçim)'));
         replik = replikHTML(veriReplik('trader', r, st), susReplik('trader', 'p:' + a.id));
       }
     } else if (sel.type === 'obje') {
