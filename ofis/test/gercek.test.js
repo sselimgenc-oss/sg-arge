@@ -48,6 +48,7 @@ ok('v1.3: sürüm etiketi; kapı durumu yoksa tarama satırı bilinmiyor', d13.s
   const istek = [];
   const sahteFetch = async (url) => {
     istek.push(url);
+    if (url === G.HAM + 'son.json') return { ok: false, status: 404, json: async () => ({}) };      // işaretçi yok → ağaç yoluna düşer
     const yanit = b => ({ ok: true, status: 200, json: async () => b });
     if (url === G.AGAC) return yanit(F.agac(['2026-10-28'], ['2026-10-27', '2026-10-28']));
     if (url === G.HAM + 'secim/2026-10-28/secim.json') return yanit(F.secim('2026-10-28', null));
@@ -55,10 +56,21 @@ ok('v1.3: sürüm etiketi; kapı durumu yoksa tarama satırı bilinmiyor', d13.s
     return { ok: false, status: 404, json: async () => ({}) };
   };
   const g = await G.yukle(sahteFetch, { simdi: SIMDI });
-  ok('sözleşme: ağaç adresi git/trees/copytrade-kapi?recursive=1 (kimliksiz tek çağrı)', istek[0] === 'https://api.github.com/repos/sselimgenc-oss/sg-arge/git/trees/copytrade-kapi?recursive=1', istek[0]);
+  ok('sözleşme: ağaç adresi git/trees/copytrade-kapi?recursive=1 (kimliksiz tek çağrı)', istek[1] === 'https://api.github.com/repos/sselimgenc-oss/sg-arge/git/trees/copytrade-kapi?recursive=1', istek[1]);
   ok('sözleşme: ham adresler raw.githubusercontent.com/…/copytrade-kapi/secim/<tarih>/secim.json ve copytrade/kapi/<tarih>/durum.json',
-    istek[1] === 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/secim/2026-10-28/secim.json' && istek[2] === 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/copytrade/kapi/2026-10-28/durum.json', istek.join(' | '));
-  ok('sözleşme: toplam 3 istek (1 API + 2 ham dosya)', istek.length === 3 && g.traderlar.length === 9);
+    istek[2] === 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/secim/2026-10-28/secim.json' && istek[3] === 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/copytrade/kapi/2026-10-28/durum.json', istek.join(' | '));
+  ok('sözleşme: son.json yoksa 4 istek (işaretçi 404 + 1 API + 2 ham dosya)', istek.length === 4 && istek[0] === G.HAM + 'son.json' && g.traderlar.length === 9);
+  /* son.json işaretçisi varsa API hiç çağrılmaz */
+  const istek2 = [];
+  const g2 = await G.yukle(async (url) => {
+    istek2.push(url);
+    const yanit = b => ({ ok: true, status: 200, json: async () => b });
+    if (url === G.HAM + 'son.json') return yanit({ kapi: '2026-10-28', secim: '2026-10-28', uretildi: '2026-10-28T06:00:00Z' });
+    if (url === G.HAM + 'secim/2026-10-28/secim.json') return yanit(F.secim('2026-10-28', null));
+    if (url === G.HAM + 'copytrade/kapi/2026-10-28/durum.json') return yanit(F.durum);
+    return { ok: false, status: 404, json: async () => ({}) };
+  }, { simdi: SIMDI });
+  ok('son.json varsa: 3 ham dosya, API çağrısı yok', istek2.length === 3 && !istek2.some(u => /api\.github\.com/.test(u)) && g2.traderlar.length === 9, istek2.join(' | '));
   let hata = null;
   try { await G.yukle(async () => ({ ok: false, status: 403, json: async () => ({}) }), { simdi: SIMDI }); } catch (e) { hata = e.message; }
   ok('API sınırı (403) → açık hata, sessiz örnek yok', /HTTP 403/.test(hata || ''), hata);

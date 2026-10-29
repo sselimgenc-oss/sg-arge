@@ -31,6 +31,7 @@
     const hh = bucket / 6, tint = kf(TINT, hh, false), sk = kf(SKY, hh, true);
     const lum = (tint[0] + tint[1] + tint[2]) / 765, night = Math.max(0, Math.min(1, (0.9 - lum) / 0.35));
     const day = hh >= 7.5 && hh <= 18;
+    Off.gece = night;                                   // gece konturu (figürler) için
     light = { bucket: bucket, h: hh, tint: tint, night: night, sky: { key: 'k' + bucket, top: sk.top, bot: sk.bot, orb: day ? '#fff2a8' : (night > 0.6 ? '#e8ecff' : '#ffd08a') } };
     W.wins.forEach(w => { w.e.s = S.windowGlass(w.side, light.sky); });
     return true;
@@ -95,7 +96,7 @@
   function fit() {
     const r = interest(), narrow = view.w < 700, mx = narrow ? 14 : 30, my = narrow ? 20 : 30;
     const z = Math.min(view.w / (r.x1 - r.x0 + mx * 2), view.h / (r.y1 - r.y0 + my * 2));
-    return { cx: (r.x0 + r.x1) / 2, cy: (r.y0 + r.y1) / 2 + (narrow ? -6 : 24), z: z };
+    return { cx: (r.x0 + r.x1) / 2, cy: (r.y0 + r.y1) / 2 + (narrow ? -6 : 24), z: narrow ? z * 1.12 : z };   // telefonda açılış biraz yakın
   }
   function setCam(c, animate) {
     if (!animate || reduced) { Object.assign(cam, c); target = null; } else target = { cx: c.cx, cy: c.cy, z: c.z, t0: performance.now(), from: { cx: cam.cx, cy: cam.cy, z: cam.z }, dur: 650 };
@@ -264,6 +265,7 @@
     const fs = Math.max(6.5, Math.min(12.5, 5.6 + z * 3.2));
     drawTraderLabels();
     drawAgeChips();
+    drawRozetler();
     if (showSigns) {
       W.ROOMS.forEach(r => {
         if (r.gizli) return;
@@ -275,6 +277,20 @@
         cx.globalAlpha = 1;
       });
     }
+  }
+  /* telefon: dolu masası olan odalarda küçük rozet ("Oda 20"); ad plakası yakınlaşmadan okunmasa da kaç kişinin oturduğu görünür */
+  function drawRozetler() {
+    if (view.w >= 700) return;
+    const s = Off.state(), fs = Math.max(7, Math.min(11, 5.6 + cam.z * 2.4));
+    ['lab', 'aday', 'oda'].forEach(id => {
+      const r = W.roomById[id], n = s.katlar[id === 'lab' ? 'havuz' : id].n, dolu = s.actors.some(a => a.kind === 'trader' && a.kat === id);
+      if (!r || r.out || !dolu || n == null) return;
+      const p = W.sign(r), v = toView(p.x, p.y + 15);
+      if (v.x < -60 || v.y < -20 || v.x > view.w + 60 || v.y > view.h + 20) return;
+      cx.globalAlpha = mode.room && id !== mode.room ? 1 - 0.68 * roomT : 1;
+      plate(v.x, v.y, { lab: 'Lab', aday: 'Aday', oda: 'Oda' }[id] + ' ' + n, { size: fs, pad: 3, stripe: 3, bg: 'rgba(240,196,92,.95)', fg: '#1a1206', accent: '#a8761c', edge: 'rgba(0,0,0,0)' });
+      cx.globalAlpha = 1;
+    });
   }
   /* her oda köşesinde ve duvar ekranında "X dk önce"; eşik aşıldıysa (veride, kaynak başına) açık VERİ ESKİ etiketi */
   function drawAgeChips() {
@@ -687,7 +703,7 @@
     applyMotion();
     applyRoute({ instant: true });
   }
-  window.OFIS.debug = { cam: cam, view: view, toView: toView, toWorld: toWorld, mode: mode, pick: pick, goRoom: goRoom, goBuilding: goBuilding, roomT: () => roomT, loop: () => ({ raf: !!raf, wake: !!wakeT }) };
+  window.OFIS.debug = { interest: interest, cam: cam, view: view, toView: toView, toWorld: toWorld, mode: mode, pick: pick, goRoom: goRoom, goBuilding: goBuilding, roomT: () => roomT, loop: () => ({ raf: !!raf, wake: !!wakeT }) };
   window.OFIS.invalidate = kick;
   window.OFIS.focusRoom = id => goRoom(id);
   boot();

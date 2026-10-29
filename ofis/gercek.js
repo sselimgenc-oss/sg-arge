@@ -91,16 +91,23 @@
     };
   }
 
-  /* ağ: (1) ağaç — tek API çağrısı, (2) secim.json, (3) durum.json (ham dosya). fetchFn: fetch uyumlu. */
+  /* ağ: (0) son.json işaretçisi (varsa yalnız ham dosyalar: API yok), yoksa (1) ağaç — tek API çağrısı; (2) secim.json, (3) durum.json. fetchFn: fetch uyumlu. */
   async function yukle(fetchFn, opt) {
     opt = opt || {};
     const oku = async url => { const r = await fetchFn(url, { cache: 'no-store' }); if (!r.ok) throw new Error(url.replace(/^https:\/\/[^/]+\//, '') + ' → HTTP ' + r.status); return r.json(); };
-    const agac = await oku(AGAC);
-    if (agac.truncated) throw new Error('veri dalı ağacı kesildi (truncated); son.json işaretçisi gerekir');
-    const son = enSon(agac);
-    if (!son.secim) throw new Error('veri dalında secim/<tarih>/secim.json yok');
-    const secim = await oku(HAM + 'secim/' + son.secim + '/secim.json');
-    const kt = kapiTarihi(secim, son.durumlar);
+    let sonJ = null;
+    try { sonJ = await oku(HAM + 'son.json'); } catch (e) { sonJ = null; }                       // yayıncı işaretçisi: API çağrısı gerekmez
+    let secimKlasor, durumlar = [];
+    if (sonJ && sonJ.secim) secimKlasor = sonJ.secim;
+    else {
+      const agac = await oku(AGAC);
+      if (agac.truncated) throw new Error('veri dalı ağacı kesildi (truncated); son.json işaretçisi gerekir');
+      const son = enSon(agac);
+      if (!son.secim) throw new Error('veri dalında secim/<tarih>/secim.json yok');
+      secimKlasor = son.secim; durumlar = son.durumlar;
+    }
+    const secim = await oku(HAM + 'secim/' + secimKlasor + '/secim.json');
+    const kt = sonJ && sonJ.secim ? (secim.kapi_tarihi || sonJ.kapi || null) : kapiTarihi(secim, durumlar);
     const durum = kt ? await oku(HAM + 'copytrade/kapi/' + kt + '/durum.json') : null;
     return cevir(secim, durum, { simdi: opt.simdi, kapiTarihi: kt });
   }
