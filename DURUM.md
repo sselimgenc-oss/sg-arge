@@ -3,6 +3,8 @@
 Son güncelleme: 2026-10-29, lider (Claude).
 
 ## Şu an (2026-10-29): canlı gölge pilotu başladı
+
+**Ön kayıt 1.6 (kullanıcı "evet"):** oda değişikliği gerekçe kodu, 28 günde en çok 2 çıkış, çıkan 56 gün izlenir. Görev: Codex `docs/GOREV_DEGISIM_VE_SAGLIK.md`. Dış görüş özeti: `arastirma/fikir_gorusleri/OZET.md`.
 **Kullanıcı onayı 2026-10-29: Seçim v1.3 odası onaylandı ("onaylıyorum").** Pilot başlangıcı (t0) = 2026-10-29; analiz 12. ve
 24. haftada (ön kayıt madde 6).
 
