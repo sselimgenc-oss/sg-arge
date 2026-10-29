@@ -102,3 +102,11 @@ Görev: `docs/GOREV_D_YOLU.md`.
   - **1.12:** canlı.
 - Faz 3 (madde 12) artık zorunlu değil; zaman kalırsa önbellek + ön eleme ile, önce küçük deneme. Kalıcılık testi öncelikli.
 - `AGENTS.md` "emir yok" kuralı aşama 1–2 boyunca geçerli (bot emir göndermez); gerçek emir yalnız kullanıcının 30.11 onayıyla açılır.
+
+### K‑8. İleriye dönük ölçümle seçim (kullanıcı kararı 2026-10-30: "tamam yapalım")
+- Seçim havuzunun (v1.3, 185) liste dışı üyeleri `havuz` kolunda **sessiz** izlenir (Telegram yok); t0 = ekleme günü. Sıra sha256(adres)
+  (sonuca bakmayan, sabit). İlk adım 30 trader (koşu süresi denemesi), sonra tamamı.
+- 1.12 canlı odası için ileri sanal kopya verisi **eleme** ölçütüdür, sıralama değil (kısa dönem kazananı kovalama tuzağı): kopyada maliyet
+  sonrası zarar etmemiş, kırmızı/kaldıraç ihlali yok, yeterli işlem; eşikler canlı oda seçiminden ÖNCE `kurallar.yaml`'a yazılır.
+  Elemeyi geçenler arasında sıralama kapı puanıyla (kalıcılık testi hangi puanın daha iyi olduğunu gösterirse o).
+- Oda, kontrol, referans kolları ve ön kayıt analizi değişmez.

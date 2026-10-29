@@ -32,7 +32,7 @@ from pano.saglik import CUSUM_YELLOW, _cusum, _mdd, blok_bootstrap
 MINUTE = 60_000
 DAY = 86_400_000
 STYLES = {'intraday', 'swing'}
-KOLLAR = {'oda', 'kontrol', 'taban', 'elle', 'referans_oda', 'referans_kontrol', 'cikarilan'}
+KOLLAR = {'oda', 'kontrol', 'taban', 'elle', 'referans_oda', 'referans_kontrol', 'cikarilan', 'havuz'}
 
 
 def timestamp(value) -> pd.Timestamp:

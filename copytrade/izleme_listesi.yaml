@@ -1,5 +1,5 @@
 # İZLEME LİSTESİ — `python -m copytrade.secim --izleme-listesi` ile secim.json'dan üretilir; ELLE YAZILMAZ.
-# kol: oda (Telegram bildirimi var) | kontrol | taban | elle (sessiz izleme). kollar: adresin bulunduğu tüm kollar.
+# kol: oda (Telegram bildirimi var) | kontrol | taban | elle | havuz (sessiz izleme). kollar: adresin bulunduğu tüm kollar.
 traderlar:
 - id: T7
   adres: '0x09d70eac3bbebf727218b81b7f6384249826ab24'
@@ -589,3 +589,303 @@ traderlar:
   kol: kontrol
   kollar:
   - kontrol
+- id: H001
+  adres: '0xd0441edb3ef3b8b5ade2239c7abdf101c8060477'
+  takma_ad: d044
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H002
+  adres: '0xd7ff86f4413c95b4e7828adef99701d7cea61007'
+  takma_ad: d7ff
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H003
+  adres: '0xaf6f7a06f7bfb3bdf7bcd2c751564f4990d1efc7'
+  takma_ad: af6f
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H004
+  adres: '0xb9fee87ada5100e29afaad51a2c60096010154c2'
+  takma_ad: b9fe
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H005
+  adres: '0x47add9a56df66b524d5e2c1993a43cde53b6ed85'
+  takma_ad: 47ad
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H006
+  adres: '0xa1bee787616cba2c7000a221570a5239f3c4ba6a'
+  takma_ad: a1be
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H007
+  adres: '0xb7e7d0fdeff5473ed6ef8d3a762d096a040dbb18'
+  takma_ad: b7e7
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H008
+  adres: '0xd9003796cc1781b1a6dfbccae25a7efc60727a6b'
+  takma_ad: d900
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H009
+  adres: '0x1a9a4932f36b3641f5f63e98f77f8a1f28d85dad'
+  takma_ad: 1a9a
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H010
+  adres: '0x63d417a577b50c96f4f09148d4e4d70950db0522'
+  takma_ad: 63d4
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H011
+  adres: '0xbb29e0d7124f61a4af2f133407b2135854592a80'
+  takma_ad: bb29
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H012
+  adres: '0x34d3a17095ef7def39a489d63c7c916e673c9ca2'
+  takma_ad: 34d3
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H013
+  adres: '0x3d2b551c44bba75c280cc0ce1150010739a5c5dc'
+  takma_ad: 3d2b
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H014
+  adres: '0xba939edf38c0ae0cc689c98b492e0535f43e4550'
+  takma_ad: ba93
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H015
+  adres: '0xe06532a98a541b48f6330d2dd88e2b4b96010d6b'
+  takma_ad: e065
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H016
+  adres: '0xfceaf5b6e735a6cee161d154cd1fa8cba51c81c6'
+  takma_ad: fcea
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H017
+  adres: '0xfc55a72ec00ea3595ba5119882c7e7adb52985ca'
+  takma_ad: fc55
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H018
+  adres: '0xdbbb9b4e361e1e1b6b4c640914ed4e4a11896df9'
+  takma_ad: dbbb
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H019
+  adres: '0x3e250a0ae9ff6005ea9dab67b5bea09948a0a1df'
+  takma_ad: 3e25
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H020
+  adres: '0xf97ad6704baec104d00b88e0c157e2b7b3a1ddd1'
+  takma_ad: f97a
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H021
+  adres: '0xbb6b56854a71550128bc0a6a8e5d8aacfac90142'
+  takma_ad: bb6b
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H022
+  adres: '0x21e9c1004717f6abb6670e1bba709d8c1d83ad4e'
+  takma_ad: 21e9
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H023
+  adres: '0x8a94c69e0801c800420f427b9015f6e8664c47d8'
+  takma_ad: 8a94
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H024
+  adres: '0x37f1fb49d88b588eb626c67c67f3db10e3674eb9'
+  takma_ad: 37f1
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H025
+  adres: '0xa1cb16d2b17202c336138f765559dfc73830b1fb'
+  takma_ad: a1cb
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H026
+  adres: '0x1c4e90fc8bdade442aed58f8011db5a17a2e7199'
+  takma_ad: 1c4e
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday
+- id: H027
+  adres: '0x0e008684ae576f280c5426a89d3f5e1da1fc7398'
+  takma_ad: 0e00
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H028
+  adres: '0x22a60014185f1486afb045219f76e4007fb71e4e'
+  takma_ad: 22a6
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H029
+  adres: '0xc92f1da3181b999feceb179dccbfe4d0bf5291e1'
+  takma_ad: c92f
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: swing
+- id: H030
+  adres: '0xf4fa6ea7cb31d95bbe61121ba827602c17e27a7a'
+  takma_ad: f4fa
+  durum: izlemede
+  t0: '2026-10-30'
+  secim: v1.3@2026-10-28
+  kol: havuz
+  kollar:
+  - havuz
+  tarz: intraday

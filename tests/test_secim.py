@@ -351,3 +351,20 @@ def test_yayim_korumasi_calisma_agacina_degil_veri_dalina_bakar():
     workflow = WORKFLOW.read_text(encoding="utf-8")
     assert 'git cat-file -e "HEAD:secim/$name/secim.json"' in workflow
     assert 'test ! -e "secim/$name/secim.json"' not in workflow
+
+
+def test_havuz_kolu_ileriye_donuk_sessiz_izleme_k8():
+    """K-8: havuzun liste dışı üyeleri sha256 sırasıyla 'havuz' koluna eklenir; havuz_adet hedef toplamdır, yeniden üretim idempotent."""
+    from copytrade.secim import izleme_listesi
+    adres = lambda i: "0x" + f"{i:040x}"
+    result = {"secim_surumu": "v1.3", "kapi_tarihi": "2026-10-28", "tarih": "2026-10-29",
+              "adresler": {adres(1): {"kollar": ["oda", "havuz"], "tarz": "swing"},
+                           **{adres(i): {"kollar": ["havuz"], "tarz": "intraday"} for i in range(2, 12)}}}
+    ilk = izleme_listesi(result, [], "2026-10-30", havuz_adet=3)
+    havuz = [r for r in ilk if r["kol"] == "havuz"]
+    assert len(havuz) == 3 and all(r["t0"] == "2026-10-30" and r["id"].startswith("H") and r["kollar"] == ["havuz"] for r in havuz)
+    assert [r for r in ilk if r["kol"] == "oda"][0]["adres"] == adres(1)          # oda değişmez, havuza ikinci kez girmez
+    tekrar = izleme_listesi(result, ilk, "2026-11-05", havuz_adet=3)
+    assert [(r["id"], r["t0"]) for r in tekrar if r["kol"] == "havuz"] == [(r["id"], r["t0"]) for r in havuz]   # korunur, t0 değişmez
+    genis = izleme_listesi(result, ilk, "2026-11-05", havuz_adet=5)
+    assert sum(r["kol"] == "havuz" for r in genis) == 5 and len({r["id"] for r in genis}) == len(genis)
