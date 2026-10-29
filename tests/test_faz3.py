@@ -57,7 +57,7 @@ def test_disarida_kalan_adres_sayilir_ve_cift_kaybolur():
     satirlar, ileri, mumlar, t = faz3.sentetik_pencere(7, 0.0, RULES, n_trader=40)
     with faz3.kural_onbellegi(RULES):
         tam = faz3.pencere_kos(t, satirlar, ileri, mumlar, RULES, tekrar=100, spearman=False, varyantlar=("V0",))
-        kesik = faz3.pencere_kos(t, satirlar, lambda a: "pencere dışı" if a.endswith("0") or a.endswith("2") else ileri(a), mumlar, RULES, tekrar=100, spearman=False, varyantlar=("V0",))
+        kesik = faz3.pencere_kos(t, satirlar, lambda a: "pencere dışı" if int(a, 16) % 2 == 0 else ileri(a), mumlar, RULES, tekrar=100, spearman=False, varyantlar=("V0",))
     assert kesik["disarida"]["sayi"] > 0 and kesik["disarida"]["nedenler"]["pencere dışı"] == kesik["disarida"]["sayi"]
     assert kesik["varyant"]["V0"]["cift"] < tam["varyant"]["V0"]["cift"]
 
