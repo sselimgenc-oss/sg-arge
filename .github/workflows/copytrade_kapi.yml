@@ -68,7 +68,15 @@ jobs:
           echo "mod=$mod" >> "$GITHUB_OUTPUT"
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "shards=$(python3 -c "import json;print(json.dumps(list(range($count))))")" >> "$GITHUB_OUTPUT"
-          echo "day=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+          day=$(date -u +%F)
+          if [ "$mod" = eksik ] && git ls-remote --exit-code --heads origin refs/heads/copytrade-kapi >/dev/null 2>&1; then
+            # Eksik mod en son yayımlanan günün sonucuna devam eder (yeni günde yeniden tam tarama başlamasın): gün veri dalından seçilir.
+            git fetch --depth=1 origin copytrade-kapi
+            git ls-tree -d --name-only FETCH_HEAD copytrade/kapi/ > gunler.txt
+            last=$(python3 -c "from copytrade.kapi import latest_day; print(latest_day(open('gunler.txt').read().split()) or '')")
+            day="${last:-$day}"
+          fi
+          echo "day=$day" >> "$GITHUB_OUTPUT"
       - name: Ortak kapı evrenini dondur
         run: python -m copytrade.kapi --evren-yaz evren.json
       - uses: actions/upload-artifact@v4
@@ -115,7 +123,7 @@ jobs:
           # uğrarsa adım (ve iş) kırmızı olur; bitmeyen parça `bitti.json` bırakmaz, birleştirme sonucu `durum: eksik` yayımlar.
           limit=100m; [ "${{ needs.plan.outputs.mod }}" = hizli ] && limit=45m
           export PYTHONWARNINGS=ignore
-          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} --evren-dosyasi evren.json $extra
+          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} --tarih ${{ needs.plan.outputs.day }} --evren-dosyasi evren.json $extra
       - name: Sonuçları tarih klasörüyle paketle
         if: always()
         shell: bash
@@ -147,6 +155,10 @@ jobs:
         with:
           pattern: stage1-*
           path: shards
+      - uses: actions/download-artifact@v4
+        with:
+          name: kapi-evren
+          path: evren_anlik
       - name: Veri dalındaki aynı günün sonuçlarını getir
         shell: bash
         run: |
@@ -159,7 +171,7 @@ jobs:
         run: |
           # Hiçbir parça sonuç üretmediyse eski (main'deki) dosyalar yayımlanmasın.
           find shards -name sonuc.csv | grep -q . || { echo "Parçalardan sonuc.csv gelmedi; yayımlanacak yeni sonuç yok." >&2; exit 1; }
-          python -m copytrade.kapi --root copytrade --birlestir shards --beklenen-parca ${{ needs.plan.outputs.count }} --mod ${{ needs.plan.outputs.mod }}
+          python -m copytrade.kapi --root copytrade --birlestir shards --beklenen-parca ${{ needs.plan.outputs.count }} --mod ${{ needs.plan.outputs.mod }} --evren-dosyasi evren_anlik/evren.json
           echo "durum=$(python3 -c "import json;print(json.load(open('copytrade/kapi/${{ needs.plan.outputs.day }}/durum.json'))['durum'])")" >> "$GITHUB_OUTPUT"
       - name: Keşif verisi ve ilişkili hesap işaretleri
         # Eksik koşudan kesif.json üretilmez. Keşif düşerse iş kırmızı olur (sonuçlar yine yayımlanır: sonraki adımlar `!cancelled()`).
