@@ -99,6 +99,13 @@ def test_gecis_bayragi_haftalik_gecisi_calistirir_getiri_yoksa_da(tmp_path):
     assert "ileri getiri verisi yok" in text                                                       # gölge henüz başlamadıysa rapor bunu söyler, sayı uydurmaz
 
 
-def test_is_akisi_elle_calisir_ve_zamanlama_yok():
+def test_is_akisi_persembe_zamanlamasi_pilot_veri_once_ve_hata_yutma_yok():
+    """Pilot veri hattı (GOREV_PILOT_VERI §3): Perşembe, dakika 0 değil; pilot_veri haftalik_rapor'dan önce; elle çalışma da kalır; hata yutulmaz."""
+    import re
     text = (ROOT / ".github/workflows/copytrade_haftalik.yml").read_text(encoding="utf-8")
-    assert "workflow_dispatch:" in text and "schedule:" not in text and "python -m copytrade.haftalik_rapor" in text
+    assert "workflow_dispatch:" in text
+    cron = re.search(r'cron: "(\d+) (\d+) \* \* (\d)"', text)
+    assert cron and cron.group(3) == "4" and cron.group(1) != "0"
+    assert text.index("python -m copytrade.pilot_veri") < text.index("python -m copytrade.haftalik_rapor")
+    assert "--getiri pilot_veri/getiri.json" in text and "--kapanmis-islem" in text and "--risk" in text and "--gecis" in text
+    assert "|| true" not in text and "continue-on-error" not in text

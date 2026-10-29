@@ -194,3 +194,6 @@ alfa_min_artik_varyans: 1.0e-12
 golge_likidasyon_esigi: -1.0
 # Dolum sayfalaması (copytrade/tarama.py PublicClient.fills): userFillsByTime sayfa boyutu (API sınırı)
 api_sayfa_boyutu_dolum: 2000
+
+# Pilot analiz kilidi (ön kayıt D; copytrade/analiz_kosu.py): bu tarihten önce gerçek veriyle 12. hafta analizi çalışmaz (yalnız --sentetik)
+onkayit_analiz_tarihi: "2027-01-21"
