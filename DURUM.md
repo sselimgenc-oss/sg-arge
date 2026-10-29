@@ -4,6 +4,8 @@ Son güncelleme: 2026-10-29, lider (Claude).
 
 ## Şu an (2026-10-29): canlı gölge pilotu başladı
 
+**Lider devri (kullanıcı, 2026-10-30):** Pazartesiye (2.11) kadar Sonnet ortak lider, Codex bağımsız denetçi (önce pano/ofis denetimi). Bkz. `docs/LIDER_DEVIR.md`.
+
 **K‑8 (kullanıcı, 2026-10-30):** izleme 61 → 91 (havuzdan 30 sessiz `havuz` trader'ı, t0 30.10); koşu süresi iyiyse havuzun tamamı. Canlı oda: ileri veriyle eleme + kapı puanıyla sıralama.
 
 **Kalite kuralları (kullanıcı, 2026-10-30):** `AGENTS.md` sonu — küçük gerçek veri denemesi, birimli veri sözleşmesi, denetimde gerçek çıktı.
