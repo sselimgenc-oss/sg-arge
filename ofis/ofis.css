@@ -245,6 +245,30 @@ dialog#ayarlar::backdrop { background: rgba(0, 0, 0, .62); }
   .b-btnler button, .btn-dosya, .b-ad-btn, .oda-ust button { min-height: 44px; }
 }
 
+/* ---- İzometrik tema (sürüm 1: referans görsel + tıklanabilir bölge + rozet) ---- */
+.tema-satir { margin: 8px 0 4px; padding: 6px 8px; border: 1px dashed #3d6573; }
+.tema-label { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.tema-label select { min-height: 36px; padding: 0 8px; background: #0d1920; border: 1px solid #3a6676; color: var(--text); font: 13px var(--sans); }
+.izo-kap { position: absolute; inset: 0; overflow: hidden; background: #f4f6f4; z-index: 2; touch-action: none; }
+.izo-kap[hidden] { display: none; }
+/* genişlik/yükseklik tema.js'de contain-fit olarak hesaplanır (ekranı mümkün olduğunca doldurur, görsel kırpılmaz/uzamaz) */
+.izo-sahne { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.izo-sahne.izo-anim { transition: transform .32s cubic-bezier(.2, .75, .2, 1); }
+.izo-sahne picture, .izo-sahne img { display: block; width: 100%; height: 100%; -webkit-user-select: none; user-select: none; pointer-events: none; }
+.izo-bolgeler, .izo-rozetler { position: absolute; inset: 0; }
+.izo-rozetler { pointer-events: none; }
+.izo-bolge { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; background: transparent; border: 0; cursor: pointer; }
+.izo-bolge:hover, .izo-bolge:focus-visible { background: rgba(255, 255, 255, .16); }
+.izo-rozet { position: absolute; transform: translate(-50%, -50%); font: 700 10.5px var(--mono); white-space: nowrap; color: #eaf4f5; background: rgba(12, 22, 28, .88); border: 1px solid rgba(210, 235, 238, .3); border-left: 3px solid var(--accent); padding: 2px 7px; border-radius: 0 3px 3px 0; box-shadow: 0 2px 8px rgba(0, 0, 0, .35); }
+.izo-rozet.ok { border-left-color: var(--ok); } .izo-rozet.wr { border-left-color: var(--warn); } .izo-rozet.dn { border-left-color: var(--danger); }
+.izo-rozet.gri, .izo-rozet.bil { color: #c3ccd0; border-left-color: #6d777b; font-style: italic; }
+.izo-zoom { position: absolute; right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 3; }
+.izo-zoom button { width: 34px; height: 34px; background: rgba(10, 21, 25, .92); border: 1px solid #2f5260; border-left: 3px solid var(--accent); color: #eaf4f5; border-radius: 0 3px 3px 0; font: 700 16px var(--mono); }
+.izo-zoom button:hover { background: #1b3540; }
+body.tema-izo:not(.oda-ici) .zoom, body.tema-izo:not(.oda-ici) .lejant { display: none; }
+@media (max-width: 899px), (pointer: coarse) { .izo-zoom button { width: 44px; height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .izo-sahne.izo-anim { transition: none; } }
+
 /* ---- v2b: olay çekmecesi, günlük özet, bayatlık, ses ---- */
 .gun-satir { margin: 0; font: 600 14px var(--mono); color: var(--text); } .gun-alt { margin-top: 4px; font-size: 12px; font-weight: 500; color: var(--muted); }
 .g-ust { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; } .g-ust h2 { margin: 0; }

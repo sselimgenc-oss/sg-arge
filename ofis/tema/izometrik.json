@@ -1,0 +1,16 @@
+{
+  "surum": 1,
+  "gorsel": { "masaustu": "tema/ofis_izometrik_referans.webp", "telefon": "tema/ofis_izometrik_referans_768.webp", "genislik": 1536, "yukseklik": 1024 },
+  "kaynak": "Yapay zekâ üretimi referans görsel; repo içi serbest kullanım (bkz. ofis/LISANSLAR.md).",
+  "bolgeler": [
+    { "oda": "finans", "ad": "Finans", "poli": [[0.06,0.03],[0.27,0.00],[0.33,0.17],[0.17,0.24],[0.03,0.17]] },
+    { "oda": "risk", "ad": "Risk", "poli": [[0.27,0.00],[0.48,0.03],[0.50,0.19],[0.33,0.17]] },
+    { "oda": "lab", "ad": "Lab", "poli": [[0.48,0.03],[0.68,0.10],[0.70,0.29],[0.50,0.19]] },
+    { "oda": "arsiv", "ad": "Arşiv", "poli": [[0.80,0.15],[0.99,0.19],[0.99,0.38],[0.80,0.34]] },
+    { "oda": "kapi", "ad": "Kapı", "poli": [[0.00,0.26],[0.17,0.26],[0.17,0.53],[0.00,0.53]] },
+    { "oda": "oda", "ad": "Oda", "poli": [[0.17,0.33],[0.56,0.33],[0.60,0.80],[0.08,0.80]] },
+    { "oda": "makam", "ad": "Makam", "poli": [[0.72,0.40],[0.89,0.43],[0.90,0.62],[0.73,0.59]] },
+    { "oda": "sekreterlik", "ad": "Sekreterlik", "poli": [[0.56,0.52],[0.70,0.55],[0.69,0.76],[0.55,0.73]] },
+    { "oda": "cay", "ad": "Çay Ocağı", "poli": [[0.71,0.62],[0.93,0.66],[0.91,0.90],[0.69,0.87]] }
+  ]
+}
