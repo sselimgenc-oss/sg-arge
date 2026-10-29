@@ -147,3 +147,14 @@ secim_min_kapsam: 0.95
 secim_surumu: "v1.3"
 # Geçiş kaydı (ön kayıt D v1.3 madde 3, copytrade/gecis.py): odadan çıkış için ardışık haftalık uygunsuz değerlendirme sayısı
 secim_cikis_ardisik_hafta: 2
+# Ön kayıt D v1.3 analiz kodu (copytrade/analiz_d.py; madde 4–7): pratik eşik δρ, tek yönlü p, haftalık blok, haftalık veri eksikliği sınırı
+onkayit_delta_rho: 0.10
+onkayit_p_max: 0.05
+onkayit_blok_gun: 7
+onkayit_veri_eksik_max: 0.05
+maliyet_duyarlilik_carpani_intraday: 2.0
+# MDE ve ikincil aralık: güç, ikincil GA düzeyi, bootstrap tekrarı; Spearman SE çarpanı (Fieller–Hartley–Pearson: √(1,06 / (n − 3)))
+onkayit_guc: 0.80
+onkayit_ci_ikincil: 0.95
+onkayit_bootstrap_tekrar: 2000
+onkayit_spearman_varyans_carpani: 1.06
