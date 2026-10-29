@@ -182,10 +182,43 @@ async function handleTelegram(request, env, fetcher = fetch) {
   if (String(message?.chat?.id) !== String(env.TELEGRAM_CHAT_ID) || message?.text !== "/durum") return new Response("ok");
   let status;
   try { status = await currentStatus(fetcher); } catch { return new Response("ok"); }
-  const age = Math.max(0, Math.floor((Date.now() - Date.parse(status.uretildi)) / 60000));
-  const text = (status.traderlar || []).map(trader => `${trader.takma_ad}: ${trader.saglik.isik} · ${trader.pozisyonlar.length} açık pozisyon`).join("\n");
-  await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: `${text}\nVeri yaşı: ${age} dk` }, fetcher);
+  await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: formatStatus(status), disable_web_page_preview: true }, fetcher);
   return new Response("ok");
+}
+
+const PANO = "https://sselimgenc-oss.github.io/sg-pano/";
+const ESKI_DK = 90;
+const LIGHT = { yesil: "🟢", sari: "🟡", kirmizi: "🔴" };
+
+// /durum: yalnız oda (bildirimli kol) ayrıntılı; diğer kollar sayı. Körlük: kâr/zarar ve kol karşılaştırması yok.
+function formatStatus(status, nowMs = Date.now()) {
+  const all = status.traderlar || [];
+  const hasArms = all.some(t => t.kol);
+  const room = hasArms ? all.filter(isNotified) : all;
+  const age = Math.max(0, Math.floor((nowMs - Date.parse(status.uretildi)) / 60000));
+  const lines = [];
+  const starts = room.map(t => Date.parse(t.t0)).filter(Number.isFinite);
+  const week = starts.length ? Math.min(12, Math.floor((nowMs - Math.min(...starts)) / (7 * 86400000)) + 1) : null;
+  lines.push(`📊 SG Arge · Pilot${week ? ` · hafta ${week}/12` : ""}`);
+  lines.push(age > ESKI_DK ? `⚠️ Veri ${age} dk önce — güncellenmedi` : `🕐 Veri ${age} dk önce`);
+  lines.push("");
+  const count = c => room.filter(t => (t.saglik?.isik || "yesil") === c).length;
+  const open = room.reduce((sum, t) => sum + (t.pozisyonlar || []).length, 0);
+  lines.push(`${hasArms ? "Oda" : "İzlenen"} · ${room.length} trader`);
+  lines.push(`🟢 ${count("yesil")}   🟡 ${count("sari")}   🔴 ${count("kirmizi")}`);
+  lines.push(`📂 Açık pozisyon: ${open}`);
+  for (const [colour, title] of [["kirmizi", "🔴 Dikkat"], ["sari", "🟡 İzle"]]) {
+    const rows = room.filter(t => t.saglik?.isik === colour);
+    if (!rows.length) continue;
+    lines.push("", title);
+    for (const t of rows.slice(0, 5)) lines.push(`• ${t.takma_ad} · ${(t.saglik.nedenler || []).join(", ") || LIGHT[colour]}`);
+    if (rows.length > 5) lines.push(`• +${rows.length - 5} trader daha (panoda)`);
+  }
+  lines.push("");
+  if (hasArms) lines.push(`👀 Sessiz izleme: ${all.length - room.length} trader (kontrol, taban, elle)`);
+  lines.push("🔒 Kâr/zarar karşılaştırması 12. haftaya kadar kilitli");
+  lines.push(`Pano: ${PANO}`);
+  return lines.join("\n");
 }
 
 export default {
@@ -201,4 +234,4 @@ export default {
   },
 };
 
-export { accumulatedOrderEvents, callbackData, decision, formatEvent, handleTelegram, isNotified, mergeFills, runCron, sendOnce };
+export { accumulatedOrderEvents, callbackData, decision, formatEvent, formatStatus, handleTelegram, isNotified, mergeFills, runCron, sendOnce };
