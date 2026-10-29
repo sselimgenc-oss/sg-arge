@@ -96,6 +96,19 @@ def test_merge_complete_run_is_tamam(tmp_path):
     assert "DURUM: EKSİK" not in (tmp_path / "root" / "kapi" / "2026-10-28" / "RAPOR.md").read_text(encoding="utf-8")
 
 
+def test_merge_reports_distinct_code_hashes(tmp_path):
+    for index, digest in enumerate(("a" * 64, "b" * 64)):
+        folder = tmp_path / "shards" / f"stage1-{index}" / "2026-10-28"
+        folder.mkdir(parents=True)
+        pd.DataFrame([{"address": f"0x{index}", "asama1": "Yetersiz", "kod_hash": digest, "now_ms": 1_800_000_000_000}]).to_csv(folder / "sonuc.csv", index=False)
+        (folder / "evren.json").write_text(json.dumps({"evren": 2}))
+        (folder / "bitti.json").write_text("{}")
+    status = merge_shards(tmp_path / "shards", tmp_path / "root", 2, "tam")["2026-10-28"]
+    report = (tmp_path / "root" / "kapi" / "2026-10-28" / "RAPOR.md").read_text(encoding="utf-8")
+    assert status["kod_hash_farkli"] is True and status["kod_hashler"] == ["a" * 64, "b" * 64]
+    assert "Farklı kod hash'leri" in report and "`" + "a" * 64 + "`" in report
+
+
 def test_workflow_does_not_hide_errors_and_skips_kesif_when_incomplete():
     text = WORKFLOW.read_text(encoding="utf-8")
     kapi_line = next(line for line in text.splitlines() if "python -m copytrade.kapi --root copytrade --shard-index" in line)
