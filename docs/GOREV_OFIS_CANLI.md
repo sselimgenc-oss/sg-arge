@@ -1,4 +1,4 @@
-# Görev — Ofisi canlı izlemeye bağla (Sonnet, 2026-10-29, lider; öncelik: FAZ3'ten ÖNCE (kullanıcı: ofisteki tüm odalar aktif olsun))
+# Görev — Ofisi canlı izlemeye bağla (Codex, 2026-10-29, lider; kullanıcı: ofisteki tüm odalar aktif olsun)
 
 Bağlam: Pilot 2026-10-29'da başladı. `sg-pano/ofis/gercek.js` yalnız `secim.json` + kapı `durum.json` okuyor; onayı bilmiyor
 (`onaylandi: false` sabit, şerit "ön izleme, onaylanmadı"), Lab/Finans/Risk "paper izleme başlamadı" diye gri, Gözcü kaydı boş.
