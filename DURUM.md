@@ -13,6 +13,7 @@ Son güncelleme: 2026-10-29, lider (Claude).
   secim.py sha256 `578cc5aa254864ae44f2973ca4552832880ba8abed769f0053c9da1f5ae7899b`). Oda 18, kontrol 18, taban 18, ikincil 167.
 - İzleme listesi `copytrade/izleme_listesi.yaml` bu seçimden üretildi (`--izleme-listesi`, 61 satır: oda 18, kontrol 18
   (`kollar`), taban 18, elle 8).
+- Analiz kodu (madde 9, veri görülmeden yazıldı): `copytrade/analiz_d.py` sha256 `ffdf2bb104fcd7f9269ac005dfbf8e5776e4f1f6d97bec78b285547fe1bd2e2e`.
 - Bayraklar (`bayrak.json`) bilgi amaçlı; kimse elenmedi. Dikkat: f208 (%100 tek coin), 84d7 (%90 tek coin, derin ekleme),
   86d2 (%88), 582e (%65); 50e2 vault.
 
@@ -20,7 +21,8 @@ Son güncelleme: 2026-10-29, lider (Claude).
 (a) anlamsız. Kural: hiçbir ajan görevi ve haftalık rapor kol bazında getiri hesaplamaz; analiz yalnız 12./24. haftada.
 (b) sağlık ışığından performans konisinin çıkarılması ayrı iş (açık).
 
-**Açık işler:** birincil/ikincil analiz kodu + altın örnekler gölge verisi görülmeden yazılıp dondurmaya eklenecek (madde 9);
+**Açık işler (2026-10-29):** Sonnet: `docs/GOREV_KORLUK.md` (K‑6 b), sonra `docs/GOREV_PILOT_VERI.md` (haftalık veri hattı +
+12. hafta analiz koşucusu). Argon: `docs/GOREV_ARGON_3.md` (A20 HIP‑3 maliyeti, A21 API geri alma sınırları). Codex/Sonnet:
 `gunluk.csv.gz` kapı koşusunda yayımlanmıyor (yoğunlaşma bölümü boş); maliyet duyarlılığı gerçek veriyle; R2 arşivi
 2026-10-29'da yeşile döndü (kullanıcı anahtarları düzeltti).
 
