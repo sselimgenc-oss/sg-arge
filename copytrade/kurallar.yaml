@@ -160,3 +160,6 @@ onkayit_bootstrap_tekrar: 2000
 onkayit_spearman_varyans_carpani: 1.06
 # İşaret yaşı (E4): açık pozisyon bundan eski bir mumla işaretlenmez (mark_missing; sonuç "eksik işaretleme" notu taşır). 1 saatlik mum + tolerans.
 isaret_yas_max_dk: 120
+# Oda yoğunlaşması ve puan yarı tutarlılığı (A14, copytrade/yogunlasma.py; seçim raporunda bilgi bölümü): ikili korelasyon için asgari ortak gün; ortalama bağlantılı kümeleme durdurma eşiği
+yogunlasma_min_ortak_gun: 10
+yogunlasma_kume_esik: 0.5

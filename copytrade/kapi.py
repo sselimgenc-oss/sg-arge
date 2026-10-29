@@ -821,7 +821,8 @@ def shard_universe(leaders: list[dict], index: int, count: int) -> list[dict]:
 
 
 def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now: datetime, start: int, start_200: int,
-                     symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None, dexes: list[str] | None = None) -> dict[str, Any]:
+                     symbols: set[str] | None, rules: dict, yalniz_adim5: bool = False, log=None, dexes: list[str] | None = None,
+                     gunluk: dict | None = None) -> dict[str, Any]:
     """Tek adres için 1. aşama + adım 1–6 (adım 7 ve katman birleştirmede). ``yalniz_adim5``: plaseboyu adım 3–4'e
     bakmadan hesaplar (hızlı koşu; satırın adım değerleri yine kurallara göre kalır). Her aşamanın süresi günlüğe yazılır."""
     address = leader["address"]
@@ -910,6 +911,7 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
                  else basket_returns(candles, sorted({str(f.get("coin")) for f in perp_fills(recent)})))
         alpha = matched_btc_alpha(own, bench, exposure) if own is not None and len(bench) else None
         statuses = gate_status(metrics, actual, p_value, alpha, rules)
+        gunluk_kaydet(gunluk, address, statuses, own)
         progress.stage("alfa", f"kıyas {kind}, t={alpha['nw_t'] if alpha else None}")
         row.update(metrics)
         row.update(shares)
@@ -1015,12 +1017,18 @@ def main(argv: list[str] | None = None) -> None:
     rows = previous_rows
     print(f"Koşu: evren {evren}, bu parçada {len(leaders)} adres (parça {args.shard_index}/{args.shard_count})", flush=True)
     dexes = hip3_dex_names(client)       # hesap değeri tabanı için bir kez (görev 27)
+    gunluk: dict[str, pd.Series] = {}
+    if args.devam and (out / "gunluk.csv.gz").exists():        # kesilen koşu devam ederken önceki günlük getiriler korunur
+        previous_daily = pd.read_csv(out / "gunluk.csv.gz", index_col=0, parse_dates=True)
+        gunluk.update({column: previous_daily[column].dropna() for column in previous_daily})
     for number, leader in enumerate(leaders, 1):
         if leader["address"] in done:
             continue
         print(f"[{number}/{len(leaders)}] {leader['address']}", flush=True)
-        rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5 and leader.get("kaynak") != "dis_aday", dexes=dexes))
+        rows.append(evaluate_address(leader, client, cache, now, start, start_200, symbols, rules, args.yalniz_adim5 and leader.get("kaynak") != "dis_aday", dexes=dexes, gunluk=gunluk))
         pd.DataFrame(rows).to_csv(out / "sonuc.csv", index=False)  # partial results survive a time limit
+        if gunluk:
+            pd.DataFrame(gunluk).to_csv(out / "gunluk.csv.gz", compression="gzip")
     pd.DataFrame(leaders).to_csv(out / "asama1.csv.gz", index=False, compression="gzip")
     passed = sum(r.get("asama1") == "Geçti" for r in rows)
     (out / "RAPOR.md").write_text(
@@ -1318,6 +1326,12 @@ def run_status(finished: int, expected: int | None, processed: int, universe: in
             "islenen": processed, "evren": universe, "kapsam": round(coverage, 4) if coverage is not None else None, "neden": "; ".join(reasons)}
 
 
+def gunluk_kaydet(gunluk: dict | None, address: str, statuses: dict, daily: pd.Series | None) -> None:
+    """Adım 1 ve 2'yi geçen adresin günlük kopya net getirisini (gecikmesiz defter) toplar; seçim raporu (A14) oda yoğunlaşması ve puan tutarlılığı için okur."""
+    if gunluk is not None and daily is not None and len(daily) and statuses.get("adim1") == "Geçti" and statuses.get("adim2") == "Geçti":
+        gunluk[address] = daily
+
+
 def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str = "tam", universe: set[str] | None = None) -> dict[str, dict]:
     """Merge partial artifacts even if some timeout jobs produced no CSV.
 
@@ -1368,6 +1382,14 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
                             len(universe) if universe is not None else evren.get(date), mod, load_rules())
         if covered is not None:
             status.update({"islenen": int(len(table)), "kapsanan": covered, "evren_disi_satir": int(len(table)) - covered})
+        daily_files = [path for path in shards.rglob("gunluk.csv.gz") if path.parent.name == date]
+        if daily_files or (output / "gunluk.csv.gz").exists():
+            # Günlük kopya getirisi (A14): önceki dosya (veri dalı) + bu koşunun parçaları; yeniden hesaplanan adres öncekini geçersiz kılar.
+            parts = ([pd.read_csv(output / "gunluk.csv.gz", index_col=0, parse_dates=True)] if (output / "gunluk.csv.gz").exists() else [])
+            parts += [pd.read_csv(path, index_col=0, parse_dates=True) for path in sorted(daily_files)]
+            combined = pd.concat(parts, axis=1)
+            combined = combined.loc[:, ~combined.columns.duplicated(keep="last")].sort_index()
+            combined.to_csv(output / "gunluk.csv.gz", compression="gzip")
         status["eski_hesap_satir"] = int(len(legacy))
         status["hesap"] = HESAP_SURUMU
         status["satir_kaynagi"] = table["satir_kaynagi"].value_counts().to_dict()

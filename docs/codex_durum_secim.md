@@ -54,3 +54,7 @@
 - [x] E3: etiketten önceki (miras) pozisyonu kapatan dolum `ZeroDivisionError` vermez (V0/V1/V2)
 - [x] E4: `Market.mark_at` işaret yaşı sınırı (`isaret_yas_max_dk` 120); aşılırsa `mark_missing`, canlı sonuç "eksik işaretleme" notu taşır
 - [x] E6: `bayrak.json` sürümlü önbellek (kod hash + seçim sürümü + kapı tarihi), her adresten sonra checkpoint, iş akışı önceki/kısmi sonucu veri dalından geri yükler ve zaman aşımında da yazar
+
+## Argon A14 — oda yoğunlaşması ve puan tutarlılığı (`copytrade/yogunlasma.py`)
+- [x] Ortalama bağlantılı kümeleme, etkin küme sayısı, yarı tutarlılığı (sıra korelasyonu `analiz_d` ile tek uygulama); eşikler `kurallar.yaml` (`yogunlasma_min_ortak_gun` 10, `yogunlasma_kume_esik` 0,5)
+- [x] Kapı, adım 1–2'yi geçenlerin günlük kopya getirisini `gunluk.csv.gz` olarak yayımlar (parçalar + önceki dosya birleşir); seçim RAPOR'unda "Oda yoğunlaşması ve puan tutarlılığı (bilgi)" bölümü ve `secim.json` `yogunlasma`; seçimi değiştirmez
