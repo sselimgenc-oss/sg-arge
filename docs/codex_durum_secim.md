@@ -36,3 +36,8 @@
 - [x] `copytrade/analiz_d.py`: `birincil_spearman` (ρ, tek yönlü p, iki yönlü %90 GA, n), `ikincil_fark` (BTC betası düzeltilmiş, örtüşen blok bootstrap %95), `karar` (3 sonuç), `mde`, `duyarlilik_net`, `veri_eksik`
 - [x] Sayılar yalnız `kurallar.yaml`: `onkayit_delta_rho` 0,10 · `onkayit_p_max` 0,05 · `onkayit_blok_gun` 7 · `onkayit_veri_eksik_max` 0,05 · `maliyet_duyarlilik_carpani_intraday` 2 · `onkayit_guc` 0,80 · `onkayit_ci_ikincil` 0,95 · `onkayit_bootstrap_tekrar` 2000 · `onkayit_spearman_varyans_carpani` 1,06
 - [x] Elle hesaplanmış altın örnekler: ρ = 0,8 (n=5: p 0,065642; GA [−0,098538; 0,979941]), bağlı sıralar 0,948683, MDE 0,22875 %/gün (σ 0,02, ρ 0,3, n 10, 84 gün)
+
+## Seçim v1.3 — iş paketi D (haftalık geri bildirim)
+- [x] `copytrade/haftalik_rapor.py`: havuz genelinde puan ↔ ileri getiri Spearman'ı + tarz / kaldıraç dilimi kırılımı; **kol bazında getiri yazılmaz** (körlük testi); `--gecis` ile `gecis.haftalik` aynı çalışmada
+- [x] `.github/workflows/copytrade_haftalik.yml`: elle çalışır (zamanlama yok), veri dalındaki en son seçimi okur, `rotasyon/` altına yazar
+- Bekleyen: gölge ileri getiri dosyası (`--getiri`) gölge defteri yayımlanınca bağlanır; o güne dek rapor "ileri getiri verisi yok" der
