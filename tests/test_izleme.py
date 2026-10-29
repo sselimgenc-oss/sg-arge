@@ -133,6 +133,7 @@ class Client:
         self.account = 1000
         self.portfolio_reads = 0
         self.candle_reads = 0
+        self.mark_reads = 0
         self.dexes = [None]
         self.funding = []
 
@@ -157,7 +158,10 @@ class Client:
 
     def candles(self, coin, start, end, interval='1m'):
         assert interval in {'1m', '1h'}
-        self.candle_reads += 1
+        if end - start <= 15 * m.MINUTE:        # işaretleme (açık pozisyonun son 1 dk mumu): her koşuda yenilenir, önbelleğe girmez
+            self.mark_reads += 1
+        else:
+            self.candle_reads += 1
         return [{'t': t, 'o': '102'} for t in range(start, end + 1, m.MINUTE)]
 
 
@@ -205,11 +209,13 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     one = m.run(root, root / 'out', client, NOW)
     two = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
     first, second = one['traderlar'][0], two['traderlar'][0]
-    assert {k: v for k, v in first.items() if k != 'veri_zamani'} == {k: v for k, v in second.items() if k != 'veri_zamani'}
+    drop = lambda t: {k: ({a: b for a, b in v.items() if a != 'son_isaret'} if k == 'sanal_kopya' else v)    # son_isaret koşuyla ilerler (işaret zamanı); sayılar aynı kalmalı
+                      for k, v in t.items() if k != 'veri_zamani'}
+    assert drop(first) == drop(second)
     assert second['veri_zamani'] == '2026-10-27T13:00:00Z'
     assert one['olaylar'] == two['olaylar']
     assert client.portfolio_reads == 2  # sağlık eğrisi saatlik yenilenir
-    assert client.candle_reads == 1
+    assert client.candle_reads == 1 and client.mark_reads == 2       # yürütme mumu önbellekten; işaret her koşuda bir kez
     starts = [x['startTime'] for x in client.calls if x['type'] == 'userFillsByTime']
     assert starts[-1] == client.rows[-1]['time']  # inclusive boundary is deduplicated
     saved = json.loads((root / 'out/motor.json').read_text())
@@ -232,7 +238,8 @@ def test_pinned_scale_does_not_rewrite_prior_copy_pnl(tmp_path):
     first = m.run(root, root / 'out', client, NOW)
     client.account = 2000
     second = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
-    assert first['traderlar'][0]['sanal_kopya'] == second['traderlar'][0]['sanal_kopya']
+    strip = lambda p: {k: v for k, v in p.items() if k != 'son_isaret'}                             # son_isaret koşuyla ilerler; sayılar yeniden yazılmamalı
+    assert strip(first['traderlar'][0]['sanal_kopya']) == strip(second['traderlar'][0]['sanal_kopya'])
 
 
 def test_fills_at_same_millisecond_are_all_retained(tmp_path):
@@ -602,3 +609,59 @@ def test_copy_results_delay_parameter_controls_execution_time():
     assert m.copy_results([opening], candles, [], 1000, T0, at('10:45'), events, False, 120)['bakiye_usd'] == 1000   # 12:00'den önce işlem yok
     assert m.copy_results([opening], candles, [], 1000, T0, at('12:00'), events, False, 120)['bakiye_usd'] == pytest.approx(expected)
     assert m.copy_results([opening], candles, [], 1000, T0, at('12:00'), events, False, 120)['gecikme_dk'] == 120
+
+
+def test_acik_zarar_sonuca_girer_denetim_probu():
+    """Altın örnek (denetim probu): 10 BTC, giriş 100, işaret 50 → toplam −%50,095 (açık −%50 + maliyet %0,095). Eski yol −%0,095 gösteriyordu."""
+    opening = fill(size=10)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100}, {'t': m.millis('2026-10-27T11:59:00Z'), 'o': 50}]}
+    result = m.copy_results([opening], candles, [], 1000, T0, NOW, {})
+    assert result['gerceklesen'] == pytest.approx(-0.00095)               # maliyet: 1000 × (0,045% + 0,05%) / 1000
+    assert result['acik'] == pytest.approx(-0.5)                          # 10 × (50 − 100) / 1000
+    assert result['toplam'] == pytest.approx(-0.50095)
+    assert result['bakiye_usd'] == pytest.approx(1000 * (1 - 0.50095)) and result['getiri'] == pytest.approx(-0.50095)
+    assert result['son_isaret'] == '2026-10-27T11:59:00Z' and result['isaret_eksik'] == 0
+    assert result['egri'][-1][1] == pytest.approx(499.05)
+
+
+def test_kapali_pozisyonda_acik_sifir_gerceklesen_toplam():
+    opening, closing = fill(), fill('2026-10-27T11:00:00Z', 2, 'A', 1, 1, 500)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100}, {'t': m.millis('2026-10-27T11:30:00Z'), 'o': 110}]}
+    result = m.copy_results([opening, closing], candles, [], 1000, T0, NOW, {})
+    assert result['acik'] == 0 and result['son_isaret'] is None
+    assert result['gerceklesen'] == pytest.approx(result['toplam']) == pytest.approx((10 - 210 * .00095) / 1000)
+
+
+def test_canli_yol_kanonik_defterle_ayni_sonucu_verir():
+    """Sözleşme: canlı ``copy_results`` ile ``defter.copy_ledger`` (aynı dolum, aynı yürütme fiyatı, aynı işaret) toplamda ayrışmaz."""
+    from copytrade.defter import Market, copy_ledger
+    fills = [fill('2026-10-27T09:00:00Z', 1, 'B', 2, 0, 100), fill('2026-10-27T09:40:00Z', 2, 'B', 1, 2, 104, oid=2),
+             fill('2026-10-27T10:30:00Z', 3, 'A', 1.5, 3, 120, oid=3), fill('2026-10-27T10:50:00Z', 4, 'B', 1, 1.5, 90, coin='ETH', oid=4)]
+    exec_prices = [100, 104, 120, 90]
+    candles = {'BTC': [], 'ETH': []}
+    for f, price in zip(fills, exec_prices):
+        candles[f['coin']].append({'t': f['time'] + 30 * m.MINUTE, 'o': price})
+    candles['BTC'].append({'t': m.millis('2026-10-27T11:58:00Z'), 'o': 130})
+    candles['ETH'].append({'t': m.millis('2026-10-27T11:57:00Z'), 'o': 80})
+    live = m.copy_results(fills, candles, [], 1000, T0, NOW, {})
+    marked = [dict(f, _execution_time=f['time'] + 30 * m.MINUTE, _execution_price=p) for f, p in zip(fills, exec_prices)]
+    canonical = copy_ledger(marked, Market(candles), 1000, 30, m.millis(T0), m.millis(NOW))
+    assert live['toplam'] == pytest.approx(canonical['net']) and live['acik'] == pytest.approx(canonical['unrealized_end'])
+    assert live['gerceklesen'] == pytest.approx(canonical['realized'])
+    # elle: BTC 3 → 1,5 kapanır (+1,5 × 20 = 30; ort. giriş (200 + 104) / 3 = 101,333…) ve ETH 1 @90 açık
+    assert canonical['unrealized_end'] == pytest.approx((1.5 * (130 - (2 * 100 + 1 * 104) / 3) + 1 * (80 - 90)) / 1000)
+
+
+def test_canli_kosu_acik_pozisyonu_son_dakika_mumuyla_isaretler(tmp_path):
+    """Uçtan uca: yürütme mumu 102, son 1 dk mum 50 → açık K/Z = 1 × (50 − 102) / 1000 = −%5,2; maliyet 102 × 0,095% / 1000."""
+    class Falling(Client):
+        def candles(self, coin, start, end, interval='1m'):
+            if end - start <= 15 * m.MINUTE:
+                self.mark_reads += 1
+                return [{'t': end - m.MINUTE, 'o': '50'}]
+            return super().candles(coin, start, end, interval)
+    root, client = project(tmp_path), Falling()
+    paper = m.run(root, root / 'out', client, NOW)['traderlar'][0]['sanal_kopya']
+    assert paper['acik'] == pytest.approx(-0.052) and paper['gerceklesen'] == pytest.approx(-102 * .00095 / 1000)
+    assert paper['toplam'] == pytest.approx(-0.052 - 102 * .00095 / 1000) and paper['son_isaret'] == '2026-10-27T11:59:00Z'
+    assert client.mark_reads == 1

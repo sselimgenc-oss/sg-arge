@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from copytrade.defter import Market, copy_ledger
 from copytrade.kapi import (SLIPPAGE, TAKER, binance_availability, delayed_copy,
                             write_binance_universe)
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
@@ -62,8 +63,8 @@ def load_list(path: Path) -> list[dict]:
     ids, addresses = set(), set()
     for row in rows:
         required = {'id', 'adres', 'takma_ad', 'durum', 't0'}
-        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {'tarz', 'kol', 'kollar'}:
-            raise ValueError('İzleme satırında yalnız id, adres, takma_ad, durum, t0 (ve isteğe bağlı tarz, kol, kollar) olmalı.')
+        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {'tarz', 'kol', 'kollar', 'secim'}:
+            raise ValueError('İzleme satırında yalnız id, adres, takma_ad, durum, t0 (ve isteğe bağlı tarz, kol, kollar, secim) olmalı.')
         if 'kol' in row and row['kol'] not in KOLLAR:
             raise ValueError('Geçersiz kol (oda | kontrol | taban | elle).')
         if 'tarz' in row and row['tarz'] not in STYLES:
@@ -279,6 +280,25 @@ def execution_candles(client, fills: list[dict], cache: dict, now_ms: int, delay
              for coin, rows in cache.items()}, approximate)
 
 
+def open_copy_coins(actions: list[dict]) -> set[str]:
+    """Kopya eylemlerinin net işaretli toplamı sıfır olmayan coinler: pencere sonunda açık pozisyonu olanlar (işaretlenecek)."""
+    net: dict[str, float] = {}
+    for action in actions:
+        net[action['coin']] = net.get(action['coin'], 0.0) + float(action['sz']) * (-1 if action['side'] == 'A' else 1)
+    return {coin for coin, size in net.items() if abs(size) > 1e-10}
+
+
+def mark_candles(client, actions: list[dict], now_ms: int) -> dict[str, list[dict]]:
+    """Açık kopya pozisyonlu her coin için en son 1 dk mumun açılışı (işaretleme fiyatı); mumun zamanı da taşınır (işaret yaşı)."""
+    marks: dict[str, list[dict]] = {}
+    for coin in sorted(open_copy_coins(actions)):
+        rows = [c for c in client.candles(coin, now_ms - 15 * MINUTE, now_ms, interval='1m') if int(c['t']) <= now_ms and float(c['o']) > 0]
+        if rows:
+            last = max(rows, key=lambda c: int(c['t']))
+            marks[coin] = [{'t': int(last['t']), 'o': float(last['o'])}]
+    return marks
+
+
 def copy_actions(fills: list[dict]) -> list[dict]:
     """Copy post-t0 changes only; closing inherited exposure must not open an inverse position."""
     positions, result = {}, []
@@ -302,22 +322,27 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
     prices = {coin: {int(c['t']): float(c['o']) for c in rows} for coin, rows in candles.items()}
     # Pending fills are not charged before their execution time (tarza göre gecikme: intraday 30, swing 120 dk).
     mature = [f for f in fills if math.ceil((int(f['time']) + delay * MINUTE) / MINUTE) * MINUTE <= millis(now)]
-    series, missing = delayed_copy(mature, candles, account, delay, funding)
-    if missing:
-        raise ValueError('Sanal defterde eksik mum var.')
     days = pd.date_range(t0.normalize(), now.normalize(), freq='1D')
+    # Sonuç kanonik defterden (defter.copy_ledger) gelir: gerçekleşmiş + açık (işaretlenmiş) K/Z ayrı yayımlanır.
+    ledger_fills = []
+    for fill in mature:
+        execution = math.ceil((int(fill['time']) + delay * MINUTE) / MINUTE) * MINUTE
+        if execution not in prices.get(fill['coin'], {}):
+            raise ValueError('Sanal defterde eksik mum var.')
+        ledger_fills.append(dict(fill, _execution_time=execution, _execution_price=prices[fill['coin']][execution]))
+    ledger = copy_ledger(ledger_fills, Market(candles), account, delay, millis(t0), millis(now), daily=True)
+    if ledger['net'] is None:
+        raise ValueError('Sanal defter için pozitif hesap değeri gerekli.')
     net = pd.Series(0.0, index=days)
-    if series is not None:
-        # delayed_copy dates its entries at source time; shift each replayed fill to
-        # execution time (notably across midnight) without changing its calculation.
-        shifted_fills = []
-        shifted_candles = {}
-        for fill in mature:
-            execution = math.ceil((int(fill['time']) + delay * MINUTE) / MINUTE) * MINUTE
-            price = prices[fill['coin']][execution]
-            shifted_fills.append(dict(fill, time=execution, px=price))
-        shifted, _ = delayed_copy(shifted_fills, shifted_candles, account, 0, funding)
-        net = shifted.reindex(days, fill_value=0.0)
+    if len(ledger['daily']):
+        net = net.add(ledger['daily'].reindex(days, fill_value=0.0), fill_value=0.0)
+    funding_frac = 0.0
+    for row in funding:                     # trader'ın funding'i hesap değerine oranlanır (kopya, trader'ı hesap oranıyla yansıtır)
+        amount = _funding_amount(row) / account
+        funding_frac += amount
+        day = pd.Timestamp(int(row['time']), unit='ms', tz='UTC').normalize()
+        if day in net.index:
+            net[day] += amount
     equity = 1000 * (1 + net.cumsum())
     # FIFO lots allocate realized return and exact friction/funding to the event
     # that opened/increased them. An event may contain many partial fills/lots;
@@ -377,9 +402,13 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
     balance = float(equity.iloc[-1]) if len(equity) else 1000.0
     result = {'baslangic_usd': 1000, 'bakiye_usd': balance, 'getiri': balance / 1000 - 1,
             'dusus': drawdown, 'gecikme_dk': delay, 't0': str(t0.date()),
-            'egri': [[str(day.date()), float(value)] for day, value in equity.items()]}
-    if approximate:
-        result['not'] = 'yaklaşık fiyat'
+            'egri': [[str(day.date()), float(value)] for day, value in equity.items()],
+            # hesap değerine oranlı kesirler: gerçekleşmiş (maliyet + funding dahil), açık (işaretlenmiş) ve toplam; son işaret zamanı
+            'gerceklesen': ledger['realized'] + funding_frac, 'acik': ledger['unrealized_end'], 'toplam': ledger['net'] + funding_frac,
+            'son_isaret': at_ms(ledger['mark_time']) if ledger['mark_time'] is not None else None, 'isaret_eksik': int(ledger['mark_missing'])}
+    notes = (['yaklaşık fiyat'] if approximate else []) + (['eksik işaretleme'] if ledger['mark_missing'] else [])
+    if notes:
+        result['not'] = ', '.join(notes)
     return result
 
 
@@ -525,7 +554,9 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
     style = resolve_style(root, row)
     delay = delay_for_style(style)
     candles, approximate = execution_candles(client, actions, saved['mumlar'], millis(now), delay)
-    paper = copy_results(actions, candles, saved['funding'], saved['kopya_paydasi'], t0, now, own_events, approximate, delay)
+    marks = mark_candles(client, actions, millis(now))
+    priced = {coin: rows + marks.get(coin, []) for coin, rows in {**{c: [] for c in marks}, **candles}.items()}
+    paper = copy_results(actions, priced, saved['funding'], saved['kopya_paydasi'], t0, now, own_events, approximate, delay)
     leverage = sum(p['buyukluk_usd'] for p in positions) / account
     metrics = calculate_metrics(perp_fills(fills), account_value=account)
     light = health(history, t0, now, leverage, metrics['martingale_signal'],

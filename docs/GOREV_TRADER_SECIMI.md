@@ -111,9 +111,9 @@ Kullanım: bildirimle **elle** kopya. Kapı iki **tarz** tanır; her trader medy
     gecikme) **ayrı küçük bir PR** yap; lider birleştirir. Bu dal yalnız kapı/ölçü dosyalarında kalır; izleme ve Worker
     düzeltmeleri Codex'te (`docs/GOREV_IZLEME_DUZELTME.md`).
 27. **Hesap değeri tabanı (kullanıcı kararı 2026-10-27):** 1. aşamada bugünkü hesap değeri (`clearinghouseState`
-    ana piyasa + tüm HIP-3 dex toplamı) **≥ 10.000 $** değilse Kaldı, `neden = hesap değeri tabanı`. Eşik yalnız
-    `kurallar.yaml`'da (`hesap_degeri_min_usd: 10000`). Gerekçe: 69b0 eski kapıda "kopyalanabilir" çıktı ama hesap değeri
-    0 $ (para çekilmiş). Altın örnek: 0 $ ve 9.999 $ Kaldı, 10.000 $ geçer. Kurallar donmadan önce eklenir.
+    ana piyasa + tüm HIP-3 dex toplamı) **≥ 5.000 $** değilse Kaldı, `neden = hesap değeri tabanı`. Eşik yalnız
+    `kurallar.yaml`'da (`hesap_degeri_min_usd: 5000`; kullanıcı kararı 2026-10-29: 10.000 → 5.000). Gerekçe: 69b0 eski kapıda "kopyalanabilir" çıktı ama hesap değeri
+    0 $ (para çekilmiş). Altın örnek: 0 $ ve 4.999 $ Kaldı, 5.000 $ geçer. Kurallar donmadan önce eklenir.
 
 ## `kesif.json` şeması (v1)
 ```json

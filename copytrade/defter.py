@@ -44,6 +44,7 @@ class Market:
         # Yürütme mumu hedeften en çok ``mum_uzaklik_max_aralik`` (kurallar.yaml; kullanıcı kararı: 1) mum aralığı uzakta olabilir.
         limit = max_intervals if max_intervals is not None else int(load_rules()["mum_uzaklik_max_aralik"])
         self.interval, self.max_distance = interval_ms, interval_ms * limit
+        self.mark_max_age = int(load_rules()["isaret_yas_max_dk"]) * 60_000
         self._raw, self._lists, self._cum = candles, {}, {}
 
     def lists(self, coin: str) -> tuple[list[int], list[float], list[float]]:
@@ -67,9 +68,16 @@ class Market:
 
     def mark(self, coin: str, at_ms: int) -> float | None:
         """``at_ms``'de veya önce açılan son mumun açılışı (gün sonu / pencere sonu işaretlemesi)."""
+        return (self.mark_at(coin, at_ms) or (None, None))[1]
+
+    def mark_at(self, coin: str, at_ms: int) -> tuple[int, float] | None:
+        """``mark`` ile aynı, mumun zamanı da döner (işaret yaşı için). Mum ``isaret_yas_max_dk`` (kurallar.yaml) dakikadan eskiyse işaret
+        yok sayılır (``None``): bayat fiyatla açık pozisyon işaretlenmez, çağıran ``mark_missing`` sayar (E4)."""
         times, opens, _ = self.lists(coin)
         index = bisect_right(times, at_ms) - 1
-        return opens[index] if index >= 0 else None
+        if index < 0 or at_ms - times[index] > self.mark_max_age:
+            return None
+        return times[index], opens[index]
 
     def funding_cum(self, coin: str, rates: FundingRates) -> tuple[list[int], list[float]]:
         """Saat başına (açılış fiyatı × funding oranı) kümülatif toplamı: bir pozisyonun funding'i = −adet × (cum[j] − cum[i])."""
@@ -249,28 +257,30 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
 
     event_times = {coin: [e[0] for e in events] for coin, events in timeline.items()}
 
-    def unrealized_at(moment: int) -> tuple[float, int]:
-        total, unknown = 0.0, 0
+    def unrealized_at(moment: int) -> tuple[float, int, int | None]:
+        total, unknown, oldest = 0.0, 0, None          # oldest: kullanılan işaretlerin en eskisinin mum zamanı (işaret yaşı)
         for coin, events in timeline.items():
             index = bisect_right(event_times[coin], moment) - 1
             if index < 0 or events[index][1] == 0.0:
                 continue
-            mark = market.mark(coin, moment)
-            if mark is None:
+            found = market.mark_at(coin, moment)
+            if found is None:
                 unknown += 1
                 continue
-            total += events[index][1] * (mark - events[index][2])
-        return total, unknown
+            total += events[index][1] * (found[1] - events[index][2])
+            oldest = found[0] if oldest is None else min(oldest, found[0])
+        return total, unknown, oldest
 
-    unrealized_end, unknown_end = unrealized_at(end_ms)
+    unrealized_end, unknown_end, mark_time = unrealized_at(end_ms)
     result: dict[str, Any] = {"net": realized + funding_total + unrealized_end, "missing": missing, "executed": executed, "costs": costs,
-                              "funding": funding_total, "realized": realized, "unrealized_end": unrealized_end, "mark_missing": unknown_end}
+                              "funding": funding_total, "realized": realized, "unrealized_end": unrealized_end, "mark_missing": unknown_end,
+                              "mark_time": mark_time}
     if daily:
         days: dict[int, float] = {}
         previous_u = 0.0
         for boundary in boundaries:
             day = (boundary - 1) // DAY
-            u, _ = unrealized_at(boundary)
+            u, _, _ = unrealized_at(boundary)
             days[day] = days.get(day, 0.0) + flow.get(day, 0.0) + funding_by_day.get(day, 0.0) + (u - previous_u)
             previous_u = u
         import pandas as pd

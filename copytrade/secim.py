@@ -1,7 +1,8 @@
-"""Seçim v1 (``docs/GOREV_SECIM_V1.md``): kapı sonucundan havuz, aday, oda, kontrol, taban ve elle liste.
+"""Seçim v1.3 (``docs/GOREV_SECIM_V13.md``, ön kayıt D sürüm 1.3): kapı sonucundan havuz, aday, oda, kontrol, taban ve elle liste.
 
 Eşik yok: tüm sayılar ``kurallar.yaml``'daki ``secim_*`` anahtarlarından gelir. Yalnız herkese açık veri; emir yok.
-Çıktı (veri dalına): ``secim/<tarih>/secim.json`` ve ``RAPOR.md``. İzleme listesi ``--izleme-listesi`` ile ``secim.json``'dan üretilir.
+Çıktı (veri dalına): ``secim/<tarih>-<sürüm>/secim.json`` ve ``RAPOR.md``; kırmızı bayraklar ayrı iş: ``--bayrak`` → ``bayrak.json``.
+Yayımlanan sürümün (aynı ``secim_surumu`` + kapı tarihi) üzerine yazılmaz. İzleme listesi ``--izleme-listesi`` ile ``secim.json``'dan üretilir.
 """
 from __future__ import annotations
 
@@ -9,6 +10,7 @@ import argparse
 import hashlib
 import json
 import math
+import statistics
 import time
 from datetime import UTC, datetime
 from pathlib import Path
@@ -37,17 +39,34 @@ def _flag(value: Any) -> bool:
     return str(value).strip().lower() in {"true", "1", "1.0"}
 
 
+KURALLAR_YOLU = Path(__file__).with_name("kurallar.yaml")
+
+
+def _sha256_dosya(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def statik_gecer(row: dict[str, Any], rules: dict) -> bool:
+    """Adım 3'ün statik koşulları (``kapi.py`` ile aynı sütunlar ve eksik-veri kuralı): kısa işlem payı yoksa geçer, kaldıraç yoksa kalır."""
+    short, median, top = _num(row.get("kisa_islem_payi")), _num(row.get("median_leverage")), _num(row.get("max_leverage"))
+    return ((short is None or short <= float(rules["kisa_islem_payi_max"]))
+            and median is not None and median <= float(rules["kapi_max_medyan_kaldirac"])
+            and top is not None and top <= float(rules["kapi_max_kaldirac"]))
+
+
 def puan(row: dict[str, Any]) -> float | None:
     """Tarzın kapı gecikmesindeki maliyet sonrası net kopya getirisi; yoksa ``None`` (puansız)."""
     delay = _num(row.get("kapi_gecikme_dk"))
     return None if delay is None else _num(row.get(f"gecikme_{int(delay)}dk_net"))
 
 
-def havuz(table: pd.DataFrame) -> list[dict[str, Any]]:
-    """Adım 1 ve 2 Geçti, tarzı intraday/swing olan satırlar; ``puan`` eklenmiş, adrese göre sıralı."""
+def havuz(table: pd.DataFrame, rules: dict | None = None) -> list[dict[str, Any]]:
+    """Adım 1 ve 2 Geçti, tarz intraday/swing, adım 3 statik koşulları sağlayan satırlar; ``puan`` eklenmiş, adrese göre sıralı."""
+    rules = rules or load_rules()
     rows = []
     for row in table.to_dict("records"):
-        if row.get("adim1") == "Geçti" and row.get("adim2") == "Geçti" and row.get("tarz") in TARZLAR:
+        if (row.get("adim1") == "Geçti" and row.get("adim2") == "Geçti" and row.get("tarz") in TARZLAR
+                and statik_gecer(row, rules)):
             rows.append({**row, "address": str(row["address"]).lower(), "puan": puan(row)})
     return sorted(rows, key=lambda r: r["address"])
 
@@ -125,16 +144,50 @@ def oda_sec(candidates: list[dict[str, Any]], rules: dict) -> dict[str, Any]:
             "hedef_ilk": int(rules["secim_oda_max"])}
 
 
-def tohum(date: str) -> int:
-    """``secim-v1-<tarih>`` dizgesinin SHA-256'sının ilk 8 baytı."""
-    return int.from_bytes(hashlib.sha256(f"secim-v1-{date}".encode()).digest()[:8], "big")
+def tohum_dizgesi(surum: str, kapi_tarihi: str) -> str:
+    return f"secim-{surum}-{kapi_tarihi}"
 
 
-def kontrol_sec(pool: list[dict[str, Any]], count: int, date: str) -> list[dict[str, Any]]:
-    """Havuzdan puana bakmadan rastgele ``count`` adres. Sıra = ``sha256(tohum-adres)``; kütüphane sürümünden bağımsız, tekrarlanabilir."""
-    seed = tohum(date)
-    ranked = sorted(pool, key=lambda r: hashlib.sha256(f"{seed}-{r['address']}".encode()).hexdigest())
-    return ranked[:min(count, len(ranked))]
+def tohum(surum: str, kapi_tarihi: str) -> int:
+    """``secim-<sürüm>-<kapı tarihi>`` dizgesinin SHA-256'sının ilk 8 baytı (bilgi amaçlı; sıralama adres başına sha256 kullanır)."""
+    return int.from_bytes(hashlib.sha256(tohum_dizgesi(surum, kapi_tarihi).encode()).digest()[:8], "big")
+
+
+def dilim_esigi(pool: list[dict[str, Any]]) -> float | None:
+    """Havuzun en yüksek kaldıraç medyanı (dilim sınırı); kaldıraç bilgisi olmayan havuzda ``None``."""
+    values = [v for v in (_num(r.get("max_leverage")) for r in pool) if v is not None]
+    return statistics.median(values) if values else None
+
+
+def dilim(row: dict[str, Any], esik: float | None) -> tuple[str, str]:
+    """Tarz × en yüksek kaldıraç (medyanın altı/eşiti = ``alt``, üstü = ``ust``)."""
+    top = _num(row.get("max_leverage"))
+    return row["tarz"], "alt" if esik is None or top is None or top <= esik else "ust"
+
+
+def kontrol_sec(pool: list[dict[str, Any]], oda: list[str], kapi_tarihi: str, surum: str) -> dict[str, Any]:
+    """Odayla ayrık, dilim-eşleştirilmiş kontrol (puana bakmaz). Her oda üyesi (adres sırasıyla) için aynı dilimden, yoksa aynı tarzın
+    öbür diliminden, ``sha256(secim-<sürüm>-<kapı tarihi>-<adres>)`` sırasındaki ilk kullanılmamış havuz-oda adresi. ``ikincil`` = havuz − oda."""
+    prefix = tohum_dizgesi(surum, kapi_tarihi)
+    room = set(oda)
+    rest = sorted((r for r in pool if r["address"] not in room), key=lambda r: hashlib.sha256(f"{prefix}-{r['address']}".encode()).hexdigest())
+    esik = dilim_esigi(pool)
+    by_address = {r["address"]: r for r in pool}
+    used: set[str] = set()
+    pairs: dict[str, str] = {}
+    unmatched: list[str] = []
+    for address in sorted(room):
+        want = dilim(by_address[address], esik)
+        for same in (True, False):
+            pick = next((r for r in rest if r["address"] not in used and r["tarz"] == want[0] and (dilim(r, esik) == want) == same), None)
+            if pick:
+                used.add(pick["address"])
+                pairs[address] = pick["address"]
+                break
+        else:
+            unmatched.append(address)
+    return {"kontrol": sorted(pairs.values()), "eslesme": pairs, "eslesmeyen": unmatched, "esik": esik,
+            "ikincil": sorted(r["address"] for r in rest)}
 
 
 def taban_sec(board: list[dict[str, Any]], count: int) -> list[str]:
@@ -154,14 +207,20 @@ def elle_liste(path: Path) -> list[str]:
 
 
 def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manual: list[str], rules: dict | None = None,
-        bayrak_fn=None) -> dict[str, Any]:
-    """``bayrak_fn(adres, hesap_degeri) -> {bayrak_*: …}``: yalnız aday katı için çağrılır; bilgi sütunudur, seçimi değiştirmez."""
+        bayrak_fn=None, kapi_tarihi: str | None = None) -> dict[str, Any]:
+    """``bayrak_fn(adres, hesap_degeri) -> {bayrak_*: …}``: yalnız aday katı için çağrılır; bilgi sütunudur, seçimi değiştirmez.
+    Komut satırı bayrakları seçimde değil ayrı işte hesaplar (``bayrak_hesapla``); ``kapi_tarihi`` yoksa ``date``."""
     rules = rules or load_rules()
-    pool = havuz(table)
+    kapi_tarihi = kapi_tarihi or date
+    surum = str(rules["secim_surumu"])
+    pool = havuz(table, rules)
     candidates = [r for r in adaylar(pool, rules)]
     room = oda_sec(candidates, rules)
     oda = room["oda"]
-    control = kontrol_sec(pool, len(oda), date)
+    kontrol_sonuc = kontrol_sec(pool, [r["address"] for r in oda], kapi_tarihi, surum)
+    control = [r for r in pool if r["address"] in set(kontrol_sonuc["kontrol"])]
+    esik = kontrol_sonuc["esik"]
+    slices = {r["address"]: dilim(r, esik) for r in pool}
     base = taban_sec(board, len(oda)) if board is not None else []
     by_address = {r["address"]: r for r in table.assign(address=table["address"].str.lower()).to_dict("records")}
     kollar: dict[str, set[str]] = {r["address"]: {"havuz"} for r in pool}
@@ -179,6 +238,8 @@ def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manu
             "kol": next(k for k in KOLLAR if k in names), "kollar": [k for k in KOLLAR if k in names],
             "tarz": row.get("tarz") if isinstance(row.get("tarz"), str) else None,
             "puan": puan_of.get(address), "sira": sira.get(address),
+            "dilim": "/".join(slices[address]) if address in slices else None,
+            "esli_oda": next((o for o, k in kontrol_sonuc["eslesme"].items() if k == address), None),
             "genc_aday": _flag(row.get("genc_aday")) if row else None,
             "medyan_kaldirac": _num(row.get("median_leverage")), "en_yuksek_kaldirac": _num(row.get("max_leverage")),
             "gecmis_gun": _num(row.get("gecmis_gun")), "hesap_degeri": _num(row.get("hesap_degeri_bugun")) or _num(row.get("account_value")),
@@ -191,11 +252,22 @@ def sec(table: pd.DataFrame, date: str, board: list[dict[str, Any]] | None, manu
             print(f"bayrak {address} {time.monotonic() - started:.0f} sn", flush=True)
     counts = {t: {"havuz": sum(r["tarz"] == t for r in pool), "puansiz": sum(r["tarz"] == t and r["puan"] is None for r in pool),
                   "aday": sum(r["tarz"] == t for r in candidates), "oda": sum(r["tarz"] == t for r in oda)} for t in TARZLAR}
-    return {"surum": 1, "tarih": date, "tohum": tohum(date), "tohum_dizgesi": f"secim-v1-{date}",
+    dilim_tablosu: dict[str, dict[str, int]] = {}
+    for address in [r["address"] for r in oda]:
+        dilim_tablosu.setdefault("/".join(slices[address]), {"oda": 0, "kontrol": 0, "havuz": 0})["oda"] += 1
+    for address in kontrol_sonuc["kontrol"]:
+        dilim_tablosu.setdefault("/".join(slices[address]), {"oda": 0, "kontrol": 0, "havuz": 0})["kontrol"] += 1
+    for address in slices:
+        dilim_tablosu.setdefault("/".join(slices[address]), {"oda": 0, "kontrol": 0, "havuz": 0})["havuz"] += 1
+    return {"surum": 1, "secim_surumu": surum, "tarih": date, "kapi_tarihi": kapi_tarihi,
+            "kurallar_sha256": _sha256_dosya(KURALLAR_YOLU), "secim_sha256": _sha256_dosya(Path(__file__)),
+            "tohum": tohum(surum, kapi_tarihi), "tohum_dizgesi": tohum_dizgesi(surum, kapi_tarihi),
             "sayilar": {"kapi_satiri": int(len(table)), "havuz": len(pool), "aday": len(candidates), "oda": len(oda),
-                        "kontrol": len(control), "taban": len(base), "elle": len(manual), "tarz": counts},
+                        "kontrol": len(control), "ikincil_kontrol": len(kontrol_sonuc["ikincil"]), "taban": len(base), "elle": len(manual), "tarz": counts},
             "oda_kisa": room["kisa"], "oda_kota": room["kota"],
-            "kontrol": [r["address"] for r in control], "adresler": entries}
+            "kontrol": kontrol_sonuc["kontrol"], "eslesme": kontrol_sonuc["eslesme"], "eslesmeyen": kontrol_sonuc["eslesmeyen"],
+            "ikincil_kontrol": kontrol_sonuc["ikincil"], "dilim_esigi": esik, "dilim_tablosu": dict(sorted(dilim_tablosu.items())),
+            "adresler": entries}
 
 
 def _fmt(value: Any, digits: int = 3) -> str:
@@ -213,9 +285,12 @@ def ozet_sutunlar(table: pd.DataFrame) -> list[str]:
 
 def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) -> str:
     n = result["sayilar"]
-    lines = [f"# Seçim v1 — {result['tarih']}", "",
+    lines = [f"# Seçim {result['secim_surumu']} — {result['tarih']} (kapı tarihi {result['kapi_tarihi']})", "",
+             "- **Seçim = geçmiş getiri sıralaması (adım 1–3 süzgeçli).** Havuz: adım 1+2 Geçti, tarz intraday/swing, adım 3 statik koşulları "
+             "(kısa işlem payı, medyan ve en yüksek kaldıraç). Bu sıralamanın ileriyi taşıyıp taşımadığı pilotun sorusudur; kanıt sayılmaz.",
+             f"- Kimlik: kurallar `{result['kurallar_sha256'][:12]}` · secim.py `{result['secim_sha256'][:12]}` · tohum `{result['tohum_dizgesi']}`.",
              f"- Girdi: kapı satırı {n['kapi_satiri']}, hesap sürümü {durum.get('hesap')}, kapsam {durum.get('kapsam')}, durum `{durum.get('durum')}`.",
-             f"- Havuz {n['havuz']} · aday {n['aday']} · oda {n['oda']} · kontrol {n['kontrol']} · taban {n['taban']} · elle {n['elle']}.", ""]
+             f"- Havuz {n['havuz']} · aday {n['aday']} · oda {n['oda']} · kontrol {n['kontrol']} (ikincil kontrol {n['ikincil_kontrol']}) · taban {n['taban']} · elle {n['elle']}.", ""]
     if result["oda_kisa"]:
         lines += [f"> **Uyarı:** oda {n['oda']} adres; en az 10 hedefiydi, aday katı yetersiz. Oda = ilişki elemesinden sonra tüm aday.", ""]
     lines += ["## Kat sayıları (tarz kırılımlı)", "", "| tarz | havuz | puansız | aday | oda |", "|---|---|---|---|---|"]
@@ -236,22 +311,72 @@ def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) ->
     dropped = [(a, e["iliskili_not"]) for a, e in sorted(result["adresler"].items()) if e["iliskili_not"].startswith("ilişkili hesap")]
     if dropped:
         lines += ["", "## İlişkili hesap nedeniyle odaya girmeyenler", ""] + [f"- `{a}`: {note}" for a, note in dropped]
-    lines += ["", "## Kontrol", "", f"Tohum: `{result['tohum_dizgesi']}` → {result['tohum']}. Seçilenler (oda üyeleri de çıkabilir):", ""]
-    lines += [f"- `{a}`" for a in result["kontrol"]]
+    lines += ["", "## Oda ↔ kontrol dilim dağılımı", "",
+              f"Dilim = tarz × en yüksek kaldıraç (havuz medyanı {_fmt(result['dilim_esigi'], 2)}; alt = medyan ve altı). Kontrol odayla ayrıktır.", "",
+              "| dilim | havuz | oda | kontrol |", "|---|---|---|---|"]
+    lines += [f"| {d} | {c['havuz']} | {c['oda']} | {c['kontrol']} |" for d, c in result["dilim_tablosu"].items()]
+    if result["eslesmeyen"]:
+        lines += ["", f"Eşi bulunamayan oda üyeleri: {', '.join('`' + a + '`' for a in result['eslesmeyen'])}."]
+    lines += ["", "## Kontrol", "", f"Sıra: `sha256({result['tohum_dizgesi']}-<adres>)`; her oda üyesine aynı dilimden bir kontrol. Eşleşmeler (oda → kontrol):", ""]
+    lines += [f"- `{o}` → `{k}`" for o, k in sorted(result["eslesme"].items())]
     lines += ["", "## Kapı tablosu sütun özeti (min/medyan/max)", ""] + ozet_sutunlar(table)
     return "\n".join(lines) + "\n"
 
 
+def bayrak_surumu() -> str:
+    """Bayrak hesabının kod kimliği (``bayrak.py`` sha256'sı): kod değişince önbellek geçersiz olur."""
+    return _sha256_dosya(Path(__file__).with_name("bayrak.py"))
+
+
+def bayrak_hesapla(result: dict[str, Any], bayrak_fn, onbellek: dict[str, Any] | None = None, kaydet=None) -> dict[str, Any]:
+    """Aday katı (``aday`` kolundaki adresler) için kırmızı bayraklar; ``bayrak.json`` gövdesi. Seçimi değiştirmez, ``secim.json``'a dokunmaz.
+
+    ``onbellek``: önceki (kısmi olabilir) ``bayrak.json`` gövdesi; ``bayrak_surumu`` (kod hash'i), ``secim_surumu`` ve ``kapi_tarihi`` aynıysa o adresin
+    sonucu yeniden hesaplanmaz (E6: yeniden koşu tüm ağ çağrılarını tekrarlamaz). ``kaydet(gövde)``: her yeni adresten sonra (``tamam: False``) ve
+    sonda (``tamam: True``) çağrılır; zaman aşımı/hata kısmi sonucu korur."""
+    body: dict[str, Any] = {"secim_surumu": result["secim_surumu"], "kapi_tarihi": result["kapi_tarihi"], "bayrak_surumu": bayrak_surumu(),
+                            "tamam": False, "bayraklar": {}}
+    reusable = {}
+    if onbellek and all(onbellek.get(k) == body[k] for k in ("secim_surumu", "kapi_tarihi", "bayrak_surumu")):
+        reusable = dict(onbellek.get("bayraklar", {}))
+    for address, e in sorted(result["adresler"].items()):
+        if "aday" not in e["kollar"]:
+            continue
+        if address in reusable:
+            body["bayraklar"][address] = reusable[address]
+            continue
+        started = time.monotonic()
+        body["bayraklar"][address] = bayrak_fn(address, e["hesap_degeri"] or 0.0)
+        print(f"bayrak {address} {time.monotonic() - started:.0f} sn", flush=True)
+        if kaydet:
+            kaydet(body)
+    body["tamam"] = True
+    if kaydet:
+        kaydet(body)
+    return body
+
+
 def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: str) -> list[dict[str, Any]]:
-    """``secim.json``'dan izleme listesi: oda + kontrol + taban + elle. Var olan satırın id/t0'ı değişmez, yalnız ``kol``/``kollar`` eklenir."""
+    """``secim.json``'dan izleme listesi: oda + kontrol + taban + elle.
+
+    Seçim kolundaki (oda/kontrol/taban) bir adres listede zaten varsa ve satırı bu seçim sürümünün etiketini (``secim`` =
+    ``<secim_surumu>@<kapı tarihi>``) taşımıyorsa **yeni id ve yeni t0** alır: eski t0'dan yeniden oynatma olmaz, ITT ölçümü sürümün
+    etiket gününden başlar (E5). Eski id yeniden kullanılmaz (motor arşivi aynı id'de adres/t0 değişimini reddeder). Etiketi aynıysa satır
+    değişmez (aynı seçimi yeniden yazmak idempotent). ``elle`` satırlar ve seçimde çıkmayan satırlar olduğu gibi korunur."""
+    label = f"{result.get('secim_surumu', 'v1')}@{result.get('kapi_tarihi') or result['tarih']}"
     by_address = {str(r["adres"]).lower(): dict(r) for r in existing}
     rows, counters = [], {k: 0 for k in ONEK}
     used = {r["id"] for r in existing}
+    replaced: set[str] = set()
     for address, e in result["adresler"].items():
         kollar = [k for k in e["kollar"] if k in LISTE_KOLLARI]
         if not kollar:
             continue
         row = by_address.get(address)
+        selected = bool(set(kollar) & {"oda", "kontrol", "taban"})
+        if row is not None and selected and row.get("secim") != label:
+            replaced.add(address)
+            row = None
         if row is None:
             kind = kollar[0]
             while True:
@@ -263,6 +388,8 @@ def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: s
             row = {"id": ident, "adres": address, "takma_ad": address[2:6], "durum": "izlemede", "t0": t0}
             if e["tarz"] in TARZLAR:
                 row["tarz"] = e["tarz"]
+        if selected:
+            row["secim"] = label
         row["kol"], row["kollar"] = kollar[0], kollar
         rows.append(row)
     kept = {r["adres"].lower() for r in rows}
@@ -289,7 +416,8 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--output", type=Path, default=Path("secim"))
     parser.add_argument("--tarih", default=None, help="varsayılan: bugün (UTC)")
     parser.add_argument("--taban-dosyasi", type=Path, default=None, help="lider tablosu JSON'u (yoksa Hyperliquid'den çekilir)")
-    parser.add_argument("--bayraksiz", action="store_true", help="kırmızı bayrak sütunlarını hesaplama (ağ isteği yok)")
+    parser.add_argument("--bayraksiz", action="store_true", help="(v1.3'te varsayılan) seçim kırmızı bayrak hesaplamaz; bayraklar --bayrak ile ayrı işte")
+    parser.add_argument("--bayrak", action="store_true", help="--secim (varsayılan: en son) secim.json'daki aday katı için bayrak.json üret (ağ isteği)")
     parser.add_argument("--izleme-listesi", action="store_true", help="secim.json'dan copytrade/izleme_listesi.yaml üret")
     parser.add_argument("--secim", type=Path, default=None, help="--izleme-listesi için secim.json (varsayılan: en son)")
     args = parser.parse_args(argv)
@@ -303,30 +431,45 @@ def main(argv: list[str] | None = None) -> None:
         yaz_izleme_listesi(rows, list_path)
         print(f"İzleme listesi: {len(rows)} satır ({source}).")
         return
+    if args.bayrak:
+        from copytrade import bayrak
+        from copytrade.tarama import PublicClient
+        source = args.secim or latest(args.output, "*/secim.json")
+        client = PublicClient()
+        target = source.parent / "bayrak.json"
+        previous = json.loads(target.read_text(encoding="utf-8")) if target.exists() else None      # önceki (kısmi) sonuç = önbellek
+
+        def write(body):                                                                              # her adresten sonra checkpoint
+            temporary = target.with_suffix(".json.tmp")
+            temporary.write_text(json.dumps(body, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")
+            temporary.replace(target)
+        body = bayrak_hesapla(json.loads(source.read_text(encoding="utf-8")), lambda address, value: bayrak.hesapla(client, address, value), previous, write)
+        print(f"Bayrak: {len(body['bayraklar'])} adres ({source.parent}).")
+        return
     path = latest(args.root, "kapi/*/sonuc.csv")
+    kapi_tarihi = path.parent.name
     durum = json.loads((path.parent / "durum.json").read_text(encoding="utf-8"))
     rules = load_rules()
     if durum.get("durum") != "tamam":
         raise SystemExit(f"Kapı koşusu tamam değil (durum={durum.get('durum')}); seçim yapılmaz.")
     if float(durum.get("kapsam") or 0) < float(rules["secim_min_kapsam"]):
         raise SystemExit(f"Kapı kapsamı {durum.get('kapsam')} < {rules['secim_min_kapsam']}: tam koşu değil (hızlı koşu?); seçim yapılmaz.")
-    table = pd.read_csv(path)
+    out = args.output / f"{date}-{rules['secim_surumu']}"
+    for published in args.output.glob("*/secim.json"):
+        old = json.loads(published.read_text(encoding="utf-8"))
+        if published.parent == out or (old.get("secim_surumu") == rules["secim_surumu"] and old.get("kapi_tarihi") == kapi_tarihi):
+            raise SystemExit(f"{published} yayımlı (sürüm {old.get('secim_surumu')}, kapı {old.get('kapi_tarihi')}): yayımlanan seçimin üzerine yazılmaz.")
+    table = pd.read_csv(path, low_memory=False)
     if args.taban_dosyasi:
         board = json.loads(args.taban_dosyasi.read_text(encoding="utf-8"))
     else:
         from copytrade.tarama import PublicClient
         board = PublicClient().leaderboard()
-    bayrak_fn = None
-    if not args.bayraksiz:
-        from copytrade import bayrak
-        from copytrade.tarama import PublicClient
-        client = PublicClient()
-        bayrak_fn = lambda address, value: bayrak.hesapla(client, address, value)    # noqa: E731
-    result = sec(table, date, board, elle_liste(list_path), rules, bayrak_fn)
-    out = args.output / date
+    result = sec(table, date, board, elle_liste(list_path), rules, None, kapi_tarihi)
     out.mkdir(parents=True, exist_ok=True)
     (out / "secim.json").write_text(json.dumps(result, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")
     (out / "RAPOR.md").write_text(rapor(result, table, durum), encoding="utf-8")
+    print(f"Çıktı: {out}")
     print(f"Seçim {date}: {result['sayilar']}")
 
 

@@ -82,3 +82,13 @@ otomatik kontroller aldı), sonuç görüldükten sonra konan p10/PF eşikleri. 
 - Uygulamadaki pencere: mum ve kopya defteri `mum_pencere_gun` = 200 gün; adım 6 alfası da fiilen bu 200 günlük veriden hesaplanır
   (`alfa_pencere_gun` 365 üst sınırdır). Adım 2'nin "≥ 1 yıl" şartı geçmiş uzunluğuna (`min_history_days`) değil, sınama verisine
   bakar; bu fark bilinçli kabul edildi ve raporlarda belirtilir.
+
+## Sürüm 3.2 (2026-10-29, kullanıcı kararı)
+- Hesap değeri eşikleri düşürüldü: `evren_min_hesap_degeri` 25.000 → **5.000** (lider tablosu ön süzgeci) ve `hesap_degeri_min_usd`
+  10.000 → **5.000** (1. aşama hesap değeri tabanı). Yalnız `kurallar.yaml`'da; kapı adımlarının mantığı ve diğer eşikler değişmez.
+- Etki (sayıma göre): evren **13.660 → 15.005** adres (+1.345). Hesap sürümü (`v1.1-2026-10-27d`) değişmediği için mevcut satırlar korunur.
+- Uygulama: `copytrade/kapi/CALISTIR` içine `mod=eksik` yazılır; koşu yalnız sonuçta olmayan (yeni) adresleri, "veri hatası" satırlarını ve
+  eski 10.000 $ tabanında kalıp yeni 5.000 $ tabanını geçen satırları (`neden = hesap değeri tabanı`, `hesap_degeri_bugun` ≥ 5.000) tarar.
+  Eski eşikte geçmiş hiçbir satır yeniden hesaplanmaz.
+- Kapsam ölçüsü (denetim B14): `kapsam = |sonuç ∩ evren| / |evren|` (evren adres kümesi ortak anlık görüntüden); evren dışı satırlar
+  `evren_disi` sütunuyla işaretlenir ve `durum.json`'da `evren_disi_satir` olarak sayılır. Eski ölçü (satır / evren) birikmiş satırlarla 1'i aşabiliyordu.

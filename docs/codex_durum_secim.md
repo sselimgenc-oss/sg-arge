@@ -25,3 +25,32 @@
 - Bayrak hesapları: `bayrak_rol` = `vault` | `subAccount:<master>` | diğer rol adı; funding payı = 365 gün `userFunding` toplamı / aynı dönem `closedPnl` toplamı
   (PnL 0 ise boş); vault oranı ve hacim oranı paydası kapı satırındaki güncel hesap değeri; hacim = `portfolio` `month` penceresi `vlm`;
   alt hesap kontrolü master'ın alt hesapları + (alt hesapsa) master'ın kendi pozisyonları.
+
+## Seçim v1.3 — iş paketi A (`docs/GOREV_SECIM_V13.md`)
+- [x] Havuz: adım 3 statik koşulları (kısa işlem payı, medyan ve en yüksek kaldıraç; `kapi.py` ile aynı eksik-veri kuralı)
+- [x] Kontrol: odayla ayrık, tarz × en yüksek kaldıraç dilimi eşleştirmeli; `ikincil_kontrol` = havuz − oda; tohum = `secim-<sürüm>-<kapı tarihi>`
+- [x] Seçim kimliği (`secim_surumu`, `kapi_tarihi`, `kurallar_sha256`, `secim_sha256`); aynı sürüm + kapı tarihi üzerine yazılmaz (kod + iş akışı)
+- [x] Çıktı klasörü `secim/<tarih>-<sürüm>/`; bayraklar ayrı iş (`--bayrak` → `bayrak.json`), seçimi beklemez
+- [x] RAPOR: "geçmiş getiri sıralaması (adım 1–3 süzgeçli)" açıklaması + oda ↔ kontrol dilim tablosu
+- [ ] B (geçiş kaydı), C (analiz kodu), D (haftalık geri bildirim): ayrı PR'lar
+## Seçim v1.3 — iş paketi B (geçiş kaydı)
+- [x] `copytrade/gecis.py`: yalnız eklemeli `kayit.jsonl` (`tarih, adres, kol, olay giris|cikis, neden, secim_surumu, kapi_tarihi`) ve `degerlendirme.jsonl`; silme/güncelleme yolu yok; aynı olay iki kez yazılmaz
+- [x] Çıkış: `secim_cikis_ardisik_hafta` (2) ardışık haftalık uygunsuz değerlendirme; araya uygun ya da atlanmış hafta sayacı sıfırlar
+- [x] `copytrade/kollar.py` (ikinci aday/kontrol/terfi uygulaması) kaldırıldı; tek kaynak `secim.py`; ona ait eski testler silindi (kod yok)
+- Not: `golge_terfi_*` anahtarları artık kodda kullanılmıyor (kural belgelerinde duruyor; temizlik ayrı karar)
+
+## Seçim v1.3 — iş paketi C (analiz kodu; gölge verisi görülmeden)
+- [x] `copytrade/analiz_d.py`: `birincil_spearman` (ρ, tek yönlü p, iki yönlü %90 GA, n), `ikincil_fark` (BTC betası düzeltilmiş, örtüşen blok bootstrap %95), `karar` (3 sonuç), `mde`, `duyarlilik_net`, `veri_eksik`
+- [x] Sayılar yalnız `kurallar.yaml`: `onkayit_delta_rho` 0,10 · `onkayit_p_max` 0,05 · `onkayit_blok_gun` 7 · `onkayit_veri_eksik_max` 0,05 · `maliyet_duyarlilik_carpani_intraday` 2 · `onkayit_guc` 0,80 · `onkayit_ci_ikincil` 0,95 · `onkayit_bootstrap_tekrar` 2000 · `onkayit_spearman_varyans_carpani` 1,06
+- [x] Elle hesaplanmış altın örnekler: ρ = 0,8 (n=5: p 0,065642; GA [−0,098538; 0,979941]), bağlı sıralar 0,948683, MDE 0,22875 %/gün (σ 0,02, ρ 0,3, n 10, 84 gün)
+
+## Seçim v1.3 — iş paketi D (haftalık geri bildirim)
+- [x] `copytrade/haftalik_rapor.py`: havuz genelinde puan ↔ ileri getiri Spearman'ı + tarz / kaldıraç dilimi kırılımı; **kol bazında getiri yazılmaz** (körlük testi); `--gecis` ile `gecis.haftalik` aynı çalışmada
+- [x] `.github/workflows/copytrade_haftalik.yml`: elle çalışır (zamanlama yok), veri dalındaki en son seçimi okur, `rotasyon/` altına yazar
+- Bekleyen: gölge ileri getiri dosyası (`--getiri`) gölge defteri yayımlanınca bağlanır; o güne dek rapor "ileri getiri verisi yok" der
+
+## Seçim v1.3 — iş paketi E2–E4, E6 (motor düzeltmeleri)
+- [x] E2: V1 atlanan ekleme sonrası kapanış gölgedeki pozisyona uygulanır (yetim yok); V2 kısmi azaltmada giriş ve pozisyon yaşı korunur; flip = çıkış + yeni giriş, yeni parça tavana tabi
+- [x] E3: etiketten önceki (miras) pozisyonu kapatan dolum `ZeroDivisionError` vermez (V0/V1/V2)
+- [x] E4: `Market.mark_at` işaret yaşı sınırı (`isaret_yas_max_dk` 120); aşılırsa `mark_missing`, canlı sonuç "eksik işaretleme" notu taşır
+- [x] E6: `bayrak.json` sürümlü önbellek (kod hash + seçim sürümü + kapı tarihi), her adresten sonra checkpoint, iş akışı önceki/kısmi sonucu veri dalından geri yükler ve zaman aşımında da yazar

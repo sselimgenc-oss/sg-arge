@@ -1,4 +1,5 @@
-"""Seçim v1 altın örnekleri (docs/GOREV_SECIM_V1.md): 12 satırlık, elle hesaplanmış kapı tablosu → havuz / aday / oda / kontrol."""
+"""Seçim v1.3 altın örnekleri (docs/GOREV_SECIM_V1.md, GOREV_SECIM_V13.md): 12 satırlık, elle hesaplanmış kapı tablosu → havuz / aday / oda / kontrol."""
+import hashlib
 import re
 import json
 from pathlib import Path
@@ -85,22 +86,88 @@ def test_kotalar_en_buyuk_kalan():
     assert secim._kotalar({"intraday": 0, "swing": 0}, 3) == {"intraday": 0, "swing": 0}
 
 
-def test_tohum_altin_deger_ve_kontrol_tekrarlanabilir():
-    assert secim.tohum("2026-10-28") == 5430774789319239683     # sha256("secim-v1-2026-10-28") ilk 8 bayt, büyük uçlu
-    pool = secim.havuz(TABLE)
-    first = [r["address"] for r in secim.kontrol_sec(pool, 4, "2026-10-28")]
-    assert first == [r["address"] for r in secim.kontrol_sec(pool, 4, "2026-10-28")] and len(set(first)) == 4     # aynı tarih → aynı kontrol
-    assert first != [r["address"] for r in secim.kontrol_sec(pool, 4, "2026-10-29")]                              # farklı tarih → farklı kontrol
-    assert addr("9") not in first                                                                                 # havuz dışı çıkmaz
-    assert len(secim.kontrol_sec(pool, 99, "2026-10-28")) == 11                                                   # havuzdan fazlası istenirse havuz kadar
+def pool_of(spec):
+    """spec: {ad: (tarz, en_yuksek_kaldirac)} → havuz satırları (puan 0,1: kontrol puana bakmaz)."""
+    return [{"address": addr(n), "tarz": t, "max_leverage": lev, "puan": 0.1} for n, (t, lev) in spec.items()]
 
 
-def test_kontrol_puana_bakmaz_oda_uyeleri_cikabilir():
-    pool = secim.havuz(TABLE)
+# intraday a,b,c,d (en yüksek kaldıraç 1, 2, 8, 9) · swing 1,2,3,4 (1, 2, 8, 9); medyan (2 + 8) / 2 = 5 → alt = ≤ 5
+KONTROL_HAVUZU = pool_of({"a": ("intraday", 1.0), "b": ("intraday", 2.0), "c": ("intraday", 8.0), "d": ("intraday", 9.0),
+                          "1": ("swing", 1.0), "2": ("swing", 2.0), "3": ("swing", 8.0), "4": ("swing", 9.0)})
+
+
+def test_havuz_statik_kosullari_kapi_ile_ayni():
+    rows = [row("a", "intraday", 0.5),                                       # 1,5x / 4x: girer
+            row("b", "intraday", 0.9, max_leverage=36.5),                    # en yüksek kaldıraç 36,5x > 10: girmez
+            row("c", "intraday", 0.8, median_leverage=3.5),                  # medyan 3,5x > 3: girmez
+            row("d", "swing", 0.7, kisa_islem_payi=0.30),                    # kısa işlem payı %30 > %25: girmez
+            row("e", "swing", 0.6, kisa_islem_payi=0.25),                    # tam sınır: girer
+            row("f", "swing", 0.5, median_leverage=3.0, max_leverage=10.0),  # tam sınır: girer
+            row("0", "swing", 0.4, median_leverage=None),                    # kaldıraç bilinmiyor: kapıdaki gibi kalır
+            row("1", "swing", 0.3, kisa_islem_payi=None)]                    # kısa işlem payı yok: kapıdaki gibi geçer
+    got = {r["address"] for r in secim.havuz(pd.DataFrame(rows), RULES)}
+    assert got == {addr("a"), addr("e"), addr("f"), addr("1")}
+    assert RULES["kisa_islem_payi_max"] == 0.25 and RULES["kapi_max_medyan_kaldirac"] == 3.0 and RULES["kapi_max_kaldirac"] == 10.0
+
+
+def test_tohum_altin_deger():
+    assert secim.tohum_dizgesi("v1.3", "2026-10-28") == "secim-v1.3-2026-10-28"
+    assert secim.tohum("v1.3", "2026-10-28") == 0x532caf57ce210502 == 5993357995778573570       # printf ... | sha256sum, ilk 8 bayt
+
+
+def test_kontrol_ayni_dilimden_odayla_ayrik():
+    got = secim.kontrol_sec(KONTROL_HAVUZU, [addr("c"), addr("3")], "2026-10-28", "v1.3")
+    assert got["esik"] == 5.0
+    assert got["eslesme"] == {addr("c"): addr("d"), addr("3"): addr("4")}       # intraday/ust yalnız d, swing/ust yalnız 4 kaldı
+    assert got["kontrol"] == [addr("4"), addr("d")] and got["eslesmeyen"] == []
+    assert set(got["ikincil"]) == {addr(n) for n in "ab124d"} and not {addr("c"), addr("3")} & set(got["ikincil"])     # havuz − oda
+    assert not {addr("c"), addr("3")} & set(got["kontrol"])
+
+
+def test_kontrol_dilim_sirasi_hash_ve_bos_dilimde_ayni_tarz():
+    # a, b (intraday/alt) odada → alt dilimde kontrol kalmadı → aynı tarzın üst dilimi (c, d); sha256(secim-v1.3-<kapı>-<adres>) sırası:
+    # 2026-10-28: c 1694a28f < d d8b847df → a→c, b→d (adres sırasıyla);  2026-10-27: d 8b0d577b < c beab36eb → a→d, b→c
+    first = secim.kontrol_sec(KONTROL_HAVUZU, [addr("a"), addr("b")], "2026-10-28", "v1.3")
+    assert first["eslesme"] == {addr("a"): addr("c"), addr("b"): addr("d")}
+    second = secim.kontrol_sec(KONTROL_HAVUZU, [addr("a"), addr("b")], "2026-10-27", "v1.3")
+    assert second["eslesme"] == {addr("a"): addr("d"), addr("b"): addr("c")}                # farklı kapı tarihi → farklı eşleşme
+    assert first == secim.kontrol_sec(KONTROL_HAVUZU, [addr("a"), addr("b")], "2026-10-28", "v1.3")      # aynı girdi → aynı çıktı
+    mixed = secim.kontrol_sec(KONTROL_HAVUZU, [addr("a"), addr("c")], "2026-10-28", "v1.3")
+    assert mixed["eslesme"] == {addr("a"): addr("b"), addr("c"): addr("d")}                 # a alt→b (alt), c üst→d (üst)
+
+
+def test_kontrol_eslesemeyen_oda_uyesi_yazilir():
+    got = secim.kontrol_sec(KONTROL_HAVUZU, [addr(n) for n in "abcd"], "2026-10-28", "v1.3")      # intraday'in tamamı odada
+    assert got["kontrol"] == [] and got["eslesmeyen"] == [addr(n) for n in "abcd"]
+    assert set(got["ikincil"]) == {addr(n) for n in "1234"}
+
+
+def test_kontrol_puana_bakmaz_oda_disindaki_herkes_cikabilir():
+    pool = [{**r, "puan": 0.1 * i} for i, r in enumerate(KONTROL_HAVUZU)]
     seen = set()
     for day in range(1, 29):
-        seen |= {r["address"] for r in secim.kontrol_sec(pool, 4, f"2026-10-{day:02d}")}
-    assert addr("f") in seen and addr("0") in seen and addr("a") in seen                                          # negatif, puansız ve oda üyesi dahil
+        seen |= set(secim.kontrol_sec(pool, [addr("c")], f"2026-10-{day:02d}", "v1.3")["kontrol"])
+    assert addr("c") not in seen and seen <= {addr("a"), addr("b"), addr("d")}               # odadan asla; başka biri hep d (üst dilim)
+    assert seen == {addr("d")}
+
+
+def test_secim_kapi_tarihine_baglidir_secim_tarihine_degil():
+    one = secim.sec(TABLE, "2026-10-28", [], [], RULES, kapi_tarihi="2026-10-27")
+    again = secim.sec(TABLE, "2026-10-30", [], [], RULES, kapi_tarihi="2026-10-27")             # seçim yeniden koştu
+    assert one["kontrol"] == again["kontrol"] and one["eslesme"] == again["eslesme"] and one["tohum_dizgesi"] == "secim-v1.3-2026-10-27"
+    other = secim.sec(TABLE, "2026-10-28", [], [], RULES, kapi_tarihi="2026-10-29")
+    assert other["tohum_dizgesi"] == "secim-v1.3-2026-10-29"
+
+
+def test_secim_kimligi_ve_ikincil_kontrol():
+    result = secim.sec(TABLE, "2026-10-28", [], [], RULES, kapi_tarihi="2026-10-27")
+    assert result["secim_surumu"] == "v1.3" and result["kapi_tarihi"] == "2026-10-27" and RULES["secim_surumu"] == "v1.3"
+    assert result["kurallar_sha256"] == hashlib.sha256((Path(secim.__file__).parent / "kurallar.yaml").read_bytes()).hexdigest()
+    assert result["secim_sha256"] == hashlib.sha256(Path(secim.__file__).read_bytes()).hexdigest()
+    oda = {a for a, e in result["adresler"].items() if "oda" in e["kollar"]}
+    assert oda == {addr("a"), addr("2")} and not oda & set(result["kontrol"])                  # oda ↔ kontrol kesişimi boş
+    assert set(result["ikincil_kontrol"]) == {r["address"] for r in secim.havuz(TABLE, RULES)} - oda and result["sayilar"]["ikincil_kontrol"] == 9
+    assert result["dilim_tablosu"] == {"intraday/alt": {"oda": 1, "kontrol": 1, "havuz": 7}, "swing/alt": {"oda": 1, "kontrol": 1, "havuz": 4}}
 
 
 def test_taban_30_gunluk_pnl():
@@ -122,7 +189,8 @@ def test_sec_kol_onceligi_ve_ciktilar():
     assert entries[addr("2")]["genc_aday"] is True and entries[addr("2")]["hesap_surumu"] == "v1.1-test"
     assert addr("9") not in entries                                     # adım 2 Kaldı: hiçbir kolda yok
     text = secim.rapor(result, TABLE, {"hesap": "v1.1-test", "kapsam": 1.0, "durum": "tamam"})
-    assert "oda 2 adres; en az 10" in text and "secim-v1-2026-10-28" in text and "| gecikme_30dk_net |" in text
+    assert "oda 2 adres; en az 10" in text and "secim-v1.3-2026-10-28" in text and "| gecikme_30dk_net |" in text
+    assert "geçmiş getiri sıralaması (adım 1–3 süzgeçli)" in text and "## Oda ↔ kontrol dilim dağılımı" in text and "| intraday/alt | 7 | 1 | 1 |" in text
 
 
 def test_izleme_listesi_mevcut_satirlari_korur_ve_dogrulanir(tmp_path: Path):
@@ -131,8 +199,11 @@ def test_izleme_listesi_mevcut_satirlari_korur_ve_dogrulanir(tmp_path: Path):
                 {"id": "T2", "adres": addr("d"), "takma_ad": "dddd", "durum": "izlemede", "t0": "2026-10-20"}]
     rows = secim.izleme_listesi(result, existing, "2026-10-29")
     by = {r["adres"]: r for r in rows}
-    assert by[addr("a")]["id"] == "T1" and by[addr("a")]["t0"] == "2026-10-20" and by[addr("a")]["kol"] == "oda"       # var olan satır değişmez
-    assert by[addr("d")]["kol"] == "elle" and by[addr("2")]["t0"] == "2026-10-29" and by[addr("2")]["id"].startswith("O")
+    # E5: listede zaten olan adres v1.3 kohortuna (oda) girince YENİ id ve t0 alır; eski t0'dan yeniden oynatma yok
+    assert by[addr("a")]["id"] != "T1" and by[addr("a")]["t0"] == "2026-10-29" and by[addr("a")]["kol"] == "oda"
+    assert "T1" not in {r["id"] for r in rows} and by[addr("a")]["secim"] == "v1.3@2026-10-28"                          # ITT etiketi seçim sürümüne bağlı
+    assert by[addr("d")]["id"] == "T2" and by[addr("d")]["t0"] == "2026-10-20" and by[addr("d")]["kol"] == "elle"       # elle satır değişmez
+    assert by[addr("2")]["t0"] == "2026-10-29" and by[addr("2")]["id"].startswith("O")
     path = tmp_path / "liste.yaml"
     secim.yaz_izleme_listesi(rows, path)
     loaded = load_list(path)                                      # izleme motorunun doğrulaması kabul eder
@@ -156,8 +227,15 @@ def test_tam_kosu_degilse_durur(tmp_path: Path):
     (day / "durum.json").write_text(json.dumps({"durum": "tamam", "kapsam": 0.95, "hesap": "v1.1-test"}), encoding="utf-8")     # 0,95 → çalışır
     (tmp_path / "board.json").write_text("[]", encoding="utf-8")
     secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28", "--taban-dosyasi", str(tmp_path / "board.json"), "--bayraksiz"])
-    assert json.loads((tmp_path / "secim/2026-10-28/secim.json").read_text())["sayilar"]["oda"] == 2
-    assert (tmp_path / "secim/2026-10-28/RAPOR.md").exists()
+    published = json.loads((tmp_path / "secim/2026-10-28-v1.3/secim.json").read_text())
+    assert published["sayilar"]["oda"] == 2 and published["kapi_tarihi"] == "2026-10-28"        # kapı tarihi = kapı klasörünün adı
+    assert (tmp_path / "secim/2026-10-28-v1.3/RAPOR.md").exists()
+    with pytest.raises(SystemExit, match="üzerine yazılmaz"):                                     # aynı sürüm + kapı tarihi: yeniden yayımlanmaz
+        secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-30", "--taban-dosyasi", str(tmp_path / "board.json")])
+    before = (tmp_path / "secim/2026-10-28-v1.3/secim.json").read_text()
+    with pytest.raises(SystemExit, match="üzerine yazılmaz"):
+        secim.main(["--root", str(tmp_path), "--output", str(tmp_path / "secim"), "--tarih", "2026-10-28", "--taban-dosyasi", str(tmp_path / "board.json")])
+    assert (tmp_path / "secim/2026-10-28-v1.3/secim.json").read_text() == before
 
 
 def test_secim_main_calistir_dosyasi_ile_tetiklenir():
@@ -169,12 +247,50 @@ def test_secim_main_calistir_dosyasi_ile_tetiklenir():
 
 def test_secim_isi_bayrak_cekimi_icin_yeterli_sure_tanir():
     # Run 1 (22 aday) 20 dk'da iptal oldu: aday başına 365 günlük dolum/funding çekimi.
-    minutes = int(re.search(r"timeout-minutes: (\d+)", WORKFLOW.read_text(encoding="utf-8")).group(1))
-    assert minutes >= 120
+    bayrak_job = WORKFLOW.read_text(encoding="utf-8").split("\n  bayrak:\n")[1]       # bayraklar ayrı işte (v1.3); süre o işe aittir
+    assert int(re.search(r"timeout-minutes: (\d+)", bayrak_job).group(1)) >= 120
 
 
 def test_secim_yayimi_seçimle_ayni_gunu_kullanir():
     # Gece yarısını geçen koşu: yayım adımı günü yeniden hesaplarsa secim/<gün> bulunamaz (denetim B24).
     workflow = WORKFLOW.read_text(encoding="utf-8")
-    assert "--tarih \"$day\"" in workflow and "day=${{ steps.secim.outputs.day }}" in workflow
+    assert "--tarih \"$day\"" in workflow and workflow.count("date -u +%F") == 1                  # gün tek yerde belirlenir
+    assert "name=${{ steps.secim.outputs.name }}" in workflow and "name=${{ needs.secim.outputs.name }}" in workflow     # yayım ve bayrak işi aynı klasör adını kullanır
     assert "actions/upload-artifact" in workflow
+
+
+def test_izleme_listesi_ayni_secim_yeniden_yazilirsa_id_ve_t0_degismez():
+    result = secim.sec(TABLE, "2026-10-28", [], [], RULES, kapi_tarihi="2026-10-28")
+    existing = [{"id": "T1", "adres": addr("a"), "takma_ad": "aaaa", "durum": "izlemede", "t0": "2026-10-20", "tarz": "intraday"}]
+    first = secim.izleme_listesi(result, existing, "2026-10-29")
+    again = secim.izleme_listesi(result, first, "2026-10-31")                      # aynı sürüm + kapı: idempotent
+    assert {r["adres"]: (r["id"], r["t0"]) for r in again} == {r["adres"]: (r["id"], r["t0"]) for r in first}
+    newer = secim.sec(TABLE, "2026-10-30", [], [], RULES, kapi_tarihi="2026-10-30")   # yeni seçim sürümü/kapı: yeniden etiketlenir
+    third = secim.izleme_listesi(newer, again, "2026-11-02")
+    by_old = {r["adres"]: r for r in again}
+    by_new = {r["adres"]: r for r in third}
+    assert by_new[addr("a")]["id"] != by_old[addr("a")]["id"] and by_new[addr("a")]["t0"] == "2026-11-02" and by_new[addr("a")]["secim"] == "v1.3@2026-10-30"
+    assert by_old[addr("a")]["id"] not in {r["id"] for r in third}                  # eski id yeniden kullanılmaz (motor arşivi adres/t0 değişimini reddeder)
+
+def test_bayrak_ayri_is_aday_kati_icin_secimi_degistirmez():
+    result = secim.sec(TABLE, "2026-10-28", [], [], RULES, kapi_tarihi="2026-10-27")
+    snapshot = json.dumps(result, sort_keys=True)
+    calls = []
+
+    def fn(address, value):
+        calls.append((address, value))
+        return {"bayrak_rol": "vault"}
+
+    body = secim.bayrak_hesapla(result, fn)
+    assert calls == [(addr("2"), 1000.0), (addr("a"), 1000.0)]                                  # aday katı, adres sırası, hesap değeri secim.json'dan
+    assert (body["secim_surumu"], body["kapi_tarihi"], body["tamam"]) == ("v1.3", "2026-10-27", True)
+    assert body["bayraklar"] == {addr("2"): {"bayrak_rol": "vault"}, addr("a"): {"bayrak_rol": "vault"}}
+    assert json.dumps(result, sort_keys=True) == snapshot                                       # secim.json değişmez
+
+
+def test_secim_ana_islemi_bayrak_hesaplamaz_ayri_is_hesaplar():
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+    secim_job, bayrak_job = workflow.split("\n  bayrak:\n")
+    assert "--bayrak" not in secim_job.split("jobs:")[1] and "needs: secim" in bayrak_job
+    assert "python -m copytrade.secim --bayrak --secim" in bayrak_job and "bayrak.json" in bayrak_job
+    assert "git archive FETCH_HEAD secim" in secim_job and "test ! -e \"secim/$name/secim.json\"" in secim_job       # yayımlı seçim üzerine yazılmaz
