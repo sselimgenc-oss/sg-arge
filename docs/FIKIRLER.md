@@ -17,3 +17,12 @@ Fikirler uygulanmadan önce bu defterden seçilir; ön kayıt ve körlük kurall
 **Birleşik görünüm (lider):** 2 + 3 + 5 tek yapı olabilir — takım = risk profili (para), yaş grubu = performans penceresi
 (seçim sinyali), ofis = futbol dili (sunum). Hepsi çaprazlanırsa hücreler 2–3 trader'a düşer ve ölçülemez; önerilen ilk adım
 3'ü yalnız ölçüm olarak eklemek, 4–6 hafta sonra hangi pencerenin işe yaradığına bakmak.
+
+## 2026-10-29 — Argon A18'den (gerçek işlem fazı için)
+
+| # | Fikir | Durum | Lider notu |
+|---|---|---|---|
+| 7 | **Karantina / sermaye kesintisi:** uyarı bandındaki trader'ın payını %50 indir, 2–4 hafta izle | düşünülüyor | Paper pilotta anlamı sınırlı; gerçek işlemde risk aracı. |
+| 8 | **Tarz kayması tespiti:** işlem sıklığı, varlık evreni ve yön asimetrisi sapması | düşünülüyor | `bayrak_ek` ve tarz sütunlarıyla ölçülebilir. |
+| 9 | **Günlük kayıp soğuması:** tek günde büyük kayıpta 24 saat kopyalamama | düşünülüyor | Performansa dayalı; pilot sırasında körlükle çelişir. |
+| 10 | **Lider tablosu dışı keşif** (evreni büyütmenin asıl yolu) | düşünülüyor | Sayım: lider tablosu 47.849 hesapla sınırlı; eşik düşürmek evreni yalnız %10 büyüttü. |
