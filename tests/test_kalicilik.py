@@ -73,7 +73,7 @@ def test_gelecege_bakma_yok_t_sonrasi_veri_skoru_degistirmez():
     bozuk = {"av": [[a, b] for a, b in h["av"]], "pnl": [[a, b + (1e6 if a > t else 0.0)] for a, b in h["pnl"]]}
     k._SERI.clear()
     assert k.skorlar(bozuk, t, RULES) == once                       # T'den sonraki noktalar değiştirildi → skor aynı
-    eski = {"av": h["av"], "pnl": [[a, b + (5000.0 if a <= t else 0.0)] for a, b in h["pnl"]]}
+    eski = {"av": h["av"], "pnl": [[a, b + (5000.0 if t - 30 * DAY < a <= t else 0.0)] for a, b in h["pnl"]]}
     k._SERI.clear()
     assert k.skorlar(eski, t, RULES) != once                        # T öncesi değişince skor değişir (test duyarlı)
 
