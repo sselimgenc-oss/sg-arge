@@ -2,36 +2,36 @@
 
 Durum: tamam (parça 32/32).
 
-Hatalı adres: 197/13767 (hata sütunu; sınıf Yetersiz).
+Hatalı adres: 221/15131 (hata sütunu; sınıf Yetersiz).
 
-- Plasebo test ailesi **m = 24** (adım 1–4'ü geçen adresler; BHY bu aile üzerinde, p'si olmayan üye p = 1 sayılır); tekrar sayısı 10000
-- İşlenen / evren: 13767 / 13710 (%100.4; hedef ≥ %98: ✓)
-- 1. aşama (kâr eğrisi) geçti: 1244
-- Veri hatası: 197
-- Sınıf: Yetersiz 11875, Kaldı 1891, Geçti 1
+- Plasebo test ailesi **m = 26** (adım 1–4'ü geçen adresler; BHY bu aile üzerinde, p'si olmayan üye p = 1 sayılır); tekrar sayısı 10000
+- İşlenen / evren: 15131 / 14684 (%103.0; hedef ≥ %98: ✓)
+- 1. aşama (kâr eğrisi) geçti: 1353
+- Veri hatası: 221
+- Sınıf: Yetersiz 13179, Kaldı 1951, Geçti 1
 
 ## Huni — tarza göre (geçen sayısı)
 
 | tarz | adres | adım 1 | adım 2 | adım 3 | adım 4 | adım 5 | adım 6 | adım 7 | izleme_adayi | kopyalanabilir |
 |---|---|---|---|---|---|---|---|---|---|---|
-| intraday | 292 | 274 | 127 | 47 | 37 | 4 | 8 | 1 | 46 | 1 |
-| swing | 381 | 355 | 99 | 40 | 21 | 6 | 7 | 1 | 40 | 0 |
-| scalp | 177 | 168 | 88 | 0 | 52 | 0 | 15 | 0 | 0 | 0 |
-| belirsiz | 12917 | 39 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| intraday | 310 | 292 | 139 | 49 | 40 | 4 | 9 | 1 | 48 | 1 |
+| swing | 399 | 373 | 102 | 42 | 22 | 6 | 7 | 1 | 42 | 0 |
+| scalp | 208 | 198 | 104 | 0 | 61 | 0 | 18 | 0 | 0 | 0 |
+| belirsiz | 14214 | 40 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 
 ## Katman
 
-- yok: 13680
-- izleme_adayi: 86
+- yok: 15040
+- izleme_adayi: 90
 - kopyalanabilir: 1
 
 ## Dondurma (kurallar ve kod özeti)
 
-- `kurallar.yaml` SHA-256: `07559a8596d9f58e8ef1a2108c2818ddb1733632369579b8f95004ee2e08ae81`
-- `kapi.py` SHA-256: `3ebb3037f8ad720c08ba061ea32c8c830530db90beaf4de7824d73bae9cf71b9`
-- `olcut.py` SHA-256: `a0fb3f6777341db8830b9d2a585f00792013fed4ed14ad32c2c894f5b73044e9`
-- `defter.py` SHA-256: `a96465dab87449e9bc7fc3b1b298ecf4db9ee396feb5783f76bd25036b82a89e`
-- Aday listesi (87 adres: kopyalanabilir + izleme_adayi) özeti: `0bab42d9c22821704b0faf3772e34ae47d72cb65f6488d0ee79b417a83a5d14f`
+- `kurallar.yaml` SHA-256: `8319f56be91036a27503092bd2cb432f56c09152ce70ebe7f55a670a7536d794`
+- `kapi.py` SHA-256: `a0a0bd8aaa3a8cf5d5d52e16b37a1d1d511e4c849f7883804295b1c198fbde6d`
+- `olcut.py` SHA-256: `fc6d1923aad8e25a643a5f27861b1a8d8c186d9b90f2090f0b29b5cc24ee98c4`
+- `defter.py` SHA-256: `6f13ede90f23f536b4f505d3a9338f1bae9aca6dd92b46c579704818c33f96a3`
+- Aday listesi (91 adres: kopyalanabilir + izleme_adayi) özeti: `ffcd61ef3c6fd3eed05bd39dbbafb142fc11c59cae76e1fa1bd87a64b31fe581`
 
 ## Adım 2'yi geçenler (alfa t'ye göre ilk 15)
 
@@ -46,11 +46,11 @@ Hatalı adres: 197/13767 (hata sütunu; sınıf Yetersiz).
 | 0x6809111be108b5f2fc57ac50799039af8ee14f8f | scalp | yok | True | 1 | 0.0636 | 2.14 | 1.22e+03 | 0.00214 | 0.205 | 0.89 | 342 | 0.7 | 0.341 | 200 | -0.000765 | -0.0857 | -0.121 | nan | 3.12 | sepet | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0xa4b00205646b41142f8aadacee815a98ecd3b35c | scalp | yok | False | 0.846 | 0.111 | 12.9 | 943 | 0.000984 | 0.169 | 0.967 | 141 | 1.2 | 0.26 | 200 | -0.0912 | -0.106 | -0.197 | nan | 3.01 | sepet | nan | Kaldı | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0xf97ad6704baec104d00b88e0c157e2b7b3a1ddd1 | intraday | izleme_adayi | False | 0.923 | 0.186 | 1.64 | 701 | 9.19 | 0.27 | 0.0858 | 296 | 0.1 | 0.192 | 200 | 0.307 | 0.32 | 0.201 | nan | 3.01 | BTC | nan | Geçti | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
-| 0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9 | swing | izleme_adayi | False | 0.846 | 0.181 | 1.19 | 86 | 48.1 | 0.454 | 0.119 | 27 | 3.9 | 0.476 | 199 | 0.556 | 0.509 | 0.435 | 0.0175 | 2.92 | sepet | 0.43 | Geçti | Geçti | Geçti | Geçti | Kaldı | Kaldı |
+| 0x3e6805e8694bb2b717a828c1bfa32df5d6580cc9 | swing | izleme_adayi | False | 0.846 | 0.181 | 1.19 | 86 | 48.1 | 0.454 | 0.119 | 27 | 3.9 | 0.476 | 199 | 0.556 | 0.509 | 0.435 | 0.0175 | 2.92 | sepet | 0.475 | Geçti | Geçti | Geçti | Geçti | Kaldı | Kaldı |
+| 0xa046c1c83a3b295ca99bb9efdd19836b12409373 | scalp | yok | False | 0.538 | 0.0477 | 33.9 | 221 | 0.0243 | 0.119 | 0.882 | 221 | 0.5 | 0.0588 | 62 | -0.061 | -0.0173 | -0.11 | nan | 2.92 | sepet | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0x8f308355ce0604dd4fd872309d5761167655b07c | scalp | yok | False | 0.75 | 0.0375 | 1.53 | 211 | 0.00268 | 0.0549 | 0.991 | 124 | 0 | 0.265 | 199 | -0.0916 | -0.0926 | -0.0921 | nan | 2.74 | BTC | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0x2312171890250347dbf1b082bdf7950504909e92 | swing | yok | False | 0.385 | 0.28 | 0.205 | 166 | 80.3 | 0.7 | 0.0798 | 45 | 4.2 | 0.0613 | 198 | 0.484 | 0.414 | 0.331 | nan | 2.67 | BTC | nan | Kaldı | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
+| 0x6177b5bf3aa32a9c3a962c7a5197c5d9a5433b00 | intraday | yok | False | 0.923 | 0.0527 | 2.07 | 112 | 3.91 | 2.3 | 0.284 | 23 | 1.5 | 0.229 | 200 | 0.139 | 0.14 | 0.18 | nan | 2.6 | sepet | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 | 0x378defc39d5dcdfbecd4f1673a5e228f992fc08e | intraday | izleme_adayi | False | 0.692 | 0.202 | 2.33 | 92 | 2.97 | 2.47 | 0.198 | 86 | 2.7 | 0.209 | 80.9 | 0.387 | 0.397 | 0.197 | nan | 2.57 | sepet | nan | Geçti | Kaldı | Kaldı | Geçti | Yetersiz | Kaldı |
-| 0xba939edf38c0ae0cc689c98b492e0535f43e4550 | swing | izleme_adayi | False | 0.846 | 0.107 | 0.153 | 175 | 53.3 | 0.159 | 0.076 | 50 | 1.7 | 0.444 | 200 | 0.105 | 0.0959 | 0.0937 | 0.0358 | 2.51 | BTC | 0.43 | Geçti | Geçti | Geçti | Geçti | Kaldı | Kaldı |
-| 0xbd7b48a5f74fec74643899795b6964a8fac7e69a | scalp | yok | True | 0.7 | 0.0727 | 4.2 | 1.92e+03 | 0.00388 | 0.223 | 0.907 | 818 | 0.8 | 0.215 | 176 | -0.442 | -0.533 | -0.419 | nan | 2.5 | BTC | nan | Kaldı | Geçti | Kaldı | Geçti | Yetersiz | Kaldı |
 
 Gecikme saat başına yuvarlandı (üst sınır). Karar önerisi yok.

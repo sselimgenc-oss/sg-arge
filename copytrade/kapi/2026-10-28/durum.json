@@ -2,15 +2,17 @@
  "durum": "tamam",
  "parca_beklenen": 32,
  "parca_biten": 32,
- "islenen": 13767,
- "evren": 13710,
- "kapsam": 1.0042,
+ "islenen": 15131,
+ "evren": 14684,
+ "kapsam": 1.0,
  "neden": "",
+ "kapsanan": 14684,
+ "evren_disi_satir": 447,
  "eski_hesap_satir": 0,
  "hesap": "v1.1-2026-10-27d",
  "satir_kaynagi": {
-  "onceki_dosya_ayni_hesap": 12584,
-  "bu_kosu": 1183
+  "onceki_dosya_ayni_hesap": 13539,
+  "bu_kosu": 1592
  },
  "kapi_sorunlari": []
 }
