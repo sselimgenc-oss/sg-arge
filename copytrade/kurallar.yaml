@@ -168,3 +168,6 @@ mutabakat_mutlak_tolerans: 1.0e-06
 # Mum akıl sağlığı (A15, copytrade/mum_saglik.py): sıçrama = açılış, önceki geçerli mumların kapanış medyanından oranla (max(o/med, med/o)) bu kat ve üstü uzak
 mum_sicrama_kat: 2.0
 mum_medyan_pencere: 24
+# Oda yoğunlaşması ve puan yarı tutarlılığı (A14, copytrade/yogunlasma.py; seçim raporunda bilgi bölümü): ikili korelasyon için asgari ortak gün; ortalama bağlantılı kümeleme durdurma eşiği
+yogunlasma_min_ortak_gun: 10
+yogunlasma_kume_esik: 0.5
