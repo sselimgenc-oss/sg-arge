@@ -110,3 +110,9 @@ Görev: `docs/GOREV_D_YOLU.md`.
   sonrası zarar etmemiş, kırmızı/kaldıraç ihlali yok, yeterli işlem; eşikler canlı oda seçiminden ÖNCE `kurallar.yaml`'a yazılır.
   Elemeyi geçenler arasında sıralama kapı puanıyla (kalıcılık testi hangi puanın daha iyi olduğunu gösterirse o).
 - Oda, kontrol, referans kolları ve ön kayıt analizi değişmez.
+
+### K‑7b. Canlı tarihi iptal (kullanıcı kararı 2026-10-30: "Kasımda bitecek planı iptal et, süresi yok, eski yönteme devam")
+- K‑7 ve K‑7a'daki **tarih** (31.12 / 1.12) ve sıkıştırılmış takvim kalkar; canlıya geçiş için sabit süre yok.
+- Eski yöntem sürer: canlı gölge pilotu ve veri biriktirme, önce veri doğruluğu (`GOREV_VERI_DUZELTME.md`), kalıcılık; canlı kararı
+  ileride kullanıcı verir. K‑7'deki güvenlik şartları (para çekme yetkisi olmayan anahtar, limitler, /dur, ≥14 gün canlı fiyatla gölge)
+  canlıya ne zaman geçilirse geçilsin geçerli kalır. `GOREV_BOT.md` askıda (öncelik veri). K‑8 (havuz kolu, ileri ölçüm) sürer.

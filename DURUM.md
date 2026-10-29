@@ -8,10 +8,10 @@ Son güncelleme: 2026-10-29, lider (Claude).
 
 **Kalite kuralları (kullanıcı, 2026-10-30):** `AGENTS.md` sonu — küçük gerçek veri denemesi, birimli veri sözleşmesi, denetimde gerçek çıktı.
 
-**K‑7a (kullanıcı, 2026-10-30): canlı 1.12.2026.** Hf1 veri düzeltme (Sonnet: `GOREV_VERI_DUZELTME.md`) ∥ bot aşama 1 (Codex: `GOREV_BOT.md`);
+**K‑7b (kullanıcı, 2026-10-30): canlı tarihi iptal, sabit süre yok; eski yöntem (pilot + önce veri) sürer. Bot görevi askıda.**
 Hf2 bot biter + canlı oda seçimi; 15–28.11 canlı fiyatla gölge (≥14 gün); 29–30.11 hesap/anahtar/onay; 1.12 canlı. Faz 3 isteğe bağlı (iptal edildi 30.10).
 
-**K‑7 (kullanıcı, 2026-10-30): en geç 31.12.2026 küçük tutarla otomatik canlı işlem; kanıt şartı yok, güvenlik şartları var** (`docs/KARARLAR_D.md`).
+**K‑7 (tarih K‑7b ile iptal):** canlıya geçişte güvenlik şartları geçerli (`docs/KARARLAR_D.md`).
 Faz 3 süre sınırında bitemiyor, kalıcılık sonucu sayısal bozuk (madde 12–13). Sıradaki iş: `docs/GOREV_VERI_DUZELTME.md` (Sol canlı veri denetimi: olay listesi 200'de kesiliyor, kasa tablosu yanlış portföy,
 kontrol 18 değil 17 sayılıyor, geçersizler toplamlara giriyor). Worker yedek tetikleme ve günlük özet devrede (TETIK_TOKEN).
 
