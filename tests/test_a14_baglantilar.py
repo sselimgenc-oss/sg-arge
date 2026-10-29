@@ -12,6 +12,13 @@ from copytrade.kurallar import load_rules
 from tests.test_secim import TABLE, addr
 
 RULES = load_rules()
+PUBLISH = Path(__file__).resolve().parents[1] / ".github/scripts/kapi_yayimla.sh"
+
+
+def test_yayimci_gunluk_getiriyi_acikca_veri_dalina_ekler():
+    """Altın sözleşme: yoğunlaşma girdisi ignore kuralıyla sessizce kaybolmaz."""
+    script = PUBLISH.read_text(encoding="utf-8")
+    assert 'git add -f "copytrade/kapi/$DAY/gunluk.csv.gz"' in script
 
 
 def test_yaml_esikleri():
