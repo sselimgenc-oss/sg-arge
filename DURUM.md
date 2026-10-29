@@ -21,6 +21,10 @@ Son güncelleme: 2026-10-29, lider (Claude).
 (a) anlamsız. Kural: hiçbir ajan görevi ve haftalık rapor kol bazında getiri hesaplamaz; analiz yalnız 12./24. haftada.
 (b) sağlık ışığından performans konisinin çıkarılması ayrı iş (açık).
 
+**Maliyet (K‑5), kullanıcı kararı 2026-10-29 ("tamam"):** ana karar maliyeti (`maliyet_taker` + `maliyet_kayma`, tek oran)
+pilot boyunca değişmez. Coin sınıfı ve saate göre maliyet yalnız bilgi amaçlı duyarlılık raporunda (`maliyet_rapor.py`); HIP‑3
+büyüme/standart mod ve seans içi/dışı ayrımı eklenecek (Argon A20, `arastirma/copytrade/argon_a20_hip3_maliyet.md`).
+
 **Açık işler (2026-10-29):** Sonnet: `docs/GOREV_KORLUK.md` (K‑6 b), sonra `docs/GOREV_PILOT_VERI.md` (haftalık veri hattı +
 12. hafta analiz koşucusu), sonra `docs/GOREV_OFIS_CANLI.md`. Argon: `docs/GOREV_ARGON_3.md` (A20 HIP‑3 maliyeti, A21 API geri alma sınırları). Codex/Sonnet:
 `gunluk.csv.gz` kapı koşusunda yayımlanmıyor (yoğunlaşma bölümü boş); maliyet duyarlılığı gerçek veriyle; R2 arşivi
@@ -83,7 +87,8 @@ paper'daki 13 kitaptan yalnız 2'sinde zayıf alfa izi vardı (`docs/kapi_kontro
 | Lider | denetim, birleştirme | bitti |
 Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama kararı değil).
 
-**2. Telegram — BİTTİ (2026-10-27):** Cloudflare Worker `sg-arge-telegram` yayında (sg-arge #283–#286): 5 dk'da bir
+**2. Telegram — KOD HAZIR, KURULMADI (düzeltme 2026-10-29):** `worker.yml` dağıtımı GitHub Secrets eksik diye hiç
+başarılı olmadı (son: 2026-10-28, "Eksik GitHub Secret: CLOUDFLARE_API_TOKEN"); beş secret kullanıcıda. Tasarım: Cloudflare Worker `sg-arge-telegram` (sg-arge #283–#286): 5 dk'da bir
 bildirim, [Açtım]/[Atladım], `/durum`. Kararlar saatlik işle `copytrade-izleme/izleme/kararlar.jsonl`'a (`KARAR_URL`).
 Açık kontrol: ilk gerçek bildirimde düğme → karar → panoya akış uçtan uca izlenecek. Not: saatlik zamanlama ilk
 saatlerde tetiklenmedi (GitHub gecikmesi); düzelmezse incelenecek.

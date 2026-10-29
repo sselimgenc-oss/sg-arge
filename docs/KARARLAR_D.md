@@ -73,3 +73,8 @@ Görev: `docs/GOREV_D_YOLU.md`.
 ### K11. Otomatik emir (uzun vade)
 - **Ne:** Etre'nin asıl gücü saniyelerle kopyalaması; bizde elle kopya 30 dk – 2 sa gecikmeli.
 - **Durum:** `AGENTS.md` gereği emir ve gerçek para yok. Bu ancak D yolu olumlu sonuç verirse ve kullanıcı açıkça isterse konuşulur.
+
+### K‑5. Maliyet (kullanıcı kararı 2026-10-29: "tamam")
+- Ana karar maliyeti tek oran kalır (taker %0,045 + kayma %0,05); pilot süresince değişmez (ön kayıt bütünlüğü).
+- Coin sınıfı (büyük / küçük / HIP‑3 büyüme / HIP‑3 standart) ve seans ayrımlı maliyet yalnız duyarlılık raporunda, bilgi amaçlı.
+  Dayanak: Argon A20 (doğrulanmamış derleme; HIP‑3'te yön coin ve saate bağlı).

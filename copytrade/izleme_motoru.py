@@ -207,7 +207,10 @@ def portfolio_curve(portfolio: list, now: pd.Timestamp, denominator: float) -> p
 
 
 def health(history: pd.Series, t0: pd.Timestamp, now: pd.Timestamp, leverage: float,
-           martingale: bool, last_fill: int | None) -> dict:
+           martingale: bool, last_fill: int | None, performans_konisi: bool | None = None) -> dict:
+    """Pilotta (``saglik_performans_konisi: false``) ışık yalnız veri bayatlığı ve kaldıraca bakar (K-6: performans sızmaz)."""
+    if performans_konisi is None:
+        performans_konisi = bool(load_rules()['saglik_performans_konisi'])
     daily = history.diff().dropna()
     before, live = daily[daily.index < t0], daily[daily.index >= t0]
     red, yellow = [], []
@@ -215,7 +218,9 @@ def health(history: pd.Series, t0: pd.Timestamp, now: pd.Timestamp, leverage: fl
     def returns(series):
         equity = 1 + pd.concat([pd.Series([0.0], index=[series.index[0] - pd.Timedelta(days=1)]), series.cumsum()])
         return equity.pct_change().iloc[1:]
-    if before.empty:
+    if not performans_konisi:
+        pass
+    elif before.empty:
         yellow.append('t0 öncesi koni geçmişi yetersiz')
     elif len(live):
         base_returns, live_returns = returns(before), returns(live)
@@ -239,7 +244,7 @@ def health(history: pd.Series, t0: pd.Timestamp, now: pd.Timestamp, leverage: fl
     if last_fill is None or millis(now) - last_fill >= 30 * DAY:
         yellow.append('son 30 günde işlem yok')
     return {'isik': 'kirmizi' if red else 'sari' if yellow else 'yesil',
-            'nedenler': red + yellow or ['konide', 'kaldıraç normal']}
+            'nedenler': red + yellow or (['konide', 'kaldıraç normal'] if performans_konisi else ['kaldıraç normal'])}
 
 
 def cached_candle(value: object) -> tuple[float, bool]:
