@@ -63,8 +63,8 @@ def load_list(path: Path) -> list[dict]:
     ids, addresses = set(), set()
     for row in rows:
         required = {'id', 'adres', 'takma_ad', 'durum', 't0'}
-        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {'tarz', 'kol', 'kollar'}:
-            raise ValueError('İzleme satırında yalnız id, adres, takma_ad, durum, t0 (ve isteğe bağlı tarz, kol, kollar) olmalı.')
+        if not isinstance(row, dict) or not required <= set(row) or set(row) - required - {'tarz', 'kol', 'kollar', 'secim'}:
+            raise ValueError('İzleme satırında yalnız id, adres, takma_ad, durum, t0 (ve isteğe bağlı tarz, kol, kollar, secim) olmalı.')
         if 'kol' in row and row['kol'] not in KOLLAR:
             raise ValueError('Geçersiz kol (oda | kontrol | taban | elle).')
         if 'tarz' in row and row['tarz'] not in STYLES:

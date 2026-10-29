@@ -131,8 +131,11 @@ def test_izleme_listesi_mevcut_satirlari_korur_ve_dogrulanir(tmp_path: Path):
                 {"id": "T2", "adres": addr("d"), "takma_ad": "dddd", "durum": "izlemede", "t0": "2026-10-20"}]
     rows = secim.izleme_listesi(result, existing, "2026-10-29")
     by = {r["adres"]: r for r in rows}
-    assert by[addr("a")]["id"] == "T1" and by[addr("a")]["t0"] == "2026-10-20" and by[addr("a")]["kol"] == "oda"       # var olan satır değişmez
-    assert by[addr("d")]["kol"] == "elle" and by[addr("2")]["t0"] == "2026-10-29" and by[addr("2")]["id"].startswith("O")
+    # E5: listede zaten olan adres v1.3 kohortuna (oda) girince YENİ id ve t0 alır; eski t0'dan yeniden oynatma yok
+    assert by[addr("a")]["id"] != "T1" and by[addr("a")]["t0"] == "2026-10-29" and by[addr("a")]["kol"] == "oda"
+    assert "T1" not in {r["id"] for r in rows} and by[addr("a")]["secim"] == "v1.3@2026-10-28"                          # ITT etiketi seçim sürümüne bağlı
+    assert by[addr("d")]["id"] == "T2" and by[addr("d")]["t0"] == "2026-10-20" and by[addr("d")]["kol"] == "elle"       # elle satır değişmez
+    assert by[addr("2")]["t0"] == "2026-10-29" and by[addr("2")]["id"].startswith("O")
     path = tmp_path / "liste.yaml"
     secim.yaz_izleme_listesi(rows, path)
     loaded = load_list(path)                                      # izleme motorunun doğrulaması kabul eder
@@ -178,3 +181,17 @@ def test_secim_yayimi_seçimle_ayni_gunu_kullanir():
     workflow = WORKFLOW.read_text(encoding="utf-8")
     assert "--tarih \"$day\"" in workflow and "day=${{ steps.secim.outputs.day }}" in workflow
     assert "actions/upload-artifact" in workflow
+
+
+def test_izleme_listesi_ayni_secim_yeniden_yazilirsa_id_ve_t0_degismez():
+    result = secim.sec(TABLE, "2026-10-28", [], [], RULES, kapi_tarihi="2026-10-28")
+    existing = [{"id": "T1", "adres": addr("a"), "takma_ad": "aaaa", "durum": "izlemede", "t0": "2026-10-20", "tarz": "intraday"}]
+    first = secim.izleme_listesi(result, existing, "2026-10-29")
+    again = secim.izleme_listesi(result, first, "2026-10-31")                      # aynı sürüm + kapı: idempotent
+    assert {r["adres"]: (r["id"], r["t0"]) for r in again} == {r["adres"]: (r["id"], r["t0"]) for r in first}
+    newer = secim.sec(TABLE, "2026-10-30", [], [], RULES, kapi_tarihi="2026-10-30")   # yeni seçim sürümü/kapı: yeniden etiketlenir
+    third = secim.izleme_listesi(newer, again, "2026-11-02")
+    by_old = {r["adres"]: r for r in again}
+    by_new = {r["adres"]: r for r in third}
+    assert by_new[addr("a")]["id"] != by_old[addr("a")]["id"] and by_new[addr("a")]["t0"] == "2026-11-02" and by_new[addr("a")]["secim"] == "v1.3@2026-10-30"
+    assert by_old[addr("a")]["id"] not in {r["id"] for r in third}                  # eski id yeniden kullanılmaz (motor arşivi adres/t0 değişimini reddeder)

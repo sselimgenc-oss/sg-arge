@@ -243,15 +243,26 @@ def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) ->
 
 
 def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: str) -> list[dict[str, Any]]:
-    """``secim.json``'dan izleme listesi: oda + kontrol + taban + elle. Var olan satırın id/t0'ı değişmez, yalnız ``kol``/``kollar`` eklenir."""
+    """``secim.json``'dan izleme listesi: oda + kontrol + taban + elle.
+
+    Seçim kolundaki (oda/kontrol/taban) bir adres listede zaten varsa ve satırı bu seçim sürümünün etiketini (``secim`` =
+    ``<secim_surumu>@<kapı tarihi>``) taşımıyorsa **yeni id ve yeni t0** alır: eski t0'dan yeniden oynatma olmaz, ITT ölçümü sürümün
+    etiket gününden başlar (E5). Eski id yeniden kullanılmaz (motor arşivi aynı id'de adres/t0 değişimini reddeder). Etiketi aynıysa satır
+    değişmez (aynı seçimi yeniden yazmak idempotent). ``elle`` satırlar ve seçimde çıkmayan satırlar olduğu gibi korunur."""
+    label = f"{result.get('secim_surumu', 'v1')}@{result.get('kapi_tarihi') or result['tarih']}"
     by_address = {str(r["adres"]).lower(): dict(r) for r in existing}
     rows, counters = [], {k: 0 for k in ONEK}
     used = {r["id"] for r in existing}
+    replaced: set[str] = set()
     for address, e in result["adresler"].items():
         kollar = [k for k in e["kollar"] if k in LISTE_KOLLARI]
         if not kollar:
             continue
         row = by_address.get(address)
+        selected = bool(set(kollar) & {"oda", "kontrol", "taban"})
+        if row is not None and selected and row.get("secim") != label:
+            replaced.add(address)
+            row = None
         if row is None:
             kind = kollar[0]
             while True:
@@ -263,6 +274,8 @@ def izleme_listesi(result: dict[str, Any], existing: list[dict[str, Any]], t0: s
             row = {"id": ident, "adres": address, "takma_ad": address[2:6], "durum": "izlemede", "t0": t0}
             if e["tarz"] in TARZLAR:
                 row["tarz"] = e["tarz"]
+        if selected:
+            row["secim"] = label
         row["kol"], row["kollar"] = kollar[0], kollar
         rows.append(row)
     kept = {r["adres"].lower() for r in rows}
