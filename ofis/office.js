@@ -477,6 +477,17 @@
     st.fx.push({ type: 'bubble', name: 'gulumse', color: '#1f6f6a', x: a.sx, y: a.sy - ((a.pose === 'sit' || a.pose === 'sitF') ? 34 : 30), t0: now(), dur: 1300 });
   };
 
+  /* gece konturu: figür siluetinin açık renkli hâli (sprite başına bir kez üretilir), 4 yönde 1 px kaydırılıp çizilir */
+  const kontur = new WeakMap();
+  function konturOf(spr) {
+    let k = kontur.get(spr.c);
+    if (!k) {
+      const c = document.createElement('canvas'); c.width = spr.c.width; c.height = spr.c.height; const x = c.getContext('2d');
+      x.drawImage(spr.c, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = '#bcd6ff'; x.fillRect(0, 0, c.width, c.height);
+      k = c; kontur.set(spr.c, k);
+    }
+    return k;
+  }
   /* ---------- çizim listesi ---------- */
   Off.dyn = function () {
     const out = [], t = now();
@@ -488,7 +499,9 @@
       const rp = a.react ? (t - a.react.t0) / a.react.dur : -1, ry = rp >= 0 && rp <= 1 && !Off.reduced ? -Math.round(3 * Math.sin(Math.PI * rp)) : 0;
       out.push({ k: a.fx + a.fy + (sitting ? 0.25 : 0), a: a, draw: ctx => {
         if (a.alpha < 1) ctx.globalAlpha = a.alpha;
-        ctx.drawImage(spr.c, Math.round(px - spr.ax), Math.round(py - spr.ay) + ry); ctx.globalAlpha = 1;
+        const gx = Math.round(px - spr.ax), gy = Math.round(py - spr.ay) + ry;
+        if (a.kind === 'trader' && Off.gece > 0.35) { Off.konturN = (Off.konturN || 0) + 1; const k = konturOf(spr), g0 = ctx.globalAlpha; ctx.globalAlpha = g0 * Math.min(1, Off.gece); [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(d => ctx.drawImage(k, gx + d[0], gy + d[1])); ctx.globalAlpha = g0; }
+        ctx.drawImage(spr.c, gx, gy); ctx.globalAlpha = 1;
         if (a.carry && O.icons[a.carry]) { const ic = O.icons[a.carry](); ctx.drawImage(ic.c, Math.round(px + 5 - ic.ax), Math.round(py - 24 - ic.ay + 6)); }
       } });
     });

@@ -26,6 +26,7 @@ const srv = http.createServer((q, r) => {
     await pg.route('https://api.github.com/**', r => (opt.agacHata ? r.fulfill({ status: 403, body: '{}' }) : r.fulfill(json(F.agac(['2026-10-28'], ['2026-10-28'])))));
     await pg.route('https://raw.githubusercontent.com/**', r => {
       const u = r.request().url();
+      if (opt.son && u === G.HAM + 'son.json') return r.fulfill(json({ kapi: '2026-10-28', secim: '2026-10-28' }));
       if (u === G.HAM + 'secim/2026-10-28/secim.json') return r.fulfill(json(F.secim('2026-10-28', null)));
       if (u === G.HAM + 'copytrade/kapi/2026-10-28/durum.json') return r.fulfill(json(F.durum));
       return r.fulfill({ status: 404, body: '' });
@@ -39,7 +40,7 @@ const srv = http.createServer((q, r) => {
 
   /* ---------- A. varsayılan: gerçek veri ---------- */
   let { ctx, pg } = await open();
-  ok('varsayılan açılış ağ yolundan veri alır (1 API + 2 ham dosya, örnek dosya yok)', istek.length === 3 && istek[0] === G.AGAC, istek.join(' | '));
+  ok('varsayılan açılış ağ yolundan veri alır (son.json 404 → 1 API + 2 ham dosya, örnek dosya yok)', istek.length === 4 && istek[0] === G.HAM + 'son.json' && istek[1] === G.AGAC, istek.join(' | '));
   const sera = await pg.evaluate(() => ({ on: !document.getElementById('onizlemeFlt').hidden, t: document.getElementById('onizlemeMetin').textContent, o: !document.getElementById('ornekFlt').hidden, r: document.getElementById('onizlemeFlt').getBoundingClientRect() }));
   ok('üst şerit: "Seçim v1 — ön izleme, onaylanmadı (2026-10-28)"', sera.on && sera.t === 'Seçim v1 — ön izleme, onaylanmadı (2026-10-28)', sera.t);
   ok('şerit ekranın içinde ve görünür', sera.r.width > 100 && sera.r.top >= 0 && sera.r.top < 120);
@@ -69,6 +70,26 @@ const srv = http.createServer((q, r) => {
   await pg.goto(base + '?saat=15:40#oda/kontrol'); await pg.waitForFunction('window.OFIS&&window.OFIS.ready'); await sleep(500);
   ok('#oda/kontrol açılmaz', await pg.evaluate(() => !OFIS.debug.mode.active || OFIS.debug.mode.room !== 'kontrol'));
   await pg.screenshot({ path: path.join(__dirname, '..', '..', 'docs', 'ofis_gercek_veri_bina.png') });
+  await ctx.close();
+
+  /* ---------- A2. son.json varsa API çağrılmaz ---------- */
+  istek.length = 0;
+  ({ ctx, pg } = await open('?saat=15:40', { son: true }));
+  ok('son.json işaretçisi: GitHub API hiç çağrılmaz (3 ham istek)', istek.length === 3 && !istek.some(u => /api\.github\.com/.test(u)), istek.join(' | '));
+  await ctx.close();
+
+  /* ---------- A3. telefon: rozet, yakın açılış, gece konturu ---------- */
+  ({ ctx, pg } = await open('?saat=12:00', { vp: { width: 390, height: 844 } }));
+  const tz = await pg.evaluate(() => ({ z: OFIS.debug.cam.z, kont: OFIS.Office.konturN || 0 }));
+  const yak = await pg.evaluate(() => { const r = OFIS.debug.interest(), v = OFIS.debug.view, z0 = Math.min(v.w / (r.x1 - r.x0 + 28), v.h / (r.y1 - r.y0 + 40)); return { oran: OFIS.debug.cam.z / z0 }; });
+  ok('telefon: açılışta kamera sığdırmadan %12 yakın', Math.abs(yak.oran - 1.12) < 0.01, JSON.stringify(yak));
+  const rozet = await pg.evaluate(() => { const s = OFIS.Office.state(); return ['oda', 'aday'].map(id => s.actors.some(a => a.kind === 'trader' && a.kat === id) + ':' + s.katlar[id].n); });
+  ok('telefon: dolu masalı odalarda rozet verisi (Oda 6, Aday 9)', rozet.join() === 'true:6,true:9', rozet.join());
+  ok('gündüz: figür konturu çizilmez', (await pg.evaluate(() => OFIS.Office.konturN || 0)) === 0);
+  await ctx.close();
+  ({ ctx, pg } = await open('?saat=23:30', { vp: { width: 390, height: 844 } }));
+  await sleep(300);
+  ok('gece: figürlere kontur çizilir', (await pg.evaluate(() => OFIS.Office.konturN || 0)) > 0 && (await pg.evaluate(() => OFIS.Office.gece)) > 0.35);
   await ctx.close();
 
   /* ---------- B. örnek yalnız ?durum=ornek ---------- */
