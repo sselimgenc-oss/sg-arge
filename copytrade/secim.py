@@ -62,10 +62,12 @@ def puan(row: dict[str, Any]) -> float | None:
 
 
 def havuz(table: pd.DataFrame, rules: dict | None = None) -> list[dict[str, Any]]:
-    """Adım 1 ve 2 Geçti, tarz intraday/swing, adım 3 statik koşulları sağlayan satırlar; ``puan`` eklenmiş, adrese göre sıralı."""
+    """Güncel evrende olan (``evren_disi`` değil), adım 1 ve 2 Geçti, tarz intraday/swing, adım 3 statik koşulları sağlayan satırlar; ``puan`` eklenmiş, adrese göre sıralı."""
     rules = rules or load_rules()
     rows = []
     for row in table.to_dict("records"):
+        if _flag(row.get("evren_disi")):        # eski evren anlık görüntüsünden kalan satır (denetim B14): havuza girmez
+            continue
         if (row.get("adim1") == "Geçti" and row.get("adim2") == "Geçti" and row.get("tarz") in TARZLAR
                 and statik_gecer(row, rules)):
             rows.append({**row, "address": str(row["address"]).lower(), "puan": puan(row)})

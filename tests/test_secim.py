@@ -110,6 +110,14 @@ def test_havuz_statik_kosullari_kapi_ile_ayni():
     assert RULES["kisa_islem_payi_max"] == 0.25 and RULES["kapi_max_medyan_kaldirac"] == 3.0 and RULES["kapi_max_kaldirac"] == 10.0
 
 
+
+def test_havuz_eski_evren_satirlarini_almaz():
+    # Kapı birleşimi önceki koşuların satırlarını da taşır; güncel evrende olmayanlar evren_disi=True (denetim B14).
+    rows = [row("a", "intraday", 0.5, evren_disi=False), row("b", "intraday", 0.9, evren_disi=True),
+            row("c", "swing", 0.7)]                                          # sütun yoksa (eski kapı tablosu) girer
+    got = {r["address"] for r in secim.havuz(pd.DataFrame(rows), RULES)}
+    assert got == {addr("a"), addr("c")}
+
 def test_tohum_altin_deger():
     assert secim.tohum_dizgesi("v1.3", "2026-10-28") == "secim-v1.3-2026-10-28"
     assert secim.tohum("v1.3", "2026-10-28") == 0x532caf57ce210502 == 5993357995778573570       # printf ... | sha256sum, ilk 8 bayt
