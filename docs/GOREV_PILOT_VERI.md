@@ -40,5 +40,12 @@ Arşivdeki dolum, funding ve mumlardan, etiket gününden (seçimin `tarih`i) ha
 `kurallar.yaml` `onkayit_analiz_tarihi: "2027-01-21"` öncesinde gerçek veriyle çalışmayı reddeder (yalnız `--sentetik`).
 Test yalnız sentetik veriyle; sonuç tablosunun biçimi altın örnekle sabitlenir.
 
+## 5. Ek (lider, Argon A20/A21 sonrası)
+- **Arşiv kesinti alarmı:** `arsiv.yml` art arda başarısız koşular 12 saati aşarsa kırmızı uyarı (haftalık raporda ve iş günlüğünde).
+  Neden (A21): halka açık API yalnız son 10.000 dolumu verir; çok aktif adreste ~1 haftadan uzun boşluk geri alınamaz.
+- **Maliyet duyarlılığı (K‑5, kullanıcı kararı):** `maliyet_rapor.py`'ye HIP‑3 için iki alt sınıf: büyüme modu ve standart mod
+  (deployer ücret ölçeği API `perpDexs`/`meta` yanıtından), ayrıca seans içi/dışı (ABD hisse seansı). Oranlar `kurallar.yaml`'a
+  (`maliyet_sinif_alt_uc` yanına), A20 tablosundaki aralıkların üst ucu. Ana karar maliyeti değişmez; yalnız rapor.
+
 ## Teslim
 PR açıklamasında: 1. maddenin bulguları, yeni yaml anahtarları, test sayısı. Lider denetler ve birleştirir.
