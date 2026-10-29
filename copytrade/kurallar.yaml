@@ -160,3 +160,5 @@ onkayit_bootstrap_tekrar: 2000
 onkayit_spearman_varyans_carpani: 1.06
 # İşaret yaşı (E4): açık pozisyon bundan eski bir mumla işaretlenmez (mark_missing; sonuç "eksik işaretleme" notu taşır). 1 saatlik mum + tolerans.
 isaret_yas_max_dk: 120
+# Kırmızı bayrak bilgi sütunu (bayrak_ek): katlama oranı = kat (ekleme / önceki büyüklük) ≥ bu değer olan zararda eklemelerin payı. Eşik DEĞİL, kimseyi elemez.
+bayrak_kat_esik: 2.0

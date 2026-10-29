@@ -69,7 +69,7 @@ class Fake:
         return self.subs
 
     def fills(self, address, start):
-        return [{"closedPnl": "30"}]
+        return [{"coin": "BTC", "px": "100", "sz": "1", "side": "A", "time": "1", "startPosition": "1", "closedPnl": "30"}]
 
     def portfolio(self, address):
         return [["month", {"vlm": "5000"}]]
@@ -99,7 +99,9 @@ def test_hesapla_bes_sutun_ve_kontrol_edilemedi():
     out = bayrak.hesapla(client, A, 1000.0, now_ms=10**12)
     assert out == {"bayrak_rol": f"subAccount:{M}", "bayrak_vault_orani": 0.25,                          # 250 / 1000
                    "bayrak_funding_payi": 0.25,                                                          # 7,5 / 30
-                   "bayrak_alt_hesap_ters": "evet", "bayrak_hacim_orani": 5.0, "bayrak_not": ""}          # 5000 / 1000
+                   "bayrak_alt_hesap_ters": "evet", "bayrak_hacim_orani": 5.0, "bayrak_not": "",           # 5000 / 1000
+                   "bayrak_zararda_ekleme": 0, "bayrak_katlama_orani": 0.0, "bayrak_coin_hhi": 1.0,           # tek dolum: ekleme yok, tek coin
+                   "bayrak_en_buyuk_coin_payi": 1.0, "bayrak_ekleme_derinligi": 0}
     broken = Fake({"role": "vault"}, {A: {}}, [], fail=("userVaultEquities", "userFunding"))
     out = bayrak.hesapla(broken, A, 1000.0, now_ms=10**12)
     assert out["bayrak_rol"] == "vault" and out["bayrak_hacim_orani"] == 5.0 and out["bayrak_alt_hesap_ters"] == "hayır"
@@ -128,3 +130,17 @@ def test_bayrak_yalniz_aday_kati_ve_secimi_degistirmez():
     assert "bayrak_rol" in flagged["adresler"][addr("a")] and "bayrak_rol" not in flagged["adresler"][addr("d")]
     text = secim.rapor(flagged, TABLE, {"hesap": "v", "kapsam": 1.0, "durum": "tamam"})
     assert "## Kırmızı bayraklar (bilgi; kimseyi elemez" in text
+
+
+def test_bayrak_tablosu_ve_bayrak_raporu_yeni_sutunlari_icerir():
+    from copytrade import secim
+    flags = {"bayrak_rol": "user", "bayrak_vault_orani": 0.25, "bayrak_funding_payi": 0.1, "bayrak_alt_hesap_ters": "hayır", "bayrak_hacim_orani": 5.0,
+             "bayrak_zararda_ekleme": 3, "bayrak_katlama_orani": 2 / 3, "bayrak_coin_hhi": 0.46, "bayrak_en_buyuk_coin_payi": 0.6, "bayrak_ekleme_derinligi": 4, "bayrak_not": ""}
+    lines = secim.bayrak_tablosu([("0xabc", flags)])
+    assert lines[0].count("|") == lines[2].count("|") and "zararda ekleme" in lines[0] and "ekleme derinliği" in lines[0]
+    assert lines[2] == "| `0xabc` | user | 0.250 | 0.100 | hayır | 5.00 | 3 | 0.667 | 0.460 | 0.600 | 4 |  |"
+    result = {"adresler": {"0xb": {"kollar": ["aday", "havuz"]}, "0xa": {"kollar": ["oda", "aday", "havuz"]}}}
+    body = {"secim_surumu": "v1.3", "kapi_tarihi": "2026-10-28", "tamam": False, "bayraklar": {"0xa": flags, "0xb": flags}}
+    text = secim.bayrak_raporu(result, body)
+    assert "KISMİ" in text and text.index("`0xa`") < text.index("`0xb`") and "kimseyi elemez" in text and "puan" not in text.lower()
+    assert "bayrak_kat_esik" in text and load_rules()["bayrak_kat_esik"] == 2.0
