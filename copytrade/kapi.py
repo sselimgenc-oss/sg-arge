@@ -934,17 +934,34 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
     return row
 
 
-def missing_addresses(leaders: list[dict], reference: pd.DataFrame | None) -> list[dict]:
-    """Aynı günün sonuc.csv'sinde olmayan veya ``neden`` alanı "veri hatası" olan adresler (``--eksikleri-tamamla``)."""
+def missing_addresses(leaders: list[dict], reference: pd.DataFrame | None, rules: dict | None = None) -> list[dict]:
+    """Aynı günün sonuc.csv'sinde olmayan, ``neden`` alanı "veri hatası" olan ya da hesap değeri tabanında kalıp bugünkü hesap değeri
+    güncel ``hesap_degeri_min_usd`` eşiğini geçen adresler (``--eksikleri-tamamla``; taban eşiği düşürülünce eski Kaldı satırı yeniden bakılır)."""
     if reference is None or reference.empty:
         return leaders
+    rules = rules or load_rules()
     bad = reference["neden"].fillna("").astype(str).str.startswith("veri hatası") if "neden" in reference else False
+    if "neden" in reference and "hesap_degeri_bugun" in reference:
+        value = pd.to_numeric(reference["hesap_degeri_bugun"], errors="coerce")
+        bad = bad | (reference["neden"].fillna("").astype(str).eq("hesap değeri tabanı") & (value >= float(rules["hesap_degeri_min_usd"])))
     ok = set(reference.loc[~bad, "address"].astype(str)) if "neden" in reference else set(reference["address"].astype(str))
     return [row for row in leaders if str(row["address"]) not in ok]
 
 
+def latest_day(paths: list[str]) -> str | None:
+    """``copytrade/kapi/<YYYY-MM-DD>`` yollarından (ya da düz adlardan) en son tarih; yoksa ``None``. Eksik mod aynı günün/son günün sonucuna devam eder."""
+    days = [m.group(1) for m in (re.search(r"(?:^|/)(\d{4}-\d{2}-\d{2})/?$", str(path).strip()) for path in paths) if m]
+    return max(days) if days else None
+
+
+def evren_addresses(path: Path) -> set[str]:
+    """Ortak evren anlık görüntüsündeki adresler (küçük harf)."""
+    return {str(row["address"]).lower() for row in read_universe_snapshot(path)}
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="CT-Kapı v1.1 public-data stage-1 runner")
+    parser.add_argument("--tarih", help="çıktı gün klasörü (varsayılan: bugün UTC); plan işinin seçtiği gün parçalara aynen geçer")
     parser.add_argument("--root", type=Path, default=Path("copytrade"))
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--shard-count", type=int, default=1)
@@ -960,12 +977,12 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--evren-dosyasi", type=Path, help="plan işinin ortak evren anlık görüntüsünü kullan")
     args = parser.parse_args(argv)
     if args.birlestir:
-        merge_shards(args.birlestir, args.root, args.beklenen_parca, args.mod)
+        merge_shards(args.birlestir, args.root, args.beklenen_parca, args.mod, evren_addresses(args.evren_dosyasi) if args.evren_dosyasi else None)
         return
     if args.shard_count < 1 or not 0 <= args.shard_index < args.shard_count:
         parser.error("shard index/count geçersiz")
     rules = load_rules()
-    now, today = datetime.now(UTC), datetime.now(UTC).date().isoformat()
+    now, today = datetime.now(UTC), args.tarih or datetime.now(UTC).date().isoformat()
     out = args.root / "kapi" / today
     out.mkdir(parents=True, exist_ok=True)
     client = PublicClient(limiter=RateLimiter(1000))
@@ -984,7 +1001,7 @@ def main(argv: list[str] | None = None) -> None:
         eligible = set(pd.read_csv(previous[-1]).query("adim1 == 'Geçti' and adim2 == 'Geçti' and adim3 == 'Geçti' and adim4 == 'Geçti'").address) if previous else set()
         leaders = [row for row in leaders if row["address"] in eligible or row["kaynak"] == "dis_aday"]
     if args.eksikleri_tamamla:
-        leaders = missing_addresses(leaders, pd.read_csv(previous_path) if previous_path.exists() else None)
+        leaders = missing_addresses(leaders, pd.read_csv(previous_path, low_memory=False) if previous_path.exists() else None, rules)
     leaders = shard_universe(leaders, args.shard_index, args.shard_count)
     symbols, binance_note = write_binance_universe(out, now)
     start = int((now - timedelta(days=int(rules["fills_lookback_days"]))).timestamp() * 1000)
@@ -1301,11 +1318,13 @@ def run_status(finished: int, expected: int | None, processed: int, universe: in
             "islenen": processed, "evren": universe, "kapsam": round(coverage, 4) if coverage is not None else None, "neden": "; ".join(reasons)}
 
 
-def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str = "tam") -> dict[str, dict]:
+def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str = "tam", universe: set[str] | None = None) -> dict[str, dict]:
     """Merge partial artifacts even if some timeout jobs produced no CSV.
 
     Aynı günün mevcut ``sonuc.csv``'si (ör. veri dalından) önce okunur; parçalardaki satırlar onu geçersiz kılar
     (``--eksikleri-tamamla`` ve hızlı koşu böyle birleşir).
+    ``universe``: ortak evren adres kümesi; verilirse kapsam = |sonuç ∩ evren| / |evren| ve evren dışı satırlar ``evren_disi`` ile işaretlenir
+    (verilmezse eski ölçü: satır sayısı / evren sayısı; denetim B14).
     """
     groups: dict[str, list[pd.DataFrame]] = {}
     evren: dict[str, int] = {}
@@ -1335,13 +1354,20 @@ def merge_shards(shards: Path, root: Path, expected: int | None = None, mod: str
             evren[date] = int(json.loads((output / "evren.json").read_text(encoding="utf-8"))["evren"])
         table = pd.concat(fresh, ignore_index=True).drop_duplicates("address", keep="last")
         table = finalize(table)
+        covered = None
+        if universe is not None:
+            table["evren_disi"] = ~table["address"].astype(str).str.lower().isin(universe)
+            covered = int((~table["evren_disi"]).sum())
         problems = sanity_check(table)
         if problems:
             raise SanityError(f"{date}: akıl sağlığı kapısı tutmadı, yayımlanmaz:\n- " + "\n- ".join(problems)
                               + f"\nKaynağa göre: {sanity_by_source(table)}\n(eski_hesap olarak ayrılan satır: {len(legacy)}, kapıya girmedi)")
         if len(legacy):
             legacy.to_csv(output / "sonuc_eski_hesap.csv.gz", index=False, compression="gzip")
-        status = run_status(len(list(shards.rglob(f"{date}/bitti.json"))), expected, len(table), evren.get(date), mod, load_rules())
+        status = run_status(len(list(shards.rglob(f"{date}/bitti.json"))), expected, len(table) if covered is None else covered,
+                            len(universe) if universe is not None else evren.get(date), mod, load_rules())
+        if covered is not None:
+            status.update({"islenen": int(len(table)), "kapsanan": covered, "evren_disi_satir": int(len(table)) - covered})
         status["eski_hesap_satir"] = int(len(legacy))
         status["hesap"] = HESAP_SURUMU
         status["satir_kaynagi"] = table["satir_kaynagi"].value_counts().to_dict()

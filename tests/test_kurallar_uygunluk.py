@@ -61,9 +61,9 @@ def test_numbered_user_decision_27_account_floor():
     assert RULES[key] == int(literal) == int(shown.replace(".", ""))
 
 
-def test_account_floor_boundary_0_9999_fail_10000_pass():
+def test_account_floor_boundary_0_4999_fail_5000_pass():
     from copytrade.kapi import account_floor_pass
-    assert not account_floor_pass(0.0, RULES) and not account_floor_pass(9999.0, RULES) and account_floor_pass(10000.0, RULES)
+    assert not account_floor_pass(0.0, RULES) and not account_floor_pass(4999.0, RULES) and account_floor_pass(5000.0, RULES)
 
 
 def test_gate_functions_use_the_yaml_thresholds_at_the_boundary():

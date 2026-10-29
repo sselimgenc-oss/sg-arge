@@ -104,13 +104,13 @@ def test_golden_8_account_value_floor_sums_main_and_hip3_dexes_and_stops_at_kald
     assert kapi.total_account_value(client({"": 6000, "xyz": 3000, "spot": 1000}), "0xa", ["xyz", "flx"]) == 10000.0
     assert kapi.account_value_parts(client({"spot": 602437.2312561}), "0x69b0", ["xyz", "flx"]) == {"ana": 0.0, "hip3": 0.0, "spot_usdc": 602437.2312561}
     rules = kapi.load_rules()
-    for values, passes in (({}, False), ({"": 6000, "xyz": 3000, "spot": 999}, False), ({"": 6000, "xyz": 3000, "spot": 1000}, True), ({"spot": 602437.23}, True)):
+    for values, passes in (({}, False), ({"": 3000, "xyz": 1000, "spot": 999}, False), ({"": 3000, "xyz": 1000, "spot": 1000}, True), ({"spot": 602437.23}, True)):
         row = kapi.evaluate_address({"address": "0xa", "accountValue": 50000.0}, client(values), type("C", (), {"requests": 0})(),
                                     datetime.now(timezone.utc), 0, 0, None, rules, dexes=["xyz", "flx"])
         if not passes:
-            assert row["asama1"] == "Kaldı" and row["neden"] == "hesap değeri tabanı" and row["hesap_degeri_bugun"] < 10000
+            assert row["asama1"] == "Kaldı" and row["neden"] == "hesap değeri tabanı" and row["hesap_degeri_bugun"] < 5000
         else:
             # Taban geçildi: satır tabanda kesilmedi (sonraki aşamada bu sahte istemci dolum veremediğinden veri hatası olması beklenir).
-            assert row.get("neden") != "hesap değeri tabanı" and row["asama1"] != "Kaldı" and row["hesap_degeri_bugun"] >= 10000.0
+            assert row.get("neden") != "hesap değeri tabanı" and row["asama1"] != "Kaldı" and row["hesap_degeri_bugun"] >= 5000.0
     table = kapi.finalize(pd.DataFrame([{"address": "0xa", "asama1": "Kaldı", "neden": "hesap değeri tabanı"}]), rules)
     assert table.loc[0, "sinif"] == "Kaldı"
