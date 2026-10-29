@@ -87,7 +87,8 @@ paper'daki 13 kitaptan yalnız 2'sinde zayıf alfa izi vardı (`docs/kapi_kontro
 | Lider | denetim, birleştirme | bitti |
 Test listesi: `copytrade/izleme_listesi.yaml` (2 test trader'ı; kopyalama kararı değil).
 
-**2. Telegram — BİTTİ (2026-10-27):** Cloudflare Worker `sg-arge-telegram` yayında (sg-arge #283–#286): 5 dk'da bir
+**2. Telegram — KOD HAZIR, KURULMADI (düzeltme 2026-10-29):** `worker.yml` dağıtımı GitHub Secrets eksik diye hiç
+başarılı olmadı (son: 2026-10-28, "Eksik GitHub Secret: CLOUDFLARE_API_TOKEN"); beş secret kullanıcıda. Tasarım: Cloudflare Worker `sg-arge-telegram` (sg-arge #283–#286): 5 dk'da bir
 bildirim, [Açtım]/[Atladım], `/durum`. Kararlar saatlik işle `copytrade-izleme/izleme/kararlar.jsonl`'a (`KARAR_URL`).
 Açık kontrol: ilk gerçek bildirimde düğme → karar → panoya akış uçtan uca izlenecek. Not: saatlik zamanlama ilk
 saatlerde tetiklenmedi (GitHub gecikmesi); düzelmezse incelenecek.
