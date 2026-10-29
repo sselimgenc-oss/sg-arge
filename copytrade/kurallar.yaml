@@ -145,8 +145,18 @@ secim_min_kapsam: 0.95
 # Seçim v1.3 (docs/GOREV_SECIM_V13.md, ön kayıt D sürüm 1.3): seçim sürümü kimlik/tohum dizgesine girer; havuz adım 3 statik koşulları
 # (kisa_islem_payi_max, kapi_max_medyan_kaldirac, kapi_max_kaldirac) kapıyla aynı anahtarlardan okunur.
 secim_surumu: "v1.3"
-# Geçiş kaydı (ön kayıt D v1.3 madde 3, copytrade/gecis.py): odadan çıkış için ardışık haftalık uygunsuz değerlendirme sayısı
+# Geçiş kaydı (ön kayıt D v1.4 madde 1, copytrade/gecis.py): odadan çıkış için ÜÇÜ BİRDEN gerekir: etiketten bu yana en az min_hafta haftalık değerlendirme
+# ve min_kapanmis_islem kapanmış işlem; havuz puan sırasında alt dilim (üstten değil alttan oran; histerezis: giriş ilk %15, çıkış alt %50);
+# bu durumun ardışık_hafta ardışık haftalık değerlendirmede sürmesi
+secim_cikis_min_hafta: 4
+secim_cikis_min_kapanmis_islem: 60
+secim_cikis_havuz_alt_dilim: 0.50
 secim_cikis_ardisik_hafta: 2
+# Risk işaretleri (ön kayıt D v1.4 madde 2, copytrade/risk_isaretleri.py; haftalık rapor; YALNIZ BİLGİ, otomatik çıkış yok, performans sayısı yok):
+# son hafta en yüksek kaldıraç > kat × etiket anı medyan kaldıraç; zarardaki açık pozisyonun yaşı > kat × medyan tutma süresi.
+# Martingale başlangıcı katlama oranını bayrak_kat_esik ile ölçer (bayrak_ek).
+risk_kaldirac_sicrama_kat: 2.5
+risk_tutma_anomali_kat: 3.0
 # Ön kayıt D v1.3 analiz kodu (copytrade/analiz_d.py; madde 4–7): pratik eşik δρ, tek yönlü p, haftalık blok, haftalık veri eksikliği sınırı
 onkayit_delta_rho: 0.10
 onkayit_p_max: 0.05

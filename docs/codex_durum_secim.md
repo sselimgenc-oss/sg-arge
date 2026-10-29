@@ -71,3 +71,7 @@
 ## Argon A14 — oda yoğunlaşması ve puan tutarlılığı (`copytrade/yogunlasma.py`)
 - [x] Ortalama bağlantılı kümeleme, etkin küme sayısı, yarı tutarlılığı (sıra korelasyonu `analiz_d` ile tek uygulama); eşikler `kurallar.yaml` (`yogunlasma_min_ortak_gun` 10, `yogunlasma_kume_esik` 0,5)
 - [x] Kapı, adım 1–2'yi geçenlerin günlük kopya getirisini `gunluk.csv.gz` olarak yayımlar (parçalar + önceki dosya birleşir); seçim RAPOR'unda "Oda yoğunlaşması ve puan tutarlılığı (bilgi)" bölümü ve `secim.json` `yogunlasma`; seçimi değiştirmez
+## Ön kayıt D v1.4 — performans çıkışı ve risk işaretleri (`copytrade/gecis.py`, `copytrade/risk_isaretleri.py`)
+- [x] Çıkış: etiketten bu yana ≥ `secim_cikis_min_hafta` (4) haftalık değerlendirme **ve** ≥ `secim_cikis_min_kapanmis_islem` (60) kapanmış işlem **ve** havuz puan sırasında alt `secim_cikis_havuz_alt_dilim` (0,50) dilimi **ve** `secim_cikis_ardisik_hafta` (2) ardışık hafta; seçim odasından düşmek tek başına çıkış değil (`tests/test_cikis_v14.py`: 59/60 işlem, 3/4 hafta, araya giren uygun hafta)
+- [x] Kapanmış işlem verisi yoksa çıkış değerlendirilemez (çıkış yok); havuzda olmayan/puansız üye sıralanamaz (çıkış gerekçesi olmaz)
+- [x] Risk işaretleri (haftalık rapor `--risk`, yalnız bilgi, performans sayısı yok): kaldıraç sıçraması (2,5×), martingale başlangıcı (`bayrak_ek`), zararda uzun tutma (3×) (`tests/test_risk_isaretleri.py`)

@@ -51,14 +51,12 @@ def _finite(value: float) -> bool:
     return value == value and abs(value) != float("inf")
 
 
-def martingale_olcusu(dolumlar: Dolumlar, kat_esik: float = 1.0) -> dict[str, Any]:
-    """Zarardaki pozisyona aynı yönde ekleme: sayı, katlama oranı (kat ≥ ``kat_esik`` olan eklemelerin payı) ve en büyük büyüme katsayısı.
-
-    kat = ekleme büyüklüğü / pozisyonun açılış ya da en son ekleme büyüklüğü. Giriş fiyatı bilinmeyen (devralınan) pozisyonda ekleme ölçülmez."""
+def zararda_eklemeler(dolumlar: Dolumlar) -> tuple[list[tuple[int, float]], int]:
+    """Zarardaki pozisyona aynı yönde eklemeler: [(dolum zamanı ms, kat)] ve atlanan satır. kat = ekleme büyüklüğü / pozisyonun açılış ya da en son
+    ekleme büyüklüğü. Giriş fiyatı bilinmeyen (devralınan) pozisyonda ekleme ölçülmez."""
     rows, skipped = _hazirla(dolumlar)
     state: dict[str, dict[str, Any]] = {}
-    losing = doubled = 0
-    biggest = 0.0
+    events: list[tuple[int, float]] = []
     for row in rows:
         coin, px, sz = row["coin"], row["px"], row["sz"]
         if sz <= 0.0:
@@ -74,10 +72,7 @@ def martingale_olcusu(dolumlar: Dolumlar, kat_esik: float = 1.0) -> dict[str, An
         direction = 1 if s["pos"] > 0 else -1
         if signed * s["pos"] > 0:                                        # aynı yönde ekleme
             if s["avg"] is not None and (px - s["avg"]) * direction < 0:   # long: px < giriş; short: px > giriş
-                losing += 1
-                kat = sz / (s["last"] if s["last"] > EPS else abs(s["pos"]))
-                doubled += kat >= kat_esik - EPS
-                biggest = max(biggest, kat)
+                events.append((row["time"], sz / (s["last"] if s["last"] > EPS else abs(s["pos"]))))
             new = s["pos"] + signed
             s["avg"] = None if s["avg"] is None else (abs(s["pos"]) * s["avg"] + sz * px) / abs(new)
             s["pos"], s["last"] = new, sz
@@ -89,8 +84,16 @@ def martingale_olcusu(dolumlar: Dolumlar, kat_esik: float = 1.0) -> dict[str, An
                 s["pos"] = rest
             else:
                 state[coin] = {"pos": rest, "avg": px, "last": abs(rest)}
-    return {"zararda_ekleme_sayisi": int(losing), "katlama_orani": float(doubled) / losing if losing else 0.0, "en_buyuk_kat": float(biggest),
-            "atlanan_satir": skipped}
+    return events, skipped
+
+
+def martingale_olcusu(dolumlar: Dolumlar, kat_esik: float = 1.0) -> dict[str, Any]:
+    """Zarardaki pozisyona aynı yönde ekleme: sayı, katlama oranı (kat ≥ ``kat_esik`` olan eklemelerin payı) ve en büyük büyüme katsayısı."""
+    events, skipped = zararda_eklemeler(dolumlar)
+    losing = len(events)
+    doubled = sum(kat >= kat_esik - EPS for _, kat in events)
+    return {"zararda_ekleme_sayisi": int(losing), "katlama_orani": float(doubled) / losing if losing else 0.0,
+            "en_buyuk_kat": float(max((kat for _, kat in events), default=0.0)), "atlanan_satir": skipped}
 
 
 def tek_coin_yogunlugu(dolumlar: Dolumlar) -> dict[str, Any]:
