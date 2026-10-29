@@ -6,7 +6,9 @@ set -euo pipefail
 : "${DAY:?}"; : "${MOD:?}"
 [ -s "copytrade/kapi/$DAY/sonuc.csv" ] || { echo "copytrade/kapi/$DAY/sonuc.csv yok; yayımlanacak sonuç yok." >&2; exit 1; }
 archive=$(mktemp -d)
-trap 'rm -rf "$archive"' EXIT
+archive_scripts=$(mktemp -d)
+cp .github/scripts/son_yaz.py "$archive_scripts/"      # veri dalına geçince betik dizini kaybolur
+trap 'rm -rf "$archive" "$archive_scripts"' EXIT
 mkdir -p "$archive/copytrade/kapi"
 cp -r "copytrade/kapi/$DAY" "$archive/copytrade/kapi/"
 if [ "$MOD" != hizli ] && [ -s kesif/kesif.json ]; then mkdir -p "$archive/kesif"; cp kesif/kesif.json "$archive/kesif/"; fi
@@ -23,6 +25,8 @@ else
 fi
 cp -r "$archive"/. .
 git add -f "copytrade/kapi/$DAY"
+python3 "$archive_scripts/son_yaz.py" son.json kapi "$DAY"     # pano/ofis en son tarihi buradan okur (API çağrısı gerekmez)
+git add -f son.json
 [ -f kesif/kesif.json ] && git add -f kesif/kesif.json
 if git diff --cached --quiet; then exit 0; fi
 git commit -m "copytrade: CT-Kapı sonuçları $DAY ($MOD)"
