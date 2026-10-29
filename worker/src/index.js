@@ -129,6 +129,10 @@ async function accumulatedOrderEvents(env, trader, rows, account) {
 
 function isNotified(trader) { return trader.kol === "oda"; }
 
+// BILDIRIM_KIPI: "ozet" (varsayılan) — yalnız günlük özet + durum değişince uyarı; "islem" — açılış/kapanış/büyütme
+// bildirimleri de (eski davranış) açık. Kod silinmez, yalnız bu ayarla kapatılır/açılır (lider kararı, kullanıcı).
+function bildirimKipi(env) { return env.BILDIRIM_KIPI === "islem" ? "islem" : "ozet"; }
+
 function githubHeaders(env) {
   return { authorization: `Bearer ${env.GITHUB_ACTIONS_TOKEN}`, accept: "application/vnd.github+json", "x-github-api-version": "2022-11-28", "user-agent": "sg-arge-worker" };
 }
@@ -171,7 +175,7 @@ async function runCron(env, fetcher = fetch) {
     try {
       const rows = await fills(trader.adres, Number(stored.son_dolum), fetcher);
       for (const event of await accumulatedOrderEvents(env, trader.id, rows, Number(trader.hesap_degeri))) {
-        if (["acilis", "kapanis", "buyutme"].includes(event.tur)) await sendOnce(env, event, trader, fetcher);
+        if (["acilis", "kapanis", "buyutme"].includes(event.tur) && bildirimKipi(env) === "islem") await sendOnce(env, event, trader, fetcher);
       }
       const newest = Math.max(Number(stored.son_dolum), ...rows.map(row => Number(row.time)));
       // Her dakika çalıştığı için yalnız değişince yazılır (D1 ücretsiz yazma kotası).
@@ -190,6 +194,7 @@ async function runCron(env, fetcher = fetch) {
         .bind(trader.id, current).run();
     }
   }
+  await checkStateAlerts(env, status, fetcher);
 }
 
 async function handleTelegram(request, env, fetcher = fetch) {
@@ -227,6 +232,81 @@ async function handleTelegram(request, env, fetcher = fetch) {
 const PANO = "https://sselimgenc-oss.github.io/sg-pano/";
 const ESKI_DK = 90;
 const LIGHT = { yesil: "🟢", sari: "🟡", kirmizi: "🔴" };
+const VERI_UYARI_DK = 180;   // günlük uyarı eşiği: 3 saat (ayrı: /durum'un kendi 90 dk eşiğinden farklı, bilgi amaçlı)
+
+function sanalKohort(all, kol) {
+  return all.filter(t => (t.kollar || [t.kol]).includes(kol)).map(t => t.sanal_kopya).filter(Boolean);
+}
+function ortalamaGetiri(copies) {
+  return copies.length ? copies.reduce((sum, c) => sum + (Number(c.getiri) || 0), 0) / copies.length : null;
+}
+function yuzdeYaz(v) { return v == null ? "bilinmiyor" : `${v >= 0 ? "+" : ""}${(v * 100).toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`; }
+
+// Günde bir, 09:00 TR'de (06:00 UTC): sanal kopya ölçeğinde oda kasası/getiri, oda−kontrol farkı (aynı dönem,
+// her ikisi de sanal_kopya.getiri ortalaması), son 24 saatteki işlem sayısı ve trader sayısı, ışıklar, veri yaşı.
+function dailySummaryText(status, nowMs = Date.now()) {
+  const all = status.traderlar || [];
+  const room = all.filter(isNotified);
+  const odaKopya = sanalKohort(all, "oda"), kontrolKopya = sanalKohort(all, "kontrol");
+  const kasa = odaKopya.reduce((sum, c) => sum + (Number(c.bakiye_usd) || 0), 0);
+  const odaGetiri = ortalamaGetiri(odaKopya), kontrolGetiri = ortalamaGetiri(kontrolKopya);
+  const fark = odaGetiri != null && kontrolGetiri != null ? odaGetiri - kontrolGetiri : null;
+  const sonGunOlaylari = (status.olaylar || []).filter(e => { const t = Date.parse(e.zaman); return Number.isFinite(t) && nowMs - t <= 86400000 && nowMs - t >= 0; });
+  const islemOlaylari = sonGunOlaylari.filter(e => ["acilis", "kapanis", "buyutme"].includes(e.tur));
+  const age = Math.max(0, Math.floor((nowMs - Date.parse(status.uretildi)) / 60000));
+  const count = c => room.filter(t => (t.saglik?.isik || "yesil") === c).length;
+  return [
+    "📊 SG Arge · Günlük özet",
+    "",
+    `💰 Oda kasası (sanal): $${kasa.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} (${yuzdeYaz(odaGetiri)})`,
+    `📐 Oda − Kontrol farkı (aynı dönem, sanal kopya): ${fark == null ? "bilinmiyor" : yuzdeYaz(fark)}`,
+    `🔁 Son 24 saat: ${islemOlaylari.length} işlem · ${new Set(islemOlaylari.map(e => e.trader)).size} trader`,
+    `🟢 ${count("yesil")}   🟡 ${count("sari")}   🔴 ${count("kirmizi")}`,
+    age > ESKI_DK ? `⚠️ Veri ${age} dk önce — güncellenmedi` : `🕐 Veri ${age} dk önce`,
+    "",
+    `Pano: ${PANO}`,
+  ].join("\n");
+}
+
+async function uyariDurumGetir(env, anahtar) {
+  const row = await env.DB.prepare("SELECT deger FROM uyari_durum WHERE anahtar = ?").bind(anahtar).first();
+  return row ? row.deger : null;
+}
+async function uyariDurumYaz(env, anahtar, deger) {
+  await env.DB.prepare("INSERT INTO uyari_durum(anahtar, deger) VALUES (?, ?) ON CONFLICT(anahtar) DO UPDATE SET deger=excluded.deger").bind(anahtar, deger).run();
+}
+
+// Yalnız durum DEĞİŞİNCE gönderir (uyari_durum'da son bilinen durum tutulur) — aynı uyarı tekrarlanmaz.
+async function checkStateAlerts(env, status, fetcher = fetch) {
+  const nowMs = Date.now(), age = (nowMs - Date.parse(status.uretildi)) / 60000;
+  const eski = Number.isFinite(age) && age > VERI_UYARI_DK, yasDurum = eski ? "eski" : "taze";
+  const oncekiYas = await uyariDurumGetir(env, "veri_yas");
+  if (eski && oncekiYas !== "eski") {
+    await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: `⚠️ Veri ${Math.round(age)} dk önce üretildi — 3 saatten eski.\nPano: ${PANO}` }, fetcher);
+  }
+  if (oncekiYas !== yasDurum) await uyariDurumYaz(env, "veri_yas", yasDurum);
+
+  const kalabalikAcik = !!status.kalabalik?.uyari, kalabalikDurum = kalabalikAcik ? "acik" : "kapali";
+  const oncekiKalabalik = await uyariDurumGetir(env, "kalabalik");
+  if (kalabalikAcik && oncekiKalabalik !== "acik") {
+    await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: `⚠️ Kalabalık uyarısı başladı: ${status.kalabalik.uyari_metni || "ayrıntı yok"}\nPano: ${PANO}` }, fetcher);
+  }
+  if (oncekiKalabalik !== kalabalikDurum) await uyariDurumYaz(env, "kalabalik", kalabalikDurum);
+}
+
+// Günde yalnız bir kez (09:00 TR = 06:00 UTC); D1'de o günün TR tarihi işaretlenir ki dakikada bir çalışan
+// cron'da yanlışlıkla ikinci kez gönderilmesin.
+async function sendDailySummaryIfDue(env, fetcher = fetch, nowMs = Date.now()) {
+  const d = new Date(nowMs);
+  if (d.getUTCHours() !== 6 || d.getUTCMinutes() !== 0) return;
+  const gun = d.toISOString().slice(0, 10);
+  const var_ = await env.DB.prepare("SELECT gun FROM ozet_gonderildi WHERE gun = ?").bind(gun).first();
+  if (var_) return;
+  let status;
+  try { status = await currentStatus(fetcher); } catch { return; }
+  await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: dailySummaryText(status, nowMs), disable_web_page_preview: true }, fetcher);
+  await env.DB.prepare("INSERT OR IGNORE INTO ozet_gonderildi(gun) VALUES (?)").bind(gun).run();
+}
 
 // Oda risk bayrakları (GOREV_ODA_RISK): yalnız uyarı varsa tek satır; bilgi amaçlı, otomasyon yok.
 function riskLine(status, room) {
@@ -270,7 +350,7 @@ function formatStatus(status, nowMs = Date.now()) {
 }
 
 export default {
-  scheduled(event, env, ctx) { ctx.waitUntil(runCron(env)); ctx.waitUntil(tetiklemeKontrol(env)); },
+  scheduled(event, env, ctx) { ctx.waitUntil(runCron(env)); ctx.waitUntil(tetiklemeKontrol(env)); ctx.waitUntil(sendDailySummaryIfDue(env)); },
   async fetch(request, env) {
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/kararlar") {
@@ -282,4 +362,4 @@ export default {
   },
 };
 
-export { accumulatedOrderEvents, callbackData, decision, dispatchWorkflow, formatEvent, formatStatus, handleTelegram, isNotified, mergeFills, runCron, sendOnce, tetiklemeKontrol, workflowRuns };
+export { accumulatedOrderEvents, bildirimKipi, callbackData, checkStateAlerts, dailySummaryText, decision, dispatchWorkflow, formatEvent, formatStatus, handleTelegram, isNotified, mergeFills, runCron, sendDailySummaryIfDue, sendOnce, tetiklemeKontrol, workflowRuns };

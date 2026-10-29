@@ -33,8 +33,10 @@ test("ilk cron imleci şimdiye koyar, geçmiş bildirimi göndermez", async () =
   }; } }; } } };
   const fetcher = async () => new Response(JSON.stringify({ uretildi: new Date().toISOString(), traderlar: [{ id: "T1", kol: "oda", adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, pozisyonlar: [], saglik: { isik: "yesil" } }] }));
   await runCron(env, fetcher);
-  assert.equal(writes.length, 1);
-  assert.match(writes[0][0], /INSERT INTO imlec/);
+  // imlec yazısına ek olarak durum uyarılarının (veri yaşı, kalabalık) ilk kez görülen taban durumu da D1'e yazılır
+  // (bildirim DEĞİL — yalnız sonraki karşılaştırma için; bkz. "yalnız durum değişince uyarı" testleri aşağıda).
+  assert.equal(writes.filter(([sql]) => /INSERT INTO imlec/.test(sql)).length, 1);
+  assert.equal(writes.filter(([sql]) => /INSERT INTO uyari_durum/.test(sql)).length, 2);
 });
 
 test("ilk görülen kırmızı ışık bildirim üretmez; yeşilden kırmızıya geçiş üretir", async () => {
@@ -45,7 +47,9 @@ test("ilk görülen kırmızı ışık bildirim üretmez; yeşilden kırmızıya
   }; } }; } } };
   let colour = "kirmizi", n = 0;
   const fetcher = async (url, init) => {
-    if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: `2026-10-27T12:0${n++}:00Z`, traderlar: [{ id: "T1", kol: "oda", adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, saglik: { isik: colour } }] }));
+    // uretildi her çağrıda biraz ileri (yalnız olay id'si farklı olsun diye); "şimdi"ye yakın kalır ki veri yaşı
+    // uyarısı (checkStateAlerts) bu testte yanlışlıkla tetiklenmesin.
+    if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: new Date(Date.now() + n++).toISOString(), traderlar: [{ id: "T1", kol: "oda", adres: "0x1", takma_ad: "Test", hesap_degeri: 1000, saglik: { isik: colour } }] }));
     if (String(url).includes("api.hyperliquid.xyz")) return new Response(JSON.stringify([]));
     sent.push(JSON.parse(init.body)); return new Response(JSON.stringify({ ok: true }));
   };
@@ -113,7 +117,7 @@ test("mesaja tarz etiketi: [Intraday] / [Swing]; tarz yoksa etiket yok", () => {
 
 test("tarz durum.json'dan okunur: cron mesajı etiketli gider", async () => {
   const sent = [];
-  const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB: { prepare(sql) { return { bind(...args) { return {
+  const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", BILDIRIM_KIPI: "islem", DB: { prepare(sql) { return { bind(...args) { return {
     first: async () => (/FROM imlec/.test(sql) ? { son_dolum: 0 } : undefined),
     run: async () => ({ meta: { changes: 1 } }),
   }; } }; } } };
@@ -133,7 +137,7 @@ test("bildirim yalnız kol = oda için: kontrol, taban, elle ve kolsuz trader se
   const fill = { coin: "BTC", side: "B", sz: "1", px: "100", time: 5, oid: 7, tid: 1, startPosition: "0" };
   const run = async kol => {
     const sent = [], hyperliquid = [];
-    const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB: { prepare(sql) { return { bind() { return {
+    const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", BILDIRIM_KIPI: "islem", DB: { prepare(sql) { return { bind() { return {
       first: async () => (/FROM imlec/.test(sql) ? { son_dolum: 0 } : undefined),
       run: async () => ({ meta: { changes: 1 } }),
     }; } }; } } };

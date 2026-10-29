@@ -23,3 +23,12 @@ CREATE TABLE IF NOT EXISTS isik (
   trader TEXT PRIMARY KEY,
   isik TEXT NOT NULL
 );
+-- Yalnız durum DEĞİŞİNCE uyarı göndermek için son bilinen durum (veri yaşı, kalabalık). Aynı uyarı tekrarlanmaz.
+CREATE TABLE IF NOT EXISTS uyari_durum (
+  anahtar TEXT PRIMARY KEY,
+  deger TEXT NOT NULL
+);
+-- Günlük özetin en son hangi TR gününde gönderildiği (aynı gün iki kez gönderilmesin; Worker dakikada bir çalışıyor).
+CREATE TABLE IF NOT EXISTS ozet_gonderildi (
+  gun TEXT PRIMARY KEY
+);
