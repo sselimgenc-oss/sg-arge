@@ -69,7 +69,14 @@ jobs:
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" | jq -r '.result.subdomain')
           [ -n "$subdomain" ] && [ "$subdomain" != null ]
-          curl --fail --silent --show-error --retry 2 \
-            --data-urlencode "url=https://sg-arge-telegram.$subdomain.workers.dev/telegram" \
-            --data-urlencode "secret_token=$TELEGRAM_WEBHOOK_SECRET" \
-            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook" >/dev/null
+          # Telegram'ın hata açıklaması yazdırılır (yanıtta anahtar yok). Yeni workers.dev adı birkaç dakika çözülemeyebilir: 5 deneme.
+          for attempt in 1 2 3 4 5; do
+            response=$(curl --silent --show-error --retry 2 \
+              --data-urlencode "url=https://sg-arge-telegram.$subdomain.workers.dev/telegram" \
+              --data-urlencode "secret_token=$TELEGRAM_WEBHOOK_SECRET" \
+              "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook")
+            [ "$(jq -r '.ok' <<<"$response")" = true ] && { echo "Webhook ayarlandı."; exit 0; }
+            echo "Deneme $attempt: Telegram: $(jq -r '.description // "açıklama yok"' <<<"$response")"
+            sleep 30
+          done
+          exit 1

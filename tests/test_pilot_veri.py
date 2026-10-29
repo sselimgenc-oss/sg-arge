@@ -61,15 +61,16 @@ def test_altin_ornek_ileri_getiri_kapanmis_islem_ve_pasif_adres(tmp_path):
 
 
 class Api:
-    """Sahte istemci; ``kapasite`` gerçek API'nin yalnız son N dolumu vermesini taklit eder."""
+    """Sahte istemci; gerçek API gibi pencere adresin TÜM dolumları üzerinden sayılır: yalnız son ``kapasite`` dolum erişilebilir, aralık süzgeci ondan sonra."""
 
     def __init__(self, dolumlar, kapasite=10_000):
         self.dolumlar, self.kapasite, self.istek = dolumlar, kapasite, 0
 
     def fills(self, adres, start, max_rows=None, end_ms=None):
         self.istek += 1
-        rows = [{k: v for k, v in f.items() if k != "adres"} for f in self.dolumlar if f["adres"] == adres and start <= f["time"] <= (end_ms or 1 << 62)]
-        return rows[-self.kapasite:]
+        pencere = [f for f in self.dolumlar if f["adres"] == adres][-self.kapasite:]
+        rows = [{k: v for k, v in f.items() if k != "adres"} for f in pencere if start <= f["time"] <= (end_ms or 1 << 62)]
+        return rows[:max_rows] if max_rows is not None else rows
 
     def info(self, body, weight=1):
         return []
@@ -86,7 +87,7 @@ def test_altin_ornek_bosluk_bir_kez_arsive_yazilir_haftalik_koşu_apiye_gitmez(t
         pilot_veri.uret(tmp_path / "arsiv", secim(), {}, "2026-10-29", tmp_path / "c", now=NOW)      # doldurmadan haftalık koşu KIRMIZI
     api = Api(GOLD)
     sonuc = pilot_veri.bosluk_doldur(tmp_path / "arsiv", secim(), api, now=NOW)
-    assert sonuc["pencere_disi"] == 0 and sonuc["dolum"] == 1 and api.istek == 2        # yalnız boşluk dolumu (01:10); iki adres
+    assert sonuc["pencere_disi"] == 0 and sonuc["dolum"] == 1 and api.istek == 4        # boşluk dolumu (01:10) + pencere sayımı; iki adres
     pilot_veri.uret(tmp_path / "arsiv", secim(), {}, "2026-10-29", tmp_path / "c", now=NOW)           # API istemcisi parametresi bile yok
     assert json.loads((tmp_path / "c/getiri.json").read_text())[A] == pytest.approx(BEKLENEN, abs=1e-12)
     assert json.loads((tmp_path / "c/kapanmis_islem.json").read_text())[A] == 1
@@ -106,12 +107,22 @@ def test_altin_ornek_api_pencere_siniri_dolarsa_adres_pencere_disi_eksik_sayilir
     assert out["pencere_disi"] == 1 and out["eksik"] == 1
 
 
-def test_altin_ornek_pencere_dolu_degilse_ya_da_basi_etikette_ise_pencere_disi_degil(tmp_path):
+def test_altin_ornek_aralikta_az_dolum_ama_adresin_penceresi_etiketten_sonra_basliyorsa_pencere_disi(tmp_path, capsys):
+    """Lider: aralıkta (etiket → ilk yoklama) yalnız 300 dolum döner, ama adresin son 10.000 dolumu etiketten sonra başlıyor → boşluğun başı erişilemez."""
+    kur(tmp_path, ilk_saat=3)
+    aralik = [fill(A, "BTC", "B", 1, 100, 0, 0, 0, 0) | {"time": T0 + 5 * H + i, "tid": i} for i in range(300)]
+    sonra = [fill(A, "BTC", "B", 1, 100, 0, 0, 0, 0) | {"time": T0 + 5 * H + 1000 + i, "tid": 1000 + i} for i in range(10_000)]
+    api = Api(aralik + sonra)
+    assert len(api.fills(A, T0, end_ms=T0 + 3 * H)) == 0          # sahte istemci pencereyi taklit eder: aralık verisi artık erişilemez
+    sonuc = pilot_veri.bosluk_doldur(tmp_path / "arsiv", secim(), api, now=NOW)
+    assert sonuc["pencere_disi"] == 1 and "pencere dışı" in capsys.readouterr().out
+    assert json.loads(pilot_veri.bosluk_yolu(tmp_path / "arsiv").read_text())["pencere_disi"] == [A]
+
+
+def test_altin_ornek_aralikta_300_dolum_donuyor_adresin_toplami_pencerenin_altindaysa_pencere_disi_degil(tmp_path):
     kur(tmp_path, ilk_saat=3)
     az = [fill(A, "BTC", "B", 1, 100, 0, 0, 0, 0) | {"time": T0 + 1000 + i, "tid": i} for i in range(9_999)]
     assert pilot_veri.bosluk_doldur(tmp_path / "arsiv", secim(), Api(az), now=NOW)["pencere_disi"] == 0
-    tam = [fill(A, "BTC", "B", 1, 100, 0, 0, 0, 0) | {"time": T0 + i, "tid": i} for i in range(10_000)]     # ilk dolum tam etikette: başı erişilmiş
-    assert pilot_veri.bosluk_doldur(tmp_path / "arsiv", secim(), Api(tam), now=NOW)["pencere_disi"] == 0
 
 
 def test_oku_gun_ve_adres_suzgeci_ve_ozet_dosyasi(tmp_path):

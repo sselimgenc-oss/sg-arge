@@ -6,7 +6,7 @@
 **Körlük (ön kayıt madde 6):** hiçbir çıktıda ya da günlükte kol bazında getiri yoktur. Adres başına ileri getiri yalnız ``getiri.json``'a yazılır
 (``haftalik_rapor``'un puan ↔ ileri getiri bölümü okur). Günlük satırları yalnız sayı (adres/eksik/dolum) taşır.
 Boşluk: arşivin ilk yoklamasından önceki aralık (etiket → ilk yoklama) **bir kez** ``--bosluk-doldur`` ile API'den arşive yazılır; haftalık koşu
-API'ye gitmez, yalnız arşivi okur. API yalnız son ``api_dolum_pencere_siniri`` dolumu verir: pencere dolup en eski dolum etiketten sonraysa adres
+API'ye gitmez, yalnız arşivi okur. API yalnız son ``api_dolum_pencere_siniri`` dolumu verir: etiketten bugüne dolum sayısı buna ulaştıysa adres
 ``pencere_disi`` (eksik) yazılır ve haftalık koşuda getiriden çıkar; sessiz sıfır yoktur.
 """
 from __future__ import annotations
@@ -106,7 +106,7 @@ def bosluk_yolu(root: Path) -> Path:
 
 def bosluk_doldur(arsiv_root: Path, result: dict, client, *, now: datetime | None = None, rules: dict | None = None) -> dict:
     """Etiketten arşivin ilk yoklamasına kadar olan aralığı API'den arşive yazar (TEK SEFER; haftalık koşu API'ye gitmez).
-    Dolum penceresi dolup (``api_dolum_pencere_siniri``) en eski dolum etiketten sonraysa adres ``pencere_disi`` olarak kaydedilir ve günlüğe yazılır."""
+    Adresin etiketten bugüne dolum sayısı ``api_dolum_pencere_siniri``'na ulaştıysa (API penceresi tüm dolumlar üzerinden sayılır) adres ``pencere_disi`` olarak kaydedilir ve günlüğe yazılır."""
     from copytrade.arsiv import Arsiv
     rules = rules or load_rules()
     now = now or datetime.now(UTC)
@@ -122,9 +122,11 @@ def bosluk_doldur(arsiv_root: Path, result: dict, client, *, now: datetime | Non
     if sinir > etiket_ms:
         for adres in addresses:
             fills = [dict(r, adres=adres) for r in client.fills(adres, etiket_ms, end_ms=sinir)]
-            if len(fills) >= limit and min(int(r["time"]) for r in fills) > etiket_ms:
+            # API'nin penceresi adresin TÜM dolumları üzerinden sayılır (sorgulanan aralık değil): etiketten bugüne dolum sayısı pencereye ulaştıysa
+            # boşluğun başı erişilemeyebilir → temkinli: adres pencere dışı (eksik) sayılır.
+            if len(client.fills(adres, etiket_ms, max_rows=limit)) >= limit:
                 kayit["pencere_disi"].append(adres)
-                print(f"UYARI pencere dışı: {adres[:6]}…{adres[-4:]} (API son {limit} dolumu verdi; boşluğun başı erişilemez)")
+                print(f"UYARI pencere dışı: {adres[:6]}…{adres[-4:]} (etiketten bugüne ≥ {limit} dolum; API penceresi dolu, boşluğun başı erişilemeyebilir)")
             fund = [dict(r, adres=adres) for r in client.info({"type": "userFunding", "user": adres, "startTime": etiket_ms, "endTime": sinir}) if "time" in r]
             kayit["dolum"] += archive.append("dolum", fills)
             kayit["funding"] += archive.append("funding", fund)

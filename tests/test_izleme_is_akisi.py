@@ -11,4 +11,4 @@ def test_izleme_isinde_pytest_adimi_yok():
 def test_izleme_adimlari_korundu():
     for step in ("python -m copytrade.izleme_motoru --root . --output izleme", "bash .github/scripts/izleme_yayimla.sh", "git archive FETCH_HEAD izleme"):
         assert step in WORKFLOW
-    assert 'cron: "23 * * * *"' in WORKFLOW and "timeout-minutes: 45" in WORKFLOW
+    assert 'cron: "23 * * * *"' in WORKFLOW and "timeout-minutes: 150" in WORKFLOW

@@ -26,7 +26,7 @@ pilot boyunca değişmez. Coin sınıfı ve saate göre maliyet yalnız bilgi am
 büyüme/standart mod ve seans içi/dışı ayrımı eklenecek (Argon A20, `arastirma/copytrade/argon_a20_hip3_maliyet.md`).
 
 **Açık işler (2026-10-29):** Sonnet: `docs/GOREV_KORLUK.md` (K‑6 b), sonra `docs/GOREV_PILOT_VERI.md` (haftalık veri hattı +
-12. hafta analiz koşucusu), sonra `docs/GOREV_OFIS_CANLI.md`. Argon: `docs/GOREV_ARGON_3.md` (A20 HIP‑3 maliyeti, A21 API geri alma sınırları). Codex/Sonnet:
+12. hafta analiz koşucusu), sonra `docs/GOREV_FAZ3.md` (geçmiş prova, Durdurma 1; hiç koşmamıştı), sonra `docs/GOREV_OFIS_CANLI.md`. Argon: `docs/GOREV_ARGON_3.md` (A20 HIP‑3 maliyeti, A21 API geri alma sınırları). Codex/Sonnet:
 `gunluk.csv.gz` kapı koşusunda yayımlanmıyor (yoğunlaşma bölümü boş); maliyet duyarlılığı gerçek veriyle; R2 arşivi
 2026-10-29'da yeşile döndü (kullanıcı anahtarları düzeltti).
 
