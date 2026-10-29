@@ -60,15 +60,15 @@ function kollu() {                                   // kol alanı olan varyant
   await pg.click('#ozMain details[data-d=akis] summary'); await sleep(200);
   ok('Tüm akış açılır, olay satırları listelenir', await pg.$$eval('#ozMain details[data-d=akis] .ct-row', (l) => l.length) >= 5);
   await pg.click('#ozMain details[data-d=kararlar] summary'); await sleep(200);
-  ok('Kararlarım: sayılar görünür, kıyas kilitli', /Toplam karar/.test(await metin(pg, '#ozMain')) && await pg.$$eval('#ozMain details[data-d=kararlar] [data-kilit]', (l) => l.length) === 1);
+  ok('Kararlarım: sayılar görünür, kilit yok', /Toplam karar/.test(await metin(pg, '#ozMain')) && await pg.$$eval('#ozMain details[data-d=kararlar] [data-kilit]', (l) => l.length) === 0);
 
-  /* ---- 3) performans körlüğü ---- */
+  /* ---- 3) canlı pilot performans görünümü ---- */
   const tum = [];
   for (const h of ['ozet', 'traderlar', 'huni', 'ayarlar']) { await pg.click(`[data-nav=${h}]`); await sleep(200); tum.push(await pg.evaluate(() => document.body.innerText)); }
   await pg.goto(base + '#trader/' + A1); await pg.reload(); await sleep(1200); tum.push(await pg.evaluate(() => document.body.innerText));
   const hepsi = tum.join('\n');
-  ok('"sanal kopya (hepsi)" ve kol toplamları sayı olarak yok; yerine "kilitli · hafta"', !/Sanal kopya \(hepsi\)\s*[\n:]*\s*[+-]?\$?\d|\(\+%\d|\+\d+,\d+ \$/.test(hepsi) && /kilitli · hafta/.test(hepsi));
-  ok('kohort ↔ kontrol kıyası sayı göstermiyor (kilitli)', /kohort ↔ kontrol/.test(hepsi) && !/kohort[^\n]*[+-]%\d/i.test(hepsi));
+  ok('"sanal kopya (hepsi)" getiri olarak görünür; kilit yok', /Sanal kopya \(hepsi\)[\s\S]{0,80}%/.test(hepsi) && !/kilitli · hafta/.test(hepsi));
+  ok('kohort ↔ kontrol kıyası görünür', /Kohort ↔ kontrol:[\s\S]*%/.test(hepsi));
   ok('kâr/zarar rengi sınıfı yok (up/down kullanılmaz)', await pg.evaluate(() => document.querySelectorAll('.up, .down').length) === 0);
   ok('rozet/seri yok (kazanma serisi, rozet kazanıldı)', !/seri|rozet kazan|streak/i.test(hepsi));
   await ctx.close();
@@ -79,7 +79,7 @@ function kollu() {                                   // kol alanı olan varyant
   ok('Özet: oda doluluğu "1 / 20 trader", hafta 5/12', /1 \/ 20 trader/.test(oz2) && /5\/12/.test(oz2), oz2.match(/Oda doluluğu[^]{0,40}/)?.[0]);
   await pg.click('[data-nav=traderlar]'); await sleep(300);
   const chips = await pg.$$eval('#trMain .chip', (l) => l.map((x) => x.textContent.trim()));
-  ok('kol filtresi: Tümü · Oda · Aday · Kontrol · Taban · Elle liste (+ kol bilinmiyor)', ['Tümü', 'Oda', 'Aday', 'Kontrol', 'Taban', 'Elle liste'].every((k, i) => chips[i].startsWith(k)) && chips.some((c) => /kol bilinmiyor/.test(c)), chips.join(' | '));
+  ok('kol filtresi: standart ve referans kolları görünür', ['Tümü', 'Oda', 'Referans oda', 'Aday', 'Kontrol', 'Referans kontrol', 'Taban', 'Elle liste'].every((k) => chips.some((c) => c.startsWith(k))) && chips.some((c) => /kol bilinmiyor/.test(c)), chips.join(' | '));
   ok('Tümü: 4 kart', await pg.$$eval('#trMain .ct-card.tik', (l) => l.length) === 4);
   await pg.click('#trMain .chip:has-text("Aday")'); await sleep(200);
   const adayKart = await pg.$$eval('#trMain .ct-card.tik', (l) => l.map((x) => x.textContent));
@@ -87,7 +87,7 @@ function kollu() {                                   // kol alanı olan varyant
   ok('kart: takma ad, tarz, kol, neden seçildi, kırmızı bayrak, açık işlem sayısı', ['Trader-2', 'tarz bilinmiyor', 'Aday', 'Neden seçildi', 'uzun süredir işlem yok', 'Açık işlem'].every((k) => adayKart[0].includes(k)), adayKart[0].replace(/\s+/g, ' ').slice(0, 200));
   await pg.click('#trMain .chip:has-text("Tümü")'); await sleep(200);
   const ilk = (await pg.$$eval('#trMain .ct-card.tik .ct-name', (l) => l.map((x) => x.textContent)));
-  ok('kart sırası nötr: kol sırası sonra ad (kâr/zarara göre sıralama yok)', JSON.stringify(ilk) === JSON.stringify(['Trader-1', 'Trader-2', 'Trader-3', 'Trader-4']), ilk.join(','));
+  ok('kart sırası sanal getiriye göre azalan', JSON.stringify(ilk) === JSON.stringify(['Trader-1', 'Trader-3', 'Trader-2', 'Trader-4']), ilk.join(','));
   await pg.click('#trMain .chip:has-text("Oda")'); await sleep(150);
   const odaKart = await pg.$eval('#trMain .ct-card.tik', (e) => e.textContent);
   ok('kart: veride verilen "neden seçildi" metni görünür', /gölgede ≥ 3 hafta, kapıyı geçti/.test(odaKart));
@@ -109,7 +109,7 @@ function kollu() {                                   // kol alanı olan varyant
   ok('işlem geçmişi aç/kapa: açılınca satırlar görünür', await pg.$eval('details[data-d^="gecmis:"]', (e) => e.open && e.querySelectorAll('.ct-trade').length >= 1));
   await pg.click('details[data-d^="gecmis:"] summary'); await sleep(150);
   ok('işlem geçmişi yeniden kapanır', await pg.$eval('details[data-d^="gecmis:"]', (e) => !e.open));
-  ok('trader sayfası: sanal kopya sonucu kilitli', /kilitli · hafta 5\/12/.test(await metin(pg, '#trMain')));
+  ok('trader sayfası: sanal kopya sonucu görünür', /Bizim sanal kopya[\s\S]*Getiri[\s\S]*Bakiye/.test(await metin(pg, '#trMain')));
   await ctx.close();
 
   /* ---- 6) Hyperliquid erişilemezse çökmez; kol/alan eksik veri ---- */

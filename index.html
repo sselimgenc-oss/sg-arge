@@ -318,8 +318,7 @@
   // ---------- sözlük: her teknik terimin yanında küçük "?" (dokununca kısa açıklama)
   const SOZLUK = {
     golge: ['Gölge ölçüm', "Gerçek para yok. Trader'ın işlemleri gecikmeyle ve maliyetle sanal olarak kopyalanır; yöntemimiz böyle ölçülür."],
-    hafta: ['Hafta x/12', 'Gölge ölçümün kaçıncı haftasındayız. Toplam sonuçlar 12 hafta dolmadan gösterilmez.'],
-    kilitli: ['Kilitli', 'Ön kayıt kuralı: sonuca bakarak seçimi değiştirmeyelim diye toplam sonuçlar süre dolana kadar gizli. Tek tek işlemler görünür.'],
+    hafta: ['Hafta x/12', 'Gölge ölçümün kaçıncı haftasındayız. Sonuçlar bilgi amaçlı canlı izlenir.'],
     kapi: ['Kapı', 'Geçmiş verilerle yapılan ön eleme. Kötü adresleri eler; kimin iyi olduğuna tek başına karar vermez.'],
     kol: ['Kol', "Trader'ın ait olduğu grup: oda, aday, kontrol, taban ya da elle liste. Gruplar ileride birbiriyle kıyaslanır."],
     oda: ['Oda', 'En seçkin küçük grup. Kopyalama kararı ancak burada verilir.'],
@@ -345,15 +344,16 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('ipKutu').hidden = true; });
 
   // ---------- kollar (kol alanı veride henüz olmayabilir → "kol bilinmiyor", çökme yok)
-  const KOLLAR = ['oda', 'aday', 'kontrol', 'taban', 'elle'];
-  const KOL_AD = { oda: 'Oda', aday: 'Aday', kontrol: 'Kontrol', taban: 'Taban', elle: 'Elle liste' };
+  const KOLLAR = ['oda', 'referans_oda', 'kontrol', 'referans_kontrol', 'aday', 'taban', 'elle'];
+  const KOL_AD = { oda: 'Oda', referans_oda: 'Referans oda', kontrol: 'Kontrol', referans_kontrol: 'Referans kontrol', aday: 'Aday', taban: 'Taban', elle: 'Elle liste' };
   const kolOf = (t) => { const v = String((t && (t.kol ?? t.kol_adi)) ?? '').toLowerCase().trim(); return KOLLAR.includes(v) ? v : null; };
   const kolRozet = (t) => { const k = kolOf(t); return k ? ctRozet(KOL_AD[k], 'ct-b-mut') : ctRozet('kol bilinmiyor', 'ct-b-warn'); };
   const tarzAd = (t) => ({ intraday: 'Intraday', swing: 'Swing', scalp: 'Scalp' }[t && t.tarz] || 'tarz bilinmiyor');
   const tarzRozet = (t) => ctRozet(tarzAd(t), 'ct-b-mut');
   const golge = () => (CT && CT.golge) || {};
   const haftaMetni = () => { const g = golge(); return `hafta ${isNum(g.hafta) ? g.hafta : '?'}/${isNum(g.hafta_toplam) ? g.hafta_toplam : 12}`; };
-  const kilitHtml = (ad) => `<div class="kilit" data-kilit>${ad ? `<span>${esc(ad)}</span>` : ''}<b>🔒 kilitli · ${haftaMetni()}</b>${ip('kilitli')}</div>`;
+  const sanalGetiri = (t) => isNum(t?.sanal_kopya?.getiri) ? t.sanal_kopya.getiri : null;
+  const ortalama = (liste) => { const x = liste.map(sanalGetiri).filter(isNum); return x.length ? x.reduce((a, b) => a + b, 0) / x.length : null; };
   const ACIK = new Map();                                        // <details> açık/kapalı durumu yeniden çizimde korunur
   const det = (id, baslik, ic, varsayilan = false) => `<details class="card ct-card det" data-d="${esc(id)}" ${(ACIK.has(id) ? ACIK.get(id) : varsayilan) ? 'open' : ''} ontoggle="ACIK.set(this.dataset.d, this.open)"><summary>${baslik}</summary><div class="mt-2">${ic}</div></details>`;
   const bos = (m) => `<div class="card empty">${esc(m)}</div>`;
@@ -402,8 +402,8 @@
       + `<div class="taze"><span>Fiyatlar</span><b>${midsZaman ? Math.max(0, Math.round((Date.now() - midsZaman) / 1000)) + ' sn önce' : 'bekleniyor'}</b></div>`;
     const son5 = ctOlaylar().slice(0, 5);
     return `<div class="card ct-card"><h2 class="bas">Gölge ölçüm ${ip('golge')}</h2>
-        <div class="ct-kv mt-2">${kv('Hafta', haftaMetni().replace('hafta ', ''), 'hafta')}${kv('Oda doluluğu', hicKolYok ? 'bilinmiyor' : `${nOda}${kap ? ' / ' + kap : ''} trader`, 'oda')}${kv('İzlenen trader', tr.length)}${kv('Açık işlem', acikSay)}</div>
-        <div class="mt-3">${kilitHtml('Sanal kopya (hepsi), kol toplamları, kohort ↔ kontrol')}</div></div>
+        <div class="ct-kv mt-2">${kv('Hafta', haftaMetni().replace('hafta ', ''), 'hafta')}${kv('Oda doluluğu', hicKolYok ? 'bilinmiyor' : `${nOda}${kap ? ' / ' + kap : ''} trader`, 'oda')}${kv('İzlenen trader', tr.length)}${kv('Açık işlem', acikSay)}${kv('Sanal kopya (hepsi)', ctPs(ortalama(tr), 2), 'ozet')}</div>
+        <div class="ct-sub mt-3">Kohort ↔ kontrol: ${ctPs(ortalama(tr.filter((t) => kolOf(t) === 'oda')), 2)} ↔ ${ctPs(ortalama(tr.filter((t) => kolOf(t) === 'kontrol')), 2)}</div></div>
       <div class="card ct-card"><h2 class="bas">Kol başına trader ${ip('kol')}</h2>
         <div class="chips mt-2">${KOLLAR.map(kolChip).join('')}${bilinmeyen ? `<button type="button" class="chip" onclick="kolFiltre='?';location.hash='traderlar'"><span>kol bilinmiyor</span><b>${bilinmeyen}</b></button>` : ''}</div>
         ${hicKolYok && tr.length ? '<div class="ct-sub mt-2">Veride henüz <code>kol</code> alanı yok; gelince burada dolar.</div>' : ''}</div>
@@ -427,7 +427,7 @@
       ${goster.length ? goster.map((o) => ctOlayYuvarlak(o, true)).join('') : '<div class="empty">Henüz olay yok.</div>'}
       ${tum.length > goster.length ? `<button class="ct-btn w-full mt-2" onclick="ctAkisN+=${CT_AKIS_ADIM};render()">Daha fazla (${tum.length - goster.length})</button>` : ''}`;
   }
-  // Kararlarım: sayılar ve nedenler görünür; "açtıklarım ↔ tümü" kıyası bir kol toplamıdır → kilitli (ön kayıt).
+  // Karar kaydı ayrı bir bilgi serisidir; seçim ya da eşiği değiştirmez.
   function kararSayilari(olay) {
     const kr = olay.filter((o) => CTK.kayit[o.id]), acti = kr.filter((o) => CTK.kayit[o.id].karar === 'acti').length;
     return { acti, atladi: kr.length - acti, cevapsiz: olay.filter((o) => o.tur === 'acilis' && !CTK.kayit[o.id]).length, kr: kr.map((o) => CTK.kayit[o.id]) };
@@ -437,7 +437,7 @@
     const olay = ctOlaylar(), kayitlar = Object.values(CTK.kayit), s = kararSayilari(olay), kv = (k, v) => `<div><div class="k">${esc(k)}</div><div class="v">${v}</div></div>`;
     return `<div class="ct-kv">${kv('Toplam karar', kayitlar.length)}${kv('Açtım', kayitlar.filter((k) => k.karar === 'acti').length)}${kv('Atladım', kayitlar.filter((k) => k.karar === 'atladi').length)}${kv('Cevapsız', s.cevapsiz)}</div>
       <div class="ct-sec"><span class="ct-sub">Atlama nedenleri:</span> ${nedenHtml(kayitlar)}</div>
-      <div class="ct-sec">${kilitHtml('Açtıklarım ↔ tümü kıyası')}</div>
+      <div class="ct-sec"><span class="ct-sub">Açtıklarım ↔ tümü: karar sayıları yukarıda; sonuçlar trader olaylarındaki sanal etiketlerde görünür.</span></div>
       <div class="ct-sub mt-2">${CTK.durum === 'hata' ? 'Karar kaydı okunamadı. ' : CTK.durum === 'yok' ? 'Henüz karar kaydı yok. ' : ''}Karar kaydı Telegram’daki [Açtım]/[Atladım] düğmelerinden gelir.</div>`;
   }
   // olay satırı
@@ -471,7 +471,7 @@
     const tr = CT.traderlar || [], sayilar = (k) => k === '' ? tr.length : k === '?' ? tr.filter((t) => !kolOf(t)).length : tr.filter((t) => kolOf(t) === k).length;
     const sec = [['', 'Tümü'], ...KOLLAR.map((k) => [k, KOL_AD[k]]), ['?', 'kol bilinmiyor']];
     const liste = tr.filter((t) => kolFiltre === '' || (kolFiltre === '?' ? !kolOf(t) : kolOf(t) === kolFiltre))
-      .sort((a, b) => (KOLLAR.indexOf(kolOf(a)) + 1 || 99) - (KOLLAR.indexOf(kolOf(b)) + 1 || 99) || String(a.takma_ad).localeCompare(String(b.takma_ad), 'tr'));   // sıralama nötr: kol sonra ad
+      .sort((a, b) => (sanalGetiri(b) ?? -Infinity) - (sanalGetiri(a) ?? -Infinity) || String(a.takma_ad).localeCompare(String(b.takma_ad), 'tr'));
     return `<div class="chips" role="group" aria-label="Kol filtresi">${sec.map(([k, ad]) => `<button type="button" class="chip${kolFiltre === k ? ' on' : ''}" aria-pressed="${kolFiltre === k}" onclick="kolFiltre='${k}';render()"><span>${esc(ad)}</span><b>${sayilar(k)}</b></button>`).join('')}${ip('kol')}</div>
       <div class="ct-grid mt-3">${liste.map(traderKart).join('') || bos('Bu kolda trader yok.')}</div>`;
   }
@@ -516,7 +516,7 @@
       ${det('gecmis:' + t.adres, `<b>İşlem geçmişi</b> <span class="ct-sub">(son 30 gün${h?.durum === 'hazir' ? ', ' + islemler.length + ' işlem' : ''})</span>`, h?.durum === 'hazir' ? (gecmis.length ? gecmis.map(satir).join('') : '<div class="ct-sub">İşlem yok.</div>') + (islemler.length > (sayfa + 1) * 20 ? `<button class="ct-btn w-full mt-2" onclick="location.hash='trader/${adr}/${sayfa + 1}'">Daha fazla</button>` : '') : '<div class="ct-sub">Canlı veri gelince burada listelenir.</div>')}
       ${olaylar.length || CT ? det('olay:' + t.adres, `<b>Bizim olaylar</b> <span class="ct-sub">(${olaylar.length})</span>`, benim.length ? benim.map((o) => ctOlayYuvarlak(o, false)).join('') + (olaylar.length > n ? `<button class="ct-btn w-full mt-2" onclick="olayN['${esc(t.adres)}']=${n + 8};render()">Daha fazla</button>` : '') : '<div class="ct-sub">Bu trader için olay yok.</div>') : ''}
       ${det('karar:' + t.adres, '<b>Kararlarım</b>', `<div class="ct-kv"><div><div class="k">Açtım</div><div class="v">${s.acti}</div></div><div><div class="k">Atladım</div><div class="v">${s.atladi}</div></div><div><div class="k">Cevapsız</div><div class="v">${s.cevapsiz}</div></div></div><div class="ct-sec"><span class="ct-sub">Atlama nedenleri:</span> ${nedenHtml(s.kr)}</div>`)}
-      <div class="card ct-card"><h2 class="bas">Bizim sanal kopya ${ip('ozet')}</h2><div class="mt-2">${kilitHtml('Bu trader’ın gölge sonucu')}</div></div>
+      <div class="card ct-card"><h2 class="bas">Bizim sanal kopya ${ip('ozet')}</h2><div class="ct-kv mt-2"><div><div class="k">Getiri</div><div class="v">${ctPs(sanalGetiri(t), 2)}</div></div><div><div class="k">Bakiye</div><div class="v">${ctUsdA(t.sanal_kopya?.bakiye_usd)}</div></div></div></div>
       ${det('secim:' + t.adres, '<b>Seçim ayrıntıları</b>', sec)}
     </div>`;
   }

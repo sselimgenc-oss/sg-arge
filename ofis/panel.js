@@ -17,7 +17,7 @@
   function dur(sec) { sec = Math.max(0, Math.round(sec)); const m = Math.floor(sec / 60); if (m < 1) return sec + ' sn'; if (m < 60) return m + ' dk'; const h = Math.floor(m / 60); if (h < 24) return h + ' sa ' + pad(m % 60) + ' dk'; return Math.floor(h / 24) + ' g ' + (h % 24) + ' sa'; }
   const NEDEN = { trader_kapatti: 'trader kapattı', zarar_kesme: 'zarar kesme', sure: 'süre doldu' };
   const KATAD = { lab: 'Lab', aday: 'Aday', oda: 'Oda', kontrol: 'Kontrol' };
-  const ODA_AD = id => { const r = O.World.roomById[id]; return r ? O.Names.room(id, r.ad) : id; };
+  const ODA_AD = id => id === 'diger' ? 'Diğer' : (id === 'referans' ? 'Referans' : (() => { const r = O.World.roomById[id]; return r ? O.Names.room(id, r.ad) : id; })());
   const ORN_CHIP = '<span class="ornek">örnek</span>';
   let ORN = ORN_CHIP;                                   // gerçek veride rozet yok (render başında güncellenir)
   const GRIN = '<span class="gri-not">paper izleme başlamadı</span>';
@@ -36,7 +36,8 @@
   function kasa() {
     if (Off.gri('finans')) { $('#kasaIcerik').innerHTML = '<p class="bos">' + GRIN + '</p>'; return; }
     const k = st.kasa, el = $('#kasaIcerik'), tem = st.acik.reduce((sum, x) => sum + (x.teminat_usd || 0), 0), kk = st.kk;
-    el.innerHTML = '<div class="kasa-satir ks2"><div><span class="kl">kasa</span><div class="kv">' + usd(k.deger_usd) + '</div></div><div><span class="kl">getiri</span><div class="kv ' + cls(k.deger_usd == null || !k.baslangic_usd ? 0 : k.deger_usd / k.baslangic_usd - 1) + '">' + pct(k.deger_usd == null || !k.baslangic_usd ? null : (k.deger_usd / k.baslangic_usd - 1) * 100, true) + '</div></div></div>' +
+    el.innerHTML = '<div class="kasa-satir ks2"><div><span class="kl">oda kasası</span><div class="kv">' + usd(k.deger_usd) + '</div></div><div><span class="kl">getiri</span><div class="kv ' + cls(k.deger_usd == null || !k.baslangic_usd ? 0 : k.deger_usd / k.baslangic_usd - 1) + '">' + pct(k.deger_usd == null || !k.baslangic_usd ? null : (k.deger_usd / k.baslangic_usd - 1) * 100, true) + '</div></div></div>' +
+      '<div class="kasa-satir"><span class="kl">kontrol kasası</span><b class="kv">' + usd(k.kontrol_deger_usd) + '</b></div>' +
       '<div class="kasa-satir ks2"><div><span class="kl">başlangıç</span><div class="kv">' + usd(k.baslangic_usd) + '</div></div><div><span class="kl">açık işlem teminatı</span><div class="kv">' + usd(tem) + '</div></div></div>' +
       '<p class="meta">n=' + (k.gun_n == null ? 'bilinmiyor' : k.gun_n + ' gün') + ' · veri ' + hm(k.zaman) + ' · ' + ORN + '</p>';
   }

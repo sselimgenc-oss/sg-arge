@@ -175,7 +175,7 @@
   }
   function acikOf(tid) { return st.acik.filter(x => x.trader === tid); }
   function tradeKat(tid) { const a = st.actorById[tid]; return a ? a.kat : (st.traders[tid] || {}).kat; }
-  const roomOf = tid => { const k = tradeKat(tid); return k === 'lab' || k === 'aday' || k === 'oda' || k === 'kontrol' ? k : 'oda'; };
+  const roomOf = tid => { const k = tradeKat(tid); return k === 'lab' || k === 'aday' || k === 'oda' || k === 'kontrol' || k === 'referans' ? k : 'diger'; };
 
   /* ---------- olaylar ---------- */
   const ENTRY = [BX + W.BW + 3, BY + 16], EXIT = [BX + W.BW + 3, BY + 17], GATE = [BX + 24, BY + 17];

@@ -11,7 +11,7 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const UNK = '<span class="bil">bilinmiyor</span>';
   const pad = n => (n < 10 ? '0' : '') + n;
-  const KATAD = { lab: 'Lab (havuz)', aday: 'Aday', oda: 'Oda (kopya)', kontrol: 'Kontrol grubu', disari: 'Kapıda' };
+  const KATAD = { lab: 'Lab (havuz)', aday: 'Aday', oda: 'Oda (kopya)', kontrol: 'Kontrol grubu', referans: 'Referans', diger: 'Diğer', disari: 'Kapıda' };
   const ROL = { yeni_adres: ['tarama', 'kapici'], kapi_gecti: ['kapici'], kapi_elendi: ['kapici'], havuzdan_cikar: ['kapici'], islem_acildi: ['finans'], islem_kapandi: ['finans'], bildirim: ['haber'], risk_tavan: ['risk'], risk_normal: ['risk'], veri_bayat: ['denetim'], veri_taze: ['denetim'], denetim: ['denetim'], arsiv_yazildi: ['arsivci'], kasa_guncelle: ['finans'], kural_kitabi: ['sekreter'], kullanici_karari: ['makam'], veri_yenile: ['finans'], kirmizi_bayrak: ['denetim'], bayrak_kalkti: ['denetim'] };
   const usd = v => (v == null ? null : (v < 0 ? '−' : v > 0 ? '+' : '') + '$' + Math.abs(v).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
   const pct = v => (v == null ? null : (v < 0 ? '−' : v > 0 ? '+' : '') + '%' + Math.abs(v).toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
