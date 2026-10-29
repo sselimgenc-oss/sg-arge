@@ -425,6 +425,7 @@ def test_health_leverage_martingale_inactivity(leverage, martingale, last, expec
 
 
 def test_health_cone_yellow_red_and_cusum(monkeypatch):
+    monkeypatch.setattr(m, 'load_rules', lambda: {'saglik_performans_konisi': True})
     h = history([-.00001])
     # A fixed known cone isolates the bands from the separate drawdown condition.
     monkeypatch.setattr(m, '_mdd', lambda returns: .1)
@@ -440,6 +441,7 @@ def test_health_cone_yellow_red_and_cusum(monkeypatch):
 
 
 def test_health_drawdown_is_red_even_with_permissive_cone(monkeypatch):
+    monkeypatch.setattr(m, 'load_rules', lambda: {'saglik_performans_konisi': True})
     h = history([.01, -.03])
     monkeypatch.setattr(m, 'blok_bootstrap', lambda *a, **kw: {'p5': [-1], 'p20': [-.9]})
     result = m.health(h, h.index[-2], NOW, 1, False, m.millis(NOW))
@@ -665,3 +667,19 @@ def test_canli_kosu_acik_pozisyonu_son_dakika_mumuyla_isaretler(tmp_path):
     assert paper['acik'] == pytest.approx(-0.052) and paper['gerceklesen'] == pytest.approx(-102 * .00095 / 1000)
     assert paper['toplam'] == pytest.approx(-0.052 - 102 * .00095 / 1000) and paper['son_isaret'] == '2026-10-27T11:59:00Z'
     assert client.mark_reads == 1
+
+
+def test_health_blind_in_pilot_ignores_performance(monkeypatch):
+    """K-6: pilotta (varsayılan yaml false) kötü getiri/düşüş/CUSUM ışığı değiştirmez ve neden sızdırmaz."""
+    h = history([-.05, -.05])
+    monkeypatch.setattr(m, 'blok_bootstrap', lambda *a, **kw: {'p5': [1], 'p20': [1]})
+    result = m.health(h, h.index[-2], NOW, 1, False, m.millis(NOW))
+    assert result == {'isik': 'yesil', 'nedenler': ['kaldıraç normal']}
+    assert m.load_rules()['saglik_performans_konisi'] is False
+
+
+def test_health_blind_keeps_leverage_and_staleness():
+    h = history([-.05])
+    result = m.health(h, h.index[-1], NOW, 10.01, False, m.millis(NOW) - 30 * m.DAY)
+    assert result['isik'] == 'kirmizi'
+    assert result['nedenler'] == ['gerçek kaldıraç > 10x', 'son 30 günde işlem yok']

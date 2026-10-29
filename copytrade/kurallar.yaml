@@ -194,3 +194,6 @@ alfa_min_artik_varyans: 1.0e-12
 golge_likidasyon_esigi: -1.0
 # Dolum sayfalaması (copytrade/tarama.py PublicClient.fills): userFillsByTime sayfa boyutu (API sınırı)
 api_sayfa_boyutu_dolum: 2000
+
+# Körlük (K-6): sağlık ışığı pilot süresince performansa (koni, düşüş, CUSUM) bakmaz; yalnız veri bayatlığı, kaldıraç ve martingale işareti (işlem deseni, getiri değil). true yalnız analiz tarihinden sonra
+saglik_performans_konisi: false
