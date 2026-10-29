@@ -90,3 +90,15 @@ Görev: `docs/GOREV_D_YOLU.md`.
   mutabakat); Aralık 1–2. hf canlı fiyatla gölge; Aralık 3. hf hesap kurulumu ve kullanıcı son onayı; en geç 31.12 canlı.
 - `AGENTS.md`'deki "emir ve gerçek para yok" kuralı bot görevi başlayana dek geçerli; bot görevi ayrı görev belgesiyle ve kullanıcı
   onayıyla açılır. Anahtarlar yalnız GitHub/Cloudflare secret'ında; repo herkese açık.
+
+### K‑7a. Canlı tarih öne alındı (kullanıcı kararı 2026-10-30: "yeni plan 1 Aralık canlı")
+- K‑7'deki tarih **1.12.2026** olur; diğer her şey (küçük tutar, kanıt şartı yok, güvenlik şartları) aynen geçerli.
+- Takvim (sıkıştırılmış; veri ve bot paralel yürür):
+  - **Hf 1 (30.10–6.11):** veri düzeltmeleri `GOREV_VERI_DUZELTME.md` (1–11, 13, 14) + kalıcılık yeniden koşu. Bot aşama 1 başlar (`GOREV_BOT.md`).
+  - **Hf 2 (7.11–14.11):** bot aşama 1 biter (emir göndermeyen karar+kayıt, limitler, /dur, mutabakat). Sol veri denetimi tekrar.
+    Canlı oda seçimi (kullanıcı kararı; kalıcılık sonucu + pilot verisi).
+  - **Hf 3–4 (15.11–28.11):** canlı fiyatla gölge, en az 14 gün (güvenlik şartı; kısaltılmaz).
+  - **29–30.11:** alt hesap, para çekme yetkisi olmayan API anahtarı (secret), tutar; kullanıcının son onayı.
+  - **1.12:** canlı.
+- Faz 3 (madde 12) artık zorunlu değil; zaman kalırsa önbellek + ön eleme ile, önce küçük deneme. Kalıcılık testi öncelikli.
+- `AGENTS.md` "emir yok" kuralı aşama 1–2 boyunca geçerli (bot emir göndermez); gerçek emir yalnız kullanıcının 30.11 onayıyla açılır.
