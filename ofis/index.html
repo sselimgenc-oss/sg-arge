@@ -14,7 +14,7 @@
 <div class="kabuk">
 <nav class="ray" aria-label="Ofis gezinmesi">
   <a class="marka" href="../" aria-label="SG Pano'ya dön"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5z" fill="#46d3c2"/><path d="M3 8v8l9 5v-8z" fill="#1f8a86"/><path d="M21 8v8l-9 5v-8z" fill="#14575b"/><path d="M9 14.5v3.2l3 1.6v-3.2z" fill="#ffb86b"/></svg><span>SG<b>ofis</b></span></a>
-  <h1 class="sr">SG Ofis: copy trade hattının animasyonlu ofis görünümü (örnek veri)</h1>
+  <h1 class="sr">SG Ofis: copy trade hattının animasyonlu ofis görünümü </h1>
   <div class="ray-ic" id="rayIc">
     <p class="ray-bas">Bina</p>
     <a class="ray-link" href="../" id="anaPanoLink"><i class="el" style="--c:#7cc4ff"></i><span>← Ana pano</span></a>
@@ -95,7 +95,7 @@
       <div id="tgIcerik"></div>
       <p class="meta" id="tgMeta"></p>
     </section>
-    <p class="alt-not">Salt okunur. Gerçek para, emir ve aracı kurum bağlantısı yok. Bu sayfa şimdilik <b>örnek veriyle</b> çalışır; adresler uydurmadır.</p>
+    <p class="alt-not">Salt okunur. Gerçek para, emir ve aracı kurum bağlantısı yok. <span id="altNot">Veri: <code>copytrade-kapi</code> veri dalındaki seçim ve kapı durumu (onaylanmamış ön izleme). Örnek veri yalnız <code>?durum=ornek</code> ile açılır.</span></p>
   </aside>
   <section class="ofis" aria-label="Ofis görünümü">
     <div class="tuval-kap" id="ofisTuval">
@@ -104,8 +104,9 @@
       <div class="ipucu" id="ipucu" role="tooltip" hidden></div>
       <button type="button" class="gun-serit" id="gunSerit" aria-controls="kartPanel" aria-label="Günlük özet; ayrıntı için tıkla"><b>Günlük özet</b><span id="gunSeritMetin">—</span><em>ayrıntı ›</em></button>
       <div class="ust-sol">
-        <span class="serit" id="ornekFlt"><i></i>örnek veri · adresler uydurma</span>
-        <span class="lejant" aria-label="Kol işaretleri"><i style="background:#ffb86b"></i>kohort <i style="background:#7cc4ff"></i>kontrol <i style="background:#b7c4c9"></i>havuz</span>
+        <span class="serit uyari" id="onizlemeFlt" role="status" hidden><i></i><span id="onizlemeMetin"></span></span>
+        <span class="serit" id="ornekFlt" hidden><i></i>Örnek veri — gerçek veriye bağlı değil · adresler uydurma</span>
+        <span class="lejant" aria-label="Kol işaretleri"><i style="background:#ffb86b"></i>kohort <span id="lejKontrol"><i style="background:#7cc4ff"></i>kontrol </span><i style="background:#b7c4c9"></i>havuz</span>
       </div>
       <div class="oda-ust" id="odaUst" hidden>
         <button type="button" id="geriBtn" aria-label="Binaya dön (Esc)">← Bina</button>
@@ -164,6 +165,7 @@
 <script src="sprites.js?v=0fd78c2"></script>
 <script src="kisiler.js?v=0fd78c2"></script>
 <script src="world.js?v=0fd78c2"></script>
+<script src="gercek.js?v=0fd78c2"></script>
 <script src="office.js?v=0fd78c2"></script>
 <script src="ad.js?v=0fd78c2"></script>
 <script src="iletisim.js?v=0fd78c2"></script>

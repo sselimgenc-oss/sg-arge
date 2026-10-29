@@ -1,0 +1,109 @@
+/* Ofis · gerçek veri uyarlayıcı: sg-arge veri dalındaki secim.json + kapı durum.json → ofis/SEMA.md şeması (bkz. SEMA.md §9).
+   Kural: veri olmayan alan boş/null kalır; sahte figür, sahte olay yok. Körlük: kâr/zarar, puan ve kol karşılaştırması taşınmaz (yalnız kat ve sıra).
+   Tarayıcıda window.OFIS.Gercek, Node'da module.exports (test). */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else { root.OFIS = root.OFIS || {}; root.OFIS.Gercek = api; }
+})(typeof window !== 'undefined' ? window : globalThis, function () {
+  'use strict';
+  const REPO = 'sselimgenc-oss/sg-arge', DAL = 'copytrade-kapi';
+  const AGAC = 'https://api.github.com/repos/' + REPO + '/git/trees/' + DAL + '?recursive=1';   // kimliksiz API: tek çağrı
+  const HAM = 'https://raw.githubusercontent.com/' + REPO + '/' + DAL + '/';
+  const ESIK_DK = 7 * 1440;                                   // seçim ve kapı haftalık/günlük üretilir: bir haftadan eskiyse VERİ ESKİ
+  const GRI = 'paper izleme başlamadı';
+  const TARIH = /^\d{4}-\d{2}-\d{2}/;
+
+  /* ağaç (GitHub git/trees yanıtı ya da yol listesi) → en son seçim klasörü ve kapı tarihleri */
+  function enSon(agac) {
+    const yollar = (Array.isArray(agac) ? agac : (agac && agac.tree) || []).map(x => (typeof x === 'string' ? x : x.path));
+    const secimler = yollar.map(p => /^secim\/([^/]+)\/secim\.json$/.exec(p)).filter(Boolean).map(m => m[1]).filter(d => TARIH.test(d)).sort();
+    const durumlar = yollar.map(p => /^copytrade\/kapi\/(\d{4}-\d{2}-\d{2})\/durum\.json$/.exec(p)).filter(Boolean).map(m => m[1]).sort();
+    return { secim: secimler.length ? secimler[secimler.length - 1] : null, durumlar: durumlar };
+  }
+  /* seçimin dayandığı kapı koşusu: secim.json'da kapi_tarihi varsa o (v1.3), yoksa seçim tarihinden önceki/aynı en son durum.json */
+  function kapiTarihi(secim, durumlar) {
+    if (secim && secim.kapi_tarihi && durumlar.indexOf(secim.kapi_tarihi) >= 0) return secim.kapi_tarihi;
+    const t = String((secim && secim.tarih) || '');
+    const uygun = durumlar.filter(d => d <= t);
+    return uygun.length ? uygun[uygun.length - 1] : durumlar.length ? durumlar[durumlar.length - 1] : null;
+  }
+  const kisa = a => (a.length > 12 ? a.slice(0, 6) + '…' + a.slice(-4) : a);
+  const sayi = v => (typeof v === 'number' && isFinite(v) ? v : null);
+  const trSayi = v => (v == null ? 'bilinmiyor' : Number(v).toLocaleString('tr-TR', { maximumFractionDigits: 0 }));
+
+  function cevir(secim, durum, opt) {
+    opt = opt || {};
+    const simdi = opt.simdi instanceof Date ? opt.simdi : new Date();
+    const n = (secim && secim.sayilar) || {}, tarih = String((secim && secim.tarih) || '').slice(0, 10);
+    const z = tarih + 'T00:00:00Z', surum = (secim && secim.secim_surumu) || 'v1';
+    const kapiZ = opt.kapiTarihi ? opt.kapiTarihi + 'T00:00:00Z' : z;
+    const girdi = Object.keys((secim && secim.adresler) || {}).map(a => Object.assign({ adres: a }, secim.adresler[a]));
+    const sira = (a, b) => ((a.sira == null ? 1e9 : a.sira) - (b.sira == null ? 1e9 : b.sira)) || String(a.tarz).localeCompare(String(b.tarz)) || (a.adres < b.adres ? -1 : 1);
+    const odaListe = girdi.filter(e => e.kollar.indexOf('oda') >= 0).sort(sira);
+    const adayListe = girdi.filter(e => e.kollar.indexOf('aday') >= 0 && e.kollar.indexOf('oda') < 0).sort(sira);
+    const olustur = (e, kat, onek, i) => ({
+      id: onek + String(i + 1).padStart(2, '0'), adres: kisa(e.adres), takma_ad: e.adres.slice(2, 6), kat: kat, kol: kat === 'oda' ? 'kohort' : 'havuz',
+      tarz: e.tarz || null, etiket: tarih, gun: sayi(e.gecmis_gun) == null ? null : Math.round(e.gecmis_gun), islem_n: null, sira: sayi(e.sira),
+      medyan_kaldirac: sayi(e.medyan_kaldirac), en_yuksek_kaldirac: sayi(e.en_yuksek_kaldirac), genc_aday: !!e.genc_aday,
+      kat_olay: { id: 'secim-' + surum + '-' + tarih + '-' + onek + (i + 1), kural: 'Seçim ' + surum + ' — ön izleme: ' + (kat === 'oda' ? 'aday katında ilk sıralardan odaya alındı' : 'aday katına girdi'), zaman: z }
+    });
+    const traderlar = odaListe.map((e, i) => olustur(e, 'oda', 'O', i)).concat(adayListe.map((e, i) => olustur(e, 'aday', 'A', i)));
+    const kolSayi = k => sayi(n[k]);
+    const evren = durum ? sayi(durum.evren) : null, islenen = durum ? sayi(durum.islenen) : null;
+    const kapsam = durum && sayi(durum.kapsam) != null ? '%' + Math.round(durum.kapsam * 100) : null;
+    const vk = (anahtar, ad, durumu, deger, zaman) => ({ anahtar: anahtar, ad: ad, durum: durumu, deger: deger, zaman: zaman, esik_dk: ESIK_DK });
+    const kapiTamam = durum && durum.durum === 'tamam';
+    return {
+      surum: 1, uretildi: simdi.toISOString(), kaynak: 'hyperliquid-kapi (veri dalı ' + DAL + ', seçim ' + surum + ' ' + tarih + ')',
+      secim: { surum: surum, tarih: tarih, kapi_tarihi: opt.kapiTarihi || null, onaylandi: false },
+      cipler: { golge: GRI, telegram: null },
+      kasa: { deger_usd: null, baslangic_usd: null, zaman: null, gun_n: null, egri: [] },
+      ozet: { islem_basi_usd: null, bugun_kz_usd: null, bugun_acilan_n: null, bugun_kapanan_n: null, zaman: null },
+      katlar: {
+        havuz: { n: kolSayi('havuz'), masa: 0, zaman: z, esik_dk: ESIK_DK },
+        aday: { n: kolSayi('aday'), masa: adayListe.length, zaman: z, esik_dk: ESIK_DK },
+        oda: { n: kolSayi('oda'), kapasite: null, masa: odaListe.length, zaman: z, esik_dk: ESIK_DK },
+        kontrol: { n: kolSayi('kontrol'), masa: 0, zaman: z, esik_dk: ESIK_DK }
+      },
+      traderlar: traderlar, acik_islemler: [], kapananlar: [], olaylar: [], gecmis_olaylar: [], akis_suresi_sn: 0,
+      kohort_kontrol: {
+        hafta: 0, hafta_toplam: 12, performans_kilitli: true,
+        kollar: [{ ad: 'Oda (kohort)', n: kolSayi('oda') }, { ad: 'Kontrol (ofiste yer almaz)', n: kolSayi('kontrol') }, { ad: 'Taban (leaderboard)', n: kolSayi('taban') }, { ad: 'Elle liste', n: kolSayi('elle') }],
+        onkayit: 'Seçim ' + surum + ' ön izleme, onaylanmadı; paper izleme başlamadı', zaman: z, esik_dk: ESIK_DK
+      },
+      veri_kalitesi: [
+        vk('tarama', 'Tarama (kapı koşusu)', durum ? (kapiTamam ? 'tamam' : 'uyari') : 'bilinmiyor', durum ? 'evren ' + trSayi(evren) + ' · işlenen ' + trSayi(islenen) + (kapsam ? ' · kapsam ' + kapsam : '') : null, durum ? kapiZ : null),
+        vk('lab', 'Gölge defteri', 'bilinmiyor', null, null), vk('arsiv', 'Arşiv yazımı', 'bilinmiyor', null, null),
+        vk('denetim', 'Sağlama (gölge ↔ trader PnL)', 'bilinmiyor', null, null), vk('gecikme', 'Gecikme zinciri p95', 'bilinmiyor', null, null), vk('mum', '1 dk mum boşluğu', 'bilinmiyor', null, null)
+      ],
+      risk: { zaman: null, tavanlar: [] }, telegram: { bugun_n: null, son: [], zaman: null },
+      tarama: { puanlar: [], zaman: durum ? kapiZ : null, esik_dk: ESIK_DK },
+      kapi: { bugun_gecen_n: null, bugun_elenen_n: null, zaman: z, esik_dk: ESIK_DK },
+      arsiv: { turler: [], zaman: null }, onkayit_kasasi: { surum: null, commit: null, dondurma_tarihi: null, zaman: null },
+      oda_sayilar: {
+        tarama: durum ? [['Evren', evren], ['İşlenen', islenen], ['Kapsam', kapsam], ['Hesap sürümü', durum.hesap || null]] : [],
+        kapi: [['Havuz', kolSayi('havuz')], ['Aday', kolSayi('aday')], ['Oda', kolSayi('oda')]]
+      },
+      oda_durum: { lab: { gri: true, metin: GRI }, finans: { gri: true, metin: GRI }, risk: { gri: true, metin: GRI }, kontrol: { gizli: true } },
+      oda_kaynak: { lab: ['katlar:havuz'], aday: ['katlar:aday'], oda: ['katlar:oda'], tarama: ['veri_kalitesi:tarama', 'tarama'], kapi: ['kapi'], sekreterlik: ['kohort_kontrol'] },
+      ekran_kaynak: { 'tarama.tv': 'tarama', 'aday.tv': 'katlar:aday' }
+    };
+  }
+
+  /* ağ: (1) ağaç — tek API çağrısı, (2) secim.json, (3) durum.json (ham dosya). fetchFn: fetch uyumlu. */
+  async function yukle(fetchFn, opt) {
+    opt = opt || {};
+    const oku = async url => { const r = await fetchFn(url, { cache: 'no-store' }); if (!r.ok) throw new Error(url.replace(/^https:\/\/[^/]+\//, '') + ' → HTTP ' + r.status); return r.json(); };
+    const agac = await oku(AGAC);
+    if (agac.truncated) throw new Error('veri dalı ağacı kesildi (truncated); son.json işaretçisi gerekir');
+    const son = enSon(agac);
+    if (!son.secim) throw new Error('veri dalında secim/<tarih>/secim.json yok');
+    const secim = await oku(HAM + 'secim/' + son.secim + '/secim.json');
+    const kt = kapiTarihi(secim, son.durumlar);
+    const durum = kt ? await oku(HAM + 'copytrade/kapi/' + kt + '/durum.json') : null;
+    return cevir(secim, durum, { simdi: opt.simdi, kapiTarihi: kt });
+  }
+
+  return { AGAC: AGAC, HAM: HAM, GRI: GRI, enSon: enSon, kapiTarihi: kapiTarihi, cevir: cevir, yukle: yukle };
+});
