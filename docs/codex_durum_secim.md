@@ -58,3 +58,6 @@
 ## Bayrak ek ölçüleri (Argon A12, `copytrade/bayrak_ek.py`)
 - [x] Martingale (zararda ekleme), tek coin HHI, ekleme derinliği; saf ölçü, eşik yok. Pencere öncesinden taşınan pozisyonda giriş bilinmiyor sayılır, pozisyon sıfırlanana dek zararda ekleme ölçülmez; ayrıştırılamayan satırlar `atlanan_satir`; girdi `perp_fills` ile süzülür
 - [x] `bayrak.json` / `BAYRAK.md` bilgi sütunları: `bayrak_zararda_ekleme`, `bayrak_katlama_orani`, `bayrak_coin_hhi`, `bayrak_en_buyuk_coin_payi`, `bayrak_ekleme_derinligi`; `bayrak_kat_esik` (2,0) yalnız katlama oranının tanımı, kimseyi elemez
+## Ek 2 bilgi sütunları (#350'den taşındı)
+- [x] Kapı/seçim çıktısı: `acik_pozisyon_sayisi`, `unrealized_end`, `mark_missing`, `acik_pozisyon_notional` (kanonik defter `copy_ledger`; E1 ile aynı kaynak), yönlü dolum farkı (`yonlu_dolum_*`; sıfır gecikmede üretilmez), `en_iyi_islem_haric_getiri`, `medyan_tutma_saat`, `gunluk_islem_sikligi`
+- [x] Gölge sağlaması: trader'ın kendi açık K/Z'si ve toplam net kıyası (`trader_toplam_net`, `golge_toplam_net`, `toplam_net_fark`), eksik işaretleme notu
