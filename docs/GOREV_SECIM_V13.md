@@ -35,3 +35,18 @@ Kaynak: `docs/ONKAYIT_D.md` "Sürüm 1.3". Kapı eşikleri ve karar kodu (`kapi.
 ## Kabul
 - Tam test paketi yeşil; yerelde `python -m copytrade.secim --bayraksiz` gerçek kapı verisiyle: havuz/aday/oda/kontrol sayıları,
   oda ↔ kontrol kesişimi 0, dilim tablosu PR açıklamasında.
+
+## İş paketi E — motor düzeltmeleri (Astra denetimi, 2026-10-29; pilot sonuçlarından önce)
+Kaynak: ikinci genel denetim (Astra) bulguları 2, 5, 6, 7, 9. Her madde önce hatayı yeniden üreten altın örnekle gelir.
+1. **Canlı sonuç = kanonik defter (kritik).** `izleme_motoru.copy_results` eski `delayed_copy` gerçekleşmiş-PnL yolunu kullanıyor;
+   açık zarar (`unrealized_end`) ve `mark_missing` sonuca girmiyor (denetim probu: 10 BTC, giriş 100, mark 50 → canlı −%0,095,
+   kanonik −%50,095). Canlı sonuç `defter.copy_ledger` ile üretilsin; gerçekleşmiş / açık / toplam ve son işaret zamanı ayrı yayımlansın.
+   Canlı yol ↔ kanonik defter sözleşme testi.
+2. **Gölge V1/V2/flip uçları:** V1'de atlanan ekleme sonrası kapanış bastırılıp gölgede tutulan pozisyon yetim kalmasın (kapanış,
+   gölgedeki miktara uygulanır); V2 kısmi azaltmada kalan pozisyonun girişi ağırlıklı ortalama kalsın (son azaltma fiyatına
+   sıfırlanmasın); flip = çıkış + yeni giriş, yeni parça tavana tabi. (`copytrade/golge.py:25-48, 65-78, 156-165`)
+3. **Miras pozisyon 0/0:** V0'da miras pozisyonu kapatan ilk dolumda `ZeroDivisionError` (denetim probu). Düzelt + altın örnek.
+4. **İşaret fiyatı yaşı:** `Market.mark` yaş sınırı; aşılırsa `mark_missing` sayılır ve sonuç "eksik işaretleme" notu taşır.
+5. **İzleme listesi t0:** listede zaten olan adres v1.3 kohortuna girince yeni id/t0 alır (eski t0'dan yeniden oynatma yok);
+   ITT etiketi seçim sürümüne bağlanır.
+6. **Bayrak önbelleği:** aday başına bayrak sonucu sürümlü önbellek/checkpoint; yeniden koşu tüm çağrıları tekrarlamasın.
