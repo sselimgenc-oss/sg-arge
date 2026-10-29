@@ -201,5 +201,5 @@ onkayit_analiz_tarihi: "2027-01-21"
 # Pilot veri hattı (copytrade/pilot_veri.py): userFillsByTime yalnız son bu kadar dolumu verir (Argon A21); adresin etiketten bugüne dolum sayısı bu sayıya ulaştıysa (pencere tüm dolumlar üzerinden sayılır) adres 'pencere dışı' (eksik) sayılır
 api_dolum_pencere_siniri: 10000
 
-# Körlük (K-6): sağlık ışığı pilot süresince performansa (koni, düşüş, CUSUM) bakmaz; yalnız veri bayatlığı, kaldıraç ve martingale işareti (işlem deseni, getiri değil). true yalnız analiz tarihinden sonra
-saglik_performans_konisi: false
+# Sağlık ışığında performans konisi (koni, düşüş, CUSUM). false = kör mod (K-6 b). Ön kayıt 1.5 (kullanıcı, 2026-10-29): körlük kalktı → true
+saglik_performans_konisi: true

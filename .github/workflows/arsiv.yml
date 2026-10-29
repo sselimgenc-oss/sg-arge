@@ -38,7 +38,8 @@ jobs:
         if: github.event_name == 'workflow_dispatch' || github.event.schedule == '*/15 * * * *'
         run: python -m copytrade.arsiv --root . --output arsiv --kapi-root guncel-kapi/copytrade/kapi --secim "$SECIM" --tur pozisyon,mum_1dk,olay
       - name: Saatlik dolum ve funding
-        if: github.event.schedule == '7 * * * *'
+        # Elle tetiklemede de çalışır: GitHub zamanlayıcısı bu repoda saatlik koşuları sık atlıyor (2026-10-29: 12:24'ten sonra tek zamanlı koşu).
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '7 * * * *'
         run: python -m copytrade.arsiv --root . --output arsiv --kapi-root guncel-kapi/copytrade/kapi --secim "$SECIM" --tur dolum,funding
       - name: Haftalık leaderboard
         if: github.event.schedule == '13 2 * * 0'
