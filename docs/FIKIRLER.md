@@ -26,3 +26,10 @@ Fikirler uygulanmadan önce bu defterden seçilir; ön kayıt ve körlük kurall
 | 8 | **Tarz kayması tespiti:** işlem sıklığı, varlık evreni ve yön asimetrisi sapması | düşünülüyor | `bayrak_ek` ve tarz sütunlarıyla ölçülebilir. |
 | 9 | **Günlük kayıp soğuması:** tek günde büyük kayıpta 24 saat kopyalamama | düşünülüyor | Performansa dayalı; pilot sırasında körlükle çelişir. |
 | 10 | **Lider tablosu dışı keşif** (evreni büyütmenin asıl yolu) | düşünülüyor | Sayım: lider tablosu 47.849 hesapla sınırlı; eşik düşürmek evreni yalnız %10 büyüttü. |
+
+## Paralel deney (kullanıcı fikri, 2026-10-29)
+- Yöntem değişikliğini mevcut pilotu bozmadan sınamak için ayrı repo yerine **aynı repoda ikinci deney**: kendi ön kayıt belgesi
+  (`docs/ONKAYIT_E.md` gibi), kendi kural dosyası, ayrı çıktı klasörü/dalı; panoda ayrı sekme.
+- Gölge tamamen halka açık veriden hesaplandığı için ikinci yöntem aynı R2 arşivi üzerinde (gerekirse geriye dönük) koşar; veri iki
+  kez toplanmaz, düzeltmeler iki kopyaya taşınmaz.
+- Şart: ikinci yöntem sonuçlar görülmeden yazılıp dondurulur; hangi deneyin karar deneyi olduğu önceden yazılır (çoklu karşılaştırma).
