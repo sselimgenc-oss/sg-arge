@@ -195,6 +195,12 @@ golge_likidasyon_esigi: -1.0
 # Dolum sayfalaması (copytrade/tarama.py PublicClient.fills): userFillsByTime sayfa boyutu (API sınırı)
 api_sayfa_boyutu_dolum: 2000
 
+# Pilot analiz kilidi (ön kayıt D; copytrade/analiz_kosu.py): bu tarihten önce gerçek veriyle 12. hafta analizi çalışmaz (yalnız --sentetik)
+onkayit_analiz_tarihi: "2027-01-21"
+
+# Pilot veri hattı (copytrade/pilot_veri.py): userFillsByTime yalnız son bu kadar dolumu verir (Argon A21); adresin etiketten bugüne dolum sayısı bu sayıya ulaştıysa (pencere tüm dolumlar üzerinden sayılır) adres 'pencere dışı' (eksik) sayılır
+api_dolum_pencere_siniri: 10000
+
 # Körlük (K-6): sağlık ışığı pilot süresince performansa (koni, düşüş, CUSUM) bakmaz; yalnız veri bayatlığı, kaldıraç ve martingale işareti (işlem deseni, getiri değil). true yalnız analiz tarihinden sonra
 saglik_performans_konisi: false
 

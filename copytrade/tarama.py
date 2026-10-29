@@ -88,13 +88,13 @@ class PublicClient:
     def info(self, payload: dict, weight: int = 20) -> Any:
         return self._request("POST", INFO, payload=payload, weight=weight)
 
-    def fills(self, address: str, start_ms: int, max_rows: int | None = None) -> list[dict]:
+    def fills(self, address: str, start_ms: int, max_rows: int | None = None, end_ms: int | None = None) -> list[dict]:
         # Resmî uç nokta imleç zaman damgasıyla sayfalar; tid ile tekilleştirilir. İmleç `newest` (newest + 1 değil): sayfa sınırında aynı ms'ye düşen
         # sonraki dolumlar kaybolmaz. Sayfanın tamamı aynı ms'deyse ya da yeni dolum gelmediyse imleç 1 ms ilerler (A19).
         page_size = int(load_rules()["api_sayfa_boyutu_dolum"])
         result, cursor, seen = [], start_ms, set()
         while True:
-            page = self.info({"type": "userFillsByTime", "user": address, "startTime": cursor, "endTime": int(time.time() * 1000)})
+            page = self.info({"type": "userFillsByTime", "user": address, "startTime": cursor, "endTime": int(time.time() * 1000) if end_ms is None else int(end_ms)})
             if not page:
                 break
             fresh = 0

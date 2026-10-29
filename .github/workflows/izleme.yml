@@ -15,7 +15,9 @@ concurrency:
 jobs:
   izleme:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # İlk koşu yeni trader başına 90 günlük dolum geçmişini çeker (61 trader ≈ 260 sayfa, istek sınırıyla ~30+ dk); yarıda kesilirse durum
+    # yayımlanmaz ve her koşu baştan başlar. Sonraki koşular artımlı (imleç) ve kısadır.
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
         with:

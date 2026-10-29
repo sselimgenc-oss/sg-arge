@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import fixture from "../../tests/fixtures/olaylar.json" with { type: "json" };
-import { accumulatedOrderEvents, callbackData, decision, formatEvent, handleTelegram, mergeFills, runCron, sendOnce } from "../src/index.js";
+import { accumulatedOrderEvents, callbackData, decision, formatEvent, formatStatus, handleTelegram, mergeFills, runCron, sendOnce } from "../src/index.js";
 import { orderEvents } from "../src/events.js";
 
 test("ortak oid fixture Python ile aynı olayları üretir", () => {
@@ -148,4 +148,31 @@ test("bildirim yalnız kol = oda için: kontrol, taban, elle ve kolsuz trader se
   };
   assert.deepEqual(await run("oda"), { sent: 1, hyperliquid: 1 });
   for (const kol of ["kontrol", "taban", "elle", undefined]) assert.deepEqual(await run(kol), { sent: 0, hyperliquid: 0 }, String(kol));
+});
+
+test("/durum: oda özeti, eski veri uyarısı, dikkat listesi; kâr/zarar yok", () => {
+  const now = Date.parse("2026-10-30T12:00:00Z");
+  const t = (id, kol, isik, nedenler, poz = 0) => ({ id, kol, takma_ad: id, t0: "2026-10-29", pozisyonlar: Array(poz).fill({}), saglik: { isik, nedenler } });
+  const status = { uretildi: "2026-10-30T06:00:00Z", traderlar: [
+    t("a1", "oda", "yesil", ["kaldıraç normal"], 2), t("b2", "oda", "kirmizi", ["gerçek kaldıraç > 10x"], 1),
+    t("c3", "oda", "sari", ["gerçek kaldıraç 3–10x"]), t("k1", "kontrol", "kirmizi", ["x"]), t("e1", "elle", "yesil", []),
+  ] };
+  const text = formatStatus(status, now);
+  assert.match(text, /hafta 1\/12/);
+  assert.match(text, /⚠️ Veri 360 dk önce — güncellenmedi/);
+  assert.match(text, /Oda · 3 trader/);
+  assert.match(text, /🟢 1 {3}🟡 1 {3}🔴 1/);
+  assert.match(text, /Açık pozisyon: 3/);
+  assert.match(text, /🔴 Dikkat\n• b2 · gerçek kaldıraç > 10x/);
+  assert.match(text, /Sessiz izleme: 2 trader/);
+  assert.doesNotMatch(text, /k1/);
+  assert.doesNotMatch(text, /getiri|kâr:|zarar:|\$/);
+});
+
+test("/durum: kol alanı yoksa tüm liste 'İzlenen' sayılır, taze veri uyarısız", () => {
+  const status = { uretildi: "2026-10-30T11:50:00Z", traderlar: [{ takma_ad: "x", pozisyonlar: [], saglik: { isik: "yesil" } }] };
+  const text = formatStatus(status, Date.parse("2026-10-30T12:00:00Z"));
+  assert.match(text, /🕐 Veri 10 dk önce/);
+  assert.match(text, /İzlenen · 1 trader/);
+  assert.doesNotMatch(text, /Sessiz izleme/);
 });
