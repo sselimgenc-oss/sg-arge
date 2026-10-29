@@ -1,273 +1,181 @@
-"""Test Modülü: test_kalicilik.py
+"""Kalıcılık keşif testi (``copytrade/kalicilik.py``) ve deneme defteri (``copytrade/deneme.py``). Yalnız sentetik veri; cevabı bilinen dünyalar."""
+import json
+from pathlib import Path
 
-kalicilik.py içerisindeki Spearman korelasyonu, pencere bazlı kalıcılık ve
-hareketli blok bootstrap fonksiyonlarının doğrulamalarını içerir.
-
-Tüm testler elle hesaplanmış beklenen değerleri ve adım adım türetimleri
-yorum olarak içerir.
-"""
-
-import math
 import numpy as np
-import pandas as pd
-from copytrade.kalicilik import spearman, pencere_kaliciligi, blok_bootstrap_ortalama
+import pytest
+
+from copytrade import deneme, kalicilik as k
+from copytrade.kurallar import load_rules
+
+RULES = load_rules()
+ROOT = Path(__file__).resolve().parents[1]
+DAY = 86_400_000
+NOW = 1_793_000_000_000
 
 
-def test_1_spearman_altin_ornek_esitlik_dahil():
-  """Test 1: Elle hesaplı 5 elemanlı Spearman (eşitlik dahil) altın örneği.
-
-  ELLE HESAPLAMA ADIMLARI:
-  -------------------------------------------------------------------------
-  Girdi Serileri (n = 5):
-    x = [10.0, 20.0, 20.0, 40.0, 50.0]
-    y = [10.0, 30.0, 30.0, 20.0, 50.0]
-
-  Adım 1: Sıraların Belirlenmesi (Eşit Değerlerde Ortalama Sıra):
-    x serisi sıraları:
-      10.0 -> En küçük değer, sıra: 1
-      20.0, 20.0 -> 2. ve 3. sıralar paylaşılıyor; ortalama = (2 + 3) / 2 = 2.5
-      40.0 -> Sıra: 4
-      50.0 -> Sıra: 5
-      rx = [1.0, 2.5, 2.5, 4.0, 5.0]
-      rx_ort = (1.0 + 2.5 + 2.5 + 4.0 + 5.0) / 5 = 15.0 / 5 = 3.0
-
-    y serisi sıraları:
-      10.0 -> Sıra: 1
-      20.0 -> Sıra: 2
-      30.0, 30.0 -> 3. ve 4. sıralar paylaşılıyor; ortalama = (3 + 4) / 2 = 3.5
-      50.0 -> Sıra: 5
-      ry = [1.0, 3.5, 3.5, 2.0, 5.0]
-      ry_ort = (1.0 + 3.5 + 3.5 + 2.0 + 5.0) / 5 = 15.0 / 5 = 3.0
-
-  Adım 2: Ortalamadan Farklar (dx = rx - 3.0, dy = ry - 3.0):
-    dx = [1.0 - 3.0, 2.5 - 3.0, 2.5 - 3.0, 4.0 - 3.0, 5.0 - 3.0]
-       = [-2.0, -0.5, -0.5, 1.0, 2.0]
-    dy = [1.0 - 3.0, 3.5 - 3.0, 3.5 - 3.0, 2.0 - 3.0, 5.0 - 3.0]
-       = [-2.0, 0.5, 0.5, -1.0, 2.0]
-
-  Adım 3: Kareler Toplamı:
-    sum(dx^2) = (-2.0)^2 + (-0.5)^2 + (-0.5)^2 + (1.0)^2 + (2.0)^2
-              = 4.0 + 0.25 + 0.25 + 1.0 + 4.0 = 9.5
-    sum(dy^2) = (-2.0)^2 + (0.5)^2 + (0.5)^2 + (-1.0)^2 + (2.0)^2
-              = 4.0 + 0.25 + 0.25 + 1.0 + 4.0 = 9.5
-
-  Adım 4: Çapraz Çarpımlar Toplamı (Kovaryans Payı):
-    sum(dx * dy) = (-2.0)*(-2.0) + (-0.5)*(0.5) + (-0.5)*(0.5) + (1.0)*(-1.0) +
-    (2.0)*(2.0)
-                 = 4.0 - 0.25 - 0.25 - 1.0 + 4.0 = 6.5
-
-  Adım 5: Spearman Sıra Korelasyonu (Sıraların Pearson Korelasyonu):
-    r = sum(dx * dy) / sqrt(sum(dx^2) * sum(dy^2))
-      = 6.5 / sqrt(9.5 * 9.5) = 6.5 / 9.5 = 13 / 19
-      = 0.6842105263157895
-  -------------------------------------------------------------------------
-  """
-  x = pd.Series(
-      [10.0, 20.0, 20.0, 40.0, 50.0], index=["t1", "t2", "t3", "t4", "t5"]
-  )
-  y = pd.Series(
-      [10.0, 30.0, 30.0, 20.0, 50.0], index=["t1", "t2", "t3", "t4", "t5"]
-  )
-
-  sonuc = spearman(x, y)
-  beklenen = 13.0 / 19.0
-
-  assert math.isclose(
-      sonuc, beklenen, rel_tol=1e-12
-  ), f"Test 1 Başarısız: beklenen={beklenen}, hesaplanan={sonuc}"
+# ------------------------------------------------------------------ deneme defteri
+def test_deneme_defteri_yalniz_eklemeli_onkayit_sonuctan_once(tmp_path):
+    y = tmp_path / "d.jsonl"
+    with pytest.raises(ValueError, match="önkayıt yok"):
+        deneme.sonuc("d1", "x", yol=y)
+    deneme.onkayit("d1", "h", "skor", "pencere", "ölçüt", yol=y, tarih="2026-10-29", sha="abc")
+    onceki = y.read_text()
+    with pytest.raises(ValueError, match="zaten kayıtlı"):
+        deneme.onkayit("d1", "h", "skor", "pencere", "ölçüt", yol=y)
+    assert deneme.sayim(y) == {"toplam": 1, "sonuclu": 0, "bekleyen": 1}
+    deneme.sonuc("d1", "sonuç metni", yol=y, tarih="2026-10-30")
+    with pytest.raises(ValueError, match="zaten yazıldı"):
+        deneme.sonuc("d1", "tekrar", yol=y)
+    assert y.read_text().startswith(onceki)                      # eski satırlar aynen duruyor (silme/değiştirme yok)
+    assert deneme.sayim(y) == {"toplam": 1, "sonuclu": 1, "bekleyen": 0}
+    on, sonuc = deneme.oku(y)
+    assert on["kod_sha"] == "abc" and on["tur"] == "onkayit" and sonuc["tur"] == "sonuc" and sonuc["id"] == "d1"
 
 
-def test_2_spearman_tam_ters_sira():
-  """Test 2: Tam ters sırada Spearman korelasyonunun -1 dönmesi.
-
-  ELLE HESAPLAMA ADIMLARI:
-  -------------------------------------------------------------------------
-  Girdi Serileri (n = 4):
-    x = [10.0, 20.0, 30.0, 40.0]
-    y = [400.0, 300.0, 200.0, 100.0]
-
-  Adım 1: Sıralar:
-    rx = [1.0, 2.0, 3.0, 4.0], rx_ort = 2.5
-    ry = [4.0, 3.0, 2.0, 1.0], ry_ort = 2.5
-
-  Adım 2: Sapmalar:
-    dx = [-1.5, -0.5,  0.5,  1.5]
-    dy = [ 1.5,  0.5, -0.5, -1.5]
-    Burada her i için dy_i = -dx_i geçerlidir.
-
-  Adım 3: Kareler ve Çarpımlar:
-    sum(dx^2) = (-1.5)^2 + (-0.5)^2 + 0.5^2 + 1.5^2 = 2.25 + 0.25 + 0.25 + 2.25
-    = 5.0
-    sum(dy^2) = 1.5^2 + 0.5^2 + (-0.5)^2 + (-1.5)^2 = 2.25 + 0.25 + 0.25 + 2.25
-    = 5.0
-    sum(dx * dy) = (-1.5)*(1.5) + (-0.5)*(0.5) + (0.5)*(-0.5) + (1.5)*(-1.5)
-                 = -2.25 - 0.25 - 0.25 - 2.25 = -5.0
-
-  Adım 4: Spearman Korelasyonu:
-    r = sum(dx * dy) / sqrt(sum(dx^2) * sum(dy^2))
-      = -5.0 / sqrt(5.0 * 5.0) = -5.0 / 5.0 = -1.0
-  -------------------------------------------------------------------------
-  """
-  x = pd.Series([10.0, 20.0, 30.0, 40.0])
-  y = pd.Series([400.0, 300.0, 200.0, 100.0])
-
-  sonuc = spearman(x, y)
-  beklenen = -1.0
-
-  assert math.isclose(
-      sonuc, beklenen, rel_tol=1e-12
-  ), f"Test 2 Başarısız: beklenen={beklenen}, hesaplanan={sonuc}"
+def test_deneme_defterinde_bos_alan_olamaz_ve_bu_gorevin_uc_denemesi_kayitli():
+    with pytest.raises(ValueError, match="boş alan"):
+        deneme.onkayit("x", " ", "s", "p", "o", yol=Path("/tmp/yok_defter.jsonl"), sha="a")
+    satirlar = deneme.oku(ROOT / "arastirma/copytrade/deneme_defteri.jsonl")
+    on = [r for r in satirlar if r["tur"] == "onkayit"]
+    assert [r["id"] for r in on] == ["kalicilik-getiri-90", "kalicilik-calmar-90", "kalicilik-karli-ay-180"]
+    assert all(r["kod_sha"] not in ("", "bilinmiyor") and r["basari_olcutu"] for r in on)
+    assert not [r for r in satirlar if r["tur"] == "sonuc"]      # sonuçlar gerçek koşudan sonra eklenir
 
 
-def test_3_ortak_adres_kucuktur_uc_nan_doner():
-  """Test 3: Ortak adres sayısı < 3 olan pencere için Spearman'ın NaN dönmesi.
-
-  ELLE HESAPLAMA ADIMLARI:
-  -------------------------------------------------------------------------
-  Pencereler: '2026-01-01' (1. Pencere) ve '2026-01-15' (2. Pencere)
-  Trader Havuzu: ['t1', 't2', 't3', 't4']
-
-  1. Pencere ('2026-01-01'):
-    puan satırı:   [10.0, 20.0,  NaN,  NaN]
-    getiri satırı: [ 0.1,  0.2,  0.3,  NaN]
-    Her iki tabloda da geçerli (NaN olmayan) ortak adresler:
-      't1' -> puan=10.0, getiri=0.1
-      't2' -> puan=20.0, getiri=0.2
-      (t3 ve t4 en az birinde eksiktir)
-    Ortak geçerli adres sayısı: n = 2.
-    Kural gereği: n < 3 olan pencerelerde sıra korelasyonu güvenilir olarak
-    tahmin edilemeyeceğinden sonuç kesinlikle NaN (np.nan) olmalıdır.
-    Beklenen: n = 2, spearman = NaN.
-
-  2. Pencere ('2026-01-15'):
-    puan satırı:   [10.0, 20.0, 30.0,  NaN]
-    getiri satırı: [ 0.1,  0.2,  0.3,  0.4]
-    Ortak geçerli adresler:
-      't1', 't2', 't3' (üçü de mevcuttur).
-    Ortak geçerli adres sayısı: n = 3 (>= 3).
-    Sıralar: rx = [1, 2, 3], ry = [1, 2, 3]. Tam doğrusal uyum -> r = 1.0.
-    Beklenen: n = 3, spearman = 1.0.
-  -------------------------------------------------------------------------
-  """
-  tarihler = ["2026-01-01", "2026-01-15"]
-  adresler = ["t1", "t2", "t3", "t4"]
-
-  puan_df = pd.DataFrame(
-      [
-          [10.0, 20.0, np.nan, np.nan],
-          [10.0, 20.0, 30.0, np.nan],
-      ],
-      index=tarihler,
-      columns=adresler,
-  )
-
-  getiri_df = pd.DataFrame(
-      [
-          [0.1, 0.2, 0.3, np.nan],
-          [0.1, 0.2, 0.3, 0.4],
-      ],
-      index=tarihler,
-      columns=adresler,
-  )
-
-  cikti = pencere_kaliciligi(puan_df, getiri_df)
-
-  # 1. Pencere doğrulaması (n = 2 < 3 -> spearman NaN)
-  assert cikti.loc["2026-01-01", "n"] == 2
-  assert np.isnan(cikti.loc["2026-01-01", "spearman"])
-
-  # 2. Pencere doğrulaması (n = 3 >= 3 -> spearman 1.0)
-  assert cikti.loc["2026-01-15", "n"] == 3
-  assert math.isclose(cikti.loc["2026-01-15", "spearman"], 1.0, rel_tol=1e-12)
+# ------------------------------------------------------------------ skorlar (elle hesap) ve geleceğe bakmama
+def dogrusal(gun=300, artis=10.0):
+    z = [NOW - (gun - i) * DAY for i in range(gun + 1)]
+    return {"av": [[t, 1000.0] for t in z], "pnl": [[t, artis * i] for i, t in enumerate(z)]}
 
 
-def test_4_ayni_tohumla_ayni_aralik():
-  """Test 4: Aynı tohumla çalıştırıldığında birebir aynı güven aralığının elde
-
-  edilmesi.
-
-  ELLE HESAPLAMA ADIMLARI:
-  -------------------------------------------------------------------------
-  Girdi: 8 pencerelik Spearman korelasyon serisi:
-    degerler = [0.15, 0.22, -0.05, 0.18, 0.30, 0.12, -0.02, 0.25]
-    blok = 3, tekrar = 500, tohum = 42, alfa = 0.05
-
-  Sözde-Rastgele Sayı Üreteci Determinizmi:
-    NumPy'ın default_rng(42) üreteci, tohum sabitlendiğinde tamamen
-    deterministik bir sözde-rastgele dizi üretir.
-    Aynı tohum ve parametrelerle fonksiyon ardışık çağrıldığında:
-      1. Çekilen blok başlangıç matrisi bit düzeyinde özdeş olur.
-      2. 500 bootstrap replikasyonunun her birinin ortalaması özdeş çıkar.
-      3. Dolayısıyla hesaplanan %2.5 ve %97.5 yüzdelik değerleri de tam eşittir:
-         alt_1 == alt_2, ust_1 == ust_2, ortalama_1 == ortalama_2, n_1 == n_2.
-  -------------------------------------------------------------------------
-  """
-  degerler = pd.Series([0.15, 0.22, -0.05, 0.18, 0.30, 0.12, -0.02, 0.25])
-
-  sonuc_1 = blok_bootstrap_ortalama(
-      degerler, blok=3, tekrar=500, tohum=42, alfa=0.05
-  )
-  sonuc_2 = blok_bootstrap_ortalama(
-      degerler, blok=3, tekrar=500, tohum=42, alfa=0.05
-  )
-
-  assert sonuc_1["n"] == sonuc_2["n"] == 8
-  assert math.isclose(sonuc_1["ortalama"], sonuc_2["ortalama"], rel_tol=1e-14)
-  assert math.isclose(sonuc_1["alt"], sonuc_2["alt"], rel_tol=1e-14)
-  assert math.isclose(sonuc_1["ust"], sonuc_2["ust"], rel_tol=1e-14)
+def test_skorlar_elle_hesap_dogrusal_artis():
+    # günde +10 $, hesap 1000 $: 90 günde +900 → getiri 0,9; düşüş 0 → Calmar = 0,9 / taban 0,01 = 90; 6 ayın 6'sı kârlı → 1,0
+    s = k.skorlar(dogrusal(), NOW, RULES)
+    assert s["getiri"] == pytest.approx(0.9) and s["calmar"] == pytest.approx(0.9 / RULES["kalicilik_mdd_taban"]) and s["kar_ay"] == 1.0
 
 
-def test_5_sabit_seride_aralik_esittir_ortalama():
-  """Test 5: Sabit değerli bir seride güven aralığının doğrudan ortalamaya eşit
-
-  olması.
-
-  ELLE HESAPLAMA ADIMLARI:
-  -------------------------------------------------------------------------
-  Girdi Serisi (n = 6):
-    degerler = [0.35, 0.35, 0.35, 0.35, 0.35, 0.35]
-    blok = 2, tekrar = 1000, tohum = 999, alfa = 0.05
-
-  Adım 1: Örneklem Ortalaması:
-    ortalama = (0.35 * 6) / 6 = 0.35
-
-  Adım 2: Hareketli Bloklar:
-    Blok boyutu b = 2. Olası tüm bloklar: [0.35, 0.35].
-    Bootstrap ile hangi blok seçilirse seçilsin, türetilen örneklemin
-    tüm elemanları istisnasız 0.35 değerini alır.
-
-  Adım 3: Bootstrap Ortalamaları Dağılımı:
-    Her k yinelemesinde:
-      boot_mean_k = sum([0.35, ..., 0.35]) / 6 = 0.35.
-    1000 yinelemenin tamamında ortalama 0.35'tir.
-
-  Adım 4: Güven Aralığı Sınırları:
-    %2.5 yüzdeliği (alt) = 0.35
-    %97.5 yüzdeliği (üst) = 0.35
-
-  Sonuç:
-    alt == ortalama == 0.35 ve ust == ortalama == 0.35
-    Aralık genişliği: ust - alt = 0.0 (noktasal kütle).
-  -------------------------------------------------------------------------
-  """
-  degerler = pd.Series([0.35, 0.35, 0.35, 0.35, 0.35, 0.35])
-
-  sonuc = blok_bootstrap_ortalama(
-      degerler, blok=2, tekrar=1000, tohum=999, alfa=0.05
-  )
-
-  assert sonuc["n"] == 6
-  assert math.isclose(sonuc["ortalama"], 0.35, rel_tol=1e-12)
-  assert math.isclose(sonuc["alt"], 0.35, rel_tol=1e-12)
-  assert math.isclose(sonuc["ust"], 0.35, rel_tol=1e-12)
-  assert math.isclose(sonuc["alt"], sonuc["ortalama"], rel_tol=1e-12)
-  assert math.isclose(sonuc["ust"], sonuc["ortalama"], rel_tol=1e-12)
+def test_skorlar_dusus_ve_zararli_ay():
+    h = dogrusal()
+    # son 90 günün ortasında −400 $'lık çukur: tepe sonrası düşüş (1000+450−... ) elle: dolayısıyla Calmar < taban payı
+    pnl = h["pnl"]
+    for i in range(len(pnl) - 60, len(pnl) - 30):
+        pnl[i][1] -= 400.0
+    s = k.skorlar(h, NOW, RULES)
+    assert s["calmar"] < 90 and s["getiri"] == pytest.approx(0.9)
+    assert s["kar_ay"] == pytest.approx(5 / 6)                    # çukurun içinden geçen ay (−400 + 300) zararlı
 
 
-if __name__ == "__main__":
-  test_1_spearman_altin_ornek_esitlik_dahil()
-  test_2_spearman_tam_ters_sira()
-  test_3_ortak_adres_kucuktur_uc_nan_doner()
-  test_4_ayni_tohumla_ayni_aralik()
-  test_5_sabit_seride_aralik_esittir_ortalama()
-  print("Tüm testler (1-5) başarıyla tamamlandı ve doğrulandı.")
+def test_gelecege_bakma_yok_t_sonrasi_veri_skoru_degistirmez():
+    h = dogrusal()
+    t = NOW - 100 * DAY
+    once = k.skorlar(h, t, RULES)
+    bozuk = {"av": [[a, b] for a, b in h["av"]], "pnl": [[a, b + (1e6 if a > t else 0.0)] for a, b in h["pnl"]]}
+    k._SERI.clear()
+    assert k.skorlar(bozuk, t, RULES) == once                       # T'den sonraki noktalar değiştirildi → skor aynı
+    eski = {"av": h["av"], "pnl": [[a, b + (5000.0 if t - 30 * DAY < a <= t else 0.0)] for a, b in h["pnl"]]}
+    k._SERI.clear()
+    assert k.skorlar(eski, t, RULES) != once                        # T öncesi değişince skor değişir (test duyarlı)
+
+
+def test_ileri_getiri_yatirma_cekme_arindirilir_ve_veri_bosluğu_disarida():
+    h = dogrusal()
+    t = NOW - 100 * DAY
+    f = k.ileri_getiri(h, t, 28, RULES)
+    assert f == pytest.approx(280.0 / 1000.0)                      # 28 gün × 10 $ / pencere hesap değeri medyanı
+    para = {"av": [[a, b + (700.0 if a > t else 0.0)] for a, b in h["av"]], "pnl": h["pnl"]}
+    k._SERI.clear()
+    assert k.ileri_getiri(para, t, 28, RULES) == pytest.approx(f)  # T sonrası yatırma PnL'yi ve T anı payda'yı etkilemez
+    kesik = {"av": h["av"], "pnl": [[a, b] for a, b in h["pnl"] if not (t < a <= t + 28 * DAY)]}
+    k._SERI.clear()
+    assert k.ileri_getiri(kesik, t, 28, RULES) is None              # pencere sonunda 7 günden uzun boşluk → dışarıda
+    assert k.ileri_getiri(h, NOW - 5 * DAY, 28, RULES) is None      # henüz geçmemiş pencere
+
+
+def test_t_anlari_26_adet_14_gun_adim_son_t_en_uzun_ileri_pencere_oncesi():
+    t = k.t_anlari(NOW, RULES)
+    assert len(t) == 26 and t[-1] == NOW - 56 * DAY and all(b - a == 14 * DAY for a, b in zip(t, t[1:]))
+
+
+# ------------------------------------------------------------------ dilim testi
+def test_dilim_testi_tam_duzenli_dunya_ve_az_hesapta_atlama():
+    veri = {f"0x{i:03x}": {"skor": {"getiri": float(i), "calmar": None, "kar_ay": None}, "ileri": {28: 0.001 * i, 56: None}} for i in range(100)}
+    r = k.dilim_testi(veri, "getiri", 28, RULES)
+    assert r["n"] == 100 and r["rho"] == pytest.approx(1.0)
+    assert r["dilim_ort"][0] == pytest.approx(0.001 * np.mean(range(80, 100))) and r["ust_alt"] == pytest.approx(0.001 * (89.5 - 9.5))
+    assert k.dilim_testi(veri, "getiri", 56, RULES) is None and k.dilim_testi(veri, "calmar", 28, RULES) is None      # ileri/skor yok → hesap sayılmaz
+    az = dict(list(veri.items())[:49])
+    assert k.dilim_testi(az, "getiri", 28, RULES) is None            # 5 dilim × 10 hesap = 50 altı
+
+
+def test_blok_bootstrap_sabit_seri_ve_tekrarlanabilirlik():
+    kural = {**RULES, "kalicilik_bootstrap_tekrar": 200}
+    assert k.blok_bootstrap_ci([0.05] * 12, kural) == pytest.approx((0.05, 0.05, 0.05))
+    x = [0.01, 0.03, -0.01, 0.02, 0.04, 0.0, 0.05, 0.02]
+    assert k.blok_bootstrap_ci(x, kural) == k.blok_bootstrap_ci(x, kural)
+    ort, alt, ust = k.blok_bootstrap_ci(x, kural)
+    assert alt <= ort <= ust and ort == pytest.approx(np.mean(x))
+
+
+def test_sentetik_dogrulama_beceri_varken_evet_yokken_asla_evet_degil():
+    """Cevabı bilinen iki dünya (n=120 hesap, hızlı bootstrap): kalıcı beceri → en az 4/6 skor-pencere 'evet'; beceri yok → 0/6."""
+    kural = {**RULES, "kalicilik_bootstrap_tekrar": 300}
+    d = k.sentetik_dogrulama(kural, n=120)
+    assert d["evet_var"] >= 4 and d["evet_yok"] == 0 and d["gecti"]
+    assert all(h != "ters yönde" for s in d["hukum"]["yok"].values() for h in s.values())
+
+
+# ------------------------------------------------------------------ kopya notu
+class SahteIstemci:
+    def __init__(self, t_ms, dolumlar, tam_pencere=False):
+        self.t, self.dolumlar, self.tam = t_ms, dolumlar, tam_pencere
+
+    def fills(self, adres, start_ms, max_rows=None, end_ms=None):
+        if max_rows and self.tam:
+            return [{"time": 1}] * max_rows
+        return list(self.dolumlar.get(adres, []))
+
+    def candles(self, coin, start_ms, end_ms, interval="1m"):
+        return [{"t": self.t + h * 3_600_000, "o": 100.0 if h < 5 else 110.0, "h": 110.0, "l": 100.0, "c": 100.0 if h < 5 else 110.0} for h in range(0, 24 * 30 + 1)]
+
+
+def test_kopya_notu_elle_hesap_ve_pencere_disi_dislanir():
+    t = NOW - 100 * DAY
+    adres = "0x" + "a" * 40
+    hesap = {adres: dogrusal()}
+    hesap[adres]["pnl"] = [[a, (0.0 if a <= t else 12.0 * min(1.0, (a - t) / (28 * DAY))) + (b * 0 if False else 0.0)] for a, b in hesap[adres]["pnl"]]
+    hesap[adres]["pnl"] = [[a, (0.0 if a <= t else 12.0)] for a, _ in hesap[adres]["pnl"]]        # T'de 0, sonra 12 $ → trader getirisi 12 / 1000
+    dolum = {adres: [{"time": t + 3_600_000, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0", "tid": 1},
+                     {"time": t + 5 * 3_600_000, "coin": "BTC", "side": "A", "sz": "1", "px": "110", "startPosition": "1", "tid": 2}]}
+    sonuc = k.kopya_notu([adres], hesap, t, 28, SahteIstemci(t, dolum), RULES, log=lambda *a: None)
+    beklenen = 0.01 - 0.001 * (100 + 110) * (RULES["maliyet_taker"] + RULES["maliyet_kayma"])        # 1/1000 ölçek, 10 $ fark, iki yön maliyet
+    for g in ("30", "120"):
+        o = sonuc["ortalama"][g]
+        assert o["n"] == 1 and o["trader"] == pytest.approx(0.012) and o["kopya"] == pytest.approx(beklenen, abs=1e-9) and o["asinma"] == pytest.approx(0.012 - beklenen, abs=1e-9)
+    kesik = k.kopya_notu([adres], hesap, t, 28, SahteIstemci(t, dolum, tam_pencere=True), RULES, log=lambda *a: None)
+    assert kesik["disarida"] == {"pencere dışı (API son dolumlar penceresi)": 1} and kesik["ortalama"]["30"]["n"] == 0
+
+
+# ------------------------------------------------------------------ rapor ve iş akışı
+def test_rapor_ilk_satir_soru_kanit_yok_ve_evet_durumlari():
+    kural = {**RULES, "kalicilik_bootstrap_tekrar": 100}
+    hesaplar = k.sentetik_hesaplar(100, NOW, False, 5)
+    sonuc = k.analiz(hesaplar, NOW, kural)
+    metin = k.rapor(sonuc, {"toplam": 3, "sonuclu": 0, "bekleyen": 3}, None, kural, kaynak="sentetik")
+    ilk5 = metin.splitlines()[:5]
+    assert ilk5[0] == "# Kalıcılık testi: skor gelecek getiriyi söylüyor mu?" and "**Kanıt yok:**" in ilk5[2] and "toplam 3 deneme" in metin
+    assert "hayatta kalan yanlılığı" in metin and "| (a) 90 gün getiri | 28 gün |" in metin and "## Sınırlamalar" in metin
+    vars_ = k.analiz(k.sentetik_hesaplar(100, NOW, True, 6), NOW, kural)
+    assert "**Kısmen evet:**" in k.rapor(vars_, {"toplam": 3, "sonuclu": 0, "bekleyen": 3}, None, kural)
+
+
+def test_is_akisi_elle_parcali_zaman_asimi_korumali_ve_sentetik_once():
+    text = (ROOT / ".github/workflows/kalicilik.yml").read_text(encoding="utf-8")
+    assert "workflow_dispatch:" in text and "schedule:" not in text and "--sentetik" in text and "--topla" in text and "--sure-sn" in text and "matrix:" in text
+    assert text.index("--sentetik") < text.index("--topla") and "timeout-minutes" in text and "needs:" in text
+    assert "|| true" not in text and "continue-on-error" not in text
+
+
+def test_yaml_anahtarlari():
+    assert [RULES[x] for x in ("kalicilik_getiri_gun", "kalicilik_kar_ay_gun", "kalicilik_dilim", "kalicilik_adim_gun")] == [90, 180, 5, 14]
+    assert RULES["kalicilik_ileri_gun"] == [28, 56] and RULES["kalicilik_kopya_ornek"] == 100 and RULES["kalicilik_kopya_gecikme_dk"] == [30, 120]

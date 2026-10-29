@@ -1,0 +1,86 @@
+name: Kalıcılık testi
+
+# Elle çalışır (keşif; pilotu/seçimi/kapıyı etkilemez). Sıra: sentetik doğrulama (geçmezse gerçek koşu yok) → evren anlık görüntüsü →
+# portfolio verisi parça parça (matris; her parça `--sure-sn` ile zaman aşımı korumalı, kesilirse aynı komutla sürer) → analiz + kopya notu → rapor.
+# Çıktı artifact: kalicilik/RAPOR.md ve sonuc.json (lider `arastirma/copytrade/kalicilik/RAPOR.md` olarak repoya alır, deneme defterine sonuç satırı ekler).
+on:
+  workflow_dispatch:
+    inputs:
+      parca:
+        description: "Evren parça sayısı"
+        type: string
+        default: "6"
+
+permissions:
+  contents: read
+
+jobs:
+  dogrulama:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt
+      - name: Sentetik doğrulama (cevabı bilinen iki dünya)
+        run: python -m copytrade.kalicilik --sentetik
+
+  plan:
+    needs: dogrulama
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      parcalar: ${{ steps.p.outputs.parcalar }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt
+      - id: p
+        run: python -c "import json,sys; print('parcalar=' + json.dumps(list(range(int(sys.argv[1])))))" "${{ inputs.parca }}" >> "$GITHUB_OUTPUT"
+      - name: Evren anlık görüntüsü (son lider tablosu, hesap değeri tabanı)
+        run: python -m copytrade.kapi --evren-yaz evren.json
+      - uses: actions/upload-artifact@v4
+        with: {name: kalicilik-evren, path: evren.json}
+
+  veri:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      max-parallel: 3
+      fail-fast: false
+      matrix:
+        parca: ${{ fromJson(needs.plan.outputs.parcalar) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with: {name: kalicilik-evren, path: .}
+      - name: Portfolio verisi (parça ${{ matrix.parca }})
+        run: python -m copytrade.kalicilik --topla --evren evren.json --parca ${{ matrix.parca }}/${{ inputs.parca }} --sure-sn 19800 --onbellek kalicilik_onbellek
+      - uses: actions/upload-artifact@v4
+        with: {name: "kalicilik-veri-${{ matrix.parca }}", path: "kalicilik_onbellek/parca_${{ matrix.parca }}.json"}
+
+  analiz:
+    needs: veri
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with: {pattern: "kalicilik-veri-*", path: kalicilik_onbellek, merge-multiple: true}
+      - name: Analiz ve kopya notu
+        run: python -m copytrade.kalicilik --analiz --kopya --onbellek kalicilik_onbellek --rapor kalicilik/RAPOR.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kalicilik-rapor
+          path: |
+            kalicilik/RAPOR.md
+            kalicilik_onbellek/sonuc.json
