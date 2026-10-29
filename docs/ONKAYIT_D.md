@@ -86,3 +86,21 @@ havuz genelinde ileri getiriyi taşıyıp taşımadığını öğrenmek ve yapı
 8. **Faz 3** (geçmiş prova, bugünkü leaderboard → iyimser üst sınır) yalnız **durdurabilir**; başlatma kanıtı sayılmaz.
 9. **Dondurma:** Bu sürümün commit hash'i ve ilk v1.3 seçiminin kimliği `DURUM.md`'ye yazılır. Birincil ve ikincil analiz kodu
    altın örnekleriyle gölge verisi görülmeden yazılır ve aynı dondurmaya girer.
+
+## Sürüm 1.4 (2026-10-29, kullanıcı onayı: "sıkıntı yaşamazsak okeyim")
+Gölge verisi henüz yok. Gerekçe: Argon A18 (odadan çıkarma kuralları; Goyal & Wahal 2008 — kısa dönem performansa göre
+çıkarma ortalamaya dönüş yüzünden zarar ettirir; risk disiplini bozulması ise beklemeden ele alınmalı). Birincil/ikincil analiz
+(ITT) değişmez: odadan çıkan da etiket gününden itibaren analizde kalır. Değişen yalnız kimin kopyalandığıdır.
+
+1. **Performansa dayalı çıkış (v1.3 madde 3'ün yerine):** Odadaki bir trader ancak şu üçü birlikte sağlanırsa çıkar:
+   - etiket gününden bu yana en az `secim_cikis_min_hafta` (4) haftalık değerlendirme ve en az `secim_cikis_min_kapanmis_islem`
+     (60) kapanmış işlem;
+   - **histerezis:** havuz puan sırasında alt `secim_cikis_havuz_alt_dilim` (0,50) dilimine düşmüş olması (giriş: tarz başına
+     pozitif puanlıların ilk %15'i — çıkış eşiği girişten belirgin biçimde düşük);
+   - bu durumun `secim_cikis_ardisik_hafta` (2) ardışık haftalık değerlendirmede sürmesi.
+2. **Risk işaretleri (yalnız bilgi, otomatik çıkış yok):** Haftalık raporda oda üyesi için işaretlenir:
+   - kaldıraç sıçraması: son haftanın en yüksek kaldıracı, etiket anındaki medyan kaldıracın `risk_kaldirac_sicrama_kat` (2,5) katını aşarsa;
+   - martingale başlangıcı: `bayrak_katlama_orani` etiket anındakinden yüksek ve son haftada ≥ 1 zararda katlama;
+   - zarardaki pozisyonu uzun tutma: zarardaki açık pozisyonun yaşı, trader'ın medyan tutma süresinin `risk_tutma_anomali_kat` (3) katını aşarsa.
+   Bu işaretler performans içermez (körlükle uyumlu). Bir işaretin çıkışa dönüşmesi ayrı kullanıcı kararıdır.
+3. Karantina/sermaye kesintisi, tarz kayması tespiti ve günlük kayıp soğuması gerçek işlem fazına bırakıldı (`docs/FIKIRLER.md`).
