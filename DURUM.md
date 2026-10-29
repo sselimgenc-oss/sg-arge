@@ -16,7 +16,7 @@ Faz 3 süre sınırında bitemiyor, kalıcılık sonucu sayısal bozuk (madde 12
 kontrol 18 değil 17 sayılıyor, geçersizler toplamlara giriyor). Worker yedek tetikleme ve günlük özet devrede (TETIK_TOKEN).
 
 **Kural (kullanıcı kararı 2026-10-29): önce veri.** Faz 4 verisi oturmadan (düzenli tetiklenen, doğru, ofis↔pano tutarlı) görünüm/tema işi
-yok; yeni fikir önce `docs/FIKIRLER.md`'ye. Tema Sürüm 1.1 ve Sürüm 2 bekliyor (`docs/GOREV_OFIS_TEMA.md`). Sıra: 1) Worker ile saatlik
+yok; yeni fikir önce `docs/FIKIRLER.md`'ye. İzometrik tema tamamen kaldırıldı (kullanıcı kararı 2026-10-30); ofis tek görünüm (klasik). Sıra: 1) Worker ile saatlik
 tetikleme, 2) izleme ve pano veri doğruluğu, 3) Telegram sadeleştirme (işlem bildirimleri kapalı; günlük özet + uyarı), 4) Faz 3 ve kalıcılık sonuçları.
 
 **Gün sonu özeti (2026-10-29 19:30 TR; limitler azaldı → yavaş tempo, yalnız önemli işler):**
