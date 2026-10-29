@@ -102,7 +102,7 @@
     }
     if (t.bayrak) list.push(row('Kırmızı bayrak', esc(t.bayrak.neden), 'Denetim notu'));
     if (tr.length) tr.forEach(x => list.push(row(x.coin + ' ' + (x.yon === 'long' ? 'LONG' : 'SHORT') + ' ' + x.kaldirac + 'x', usd(x.kz_usd) + ' (' + pct(x.kz_yuzde) + ')', 'lik. uzaklık %' + String(x.lik_uzaklik).replace('.', ',') + ' · açık işlem')));
-    else list.push(row('Açık gölge işlem', O.Panel.ornekMi() ? 'yok' : 'paper izleme başlamadı'));
+    else list.push(row('Açık gölge işlem', O.Panel.ornekMi() ? 'yok' : 'sanal izleme başlamadı'));
     return list;
   }
   function objRows(id, st) {

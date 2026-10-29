@@ -20,7 +20,7 @@
   const ODA_AD = id => id === 'diger' ? 'Diğer' : (id === 'referans' ? 'Referans' : (() => { const r = O.World.roomById[id]; return r ? O.Names.room(id, r.ad) : id; })());
   const ORN_CHIP = '<span class="ornek">örnek</span>';
   let ORN = ORN_CHIP;                                   // gerçek veride rozet yok (render başında güncellenir)
-  const GRIN = '<span class="gri-not">paper izleme başlamadı</span>';
+  const GRIN = '<span class="gri-not">sanal izleme başlamadı</span>';
   P.ornekMi = () => String((O.data || {}).kaynak || '').indexOf('ornek') === 0;
 
   const dkTxt = m => { m = Math.round(m); return m < 1 ? 'şimdi' : m < 60 ? m + ' dk' : m < 1440 ? Math.floor(m / 60) + ' sa' + (m % 60 ? ' ' + (m % 60) + ' dk' : '') : Math.floor(m / 1440) + ' g'; };
@@ -47,11 +47,11 @@
     const cap = k.oda.kapasite;
     $('#ozetIcerik').innerHTML = (ornek
       ? box('Açık işlem', a.length, 'teminat ' + usd(tem)) + box('Bugün', 'n=' + (o.bugun_acilan_n + o.bugun_kapanan_n), o.bugun_acilan_n + ' açıldı · ' + o.bugun_kapanan_n + ' kapandı')
-      : box('Açık işlem', '<span class="gri-not">—</span>', 'paper izleme başlamadı') + box('Bugün', '<span class="gri-not">—</span>', 'paper izleme başlamadı')) +
+      : box('Açık işlem', '<span class="gri-not">—</span>', 'sanal izleme başlamadı') + box('Bugün', '<span class="gri-not">—</span>', 'sanal izleme başlamadı')) +
       box('Oda', num(k.oda.n) == null ? UNK : cap == null ? num(k.oda.n) : k.oda.n + '<small>/' + cap + '</small>', cap == null ? 'n=' + num(k.oda.n) + ' · ' + hm(k.oda.zaman) : 'doluluk ' + pct(k.oda.n / cap * 100, false, 0)) +
       box('Aday', num(k.aday.n) == null ? UNK : num(k.aday.n), 'n=' + num(k.aday.n) + ' · ' + hm(k.aday.zaman)) +
       box('Havuz', num(k.havuz.n) == null ? UNK : num(k.havuz.n), 'n=' + num(k.havuz.n) + ' · ' + hm(k.havuz.zaman)) +
-      box('İşlem başı', ornek ? usd(o.islem_basi_usd) : '<span class="gri-not">—</span>', ornek ? 'kural: kurallar.yaml' : 'paper izleme başlamadı');
+      box('İşlem başı', ornek ? usd(o.islem_basi_usd) : '<span class="gri-not">—</span>', ornek ? 'kural: kurallar.yaml' : 'sanal izleme başlamadı');
     $('#ozetMeta').innerHTML = (ornek ? 'veri ' + hm(o.zaman) : 'seçim verisi ' + hm(k.havuz.zaman)) + ' · ' + ORN;
   }
   function liveSec(x) { return (x.yas_dk || 0) * 60 + (x.t0 ? (Date.now() - x.t0) / 1000 : (Date.now() - st.loadMs) / 1000); }
@@ -105,7 +105,7 @@
   function risk() {
     if (Off.gri('risk')) { $('#riskIcerik').innerHTML = '<p class="bos">' + GRIN + '</p>'; $('#riskMeta').innerHTML = 'eşikler yalnız kurallar.yaml\'da'; return; }
     $('#riskIcerik').innerHTML = st.risk.tavanlar.map(t => {
-      const r = t.kullanim / t.tavan, c = r >= 0.999 ? 'dn' : r >= 0.75 ? 'wr' : 'ok', f = x => t.birim === 'kasa payı' ? pct(x * 100, false, 0) : '%' + Math.round(x * 100);
+      const r = t.kullanim / t.tavan, c = r >= 0.999 ? 'dn' : r >= 0.75 ? 'wr' : 'ok', f = x => t.birim === 'kasa payı' ? pct(x * 100, false, 0) : t.birim === 'x' ? (Math.round(x * 10) / 10) + 'x' : '%' + Math.round(x * 100);
       return '<div class="rr"><div class="rh"><b>' + esc(t.ad) + '</b><span class="' + c + '">' + (r >= 0.999 ? 'TAVAN DOLU' : '%' + Math.round(r * 100)) + '</span></div><div class="hb"><i class="' + c + '" style="width:' + Math.min(100, r * 100).toFixed(0) + '%"></i></div><div class="ks">' + esc(t.birim) + ': ' + f(t.kullanim) + ' / ' + f(t.tavan) + '</div></div>';
     }).join('');
     $('#riskMeta').innerHTML = 'veri ' + hm(st.risk.zaman) + ' · eşikler yalnız kurallar.yaml\'da · ' + ORN;
@@ -117,8 +117,15 @@
   /* Taban kolundaki traderlar Lab/havuz katında oturur (ayrı oda çizilmiyor) ama "taban" kontrol kümesi kavramsal
      olarak Lab'dan ayrıdır — olay etiketi karıştırmasın diye "Taban" yazılır (SEMA.md: traderlar[].kol). */
   const odaAdOlay = l => { const t = l.trader && st.traders[l.trader]; return t && t.kol === 'taban' ? 'Taban' : ODA_AD(l.oda); };
+  /* gözcü kaydı oturumun canlı günlüğü (st.log) + veri dosyasındaki geçmiş günlüğü (st.gecmis, gerçek veride buradan
+     gelir — olay çekmecesiyle aynı kaynak) birleştirir; yoksa sürekli boş kalırdı (örnek veri dışında st.log hiç dolmaz). */
+  function gozcuListesi() {
+    const log = st.log.map(l => ({ ts: l.ts, oda: l.oda, trader: l.trader, metin: l.metin, iso: l.iso }));
+    const gecmis = st.gecmis.map(g => ({ ts: Off.trTarihHM(g.zaman), oda: g.oda || '', trader: g.trader || null, metin: g.metin || g.tur, iso: g.zaman }));
+    return log.concat(gecmis).sort((a, b) => (a.iso < b.iso ? 1 : a.iso > b.iso ? -1 : 0));
+  }
   function gozcu() {
-    $('#gozcuListe').innerHTML = st.log.slice(0, 7).map(l => '<li><button data-oda="' + esc(l.oda) + '"><time>' + l.ts + '</time><i class="oc" data-o="' + esc(l.oda) + '">' + esc(odaAdOlay(l)) + '</i><span>' + esc(l.metin) + '</span></button></li>').join('') || '<li class="bos">' + (P.ornekMi() ? 'Henüz olay yok (örnek akış başlıyor).' : 'Henüz olay yok — paper izleme başlamadı.') + '</li>';
+    $('#gozcuListe').innerHTML = gozcuListesi().slice(0, 7).map(l => '<li><button data-oda="' + esc(l.oda) + '"><time>' + esc(l.ts) + '</time><i class="oc" data-o="' + esc(l.oda) + '">' + esc(odaAdOlay(l)) + '</i><span>' + esc(l.metin) + '</span></button></li>').join('') || '<li class="bos">' + (P.ornekMi() ? 'Henüz olay yok (örnek akış başlıyor).' : 'Henüz olay yok — sanal izleme başlamadı.') + '</li>';
   }
   function aciklama() {
     const k = st.katlar, ac = Object.keys(st.stale).filter(x => st.stale[x]).map(ODA_AD);

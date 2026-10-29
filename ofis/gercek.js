@@ -12,7 +12,7 @@
   const HAM = 'https://raw.githubusercontent.com/' + REPO + '/' + DAL + '/';
   const IZLEME_HAM = 'https://raw.githubusercontent.com/' + REPO + '/' + IZLEME_DALI + '/izleme/durum.json';
   const ESIK_DK = 7 * 1440;                                   // seçim ve kapı haftalık/günlük üretilir: bir haftadan eskiyse VERİ ESKİ
-  const GRI = 'paper izleme başlamadı';
+  const GRI = 'sanal izleme başlamadı';
   const TARIH = /^\d{4}-\d{2}-\d{2}/;
 
   /* ağaç (GitHub git/trees yanıtı ya da yol listesi) → en son seçim klasörü ve kapı tarihleri */
@@ -78,13 +78,14 @@
     const kol = name => eslesmis.filter(t => (t.kollar || []).indexOf(name) >= 0).map(t => t.sanal_kopya).filter(Boolean);
     const getiri = name => { const a = kol(name); return a.length ? a.reduce((x, c) => x + (sayi(c.getiri) || 0), 0) / a.length : null; };
     const hafta = onaylandi ? Math.max(1, Math.floor((simdi.getTime() - Date.parse(tarih + 'T00:00:00Z')) / 604800000) + 1) : 0;
+    const gunSayisi = onaylandi ? Math.max(1, Math.floor((simdi.getTime() - Date.parse(tarih + 'T00:00:00Z')) / 86400000) + 1) : null;   // t0 günü = 1 (hafta×7 değil)
     const gecmis = (live && live.olaylar || []).map(e => ({ id: e.id, zaman: e.zaman, tur: e.tur === 'acilis' ? 'islem_acildi' : e.tur === 'kapanis' ? 'islem_kapandi' : e.tur, oda: (liveRows.find(t => t.id === e.trader) || {}).kat || 'diger', trader: e.trader, metin: e.trader + ' · ' + e.coin + ' · ' + e.tur })).filter(e => e.tur === 'islem_acildi' || e.tur === 'islem_kapandi');
     const maxLev = eslesmis.filter(t => (t.kollar || []).indexOf('oda') >= 0).reduce((x, t) => Math.max(x, ...(t.pozisyonlar || []).map(p => sayi(p.kaldirac) || 0)), 0);
     return {
       surum: 1, uretildi: simdi.toISOString(), kaynak: 'hyperliquid-kapi (veri dalı ' + DAL + ', seçim ' + surum + ' ' + tarih + ')',
       secim: { surum: surum, tarih: tarih, kapi_tarihi: opt.kapiTarihi || null, onaylandi: onaylandi },
       cipler: { golge: onaylandi ? 'açık' : GRI, telegram: null },
-      kasa: { deger_usd: onaylandi ? kol('oda').reduce((x, c) => x + (sayi(c.bakiye_usd) || 0), 0) : null, baslangic_usd: onaylandi ? kol('oda').reduce((x, c) => x + (sayi(c.baslangic_usd) || 0), 0) : null, zaman: live && live.uretildi || null, gun_n: onaylandi ? hafta * 7 : null, egri: [], kontrol_deger_usd: onaylandi ? kol('kontrol').reduce((x, c) => x + (sayi(c.bakiye_usd) || 0), 0) : null },
+      kasa: { deger_usd: onaylandi ? kol('oda').reduce((x, c) => x + (sayi(c.bakiye_usd) || 0), 0) : null, baslangic_usd: onaylandi ? kol('oda').reduce((x, c) => x + (sayi(c.baslangic_usd) || 0), 0) : null, zaman: live && live.uretildi || null, gun_n: gunSayisi, egri: [], kontrol_deger_usd: onaylandi ? kol('kontrol').reduce((x, c) => x + (sayi(c.bakiye_usd) || 0), 0) : null },
       ozet: { islem_basi_usd: null, bugun_kz_usd: null, bugun_acilan_n: null, bugun_kapanan_n: null, zaman: null },
       katlar: {
         havuz: { n: kolSayi('havuz'), masa: 0, zaman: z, esik_dk: ESIK_DK },

@@ -124,12 +124,12 @@ const srv = http.createServer((q, r) => {
   ok('Arşiv rozeti: veri_kalitesi.deger metnini kullanır', r.arsiv.t === '48.210 satır', JSON.stringify(r.arsiv));
   ok('Makam rozeti: hafta/toplam', r.makam.t.indexOf('hafta 5/12') === 0, JSON.stringify(r.makam));
   /* gri oda (henüz verisi olmayan): gerçek veri senaryosunda rozet "gri" metnini gösterir, sayı uydurmaz */
-  const griOrnek = { oda_durum: { finans: { gri: true, metin: 'paper izleme başlamadı' } } };
+  const griOrnek = { oda_durum: { finans: { gri: true, metin: 'sanal izleme başlamadı' } } };
   const griSonuc = await pg.evaluate(gdata => {
     const eski = OFIS.data.oda_durum; OFIS.data.oda_durum = gdata.oda_durum;
     const r = OFIS.Tema.debug.rozet('finans'); OFIS.data.oda_durum = eski; return r;
   }, griOrnek);
-  ok('Finans gri (veri yok) durumunda rozet gri metni gösterir, sayı uydurmaz', griSonuc.t === 'paper izleme başlamadı' && griSonuc.c === 'gri', JSON.stringify(griSonuc));
+  ok('Finans gri (veri yok) durumunda rozet gri metni gösterir, sayı uydurmaz', griSonuc.t === 'sanal izleme başlamadı' && griSonuc.c === 'gri', JSON.stringify(griSonuc));
   /* Sekreterlik rozeti: onkayit_kasasi.surum alanından (SEMA.md §8; ornek_durum.json altın değeri) */
   const sekreterlik = await pg.evaluate(() => OFIS.Tema.debug.rozet('sekreterlik'));
   ok('Sekreterlik rozeti: onkayit_kasasi.surum metnini taşır', sekreterlik.t === 'ön kayıt ' + ornek.onkayit_kasasi.surum, JSON.stringify(sekreterlik));

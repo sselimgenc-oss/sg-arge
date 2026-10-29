@@ -28,8 +28,8 @@ const srv = http.createServer((q, r) => {
 }).listen(0, async () => {
   const base = 'http://localhost:' + srv.address().port + '/ofis/';
   const b = await chromium.launch();
-  async function gercekAc(url) {
-    const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
+  async function gercekAc(url, vp) {
+    const ctx = await b.newContext({ viewport: vp || { width: 1440, height: 900 }, isMobile: !!(vp && vp.width < 700), hasTouch: !!(vp && vp.width < 700) });
     const pg = await ctx.newPage();
     const errs = []; pg.on('pageerror', e => errs.push(e.message)); pg.on('console', m => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errs.push(m.text()); });
     await pg.route('https://api.github.com/**', r => r.fulfill(json(F.agac(['2026-10-28'], ['2026-10-28']))));
@@ -81,6 +81,34 @@ const srv = http.createServer((q, r) => {
     ok(tema + ': "Oda" paneli açık işlemler listesini gösterir (durum.json\'daki pozisyondan, BTC)', acik.n === '1' && /BTC/.test(acik.html) && /LONG/.test(acik.html) && /3x/.test(acik.html) && acik.kartGorunur, JSON.stringify({ n: acik.n, kartGorunur: acik.kartGorunur, kisa: acik.html.slice(0, 200) }));
     const cekmeceVar = await pg.evaluate(() => !!document.getElementById('olayCekmece'));
     ok(tema + ': olay çekmecesi hâlâ yerinde (kaldırılmadı)', cekmeceVar);
+    await ctx.close();
+  }
+
+  /* ---------- Lider denetimi: gözcü kaydı aynı kaynaktan (st.gecmis), risk biriminin doğru yazımı, rozetler
+     ekrandan taşmaz/çakışmaz, Arşiv/Sekreterlik veri yoksa rozetsiz ---------- */
+  ({ ctx, pg, errs } = await gercekAc('?saat=15:40'));
+  const gozcu = await pg.evaluate(() => document.getElementById('gozcuListe').textContent);
+  ok('gözcü kaydı olay çekmecesiyle aynı kaynaktan dolar (st.log boşsa st.gecmis), "Taban" etiketiyle', !/Henüz olay yok/.test(gozcu) && /Taban/.test(gozcu), gozcu.slice(0, 200));
+  await pg.click('.ray [data-oda=risk]'); await sleep(500);
+  const riskTxt = await pg.evaluate(() => document.getElementById('riskIcerik').textContent);
+  ok('Risk kartında kaldıraç "x" birimiyle yazılır (yüzdeye çevrilmez): "3x / 10x"', /3x\s*\/\s*10x/.test(riskTxt), riskTxt.replace(/\s+/g, ' ').trim());
+  await ctx.close();
+
+  for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+    ({ ctx, pg, errs } = await gercekAc('?saat=15:40&tema=izometrik', vp));
+    const durum = await pg.evaluate(() => {
+      const kap = document.getElementById('izoKap').getBoundingClientRect(), zoom = document.querySelector('.izo-zoom').getBoundingClientRect();
+      const rozetler = [...document.querySelectorAll('#izoRozetler .izo-rozet')].filter(d => !d.hidden);
+      const tasan = rozetler.filter(d => { const r = d.getBoundingClientRect(); return r.left < kap.left - 1 || r.right > kap.right + 1 || r.top < kap.top - 1 || r.bottom > kap.bottom + 1; });
+      const kesisenler = rozetler.filter(d => { const r = d.getBoundingClientRect(); return r.left < zoom.right && r.right > zoom.left && r.top < zoom.bottom && r.bottom > zoom.top; });
+      const cakisanlar = [];
+      for (let i = 0; i < rozetler.length; i++) for (let j = i + 1; j < rozetler.length; j++) { const a = rozetler[i].getBoundingClientRect(), b = rozetler[j].getBoundingClientRect(); if (a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top) cakisanlar.push([rozetler[i].dataset.oda, rozetler[j].dataset.oda]); }
+      return { n: rozetler.length, tasanN: tasan.length, kesisenN: kesisenler.length, cakisanN: cakisanlar.length, odalar: rozetler.map(d => d.dataset.oda), detay: cakisanlar };
+    });
+    ok(JSON.stringify(vp) + ': rozetler görsel içinde kalır (ekrandan taşmaz)', durum.tasanN === 0, JSON.stringify(durum));
+    ok(JSON.stringify(vp) + ': hiçbir rozet yakınlaştırma düğmeleriyle çakışmaz', durum.kesisenN === 0, JSON.stringify(durum));
+    ok(JSON.stringify(vp) + ': rozetler birbiriyle çakışmaz', durum.cakisanN === 0, JSON.stringify(durum.detay));
+    ok(JSON.stringify(vp) + ': Arşiv/Sekreterlik veri yoksa rozetsiz (bilinmiyor yazmaz)', !durum.odalar.includes('arsiv') && !durum.odalar.includes('sekreterlik'), JSON.stringify(durum.odalar));
     await ctx.close();
   }
 

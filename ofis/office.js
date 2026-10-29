@@ -47,7 +47,7 @@
     srcOfRoom(room).forEach(o => { const i = Off.srcInfo(o); if (!i) return; if (!w || (i.stale && !w.stale) || (i.stale === w.stale && i.dk > w.dk)) w = i; });
     return w;
   };
-  /* henüz verisi olmayan oda (oda_durum[oda].gri): "paper izleme başlamadı" metni ya da null. Oda gri çizilir, sahte sayı gösterilmez. */
+  /* henüz verisi olmayan oda (oda_durum[oda].gri): "sanal izleme başlamadı" metni ya da null. Oda gri çizilir, sahte sayı gösterilmez. */
   Off.gri = room => { const d = st && st.data.oda_durum && st.data.oda_durum[room]; return d && d.gri ? (d.metin || 'veri yok') : null; };
   Off.screenAge = id => { const p = (st.data.ekran_kaynak || {})[id]; return p ? Off.srcInfo(srcObj(p)) : null; };
   Off.srcObj = srcObj;
@@ -589,7 +589,7 @@
       case 'oda': lines.push('Oda: ' + (k.oda.kapasite == null ? 'n=' + k.oda.n : k.oda.n + '/' + k.oda.kapasite) + ' trader' + (st.data.oda_durum ? '' : '; açık gölge işlemi ' + st.acik.length) + '.'); break;
       case 'kontrol': lines.push('Kontrol: aynı havuzdan rastgele N=' + (st.kk.kollar[1] || {}).n + ' adres (sabit tohum).'); break;
       case 'risk': lines.push('Risk tavanları: ' + st.risk.tavanlar.map(x => x.ad + ' %' + Math.round(x.kullanim / x.tavan * 100)).join(' · ')); break;
-      case 'finans': lines.push('Sanal kasa değeri ve eğrisi kilitli (hafta ' + st.kk.hafta + '/' + st.kk.hafta_toplam + ').'); break;
+      case 'finans': lines.push(Off.KILIT ? 'Sanal kasa değeri ve eğrisi kilitli (hafta ' + st.kk.hafta + '/' + st.kk.hafta_toplam + ').' : 'Sanal kasa değeri: ' + (st.kasa.deger_usd == null ? 'bilinmiyor' : '$' + st.kasa.deger_usd.toLocaleString('tr-TR', { minimumFractionDigits: 2 })) + ' (hafta ' + st.kk.hafta + '/' + st.kk.hafta_toplam + ').'); break;
       case 'haberlesme': lines.push('Telegram bildirimi bugün: n=' + st.tg.bugun_n + '.'); break;
       case 'denetim': lines.push('Son denetim: ' + (st.denetim === 'tamam' ? 'tamam' : 'uyarı') + '.'); break;
       case 'arsiv': lines.push('Arşiv: ' + ((st.vk.find(x => x.anahtar === 'arsiv') || {}).deger || 'bilinmiyor') + '.'); break;

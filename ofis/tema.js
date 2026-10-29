@@ -37,7 +37,7 @@
     kap.hidden = !goster;
     const tuval = $('#tuval'); if (tuval) tuval.style.visibility = goster ? 'hidden' : 'visible';
     const sec = $('#temaSec'); if (sec && sec.value !== mevcut) sec.value = mevcut;
-    if (goster) { gorselYukle(); odaOdaklaSync(true); }
+    if (goster) { gorselYukle(); oturt(); odaOdaklaSync(true); }
     rozetleriCiz();
   }
   /* oda girişi/çıkışı body.oda-ici sınıfıyla main.js'te değişir: burada izlenip kendi yakınlaşmamız uygulanır. */
@@ -83,6 +83,8 @@
   }
   /* Risk: en kötü tavan kullanımı (ışık: 🟢/🟡/🔴). "Kalabalık" uyarısı yalnız kapasite bilinen kaynakta (ör. örnek veri)
      eklenir — gerçek veride oda.kapasite şimdilik hiç gelmiyor (gercek.js), sahte doluluk uydurulmaz. */
+  /* tavan birimi "x" (ör. kaldıraç) ise çarpan olarak yazılır (4x); "kasa payı"/diğerleri yüzde kalır. */
+  const tavanDeger = t => t.birim === 'x' ? Math.round(t.kullanim * 10) / 10 + 'x' : '%' + Math.round((t.tavan ? t.kullanim / t.tavan : 0) * 100);
   function riskBadge(s) {
     const o = off(), g = o.gri('risk'); if (g) return { t: g, c: 'gri' };
     const tv = s.risk.tavanlar; if (!tv.length) return { t: 'bilinmiyor', c: 'bil' };
@@ -90,7 +92,7 @@
     tv.forEach(t => { const r = t.tavan ? t.kullanim / t.tavan : 0; if (r > wr) { wr = r; worst = t; } });
     const c = wr >= 0.999 ? 'dn' : wr >= 0.75 ? 'wr' : 'ok', isik = c === 'dn' ? '🔴' : c === 'wr' ? '🟡' : '🟢';
     const kap = s.katlar.oda.kapasite, kalabalik = kap != null && s.katlar.oda.n != null && s.katlar.oda.n >= kap * 0.9 ? ' · kalabalık' : '';
-    return { t: isik + ' ' + (s.alarm ? 'TAVAN DOLU' : esc(worst.ad) + ' %' + Math.round(wr * 100)) + kalabalik, c: c };
+    return { t: isik + ' ' + (s.alarm ? 'TAVAN DOLU' : esc(worst.ad) + ' ' + tavanDeger(worst)) + kalabalik, c: c };
   }
   function labBadge(s) {
     const o = off(), g = o.gri('lab'); if (g) return { t: g, c: 'gri' };
@@ -132,6 +134,7 @@
     const o = off(), g = o.gri('arsiv'); if (g) return { t: g, c: 'gri' };
     const row = s.vk.find(x => x.anahtar === 'arsiv'), inf = o.ageInfo('arsiv');
     const val = row && row.deger != null ? row.deger : null;
+    if (val == null && !inf) return { t: 'bilinmiyor', c: 'bil' };
     return { t: val != null ? esc(val) : O.Panel.ageTxt(inf), c: inf && inf.stale ? 'wr' : 'ok' };
   }
   function makamBadge(s) {
@@ -163,22 +166,28 @@
       bk.appendChild(btn);
       if (pk) { const g = document.createElement('div'); g.className = 'izo-bolge-glow'; g.dataset.oda = b.oda; g.style.clipPath = clip; pk.appendChild(g); }
       if (ROZET[b.oda]) {
-        const bx = bbox(b.poli), cx = (bx.x0 + bx.x1) / 2, cy = bx.y0 + (bx.y1 - bx.y0) * 0.14;
+        const bx = bbox(b.poli);
+        const cx = Math.max(0.07, Math.min(0.93, (bx.x0 + bx.x1) / 2)), cy = Math.max(0.06, Math.min(0.88, bx.y0 + (bx.y1 - bx.y0) * 0.14));
         const d = document.createElement('div');
-        d.className = 'izo-rozet'; d.dataset.oda = b.oda;
+        d.className = 'izo-rozet'; d.dataset.oda = b.oda; d.dataset.cx = cx; d.dataset.cy = cy;
         d.style.left = (cx * 100).toFixed(2) + '%'; d.style.top = (cy * 100).toFixed(2) + '%';
         rk.appendChild(d);
       }
     });
     rozetleriCiz();
   }
+  /* Arşiv ve Sekreterlik'te veri yoksa (gerçek veride şimdilik hep öyle: gercek.js bu iki alanı doldurmuyor)
+     "bilinmiyor" rozetiyle gürültü yapmak yerine rozet hiç gösterilmez — oda yine tıklanabilir kalır. */
+  const ROZET_GIZLE_BILINMIYORSA = { arsiv: 1, sekreterlik: 1 };
   function rozetleriCiz() {
     const s = st(); if (!s) return;
     document.querySelectorAll('#izoRozetler .izo-rozet').forEach(d => {
       const f = ROZET[d.dataset.oda]; if (!f) return;
       const r = f(s) || { t: 'bilinmiyor', c: 'bil' };
-      d.innerHTML = r.t; d.className = 'izo-rozet' + (r.c ? ' ' + r.c : '');
+      if (r.c === 'bil' && ROZET_GIZLE_BILINMIYORSA[d.dataset.oda]) { d.hidden = true; return; }
+      d.hidden = false; d.innerHTML = r.t; d.className = 'izo-rozet' + (r.c ? ' ' + r.c : '');
     });
+    rozetYerlestir();
   }
   const mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
 
@@ -250,6 +259,33 @@
     if (h > r.height) { h = r.height; w = h * ORAN; }
     baseW = Math.max(1, w); baseH = Math.max(1, h);
     uygulaDonusum(false);
+    rozetYerlestir();
+  }
+  /* Rozetler önce oranlı (dataset.cx/cy) hedef konuma yerleşir; burada ekran kenarından taşmayacak, birbiriyle ve
+     yakınlaştırma düğmeleriyle çakışmayacak şekilde küçük kaydırmalarla düzeltilir (çatışma çözümü, px tabanlı).
+     Yalnız bina görünümünde çalışır (oda yakınken tek rozet öne çıkar, karışıklık daha az önemlidir). */
+  function rozetYerlestir() {
+    if (scale > 1.02) return;
+    const sahne = $('#izoSahne'); if (!sahne) return;
+    const sr = sahne.getBoundingClientRect(); if (!sr.width || !sr.height) return;
+    const zoomEl = document.querySelector('.izo-zoom'), zr = zoomEl ? zoomEl.getBoundingClientRect() : null;
+    const pad = 4, placed = [];
+    const rectOf = (bw, bh, x, y) => ({ x0: x - bw / 2, y0: y - bh / 2, x1: x + bw / 2, y1: y + bh / 2 });
+    const kesisir = (a, b) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+    document.querySelectorAll('#izoRozetler .izo-rozet').forEach(d => {
+      if (d.hidden || d.dataset.cx == null) return;
+      const bw = d.offsetWidth, bh = d.offsetHeight; if (!bw || !bh) return;
+      let cx = parseFloat(d.dataset.cx) * sr.width, cy = parseFloat(d.dataset.cy) * sr.height;
+      const sinirla = () => { cx = Math.max(bw / 2 + pad, Math.min(sr.width - bw / 2 - pad, cx)); cy = Math.max(bh / 2 + pad, Math.min(sr.height - bh / 2 - pad, cy)); };
+      sinirla();
+      if (zr) {
+        const zRel = { x0: zr.left - sr.left - 6, y0: zr.top - sr.top - 6, x1: zr.right - sr.left + 6, y1: zr.bottom - sr.top + 6 };
+        let tries = 0; while (kesisir(rectOf(bw, bh, cx, cy), zRel) && tries < 24) { cy -= 8; sinirla(); tries++; }
+      }
+      let tries2 = 0; while (placed.some(p => kesisir(rectOf(bw, bh, cx, cy), p)) && tries2 < 30) { cy += 8; sinirla(); tries2++; }
+      d.style.left = cx + 'px'; d.style.top = cy + 'px';
+      placed.push(rectOf(bw, bh, cx, cy));
+    });
   }
   function uygulaDonusum(animate) {
     const kap = $('#izoKap'), sahne = $('#izoSahne'); if (!kap || !sahne || !baseW) return;
@@ -265,8 +301,8 @@
     const mx = Math.min(0.5, (kap.clientWidth / 2) / rw), my = Math.min(0.5, (kap.clientHeight / 2) / rh);
     focusX = Math.max(mx, Math.min(1 - mx, focusX)); focusY = Math.max(my, Math.min(1 - my, focusY));
   }
-  function zoomBy(f) { scale = Math.max(1, Math.min(3, scale * f)); siniraCek(); uygulaDonusum(true); }
-  function sigdir(animate) { scale = 1; focusX = 0.5; focusY = 0.5; uygulaDonusum(animate !== false); }
+  function zoomBy(f) { scale = Math.max(1, Math.min(3, scale * f)); siniraCek(); uygulaDonusum(true); rozetYerlestir(); }
+  function sigdir(animate) { scale = 1; focusX = 0.5; focusY = 0.5; uygulaDonusum(animate !== false); rozetYerlestir(); }
   /* bir odaya "kamerayı" (odak + ölçek) yakınlaştır — klasik temanın interiorCam() mantığının izometrik karşılığı */
   function odaOdakla(id, animate) {
     const b = BOLGELER.find(x => x.oda === id); if (!b) { sigdir(animate); return; }

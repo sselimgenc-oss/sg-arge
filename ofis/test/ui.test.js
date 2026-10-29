@@ -223,7 +223,7 @@ const srv = http.createServer((q, r) => {
   ({ ctx, pg } = await open());
   await sleep(400);
   tx = await pg.evaluate(() => document.body.textContent);
-  ok('toplanmış performans (kasa değeri, % değişim, günlük toplam K/Z) hiçbir yerde yok', !/1\.01\d,\d\d/.test(tx) && !/%1,24/.test(tx) && !/Bugün\s*[−+-]\$/.test(tx) && /Kasa değeri kilitli/.test(tx), '');
+  ok('kasa değeri ve getiri görünür (Off.KILIT=false; ön kayıt körlüğü yalnız lider kararıyla açılır)', /\$1\.012,40/.test(tx) && /\+%1,2/.test(tx), '');
   ok('yasal ibare her ekranda ("araştırma / sanal, yatırım tavsiyesi değil")', await pg.evaluate(() => { const y = document.getElementById('yasal'); const r = y.getBoundingClientRect(); return /yatırım tavsiyesi değil/.test(y.textContent) && r.height > 0; }));
   await pg.click('.ray [data-oda=finans]'); await sleep(900);
   await pg.evaluate(() => { const o = OFIS.World.objects.find(x => x.id === 'finans.kasa'); const s = o.e.s, x0 = o.e.px - s.ax, y0 = o.e.py - s.ay; const hits = []; for (let y = 2; y < s.c.height; y += 2) for (let x = 2; x < s.c.width; x += 2) { const p = OFIS.debug.pick(x0 + x, y0 + y, false); if (p && p.type === 'obje') hits.push([x0 + x, y0 + y]); } const mx = hits.reduce((a, h) => a + h[0], 0) / hits.length, my = hits.reduce((a, h) => a + h[1], 0) / hits.length; hits.sort((a, b) => Math.hypot(a[0] - mx, a[1] - my) - Math.hypot(b[0] - mx, b[1] - my)); const v = OFIS.debug.toView(hits[0][0], hits[0][1]), r = document.getElementById('tuval').getBoundingClientRect(); window.__pt = { x: v.x + r.left, y: v.y + r.top }; });
@@ -442,7 +442,7 @@ const srv = http.createServer((q, r) => {
   ok('diğer odalar (Denetim, Sekreterlik, Makam, Çay ocağı) → oda bilgisi kartı, panel kapalı', digerleri.length === 0, digerleri.join(' | ').slice(0, 300));
   /* kartlar panelde: sütundan alınır, kapanınca yerine döner */
   await pg.click('.ray [data-oda=finans]'); await sleep(450);
-  ok('panelde kart sütunundan alınan gerçek kart (Gölge kasası kilitli içerik)', await pg.evaluate(() => { const k = document.querySelector('#kartPanel #cKasa'); return !!k && /kilitli/i.test(k.textContent) && k.closest('#sol') === null; }));
+  ok('panelde kart sütunundan alınan gerçek kart (Gölge kasası görünür değer)', await pg.evaluate(() => { const k = document.querySelector('#kartPanel #cKasa'); return !!k && /\$1\.012,40/.test(k.textContent) && k.closest('#sol') === null; }));
   const sirasi = await pg.evaluate(() => [...document.querySelectorAll('#sol > .kart')].map(k => k.id).join(','));
   ok('açıkken kart sütunundan eksik (cKasa yok)', !/cKasa/.test(sirasi), sirasi);
   /* kapatma yolları */
@@ -490,7 +490,7 @@ const srv = http.createServer((q, r) => {
   /* performans körlüğü ve yasal ibare paneldeyken de aynı */
   await pg.click('.ray [data-oda=finans]'); await sleep(450);
   const pnlTxt = await pg.evaluate(() => document.getElementById('kartPanel').textContent);
-  ok('panelde de kasa değeri yok ("kilitli"), yasal ibare görünür', /kilitli/i.test(pnlTxt) && !/toplam kasa|kasa değeri:\s*\$/i.test(pnlTxt) && /yatırım tavsiyesi değil/i.test(await pg.evaluate(() => document.getElementById('yasal').textContent)));
+  ok('panelde de kasa değeri görünür, yasal ibare de görünür', /\$1\.012,40/.test(pnlTxt) && /yatırım tavsiyesi değil/i.test(await pg.evaluate(() => document.getElementById('yasal').textContent)));
   /* ◧ düğmesi klasik sütunu geri getirir: panel modu kapanır, eski davranış */
   await pg.click('#zPanel'); await sleep(400);
   const dC = await pg.evaluate(() => ({ sol: getComputedStyle(document.getElementById('sol')).display, panel: document.getElementById('kartPanel').hidden, bas: document.getElementById('zPanel').getAttribute('aria-pressed'), n: document.querySelectorAll('#sol > .kart').length }));

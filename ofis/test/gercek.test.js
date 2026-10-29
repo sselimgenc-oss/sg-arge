@@ -36,7 +36,7 @@ ok('masa: lab 0, aday 3, oda 6, kontrol 0', d.katlar.havuz.masa === 0 && d.katla
 ok('tarama odası: evren, işlenen, kapsam, hesap sürümü', JSON.stringify(d.oda_sayilar.tarama) === JSON.stringify([['Evren', 13710], ['İşlenen', 13767], ['Kapsam', '%100'], ['Hesap sürümü', 'v1.1-2026-10-27d']]), JSON.stringify(d.oda_sayilar.tarama));
 ok('kapı odası: havuz, aday, oda', JSON.stringify(d.oda_sayilar.kapi) === JSON.stringify([['Havuz', 30], ['Aday', 9], ['Oda', 6]]));
 ok('kontrol kolu: yalnız sayı, kohort kartında (n=5)', d.kohort_kontrol.kollar.some(k => /Kontrol/.test(k.ad) && k.n === 5) && d.oda_durum.kontrol.gizli === true);
-ok('finans, risk, lab gri: "paper izleme başlamadı"', ['lab', 'finans', 'risk'].every(r => d.oda_durum[r].gri && d.oda_durum[r].metin === 'paper izleme başlamadı'));
+ok('finans, risk, lab gri: "sanal izleme başlamadı"', ['lab', 'finans', 'risk'].every(r => d.oda_durum[r].gri && d.oda_durum[r].metin === 'sanal izleme başlamadı'));
 ok('tarama veri kalitesi satırı durum.json sayılarını taşır', d.veri_kalitesi[0].deger === 'evren 13.710 · işlenen 13.767 · kapsam %100', d.veri_kalitesi[0].deger);
 ok('verisi olmayan kalite satırları "bilinmiyor", sıfır değil', d.veri_kalitesi.slice(1).every(v => v.durum === 'bilinmiyor' && v.deger === null && v.zaman === null));
 ok('seçim sürümü v1 (secim.json sürüm vermiyorsa), tarih', d.secim.surum === 'v1' && d.secim.tarih === '2026-10-28' && d.secim.onaylandi === false);
@@ -55,6 +55,8 @@ const btc = canli.acik_islemler.find(x => x.coin === 'BTC'), eth = canli.acik_is
 ok('altın örnek (BTC): yön/kaldıraç/K-Z aynen taşınır, süre = uretildi − acılış (2 sa = 120 dk)', btc && btc.yon === 'long' && btc.kaldirac === 3 && btc.kz_usd === -29.5 && btc.yas_dk === 120, JSON.stringify(btc));
 ok('altın örnek (ETH): short, 30 dk önce açıldı', eth && eth.yon === 'short' && eth.kaldirac === 5 && eth.kz_usd === 12.25 && eth.yas_dk === 30, JSON.stringify(eth));
 ok('sahte veri yok: yüzde/teminat/likidasyon uydurulmaz (durum.json\'da yok), null kalır', canli.acik_islemler.every(x => x.kz_yuzde === null && x.teminat_usd === null && x.lik_uzaklik === null));
+/* gölge kasası günü: t0'dan bu yana gün sayısı (t0 günü = 1), hafta × 7 değil (lider denetimi: "n=7 gün" → bugün 1 hatasıydı) */
+ok('kasa.gun_n: t0\'dan bu yana gün (hafta × 7 değil)', canli.kasa.gun_n === Math.floor((SIMDI.getTime() - Date.parse('2026-10-28T00:00:00Z')) / 86400000) + 1 && canli.kasa.gun_n !== canli.kohort_kontrol.hafta * 7, 'gun_n=' + canli.kasa.gun_n + ' hafta=' + canli.kohort_kontrol.hafta);
 
 /* canlı yol sözleşmesi: tek ağaç çağrısı + iki ham dosya, doğru adreslerle */
 (async () => {

@@ -47,10 +47,10 @@ const srv = http.createServer((q, r) => {
   ok('örnek veri şeridi yok', !sera.o);
   const durum = await pg.evaluate(() => { const s = OFIS.Office.state(), n = k => s.actors.filter(a => a.kind === 'trader' && a.kat === k).length; return { oda: n('oda'), aday: n('aday'), lab: n('lab'), kontrol: n('kontrol'), gri: ['lab', 'finans', 'risk', 'oda', 'aday'].map(r => OFIS.Office.gri(r)), gizli: !!OFIS.World.roomById.kontrol.gizli, out: !!OFIS.World.roomById.kontrol.out, kaynak: OFIS.data.kaynak }; });
   ok('figürler: oda 6, aday 3, lab 0, kontrol 0', durum.oda === 6 && durum.aday === 3 && durum.lab === 0 && durum.kontrol === 0, JSON.stringify(durum));
-  ok('gri odalar: lab, finans, risk; oda ve aday gri değil', durum.gri.join('|') === 'paper izleme başlamadı|paper izleme başlamadı|paper izleme başlamadı||' || (durum.gri[0] && durum.gri[1] && durum.gri[2] && !durum.gri[3] && !durum.gri[4]), JSON.stringify(durum.gri));
+  ok('gri odalar: lab, finans, risk; oda ve aday gri değil', durum.gri.join('|') === 'sanal izleme başlamadı|sanal izleme başlamadı|sanal izleme başlamadı||' || (durum.gri[0] && durum.gri[1] && durum.gri[2] && !durum.gri[3] && !durum.gri[4]), JSON.stringify(durum.gri));
   ok('kontrol odası gizli (etkileşim dışı)', durum.gizli && durum.out);
   const t = await govde(pg);
-  ok('sol panel: kasa/risk "paper izleme başlamadı"', (t.match(/paper izleme başlamadı/g) || []).length >= 7, String((t.match(/paper izleme başlamadı/g) || []).length));
+  ok('sol panel: kasa/risk "sanal izleme başlamadı"', (t.match(/sanal izleme başlamadı/g) || []).length >= 7, String((t.match(/sanal izleme başlamadı/g) || []).length));
   ok('"örnek" rozeti ve "örnek veri" yazısı yok', !/örnek/i.test(t.replace(/Örnek veri yalnız[^\n]*/i, '')), (t.match(/.{20}örnek.{20}/i) || [''])[0]);
   ok('körlük: para birimi ($), K/Z, "puan" yok', !/\$\d/.test(t) && !/K\/Z/.test(t) && !/puan/i.test(t), (t.match(/.{15}(\$\d|K\/Z|puan).{15}/i) || [''])[0]);
   ok('etiket eşleşmezse kontrol veri yoktur; örnek kontrol figürü yok', /Kontrol \(sabit\)\s*N=5/i.test(t) && (t.match(/KONTROL GRUBU/gi) || []).length === 0, (t.match(/.{10}ontrol.{20}/g) || []).join(' | '));
@@ -59,7 +59,7 @@ const srv = http.createServer((q, r) => {
   const bilgi = await pg.evaluate(() => ['tarama', 'kapi', 'lab', 'finans', 'risk', 'oda'].map(r => OFIS.Office.roomInfo(r).lines.join(' ')));
   ok('Tarama odası: evren 13.710 · işlenen 13.767', /Evren: 13\.710/.test(bilgi[0]) && /İşlenen: 13\.767/.test(bilgi[0]), bilgi[0]);
   ok('Kapı odası: havuz 30 · aday 9 · oda 6', /Havuz: 30 · Aday: 9 · Oda: 6/.test(bilgi[1]), bilgi[1]);
-  ok('Lab, Finans, Risk odası bilgisi: paper izleme başlamadı', bilgi.slice(2, 5).every(x => /^paper izleme başlamadı\.$/.test(x)), bilgi.slice(2, 5).join('|'));
+  ok('Lab, Finans, Risk odası bilgisi: sanal izleme başlamadı', bilgi.slice(2, 5).every(x => /^sanal izleme başlamadı\.$/.test(x)), bilgi.slice(2, 5).join('|'));
   ok('Oda bilgisi kontrol/para içermez', !/kontrol|\$/i.test(bilgi[5]), bilgi[5]);
   /* trader bilgi kutusu */
   await pg.evaluate(() => { const a = OFIS.Office.state().actorById.O01; OFIS.Info.show ? OFIS.Info.show({ type: 'person', a: a }) : null; });
