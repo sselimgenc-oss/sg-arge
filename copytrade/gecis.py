@@ -12,8 +12,10 @@ from __future__ import annotations
 
 import json
 import math
+import argparse
+import hashlib
 import re
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +27,65 @@ OLAYLAR = ("giris", "cikis")
 KOLLAR = ("oda", "kontrol", "taban", "elle")
 TARIH = re.compile(r"\d{4}-\d{2}-\d{2}")
 HAFTA_GUN = 7
+
+
+def degisim_yaz(path: Path, row: dict[str, Any], rules: dict | None = None) -> None:
+    """Ön kayıt 1.6'nın kullanıcı onaylı oda değişimini ayrı JSONL kaydına ekler."""
+    rules = rules or load_rules()
+    required = {'tarih', 'cikarilan', 'alinan', 'gerekce', 'not'}
+    if set(row) != required or not TARIH.fullmatch(str(row['tarih'])):
+        raise ValueError('değişim satırı tarih, cikarilan, alinan, gerekce, not alanlarını taşımalı')
+    for key in ('cikarilan', 'alinan'):
+        if not re.fullmatch(r'0x[0-9a-fA-F]{40}', str(row[key])):
+            raise ValueError(f'{key} geçerli halka açık adres olmalı')
+    if row['cikarilan'].lower() == row['alinan'].lower():
+        raise ValueError('çıkarılan ve alınan adres aynı olamaz')
+    if row['gerekce'] not in rules['degisim_gerekce_kodlari']:
+        raise ValueError('gerekçe ön kayıt gerekçe kodlarından biri olmalı')
+    today = date.fromisoformat(str(row['tarih']))
+    counted = [r for r in oku(path) if r.get('gerekce') not in rules['degisim_tavan_disi']
+               and 0 <= (today - date.fromisoformat(r['tarih'])).days < int(rules['degisim_tavan_gun'])]
+    if row['gerekce'] not in rules['degisim_tavan_disi'] and len(counted) >= int(rules['degisim_tavan_adet']):
+        raise ValueError('oda değişim tavanına ulaşıldı')
+    if any(r.get('tarih') == row['tarih'] and str(r.get('cikarilan', '')).lower() == row['cikarilan'].lower() for r in oku(path)):
+        raise ValueError('bu çıkarılan için aynı gün değişim kaydı zaten var')
+    _ekle(path, row)
+
+
+def degisim_uygula(liste_yolu: Path, kayit_yolu: Path, cikarilan: str, alinan: str, gerekce: str,
+                   not_: str = '', tarih: str | None = None, rules: dict | None = None) -> dict[str, Any]:
+    """Kayıt ekler ve izleme listesini oda→çıkarılan / yeni oda olarak günceller."""
+    import yaml
+    rules = rules or load_rules()
+    tarih = tarih or datetime.now(timezone.utc).date().isoformat()
+    row = {'tarih': tarih, 'cikarilan': cikarilan.lower(), 'alinan': alinan.lower(), 'gerekce': gerekce, 'not': not_}
+    data = yaml.safe_load(liste_yolu.read_text(encoding='utf-8'))
+    rows = data['traderlar'] if isinstance(data, dict) else data
+    old = next((r for r in rows if r['adres'].lower() == cikarilan.lower()), None)
+    if old is None or old.get('kol') != 'oda':
+        raise ValueError('çıkarılan adres etkin oda üyesi olmalı')
+    if any(r['adres'].lower() == alinan.lower() for r in rows):
+        raise ValueError('alınan adres izleme listesinde zaten var')
+    degisim_yaz(kayit_yolu, row, rules)
+    old['kol'], old['kollar'], old['cikarilma_tarihi'] = 'cikarilan', ['cikarilan'], tarih
+    rows.append({'id': 'O' + hashlib.sha1(alinan.lower().encode()).hexdigest()[:8], 'adres': alinan.lower(),
+                 'takma_ad': alinan[2:6].lower(), 'durum': 'izlemede', 't0': tarih, 'kol': 'oda', 'kollar': ['oda']})
+    liste_yolu.write_text(yaml.safe_dump({'traderlar': rows}, allow_unicode=True, sort_keys=False), encoding='utf-8')
+    return row
+
+
+def temizle_cikarilan(liste_yolu: Path, today: str, rules: dict | None = None) -> int:
+    """İzleme süresi dolan çıkarılanı listeden siler; değişim kaydı korunur."""
+    import yaml
+    rules = rules or load_rules()
+    data = yaml.safe_load(liste_yolu.read_text(encoding='utf-8'))
+    rows = data['traderlar'] if isinstance(data, dict) else data
+    cut = date.fromisoformat(today)
+    kept = [r for r in rows if not (r.get('kol') == 'cikarilan' and r.get('cikarilma_tarihi') and
+                                    (cut - date.fromisoformat(str(r['cikarilma_tarihi']))).days >= int(rules['cikarilan_izleme_gun']))]
+    if len(kept) != len(rows):
+        liste_yolu.write_text(yaml.safe_dump({'traderlar': kept}, allow_unicode=True, sort_keys=False), encoding='utf-8')
+    return len(rows) - len(kept)
 
 
 def _denetle(row: dict[str, Any], alanlar: tuple[str, ...]) -> None:
@@ -158,3 +219,21 @@ def haftalik(kayit_yolu: Path, degerlendirme_yolu: Path, result: dict[str, Any],
             yaz(kayit_yolu, row)
             written.append(row)
     return written
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description='Kullanıcı onaylı oda değişimini kaydeder.')
+    parser.add_argument('--cikar', required=True)
+    parser.add_argument('--al', required=True)
+    parser.add_argument('--gerekce', required=True)
+    parser.add_argument('--not', default='', dest='not_')
+    parser.add_argument('--root', type=Path, default=Path('.'))
+    parser.add_argument('--tarih', default=None, help='test/düzeltme için YYYY-MM-DD; normalde bugünün UTC tarihi')
+    args = parser.parse_args(argv)
+    row = degisim_uygula(args.root / 'copytrade/izleme_listesi.yaml', args.root / 'copytrade/degisim.jsonl',
+                         args.cikar, args.al, args.gerekce, args.not_, args.tarih)
+    print(f"Oda değişimi kaydedildi: {row['cikarilan']} → {row['alinan']} ({row['gerekce']})")
+
+
+if __name__ == '__main__':
+    main()
