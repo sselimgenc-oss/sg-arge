@@ -239,3 +239,28 @@ degisim_tavan_gun: 28
 degisim_tavan_adet: 2
 degisim_tavan_disi: [kaldirac_ihlali, veri_sorunu]
 cikarilan_izleme_gun: 56
+
+# Kalıcılık keşif testi (copytrade/kalicilik.py; docs/GOREV_KALICILIK.md): pilotu/seçimi/kapıyı değiştirmez, yalnız rapor
+# T anları: son kalicilik_gecmis_gun gün, kalicilik_adim_gun günde bir (son T = bugün − en uzun ileri pencere)
+kalicilik_gecmis_gun: 365
+kalicilik_adim_gun: 14
+# Skorlar (yalnız bu üçü): (a) getiri penceresi, (b) Calmar = getiri / maksimum düşüş (aynı pencere), (c) kârlı ay oranı penceresi; ay = kalicilik_ay_gun gün
+kalicilik_getiri_gun: 90
+kalicilik_kar_ay_gun: 180
+kalicilik_ay_gun: 30
+# Calmar paydası: maksimum düşüş bunun altındaysa bunun kullanılır (sıfıra bölme / abartılı oran önlemi)
+kalicilik_mdd_taban: 0.01
+kalicilik_dilim: 5
+kalicilik_ileri_gun: [28, 56]
+# Bir T'de dilim başına en az bu kadar hesap yoksa o T o skor için atlanır (raporda sayılır)
+kalicilik_min_dilim_hesap: 10
+# Pencere sonu için kâr geçmişinde bu kadar günden uzak veri yoksa hesap o T'de dışarıda (veri boşluğu)
+kalicilik_veri_bosluk_gun: 7
+# Blok bootstrap (T'ler arası örtüşme): blok = 56 / 14 = 4 T; tekrar, düzey, tohum
+kalicilik_blok_t: 4
+kalicilik_bootstrap_tekrar: 2000
+kalicilik_ci: 0.95
+kalicilik_tohum: 20261029
+# Kopya notu: üst dilimden örnek büyüklüğü ve gecikmeler (dk)
+kalicilik_kopya_ornek: 100
+kalicilik_kopya_gecikme_dk: [30, 120]
