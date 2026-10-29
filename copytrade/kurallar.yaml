@@ -162,3 +162,6 @@ onkayit_spearman_varyans_carpani: 1.06
 isaret_yas_max_dk: 120
 # Kırmızı bayrak bilgi sütunu (bayrak_ek): katlama oranı = kat (ekleme / önceki büyüklük) ≥ bu değer olan zararda eklemelerin payı. Eşik DEĞİL, kimseyi elemez.
 bayrak_kat_esik: 2.0
+# Pozisyon mutabakatı (A13, copytrade/pozisyon_mutabakat.py): defter ↔ clearinghouseState tolerans eşiği = max(mutlak, göreli × |defter|); yalnız rapor
+mutabakat_goreli_tolerans: 0.01
+mutabakat_mutlak_tolerans: 1.0e-06

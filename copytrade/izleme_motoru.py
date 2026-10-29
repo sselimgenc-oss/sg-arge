@@ -22,6 +22,7 @@ import yaml
 from copytrade.defter import Market, copy_ledger
 from copytrade.kapi import (SLIPPAGE, TAKER, binance_availability, delayed_copy,
                             write_binance_universe)
+from copytrade.pozisyon_mutabakat import mutabakat, ozet
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
 from copytrade.tarama import PublicClient, RateLimiter
 from copytrade.kurallar import load_rules
@@ -435,6 +436,25 @@ def positions_from_state(states: list[dict], fills: list[dict], symbols: set[str
     return account, result
 
 
+def defter_pozisyonlari(fills: list[dict]) -> dict[str, float]:
+    """Dolumlardan türetilen pozisyon (kaynak birimi): her coinin son dolumundan sonraki işaretli büyüklük (``startPosition`` + dolum)."""
+    last: dict[str, tuple[int, float]] = {}
+    for fill in sorted(perp_fills(fills), key=lambda f: int(f['time'])):
+        signed = float(fill['sz']) * (-1 if fill['side'] == 'A' else 1)
+        last[fill['coin']] = (int(fill['time']), float(fill.get('startPosition', 0)) + signed)
+    return {coin: size for coin, (_, size) in last.items()}
+
+
+def mutabakat_raporu(fills: list[dict], states: list[dict], now: pd.Timestamp, rules: dict | None = None) -> dict:
+    """Oda üyesi için defter ↔ ``clearinghouseState`` mutabakatı (A13): yalnız rapor; hiçbir pozisyon kapatılmaz, defter değişmez.
+    ``veri_kalitesi.mutabakat``: durum sayıları, ``uyumsuz_oran``, ``yetim_coinler``, atlanan bozuk satır, zaman."""
+    rules = rules or load_rules()
+    exchange = {'assetPositions': [item for state in states for item in state.get('assetPositions', [])]}
+    rows, broken = mutabakat(defter_pozisyonlari(fills), exchange, float(rules['mutabakat_goreli_tolerans']), float(rules['mutabakat_mutlak_tolerans']))
+    return {**ozet(rows), 'yetim_coinler': [r['coin'] for r in rows if r['durum'] == 'yetim'],
+            'sorunlu': [r for r in rows if r['durum'] != 'uyumlu'], 'bozuk_satir': broken, 'zaman': iso(now)}
+
+
 def gate_result(root: Path, address: str) -> dict:
     for path in sorted((root / 'copytrade/kapi').glob('*/sonuc.csv'), reverse=True):
         with path.open(encoding='utf-8', newline='') as handle:
@@ -591,6 +611,8 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
                        'getiri_30g': ret30, 'getiri_90g': float(recent.iloc[-1] - recent.iloc[0]) if len(recent) else 0.0},
               'hesap_degeri': account, 'pozisyonlar': positions, 'son_islem': last_trade,
               'egri': [[str(day.date()), float(value)] for day, value in recent.items()], 'sanal_kopya': paper}
+    if row.get('kol') == 'oda':
+        trader['veri_kalitesi'] = {'mutabakat': mutabakat_raporu(fills, states, now)}
     saved['son_trader'] = trader
     return trader
 

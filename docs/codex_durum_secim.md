@@ -61,3 +61,6 @@
 ## Ek 2 bilgi sütunları (#350'den taşındı)
 - [x] Kapı/seçim çıktısı: `acik_pozisyon_sayisi`, `unrealized_end`, `mark_missing`, `acik_pozisyon_notional` (kanonik defter `copy_ledger`; E1 ile aynı kaynak), yönlü dolum farkı (`yonlu_dolum_*`; sıfır gecikmede üretilmez), `en_iyi_islem_haric_getiri`, `medyan_tutma_saat`, `gunluk_islem_sikligi`
 - [x] Gölge sağlaması: trader'ın kendi açık K/Z'si ve toplam net kıyası (`trader_toplam_net`, `golge_toplam_net`, `toplam_net_fark`), eksik işaretleme notu
+## Argon A13 — pozisyon mutabakatı (`copytrade/pozisyon_mutabakat.py`)
+- [x] Defter ↔ `clearinghouseState` (uyumlu / yetim / eksik / yon_farki / boy_farki); `borsa_pozisyonlari` ve `mutabakat` bozuk satır sayısını dönüş değerinde verir; eşikler `kurallar.yaml` (`mutabakat_*_tolerans`)
+- [x] İzleme motoru her koşuda oda üyeleri için çalıştırır, sonucu `veri_kalitesi.mutabakat` alanına yazar; yalnız rapor (otomatik kapatma yok)
