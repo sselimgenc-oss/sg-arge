@@ -37,9 +37,11 @@ Her madde için test; sg-arge ve sg-pano ayrı PR; Sol 6.1'e tekrar denetim içi
 
 ## Ek (lider, 2026-10-30 gece denetimi) — Faz 3 ve kalıcılık koşuları
 12. **Faz 3 bitemiyor (yüksek):** `faz3.yml` ilk üç pencere (2026-03-28, 04-11, 04-25) 350 dk süre sınırında sonuçsuz iptal oldu;
-    pencere başına iş binlerce adres × ~1 dk. Bu tasarımla 12 pencerenin hiçbiri bitmez. Çözüm: pencere başına evreni ön kayıtlı
-    bir örnekleme (ör. kapı adım 1–2'yi geçen havuz, sabit tohum) ya da adres parçalama + ara sonuç önbelleği (kaldığı yerden
-    devam); her pencere ≤ 5 sa. Önce tek pencerelik deneme koşusu.
+    pencere başına iş binlerce adres × ~1 dk. Bu tasarımla 12 pencerenin hiçbiri bitmez. Çözüm sırası: 1) dolum geçmişi
+    önbelleği (her adres bir kez indirilir, 12 pencere aynı önbellekten; R2 arşivi kullanılabilir), 2) T anında ucuz ön eleme
+    (portfolio: hesap değeri, aktiflik) — pahalı dolum yalnız elemeyi geçenlere, 3) gerekirse sabit tohumlu ön kayıtlı örneklem
+    (raporda yazılır; küçük havuz yöntemi kötümser gösterir). Kaldığı yerden devam; her iş ≤ 5 sa. Önce 1 pencere × 50 hesap deneme.
+    **K‑7a ile öncelik düştü:** kalıcılık (13) önce; Faz 3 zaman kalırsa.
 13. **Kalıcılık sonucu sayısal olarak bozuk (yüksek):** 29.10 koşusu yeşil ama dilim ortalamaları milyonlarca (ör. D1 17.476.474),
     "trader getirisi 109.527.699" — payda (pencere hesap değeri medyanı) sıfıra yakın hesaplarda getiri patlıyor. Rapor bu haliyle
     yorumlanamaz. Çözüm (ön kayıtlı, deneme defterine yeni satır): asgari payda (ör. hesap değeri ≥ kapı tabanı), getiri kırpma
