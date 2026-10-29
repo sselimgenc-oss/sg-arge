@@ -179,7 +179,8 @@ def test_empty_list_writes_contract_and_never_uses_network(tmp_path):
         def __getattr__(self, name):
             raise AssertionError(name)
     result = m.run(root, root / 'out', NoNetwork(), NOW)
-    assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [], 'olaylar': []}
+    assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
+                      'kasa_egri': {'oda': [], 'kontrol': []}, 'olaylar': []}
     assert json.loads((root / 'out/durum.json').read_text()) == result
 
 

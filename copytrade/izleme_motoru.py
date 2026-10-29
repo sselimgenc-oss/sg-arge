@@ -539,6 +539,31 @@ def with_data_error(trader: dict, error: Exception) -> dict:
     return previous
 
 
+def kasa_egrisi(traderlar: list[dict], kol: str, gun: int = 90) -> list[list[object]]:
+    """Koldaki sanal-kopya bakiyelerinin son ``gun`` günlük toplamı.
+
+    Her trader kendi son bilinen günlük bakiyesiyle taşınır; eksik eğri uydurulmaz.
+    Bu isteğe bağlı pano alanıdır, kapı/seçim hesabına girmez.
+    """
+    curves = []
+    for trader in traderlar:
+        if trader.get('kol') != kol:
+            continue
+        values = {str(day): float(value) for day, value in trader.get('sanal_kopya', {}).get('egri', [])}
+        if values:
+            curves.append(values)
+    dates = sorted({day for curve in curves for day in curve})[-gun:]
+    result = []
+    for day in dates:
+        total = 0.0
+        for curve in curves:
+            known = [key for key in curve if key <= day]
+            if known:
+                total += curve[max(known)]
+        result.append([day, total])
+    return result
+
+
 def data_error_reason(error: Exception) -> str:
     return str(error).splitlines()[0][:120] or type(error).__name__
 
@@ -675,6 +700,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     if watchlist and failed == len(watchlist):
         raise RuntimeError('Tüm trader verileri hatalı; önceki durum yayımlanmadı.')
     result = {'surum': 1, 'uretildi': iso(now), 'kaynak': 'hyperliquid', 'traderlar': traders,
+              'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')},
               'olaylar': sorted(all_events.values(), key=lambda e: (e['zaman'], e['id']), reverse=True)[:200]}
     # Serialize both before replacing either; API/validation/NaN errors leave the archive untouched.
     payloads = {name: json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + '\n'
