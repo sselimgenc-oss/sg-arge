@@ -151,13 +151,14 @@
   // Kaynak adresleri yalnız burada değişir (canlı: sg-arge copytrade-izleme dalı; örnek sabit veri: ./izleme/ornek_durum.json).
   const CT_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/durum.json';
   const CT_KARAR = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/kararlar.jsonl'; // dosya yoksa (404) karar kaydı yok sayılır
+  const CT_DEGISIM = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-izleme/izleme/degisim.json';
   // Keşif verisinin tek uzak kaynağı: GitHub API tarih klasörünü, ardından API'nin verdiği ham adresi bulur.
   const KESIF_KAYNAK = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/kesif/kesif.json';   // yayıncı (kapi_yayimla.sh) sabit yola yazar
   const KESIF_ORNEK = './kesif/ornek_kesif.json';
   const CT_ESKI_DK = 90, CT_SAYFA = 8, CT_AKIS_ADIM = 50, CT_YETERSIZ = 10;
   const KAYMA_ESIK = { intraday: 0.005, swing: 0.015 }; // kullanıcı kararı: %0,5 / %1,5
   const HL_INFO = 'https://api.hyperliquid.xyz/info', TUTAR_AYAR = 'sg-pano-tutar-v1';
-  let CT = null, CTK = { durum: 'yok', kayit: {}, bozuk: 0 }, ctHata = null;
+  let CT = null, CTK = { durum: 'yok', kayit: {}, bozuk: 0 }, CTD = { durum: 'yok', degisimler: [] }, ctHata = null;
   let ctSel = null, traderAdres = null, traderCoin = null, ctSayfa = 0, ctFiltre = '', ctAkisN = CT_AKIS_ADIM;
   let KS = null, ksHata = null, ksSel = null, ksKaynak = null;
   let HL = {}, MIDS = {}, midsZaman = null, midDexler = null;
@@ -344,8 +345,8 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('ipKutu').hidden = true; });
 
   // ---------- kollar (kol alanı veride henüz olmayabilir → "kol bilinmiyor", çökme yok)
-  const KOLLAR = ['oda', 'referans_oda', 'kontrol', 'referans_kontrol', 'aday', 'taban', 'elle'];
-  const KOL_AD = { oda: 'Oda', referans_oda: 'Referans oda', kontrol: 'Kontrol', referans_kontrol: 'Referans kontrol', aday: 'Aday', taban: 'Taban', elle: 'Elle liste' };
+  const KOLLAR = ['oda', 'cikarilan', 'referans_oda', 'kontrol', 'referans_kontrol', 'aday', 'taban', 'elle'];
+  const KOL_AD = { oda: 'Oda', cikarilan: 'Çıkarılan (izlemede)', referans_oda: 'Referans oda', kontrol: 'Kontrol', referans_kontrol: 'Referans kontrol', aday: 'Aday', taban: 'Taban', elle: 'Elle liste' };
   const kolOf = (t) => { const v = String((t && (t.kol ?? t.kol_adi)) ?? '').toLowerCase().trim(); return KOLLAR.includes(v) ? v : null; };
   const kolRozet = (t) => { const k = kolOf(t); return k ? ctRozet(KOL_AD[k], 'ct-b-mut') : ctRozet('kol bilinmiyor', 'ct-b-warn'); };
   const tarzAd = (t) => ({ intraday: 'Intraday', swing: 'Swing', scalp: 'Scalp' }[t && t.tarz] || 'tarz bilinmiyor');
@@ -401,9 +402,13 @@
       + (KS ? tazelikSatiri('Keşif verisi', KS.uretildi, ksKaynak?.ornek ? '<span class="text-amber-300">ÖRNEK VERİ</span>' : '') : '<div class="taze eski"><span>Keşif verisi</span><b>⚠ okunamadı</b></div>')
       + `<div class="taze"><span>Fiyatlar</span><b>${midsZaman ? Math.max(0, Math.round((Date.now() - midsZaman) / 1000)) + ' sn önce' : 'bekleniyor'}</b></div>`;
     const son5 = ctOlaylar().slice(0, 5);
+    const odaMut = tr.filter((t) => kolOf(t) === 'oda').map((t) => t.veri_kalitesi?.mutabakat?.saglik).filter(Boolean);
+    const health = odaMut.some((x) => x.isik === 'kirmizi') ? { isik: 'kirmizi', metin: '🔴 Dikkat' } : odaMut.some((x) => x.isik === 'sari') ? { isik: 'sari', metin: '🟡 İzle' } : odaMut.length ? { isik: 'yesil', metin: '🟢 Her şey yolunda' } : { isik: '', metin: '⚪ Mutabakat verisi bekleniyor' };
+    const need = health.isik === 'kirmizi' ? 'İnceleme gerekli' : health.isik === 'sari' ? 'İzleme gerekli' : health.isik === 'yesil' ? 'İşlem gerekmez' : 'Veri bekleniyor';
     return `<div class="card ct-card"><h2 class="bas">Gölge ölçüm ${ip('golge')}</h2>
         <div class="ct-kv mt-2">${kv('Hafta', haftaMetni().replace('hafta ', ''), 'hafta')}${kv('Oda doluluğu', hicKolYok ? 'bilinmiyor' : `${nOda}${kap ? ' / ' + kap : ''} trader`, 'oda')}${kv('İzlenen trader', tr.length)}${kv('Açık işlem', acikSay)}${kv('Sanal kopya (hepsi)', ctPs(ortalama(tr), 2), 'ozet')}</div>
         <div class="ct-sub mt-3">Kohort ↔ kontrol: ${ctPs(ortalama(tr.filter((t) => kolOf(t) === 'oda')), 2)} ↔ ${ctPs(ortalama(tr.filter((t) => kolOf(t) === 'kontrol')), 2)}</div></div>
+      <div class="card ct-card"><h2 class="bas">Mutabakat sağlığı</h2><div class="ct-kv mt-2">${kv('Durum', health.metin)}${kv('Eylem', need)}</div><div class="ct-sub mt-2">Yetim pozisyon, kaçırılmış dolum, pozisyon farkı ve hesap değeri sıçraması için yalnız uyarıdır.</div></div>
       <div class="card ct-card"><h2 class="bas">Kol başına trader ${ip('kol')}</h2>
         <div class="chips mt-2">${KOLLAR.map(kolChip).join('')}${bilinmeyen ? `<button type="button" class="chip" onclick="kolFiltre='?';location.hash='traderlar'"><span>kol bilinmiyor</span><b>${bilinmeyen}</b></button>` : ''}</div>
         ${hicKolYok && tr.length ? '<div class="ct-sub mt-2">Veride henüz <code>kol</code> alanı yok; gelince burada dolar.</div>' : ''}</div>
@@ -438,6 +443,7 @@
     return `<div class="ct-kv">${kv('Toplam karar', kayitlar.length)}${kv('Açtım', kayitlar.filter((k) => k.karar === 'acti').length)}${kv('Atladım', kayitlar.filter((k) => k.karar === 'atladi').length)}${kv('Cevapsız', s.cevapsiz)}</div>
       <div class="ct-sec"><span class="ct-sub">Atlama nedenleri:</span> ${nedenHtml(kayitlar)}</div>
       <div class="ct-sec"><span class="ct-sub">Açtıklarım ↔ tümü: karar sayıları yukarıda; sonuçlar trader olaylarındaki sanal etiketlerde görünür.</span></div>
+      <div class="ct-sec"><span class="ct-sub">Oda değişimleri:</span> ${CTD.durum === 'ok' ? CTD.degisimler.map((d) => `${esc(ctAdr(d.cikarilan))} → ${esc(ctAdr(d.alinan))} · ${esc(d.gerekce)} · değişim alfası ${ctPs(d.degisim_alfasi, 2)}`).join('<br>') || 'yok' : 'henüz rapor yok'}</div>
       <div class="ct-sub mt-2">${CTK.durum === 'hata' ? 'Karar kaydı okunamadı. ' : CTK.durum === 'yok' ? 'Henüz karar kaydı yok. ' : ''}Karar kaydı Telegram’daki [Açtım]/[Atladım] düğmelerinden gelir.</div>`;
   }
   // olay satırı
@@ -631,6 +637,12 @@
         CTK = { durum: Object.keys(kayit).length ? 'ok' : 'yok', kayit, bozuk };
       }
     } catch (e) { CTK = { durum: 'hata', kayit: {}, bozuk: 0 }; }
+    try {
+      const r = await fetch(CT_DEGISIM + '?t=' + Date.now(), { cache: 'no-store' });
+      if (r.status === 404) CTD = { durum: 'yok', degisimler: [] };
+      else if (!r.ok) throw new Error('HTTP ' + r.status);
+      else { const j = await r.json(); CTD = { durum: Array.isArray(j.degisimler) ? 'ok' : 'hata', degisimler: Array.isArray(j.degisimler) ? j.degisimler : [] }; }
+    } catch (e) { CTD = { durum: 'hata', degisimler: [] }; }
     render();
     midsYenile();
     yonlendir(); detayAc();

@@ -14,6 +14,7 @@ function kollu() {                                   // kol alanı olan varyant
   const d = JSON.parse(JSON.stringify(ornek));
   ['oda', 'aday', 'kontrol', 'taban'].forEach((k, i) => { d.traderlar[i].kol = k; });
   d.golge = { hafta: 5, hafta_toplam: 12, oda_kapasite: 20 };
+  d.traderlar[0].veri_kalitesi = { mutabakat: { saglik: { isik: 'yesil', neden: 'mutabakat uyumlu' } } };
   d.traderlar[0].neden_secildi = 'gölgede ≥ 3 hafta, kapıyı geçti';
   d.traderlar[1].kirmizi_bayraklar = ['uzun süredir işlem yok'];
   return d;
@@ -77,6 +78,7 @@ function kollu() {                                   // kol alanı olan varyant
   ({ ctx, pg } = await ac({ durum: kollu() }));
   const oz2 = await metin(pg, '#ozMain');
   ok('Özet: oda doluluğu "1 / 20 trader", hafta 5/12', /1 \/ 20 trader/.test(oz2) && /5\/12/.test(oz2), oz2.match(/Oda doluluğu[^]{0,40}/)?.[0]);
+  ok('Özet: mutabakat sağlık ışığı ve eylem görünür', /Her şey yolunda/.test(oz2) && /İşlem gerekmez/.test(oz2));
   await pg.click('[data-nav=traderlar]'); await sleep(300);
   const chips = await pg.$$eval('#trMain .chip', (l) => l.map((x) => x.textContent.trim()));
   ok('kol filtresi: standart ve referans kolları görünür', ['Tümü', 'Oda', 'Referans oda', 'Aday', 'Kontrol', 'Referans kontrol', 'Taban', 'Elle liste'].every((k) => chips.some((c) => c.startsWith(k))) && chips.some((c) => /kol bilinmiyor/.test(c)), chips.join(' | '));
@@ -189,6 +191,7 @@ function kollu() {                                   // kol alanı olan varyant
   const ipk = await pg.evaluate(() => { const e = document.querySelector('#ozMain .ip'); const cs = getComputedStyle(e, '::after'); return { w: e.getBoundingClientRect().width, extra: parseFloat(cs.left) }; });
   ok('telefon: "?" düğmesi dokunma alanı ≥ 44 px (22 px + 11 px genişletme)', ipk.w + 22 >= 44, JSON.stringify(ipk));
   await pg.click('[data-nav=ozet]');
+  await pg.screenshot({ path: path.join(root, 'docs/degisim_saglik_telefon.png'), fullPage: true });
   ok('telefon: yasal ibare ekranda', await pg.$eval('#yasal', (e) => { const r = e.getBoundingClientRect(); return r.bottom <= innerHeight && r.height > 0; }));
   await ctx.close();
 
