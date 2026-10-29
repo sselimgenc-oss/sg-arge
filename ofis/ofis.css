@@ -294,7 +294,12 @@ dialog#ayarlar::backdrop { background: rgba(0, 0, 0, .62); }
   .ust-sol { top: 40px; } .oda-ust { top: 74px; }
   .bilgi, .cekmece { top: 40px; }
 }
-@media (max-width: 899px) { .gun-serit, .kart-panel { display: none !important; } }
+@media (max-width: 899px) {
+  .gun-serit { display: none !important; }
+  /* telefonda kart paneli alttan açılan sayfa: harita üstte görünür kalır */
+  .kart-panel { position: fixed; left: 0; right: 0; top: auto; bottom: 0; width: auto; max-width: none; max-height: 62vh; z-index: 30;
+    border-left: 1px solid #3a6676; border-top: 3px solid var(--accent); border-radius: 10px 10px 0 0; padding-bottom: env(safe-area-inset-bottom); }
+}
 .serit.uyari { background: repeating-linear-gradient(135deg, #ffd27a 0 8px, #f5bd55 8px 16px); }
 .gri-not { color: #9aa7ab; font-style: italic; }
 .serit[hidden], .lejant [hidden] { display: none; }

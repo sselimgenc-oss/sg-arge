@@ -554,7 +554,9 @@
     b.addEventListener('click', () => railTik(b.dataset.oda));
   });
   /* panel modu: geniş ekran + kart sütunu gizli (varsayılan). Aksi halde (telefon, klasik sütun) eski davranış: kart sütununda kaydır */
-  const panelModu = () => window.matchMedia('(min-width: 900px)').matches && document.body.classList.contains('tam');
+  const telefon = () => !window.matchMedia('(min-width: 900px)').matches;
+  // telefonda menü tıklaması bilgi kartını alttan açılan panelde gösterir (önce yalnız kamera yakınlaşıyordu, kartlar sayfanın altında kalıyordu)
+  const panelModu = () => telefon() || document.body.classList.contains('tam');
   /* sol menü panelinin açılmadan önceki görünümü: kapatınca (×, Esc, aynı menüye ikinci tıklama, boş alan) kamera oraya yumuşakça döner */
   let once = null, railIc = false;
   function anlik() {
@@ -589,7 +591,7 @@
     const ic = $('#kpIc'), yer = [];
     kartlar.forEach(k => { const el = $('#' + k); if (!el) return; const ph = document.createComment(k); el.before(ph); ic.appendChild(el); yer.push([ph, el]); });
     kartAcik = { id, yer }; $('#kpBaslik').textContent = baslik; $('#kartPanel').hidden = false; ic.scrollTop = 0;
-    solPx = $('#kartPanel').offsetWidth + 10;
+    solPx = telefon() ? 0 : $('#kartPanel').offsetWidth + 10;   // telefonda panel altta: kamera sola kaydırılmaz
     if (mode.active) setCam(interiorCam(mode.room), true);
     kick();
   }

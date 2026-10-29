@@ -499,12 +499,16 @@ const srv = http.createServer((q, r) => {
   ok('klasik sütun açıkken menü eski gibi çalışır (panel açılmaz)', (await panelDurum()).acik === false && (await panelDurum()).oda === 'risk');
   await ctx.close();
 
-  /* telefon: düzen değişmez (kart sütunu sayfada, panel ve şerit yok, alttan çekmece) */
+  /* telefon: kart sütunu sayfada; şerit yok; menüden açılan kart alttan panelde */
   ({ ctx, pg } = await open('?saat=15:40&durum=ornek', { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }));
   const ph = await pg.evaluate(() => ({ sol: getComputedStyle(document.getElementById('sol')).display, serit: getComputedStyle(document.getElementById('gunSerit')).display, panel: getComputedStyle(document.getElementById('kartPanel')).display, sw: document.documentElement.scrollWidth, n: document.querySelectorAll('#sol > .kart').length }));
   ok('telefon: kart sütunu sayfada görünür, şerit ve panel yok, yatay kaydırma yok', ph.sol !== 'none' && ph.serit === 'none' && ph.panel === 'none' && ph.sw <= 390 && ph.n === 10, JSON.stringify(ph));
   await pg.tap('.ray [data-oda=finans]'); await sleep(700);
-  ok('telefon: menüye dokununca panel açılmaz, kartlar sütunda kalır', await pg.evaluate(() => document.getElementById('kartPanel').hidden && document.querySelectorAll('#sol > .kart').length === 10));
+  // kullanıcı isteği (2026-10-30): telefonda menüye dokununca bilgi kartı alttan açılan panelde görünür; × ile kart sütuna geri döner
+  const tp = await pg.evaluate(() => { const k = document.getElementById('kartPanel'), r = k.getBoundingClientRect(); return { acik: !k.hidden && getComputedStyle(k).display !== 'none', alt: Math.round(r.bottom), ust: Math.round(r.top), kart: k.querySelectorAll('.kart').length, sw: document.documentElement.scrollWidth }; });
+  ok('telefon: menüye dokununca bilgi kartı alttan açılan panelde görünür (ekranın alt yarısında, yatay kaydırma yok)', tp.acik && tp.kart >= 1 && tp.alt >= 840 && tp.ust > 300 && tp.sw <= 390, JSON.stringify(tp));
+  await pg.tap('#kpKapat'); await sleep(500);
+  ok('telefon: × ile panel kapanır, kartlar sütuna geri döner', await pg.evaluate(() => document.getElementById('kartPanel').hidden && document.querySelectorAll('#sol > .kart').length === 10));
   await ctx.close();
 
 
