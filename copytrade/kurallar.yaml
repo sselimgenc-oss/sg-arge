@@ -160,3 +160,6 @@ onkayit_bootstrap_tekrar: 2000
 onkayit_spearman_varyans_carpani: 1.06
 # İşaret yaşı (E4): açık pozisyon bundan eski bir mumla işaretlenmez (mark_missing; sonuç "eksik işaretleme" notu taşır). 1 saatlik mum + tolerans.
 isaret_yas_max_dk: 120
+# Pozisyon mutabakatı (A13, copytrade/pozisyon_mutabakat.py): defter ↔ clearinghouseState tolerans eşiği = max(mutlak, göreli × |defter|); yalnız rapor
+mutabakat_goreli_tolerans: 0.01
+mutabakat_mutlak_tolerans: 1.0e-06

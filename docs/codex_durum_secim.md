@@ -54,3 +54,7 @@
 - [x] E3: etiketten önceki (miras) pozisyonu kapatan dolum `ZeroDivisionError` vermez (V0/V1/V2)
 - [x] E4: `Market.mark_at` işaret yaşı sınırı (`isaret_yas_max_dk` 120); aşılırsa `mark_missing`, canlı sonuç "eksik işaretleme" notu taşır
 - [x] E6: `bayrak.json` sürümlü önbellek (kod hash + seçim sürümü + kapı tarihi), her adresten sonra checkpoint, iş akışı önceki/kısmi sonucu veri dalından geri yükler ve zaman aşımında da yazar
+
+## Argon A13 — pozisyon mutabakatı (`copytrade/pozisyon_mutabakat.py`)
+- [x] Defter ↔ `clearinghouseState` (uyumlu / yetim / eksik / yon_farki / boy_farki); `borsa_pozisyonlari` ve `mutabakat` bozuk satır sayısını dönüş değerinde verir; eşikler `kurallar.yaml` (`mutabakat_*_tolerans`)
+- [x] İzleme motoru her koşuda oda üyeleri için çalıştırır, sonucu `veri_kalitesi.mutabakat` alanına yazar; yalnız rapor (otomatik kapatma yok)
