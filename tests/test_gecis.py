@@ -1,4 +1,4 @@
-"""Paket B — geçiş kaydı (docs/GOREV_SECIM_V13.md): yalnız ekleme, silme yok, çıkış için 2 ardışık haftalık değerlendirme, tek seçim kaynağı."""
+"""Paket B — geçiş kaydı (docs/GOREV_SECIM_V13.md): yalnız ekleme, silme yok, çıkış kuralı v1.4 (tests/test_cikis_v14.py), tek seçim kaynağı."""
 import json
 from pathlib import Path
 
@@ -81,12 +81,12 @@ def test_haftalik_gecis_giris_cikis_ve_surum_kimligi(tmp_path):
     assert [(r["adres"], r["olay"]) for r in week1] == [(addr("a"), "giris"), (addr("b"), "giris")]
     assert all(r["secim_surumu"] == "v1.3" and r["kapi_tarihi"] == "2026-10-28" and r["kol"] == "oda" for r in week1)
     assert gecis.haftalik(kayit, deg, result_of(["a", "b"]), "2026-11-05", RULES) == []          # aynı hafta yeniden koşunca yeni olay yok (idempotent)
-    week2 = gecis.haftalik(kayit, deg, result_of(["a", "c"]), "2026-11-12", RULES)               # b odadan düştü (1. uygunsuz hafta): çıkış yok; c girer
+    week2 = gecis.haftalik(kayit, deg, result_of(["a", "c"]), "2026-11-12", RULES)               # b odadan düştü; c girer. v1.4: seçim odasından düşmek çıkış değildir
     assert [(r["adres"], r["olay"]) for r in week2] == [(addr("c"), "giris")]
-    week3 = gecis.haftalik(kayit, deg, result_of(["a", "c"]), "2026-11-19", RULES)               # b ikinci ardışık uygunsuz hafta: çıkar
-    assert [(r["adres"], r["olay"], r["neden"]) for r in week3] == [(addr("b"), "cikis", "2 ardışık haftalık değerlendirmede odada değil")]
-    assert gecis.oda_uyeleri(gecis.oku(kayit)) == {addr("a"), addr("c")}
-    assert [r["olay"] for r in gecis.oku(kayit) if r["adres"] == addr("b")] == ["giris", "cikis"]  # silinmez, iz kalır
+    for hafta in ("2026-11-19", "2026-11-26", "2026-12-03"):
+        assert gecis.haftalik(kayit, deg, result_of(["a", "c"]), hafta, RULES, kapanmis_islem={addr("b"): 500}) == []     # havuz alt dilimi değil: çıkış yok
+    assert gecis.oda_uyeleri(gecis.oku(kayit)) == {addr("a"), addr("b"), addr("c")}
+    assert [r["olay"] for r in gecis.oku(kayit) if r["adres"] == addr("b")] == ["giris"]             # silinmez, iz kalır; çıkış kuralı için tests/test_cikis_v14.py
 
 
 def test_kollar_py_ikinci_uygulama_kaldirildi_tek_kaynak_secim():

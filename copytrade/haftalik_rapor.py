@@ -3,7 +3,8 @@
 **Rotasyon içindir, karar analizi değildir.** Havuz genelinde seçim puanı ↔ o ana kadarki ileri getiri Spearman'ı ve tarz / kaldıraç dilimi kırılımı.
 Kol bazında (oda, kontrol, taban, elle) getiri HİÇBİR yerde hesaplanmaz ya da yazılmaz: performans körlüğü 12. haftaya kadar sürer. Girdi: ``secim.json`` ve
 ``{adres: ileri getiri}`` (gölge defterinin etiket gününden bugüne maliyet sonrası net getirisi; yoksa rapor bunu söyler, sayı uydurmaz).
-``--gecis`` ile aynı haftalık çalışma geçiş kaydını da günceller (``copytrade/gecis.py``).
+``--gecis`` ile aynı haftalık çalışma geçiş kaydını da günceller (``copytrade/gecis.py``; v1.4 çıkış kuralı için ``--kapanmis-islem``).
+``--risk`` ile oda üyeleri için risk işaretleri (v1.4 madde 2) yalnız bilgi olarak yazılır: performans sayısı içermez, otomatik çıkış yoktur.
 """
 from __future__ import annotations
 
@@ -12,7 +13,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from copytrade import analiz_d, gecis
+from copytrade import analiz_d, gecis, risk_isaretleri
 from copytrade.kurallar import load_rules
 
 MIN_N = 4          # n ≤ 3'te Fisher z tanımsız (analiz_d); kırılımda "n yetersiz"
@@ -49,8 +50,28 @@ def _fmt(value: float | None, digits: int = 3) -> str:
     return "–" if value is None else f"{value:.{digits}f}".replace(".", ",")
 
 
-def rapor(result: dict[str, Any], ileri: dict[str, float], tarih: str, rules: dict | None = None) -> str:
+ISARETLER = (("kaldirac_sicramasi", "kaldıraç sıçraması"), ("martingale_baslangici", "martingale başlangıcı"), ("tutma_anomalisi", "zararda uzun tutma"))
+
+
+def risk_bolumu(risk: dict[str, dict[str, Any]], rules: dict) -> list[str]:
+    """Oda üyesi başına üç işaret: ``işaretli`` / ``–`` / ``veri yok``. Hiçbir performans sayısı yazılmaz."""
+    lines = ["", "## Risk işaretleri (yalnız bilgi)", "",
+             "> Otomatik çıkış yoktur; performans sayısı içermez. Bir işaretin çıkışa dönüşmesi ayrı kullanıcı kararıdır.", "",
+             "| adres | " + " | ".join(ad for _, ad in ISARETLER) + " |", "|---|" + "---|" * len(ISARETLER)]
+    for adres in sorted(risk):
+        got = risk_isaretleri.uye_isaretleri(risk[adres].get("etiket") or {}, risk[adres].get("son") or {}, rules)
+        cells = ["veri yok" if got[k] is None else "**işaretli**" if got[k] else "–" for k, _ in ISARETLER]
+        lines.append(f"| `{adres[:6]}…{adres[-4:]}` | " + " | ".join(cells) + " |")
+    return lines
+
+
+def rapor(result: dict[str, Any], ileri: dict[str, float], tarih: str, rules: dict | None = None, risk: dict[str, dict[str, Any]] | None = None) -> str:
     rules = rules or load_rules()
+    metin = _rapor(result, ileri, tarih, rules)
+    return metin if not risk else metin.rstrip("\n") + "\n" + "\n".join(risk_bolumu(risk, rules)) + "\n"
+
+
+def _rapor(result: dict[str, Any], ileri: dict[str, float], tarih: str, rules: dict) -> str:
     out = hesapla(result, ileri, rules)
     lines = [f"# Haftalık geri bildirim — {tarih}", "",
              "> Bu rapor **rotasyon içindir**, **karar analizi değildir**. Kol bazında (oda / kontrol / taban / elle) getiri yazılmaz (performans körlüğü, 12. haftaya kadar).", "",
@@ -74,18 +95,22 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--secim", type=Path, required=True, help="secim.json")
     parser.add_argument("--getiri", type=Path, default=None, help="{adres: ileri getiri} JSON (yoksa rapor 'ileri getiri verisi yok' der)")
+    parser.add_argument("--kapanmis-islem", type=Path, default=None, help="{adres: etiketten bu yana kapanmış işlem} JSON (v1.4 çıkış kuralı; yoksa çıkış değerlendirilemez)")
+    parser.add_argument("--risk", type=Path, default=None, help="{adres: {etiket: {...}, son: {...}}} JSON (v1.4 risk işaretleri; yalnız bilgi)")
     parser.add_argument("--tarih", required=True)
     parser.add_argument("--cikti", type=Path, default=Path("rotasyon"))
     parser.add_argument("--gecis", action="store_true", help="aynı haftalık çalışmada geçiş kaydını da güncelle (kayit.jsonl, degerlendirme.jsonl)")
     args = parser.parse_args(argv)
     result = json.loads(args.secim.read_text(encoding="utf-8"))
     ileri = json.loads(args.getiri.read_text(encoding="utf-8")) if args.getiri else {}
+    risk = json.loads(args.risk.read_text(encoding="utf-8")) if args.risk else None
     rules = load_rules()
     args.cikti.mkdir(parents=True, exist_ok=True)
     if args.gecis:
-        written = gecis.haftalik(args.cikti / "kayit.jsonl", args.cikti / "degerlendirme.jsonl", result, args.tarih, rules)
+        sayim = json.loads(args.kapanmis_islem.read_text(encoding="utf-8")) if args.kapanmis_islem else None
+        written = gecis.haftalik(args.cikti / "kayit.jsonl", args.cikti / "degerlendirme.jsonl", result, args.tarih, rules, kapanmis_islem=sayim)
         print(f"Geçiş: {len(written)} olay.")
-    (args.cikti / f"haftalik_{args.tarih}.md").write_text(rapor(result, ileri, args.tarih, rules), encoding="utf-8")
+    (args.cikti / f"haftalik_{args.tarih}.md").write_text(rapor(result, ileri, args.tarih, rules, risk), encoding="utf-8")
     print(f"Rapor: {args.cikti / f'haftalik_{args.tarih}.md'}")
 
 

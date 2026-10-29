@@ -145,14 +145,29 @@ secim_min_kapsam: 0.95
 # Seçim v1.3 (docs/GOREV_SECIM_V13.md, ön kayıt D sürüm 1.3): seçim sürümü kimlik/tohum dizgesine girer; havuz adım 3 statik koşulları
 # (kisa_islem_payi_max, kapi_max_medyan_kaldirac, kapi_max_kaldirac) kapıyla aynı anahtarlardan okunur.
 secim_surumu: "v1.3"
-# Geçiş kaydı (ön kayıt D v1.3 madde 3, copytrade/gecis.py): odadan çıkış için ardışık haftalık uygunsuz değerlendirme sayısı
+# Geçiş kaydı (ön kayıt D v1.4 madde 1, copytrade/gecis.py): odadan çıkış için ÜÇÜ BİRDEN gerekir: etiketten bu yana en az min_hafta haftalık değerlendirme
+# ve min_kapanmis_islem kapanmış işlem; havuz puan sırasında alt dilim (üstten değil alttan oran; histerezis: giriş ilk %15, çıkış alt %50);
+# bu durumun ardışık_hafta ardışık haftalık değerlendirmede sürmesi
+secim_cikis_min_hafta: 4
+secim_cikis_min_kapanmis_islem: 60
+secim_cikis_havuz_alt_dilim: 0.50
 secim_cikis_ardisik_hafta: 2
+# Risk işaretleri (ön kayıt D v1.4 madde 2, copytrade/risk_isaretleri.py; haftalık rapor; YALNIZ BİLGİ, otomatik çıkış yok, performans sayısı yok):
+# son hafta en yüksek kaldıraç > kat × etiket anı medyan kaldıraç; zarardaki açık pozisyonun yaşı > kat × medyan tutma süresi.
+# Martingale başlangıcı katlama oranını bayrak_kat_esik ile ölçer (bayrak_ek).
+risk_kaldirac_sicrama_kat: 2.5
+risk_tutma_anomali_kat: 3.0
 # Ön kayıt D v1.3 analiz kodu (copytrade/analiz_d.py; madde 4–7): pratik eşik δρ, tek yönlü p, haftalık blok, haftalık veri eksikliği sınırı
 onkayit_delta_rho: 0.10
 onkayit_p_max: 0.05
 onkayit_blok_gun: 7
 onkayit_veri_eksik_max: 0.05
 maliyet_duyarlilik_carpani_intraday: 2.0
+# Maliyet duyarlılık raporu (copytrade/maliyet_rapor.py; yalnız rapor, karar kodu bunları OKUMAZ): sınıf ayrımı ve A17 §8.2 sınıf maliyetleri
+# (taker + kayma, tek yön, alt uç: büyük %0,055, küçük %0,125, HIP-3 standart %0,34); senaryo (c): HIP-3 taker ücreti bu çarpanla
+maliyet_buyuk_coinler: [BTC, ETH, SOL]
+maliyet_sinif_alt_uc: {buyuk: 0.00055, kucuk: 0.00125, hip3: 0.0034}
+maliyet_hip3_ucret_carpani: 2.0
 # MDE ve ikincil aralık: güç, ikincil GA düzeyi, bootstrap tekrarı; Spearman SE çarpanı (Fieller–Hartley–Pearson: √(1,06 / (n − 3)))
 onkayit_guc: 0.80
 onkayit_ci_ikincil: 0.95
@@ -171,3 +186,11 @@ mum_medyan_pencere: 24
 # Oda yoğunlaşması ve puan yarı tutarlılığı (A14, copytrade/yogunlasma.py; seçim raporunda bilgi bölümü): ikili korelasyon için asgari ortak gün; ortalama bağlantılı kümeleme durdurma eşiği
 yogunlasma_min_ortak_gun: 10
 yogunlasma_kume_esik: 0.5
+
+# Argon A19 (mevcut kodda üç düzeltme)
+# Alfa (kapi/istatistik.py nw_alpha): regresyon artık varyansı bunun altındaysa (birebir kopya/deterministik ilişki) t anlamsızdır → durum "yetersiz", alfa ne olursa olsun
+alfa_min_artik_varyans: 1.0e-12
+# Gölge likidasyonu (copytrade/golge.py): trader'ın açık pozisyonlarının TOPLAM (çapraz teminat) ya da tek pozisyonun ayrılmış 1 birime oranlı K/Z'si bu değere ya da altına inerse tasfiye
+golge_likidasyon_esigi: -1.0
+# Dolum sayfalaması (copytrade/tarama.py PublicClient.fills): userFillsByTime sayfa boyutu (API sınırı)
+api_sayfa_boyutu_dolum: 2000
