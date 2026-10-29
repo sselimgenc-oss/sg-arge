@@ -12,8 +12,12 @@ from pathlib import Path
 from copytrade.gecis import oku
 
 
-def rapor(kayit_yolu: Path, durum_yolu: Path) -> dict:
+def rapor(kayit_yolu: Path, durum_yolu: Path, onceki_yolu: Path | None = None) -> dict:
+    """Değişim alfası = alınanın değişimden bu yana sanal getirisi − çıkarılanın aynı dönemdeki getirisi. Çıkarılanın ``toplam``ı
+    kendi t0'ından birikir; değişimden sonraki ilk raporda görülen değeri taban (``cikarilan_taban_net``) olarak saklanır."""
     durum = json.loads(durum_yolu.read_text(encoding='utf-8')) if durum_yolu.exists() else {'traderlar': []}
+    onceki = json.loads(onceki_yolu.read_text(encoding='utf-8')) if onceki_yolu and onceki_yolu.exists() else {}
+    tabanlar = {(r['tarih'], r['cikarilan'].lower()): r.get('cikarilan_taban_net') for r in onceki.get('degisimler', [])}
     traderlar = {str(t.get('adres', '')).lower(): t for t in durum.get('traderlar', [])}
     changes = []
     totals: dict[str, dict] = defaultdict(lambda: {'adet': 0, 'degisim_alfasi': []})
@@ -21,8 +25,12 @@ def rapor(kayit_yolu: Path, durum_yolu: Path) -> dict:
         out, incoming = traderlar.get(row['cikarilan'].lower()), traderlar.get(row['alinan'].lower())
         out_ret = out.get('sanal_kopya', {}).get('toplam') if out else None
         in_ret = incoming.get('sanal_kopya', {}).get('toplam') if incoming else None
-        alpha = in_ret - out_ret if isinstance(in_ret, (int, float)) and isinstance(out_ret, (int, float)) else None
-        item = {**row, 'cikarilan_sanal_net': out_ret, 'alinan_sanal_net': in_ret, 'degisim_alfasi': alpha,
+        base = tabanlar.get((row['tarih'], row['cikarilan'].lower()))
+        if base is None and isinstance(out_ret, (int, float)):
+            base = out_ret
+        alpha = (in_ret - (out_ret - base) if isinstance(in_ret, (int, float)) and isinstance(out_ret, (int, float))
+                 and isinstance(base, (int, float)) else None)
+        item = {**row, 'cikarilan_sanal_net': out_ret, 'cikarilan_taban_net': base, 'alinan_sanal_net': in_ret, 'degisim_alfasi': alpha,
                 'durum': 'hazir' if alpha is not None else 'izleme verisi bekleniyor'}
         changes.append(item)
         totals[row['gerekce']]['adet'] += 1
@@ -41,7 +49,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument('--cikti', type=Path, default=Path('izleme/degisim.json'))
     args = parser.parse_args(argv)
     args.cikti.parent.mkdir(parents=True, exist_ok=True)
-    args.cikti.write_text(json.dumps(rapor(args.kayit, args.durum), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    args.cikti.write_text(json.dumps(rapor(args.kayit, args.durum, args.cikti), ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
 if __name__ == '__main__':

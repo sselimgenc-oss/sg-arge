@@ -67,7 +67,9 @@ def degisim_uygula(liste_yolu: Path, kayit_yolu: Path, cikarilan: str, alinan: s
     if any(r['adres'].lower() == alinan.lower() for r in rows):
         raise ValueError('alınan adres izleme listesinde zaten var')
     degisim_yaz(kayit_yolu, row, rules)
-    old['kol'], old['kollar'], old['cikarilma_tarihi'] = 'cikarilan', ['cikarilan'], tarih
+    # Sabit referans kolu (ön kayıt 1.5 madde 3): ilk seçimin oda üyesi çıkarılsa da referans_oda olarak kalıcı izlenir.
+    referans = ['referans_oda'] if old.get('secim') == rules.get('referans_secim') else []
+    old['kol'], old['kollar'], old['cikarilma_tarihi'] = 'cikarilan', ['cikarilan'] + referans, tarih
     rows.append({'id': 'O' + hashlib.sha1(alinan.lower().encode()).hexdigest()[:8], 'adres': alinan.lower(),
                  'takma_ad': alinan[2:6].lower(), 'durum': 'izlemede', 't0': tarih, 'kol': 'oda', 'kollar': ['oda']})
     liste_yolu.write_text(yaml.safe_dump({'traderlar': rows}, allow_unicode=True, sort_keys=False), encoding='utf-8')
@@ -81,7 +83,7 @@ def temizle_cikarilan(liste_yolu: Path, today: str, rules: dict | None = None) -
     data = yaml.safe_load(liste_yolu.read_text(encoding='utf-8'))
     rows = data['traderlar'] if isinstance(data, dict) else data
     cut = date.fromisoformat(today)
-    kept = [r for r in rows if not (r.get('kol') == 'cikarilan' and r.get('cikarilma_tarihi') and
+    kept = [r for r in rows if not (r.get('kol') == 'cikarilan' and r.get('cikarilma_tarihi') and 'referans_oda' not in (r.get('kollar') or []) and
                                     (cut - date.fromisoformat(str(r['cikarilma_tarihi']))).days >= int(rules['cikarilan_izleme_gun']))]
     if len(kept) != len(rows):
         liste_yolu.write_text(yaml.safe_dump({'traderlar': kept}, allow_unicode=True, sort_keys=False), encoding='utf-8')

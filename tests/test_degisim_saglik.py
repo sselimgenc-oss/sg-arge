@@ -42,8 +42,30 @@ def test_degisim_raporu_gerekceyi_ayri_ve_sanal_alfayi_yazar(tmp_path):
     status = tmp_path / 'durum.json'
     status.write_text(json.dumps({'traderlar': [{'adres': addr('a'), 'sanal_kopya': {'toplam': .01}}, {'adres': addr('b'), 'sanal_kopya': {'toplam': .03}}]}))
     result = rapor(record, status)
-    assert result['degisimler'][0]['degisim_alfasi'] == pytest.approx(.02)
+    assert result['degisimler'][0]['degisim_alfasi'] == pytest.approx(.03)   # ilk raporda çıkarılanın tabanı = .01
+    previous = tmp_path / 'degisim.json'
+    previous.write_text(json.dumps(result))
+    status.write_text(json.dumps({'traderlar': [{'adres': addr('a'), 'sanal_kopya': {'toplam': .02}}, {'adres': addr('b'), 'sanal_kopya': {'toplam': .03}}]}))
+    result = rapor(record, status, previous)
+    assert result['degisimler'][0]['degisim_alfasi'] == pytest.approx(.02)   # .03 − (.02 − .01)
     assert result['gerekce_toplamlari']['kullanici_takdiri'] == {'adet': 1, 'ortalama_degisim_alfasi': pytest.approx(.02)}
+
+
+def test_referans_odasi_uyesi_cikarilsa_da_listeden_dusmez(tmp_path):
+    listing = tmp_path / 'izleme_listesi.yaml'
+    listing.write_text(yaml.safe_dump({'traderlar': [{'id': 'O01', 'adres': addr('a'), 'takma_ad': 'aaaa', 'durum': 'izlemede', 't0': '2026-10-29',
+                                                      'kol': 'oda', 'kollar': ['oda'], 'secim': load_rules()['referans_secim']}]}, sort_keys=False))
+    gecis.degisim_uygula(listing, tmp_path / 'degisim.jsonl', addr('a'), addr('b'), 'kullanici_takdiri', tarih='2026-10-30')
+    old = yaml.safe_load(listing.read_text())['traderlar'][0]
+    assert (old['kol'], old['kollar']) == ('cikarilan', ['cikarilan', 'referans_oda'])
+    assert gecis.temizle_cikarilan(listing, '2027-06-01') == 0
+
+
+def test_yetim_pozisyon_hesap_sicramasindan_once_gelir():
+    now = timestamp('2026-10-29T00:00:00Z')
+    fill = {'coin': 'BTC', 'time': 1, 'side': 'B', 'sz': '1', 'startPosition': '0'}
+    report = mutabakat_raporu([fill], [{'assetPositions': []}], now, onceki_hesap_degeri=100.0, hesap_degeri=200.0)
+    assert report['saglik']['isik'] == 'kirmizi'
 
 
 def test_mutabakat_saglik_isigi_altin_ornekleri():

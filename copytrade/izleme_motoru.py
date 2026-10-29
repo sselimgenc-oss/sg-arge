@@ -459,12 +459,13 @@ def mutabakat_raporu(fills: list[dict], states: list[dict], now: pd.Timestamp, r
     rows, broken = mutabakat(defter_pozisyonlari(fills), exchange, float(rules['mutabakat_goreli_tolerans']), float(rules['mutabakat_mutlak_tolerans']))
     summary = ozet(rows)
     jump = (abs(hesap_degeri / onceki_hesap_degeri - 1) if onceki_hesap_degeri and hesap_degeri else 0.0)
-    if jump >= float(rules['mutabakat_saglik_hesap_degeri_sicrama_oran']):
-        health = {'isik': 'sari', 'neden': 'hesap değeri sıçraması (yatırma/çekme şüphesi)'}
-    elif summary['yetim']:
+    # Kırmızı nedenler sarıdan önce gelir: sıçrama, yetim pozisyonu gizlememeli.
+    if summary['yetim']:
         health = {'isik': 'kirmizi', 'neden': 'yetim pozisyon'}
     elif summary['uyumsuz_oran'] >= float(rules['mutabakat_saglik_kirmizi_uyumsuz_oran']):
         health = {'isik': 'kirmizi', 'neden': 'pozisyon oranı uyumsuz'}
+    elif jump >= float(rules['mutabakat_saglik_hesap_degeri_sicrama_oran']):
+        health = {'isik': 'sari', 'neden': 'hesap değeri sıçraması (yatırma/çekme şüphesi)'}
     elif summary['uyumsuz_oran'] >= float(rules['mutabakat_saglik_sari_uyumsuz_oran']):
         health = {'isik': 'sari', 'neden': 'kaçırılmış dolum olasılığı'}
     elif broken:
