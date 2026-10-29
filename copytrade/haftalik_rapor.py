@@ -97,6 +97,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--getiri", type=Path, default=None, help="{adres: ileri getiri} JSON (yoksa rapor 'ileri getiri verisi yok' der)")
     parser.add_argument("--kapanmis-islem", type=Path, default=None, help="{adres: etiketten bu yana kapanmış işlem} JSON (v1.4 çıkış kuralı; yoksa çıkış değerlendirilemez)")
     parser.add_argument("--risk", type=Path, default=None, help="{adres: {etiket: {...}, son: {...}}} JSON (v1.4 risk işaretleri; yalnız bilgi)")
+    parser.add_argument("--arsiv-kesinti", type=Path, default=None, help="arsiv_alarm özet JSON: arşiv kesintisi rapora yazılır (alarmda kırmızı işaret)")
     parser.add_argument("--tarih", required=True)
     parser.add_argument("--cikti", type=Path, default=Path("rotasyon"))
     parser.add_argument("--gecis", action="store_true", help="aynı haftalık çalışmada geçiş kaydını da güncelle (kayit.jsonl, degerlendirme.jsonl)")

@@ -197,3 +197,14 @@ api_sayfa_boyutu_dolum: 2000
 
 # Körlük (K-6): sağlık ışığı pilot süresince performansa (koni, düşüş, CUSUM) bakmaz; yalnız veri bayatlığı, kaldıraç ve martingale işareti (işlem deseni, getiri değil). true yalnız analiz tarihinden sonra
 saglik_performans_konisi: false
+
+# HIP-3 alt sınıfları (K-5; copytrade/maliyet_rapor.py, yalnız rapor): A20 §4 tablosundaki aralıkların ÜST ucu (tek yön, ücret + kayma). Ana karar maliyeti (maliyet_taker, maliyet_kayma) değişmez.
+# buyume_seans_ici: büyüme modu, ABD hisse seansı içi (A20 c2: %0,014–0,024); buyume_seans_disi ve standart: gece/hafta sonu ya da standart mod (A20 c3: %0,14–0,34)
+maliyet_hip3_alt_uc: {buyume_seans_ici: 0.00024, buyume_seans_disi: 0.0034, standart: 0.0034}
+# ABD hisse seansı (yerel saat, hafta içi; resmî tatiller dikkate alınmaz → seans içi sayılır)
+maliyet_us_seans: {zaman_dilimi: America/New_York, acilis: "09:30", kapanis: "16:00"}
+# Büyüme modunda protokol ücreti bu çarpanla küçülür (A20: growthModeScale 0,1); deployerFeeScale çarpanı: ölçek < 1 ise ölçek + 1, değilse ölçek × 2
+maliyet_buyume_ucret_olcegi: 0.1
+
+# Arşiv kesinti alarmı (copytrade/arsiv_alarm.py): arsiv.yml'in son BAŞARILI koşusundan bu kadar saat geçtiyse kırmızı uyarı (A21: API yalnız son 10.000 dolumu verir; uzun boşluk geri alınamaz)
+arsiv_kesinti_saat: 12
