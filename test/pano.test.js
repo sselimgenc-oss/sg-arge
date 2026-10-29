@@ -192,6 +192,19 @@ function kollu() {                                   // kol alanı olan varyant
   ok('telefon: yasal ibare ekranda', await pg.$eval('#yasal', (e) => { const r = e.getBoundingClientRect(); return r.bottom <= innerHeight && r.height > 0; }));
   await ctx.close();
 
+  /* ---- 13) Keşif canlı yol sözleşmesi (veri dalı: kesif/kesif.json) ---- */
+  const KESIF_CANLI = 'https://raw.githubusercontent.com/sselimgenc-oss/sg-arge/copytrade-kapi/kesif/kesif.json';
+  const ornekKesif = JSON.parse(fs.readFileSync(path.join(root, 'kesif/ornek_kesif.json'), 'utf8'));
+  ({ ctx, pg } = await ac({ canliKesif: { ...ornekKesif, uretildi: '2026-10-28T18:00:00Z', adaylar: ornekKesif.adaylar.slice(0, 3) } }));
+  ok('Keşif: canlı dosya sabit yoldan okunur, GitHub API listelemesi yok', pg.istekler.some((u) => u === KESIF_CANLI) && !pg.istekler.some((u) => /api\.github\.com/.test(u)), pg.istekler.join(' ').slice(0, 200));
+  await pg.click('[data-nav=huni]'); await sleep(250);
+  ok('Keşif: canlı veri gösterilir (tarih 2026-10-28), örnek uyarısı yok', /2026-10-28/.test(await metin(pg, '#huMain')) && await pg.$eval('#ksMsg', (e) => e.classList.contains('hidden')));
+  await ctx.close();
+  ({ ctx, pg } = await ac({}, { width: 1440, height: 900 }));
+  const uyari = await pg.$eval('#ksMsg', (e) => { const m = document.getElementById('main').getBoundingClientRect(), r = e.getBoundingClientRect(); return { gorunur: !e.classList.contains('hidden'), tam: Math.abs(r.width - (m.width - parseFloat(getComputedStyle(document.getElementById('main')).paddingLeft) * 2)) < 40, metin: e.textContent }; });
+  ok('Keşif: canlı yoksa tam genişlikte "ÖRNEK (sahte) veri" uyarısı, her sekmede', uyari.gorunur && uyari.tam && /ÖRNEK \(sahte\) veri/.test(uyari.metin), JSON.stringify(uyari).slice(0, 160));
+  await ctx.close();
+
   ok('sayfa/konsol hatası yok', errs.length === 0, errs.join(' | ').slice(0, 300));
   await b.close(); s.close();
   console.log(bad ? '\n' + bad + ' test başarısız' : '\nhepsi geçti');
