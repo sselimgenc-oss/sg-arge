@@ -3,7 +3,7 @@
 Kaynak: `docs/ONKAYIT_D.md` "Sürüm 1.3". Kapı eşikleri ve karar kodu (`kapi.py` adımları) değişmez. Yeni sayılar yalnız
 `copytrade/kurallar.yaml`'a. Her madde altın örnekli test ile gelir; tam paket yeşil. main'e doğrudan push yok; PR açılır.
 
-## İş paketi A — seçim (`copytrade/secim.py`)
+## İş paketi A — seçim (`copytrade/secim.py`)  _(uygulandı: PR "Seçim v1.3 — iş paketi A"; çıktı klasörü `secim/<tarih>-v1.3/`)_
 1. `havuz`: adım 1+2 Geçti + tarz intraday/swing + adım 3 statik koşulları (`kisa_islem_payi_max`, `kapi_max_medyan_kaldirac`,
    `kapi_max_kaldirac`; sütunlar `kapi.py`'nin adım 3'te kullandıklarıyla aynı). Altın örnek: 36,5x en yüksek kaldıraçlı satır havuza girmez.
 2. `kontrol_sec`: havuz − oda; dilim = tarz × en yüksek kaldıraç (havuz medyanı altı/üstü); her oda üyesine aynı dilimden bir kontrol,

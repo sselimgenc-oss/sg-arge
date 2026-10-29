@@ -1,7 +1,8 @@
-name: CT-Seçim v1
+name: CT-Seçim v1.3
 
 # Elle çalışır. Girdi: `copytrade-kapi` veri dalındaki en son TAM kapı koşusu (durum = tamam, kapsam ≥ secim_min_kapsam).
-# Çıktı: veri dalına `secim/<tarih>/secim.json` + `RAPOR.md`. İzleme listesi burada üretilmez (kullanıcı onayından sonra, elle: `--izleme-listesi`).
+# Çıktı: veri dalına `secim/<tarih>-v1.3/secim.json` + `RAPOR.md` (bayraksız; seçimi bekletmez). İkinci iş kırmızı bayrakları hesaplayıp aynı klasöre `bayrak.json` ekler.
+# Aynı sürüm + kapı tarihi veri dalında varsa seçim reddedilir (üzerine yazılmaz). İzleme listesi burada üretilmez (kullanıcı onayından sonra, elle: `--izleme-listesi`).
 on:
   workflow_dispatch:
   push:
@@ -20,7 +21,9 @@ concurrency:
 jobs:
   secim:
     runs-on: ubuntu-latest
-    timeout-minutes: 150  # aday katı kırmızı bayrakları 365 gün dolum/funding çeker; 20 dk run 1'de yetmedi
+    timeout-minutes: 30  # seçim bayraksızdır (ağ isteği yok); bayraklar ayrı işte
+    outputs:
+      day: ${{ steps.secim.outputs.day }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,6 +37,8 @@ jobs:
         run: |
           git fetch --depth=1 origin copytrade-kapi
           git archive FETCH_HEAD copytrade/kapi | tar -x
+          # yayımlanmış seçimler (aynı sürüm + kapı tarihi üzerine yazılmasın); ilk yayımda secim/ yoktur
+          if git cat-file -e FETCH_HEAD:secim 2>/dev/null; then git archive FETCH_HEAD secim | tar -x; fi
       - name: Seçim
         id: secim
         run: |
@@ -44,21 +49,65 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: secim-${{ steps.secim.outputs.day }}
-          path: secim
+          path: secim/${{ steps.secim.outputs.day }}-v1.3
       - name: Veri dalına yaz
         run: |
           day=${{ steps.secim.outputs.day }}
           archive=$(mktemp -d)
           mkdir -p "$archive/secim"
-          cp -r "secim/$day" "$archive/secim/"
+          cp -r "secim/$day-v1.3" "$archive/secim/"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch origin copytrade-kapi
           git checkout -f -B copytrade-kapi FETCH_HEAD
+          test -e "secim/$day-v1.3" && { echo "secim/$day-v1.3 veri dalında zaten var; üzerine yazılmaz."; exit 1; }
           cp -r "$archive"/. .
-          git add -f "secim/$day"
+          git add -f "secim/$day-v1.3"
           git diff --cached --quiet && exit 0
-          git commit -m "copytrade: Seçim v1 $day"
+          git commit -m "copytrade: Seçim v1.3 $day"
+          for attempt in 1 2 3; do
+            git pull --rebase origin copytrade-kapi
+            git push origin HEAD:copytrade-kapi && exit 0
+            sleep 5
+          done
+          exit 1
+
+  bayrak:
+    # Seçim yayımlandıktan sonra, onu beklemeden ayrı iş: aday katı kırmızı bayrakları (365 gün dolum/funding çeker; 20 dk run 1'de yetmedi).
+    # Bilgi sütunudur, seçimi değiştirmez; başarısızsa seçim etkilenmez.
+    needs: secim
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    concurrency:
+      group: copytrade-secim-bayrak
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Yayımlanmış seçimi getir
+        run: |
+          git fetch --depth=1 origin copytrade-kapi
+          git archive FETCH_HEAD "secim/${{ needs.secim.outputs.day }}-v1.3" | tar -x
+      - name: Bayrakları hesapla
+        run: python -m copytrade.secim --bayrak-uret "secim/${{ needs.secim.outputs.day }}-v1.3/secim.json"
+      - name: Veri dalına ekle
+        run: |
+          day=${{ needs.secim.outputs.day }}
+          cp "secim/$day-v1.3/bayrak.json" "$RUNNER_TEMP/bayrak.json"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin copytrade-kapi
+          git checkout -f -B copytrade-kapi FETCH_HEAD
+          cp "$RUNNER_TEMP/bayrak.json" "secim/$day-v1.3/bayrak.json"
+          git add -f "secim/$day-v1.3/bayrak.json"
+          git diff --cached --quiet && exit 0
+          git commit -m "copytrade: Seçim v1.3 $day kırmızı bayraklar"
           for attempt in 1 2 3; do
             git pull --rebase origin copytrade-kapi
             git push origin HEAD:copytrade-kapi && exit 0
