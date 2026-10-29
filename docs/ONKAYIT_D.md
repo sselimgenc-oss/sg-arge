@@ -118,3 +118,17 @@ olmalı, 12 hafta beklemek kabul görmüyor.
    değiştirilmeden izlenir (`referans_oda`, `referans_kontrol`). "Kararlarım değer kattı mı?" = yönetilen oda ↔ sabit referans oda.
 4. **Analiz.** 12. hafta (2027-01-21) birincil/ikincil hesabı yine yapılır ama artık "kör test" değildir; raporda bu yazılır.
    Ara bakışlar serbesttir.
+
+## Sürüm 1.6 (2026-10-29, kullanıcı kararı: "evet"; dayanak `arastirma/fikir_gorusleri/OZET.md`)
+Altı dış görüşün ortak uyarısı: gerekçesiz, kâra bakarak trader değiştirmek veri gözetlemedir. 1.5'teki değiştirme hakkı
+korunur; ölçülebilir olması için kayıt kuralı eklenir.
+
+1. **Gerekçe kodu zorunlu.** Her oda değişikliği (çıkış/giriş) `gecis.py` kaydına şu kodlardan biriyle yazılır:
+   `kaldirac_ihlali`, `tarz_kaymasi`, `hareketsizlik`, `veri_sorunu`, `anti_martingale`, `otomatik_kural` (v1.4 çıkış önerisi),
+   `kullanici_takdiri`. Kâr/zarar ayrı bir kod değildir; kullanıcı sezgisiyle yapılan değişiklik `kullanici_takdiri` olarak işaretlenir
+   ve ayrıca raporlanır ("takdirle yapılan değişiklikler değer kattı mı?").
+2. **Değişiklik tavanı.** Kayan `degisim_tavan_gun` (28) gün içinde en çok `degisim_tavan_adet` (2) çıkış. `kaldirac_ihlali` ve
+   `veri_sorunu` tavana sayılmaz.
+3. **Çıkarılan izlenir.** Odadan çıkan trader `cikarilan_izleme_gun` (56) gün `cikarilan` kolunda sessizce izlenir (bildirim yok).
+   "Değişim alfası" = giren − çıkan (aynı tarihlerden itibaren, sanal kopya getirisi); trader ve gerekçe kodu bazında raporlanır.
+4. Sabit referans kolu (1.5 madde 3), analiz tarihi ve Faz 3 değişmez.

@@ -232,3 +232,10 @@ faz3_rejim_pencere_gun: 30
 faz3_rejim_getiri_esik: 0.10
 faz3_rejim_sok_yuzdelik: 0.90
 faz3_rejim_yuzdelik_pencere_gun: 90
+
+# Ön kayıt 1.6: oda değişikliği gerekçe kodu, tavan ve çıkarılanın izlenmesi (docs/ONKAYIT_D.md)
+degisim_gerekce_kodlari: [kaldirac_ihlali, tarz_kaymasi, hareketsizlik, veri_sorunu, anti_martingale, otomatik_kural, kullanici_takdiri]
+degisim_tavan_gun: 28
+degisim_tavan_adet: 2
+degisim_tavan_disi: [kaldirac_ihlali, veri_sorunu]
+cikarilan_izleme_gun: 56
