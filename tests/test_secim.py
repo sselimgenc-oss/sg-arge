@@ -324,4 +324,11 @@ def test_secim_ana_islemi_bayrak_hesaplamaz_ayri_is_hesaplar():
     secim_job, bayrak_job = workflow.split("\n  bayrak:\n")
     assert "--bayrak" not in secim_job.split("jobs:")[1] and "needs: secim" in bayrak_job
     assert "python -m copytrade.secim --bayrak --secim" in bayrak_job and "bayrak.json" in bayrak_job
-    assert "git archive FETCH_HEAD secim" in secim_job and "test ! -e \"secim/$name/secim.json\"" in secim_job       # yayımlı seçim üzerine yazılmaz
+    assert "git archive FETCH_HEAD secim" in secim_job and "git cat-file -e \"HEAD:secim/$name/secim.json\"" in secim_job       # yayımlı seçim üzerine yazılmaz
+
+
+def test_yayim_korumasi_calisma_agacina_degil_veri_dalina_bakar():
+    # Koşu 40868284352: seçimin kendi çıktısı (secim/<ad>/) çalışma ağacında durduğu için `test ! -e` her zaman düşüyordu.
+    workflow = WORKFLOW.read_text(encoding="utf-8")
+    assert 'git cat-file -e "HEAD:secim/$name/secim.json"' in workflow
+    assert 'test ! -e "secim/$name/secim.json"' not in workflow
