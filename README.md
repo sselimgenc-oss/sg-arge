@@ -24,7 +24,6 @@
 - Sayfa: `ofis/` (GitHub Pages'te `…/ofis/`). Belgeler: `ofis/SEMA.md` (veri), `ofis/OLAYLAR.md` (olay → animasyon), `ofis/LISANSLAR.md`.
 - Deneme parametreleri: `?saat=23:14` (gün ışığı), `?hiz=2`, `?etiket=0`, `?hareket=0`, `?perf=1` (ayrıntı `ofis/SEMA.md` §6).
 - Salt okunur; gerçek emir, para ve aracı kurum bağlantısı yok.
-- **Tema (sürüm 1, `claude/ofis-tema-sonnet`):** Ayarlar → Tema: **Klasik (piksel)** (varsayılan) ya da **İzometrik**. Seçim tarayıcıda saklanır (`localStorage`); `?tema=izometrik` adres parametresiyle de denenebilir. İzometrik temada "binanın tümü" görünümü `ofis/tema/ofis_izometrik_referans.webp` referans görseli (masaüstü) / `…_768.webp` (telefon) ve tıklanabilir bölgelerle (`ofis/tema/izometrik.json`) çizilir; her bölgenin üstünde canlı rozet (Finans: kasa/getiri, Risk: en kötü tavan, Lab/Kapı/Arşiv: veri yaşı, Oda: trader sayısı ve likidasyon-uzaklığı renk dağılımı, Makam: hafta/karar). Bir odaya girince (dokunma ya da sol menü) **her iki temada da aynı** piksel oda içi görünüm ve panel açılır; yalnız bina genel görünümü farklıdır. Testler: `node ofis/test/tema.test.js`.
 
 ## Veri kaynağı
 `index.html` içindeki iki sabit, canlı veriyi gösterir (sg-arge `copytrade-izleme` dalı, ham GitHub adresi):

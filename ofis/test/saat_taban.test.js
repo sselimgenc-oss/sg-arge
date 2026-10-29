@@ -74,7 +74,7 @@ const srv = http.createServer((q, r) => {
   await ctx.close();
 
   /* ---------- Ek: açık işlemler durum.json'daki oda üyesi pozisyonlarından (iki temada da) ---------- */
-  for (const tema of ['klasik', 'izometrik']) {
+  for (const tema of ['klasik']) {
     ({ ctx, pg, errs } = await gercekAc('?saat=15:40&tema=' + tema));
     await pg.click('.ray [data-oda=oda]'); await sleep(600);
     const acik = await pg.evaluate(() => ({ n: document.getElementById('acikN').textContent, html: document.getElementById('acikIcerik').innerHTML, kartGorunur: !document.getElementById('kartPanel').hidden || !document.getElementById('bilgi').hidden }));
@@ -93,24 +93,6 @@ const srv = http.createServer((q, r) => {
   const riskTxt = await pg.evaluate(() => document.getElementById('riskIcerik').textContent);
   ok('Risk kartında kaldıraç "x" birimiyle yazılır (yüzdeye çevrilmez): "3x / 10x"', /3x\s*\/\s*10x/.test(riskTxt), riskTxt.replace(/\s+/g, ' ').trim());
   await ctx.close();
-
-  for (const vp of [{ width: 1280, height: 800 }, { width: 390, height: 844 }]) {
-    ({ ctx, pg, errs } = await gercekAc('?saat=15:40&tema=izometrik', vp));
-    const durum = await pg.evaluate(() => {
-      const kap = document.getElementById('izoKap').getBoundingClientRect(), zoom = document.querySelector('.izo-zoom').getBoundingClientRect();
-      const rozetler = [...document.querySelectorAll('#izoRozetler .izo-rozet')].filter(d => !d.hidden);
-      const tasan = rozetler.filter(d => { const r = d.getBoundingClientRect(); return r.left < kap.left - 1 || r.right > kap.right + 1 || r.top < kap.top - 1 || r.bottom > kap.bottom + 1; });
-      const kesisenler = rozetler.filter(d => { const r = d.getBoundingClientRect(); return r.left < zoom.right && r.right > zoom.left && r.top < zoom.bottom && r.bottom > zoom.top; });
-      const cakisanlar = [];
-      for (let i = 0; i < rozetler.length; i++) for (let j = i + 1; j < rozetler.length; j++) { const a = rozetler[i].getBoundingClientRect(), b = rozetler[j].getBoundingClientRect(); if (a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top) cakisanlar.push([rozetler[i].dataset.oda, rozetler[j].dataset.oda]); }
-      return { n: rozetler.length, tasanN: tasan.length, kesisenN: kesisenler.length, cakisanN: cakisanlar.length, odalar: rozetler.map(d => d.dataset.oda), detay: cakisanlar };
-    });
-    ok(JSON.stringify(vp) + ': rozetler görsel içinde kalır (ekrandan taşmaz)', durum.tasanN === 0, JSON.stringify(durum));
-    ok(JSON.stringify(vp) + ': hiçbir rozet yakınlaştırma düğmeleriyle çakışmaz', durum.kesisenN === 0, JSON.stringify(durum));
-    ok(JSON.stringify(vp) + ': rozetler birbiriyle çakışmaz', durum.cakisanN === 0, JSON.stringify(durum.detay));
-    ok(JSON.stringify(vp) + ': Arşiv/Sekreterlik veri yoksa rozetsiz (bilinmiyor yazmaz)', !durum.odalar.includes('arsiv') && !durum.odalar.includes('sekreterlik'), JSON.stringify(durum.odalar));
-    await ctx.close();
-  }
 
   await b.close(); srv.close();
   console.log(bad ? ('\n' + bad + ' test başarısız') : '\nTüm testler geçti.');

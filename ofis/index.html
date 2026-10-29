@@ -100,23 +100,6 @@
   <section class="ofis" aria-label="Ofis görünümü">
     <div class="tuval-kap" id="ofisTuval">
       <canvas id="tuval" tabindex="0" role="img" aria-label="İzometrik ofis binası" aria-describedby="ofisAciklama"></canvas>
-      <div class="izo-kap" id="izoKap" hidden>
-        <div class="izo-sahne" id="izoSahne">
-          <picture>
-            <source media="(max-width: 699px)" data-srcset="tema/ofis_izometrik_referans_768.webp">
-            <img id="izoImg" data-src="tema/ofis_izometrik_referans.webp" alt="İzometrik 3B minyatür ofis kesiti; her oda tabelayla işaretli" draggable="false">
-          </picture>
-          <div class="izo-bolgeler izo-parlak" id="izoParlak"></div>
-          <div class="izo-bolgeler" id="izoBolgeler"></div>
-          <div class="izo-rozetler" id="izoRozetler"></div>
-          <div class="izo-balonlar" id="izoBalonlar" aria-hidden="true"></div>
-        </div>
-        <div class="izo-zoom">
-          <button type="button" id="izoIn" aria-label="İzometrik görünümü yakınlaştır">+</button>
-          <button type="button" id="izoOut" aria-label="İzometrik görünümü uzaklaştır">−</button>
-          <button type="button" id="izoSigdir" aria-label="İzometrik görünümü sığdır">⌂</button>
-        </div>
-      </div>
       <p id="ofisAciklama" class="sr">Ofis yükleniyor.</p>
       <div class="ipucu" id="ipucu" role="tooltip" hidden></div>
       <button type="button" class="gun-serit" id="gunSerit" aria-controls="kartPanel" aria-label="Günlük özet; ayrıntı için tıkla"><b>Günlük özet</b><span id="gunSeritMetin">—</span><em>ayrıntı ›</em></button>
@@ -168,7 +151,6 @@
     <header><h2 id="ayarBas">Oda ve çalışan adları</h2><button type="button" id="ayarKapat" aria-label="Ayarları kapat">×</button></header>
     <p class="ks">Adlar yalnız bu tarayıcıda saklanır; JSON olarak dışa ve içe aktarılır. Yalnız etiket değişir: veri ve trader'ın gerçek adresi (kısaltılmış) sabit kalır.</p>
     <div class="ses-satir"><label class="sw"><input type="checkbox" id="sesAc"><span>Ses: olay başına tek kısa ton</span></label><p class="ks">Varsayılan kapalı. Tonlar kodla üretilir (ses dosyası yok); bu tarayıcıda saklanır.</p></div>
-    <div class="tema-satir"><label class="tema-label">Tema<select id="temaSec"><option value="klasik">Klasik (piksel)</option><option value="izometrik">İzometrik</option></select></label><p class="ks">Oda içi görünüm ve paneller her iki temada aynıdır; yalnız binanın tümü farklı çizilir. Bu tarayıcıda saklanır; adres çubuğunda <code>?tema=izometrik</code> da çalışır.</p></div>
     <div id="ayarListe"></div>
     <div class="b-btnler">
       <button type="button" id="ayarDisa">Dışa aktar (JSON)</button>
@@ -191,7 +173,6 @@
 <script src="cekmece.js?v=913eed6"></script>
 <script src="ses.js?v=913eed6"></script>
 <script src="panel.js?v=913eed6"></script>
-<script src="tema.js?v=913eed6"></script>
 <script src="main.js?v=913eed6"></script>
 </body>
 </html>

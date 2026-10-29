@@ -65,14 +65,3 @@ Ağ üzerinden ≈ 80 KB (gzip). `kanit/` klasörü (sürüm 2 ekran görüntül
 **Sürüm 2b eki:** yeni dosyalar `cekmece.js` (≈ 4,6 KB) ve `ses.js` (≈ 2 KB); ses WebAudio ile kodla üretilir, ses dosyası yoktur. Dış varlık eklenmedi; görsel varlık dosyası hâlâ 0 bayt.
 Tüm sayfa ≈ 313 KB (gzip öncesi). `kanit/` (v1 karşılaştırmaları, `v2/`, `v2b/`) ≈ 13 MB < 15 MB.
 
-## İzometrik tema (sürüm 1, 2026-10-29) — ilk dış görsel varlık
-Yukarıdaki "dış görsel varlık yok" sonucu yalnız **klasik (piksel)** temayı kapsar; klasik tema değişmeden duruyor. **İzometrik** tema
-(kullanıcı seçimiyle açılır, varsayılan değildir) tek bir referans görsel kullanır:
-
-| Varlık | Kaynak | Lisans |
-|---|---|---|
-| `tema/ofis_izometrik_referans.webp` (1536×1024, ≈ 295 KB) ve telefon sürümü `tema/ofis_izometrik_referans_768.webp` (768×512, ≈ 62 KB) | Yapay zekâ üretimi (`sg-arge` görev belgesinde, kullanıcı onayıyla üretildi); `sg-arge/docs/tema/ofis_izometrik_referans.webp`'ten aynen kopyalandı | Repo içi serbest kullanım (görev belgesi: `sg-arge/docs/GOREV_OFIS_TEMA.md`); üçüncü taraf telifi yok |
-| Bölge koordinatları (`tema/izometrik.json`) ve rozet metinleri | `tema.js` — görselin üstüne CSS `clip-path` ile çizilir, veriden okunur | Bu reponun kendi içeriği |
-
-Oda içi görünüm, panel ve olay çekmecesi her iki temada da ortaktır (piksel kodla, görsel varlıksız); yalnız "binanın tümü" görünümü
-izometrik temada bu tek görsele döner.
