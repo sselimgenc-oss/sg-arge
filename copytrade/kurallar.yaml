@@ -214,3 +214,21 @@ api_dolum_pencere_siniri: 10000
 
 # Sağlık ışığında performans konisi (koni, düşüş, CUSUM). false = kör mod (K-6 b). Ön kayıt 1.5 (kullanıcı, 2026-10-29): körlük kalktı → true
 saglik_performans_konisi: true
+
+# Faz 3 geçmiş prova (copytrade/faz3.py; docs/GOREV_FAZ3.md). Lider kararları: ileri 60 gün, adım 14 gün, en az 6 pencere. Durdurma 1: fark ≤ 0 olan pencere oranı > faz3_durdurma_orani → öneri
+faz3_ileri_gun: 60
+faz3_adim_gun: 14
+faz3_min_pencere: 6
+faz3_durdurma_orani: 0.50
+# Hiçbir pencere bu tarihten sonraya taşmaz (pilot verisi görülmez; körlük): son T = son_tarih − ileri_gun; pencere sayısı geriye doğru
+faz3_son_tarih: "2026-10-28"
+faz3_pencere_sayisi: 12
+# Sentetik doğrulama (GOREV_FAZ3 madde 1): tohum sayısı, yanlış pozitif beklenen bant (tek yönlü %5 civarı; MBB küçük örnekte iyimser), enjekte etkinin asgari yakalanma oranı
+faz3_sentetik_tohum: 200
+faz3_yanlis_pozitif_bant: [0.0, 0.10]
+faz3_etki_yakalama_min: 0.80
+# Rejim kırılımı (bilgi; rejim.py parametreleri)
+faz3_rejim_pencere_gun: 30
+faz3_rejim_getiri_esik: 0.10
+faz3_rejim_sok_yuzdelik: 0.90
+faz3_rejim_yuzdelik_pencere_gun: 90
