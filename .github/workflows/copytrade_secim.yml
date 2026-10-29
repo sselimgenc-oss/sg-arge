@@ -114,14 +114,14 @@ jobs:
           name=${{ needs.secim.outputs.name }}
           archive=$(mktemp -d)
           test -f "yayim/secim/$name/bayrak.json"
-          cp "yayim/secim/$name/bayrak.json" "$archive/"
+          cp "yayim/secim/$name/bayrak.json" "yayim/secim/$name/BAYRAK.md" "$archive/"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch origin copytrade-kapi
           git checkout -f -B copytrade-kapi FETCH_HEAD
           test -f "secim/$name/secim.json"
-          cp "$archive/bayrak.json" "secim/$name/bayrak.json"
-          git add -f "secim/$name/bayrak.json"
+          cp "$archive/bayrak.json" "$archive/BAYRAK.md" "secim/$name/"
+          git add -f "secim/$name/bayrak.json" "secim/$name/BAYRAK.md"
           git diff --cached --quiet && exit 0
           git commit -m "copytrade: Seçim $name bayrakları"
           for attempt in 1 2 3; do

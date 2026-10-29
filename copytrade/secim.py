@@ -283,6 +283,32 @@ def ozet_sutunlar(table: pd.DataFrame) -> list[str]:
     return lines
 
 
+BAYRAK_BASLIK = ("adres", "rol", "vault oranı", "funding payı", "alt hesapta ters", "30 gün hacim/hesap", "zararda ekleme", "katlama oranı", "coin HHI",
+                 "en büyük coin payı", "ekleme derinliği", "not")
+
+
+def bayrak_tablosu(items: list[tuple[str, dict[str, Any]]]) -> list[str]:
+    """Kırmızı bayrak bilgi tablosu (RAPOR ve BAYRAK.md): satır = (adres, bayrak_* alanları). Eksik/None değerler "–"."""
+    lines = ["| " + " | ".join(BAYRAK_BASLIK) + " |", "|" + "---|" * len(BAYRAK_BASLIK)]
+    for address, e in items:
+        lines.append(f"| `{address}` | {e.get('bayrak_rol') or '–'} | {_fmt(e.get('bayrak_vault_orani'))} | {_fmt(e.get('bayrak_funding_payi'))} | "
+                     f"{e.get('bayrak_alt_hesap_ters', '–')} | {_fmt(e.get('bayrak_hacim_orani'), 2)} | {_fmt(e.get('bayrak_zararda_ekleme'))} | "
+                     f"{_fmt(e.get('bayrak_katlama_orani'))} | {_fmt(e.get('bayrak_coin_hhi'))} | {_fmt(e.get('bayrak_en_buyuk_coin_payi'))} | "
+                     f"{_fmt(e.get('bayrak_ekleme_derinligi'))} | {e.get('bayrak_not') or ''} |")
+    return lines
+
+
+def bayrak_raporu(result: dict[str, Any], body: dict[str, Any]) -> str:
+    """``BAYRAK.md``: bayrak.json'daki aday katı bilgi tablosu (oda üyeleri önce). Bilgidir, kimseyi elemez; puan ve getiri yoktur."""
+    room = [a for a, e in sorted(result["adresler"].items()) if "oda" in e["kollar"]]
+    candidates = [a for a in sorted(body["bayraklar"]) if a not in room]
+    items = [(a, body["bayraklar"][a]) for a in room + candidates if a in body["bayraklar"]]
+    head = [f"# Kırmızı bayraklar — seçim {body['secim_surumu']} (kapı {body['kapi_tarihi']})", "",
+            f"Bilgi sütunlarıdır, kimseyi elemez. Katlama oranı: kat ≥ `bayrak_kat_esik` olan zararda eklemelerin payı. Hesaplama {'tamam' if body.get('tamam') else 'KISMİ (zaman aşımı/hata)'}; "
+            f"oda üyeleri önce ({len(room)}), sonra diğer adaylar.", ""]
+    return "\n".join(head + bayrak_tablosu(items)) + "\n"
+
+
 def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) -> str:
     n = result["sayilar"]
     lines = [f"# Seçim {result['secim_surumu']} — {result['tarih']} (kapı tarihi {result['kapi_tarihi']})", "",
@@ -304,10 +330,7 @@ def rapor(result: dict[str, Any], table: pd.DataFrame, durum: dict[str, Any]) ->
                      f"{_fmt(e['en_yuksek_kaldirac'], 2)} | {_fmt(e['gecmis_gun'], 0)} | {why} |")
     flagged = [(a, e) for a, e in room if "bayrak_rol" in e]
     if flagged:
-        lines += ["", "## Kırmızı bayraklar (bilgi; kimseyi elemez — oda üyeleri)", "",
-                  "| adres | rol | vault oranı | funding payı | alt hesapta ters | 30 gün hacim/hesap | not |", "|---|---|---|---|---|---|---|"]
-        lines += [f"| `{a}` | {e['bayrak_rol'] or '–'} | {_fmt(e['bayrak_vault_orani'])} | {_fmt(e['bayrak_funding_payi'])} | "
-                  f"{e['bayrak_alt_hesap_ters']} | {_fmt(e['bayrak_hacim_orani'], 2)} | {e['bayrak_not'] or ''} |" for a, e in flagged]
+        lines += ["", "## Kırmızı bayraklar (bilgi; kimseyi elemez — oda üyeleri)", ""] + bayrak_tablosu([(a, e) for a, e in flagged])
     dropped = [(a, e["iliskili_not"]) for a, e in sorted(result["adresler"].items()) if e["iliskili_not"].startswith("ilişkili hesap")]
     if dropped:
         lines += ["", "## İlişkili hesap nedeniyle odaya girmeyenler", ""] + [f"- `{a}`: {note}" for a, note in dropped]
@@ -439,11 +462,14 @@ def main(argv: list[str] | None = None) -> None:
         target = source.parent / "bayrak.json"
         previous = json.loads(target.read_text(encoding="utf-8")) if target.exists() else None      # önceki (kısmi) sonuç = önbellek
 
-        def write(body):                                                                              # her adresten sonra checkpoint
+        secim_json = json.loads(source.read_text(encoding="utf-8"))
+
+        def write(body):                                                                              # her adresten sonra checkpoint (kısmi sonuç da okunur)
+            (source.parent / "BAYRAK.md").write_text(bayrak_raporu(secim_json, body), encoding="utf-8")
             temporary = target.with_suffix(".json.tmp")
             temporary.write_text(json.dumps(body, ensure_ascii=False, indent=1, allow_nan=False) + "\n", encoding="utf-8")
             temporary.replace(target)
-        body = bayrak_hesapla(json.loads(source.read_text(encoding="utf-8")), lambda address, value: bayrak.hesapla(client, address, value), previous, write)
+        body = bayrak_hesapla(secim_json, lambda address, value: bayrak.hesapla(client, address, value), previous, write)
         print(f"Bayrak: {len(body['bayraklar'])} adres ({source.parent}).")
         return
     path = latest(args.root, "kapi/*/sonuc.csv")

@@ -54,3 +54,7 @@
 - [x] E3: etiketten önceki (miras) pozisyonu kapatan dolum `ZeroDivisionError` vermez (V0/V1/V2)
 - [x] E4: `Market.mark_at` işaret yaşı sınırı (`isaret_yas_max_dk` 120); aşılırsa `mark_missing`, canlı sonuç "eksik işaretleme" notu taşır
 - [x] E6: `bayrak.json` sürümlü önbellek (kod hash + seçim sürümü + kapı tarihi), her adresten sonra checkpoint, iş akışı önceki/kısmi sonucu veri dalından geri yükler ve zaman aşımında da yazar
+
+## Bayrak ek ölçüleri (Argon A12, `copytrade/bayrak_ek.py`)
+- [x] Martingale (zararda ekleme), tek coin HHI, ekleme derinliği; saf ölçü, eşik yok. Pencere öncesinden taşınan pozisyonda giriş bilinmiyor sayılır, pozisyon sıfırlanana dek zararda ekleme ölçülmez; ayrıştırılamayan satırlar `atlanan_satir`; girdi `perp_fills` ile süzülür
+- [x] `bayrak.json` / `BAYRAK.md` bilgi sütunları: `bayrak_zararda_ekleme`, `bayrak_katlama_orani`, `bayrak_coin_hhi`, `bayrak_en_buyuk_coin_payi`, `bayrak_ekleme_derinligi`; `bayrak_kat_esik` (2,0) yalnız katlama oranının tanımı, kimseyi elemez
