@@ -11,10 +11,12 @@ test("çalışan ya da sırada bekleyen koşu varsa asla tetiklenmez", () => {
   assert.deepEqual(tetiklemeKarari([{ status: "waiting" }], 60, NOW), { tetikle: false, neden: "calisan_var" });
 });
 
-test("hiç başarılı koşu yoksa tetiklenir (ilk koşu ya da hepsi başarısız)", () => {
-  assert.deepEqual(tetiklemeKarari([], 60, NOW), { tetikle: true, neden: "basarili_kosu_yok" });
-  assert.deepEqual(tetiklemeKarari([{ status: "completed", conclusion: "failure", run_started_at: "2026-10-29T17:00:00Z" }], 60, NOW),
-    { tetikle: true, neden: "basarili_kosu_yok" });
+test("hiç koşu yoksa tetiklenir; kırmızı biten koşu da sayılır (arşiv boşluk eşiğinde bilerek kırmızı biter → dakikada bir yeniden tetikleme yok)", () => {
+  assert.deepEqual(tetiklemeKarari([], 60, NOW), { tetikle: true, neden: "kosu_yok" });
+  assert.deepEqual(tetiklemeKarari([{ status: "completed", conclusion: "failure", run_started_at: "2026-10-29T17:30:00Z" }], 60, NOW),
+    { tetikle: false, neden: "taze", yasDk: 30 });
+  assert.deepEqual(tetiklemeKarari([{ status: "completed", conclusion: "failure", run_started_at: "2026-10-29T16:30:00Z" }], 60, NOW),
+    { tetikle: true, neden: "eski", yasDk: 90 });
 });
 
 test("son başarılı koşu eşikten eskiyse tetiklenir (altın örnek: 75 dk eşik, 80 dk önce)", () => {

@@ -252,7 +252,8 @@ function dailySummaryText(status, nowMs = Date.now()) {
   const odaGetiri = ortalamaGetiri(odaKopya), kontrolGetiri = ortalamaGetiri(kontrolKopya);
   const fark = odaGetiri != null && kontrolGetiri != null ? odaGetiri - kontrolGetiri : null;
   const sonGunOlaylari = (status.olaylar || []).filter(e => { const t = Date.parse(e.zaman); return Number.isFinite(t) && nowMs - t <= 86400000 && nowMs - t >= 0; });
-  const islemOlaylari = sonGunOlaylari.filter(e => ["acilis", "kapanis", "buyutme"].includes(e.tur));
+  const odaIdleri = new Set(room.map(t => t.id));   // özet oda içindir; olaylar listesi tüm kolları taşır
+  const islemOlaylari = sonGunOlaylari.filter(e => ["acilis", "kapanis", "buyutme"].includes(e.tur) && odaIdleri.has(e.trader));
   const age = Math.max(0, Math.floor((nowMs - Date.parse(status.uretildi)) / 60000));
   const count = c => room.filter(t => (t.saglik?.isik || "yesil") === c).length;
   return [
