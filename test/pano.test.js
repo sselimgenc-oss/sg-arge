@@ -8,6 +8,7 @@ let bad = 0;
 const ok = (n, c, x) => { if (!c) bad++; console.log((c ? 'OK   ' : 'FAIL ') + n + (x !== undefined && x !== '' ? ' → ' + x : '')); };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const ornek = JSON.parse(fs.readFileSync(path.join(root, 'izleme/ornek_durum.json'), 'utf8'));
+const kasaSentetik = JSON.parse(fs.readFileSync(path.join(root, 'test/kasa_sentetik.json'), 'utf8'));
 const A1 = '0x0000000000000000000000000000000000000001';
 
 function kollu() {                                   // kol alanı olan varyant
@@ -37,11 +38,11 @@ function kollu() {                                   // kol alanı olan varyant
   /* ---- 1) sekmeler ve yasal ibare ---- */
   let { ctx, pg } = await ac();
   const sek = await pg.$$eval('button.nav-btn', (l) => l.map((x) => x.textContent.trim()));
-  ok('4 sekme, bu sırayla: Özet · Trader\'lar · Huni · Ayarlar', JSON.stringify(sek) === JSON.stringify(['Özet', "Trader'lar", 'Huni', 'Ayarlar']), JSON.stringify(sek));
+  ok('5 sekme, Kasa dahil doğru sırada', JSON.stringify(sek) === JSON.stringify(['Özet', 'Kasa', "Trader'lar", 'Huni', 'Ayarlar']), JSON.stringify(sek));
   const ol = await pg.$eval('#ofisLink', (e) => ({ href: e.getAttribute('href'), txt: e.textContent.trim(), cls: e.className, h: e.getBoundingClientRect().height }));
   ok('üst menüde "Ofis" bağlantısı: göreli yol ofis/, sekmelerle aynı stil', ol.href === 'ofis/' && ol.txt === 'Ofis' && /nav-btn/.test(ol.cls) && ol.h >= 44, JSON.stringify(ol));
   ok('açılışta Özet sekmesi aktif', await pg.$eval('.nav-btn.active', (e) => e.dataset.nav) === 'ozet');
-  for (const t of ['ozet', 'traderlar', 'huni', 'ayarlar']) {
+  for (const t of ['ozet', 'kasa', 'traderlar', 'huni', 'ayarlar']) {
     await pg.click(`[data-nav=${t}]`); await sleep(300);
     const g = await pg.evaluate(() => { const y = document.getElementById('yasal'), r = y.getBoundingClientRect(); return { txt: y.textContent, gor: r.height > 0 && r.top >= 0 && r.bottom <= innerHeight }; });
     ok(`yasal ibare görünür (${t}): araştırma / sanal, yatırım tavsiyesi değil`, /araştırma \/ sanal, yatırım tavsiyesi değil/i.test(g.txt) && g.gor);
@@ -62,6 +63,8 @@ function kollu() {                                   // kol alanı olan varyant
   ok('Tüm akış açılır, olay satırları listelenir', await pg.$$eval('#ozMain details[data-d=akis] .ct-row', (l) => l.length) >= 5);
   await pg.click('#ozMain details[data-d=kararlar] summary'); await sleep(200);
   ok('Kararlarım: sayılar görünür, kilit yok', /Toplam karar/.test(await metin(pg, '#ozMain')) && await pg.$$eval('#ozMain details[data-d=kararlar] [data-kilit]', (l) => l.length) === 0);
+  await pg.click('[data-nav=kasa]'); await sleep(200);
+  ok('Kasa: veri yoksa sahte sayı yerine açık açıklama gösterir', /Sanal kasa|veri yok/.test(await metin(pg, '#kasaMain')));
 
   /* ---- 3) canlı pilot performans görünümü ---- */
   const tum = [];
@@ -79,6 +82,15 @@ function kollu() {                                   // kol alanı olan varyant
   const oz2 = await metin(pg, '#ozMain');
   ok('Özet: oda doluluğu "1 / 20 trader", hafta 5/12', /1 \/ 20 trader/.test(oz2) && /5\/12/.test(oz2), oz2.match(/Oda doluluğu[^]{0,40}/)?.[0]);
   ok('Özet: mutabakat sağlık ışığı ve eylem görünür', /Her şey yolunda/.test(oz2) && /İşlem gerekmez/.test(oz2));
+  await pg.click('[data-nav=kasa]'); await sleep(200);
+  const kasa = await metin(pg, '#kasaMain');
+  ok('Kasa: yalnız oda toplamı, kontrol satırı, eğri ve dört kutu görünür', ['Oda kasası', 'Kontrol karşılaştırması', 'Kasa eğrisi', 'Nakit (serbest)', 'Açık teminat', 'Gerçekleşmemiş K/Z', 'Son 24 saat'].every((x) => kasa.includes(x)), kasa.slice(0, 300));
+  ok('Kasa: açık işlem ve son kapanan tabloları, eksik likidasyon verisini dürüstçe gösterir', /Açık işlemler/.test(kasa) && /Son kapananlar/.test(kasa) && /veri yok/.test(kasa));
+  await ctx.close();
+  ({ ctx, pg } = await ac({ durum: kasaSentetik })); await pg.click('[data-nav=kasa]'); await sleep(200);
+  ok('Kasa sentetik altın örneği: oda 1.050 $, kontrol 1.020 $, teminat 100 $ (nosyonel 200 $ / 2x)', /1\.050 \$/.test(await metin(pg, '#kasaMain')) && /1\.020 \$/.test(await metin(pg, '#kasaMain')) && /100 \$/.test(await metin(pg, '#kasaMain')));
+  await ctx.close();
+  ({ ctx, pg } = await ac({ durum: kollu() }));
   await pg.click('[data-nav=traderlar]'); await sleep(300);
   const chips = await pg.$$eval('#trMain .chip', (l) => l.map((x) => x.textContent.trim()));
   ok('kol filtresi: standart ve referans kolları görünür', ['Tümü', 'Oda', 'Referans oda', 'Aday', 'Kontrol', 'Referans kontrol', 'Taban', 'Elle liste'].every((k) => chips.some((c) => c.startsWith(k))) && chips.some((c) => /kol bilinmiyor/.test(c)), chips.join(' | '));
@@ -180,7 +192,7 @@ function kollu() {                                   // kol alanı olan varyant
   ({ ctx, pg } = await ac({ durum: kollu(), dokunmatik: true }, { width: 390, height: 844 }));
   const ofisGor = await pg.evaluate(() => { const r = document.getElementById('ofisLink').getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= innerWidth && r.height >= 44; });
   ok('telefon: "Ofis" bağlantısı ekranda, tam görünür, ≥ 44 px', ofisGor);
-  for (const h of ['ozet', 'traderlar', 'huni', 'ayarlar']) {
+  for (const h of ['ozet', 'kasa', 'traderlar', 'huni', 'ayarlar']) {
     await pg.click(`[data-nav=${h}]`); await sleep(250);
     const g = await pg.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: innerWidth }));
     ok(`telefon: ${h} sekmesinde yatay kaydırma yok`, g.sw <= g.iw, JSON.stringify(g));
@@ -190,8 +202,8 @@ function kollu() {                                   // kol alanı olan varyant
   await pg.click('[data-nav=ozet]'); await sleep(200);
   const ipk = await pg.evaluate(() => { const e = document.querySelector('#ozMain .ip'); const cs = getComputedStyle(e, '::after'); return { w: e.getBoundingClientRect().width, extra: parseFloat(cs.left) }; });
   ok('telefon: "?" düğmesi dokunma alanı ≥ 44 px (22 px + 11 px genişletme)', ipk.w + 22 >= 44, JSON.stringify(ipk));
-  await pg.click('[data-nav=ozet]');
-  await pg.screenshot({ path: path.join(root, 'docs/degisim_saglik_telefon.png'), fullPage: true });
+  await pg.click('[data-nav=kasa]'); await sleep(200);
+  await pg.screenshot({ path: path.join(root, 'docs/kasa_telefon.png'), fullPage: true });
   ok('telefon: yasal ibare ekranda', await pg.$eval('#yasal', (e) => { const r = e.getBoundingClientRect(); return r.bottom <= innerHeight && r.height > 0; }));
   await ctx.close();
 
