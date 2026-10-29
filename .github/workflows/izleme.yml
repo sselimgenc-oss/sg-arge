@@ -38,6 +38,21 @@ jobs:
             status=$?
             if [ "$status" -ne 2 ]; then exit "$status"; fi
           fi
+      - name: Motor durumunu R2'den indir
+        # motor.json (dolum önbelleği) 61 trader'da ~270 MB: GitHub'ın 100 MB dosya sınırını aşar, bu yüzden veri dalında değil
+        # R2'de (gzip) tutulur. R2'de yoksa veri dalındaki eski kopya kullanılır (ilk geçiş).
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          if aws s3 cp "s3://${R2_BUCKET}/izleme/motor.json.gz" motor.json.gz --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" --no-progress; then
+            gunzip -c motor.json.gz > izleme/motor.json && rm motor.json.gz
+          else
+            echo "R2'de motor durumu yok; veri dalındaki kopya kullanılıyor."
+          fi
       - name: Kapı sonuçlarını (tarz) veri dalından getir
         shell: bash
         # Trader'ın tarzı izleme listesinde yoksa en son kapı sonucundan okunur (copytrade-kapi dalı).
@@ -57,5 +72,15 @@ jobs:
         run: python -m copytrade.kararlar --url "$KARAR_URL" --output izleme/kararlar.jsonl
       - name: Oda değişim raporunu üret
         run: python -m copytrade.degisim_rapor --kayit copytrade/degisim.jsonl --durum izleme/durum.json --cikti izleme/degisim.json
+      - name: Motor durumunu R2'ye yükle
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          gzip -c izleme/motor.json > motor.json.gz
+          aws s3 cp motor.json.gz "s3://${R2_BUCKET}/izleme/motor.json.gz" --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" --no-progress
       - name: Arşivi ayrı veri dalına yaz
         run: bash .github/scripts/izleme_yayimla.sh
