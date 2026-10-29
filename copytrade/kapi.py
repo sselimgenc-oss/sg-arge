@@ -22,7 +22,7 @@ import pandas as pd
 import requests
 
 from copytrade.defter import DAY as DAY_MS
-from copytrade.defter import FundingRates, Market, copy_ledger
+from copytrade.defter import FundingRates, Market, copy_ledger, delayed_execution_quality
 from copytrade.kurallar import load_rules
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
 from copytrade.tarama import PublicClient, RateLimitError, RateLimiter, _address, prefilter
@@ -560,6 +560,11 @@ def copy_window_metrics(fills: list[dict], funding: list[dict], account_value: f
         nets[delay] = out["net"]
         metrics[f"gecikme_{delay}dk_eksik_dolum"] = out["missing"]
         metrics[f"gecikme_{delay}dk_dolum"] = out["executed"]
+        for name in ("acik_pozisyon_sayisi", "unrealized_end", "mark_missing", "acik_pozisyon_notional"):
+            metrics[f"gecikme_{delay}dk_{name}"] = out.get(name)
+        if delay > 0:          # sıfır gecikmede yürütme = kaynak fiyat: sütun tanımsız (tamamen boş sütun akıl sağlığı kapısını kırar)
+            for name, value in delayed_execution_quality(source, market, delay, start_200, now_ms).items():
+                metrics[f"gecikme_{delay}dk_{name}"] = value
         if ledgers is not None:
             ledgers[delay] = out
     return metrics, nets
@@ -872,6 +877,11 @@ def evaluate_address(leader: dict, client: PublicClient, cache: CandleCache, now
         metrics["gece_payi"], metrics["gecikme_gun"] = night_share(fills, rules), delay_test_days(recent, now_ms, start_200)
         delay = delay_for_style(tarz, rules)
         actual = nets.get(delay)
+        # Seçilmiş tarzın gecikmesindeki bütünlük/fiyat kalitesi bilgi sütunlarını düz adıyla yayımla.
+        # Bu atamalar yalnız rapor alanıdır; kapı fonksiyonuna giden ölçütleri değiştirmez.
+        for name in ("acik_pozisyon_sayisi", "unrealized_end", "mark_missing", "acik_pozisyon_notional",
+                     "yonlu_dolum_sayisi", "yonlu_dolum_iyi_orani", "yonlu_dolum_kotu_orani", "yonlu_dolum_ortalama_bp"):
+            metrics[name] = metrics.get(f"gecikme_{delay}dk_{name}")
         for dead in ("liquid_coin_share", "setting_leverage"):    # ölü sütunlar (hep 0 / hep boş) kapı satırına yazılmaz (görev 18b)
             metrics.pop(dead, None)
         missing_fills, executed_fills = metrics.get(f"gecikme_{delay}dk_eksik_dolum", 0), metrics.get(f"gecikme_{delay}dk_dolum", 0)

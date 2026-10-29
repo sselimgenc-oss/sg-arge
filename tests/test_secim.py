@@ -193,6 +193,29 @@ def test_sec_kol_onceligi_ve_ciktilar():
     assert "geçmiş getiri sıralaması (adım 1–3 süzgeçli)" in text and "## Oda ↔ kontrol dilim dağılımı" in text and "| intraday/alt | 7 | 1 | 1 |" in text
 
 
+def test_secim_ciktisi_golge_butunluk_bilgi_sutunlarini_korur():
+    """Kapı tablosundaki bütün yeni bilgi alanları secim.json'a aynen taşınır; aday/oda kararını etkilemez."""
+    table = TABLE.copy()
+    fields = {"acik_pozisyon_sayisi": 2, "unrealized_end": -0.03, "mark_missing": 1,
+              "acik_pozisyon_notional": 0.4, "en_iyi_islem_haric_getiri": 0.08,
+              "median_holding_hours": 7.0, "gunluk_islem_sikligi": 1.5,
+              "yonlu_dolum_sayisi": 10, "yonlu_dolum_iyi_orani": 0.4,
+              "yonlu_dolum_kotu_orani": 0.5, "yonlu_dolum_ortalama_bp": 12.0}
+    table.loc[table.address == addr("a"), list(fields)] = list(fields.values())
+    entry = secim.sec(table, "2026-10-28", [], [], RULES)["adresler"][addr("a")]
+    assert {"acik_pozisyon_sayisi": entry["acik_pozisyon_sayisi"], "unrealized_end": entry["unrealized_end"],
+            "mark_missing": entry["mark_missing"], "acik_pozisyon_notional": entry["acik_pozisyon_notional"],
+            "en_iyi_islem_haric_getiri": entry["en_iyi_islem_haric_getiri"], "medyan_tutma_saat": entry["medyan_tutma_saat"],
+            "gunluk_islem_sikligi": entry["gunluk_islem_sikligi"], "yonlu_dolum_sayisi": entry["yonlu_dolum_sayisi"],
+            "yonlu_dolum_iyi_orani": entry["yonlu_dolum_iyi_orani"], "yonlu_dolum_kotu_orani": entry["yonlu_dolum_kotu_orani"],
+            "yonlu_dolum_ortalama_bp": entry["yonlu_dolum_ortalama_bp"]} == {
+                "acik_pozisyon_sayisi": 2, "unrealized_end": -0.03, "mark_missing": 1,
+                "acik_pozisyon_notional": 0.4, "en_iyi_islem_haric_getiri": 0.08,
+                "medyan_tutma_saat": 7.0, "gunluk_islem_sikligi": 1.5,
+                "yonlu_dolum_sayisi": 10, "yonlu_dolum_iyi_orani": 0.4,
+                "yonlu_dolum_kotu_orani": 0.5, "yonlu_dolum_ortalama_bp": 12.0}
+
+
 def test_izleme_listesi_mevcut_satirlari_korur_ve_dogrulanir(tmp_path: Path):
     result = secim.sec(TABLE, "2026-10-28", [], [addr("d")], RULES)
     existing = [{"id": "T1", "adres": addr("a"), "takma_ad": "aaaa", "durum": "izlemede", "t0": "2026-10-20", "tarz": "intraday"},

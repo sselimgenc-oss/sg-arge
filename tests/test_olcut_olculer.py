@@ -49,6 +49,17 @@ def test_golden_profit_factor_without_best_removes_exactly_one_best_trade():
     assert metrics["largest_trade_share"] == pytest.approx(100 / 200)
 
 
+def test_golden_information_returns_exclude_one_best_and_frequency_is_per_calendar_day():
+    """Dört kapanmış tur aynı günde: +100, +100, −50, −25. Bir en iyi çıkarılınca getiri 25/10.000=%0,25;
+    gözlenen tek takvim günde sıklık 4 tur/gün. Bu iki sayı kapı/puan için kullanılmaz."""
+    fills = []
+    for index, pnl in enumerate([100, 100, -50, -25]):
+        fills += [fill(2 * index, "B", 1, 0, 100, tid=2 * index), fill(2 * index + 1, "A", 1, 1, 100, pnl, tid=2 * index + 1)]
+    metrics = calculate_metrics(fills, account_value=10_000)
+    assert metrics["en_iyi_islem_haric_getiri"] == pytest.approx(25 / 10_000)
+    assert metrics["gunluk_islem_sikligi"] == pytest.approx(4.0)
+
+
 def martingale_fills():
     return [fill(1, "B", 1, 0, 100, oid=1, tid=1), fill(2, "B", 1, 1, 97, oid=2, tid=2), fill(3, "B", 1, 2, 98, oid=3, tid=3),
             fill(4, "B", 0.5, 3, 90, oid=4, tid=4), fill(5, "B", 0.5, 3.5, 92, oid=4, tid=5)]
