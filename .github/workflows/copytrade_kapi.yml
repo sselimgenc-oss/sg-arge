@@ -79,10 +79,14 @@ jobs:
           echo "day=$day" >> "$GITHUB_OUTPUT"
       - name: Ortak kapı evrenini dondur
         run: python -m copytrade.kapi --evren-yaz evren.json
+      - name: Ortak Binance vadeli listesini dondur
+        run: python -c "from pathlib import Path; from copytrade.kapi import write_binance_universe; write_binance_universe(Path('.'))"
       - uses: actions/upload-artifact@v4
         with:
           name: kapi-evren
-          path: evren.json
+          path: |
+            evren.json
+            binance_vadeli.txt
 
   stage1:
     needs: plan
@@ -123,7 +127,7 @@ jobs:
           # uğrarsa adım (ve iş) kırmızı olur; bitmeyen parça `bitti.json` bırakmaz, birleştirme sonucu `durum: eksik` yayımlar.
           limit=100m; [ "${{ needs.plan.outputs.mod }}" = hizli ] && limit=45m
           export PYTHONWARNINGS=ignore
-          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} --tarih ${{ needs.plan.outputs.day }} --evren-dosyasi evren.json $extra
+          timeout $limit python -m copytrade.kapi --root copytrade --shard-index ${{ matrix.shard }} --shard-count ${{ needs.plan.outputs.count }} --tarih ${{ needs.plan.outputs.day }} --evren-dosyasi evren.json --binance-dosyasi binance_vadeli.txt $extra
       - name: Sonuçları tarih klasörüyle paketle
         if: always()
         shell: bash

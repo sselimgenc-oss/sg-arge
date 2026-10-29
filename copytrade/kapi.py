@@ -278,6 +278,16 @@ def write_binance_universe(root: Path, now: datetime | None = None, get=requests
         return None, type(exc).__name__
 
 
+def read_binance_universe(path: Path) -> tuple[set[str] | None, str]:
+    """Plan işinin dondurduğu listeyi oku; engelli kaynak tüm parçalarda yoktur."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or not lines[0].startswith("# "):
+        raise ValueError(f"Geçersiz Binance anlık görüntüsü: {path}")
+    if "erişim " in lines[0]:
+        return None, lines[0].rsplit(": ", 1)[-1]
+    return {line.strip() for line in lines[1:] if line.strip()}, "dondurulmuş"
+
+
 def binance_availability(coin: str, symbols: set[str] | None) -> str:
     if binance_symbol(coin) == "yok":
         return "yok"
@@ -1001,6 +1011,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--adres", action="append", default=[], help="kapıya zorla eklenen adres (dis_aday); tekrarlanabilir")
     parser.add_argument("--evren-yaz", type=Path, help="yalnız ortak evren anlık görüntüsünü yazıp çık")
     parser.add_argument("--evren-dosyasi", type=Path, help="plan işinin ortak evren anlık görüntüsünü kullan")
+    parser.add_argument("--binance-dosyasi", type=Path, help="plan işinin ortak Binance vadeli listesi")
     args = parser.parse_args(argv)
     if args.birlestir:
         merge_shards(args.birlestir, args.root, args.beklenen_parca, args.mod, evren_addresses(args.evren_dosyasi) if args.evren_dosyasi else None)
@@ -1029,7 +1040,11 @@ def main(argv: list[str] | None = None) -> None:
     if args.eksikleri_tamamla:
         leaders = missing_addresses(leaders, pd.read_csv(previous_path, low_memory=False) if previous_path.exists() else None, rules)
     leaders = shard_universe(leaders, args.shard_index, args.shard_count)
-    symbols, binance_note = write_binance_universe(out, now)
+    if args.binance_dosyasi:
+        symbols, binance_note = read_binance_universe(args.binance_dosyasi)
+        (out / "binance_vadeli.txt").write_bytes(args.binance_dosyasi.read_bytes())
+    else:
+        symbols, binance_note = write_binance_universe(out, now)
     start = int((now - timedelta(days=int(rules["fills_lookback_days"]))).timestamp() * 1000)
     start_200 = int((now - timedelta(days=int(rules["mum_pencere_gun"]))).timestamp() * 1000)
     cache = CandleCache(client, start_200, int(now.timestamp() * 1000))

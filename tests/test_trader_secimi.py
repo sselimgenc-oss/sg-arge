@@ -12,13 +12,23 @@ import requests
 from copytrade import kesif
 from copytrade.kapi import (HESAP_SURUMU, SanityError, activity_metrics, basket_returns, delay_test_days, family_mask, night_share, benchmark_kind, binance_availability, binance_symbol, classify_style,
                             delay_for_style, finalize, gate_status, katman, market_shares, merge_shards,
-                            missing_addresses, placebo_scores, randomize_trades, short_trade_share)
+                            missing_addresses, placebo_scores, randomize_trades, read_binance_universe, short_trade_share)
 from copytrade.kurallar import load_rules
 from copytrade.tarama import PublicClient
 
 HOUR = 3_600_000
 RULES = load_rules()
 START, END = pd.Timestamp("2026-01-01", tz="UTC"), pd.Timestamp("2026-01-05", tz="UTC")
+
+
+def test_dondurulmus_binance_listesi_tum_parcalarda_ayni_kaynaktir(tmp_path):
+    """Altın örnek: planın tek listesi hem sembolü hem engelli kaynağı aynen taşır."""
+    path = tmp_path / "binance_vadeli.txt"
+    path.write_text("# https://fapi.binance.com/fapi/v1/exchangeInfo | 2026-10-29T00:00:00Z\nBTCUSDT\nETHUSDT\n", encoding="utf-8")
+    symbols, note = read_binance_universe(path)
+    assert symbols == {"BTCUSDT", "ETHUSDT"} and note == "dondurulmuş"
+    path.write_text("# kaynak | erişim engeli: HTTP 451\n", encoding="utf-8")
+    assert read_binance_universe(path) == (None, "HTTP 451")
 
 
 def trade(coin, hours=2, **extra):
