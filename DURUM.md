@@ -4,6 +4,8 @@ Son güncelleme: 2026-10-29, lider (Claude).
 
 ## Şu an (2026-10-29): canlı gölge pilotu başladı
 
+**Kalite kuralları (kullanıcı, 2026-10-30):** `AGENTS.md` sonu — küçük gerçek veri denemesi, birimli veri sözleşmesi, denetimde gerçek çıktı.
+
 **K‑7a (kullanıcı, 2026-10-30): canlı 1.12.2026.** Hf1 veri düzeltme (Sonnet: `GOREV_VERI_DUZELTME.md`) ∥ bot aşama 1 (Codex: `GOREV_BOT.md`);
 Hf2 bot biter + canlı oda seçimi; 15–28.11 canlı fiyatla gölge (≥14 gün); 29–30.11 hesap/anahtar/onay; 1.12 canlı. Faz 3 isteğe bağlı (iptal edildi 30.10).
 

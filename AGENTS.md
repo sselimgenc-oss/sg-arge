@@ -30,3 +30,16 @@ Bu repo bir copy trade araştırma projesidir (Hyperliquid; 2026-10-27 itibarıy
 
 ## Dil
 Belgeler ve durum notları Türkçe, kısa ve maddeli.
+
+## Kalite kuralları (kullanıcı kararı 2026-10-30; ilk iki günün hatalarından)
+1. **Önce küçük gerçek veri denemesi.** Yeni iş akışı, analiz ya da büyük koşu önce küçük gerçek veriyle (ör. 1 pencere × 50 hesap,
+   1 trader, 1 saat) çalıştırılır; çıktı gözle kontrol edilir; sonra tam koşu. Yalnız sentetik test yeterli sayılmaz. PR açıklamasına
+   deneme komutu ve çıktının özeti yazılır. Sentetik testlere gerçek verinin uç durumları eklenir (sıfıra yakın payda, boş hesap,
+   sayfa/olay sınırı, eksik mum, büyük dosya).
+2. **Veri sözleşmesi birimiyle.** `docs/VERI_SOZLESMESI.md`'de her alanın birimi ve anlamı açık yazılır: oran mı yüzde mi (getiri
+   oranlardır: 0,012 = %1,2), kaldıraç "x", tutar "$" ve **hangi ölçekte** (trader hesabı mı, 1.000 $ sanal kopya mı), zaman UTC mi,
+   koşu başlangıcı mı okuma zamanı mı, kol üyeliği `kol` (ana etiket) mi `kollar` (tüm üyelikler) mi. Yeni alan sözleşmeye yazılmadan
+   tüketilmez; tüketen kod sözleşmeye göre test edilir.
+3. **Denetimde gerçek çıktıya bakmak zorunlu.** "Testler yeşil" birleştirme için yetmez: denetçi değişikliğin gerçek veriyle ürettiği
+   çıktıya (sayı, ekran görüntüsü, rapor) bakar ve akıl sağlığını kontrol eder (ör. getiri milyonlarca % olamaz, sanal kasa 1.000 $
+   ölçeğinden sapamaz, sayılar ofis ↔ pano ↔ Telegram'da aynı). Bulgusuz denetim de PR'a "kontrol edilen çıktı" diye not düşülür.
