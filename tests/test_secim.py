@@ -283,7 +283,8 @@ def test_bayrak_ayri_is_aday_kati_icin_secimi_degistirmez():
 
     body = secim.bayrak_hesapla(result, fn)
     assert calls == [(addr("2"), 1000.0), (addr("a"), 1000.0)]                                  # aday katı, adres sırası, hesap değeri secim.json'dan
-    assert body == {"secim_surumu": "v1.3", "kapi_tarihi": "2026-10-27", "bayraklar": {addr("2"): {"bayrak_rol": "vault"}, addr("a"): {"bayrak_rol": "vault"}}}
+    assert (body["secim_surumu"], body["kapi_tarihi"], body["tamam"]) == ("v1.3", "2026-10-27", True)
+    assert body["bayraklar"] == {addr("2"): {"bayrak_rol": "vault"}, addr("a"): {"bayrak_rol": "vault"}}
     assert json.dumps(result, sort_keys=True) == snapshot                                       # secim.json değişmez
 
 

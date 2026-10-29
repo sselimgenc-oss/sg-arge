@@ -95,12 +95,22 @@ jobs:
         with:
           name: secim-${{ needs.secim.outputs.name }}
           path: yayim
+      - name: Önceki (kısmi) bayrak sonucunu önbellek olarak getir
+        run: |
+          name=${{ needs.secim.outputs.name }}
+          git fetch --depth=1 origin copytrade-kapi
+          if git cat-file -e "FETCH_HEAD:secim/$name/bayrak.json" 2>/dev/null; then
+            git show "FETCH_HEAD:secim/$name/bayrak.json" > "yayim/secim/$name/bayrak.json"    # aynı sürüm + kapı + kod ise çağrılar yeniden yapılmaz
+          fi
       - name: Kırmızı bayraklar (bilgi; seçimi değiştirmez)
+        id: bayrak
         run: python -m copytrade.secim --bayrak --secim "yayim/secim/${{ needs.secim.outputs.name }}/secim.json"
-      - name: Veri dalına ekle
+      - name: Veri dalına ekle (zaman aşımında kısmi sonuç da yazılır)
+        if: always() && steps.bayrak.outcome != 'skipped'
         run: |
           name=${{ needs.secim.outputs.name }}
           archive=$(mktemp -d)
+          test -f "yayim/secim/$name/bayrak.json"
           cp "yayim/secim/$name/bayrak.json" "$archive/"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'

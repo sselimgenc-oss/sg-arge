@@ -23,20 +23,32 @@ def _delay(style: str, rules: dict) -> int:
 def _band_fills(fills: list[dict], market: Market, delay: int, style: str, rules: dict) -> tuple[list[dict], list[dict]]:
     """V1: bandı aşan giriş/eklemeyi silmez, denetim için `atlandi_bant` kaydeder."""
     allowed, skipped, skipped_openings = [], [], set()
+    shadow: dict[str, float] = {}      # gölgenin kaynak birimiyle izlenen pozisyonu (yalnız izin verilen dolumlar)
     limit = float(rules["golge_fiyat_bandi"][style])
     for fill in fills:
         coin = str(fill["coin"])
         signed = (-1 if fill["side"] in {"A", "Sell", "sell"} else 1) * float(fill["sz"])
         before = float(fill.get("startPosition", 0))
         opening_or_add = before == 0 or before * signed > 0
-        # Atlanan girişin sonraki kapanışı gölgede ters işlem başlatmamalı.
+        # Atlanan girişin sonraki kapanışı gölgede ters işlem başlatmamalı; ama gölgede (önceki izinli dolumlardan) pozisyon varsa kapanış
+        # ona uygulanır: atlanan ekleme sonrası kapanış bastırılırsa gölge pozisyon yetim kalır (E2).
         if coin in skipped_openings and not opening_or_add:
+            if abs(shadow.get(coin, 0.0)) > 1e-12:
+                allowed.append(fill)
+                shadow[coin] = shadow.get(coin, 0.0) + signed
+                if abs(before + signed) < 1e-12:
+                    skipped_openings.discard(coin)
+                    shadow[coin] = 0.0
+                continue
             skipped.append({"durum": "atlandi_bant", "dolum": fill, "neden": "giris_atlandi"})
             if before + signed == 0:
                 skipped_openings.discard(coin)
             continue
         if not opening_or_add:
             allowed.append(fill)
+            shadow[coin] = shadow.get(coin, 0.0) + signed
+            if abs(before + signed) < 1e-12:
+                shadow[coin] = 0.0
             continue
         execution = market.execution(coin, int(fill["time"]) + delay * 60_000)
         source = float(fill.get("px", 0))
@@ -45,6 +57,7 @@ def _band_fills(fills: list[dict], market: Market, delay: int, style: str, rules
             skipped_openings.add(coin)
         else:
             allowed.append(fill)
+            shadow[coin] = shadow.get(coin, 0.0) + signed
     return allowed, skipped
 
 
@@ -69,9 +82,18 @@ def kirp_pozisyon(fill: dict, shadow_before: float, account: float, rules: dict 
     price, size = abs(float(fill.get("px", 0))), float(fill["sz"])
     sign = -1 if fill["side"] in {"A", "Sell", "sell"} else 1
     signed = sign * size / float(account)
-    # Tavan yalnız aynı yöndeki açılış/eklemeyi sınırlar; azaltma tavanı
-    # büyütmez ve kırpılmaz.
-    if not price or shadow_before * signed < 0 or abs(shadow_before + signed) * price <= cap:
+    # Tavan yalnız aynı yöndeki açılış/eklemeyi sınırlar; saf azaltma tavanı büyütmez ve kırpılmaz. Flip (ters çevirme) = çıkış + yeni giriş:
+    # çıkış tam yapılır, ters yönde açılan yeni parça tavana tabidir (E2).
+    if not price:
+        return fill, None
+    after = shadow_before + signed
+    if shadow_before * signed < 0:
+        if shadow_before * after >= 0 or abs(after) * price <= cap:
+            return fill, None
+        allowed = (abs(shadow_before) + cap / price) * float(account)
+        clipped = dict(fill, sz=str(allowed))
+        return clipped, {"durum": "kirpildi", "eski_sz": str(fill["sz"]), "yeni_sz": clipped["sz"], "tavan_usd": cap}
+    if abs(after) * price <= cap:
         return fill, None
     allowed = max(0.0, cap / price - abs(shadow_before)) * float(account)
     clipped = dict(fill, sz=str(allowed))
@@ -155,13 +177,18 @@ def v2_cikislari(fills: list[dict], market: Market, account: Any, style: str, de
                 continue
         before, old_entry, opened, _ = held.get(coin, (0.0, price, when, when))
         amount = _v2_signed(fill, before, scale)
+        if abs(amount) < 1e-15:           # etiketten önceki (miras) pozisyonu kapatan dolum: kopyada pozisyon yok, hiçbir şey olmaz (E3: 0/0 yok)
+            allowed.append(fill)
+            continue
         after = before + amount
         if before == 0 or before * amount > 0:
             entry = (old_entry * abs(before) + price * abs(amount)) / abs(after)
             held[coin] = (after, entry, opened if before else when, when)
         elif abs(after) < 1e-15:
             held.pop(coin, None)
-        else:
+        elif before * after > 0:          # kısmi azaltma: giriş ve pozisyon yaşı korunur (ağırlıklı ortalama giriş; E2)
+            held[coin] = (after, old_entry, opened, when)
+        else:                             # flip: yeni yönde yeni giriş, yeni yaş
             held[coin] = (after, price, when, when)
         allowed.append(fill)
     for coin, state in list(held.items()):
