@@ -181,3 +181,11 @@ mum_medyan_pencere: 24
 # Oda yoğunlaşması ve puan yarı tutarlılığı (A14, copytrade/yogunlasma.py; seçim raporunda bilgi bölümü): ikili korelasyon için asgari ortak gün; ortalama bağlantılı kümeleme durdurma eşiği
 yogunlasma_min_ortak_gun: 10
 yogunlasma_kume_esik: 0.5
+
+# Argon A19 (mevcut kodda üç düzeltme)
+# Alfa (kapi/istatistik.py nw_alpha): regresyon artık varyansı bunun altındaysa (birebir kopya/deterministik ilişki) t anlamsızdır → durum "yetersiz", alfa ne olursa olsun
+alfa_min_artik_varyans: 1.0e-12
+# Gölge likidasyonu (copytrade/golge.py): trader'ın açık pozisyonlarının TOPLAM (çapraz teminat) ya da tek pozisyonun ayrılmış 1 birime oranlı K/Z'si bu değere ya da altına inerse tasfiye
+golge_likidasyon_esigi: -1.0
+# Dolum sayfalaması (copytrade/tarama.py PublicClient.fills): userFillsByTime sayfa boyutu (API sınırı)
+api_sayfa_boyutu_dolum: 2000

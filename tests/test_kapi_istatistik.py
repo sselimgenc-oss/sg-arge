@@ -25,7 +25,8 @@ def test_placebo_is_reproducible():
 def test_newey_west_alpha_and_matched_benchmark_extremes():
     index = pd.date_range("2020-01-01", periods=500, tz="UTC")
     market = pd.Series(np.random.default_rng(2).normal(0, .01, len(index)), index=index)
-    alpha = nw_alpha(market + .002, market)
+    noise = pd.Series(np.random.default_rng(9).normal(0, .002, len(index)), index=index)       # A19: artık varyansı sıfır olan kusursuz uyum 'yetersiz' sayılır
+    alpha = nw_alpha(market + .002 + noise, market)
     no_alpha = nw_alpha(market, market)
     assert alpha["nw_t"] > 2 and abs(no_alpha["alfa_yillik"]) < 1e-10
     assert (market * 0).eq(0).all() and (market * 1).equals(market)

@@ -747,8 +747,8 @@ def gate_status(metrics: dict[str, Any], copy_net: float | None, placebo_p: floa
                                and value("profit_factor_without_best", 0) > rules["min_profit_factor_without_best"]
                                and not metrics.get("martingale_signal")) else "Kaldı"
     out["adim5"] = "Geçti" if placebo_p is not None and placebo_p <= float(rules["plasebo_p_max"]) else "Kaldı"
-    if alpha is None or not np.isfinite(alpha.get("alfa_yillik", np.nan)):
-        out["adim6"] = "Yetersiz"
+    if alpha is None or not np.isfinite(alpha.get("alfa_yillik", np.nan)) or alpha.get("durum") == "yetersiz":
+        out["adim6"] = "Yetersiz"          # artık varyans sıfıra yakın (A19): t anlamsız, alfa ne olursa olsun yetersiz
     elif alpha["alfa_yillik"] <= 0:
         out["adim6"] = "Kaldı"
     else:
