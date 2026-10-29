@@ -140,3 +140,5 @@ secim_oda_min: 10
 secim_oda_max: 20
 # Seçim yalnız tam koşuda çalışır: durum.json kapsamı (işlenen / evren) bunun altındaysa (ör. hızlı koşu) durur. (Kullanıcı kararı 2026-10-28: 0,95.)
 secim_min_kapsam: 0.95
+# Geçiş kaydı (ön kayıt D v1.3 madde 3, copytrade/gecis.py): odadan çıkış için ardışık haftalık uygunsuz değerlendirme sayısı
+secim_cikis_ardisik_hafta: 2
