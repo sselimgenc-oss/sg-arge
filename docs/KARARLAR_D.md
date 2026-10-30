@@ -123,3 +123,8 @@ Görev: `docs/GOREV_D_YOLU.md`.
   yeniden yazılmaz, yan yana yayımlanır. Ön kayıt analizi v1 üzerinde de raporlanır (sapma şeffaf).
 - Yeni kol `gecikme5` (5 dk gecikmeli sanal kopya, oda üyeleriyle aynı adresler, paralel; Telegram yok) ve oda brüt kaldıraç tavanı
   yalnız **tanısal**: ön kayıtlı birincil analiz değişmez; eşikler kod değişmeden önce `kurallar.yaml`'a yazılır.
+
+### K‑10. Sadeleştirme ve dondurma (kullanıcı kararı 2026-10-30: "yap")
+- `AGENTS.md` kural 4–8: yeni özellik dondurması, strateji kilidi, hesap değişikliği yan yana (v2), her iş tek yerde, tek yazar/tek denetçi.
+- Plan: `GOREV_VERI_DUZELTME.md` "Sadeleştirme" (S1–S5). Ayrı büyük yeniden yazım yok; mevcut maddelerin içinde yapılır.
+- K‑8 havuz genişletmesi (30 → +30, motor ≈ 60 dk) dondurma bitene kadar bekler; 91 trader'da motor adımı 45 dk.
