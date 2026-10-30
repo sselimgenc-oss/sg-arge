@@ -243,6 +243,15 @@ function ortalamaGetiri(copies) {
 }
 function yuzdeYaz(v) { return v == null ? "bilinmiyor" : `${v >= 0 ? "+" : ""}${(v * 100).toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`; }
 
+// Son 24 saat: motorun kesilmemiş olaylardan hesapladığı `sayac_24s.oda` varsa ondan (yayımlanan olay listesi kısa olsa da doğru);
+// yoksa olay listesinden (eski veri). Kazanma: sanal sonucu o pencerede biten kopyalardan kazananların oranı.
+function son24Satiri(status, islemOlaylari) {
+  const c = status.sayac_24s?.oda;
+  if (!c) return `🔁 Son 24 saat: ${islemOlaylari.length} işlem · ${new Set(islemOlaylari.map(e => e.trader)).size} trader`;
+  const kazanma = c.kapanan ? ` · kazanma ${c.kazanan}/${c.kapanan}` : "";
+  return `🔁 Son 24 saat: ${c.acilis + c.kapanis} işlem (${c.acilis} açılış, ${c.kapanis} kapanış) · ${c.trader_sayisi} trader${kazanma}`;
+}
+
 // Kol kapsaması: üye sayısı sabit (ITT), geçerli/geçersiz ayrı. Motor `kapsam` yayımlamadıysa satır yazılmaz.
 function kapsamSatiri(status, kol) {
   const k = status.kapsam?.[kol];
@@ -272,7 +281,7 @@ function dailySummaryText(status, nowMs = Date.now()) {
     "",
     `💰 Oda kasası (sanal): $${kasa.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} (${yuzdeYaz(odaGetiri)})`,
     `📐 Oda − Kontrol farkı (aynı dönem, sanal kopya): ${fark == null ? "bilinmiyor" : yuzdeYaz(fark)}`,
-    `🔁 Son 24 saat: ${islemOlaylari.length} işlem · ${new Set(islemOlaylari.map(e => e.trader)).size} trader`,
+    son24Satiri(status, islemOlaylari),
     `🟢 ${count("yesil")}   🟡 ${count("sari")}   🔴 ${count("kirmizi")}`,
     kapsamSatiri(status, "oda"),
     age > ESKI_DK ? `⚠️ Veri ${age} dk önce — güncellenmedi` : `🕐 Veri ${age} dk önce`,

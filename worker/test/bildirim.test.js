@@ -89,6 +89,17 @@ test("dailySummaryText: geçersiz trader toplama girmez, kapsama satırı üye s
   assert.match(text, /Oda kapsama: 2\/3 geçerli \(%67\) · 1 geçersiz\/eski/);
 });
 
+test("dailySummaryText: sayac_24s varsa 24 saat satırı motor sayaçlarından (olaylar listesi kesik olsa da)", () => {
+  const now = Date.parse("2026-10-30T06:00:00Z");
+  const status = {
+    uretildi: "2026-10-30T05:50:00Z",
+    traderlar: [{ id: "O1", kol: "oda", kollar: ["oda"], saglik: { isik: "yesil" }, sanal_kopya: { bakiye_usd: 1000, baslangic_usd: 1000, getiri: 0 } }],
+    olaylar: [],                                                       // yoğun taban olayları oda olaylarını düşürmüş gibi: liste boş
+    sayac_24s: { oda: { acilis: 7, kapanis: 5, trader_sayisi: 4, kapanan: 5, kazanan: 2 } },
+  };
+  assert.match(dailySummaryText(status, now), /Son 24 saat: 12 işlem \(7 açılış, 5 kapanış\) · 4 trader · kazanma 2\/5/);
+});
+
 test("checkStateAlerts: veri 3 saatten eskiyse uyarı gider, aynı durumda tekrarlanmaz", async () => {
   const mock = d1Mock();
   const sent = [];

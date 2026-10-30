@@ -180,7 +180,7 @@ def test_empty_list_writes_contract_and_never_uses_network(tmp_path):
             raise AssertionError(name)
     result = m.run(root, root / 'out', NoNetwork(), NOW)
     assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'yayim_zamani': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
-                      'kasa_egri': {'oda': [], 'kontrol': []}, 'kapsam': {}, 'olaylar': [], 'gunluk_sayac': [],
+                      'kasa_egri': {'oda': [], 'kontrol': []}, 'kapsam': {}, 'olaylar': [], 'gunluk_sayac': [], 'sayac_24s': {},
                       'olay_kapsami': {'baslangic': None, 'tam': True, 'toplam': 0, 'kol_basina_son': 200, 'sayac_gun': 30}}
     assert json.loads((root / 'out/durum.json').read_text()) == result
 
@@ -723,7 +723,7 @@ def test_olay_ozeti_yogun_taban_oda_olaylarini_disarida_birakmaz():
         e = _olay(i, 'O01', tur, z)
         events[e['id']] = e
     traders = [{'id': 'B17', 'kol': 'taban'}, {'id': 'O01', 'kol': 'oda'}]
-    recent, sayac, scope = m.olay_ozeti(events, traders, NOW, tam=True)
+    recent, sayac, scope, _ = m.olay_ozeti(events, traders, NOW, tam=True)
     assert sum(e['trader'] == 'B17' for e in recent) == 200
     assert sum(e['trader'] == 'O01' for e in recent) == 3
     assert len(recent) == 203
@@ -738,13 +738,13 @@ def test_olay_ozeti_yogun_taban_oda_olaylarini_disarida_birakmaz():
 
 def test_olay_ozeti_isik_olayi_sayaca_girmez_ve_kapsam_islemden_baslar():
     events = {e['id']: e for e in [_olay(1, 'O01', 'isik', '2026-10-20T00:00:00Z'), _olay(2, 'O01', 'acilis', '2026-10-27T09:00:00Z')]}
-    _, sayac, scope = m.olay_ozeti(events, [{'id': 'O01', 'kol': 'oda'}], NOW, tam=False)
+    _, sayac, scope, _ = m.olay_ozeti(events, [{'id': 'O01', 'kol': 'oda'}], NOW, tam=False)
     assert len(sayac) == 1 and sayac[0]['acilis'] == 1
     assert scope['baslangic'] == '2026-10-27T09:00:00Z' and scope['tam'] is False
 
 
 def test_olay_ozeti_bos_arsiv():
-    recent, sayac, scope = m.olay_ozeti({}, [], NOW, tam=True)
+    recent, sayac, scope, _ = m.olay_ozeti({}, [], NOW, tam=True)
     assert recent == [] and sayac == [] and scope['baslangic'] is None and scope['toplam'] == 0
 
 
@@ -868,3 +868,27 @@ def test_uretildi_veri_zamani_ve_yayim_zamani_ayri(tmp_path, monkeypatch):
     assert result['uretildi'] == '2026-10-27T12:00:00Z'
     assert result['traderlar'][0]['veri_zamani'] == '2026-10-27T12:07:30Z'
     assert result['yayim_zamani'] == '2026-10-27T12:09:00Z'
+
+
+# ---------------------------------------------------------------- madde 16: kol başına 24 saat sayacı
+def test_sayac_24s_altin_ornek():
+    # NOW = 12:00. Oda (O1, O2) ve taban (B1). Pencere 24 saat = 26.10 12:00 – 27.10 12:00.
+    # O1: acilis 11:00 (kapanan, kazanan +1%), kapanis 11:30 → sanal sonuc 11:30'da biter (kazanan).
+    # O2: acilis 10:00 (kapanan, -2%, kapanış 10:30 → kaybeden), kapanis 10:20; acilis dün 11:00 (pencere dışı kalmaz: 25 sa önce → dışarıda).
+    # B1: 300 açılış (taban; oda sayısını etkilemez).
+    ev = {}
+    def add(i, tr, tur, z, sonuc=None):
+        e = _olay(i, tr, tur, z)
+        if sonuc: e['sanal_sonuc'] = sonuc
+        ev[e['id']] = e
+    add(1, 'O1', 'acilis', '2026-10-27T11:00:00Z', {'durum': 'kapandi', 'net_yuzde': 0.01, 'kapanis': '2026-10-27T11:30:00Z'})
+    add(2, 'O1', 'kapanis', '2026-10-27T11:30:00Z')
+    add(3, 'O2', 'acilis', '2026-10-27T10:00:00Z', {'durum': 'kapandi', 'net_yuzde': -0.02, 'kapanis': '2026-10-27T10:30:00Z'})
+    add(4, 'O2', 'kapanis', '2026-10-27T10:20:00Z')
+    add(5, 'O2', 'acilis', '2026-10-26T11:00:00Z', {'durum': 'kapandi', 'net_yuzde': 0.05, 'kapanis': '2026-10-26T11:30:00Z'})   # 25 sa önce: dışarıda
+    for i in range(300):
+        add(100 + i, 'B1', 'acilis', f'2026-10-27T11:{i // 60:02d}:{i % 60:02d}Z')
+    traders = [{'id': 'O1', 'kol': 'oda'}, {'id': 'O2', 'kol': 'oda'}, {'id': 'B1', 'kol': 'taban'}]
+    *_, sayac_24s = m.olay_ozeti(ev, traders, NOW, tam=True)
+    assert sayac_24s['oda'] == {'acilis': 2, 'kapanis': 2, 'trader_sayisi': 2, 'kapanan': 2, 'kazanan': 1}
+    assert sayac_24s['taban']['acilis'] == 300 and sayac_24s['taban']['trader_sayisi'] == 1 and sayac_24s['taban']['kapanan'] == 0

@@ -71,7 +71,12 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
   kapsama, gecerli_bakiye_usd, gecersiz_bakiye_usd}`. `toplam` üye sayısıdır ve sabit kalır (ITT); her üye `gecerli | perp_bos | yer_tutucu | bayat |
   okuma_hatasi` kovalarından tam birindedir (`fiyatsiz`, `gecerli`nin alt kümesi). `kapsama` = gecerli/toplam (oran, 0,67 = %67). Bakiye alt
   toplamları 1.000 $ kopya ölçeğinde USD'dir; `gecersiz_bakiye_usd` eski sonuçların önceki bakiyeleridir (yer tutucu ve perp_bos hariç).
-  `kasa_egri` ve kol toplamları yalnız `gecerli=true` traderları, `kollar` üyeliğiyle toplar.
+  `kasa_egri` ve kol toplamları yalnız `gecerli=true` traderları, `kollar` üyeliğiyle toplar. Eğri = kasa (madde 17): `egri_eksik` = eğrisi
+  olmayan geçerli üye sayısı (eksik kapsama; kasaya girmez), `kasa_son_nokta_usd` = `kasa_egri`nin son noktası, `kasa_fark_usd` = o nokta − eğrisi olan
+  geçerli üyelerin `bakiye_usd` toplamı, `kasa_mutabik` = |fark| < 0,5 $ (aksi halde ekranlar uyarı göstermelidir).
+- `sayac_24s` (v1.6, üst düzey, madde 16): kol → `{acilis, kapanis, trader_sayisi, kapanan, kazanan}`; koşu başlangıcından geriye 24 saat, kesilmemiş
+  olaylardan. `kapanan`/`kazanan`: sanal sonucu (`sanal_sonuc.kapanis`) o pencerede biten kopyalar ve bunlardan `net_yuzde > 0` olanlar.
+  Ekranlar 24 saat sayısı için `olaylar` listesini DEĞİL bunu kullanır.
 - `olay_kapsami` (v1.6): `{baslangic (ilk işlem olayı, UTC ISO), tam (bu koşuda hiç trader hatası yoksa true), toplam, kol_basina_son, sayac_gun}`.
 - Eski anlatım: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
 - **Olay kimliği (v1.2):** `{trader}-{oid}-{tur}` (ör. `T1-123456789-acilis`); ışık olayı `{trader}-{ms}-isik`.

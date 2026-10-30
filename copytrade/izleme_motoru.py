@@ -637,6 +637,14 @@ def kapsam(traderlar: list[dict], kol: str) -> dict:
             result['bayat' if trader.get('veri_durumu') == 'bayat' else 'okuma_hatasi'] += 1
             result['gecersiz_bakiye_usd'] += balance
     result['kapsama'] = result['gecerli'] / result['toplam'] if result['toplam'] else 0.0
+    # Eğri = kasa (madde 17): eğrisi olmayan geçerli üye "eksik kapsama"dır; eğrinin son noktası geçerli bakiyelerin toplamıyla mutabık olmalı.
+    with_curve = [t for t in kol_uyeleri(traderlar, kol) if t.get('gecerli', True) and (t.get('sanal_kopya') or {}).get('egri')]
+    result['egri_eksik'] = result['gecerli'] - len(with_curve)
+    curve = kasa_egrisi(traderlar, kol)
+    balances = sum(float(t['sanal_kopya'].get('bakiye_usd') or 0.0) for t in with_curve)
+    result['kasa_son_nokta_usd'] = curve[-1][1] if curve else None
+    result['kasa_fark_usd'] = (curve[-1][1] - balances) if curve else None
+    result['kasa_mutabik'] = abs(result['kasa_fark_usd']) < 0.5 if curve else (not with_curve)
     return result
 
 
@@ -800,7 +808,7 @@ KOL_SON_OLAY = 200
 SAYAC_GUN = 30
 
 
-def olay_ozeti(all_events: dict, traders: list[dict], now: pd.Timestamp, tam: bool) -> tuple[list[dict], list[dict], dict]:
+def olay_ozeti(all_events: dict, traders: list[dict], now: pd.Timestamp, tam: bool) -> tuple[list[dict], list[dict], dict, dict]:
     """Kesilmemiş olaylardan: kol başına son N olay, günlük sayaçlar ve kapsam (veri sözleşmesi v1.6)."""
     kol_of = {t['id']: t.get('kol', '') for t in traders}
     ordered = sorted(all_events.values(), key=lambda e: (e['zaman'], e['id']), reverse=True)
@@ -821,10 +829,26 @@ def olay_ozeti(all_events: dict, traders: list[dict], now: pd.Timestamp, tam: bo
         row['traderlar'].add(event['trader'])
     sayac = [{'gun': gun, 'kol': kol, 'acilis': row['acilis'], 'kapanis': row['kapanis'], 'trader_sayisi': len(row['traderlar'])}
              for (gun, kol), row in sorted(counts.items(), reverse=True)]
+    # Son 24 saat (koşu başlangıcından geriye), kol başına: açılış/kapanış olayı, işlem yapan trader sayısı, sanal sonucu o pencerede biten
+    # (sanal_sonuc.kapanis) kopyaların sayısı ve kazananı (net_yuzde > 0). Kesilmemiş olaylardan; yayımlanan olaylar listesi kısalsa da değişmez.
+    since_24, until_24 = millis(now) - 24 * 60 * MINUTE, millis(now)
+    last_24: dict[str, dict] = {}
+    for event in ordered:
+        kol = kol_of.get(event['trader'], '')
+        row = last_24.setdefault(kol, {'acilis': 0, 'kapanis': 0, 'kapanan': 0, 'kazanan': 0, 'traderlar': set()})
+        if event.get('tur') in {'acilis', 'kapanis'} and since_24 <= millis(timestamp(event['zaman'])) <= until_24:
+            row[event['tur']] += 1
+            row['traderlar'].add(event['trader'])
+        outcome = event.get('sanal_sonuc') or {}
+        if outcome.get('durum') == 'kapandi' and outcome.get('kapanis') and since_24 <= millis(timestamp(outcome['kapanis'])) <= until_24:
+            row['kapanan'] += 1
+            row['kazanan'] += 1 if (outcome.get('net_yuzde') or 0) > 0 else 0
+    sayac_24s = {kol: {'acilis': r['acilis'], 'kapanis': r['kapanis'], 'trader_sayisi': len(r['traderlar']), 'kapanan': r['kapanan'],
+                       'kazanan': r['kazanan']} for kol, r in sorted(last_24.items()) if kol}
     trade_times = [e['zaman'] for e in ordered if e.get('tur') != 'isik']
     scope = {'baslangic': min(trade_times) if trade_times else None, 'tam': bool(tam), 'toplam': len(ordered),
              'kol_basina_son': KOL_SON_OLAY, 'sayac_gun': SAYAC_GUN}
-    return recent, sayac, scope
+    return recent, sayac, scope, sayac_24s
 
 
 def write_event_archive(output: Path, all_events: dict) -> None:
@@ -887,7 +911,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     result = {'surum': 1, 'uretildi': iso(now), 'yayim_zamani': iso(clock() if clock else now), 'kaynak': 'hyperliquid', 'traderlar': traders,
               'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')},
               'kapsam': {kol: kapsam(traders, kol) for kol in sorted({k for t in traders for k in (t.get('kollar') or [t.get('kol')]) if k})}}
-    result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'] = olay_ozeti(all_events, traders, now, failed == 0)
+    result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'], result['sayac_24s'] = olay_ozeti(all_events, traders, now, failed == 0)
     oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']
     if oda_uyeleri:
         result['kalabalik'] = {**oda_risk.kalabalik([t for t in oda_uyeleri if t.get('gecerli') and t.get('hesap_degeri')]), 'zaman': iso(now)}
