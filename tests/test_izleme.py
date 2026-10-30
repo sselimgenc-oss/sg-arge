@@ -892,3 +892,16 @@ def test_sayac_24s_altin_ornek():
     *_, sayac_24s = m.olay_ozeti(ev, traders, NOW, tam=True)
     assert sayac_24s['oda'] == {'acilis': 2, 'kapanis': 2, 'trader_sayisi': 2, 'kapanan': 2, 'kazanan': 1}
     assert sayac_24s['taban']['acilis'] == 300 and sayac_24s['taban']['trader_sayisi'] == 1 and sayac_24s['taban']['kapanan'] == 0
+
+
+# ---------------------------------------------------------------- madde 18: eksik işaret fiyatı
+def test_eksik_isaret_eksik_degerleme_bayragi_ve_kol_sayisi():
+    early = fill('2026-10-27T08:00:00Z', 1, price=99)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T08:30:00Z'), 'o': 100.0}]}      # işaret 210 dk eski > isaret_yas_max_dk (120)
+    stale = m.copy_results([early], candles, [], 1000, T0, NOW, {})
+    assert stale['isaret_eksik'] == 1 and stale['eksik_degerleme'] is True
+    fresh = m.copy_results([early], {'BTC': [{'t': m.millis('2026-10-27T08:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:59:00Z'), 'o': 101.0}]}, [], 1000, T0, NOW, {})
+    assert fresh['isaret_eksik'] == 0 and fresh['eksik_degerleme'] is False
+    traders = [{'kol': 'oda', 'gecerli': True, 'sanal_kopya': stale}, {'kol': 'oda', 'gecerli': True, 'sanal_kopya': fresh},
+               {'kol': 'oda', 'gecerli': False, 'sanal_kopya': stale}]            # geçersiz üye sayılmaz (zaten toplama girmiyor)
+    assert m.kapsam(traders, 'oda')['eksik_degerleme'] == 1

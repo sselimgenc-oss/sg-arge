@@ -28,10 +28,10 @@ def test_gecersizler_toplama_girmez_kapsamda_ayri_sayilir_kollar_ile():
     # Altın örnek: A geçerli 1.010 $; B okuma_hatasi (önceki sonuç 1.500 $ ayrı alt toplam); C yer tutucu; D perp_bos. ITT: toplam 4 sabit.
     assert kapsam(traders, 'oda') == {'toplam': 4, 'gecerli': 1, 'fiyatsiz': 0, 'perp_bos': 1, 'yer_tutucu': 1, 'bayat': 0, 'okuma_hatasi': 1,
                                       'kapsama': 0.25, 'gecerli_bakiye_usd': 1010.0, 'gecersiz_bakiye_usd': 1500.0,
-                                      'egri_eksik': 0, 'kasa_son_nokta_usd': 1010.0, 'kasa_fark_usd': 0.0, 'kasa_mutabik': True}
+                                      'egri_eksik': 0, 'kasa_son_nokta_usd': 1010.0, 'kasa_fark_usd': 0.0, 'kasa_mutabik': True, 'eksik_degerleme': 0}
     assert kapsam(traders, 'kontrol') == {'toplam': 1, 'gecerli': 1, 'fiyatsiz': 0, 'perp_bos': 0, 'yer_tutucu': 0, 'bayat': 0, 'okuma_hatasi': 0,
                                           'kapsama': 1.0, 'gecerli_bakiye_usd': 990.0, 'gecersiz_bakiye_usd': 0.0,
-                                          'egri_eksik': 0, 'kasa_son_nokta_usd': 990.0, 'kasa_fark_usd': 0.0, 'kasa_mutabik': True}
+                                          'egri_eksik': 0, 'kasa_son_nokta_usd': 990.0, 'kasa_fark_usd': 0.0, 'kasa_mutabik': True, 'eksik_degerleme': 0}
 
 
 def test_bayat_ve_fiyatsiz_durum_kodlari():

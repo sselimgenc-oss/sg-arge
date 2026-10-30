@@ -457,7 +457,7 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
             'egri': [[str(day.date()), float(value)] for day, value in equity.items()],
             # hesap değerine oranlı kesirler: gerçekleşmiş (maliyet + funding dahil), açık (işaretlenmiş) ve toplam; son işaret zamanı
             'gerceklesen': ledger['realized'] + funding_frac, 'acik': ledger['unrealized_end'], 'toplam': ledger['net'] + funding_frac,
-            'son_isaret': at_ms(ledger['mark_time']) if ledger['mark_time'] is not None else None, 'isaret_eksik': int(ledger['mark_missing'])}
+            'son_isaret': at_ms(ledger['mark_time']) if ledger['mark_time'] is not None else None, 'isaret_eksik': int(ledger['mark_missing']), 'eksik_degerleme': bool(ledger['mark_missing'])}
     result['fiyatsiz_eylem'] = fiyatsiz_eylem
     result['fiyatsiz_coinler'] = sorted(fiyatsiz_net)
     # Fiyatsız eylemlerin net işaretli toplamı sıfır değilse o coinde gerçek kopya pozisyonu defterden farklı olabilir.
@@ -637,6 +637,8 @@ def kapsam(traderlar: list[dict], kol: str) -> dict:
             result['bayat' if trader.get('veri_durumu') == 'bayat' else 'okuma_hatasi'] += 1
             result['gecersiz_bakiye_usd'] += balance
     result['kapsama'] = result['gecerli'] / result['toplam'] if result['toplam'] else 0.0
+    # Eksik değerleme (madde 18): açık lotu işaretlenemeyen (işaret yok/bayat) geçerli üye sayısı; >0 ise kol kasası "bilinmiyor" gösterilmeli.
+    result['eksik_degerleme'] = sum(1 for t in kol_uyeleri(traderlar, kol) if t.get('gecerli', True) and (t.get('sanal_kopya') or {}).get('eksik_degerleme'))
     # Eğri = kasa (madde 17): eğrisi olmayan geçerli üye "eksik kapsama"dır; eğrinin son noktası geçerli bakiyelerin toplamıyla mutabık olmalı.
     with_curve = [t for t in kol_uyeleri(traderlar, kol) if t.get('gecerli', True) and (t.get('sanal_kopya') or {}).get('egri')]
     result['egri_eksik'] = result['gecerli'] - len(with_curve)

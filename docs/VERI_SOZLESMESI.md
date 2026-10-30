@@ -74,6 +74,9 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
   `kasa_egri` ve kol toplamları yalnız `gecerli=true` traderları, `kollar` üyeliğiyle toplar. Eğri = kasa (madde 17): `egri_eksik` = eğrisi
   olmayan geçerli üye sayısı (eksik kapsama; kasaya girmez), `kasa_son_nokta_usd` = `kasa_egri`nin son noktası, `kasa_fark_usd` = o nokta − eğrisi olan
   geçerli üyelerin `bakiye_usd` toplamı, `kasa_mutabik` = |fark| < 0,5 $ (aksi halde ekranlar uyarı göstermelidir).
+- `sanal_kopya.eksik_degerleme` (bool, v1.6, madde 18) = `isaret_eksik > 0`: açık lotlardan en az birinin işareti yok/bayat; bu satırın açık K/Z ve bakiyesi
+  eksik değerlenmiştir. `kapsam[kol].eksik_degerleme` = böyle geçerli üye sayısı; >0 ise ekranlar kol kasasını "bilinmiyor/eksik" göstermelidir
+  (sıfır varsaymaz). `null` teminat/değer 0 olarak toplanmaz.
 - `sayac_24s` (v1.6, üst düzey, madde 16): kol → `{acilis, kapanis, trader_sayisi, kapanan, kazanan}`; koşu başlangıcından geriye 24 saat, kesilmemiş
   olaylardan. `kapanan`/`kazanan`: sanal sonucu (`sanal_sonuc.kapanis`) o pencerede biten kopyalar ve bunlardan `net_yuzde > 0` olanlar.
   Ekranlar 24 saat sayısı için `olaylar` listesini DEĞİL bunu kullanır.
