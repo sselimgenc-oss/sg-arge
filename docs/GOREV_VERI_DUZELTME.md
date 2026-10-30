@@ -82,3 +82,19 @@ Her madde test ile; önce küçük gerçek veri denemesi (AGENTS.md kalite kural
     sıklık) tanısal rapor (C#14).
 
 Teslim: her grup (15–19, 20–23, 24–25) ayrı PR; Sol'a tekrar denetim notu.
+
+## Sadeleştirme (K‑10) — Sonnet; kurallar `AGENTS.md` 4–8
+Hedef: her iş tek yerde. Ayrı yeniden yazım değil; aşağıdaki sırayla mevcut maddelerin içinde. Her adımda önce/sonra sayılar aynı
+(ya da fark açıklanmış) olmalı; PR'da tablo.
+- **S1 Hesap yalnız motorda (15–19 ile birlikte):** pano `kasaToplam`/`ortalama`/24 saat sayımı, ofis `gercek.js` 1.000 $ ölçekleme ve
+  teminat, Worker günlük özet hesapları `durum.json`'a hazır alan olarak taşınır (`kol_ozet`: kasa, getiri, kapsama, `sayac_24s`, teminat);
+  üç ekran yalnız okur. Ekranlarda kalan hesap kodu listelenip silinir.
+- **S2 Tek motor (20–23 ile birlikte):** `izleme_motoru.copy_results` → `golge.calistir` (tek yürütme/kırpma/tasfiye/payda/funding).
+  Canlıda kopyalanan ikinci defter mantığı kalmaz.
+- **S3 Tek veri kaynağı:** dolumlar bir kez çekilir (arşiv → R2); motor oradan okur, eksikse yalnız eksik aralığı çeker. Worker dolum
+  çekmez; bildirimi `durum.json`/olay arşivinden üretir. Önce 1 saatlik gerçek veriyle eşitlik denemesi (olay sayıları aynı).
+- **S4 Şema testi:** `docs/VERI_SOZLESMESI.md` ↔ `durum.json` makine okunur şema (`copytrade/sema_durum.json`); motor çıktısı her
+  testte şemaya karşı doğrulanır; pano/ofis/Worker okuduğu her alan şemada olmalı.
+- **S5 Belge ve ölü kod:** görev dosyaları tek listede (`GOREV_VERI_DUZELTME.md`); biten/askıdaki görev dosyaları `docs/arsiv/`'e taşınır
+  (silinmez). Kullanılmayan modül/iş akışı listesi çıkarılır; arşive alma kullanıcı onayıyla.
+Ölçü: PR açıklamasında "kaldırılan yinelenen kod satırı" ve "aynı sayıyı hesaplayan yer sayısı" önce/sonra.
