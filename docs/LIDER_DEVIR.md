@@ -1,3 +1,7 @@
+> **2026-10-30 güncelleme (kullanıcı kararı: "Sonneti kapatıcam yetkileri devral"):** Sonnet ortak liderliği sona erdi.
+> Tek lider Claude (bu oturum); Codex (Sol) denetçi. Sonnet'in açık PR'ı #434 (`claude/zen-heisenberg-lx1ond`) lidere devredildi:
+> önce `izleme_deneme.yml` ile küçük gerçek veri denemesi (O10, B17, O01, O02; motor süresi, v1↔v2), sonra Sol denetimi, sonra birleştirme.
+
 # Lider devri — Sonnet ortak lider (2026-10-30 → 2026-11-02 Pazartesi), lider Claude (Opus) limitte
 
 Okuma sırası: bu dosya → `DURUM.md` ("Şu an") → `AGENTS.md` (kurallar + **kalite kuralları**) → `docs/KARARLAR_D.md` (K‑5…K‑8) →

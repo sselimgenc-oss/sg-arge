@@ -52,4 +52,4 @@ Belgeler ve durum notları Türkçe, kısa ve maddeli.
    PR'da eski ↔ yeni sayılar yan yana (oda, kontrol, O10); açıklanamayan fark varsa birleştirilmez. O10 altın örnek testi zorunlu.
 7. **Her iş tek yerde.** Aynı hesap ikinci bir yerde yazılmaz: veri bir kez çekilir, hesap yalnız motorda yapılır, ekranlar
    (pano/ofis/Telegram) yalnız `durum.json`'daki hazır sayıyı gösterir. Yeni kod mevcut bir fonksiyonu kopyalıyorsa birleştirilir.
-8. **Tek yazar, tek denetçi.** Bir dönemde kodu bir ajan yazar (bu hafta Sonnet), bir ajan denetler (Codex/Sol); lider karışmaz.
+8. **Tek yazar, tek denetçi.** Bir dönemde kodu bir ajan yazar (2026-10-30'dan itibaren lider Claude), bir ajan denetler (Codex/Sol).
