@@ -825,7 +825,7 @@ def test_perp_hesabi_sifir_ayri_durum_kodu_alir(tmp_path):
             return super().fills(address, start)
     result = m.run(root, root / 'out', Karisik(), NOW)
     durum = {t['id']: (t['veri_durumu'], t['gecerli']) for t in result['traderlar']}
-    assert durum == {'T1': ('tamam', True), 'T2': ('perp_hesabi_bos', False), 'T3': ('veri_hatasi', False)}
+    assert durum == {'T1': ('tamam', True), 'T2': ('perp_bos', False), 'T3': ('okuma_hatasi', False)}
     bos = next(t for t in result['traderlar'] if t['id'] == 'T2')
     assert 'perp hesabı boş/kapalı' in bos['saglik']['nedenler'][0]
 
@@ -846,7 +846,7 @@ def test_perp_hesabi_sifir_onceki_sonucu_korur_ve_etiketler(tmp_path):
     client.info = info
     result = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
     t = next(x for x in result['traderlar'] if x['id'] == 'T1')
-    assert (t['gecerli'], t['veri_durumu']) == (False, 'perp_hesabi_bos')
+    assert (t['gecerli'], t['veri_durumu']) == (False, 'perp_bos')
     assert t['sanal_kopya']['bakiye_usd'] == pytest.approx(next(x for x in first['traderlar'] if x['id'] == 'T1')['sanal_kopya']['bakiye_usd'])
 
 

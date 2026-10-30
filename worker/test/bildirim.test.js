@@ -75,6 +75,20 @@ test("dailySummaryText: sanal kopya ölçeğinde oda kasası/getiri, oda−kontr
   assert.match(text, /Veri 10 dk önce/);
 });
 
+test("dailySummaryText: geçersiz trader toplama girmez, kapsama satırı üye sayısını sabit gösterir (altın örnek)", () => {
+  const now = Date.parse("2026-10-30T06:00:00Z");
+  const t = (id, bakiye, gecerli = true) => ({ id, kol: "oda", kollar: ["oda"], saglik: { isik: "yesil" }, gecerli, sanal_kopya: { bakiye_usd: bakiye, baslangic_usd: 1000, getiri: bakiye / 1000 - 1 } });
+  const status = {
+    uretildi: "2026-10-30T05:50:00Z",
+    traderlar: [t("O1", 1100), t("O2", 900), t("O3", 1500, false)],      // O3 eski sonuç: 1.500 $ toplama girmemeli
+    kapsam: { oda: { toplam: 3, gecerli: 2, gecersiz_bakiye_usd: 1500 } },
+    olaylar: [],
+  };
+  const text = dailySummaryText(status, now);
+  assert.match(text, /Oda kasası \(sanal\): \$2\.000 \(\+0,0%\)/);                  // 1100+900, ortalama getiri (10%,-10%)/2
+  assert.match(text, /Oda kapsama: 2\/3 geçerli \(%67\) · 1 geçersiz\/eski/);
+});
+
 test("checkStateAlerts: veri 3 saatten eskiyse uyarı gider, aynı durumda tekrarlanmaz", async () => {
   const mock = d1Mock();
   const sent = [];

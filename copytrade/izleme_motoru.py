@@ -585,20 +585,26 @@ class PerpHesapBos(ValueError):
     """Güncel perp hesap değeri 0: "veri yok" değil "perp hesabı boş/kapalı" (spot bakiye ayrı; madde 3)."""
 
 
-def veri_durumu(error: Exception | None) -> str:
-    """``tamam`` | ``perp_hesabi_bos`` | ``veri_hatasi`` (veri sözleşmesi v1.6)."""
+BAYAT_DK = 180      # önceki başarılı okuma bundan eskiyse durum `bayat` (Worker veri-yaşı uyarısıyla aynı 3 saat)
+
+
+def veri_durumu(error: Exception | None, yas_dk: float | None = None) -> str:
+    """``tamam | fiyatsiz | perp_bos | okuma_hatasi | bayat`` (veri sözleşmesi v1.6; ``fiyatsiz`` başarılı okumada ayrıca atanır)."""
     if error is None:
         return 'tamam'
-    return 'perp_hesabi_bos' if isinstance(error, PerpHesapBos) else 'veri_hatasi'
+    if isinstance(error, PerpHesapBos):
+        return 'perp_bos'
+    return 'bayat' if yas_dk is not None and yas_dk > BAYAT_DK else 'okuma_hatasi'
 
 
-def with_data_error(trader: dict, error: Exception) -> dict:
+def with_data_error(trader: dict, error: Exception, now: pd.Timestamp | None = None) -> dict:
     previous = copy.deepcopy(trader)
     short = data_error_reason(error)
     reasons = [reason for reason in previous['saglik']['nedenler'] if not reason.startswith('veri hatası:')]
     previous['saglik']['nedenler'] = reasons + [f'veri hatası: {short}']
     previous['gecerli'] = False
-    previous['veri_durumu'] = veri_durumu(error)
+    age = (now - timestamp(previous['veri_zamani'])).total_seconds() / 60 if now is not None and previous.get('veri_zamani') else None
+    previous['veri_durumu'] = veri_durumu(error, age)
     return previous
 
 
@@ -608,21 +614,29 @@ def kol_uyeleri(traderlar: list[dict], kol: str) -> list[dict]:
 
 
 def kapsam(traderlar: list[dict], kol: str) -> dict:
-    """Kolun veri kapsamı: geçerli / eski (okuma hatası, önceki sonuç gösteriliyor) / yer tutucu (hiç okunmadı) sayıları.
-
-    ``perp_hesabi_bos`` eski ya da yer tutucudan ayrı raporlanır; toplam = hepsinin toplamı.
+    """Kolun veri kapsamı (üye sayısı ``toplam`` sabit kalır; ITT). Her üye tam bir kovaya düşer:
+    ``gecerli`` (``fiyatsiz`` bunun alt kümesidir: trader geçerli, yalnız bazı coinler ölçüm dışı) | ``perp_bos`` | ``yer_tutucu`` (hiç
+    okunmadı) | ``bayat`` | ``okuma_hatasi`` (son okuma başarısız, önceki sonuç gösteriliyor). ``kapsama`` = gecerli / toplam (oran).
+    ``gecerli_bakiye_usd`` / ``gecersiz_bakiye_usd``: sanal kopya bakiyelerinin ayrı alt toplamları (yer tutucu ve perp_bos hariç).
     """
-    result = {'toplam': 0, 'gecerli': 0, 'eski': 0, 'yer_tutucu': 0, 'perp_hesabi_bos': 0}
+    result = {'toplam': 0, 'gecerli': 0, 'fiyatsiz': 0, 'perp_bos': 0, 'yer_tutucu': 0, 'bayat': 0, 'okuma_hatasi': 0,
+              'kapsama': 0.0, 'gecerli_bakiye_usd': 0.0, 'gecersiz_bakiye_usd': 0.0}
     for trader in kol_uyeleri(traderlar, kol):
         result['toplam'] += 1
+        balance = float((trader.get('sanal_kopya') or {}).get('bakiye_usd') or 0.0)
         if trader.get('gecerli', True):
             result['gecerli'] += 1
-        elif trader.get('veri_durumu') == 'perp_hesabi_bos':
-            result['perp_hesabi_bos'] += 1
+            result['gecerli_bakiye_usd'] += balance
+            if trader.get('veri_durumu') == 'fiyatsiz':
+                result['fiyatsiz'] += 1
+        elif trader.get('veri_durumu') == 'perp_bos':
+            result['perp_bos'] += 1
         elif trader.get('veri_zamani') is None:
             result['yer_tutucu'] += 1
         else:
-            result['eski'] += 1
+            result['bayat' if trader.get('veri_durumu') == 'bayat' else 'okuma_hatasi'] += 1
+            result['gecersiz_bakiye_usd'] += balance
+    result['kapsama'] = result['gecerli'] / result['toplam'] if result['toplam'] else 0.0
     return result
 
 
@@ -661,12 +675,12 @@ def unavailable_trader(root: Path, row: dict, error: Exception) -> dict:
     style = resolve_style(root, row)
     return {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': None, 'gecerli': False,
             'kapi': gate_result(root, row['adres']),
-            'veri_durumu': veri_durumu(error),
+            'veri_durumu': veri_durumu(error), 'yer_tutucu': True,
             'saglik': {'isik': 'sari', 'nedenler': [f'veri hatası: {data_error_reason(error)}']},
             'form': {'skor': 0.0, 'getiri_30g': 0.0, 'getiri_90g': 0.0},
             'hesap_degeri': 0.0, 'pozisyonlar': [], 'egri': [],
             'son_islem': {'coin': '', 'yon': '', 'acilis': '', 'kapanis': '', 'net_yuzde': 0.0},
-            'sanal_kopya': {'baslangic_usd': 1000, 'bakiye_usd': 1000.0, 'getiri': 0.0, 'dusus': 0.0,
+            'sanal_kopya': {'yer_tutucu': True, 'baslangic_usd': 1000, 'bakiye_usd': 1000.0, 'getiri': 0.0, 'dusus': 0.0,
                             'gecikme_dk': delay_for_style(style), 't0': str(timestamp(row['t0']).date()), 'egri': []}}
 
 
@@ -767,7 +781,7 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
         last_trade = {'coin': last['coin'], 'yon': 'long' if float(ending.get('startPosition', 0)) > 0 else 'short',
                       'acilis': iso(last['open_time']) if last['open_time'] is not None else '',
                       'kapanis': iso(last['close_time']), 'net_yuzde': last['net_pnl'] / notional if notional else 0.0}
-    trader = {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': iso(read_at), 'gecerli': True, 'veri_durumu': 'tamam',
+    trader = {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': iso(read_at), 'gecerli': True, 'veri_durumu': 'fiyatsiz' if paper.get('fiyatsiz_eylem') else 'tamam',
               'kapi': gate_result(root, address), 'saglik': light,
               'form': {'skor': ret30 / volatility if volatility > 0 and math.isfinite(volatility) else 0.0,
                        'getiri_30g': ret30, 'getiri_90g': float(recent.iloc[-1] - recent.iloc[0]) if len(recent) else 0.0},
@@ -863,7 +877,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
             retained = state['traderlar'].get(row['id'], {})
             previous = retained.get('son_trader')
             if previous:
-                traders.append(with_data_error(previous, error))
+                traders.append(with_data_error(previous, error, now))
                 for event in retained.get('son_olaylar', []):
                     all_events[event['id']] = event
             else:

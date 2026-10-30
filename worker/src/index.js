@@ -235,12 +235,23 @@ const LIGHT = { yesil: "🟢", sari: "🟡", kirmizi: "🔴" };
 const VERI_UYARI_DK = 180;   // günlük uyarı eşiği: 3 saat (ayrı: /durum'un kendi 90 dk eşiğinden farklı, bilgi amaçlı)
 
 function sanalKohort(all, kol) {
-  return all.filter(t => (t.kollar || [t.kol]).includes(kol)).map(t => t.sanal_kopya).filter(Boolean);
+  // Yalnız geçerli traderlar toplanır (gecerli=false: eski sonuç/yer tutucu); kapsama ayrıca gösterilir (kapsamSatiri).
+  return all.filter(t => (t.kollar || [t.kol]).includes(kol) && t.gecerli !== false).map(t => t.sanal_kopya).filter(Boolean);
 }
 function ortalamaGetiri(copies) {
   return copies.length ? copies.reduce((sum, c) => sum + (Number(c.getiri) || 0), 0) / copies.length : null;
 }
 function yuzdeYaz(v) { return v == null ? "bilinmiyor" : `${v >= 0 ? "+" : ""}${(v * 100).toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`; }
+
+// Kol kapsaması: üye sayısı sabit (ITT), geçerli/geçersiz ayrı. Motor `kapsam` yayımlamadıysa satır yazılmaz.
+function kapsamSatiri(status, kol) {
+  const k = status.kapsam?.[kol];
+  if (!k || !k.toplam) return null;
+  const gecersiz = k.toplam - k.gecerli;
+  const yuzde = (k.gecerli / k.toplam * 100).toLocaleString("tr-TR", { maximumFractionDigits: 0 });
+  const ek = gecersiz ? ` · ${gecersiz} geçersiz/eski (toplama girmez${k.gecersiz_bakiye_usd ? `, önceki bakiyeleri $${Math.round(k.gecersiz_bakiye_usd).toLocaleString("tr-TR")}` : ""})` : "";
+  return `📡 ${kol === "oda" ? "Oda" : kol} kapsama: ${k.gecerli}/${k.toplam} geçerli (%${yuzde})${ek}`;
+}
 
 // Günde bir, 09:00 TR'de (06:00 UTC): sanal kopya ölçeğinde oda kasası/getiri, oda−kontrol farkı (aynı dönem,
 // her ikisi de sanal_kopya.getiri ortalaması), son 24 saatteki işlem sayısı ve trader sayısı, ışıklar, veri yaşı.
@@ -263,10 +274,11 @@ function dailySummaryText(status, nowMs = Date.now()) {
     `📐 Oda − Kontrol farkı (aynı dönem, sanal kopya): ${fark == null ? "bilinmiyor" : yuzdeYaz(fark)}`,
     `🔁 Son 24 saat: ${islemOlaylari.length} işlem · ${new Set(islemOlaylari.map(e => e.trader)).size} trader`,
     `🟢 ${count("yesil")}   🟡 ${count("sari")}   🔴 ${count("kirmizi")}`,
+    kapsamSatiri(status, "oda"),
     age > ESKI_DK ? `⚠️ Veri ${age} dk önce — güncellenmedi` : `🕐 Veri ${age} dk önce`,
     "",
     `Pano: ${PANO}`,
-  ].join("\n");
+  ].filter(line => line !== null).join("\n");
 }
 
 async function uyariDurumGetir(env, anahtar) {
