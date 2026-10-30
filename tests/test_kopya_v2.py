@@ -51,13 +51,26 @@ def test_tasfiye_bakiye_sifirda_kalir_ve_zaman_yayimlanir():
     assert v2['egri'][-1] == ['2026-10-27', 0.0]
 
 
-def test_tasfiye_olmayan_derin_zarar_negatif_bakiye_uretmez():
-    # Aynı pozisyon, işaret 60 -> K/Z -0,8 (eşik altında değil): tasfiye yok; açık K/Z -0,8 -> özsermaye 1000x(1-0,8-0,0019) ~ 198,1 > 0.
+def test_aşamalı_zarar_kes_tasfiyeden_once_pozisyonu_kapatir():
+    # E3: intraday zarar_kes eşiği -%50 (kurallar.yaml golge_v2, ön kayıtlı). 11:00'de K/Z = 0,02x(60-100) = -0,8 <=
+    # -0,5 (ama -1,0 çapraz teminat eşiğinin ÜSTÜNDE, tasfiye değil) -> pozisyon 11:00'de @60 zorunlu kapanır.
+    # Gerçekleşen: -0,8 (kapanış) - giriş maliyeti 0,02x100x0,00095=0,0019 - çıkış maliyeti 0,02x60x0,00095=0,00114
+    # = -0,80304 -> bakiye 1000x(1-0,80304) = 196,96.
     fills = [fill('2026-10-27T10:00:00Z', 'B', 20, 0, 100)]
     v2 = run(fills, hourly(BTC={'10:00': 100.0, '11:00': 60.0}), {'BTC': {'10:30': 100.0}}, ACCOUNT_1000,
              isaret={'BTC': [{'t': ms('2026-10-27T11:59:00Z'), 'o': 60.0}]})
-    assert v2['tasfiye'] is False
-    assert v2['bakiye_usd'] == pytest.approx(1000 * (1 - 0.8 - 0.0019), rel=1e-9)
+    assert v2['tasfiye'] is False                                        # çapraz teminat eşiğine değmedi
+    assert v2['bakiye_usd'] == pytest.approx(196.96, rel=1e-6)
+    assert v2['kapanis_nedenleri'] == [{'coin': 'BTC', 'neden': 'zarar_kes', 'zaman': '2026-10-27T11:00:00Z'}]
+
+
+def test_zarar_kes_esigine_degmeyen_pozisyon_acik_kalir():
+    # Aynı pozisyon, işaret -%20 (eşiğin üstünde): hiçbir zorunlu çıkış yok, açık K/Z işaretle yayımlanır.
+    fills = [fill('2026-10-27T10:00:00Z', 'B', 20, 0, 100)]
+    v2 = run(fills, hourly(BTC={'10:00': 100.0, '11:00': 90.0}), {'BTC': {'10:30': 100.0}}, ACCOUNT_1000,
+             isaret={'BTC': [{'t': ms('2026-10-27T11:59:00Z'), 'o': 90.0}]})
+    assert v2['tasfiye'] is False and v2['kapanis_nedenleri'] == []
+    assert v2['bakiye_usd'] == pytest.approx(1000 * (1 - 0.2 - 0.0019), rel=1e-9)
 
 
 def test_zamanla_degisen_payda():
