@@ -13,15 +13,16 @@ function secim(tarih, surum) {
 }
 const durum = { durum: 'tamam', parca_beklenen: 32, parca_biten: 32, islenen: 13767, evren: 13710, kapsam: 1.0042, neden: '', hesap: 'v1.1-2026-10-27d' };
 /* copytrade-izleme/izleme/durum.json biçiminde "onaylı" (secim etiketiyle eşleşen) canlı veri — UYDURMA.
-   traders: [{id, adresIndex(kol harfi+sayı), kol, kollar, saglik, sanal_kopya, pozisyonlar}]; her biri secim.json'daki
-   aynı adres(a1..a6=oda, b1..b3=aday, d1..d4=taban)'a eşlenir ki gercek.js onu secim satırıyla birleştirsin. */
+   traders: [{id, adresIndex(kol harfi+sayı), kol, kollar, saglik, sanal_kopya_v3, pozisyonlar}]; her biri secim.json'daki
+   aynı adres(a1..a6=oda, b1..b3=aday, d1..d4=taban)'a eşlenir ki gercek.js onu secim satırıyla birleştirsin.
+   sanal_kopya_v3: gercek.js'in güncel motor olarak okuduğu alan (v1 sanal_kopya artık okunmuyor, kullanıcı kararı 2026-10-30). */
 function izleme(etiket, traders, olaylar) {
   return {
     surum: 1, uretildi: '2026-10-28T14:20:00Z', kaynak: 'hyperliquid-izleme (test)',
     traderlar: traders.map(t => Object.assign({
       id: t.id, adres: t.adresTam, takma_ad: t.adresTam.slice(2, 6), durum: 'izlemede', t0: '2026-10-28',
       kol: t.kol, kollar: t.kollar, tarz: t.tarz || 'intraday', veri_zamani: '2026-10-28T14:18:00Z', gecerli: true,
-      secim: etiket, saglik: t.saglik || null, sanal_kopya: t.sanal_kopya || null, pozisyonlar: t.pozisyonlar || []
+      secim: etiket, saglik: t.saglik || null, sanal_kopya_v3: t.sanal_kopya_v3 || null, pozisyonlar: t.pozisyonlar || []
     })),
     kasa_egri: [], olaylar: olaylar || [], kalabalik: { n_oda: traders.filter(t => t.kollar.includes('oda')).length, uyari: false, uyari_metni: null }
   };

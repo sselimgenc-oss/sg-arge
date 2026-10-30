@@ -19,7 +19,7 @@
           "anlik_kz_usd": 100
         }
       ],
-      "sanal_kopya": {
+      "sanal_kopya_v3": {
         "bakiye_usd": 1050,
         "acik": 0.01,
         "egri": [
@@ -41,7 +41,7 @@
       "kol": "kontrol",
       "hesap_degeri": 10000,
       "pozisyonlar": [],
-      "sanal_kopya": {
+      "sanal_kopya_v3": {
         "bakiye_usd": 1020,
         "acik": 0,
         "egri": [
@@ -67,7 +67,7 @@
       ],
       "hesap_degeri": 10000,
       "pozisyonlar": [],
-      "sanal_kopya": {
+      "sanal_kopya_v3": {
         "bakiye_usd": 1100,
         "acik": 0,
         "egri": [

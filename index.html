@@ -362,10 +362,12 @@
   const golge = () => (CT && CT.golge) || {};
   // Hafta: veride `golge.hafta` yoksa oda üyelerinin en erken t0'ından türetilir (ofisle aynı kural: tam hafta + 1)
   const haftaHesap = () => { const g = golge(); if (isNum(g.hafta)) return g.hafta;
-    const t0 = (CT?.traderlar || []).filter((t) => uyeMi(t, 'oda')).map((t) => Date.parse(String(t.t0 || t.sanal_kopya?.t0 || '') + 'T00:00:00Z')).filter(Number.isFinite);
+    const t0 = (CT?.traderlar || []).filter((t) => uyeMi(t, 'oda')).map((t) => Date.parse(String(t.t0 || t.sanal_kopya_v3?.t0 || '') + 'T00:00:00Z')).filter(Number.isFinite);
     return t0.length ? Math.max(1, Math.floor((Date.now() - Math.min(...t0)) / 604800000) + 1) : null; };
   const haftaMetni = () => { const g = golge(), h = haftaHesap(); return `hafta ${isNum(h) ? h : '?'}/${isNum(g.hafta_toplam) ? g.hafta_toplam : 12}`; };
-  const sanalGetiri = (t) => isNum(t?.sanal_kopya?.getiri) ? t.sanal_kopya.getiri : null;
+  // Güncel motor (sanal_kopya_v3 — sabit tutar + çıkış kuralları + tasfiye); v1 (sanal_kopya) silinmedi
+  // ama pano artık onu göstermiyor (kullanıcı kararı 2026-10-30).
+  const sanalGetiri = (t) => isNum(t?.sanal_kopya_v3?.getiri) ? t.sanal_kopya_v3.getiri : null;
   const ortalama = (liste) => { const x = liste.map(sanalGetiri).filter(isNum); return x.length ? x.reduce((a, b) => a + b, 0) / x.length : null; };
   const ACIK = new Map();                                        // <details> açık/kapalı durumu yeniden çizimde korunur
   const det = (id, baslik, ic, varsayilan = false) => `<details class="card ct-card det" data-d="${esc(id)}" ${(ACIK.has(id) ? ACIK.get(id) : varsayilan) ? 'open' : ''} ontoggle="ACIK.set(this.dataset.d, this.open)"><summary>${baslik}</summary><div class="mt-2">${ic}</div></details>`;
@@ -442,12 +444,12 @@
 
   // ---------- sanal kasa: yalnız oda; kontrol tek karşılaştırma satırıdır
   const kasaUyeleri = (kol) => (CT?.traderlar || []).filter((t) => uyeMi(t, kol));
-  const kasaToplam = (kol, alan = 'bakiye_usd') => kasaUyeleri(kol).reduce((n, t) => n + (Number(t.sanal_kopya?.[alan]) || 0), 0);
+  const kasaToplam = (kol, alan = 'bakiye_usd') => kasaUyeleri(kol).reduce((n, t) => n + (Number(t.sanal_kopya_v3?.[alan]) || 0), 0);
   function kasaSeri(kol) {
     const live = CT?.kasa_egri?.[kol];
     if (Array.isArray(live) && live.length) return live;
     const byDay = {};
-    kasaUyeleri(kol).forEach((t) => (t.sanal_kopya?.egri || []).forEach(([day, value]) => { byDay[day] = (byDay[day] || 0) + Number(value || 0); }));
+    kasaUyeleri(kol).forEach((t) => (t.sanal_kopya_v3?.egri || []).forEach(([day, value]) => { byDay[day] = (byDay[day] || 0) + Number(value || 0); }));
     return Object.entries(byDay).sort(([a], [b]) => a.localeCompare(b));
   }
   function kasaGrafik(seri) {
@@ -474,7 +476,7 @@
     const closed = ctOlaylar().filter((o) => oda.some((t) => t.id === o.trader) && o.sanal_sonuc?.durum === 'kapandi');
     const recentClosed = closed.filter((o) => ctDate(o.sanal_sonuc.kapanis).getTime() >= dayAgo);
     const wins = recentClosed.filter((o) => Number(o.sanal_sonuc.net_yuzde) > 0).length;
-    const row = (x) => `<tr><td>${esc(x.p.coin)}</td><td>${esc(x.t.takma_ad || ctAdr(x.t.adres))}</td><td>${esc(x.p.yon === 'long' ? 'alış yönü' : x.p.yon === 'short' ? 'satış yönü' : '—')}</td><td>${x.p.acilis ? sureBaslangic(ctDate(x.p.acilis).getTime()) : '—'}</td><td>${ctKaldirac(x.p.kaldirac)}</td><td>— <span class="ct-sub">veri yok</span></td><td>${ctUsdA(x.margin)}</td><td>${ctUsds(x.pnl)} · ${ctPs(x.t.sanal_kopya?.acik)}</td></tr>`;
+    const row = (x) => `<tr><td>${esc(x.p.coin)}</td><td>${esc(x.t.takma_ad || ctAdr(x.t.adres))}</td><td>${esc(x.p.yon === 'long' ? 'alış yönü' : x.p.yon === 'short' ? 'satış yönü' : '—')}</td><td>${x.p.acilis ? sureBaslangic(ctDate(x.p.acilis).getTime()) : '—'}</td><td>${ctKaldirac(x.p.kaldirac)}</td><td>— <span class="ct-sub">veri yok</span></td><td>${ctUsdA(x.margin)}</td><td>${ctUsds(x.pnl)} · ${ctPs(x.t.sanal_kopya_v3?.acik)}</td></tr>`;
     const close = (o) => `<tr><td>${esc(o.coin || '—')}</td><td>${esc((CT.traderlar || []).find((t) => t.id === o.trader)?.takma_ad || o.trader)}</td><td>— <span class="ct-sub">kayıt yok</span></td><td>—</td><td>${ctPs(o.sanal_sonuc.net_yuzde, 2)}</td></tr>`;
     return `<div class="card ct-card"><h2 class="bas">Sanal kasa</h2><div class="ct-kv mt-2"><div><div class="k">Oda kasası</div><div class="v">${ctUsdA(balance)}</div></div><div><div class="k">Başlangıçtan</div><div class="v">${ctUsds(since)} · ${ctPs(initial ? since / initial : null, 2)}</div></div></div><div class="ct-sec"><span class="ct-sub">Kontrol karşılaştırması:</span> ${ctUsdA(ctrl)} · ${ctPs(ctrlInitial ? (ctrl - ctrlInitial) / ctrlInitial : null, 2)}</div></div>
       <div class="card ct-card"><h2 class="bas">Kasa eğrisi</h2>${kasaGrafik(kasaSeri('oda'))}</div>
@@ -579,7 +581,7 @@
       ${det('gecmis:' + t.adres, `<b>İşlem geçmişi</b> <span class="ct-sub">(son 30 gün${h?.durum === 'hazir' ? ', ' + islemler.length + ' işlem' : ''})</span>`, h?.durum === 'hazir' ? (gecmis.length ? gecmis.map(satir).join('') : '<div class="ct-sub">İşlem yok.</div>') + (islemler.length > (sayfa + 1) * 20 ? `<button class="ct-btn w-full mt-2" onclick="location.hash='trader/${adr}/${sayfa + 1}'">Daha fazla</button>` : '') : '<div class="ct-sub">Canlı veri gelince burada listelenir.</div>')}
       ${olaylar.length || CT ? det('olay:' + t.adres, `<b>Bizim olaylar</b> <span class="ct-sub">(${olaylar.length})</span>`, benim.length ? benim.map((o) => ctOlayYuvarlak(o, false)).join('') + (olaylar.length > n ? `<button class="ct-btn w-full mt-2" onclick="olayN['${esc(t.adres)}']=${n + 8};render()">Daha fazla</button>` : '') : '<div class="ct-sub">Bu trader için olay yok.</div>') : ''}
       ${det('karar:' + t.adres, '<b>Kararlarım</b>', `<div class="ct-kv"><div><div class="k">Açtım</div><div class="v">${s.acti}</div></div><div><div class="k">Atladım</div><div class="v">${s.atladi}</div></div><div><div class="k">Cevapsız</div><div class="v">${s.cevapsiz}</div></div></div><div class="ct-sec"><span class="ct-sub">Atlama nedenleri:</span> ${nedenHtml(s.kr)}</div>`)}
-      <div class="card ct-card"><h2 class="bas">Bizim sanal kopya ${ip('ozet')}</h2><div class="ct-kv mt-2"><div><div class="k">Getiri</div><div class="v">${ctPs(sanalGetiri(t), 2)}</div></div><div><div class="k">Bakiye</div><div class="v">${ctUsdA(t.sanal_kopya?.bakiye_usd)}</div></div></div></div>
+      <div class="card ct-card"><h2 class="bas">Bizim sanal kopya ${ip('ozet')}</h2><div class="ct-kv mt-2"><div><div class="k">Getiri</div><div class="v">${ctPs(sanalGetiri(t), 2)}</div></div><div><div class="k">Bakiye</div><div class="v">${ctUsdA(t.sanal_kopya_v3?.bakiye_usd)}</div></div></div></div>
       ${det('secim:' + t.adres, '<b>Seçim ayrıntıları</b>', sec)}
     </div>`;
   }

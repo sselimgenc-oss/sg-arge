@@ -72,11 +72,16 @@
           teminat_usd: sayi(t.hesap_degeri) > 0 && sayi(p.buyukluk_usd) != null && sayi(p.kaldirac) > 0 ? Math.abs(sayi(p.buyukluk_usd)) * 1000 / sayi(t.hesap_degeri) / sayi(p.kaldirac) : null   // K/Z ve teminat panoyla aynı 1.000 $ sanal ölçekte (teminat = nosyonel / kaldıraç); yalnız durum.json'da gerçekten olan alanlar; sahte yüzde/teminat/likidasyon uydurulmaz
         });
       });
-      return Object.assign(olustur(e, kat, t.id.slice(0, 1), i), { id: t.id, adres: kisa(t.adres), takma_ad: t.takma_ad, kat: kat, kol: t.kol, saglik: t.saglik, sanal_kopya: t.sanal_kopya || null, veri_zamani: t.veri_zamani || live.uretildi });
+      // Güncel motor (sanal_kopya_v3 — sabit tutar + çıkış kuralları + tasfiye); v1 (sanal_kopya) silinmedi
+      // ama ofis artık onu göstermiyor (kullanıcı kararı 2026-10-30). Çıkış alanı adı (sanal_kopya) değişmedi;
+      // bu uyarlayıcının kendi çıktı sözleşmesi, kaynaktaki alan adıyla bağımlı değil.
+      return Object.assign(olustur(e, kat, t.id.slice(0, 1), i), { id: t.id, adres: kisa(t.adres), takma_ad: t.takma_ad, kat: kat, kol: t.kol, saglik: t.saglik, sanal_kopya: t.sanal_kopya_v3 || null, veri_zamani: t.veri_zamani || live.uretildi });
     }) : traderlar;
-    const copies = eslesmis.map(t => t.sanal_kopya).filter(Boolean);
+    const copies = eslesmis.map(t => t.sanal_kopya_v3).filter(c => c && typeof c.getiri === 'number');
     const total = key => copies.reduce((x, c) => x + (sayi(c[key]) || 0), 0);
-    const kol = name => eslesmis.filter(t => (t.kollar || []).indexOf(name) >= 0).map(t => t.sanal_kopya).filter(Boolean);
+    // "durum":"hesaplanamadi" (v3 henüz hesaplanmamış/hesaplanamamış) sayılmaz: ortalamaya 0 olarak girip
+    // getiriyi çekmesin, kasa toplamına da hayalî üye eklemesin (worker/src/index.js sanalKohort ile aynı düzeltme).
+    const kol = name => eslesmis.filter(t => (t.kollar || []).indexOf(name) >= 0).map(t => t.sanal_kopya_v3).filter(c => c && typeof c.getiri === 'number');
     const getiri = name => { const a = kol(name); return a.length ? a.reduce((x, c) => x + (sayi(c.getiri) || 0), 0) / a.length : null; };
     const hafta = onaylandi ? Math.max(1, Math.floor((simdi.getTime() - Date.parse(tarih + 'T00:00:00Z')) / 604800000) + 1) : 0;
     const gunSayisi = onaylandi ? Math.max(1, Math.floor((simdi.getTime() - Date.parse(tarih + 'T00:00:00Z')) / 86400000) + 1) : null;   // t0 günü = 1 (hafta×7 değil)
