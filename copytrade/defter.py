@@ -38,6 +38,65 @@ def cost_rate(rules: dict | None = None) -> float:
     return float(rules["maliyet_taker"]) + float(rules["maliyet_kayma"])
 
 
+def sabit_tutar_egrisi(rules: dict | None = None) -> Any:
+    """E2 sabit işlem tutarı (kullanıcı kararı 2026-10-30: "Etre eğrisini enterpolasyonla port et").
+
+    Kaynak: `etre-trading-office` `etre2/kasa.py` (`Kasa.islem_usd`) + `etre2/ayar.py` (varsayılanlar), GPL-3.0.
+    tutar_usd = ref_islem_usd × (clamp(kopya_hesabının_KENDİ_güncel_$_değeri, 1, tavan) / ref_kasa_usd) ** us.
+    Etre'nin kendi varsayılanları (`kurallar.yaml`): 200$→5,2$, 1.000$→~20,7$, 10.000$→~150$, sonrası sabit (kasa.py
+    docstring'inde doğrulandı) — enterpolasyon benim değil, Etre'nin kendi eğrisi."""
+    rules = rules or load_rules()
+    ref_kasa = float(rules["sabit_tutar_ref_kasa_usd"])
+    ref_islem = float(rules["sabit_tutar_ref_islem_usd"])
+    us = float(rules["sabit_tutar_us"])
+    tavan = float(rules["sabit_tutar_tavan_kasa_usd"])
+
+    def tutar(hesap_usd: float) -> float:
+        e = max(1.0, min(float(hesap_usd), tavan))
+        return ref_islem * (e / ref_kasa) ** us
+    return tutar
+
+
+def _fresh_open(sign: float, price: float, when: int, held: dict[str, float], entry: dict[str, float],
+                market: "Market", realized_so_far: float, tutar_egrisi: Any, base_usd: float) -> float:
+    """Taze açılış (kopyada pozisyon yok): Etre `masa.py _giris`in portu — tutar, kopya hesabının O ANKİ (trader'ınki
+    değil) gerçek $ değerinden okunur. Hesap: baz × (1 + gerçekleşen_simdiye_kadar + gerçekleşmemiş_simdi); gerçekleşmemiş
+    bu dolumdan ÖNCEki ``held``/``entry`` ile hesaplanır (bu dolumun kendisi henüz işlenmedi). Funding bu tahmine girmez
+    (saatlik, döngü sonrası ayrı hesaplanır) — küçük bir yaklaşıklık, belgelenmiştir."""
+    if price <= 0:
+        return 0.0
+    unrealized = 0.0
+    for coin, size in held.items():
+        if size == 0.0:
+            continue
+        mark = market.mark(coin, when)
+        if mark is not None:
+            unrealized += size * (mark - entry[coin])
+    equity_usd = max(0.0, base_usd * (1.0 + realized_so_far + unrealized))
+    tutar_usd = float(tutar_egrisi(equity_usd))
+    if tutar_usd <= 0:
+        return 0.0
+    return sign * (tutar_usd / price) / base_usd
+
+
+def _sabit_tutar_signed(sign: float, signed: float, before_leader: float, own: float, price: float, when: int,
+                        held: dict[str, float], entry: dict[str, float], market: "Market", realized_so_far: float,
+                        tutar_egrisi: Any, base_usd: float) -> float:
+    """E2 sabit tutar: açılış (ve flip'in yeni yöndeki parçası) sabit $ eğrisiyle; ekleme Etre `masa.py _ekle`
+    gibi MEVCUT kopya pozisyonuna oranla (trader'ın kendi oranı kadar); azaltma/kapatma değişmez (defterin ortak
+    kuralı)."""
+    if before_leader * signed < 0:            # trader azaltıyor / kapatıyor / ters çeviriyor
+        leader_close = min(abs(before_leader), abs(signed))
+        close = abs(own) * leader_close / abs(before_leader) if own * before_leader > 0 else 0.0
+        remainder = max(0.0, abs(signed) - leader_close)
+        opened = _fresh_open(sign, price, when, held, entry, market, realized_so_far, tutar_egrisi, base_usd) if remainder > 0 else 0.0
+        return sign * close + opened
+    if own == 0.0:
+        return _fresh_open(sign, price, when, held, entry, market, realized_so_far, tutar_egrisi, base_usd)
+    f = abs(signed) / abs(before_leader) if before_leader else 0.0
+    return sign * abs(own) * f
+
+
 def delayed_execution_quality(fills: list[dict], market: "Market", delay_min: int,
                               start_ms: int, end_ms: int) -> dict[str, float | int | None]:
     """Gecikmeli dolumun kaynak doluma göre yön-duyarlı fiyat farkı.
@@ -217,16 +276,24 @@ def capital_scale(account: Any):
 
 
 def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int, start_ms: int, end_ms: int,
-                rates: FundingRates | None = None, rules: dict | None = None, daily: bool = False) -> dict[str, Any]:
+                rates: FundingRates | None = None, rules: dict | None = None, daily: bool = False,
+                tutar_egrisi: Any = None, base_usd: float = 1000.0) -> dict[str, Any]:
     """Tek kopya defteri. ``fills``: kaynak dolumlar (coin, side A/B, sz, startPosition, time, px), zamana göre sıralı olmak zorunda değil.
 
     Döner: ``net`` (gerçekleşen − maliyet + funding + pencere sonu gerçekleşmemiş K/Z; hesap değerine oranla), ``missing`` (eksik dolum),
     ``executed``, ``costs``, ``funding``, ``realized``, ``unrealized_end``; ``daily=True`` ise ``daily`` (UTC gün → net, açık pozisyon
     fiyatlaması dahil), ``exposure`` (gün → açık pozisyonlu saat oranı) ve ``max_drawdown`` (kopya eğrisinin zirveden düşüşü, kesir).
+
+    ``tutar_egrisi`` verilirse (E2 sabit tutar, bkz. ``sabit_tutar_egrisi``): ``account``/trader hesabına ORANLI kopyalama
+    YERİNE, her taze açılış kopya hesabının KENDİ o anki ``base_usd`` ölçeğindeki değerine göre sabit $ tutarla açılır;
+    ekleme mevcut kopya pozisyonuna trader'ın oranı kadar eklenir (Etre `masa.py` portu). ``account`` bu modda okunmaz.
     """
-    scale = capital_scale(account)
-    if scale is None:
-        return {"net": None, "missing": 0, "executed": 0}
+    if tutar_egrisi is None:
+        scale = capital_scale(account)
+        if scale is None:
+            return {"net": None, "missing": 0, "executed": 0}
+    else:
+        scale = None
     rate = cost_rate(rules)
     held: dict[str, float] = {}       # kopya pozisyonu (coin birimi)
     entry: dict[str, float] = {}
@@ -245,16 +312,6 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
         if abs(signed) < 1e-12:
             continue
         own = held.get(coin, 0.0)
-        factor = scale(int(fill["time"]))     # kopya sermayesi 1 / trader'ın o andaki hesap değeri
-        if before_leader * signed < 0:    # trader'ın pozisyonunu azaltıyor / kapatıyor / ters çeviriyor
-            leader_close = min(abs(before_leader), abs(signed))
-            # kopya, kendi pozisyonunun trader'ın kapattığı oranı kadarını kapatır (ölçek zamanla değişse de artık pozisyon kalmaz)
-            close = abs(own) * leader_close / abs(before_leader) if own * before_leader > 0 else 0.0
-            signed = sign * (close + max(0.0, abs(signed) - leader_close) * factor)
-        else:
-            signed = signed * factor
-        if abs(signed) < 1e-15:
-            continue
         if "_execution_time" in fill:
             when, price = int(fill["_execution_time"]), float(fill["_execution_price"])
         elif delay_min == 0:
@@ -266,6 +323,20 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
                 continue
             when, price = found
         if when > end_ms or when < start_ms:
+            continue
+        if tutar_egrisi is None:
+            factor = scale(int(fill["time"]))     # kopya sermayesi 1 / trader'ın o andaki hesap değeri
+            if before_leader * signed < 0:    # trader'ın pozisyonunu azaltıyor / kapatıyor / ters çeviriyor
+                leader_close = min(abs(before_leader), abs(signed))
+                # kopya, kendi pozisyonunun trader'ın kapattığı oranı kadarını kapatır (ölçek zamanla değişse de artık pozisyon kalmaz)
+                close = abs(own) * leader_close / abs(before_leader) if own * before_leader > 0 else 0.0
+                signed = sign * (close + max(0.0, abs(signed) - leader_close) * factor)
+            else:
+                signed = signed * factor
+        else:
+            signed = _sabit_tutar_signed(sign, signed, before_leader, own, price, when, held, entry, market,
+                                         realized, tutar_egrisi, base_usd)
+        if abs(signed) < 1e-15:
             continue
         executed += 1
         pnl = 0.0

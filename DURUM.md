@@ -1,6 +1,6 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-30, Claude (temizlik). Lider: Sonnet (K‑11, birleştirme yetkili).
+Son güncelleme: 2026-10-30 gece, Sonnet (E2 sabit tutar/v3). Lider: Sonnet (K‑11, birleştirme yetkili).
 
 **Kullanıcı kararı (2026-10-30 gece):** Sol (Codex) denetimi artık **manuel** — zorunlu birleştirme koşulu değil,
 yalnız kullanıcı isterse ayrıca devreye girer. Birleştirme koşulu: **CI yeşil** (lider kendi birleştirir, denetim
@@ -51,6 +51,24 @@ pozisyon tavanı mantığı canlıya bağlı değildi (K3/K5/K6, `DENETIM_TRADER
 değişmedi. **Gerçek veri (canlı HL, O01):** v1 getiri +%7,18 ↔ v2 +%0,95 — fark açıklanabilir: O01'in gerçek açık
 pozisyonu hesabın %163'ü notional (HL'den doğrulandı), v1 kapsız kopyalıyor, v2'nin pozisyon tavanı (3,0x) kırpıyor.
 8 altın örnek testi; `python -m pytest -q` 535 geçti. Kapsam dışı (E3): sabit $ tutar, aşamalı zarar_kes/kar_al.
+
+## E2 devamı (2026-10-30 gece): sabit $ işlem tutarı (v3)
+Kullanıcı kararı: "Etre eğrisini enterpolasyonla port et" (Etre'nin kendi `kasa.py`/`ayar.py` sayıları, DEĞİŞTİRİLMEDİ:
+200$→5,2$, 1.000$→~20,75$, 10.000$→~150,35$, sonrası sabit). `copytrade/kopya_v3.py` (`sanal_kopya_v3`, v1/v2
+yanında, kural 6): açılış kopyanın KENDİ 1.000 $ değerine göre bu eğriden sabit tutarla (trader'ın işlem büyüklüğü
+etkilemez); ekleme mevcut pozisyona oranla (Etre `masa.py _ekle`). Aynı motor (`defter.copy_ledger`, kural 7),
+yalnız yeni `tutar_egrisi` parametresiyle. 14 altın örnek testi (`test_defter_sabit_tutar.py`, `test_kopya_v3.py`).
+**Kapsam dışı (bu sürümde HENÜZ yok):** tasfiye/pozisyon tavanı/aşamalı çıkış — `golge.py`'nin bu katmanı trader
+hesabına ORANLI ölçeklemeye kodlanmış; sabit tutar tabanına taşınması ayrı tasarım kararı (sentetik zorunlu-çıkış
+dolumlarının ölçeği belirsiz). Kaldıraç kademesi/marj modeli/"ikna" çarpanı da kapsam dışı (ayrı GOREV alt maddesi).
+**Küçük gerçek veri denemesi** (O01, O02, B17; canlı HL): O01 v1 +%7,68, v2 +%0,91, v3 −%0,34 (makul, küçük fark).
+B17 (taban, hesap 70,2 milyon $) v1 +%0,81, v2 +%0,76, v3 **+%18,8** — beklenen ayrışma: v1/v2 B17'nin devasa
+hesabına ORANLI kopyaladığından pozisyon kırıntı kalıyor, v3 sabit $ açtığından aynı fiyat hareketi kopya
+sermayesinin çok daha büyük bir payını oynatıyor (tasarımın amacı tam bu). **Yan bulgu:** B17'de v2 `fiyatsiz_eylem`
+0, v3 322 — v3 hatası değil: `golge.v2_cikislari` yürütülemeyen dolumu deftere vermeden sessizce atıyor, v2'nin
+sayısına hiç girmiyor (maskeli alt sınır); v3 `copy_ledger`'ı doğrudan çağırdığından gerçek sayıyı yayımlıyor
+(`VERI_SOZLESMESI.md`'ye not düşüldü). O02 hesap=0 hata zaten v1/v2'yi de etkiliyor (benim değişikliğimden önce).
+`python -m pytest -q`: 544 geçti.
 
 ## E3 (2026-10-30 gece): aşamalı zarar_kes/kar_al canlıya bağlandı
 Kullanıcı: "sırayla yap, sormana gerek yok." `golge.py`'deki ön kayıtlı aşamalı çıkış kuralı (intraday −%50; swing
