@@ -2,6 +2,11 @@
 
 `sg-arge` copy trade izleme panosu. **Salt okunur; gerçek emir, para hareketi ve aracı kurum bağlantısı yok.**
 
+## Lisans ve atıf
+Bu depo [GPL-3.0](LICENSE) ile lisanslıdır. Pano/ofis tasarımı, K-11 kararıyla (`sg-arge/docs/KARARLAR_D.md`) kısmen
+Etre v2 · Trading Office (ismailkaraabc) projesinden esinlenmiştir: <https://github.com/ismailkaraabc/etre-trading-office>
+(GPL-3.0). Birebir alınan/çevrilen dosyalarda kaynak yolu belirtilir. Gerçek emir, cüzdan ve para çekme işlevleri alınmamıştır.
+
 - Yayın: GitHub Pages (`main` / kök). Tek sayfa (`index.html`), erişim yöntemi değişmedi (ek hesap/şifre yok).
 - Sekmeler (sürüm `pano-sade`): **Özet** (`#ozet`: hafta x/12, oda doluluğu, kol başına trader, veri tazeliği, son 5 olay; altında kapalı bölümler: tüm akış, açık işlemler, "Kararlarım değer kattı mı?") · **Trader'lar** (`#traderlar`: kol filtresi + kartlar; trader sayfası `#trader/<adres>`) · **Huni** (`#huni`: havuz → aday → oda, son tarama, aday listesi) · **Ayarlar** (`#ayarlar`: tutar hesaplayıcı, sözlük). Sayfa Özet ile açılır. Eski adresler yönlenir: `#ct/<id>`, `#kesif/<adres>` → trader sayfası; `#ctakis`, `#ctistat` → Özet; `#kesif` → Huni.
 - Telefon öncelikli, kısa Türkçe; her teknik terimin yanında "?" (dokununca açıklama; tam liste Ayarlar → Sözlük). "Araştırma / sanal, yatırım tavsiyesi değil" ibaresi sabit üst bantta her sekmede görünür.
