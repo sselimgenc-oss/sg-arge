@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1.7, 2026-10-30; v1.7 `gecikme.json`, v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
+# Veri sözleşmesi — copy trade izleme (v1.8, 2026-10-30; v1.8 `gecikme.json` taze pencere, v1.7 `gecikme.json`, v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -120,13 +120,17 @@ hesap, isim ve serbest metin yazılmaz. Eski `bakiye_yok` kayıtları içe aktar
 `copytrade-izleme` dalında `izleme/kararlar.jsonl`; v1'de karar yalnız Telegram düğmesiyle verilir.
 İstatistik: aynı trader için "tüm olaylar" ile "açtıklarım" sanal sonuçları ayrı hesaplanır.
 
-## 4a. Gerçek algılama gecikmesi (`izleme/gecikme.json`, v1.7, E1 devamı)
-`{"n": <int>, "gecikme_dk_medyan": <float|null>, "gecikme_dk_maks": <float|null>, "trader_detay": [{"trader", "gecikme_dk", "zaman"}]}`.
+## 4a. Gerçek algılama gecikmesi (`izleme/gecikme.json`, v1.8, E1 devamı)
+`{"n": <int>, "n_toplam": <int>, "gecikme_dk_medyan": <float|null>, "gecikme_dk_maks": <float|null>,
+"uretildi": <iso>, "trader_detay": [{"trader", "gecikme_dk", "zaman"}]}`.
 `gecikme_dk` = Worker'ın bir dolumu gördüğü an ile o dolumun Hyperliquid'deki **gerçek** zamanı arasındaki fark
 (dakika) — `copytrade/saglik_hatti.py`'deki `acik_pozisyon_yasi_dk_medyan` (pozisyon yaşı) ile **karıştırılmamalı**;
 bu gerçek uçtan uca algılama süresidir. Worker yalnız her trader için **en son** örneği tutar (D1 ücretsiz yazma
-kotası); `trader_detay` oda üyesi sayısı kadar satır taşır, geçmiş birikmez. `n=0` → hiçbir oda üyesinde henüz
-yeni dolum görülmedi (ilk koşu ya da sakin piyasa); medyan/maks `null`. Yalnız rapor; kopya ekonomisini değiştirmez.
+kotası) — bu yüzden `trader_detay` oda üyesi sayısı kadar satır taşır, geçmiş birikmez, ve uzun süre işlem
+yapmayan bir trader'ın örneği D1'de eskiyebilir. **v1.8 (Sol 2. denetimi, YÜKSEK bulgu):** `n`/medyan/maks yalnız
+`zaman`'ı `uretildi`den en çok 120 dk eski olan ("taze") örnekleri sayar; `n_toplam` tüm `trader_detay` satır
+sayısıdır — eski bir trader örneği artık oda genelindeki "gerçek hız" ölçüsünü bozmaz. `n=0` → henüz taze örnek
+yok (ilk koşu, sakin piyasa ya da tüm örnekler eski); medyan/maks `null`. Yalnız rapor; kopya ekonomisini değiştirmez.
 
 ## 5. Telegram
 - Gönderen: Cloudflare Worker, 5 dakikada bir (`docs/GOREV_TELEGRAM.md`). Olay türleri: `acilis`, `kapanis`, `buyutme`,

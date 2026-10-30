@@ -1,30 +1,59 @@
 """Worker'ın GET /gecikme'de ölçtüğü gerçek algılama gecikmesini okur, oda genelinde özet üretir ve
-``izleme/gecikme.json``'a yazar (E1 devamı, Sol denetimi 2026-10-30 — `docs/DENETIM_ETRE_GECIS_2026-10-30.md`).
+``izleme/gecikme.json``'a yazar (E1 devamı, Sol denetimi 2026-10-30 — `docs/DENETIM_ETRE_GECIS_2026-10-30.md`,
+`docs/DENETIM_ETRE_GECIS_TEKRAR_2026-10-30.md`).
 
 Bu, ``copytrade/saglik_hatti.py``'deki ``acik_pozisyon_yasi_dk_medyan``'dan ayrıdır: burada ölçülen, trader'ın
 gerçek Hyperliquid dolum zamanı ile Worker'ın onu görmesi arasındaki **gerçek** süre (Worker dakikalık çalıştığı
 için aynı mantıkla `copytrade/kararlar.py`'nin izlediği "Worker'dan açık veriye aktar" desenini izler).
+
+Worker, D1 yazma kotası için trader başına yalnız **en son** gecikme örneğini tutar (`son_gecikme`); uzun süre
+işlem yapmayan bir trader'ın eski örneği D1'de kalıcı olarak durur. İkinci denetimin bulduğu gibi, bunu filtresiz
+oda medyanına katmak yanıltıcıdır (eski bir örnek "güncel hız" gibi görünür) — ``ozet()`` bu yüzden ``pencere_dk``
+içinde kalan (yakın zamanda güncellenmiş) örnekleri ayırır; eski örnekler ``n_toplam``'a girer ama medyana girmez.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.request import Request, urlopen
 
 import pandas as pd
 
+# Worker dakikalık çalışıyor; bir saatlik izleme turunda güncellenmemiş örnek "taze" sayılmaz.
+PENCERE_DK_VARSAYILAN = 120.0
 
-def ozet(rows: list[dict]) -> dict:
-    """Saf fonksiyon: Worker'dan gelen ``{trader, gecikme_dk, zaman}`` satırlarından oda genelinde özet üretir."""
-    degerler = [float(row['gecikme_dk']) for row in rows if row.get('gecikme_dk') is not None]
-    if not degerler:
-        return {'n': 0, 'gecikme_dk_medyan': None, 'gecikme_dk_maks': None}
+
+def ozet(rows: list[dict], simdi: str | None = None, pencere_dk: float = PENCERE_DK_VARSAYILAN) -> dict:
+    """Saf fonksiyon: Worker'dan gelen ``{trader, gecikme_dk, zaman}`` satırlarından oda genelinde özet üretir.
+
+    ``zaman`` (örneğin Worker'ın o gecikmeyi kaydettiği an) ``simdi``'den ``pencere_dk`` dakikadan daha eskiyse
+    örnek sayılır (``n_toplam``) ama medyan/maks'a girmez — eski, artık güncellenmeyen bir trader'ın tek
+    örneğinin oda genelindeki "gerçek algılama hızı" ölçüsünü bozmaması için.
+    """
+    simdi_ts = pd.Timestamp(simdi) if simdi else pd.Timestamp.now(tz='UTC')
+    n_toplam = len(rows)
+    taze: list[float] = []
+    for row in rows:
+        deger = row.get('gecikme_dk')
+        zaman = row.get('zaman')
+        if deger is None or not zaman:
+            continue
+        try:
+            yas_dk = (simdi_ts - pd.Timestamp(zaman)).total_seconds() / 60.0
+        except (ValueError, TypeError):
+            continue
+        if 0 <= yas_dk <= pencere_dk:
+            taze.append(float(deger))
+    if not taze:
+        return {'n': 0, 'n_toplam': n_toplam, 'gecikme_dk_medyan': None, 'gecikme_dk_maks': None}
     return {
-        'n': len(degerler),
-        'gecikme_dk_medyan': float(pd.Series(degerler).median()),
-        'gecikme_dk_maks': float(max(degerler)),
+        'n': len(taze),
+        'n_toplam': n_toplam,
+        'gecikme_dk_medyan': float(pd.Series(taze).median()),
+        'gecikme_dk_maks': float(max(taze)),
     }
 
 
@@ -44,7 +73,8 @@ def main() -> None:
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     rows = fetch(args.url)
-    result = {**ozet(rows), 'trader_detay': rows}
+    simdi = datetime.now(UTC).isoformat()
+    result = {**ozet(rows, simdi), 'uretildi': simdi, 'trader_detay': rows}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
