@@ -155,3 +155,15 @@ hesap, isim ve serbest metin yazılmaz. Eski `bakiye_yok` kayıtları içe aktar
   3. ardışık hatada tek Telegram alarmı, başarıda sayaç sıfırlanır. Mevcut D1'e `worker/schema.sql`daki yeni tablo bir kez uygulanmalıdır.
 - `GET /kararlar`: Cloudflare secret `KARAR_ANAHTARI` tanımlıysa `Authorization: Bearer <anahtar>` zorunlu (yoksa 401); tanımlı değilse eski açık davranış sürer.
   Saatlik içe aktarma (`izleme.yml`) aynı adlı GitHub secret'ını gönderir (boşsa başlıksız).
+
+## Kopya hesap v2 — `traderlar[].sanal_kopya_v2` (v1.6, K-9, madde 20-23)
+v1 (`sanal_kopya`) silinmez ve yeniden yazılmaz; v2 yan yana yayımlanır. Birim: 1.000 $ sanal kopya ölçeği (USD), getiri/oranlar kesirdir (0,012 = %1,2).
+- **Tek motor:** v2 `golge.calistir` (V0) → `defter.copy_ledger` ile hesaplanır; araştırma gölgesiyle aynı yürütme, maliyet ve tasfiye fonksiyonu.
+  Yürütme fiyatı v1'in dakika mumundan dolum üzerine eklenir (`_execution_*`); tasfiye denetimi ve funding saatlik mumlarla yapılır (dakika mumları funding ızgarasına girmez).
+- **Tasfiye (madde 21):** kopya K/Z'si ayrılmış 1 birimin `golge_likidasyon_esigi`ne (kurallar.yaml, −1,0) ya da altına inerse pozisyonlar o saatin işaretinde tasfiye edilir.
+  Alanlar: `tasfiye` (bool), `tasfiye_zamani` (UTC ISO, yoksa null), `tasfiye_kaynagi` (`mum` | `gunluk_ozsermaye`). Tasfiyeden sonra `bakiye_usd` 0'da kalır, `egri` o günden itibaren 0'dır; bakiye negatif olmaz (v1'de olabilir).
+- **Zamanla değişen payda (madde 22):** her koşuda trader hesap değeri `hesap_serisi`ne eklenir (motor.json); ilk kayıt t0'da sabitlenen `kopya_paydasi`. Dolum, o ana kadarki son okumayla ölçeklenir; ilk okumadan önce ilk okuma geçerlidir.
+  `payda_yontemi`: `ilk_okuma` (tek okuma) | `saatlik_okuma` (≥2 okuma); `payda_okuma_sayisi`. Geçmiş saatler için okuma yoktur (v2 dağıtım anından başlar; t0 ↔ dağıtım arası ilk okuma kullanılır).
+- **Funding (madde 23):** kopyalanan pozisyon büyüklüğü × saatlik oran; t0 öncesi devralınan pozisyonun funding'i girmez (`funding` alanı kesir, hesap değerine oran).
+- Diğer alanlar: `baslangic_usd`, `bakiye_usd`, `getiri`, `dusus`, `egri`, `gerceklesen` (maliyet+funding dahil), `acik`, `toplam`, `funding`, `maliyet`, `fiyatsiz_eylem` (yürütme fiyatı bulunamayan dolum sayısı), `gecikme_dk`, `t0`.
+- Hesaplanamazsa `{"surum":"v2","durum":"hesaplanamadi","neden":...}`; v1'i etkilemez. Hiç okunmamış trader için `yer_tutucu: true`.

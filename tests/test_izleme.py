@@ -134,6 +134,7 @@ class Client:
         self.portfolio_reads = 0
         self.candle_reads = 0
         self.mark_reads = 0
+        self.hourly_reads = 0
         self.dexes = [None]
         self.funding = []
 
@@ -158,7 +159,9 @@ class Client:
 
     def candles(self, coin, start, end, interval='1m'):
         assert interval in {'1m', '1h'}
-        if end - start <= 15 * m.MINUTE:        # işaretleme (açık pozisyonun son 1 dk mumu): her koşuda yenilenir, önbelleğe girmez
+        if interval == '1h':                    # v2 tasfiye denetimi için saatlik mumlar (yürütme/işaret sayaçlarından ayrı)
+            self.hourly_reads += 1
+        elif end - start <= 15 * m.MINUTE:        # işaretleme (açık pozisyonun son 1 dk mumu): her koşuda yenilenir, önbelleğe girmez
             self.mark_reads += 1
         else:
             self.candle_reads += 1
@@ -211,13 +214,15 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     one = m.run(root, root / 'out', client, NOW)
     two = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
     first, second = one['traderlar'][0], two['traderlar'][0]
-    drop = lambda t: {k: ({a: b for a, b in v.items() if a != 'son_isaret'} if k == 'sanal_kopya' else v)    # son_isaret koşuyla ilerler (işaret zamanı); sayılar aynı kalmalı
+    ignore = {'sanal_kopya': {'son_isaret'}, 'sanal_kopya_v2': {'payda_okuma_sayisi'}}      # koşuyla ilerleyen sayaçlar; sayılar aynı kalmalı
+    drop = lambda t: {k: ({a: b for a, b in v.items() if a not in ignore[k]} if k in ignore else v)    # son_isaret koşuyla ilerler (işaret zamanı); sayılar aynı kalmalı
                       for k, v in t.items() if k != 'veri_zamani'}
     assert drop(first) == drop(second)
     assert second['veri_zamani'] == '2026-10-27T13:00:00Z'
     assert one['olaylar'] == two['olaylar']
     assert client.portfolio_reads == 2  # sağlık eğrisi saatlik yenilenir
     assert client.candle_reads == 1 and client.mark_reads == 2       # yürütme mumu önbellekten; işaret her koşuda bir kez
+    assert client.hourly_reads == 2                                  # v2: açık coin için her koşuda tek artımlı saatlik okuma
     starts = [x['startTime'] for x in client.calls if x['type'] == 'userFillsByTime']
     assert starts[-1] == client.rows[-1]['time']  # inclusive boundary is deduplicated
     saved = json.loads((root / 'out/motor.json').read_text())
