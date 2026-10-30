@@ -29,5 +29,13 @@ Pano temizliği Opus'ta; bu dal (sg-arge) E1-E6'ya devam ediyor.
 ## E1 devamı (2026-10-30 akşam): gerçek algılama gecikmesi
 `#445`: Worker'ın zaten çektiği dolumlardan **gerçek** algılama gecikmesi (Hyperliquid dolum zamanı → Worker'ın
 görmesi) ölçülüyor (`son_gecikme` D1 tablosu, `GET /gecikme`, `copytrade/gecikme.py` → `izleme/gecikme.json`).
-`#441`'deki pozisyon yaşından (tahmini) tamamen ayrı, gerçek ölçüm. Dağıtım: D1'e `son_gecikme` tablosu bir kez
-uygulanmalı, `GECIKME_URL` Actions değişkeni tanımlanmalı (yoksa adım atlanır).
+`#441`'deki pozisyon yaşından (tahmini) tamamen ayrı, gerçek ölçüm.
+- **D1 şeması**: `worker.yml` her dağıtımda otomatik uyguluyor — önceki not ("bir kez elle uygulanmalı") yanlıştı,
+  düzeltildi. Canlı kontrol: `https://sg-arge-telegram.sselimgenc-c18.workers.dev/gecikme` çalışıyor, gerçek veri
+  dönüyor (2026-10-30 ~16:40 TR: medyan ≈ 0,31 dk, maks ≈ 0,52 dk — 2 örnek).
+- **Kullanıcıdan gereken tek adım:** GitHub reponun Settings → Secrets and variables → Actions → Variables'a
+  `GECIKME_URL` = `https://sg-arge-telegram.sselimgenc-c18.workers.dev/gecikme` eklemek (büyük olasılıkla
+  `KARAR_URL`'in yanına, aynı yöntemle). Eklenmezse saatlik iş adımı sessizce atlanır, hiçbir şey bozulmaz.
+- Sol'un 2. denetimindeki (`docs/DENETIM_ETRE_GECIS_TEKRAR_2026-10-30.md`) YÜKSEK bulgusu — eski/eylemsiz
+  trader'ın tek D1 örneğinin oda medyanını bozması — `copytrade/gecikme.py`'de pencere filtresiyle (120 dk)
+  düzeltildi: `claude/e1-gecikme-pencere` dalı.

@@ -3,6 +3,23 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-30 19:45 TR — Sol'un 2. denetimi (%33): #445'teki gerçek bulgu düzeltildi, canlı kanıt eklendi
+- `docs/DENETIM_ETRE_GECIS_TEKRAR_2026-10-30.md` (#446): ilerleme puanı 4/12 (%33) — bu, 12 geniş Etre alanının
+  kaba oranı, "bugünün işi eksik" anlamına gelmez; E2–E5 (kopya motoru, risk kuralları, oda yönetimi, pano) henüz
+  başlamadı, sıradaki iş zaten bu. Rapordaki iki gerçek hata:
+  1. **Önceki düzeltme:** "dakikalık Worker yoklaması yok" bulgusu rapor yazarının kendi hatasıydı — Worker
+     zaten her dakika çalışıyor (`wrangler.toml` `crons`); "hız" alanı KISMİ'ye düzeltildi.
+  2. **YÜKSEK, gerçek:** `son_gecikme` D1'de trader başına tek satır kalıcı olduğundan, uzun süre işlem yapmayan
+     bir trader'ın eski örneği oda medyanına filtresiz giriyordu. `copytrade/gecikme.py::ozet()` artık `zaman`'ı
+     120 dk'dan eski örnekleri medyandan/maks'tan dışlıyor (`n` taze, `n_toplam` hepsi) — `claude/e1-gecikme-pencere`.
+- **Canlı kanıt (denetimin istediği, önceden eksikti):** Worker'ın gerçek adresi bulundu (deploy log'undan):
+  `https://sg-arge-telegram.sselimgenc-c18.workers.dev`. `/gecikme` canlıda çalışıyor, gerçek veri dönüyor
+  (2026-10-30 ~16:40 TR): 2 örnek, medyan ≈ 0,31 dk, maks ≈ 0,52 dk — **E1'in hedeflediği ≤5 dk'nın çok altında**.
+  `/kararlar` da canlı. D1 şeması manuel adım değil, `worker.yml` her dağıtımda otomatik uyguluyor (önceki
+  günlük/DURUM notu yanlıştı, düzeltildi). Tek gerçek eksik: `GECIKME_URL` GitHub Actions değişkeni henüz
+  tanımlı değil (kullanıcı eklemeli); tanımlanınca saatlik iş bu canlı veriyi `izleme/gecikme.json`'a yazacak.
+- Test: `tests/test_gecikme.py` 8 altın örnek (pencere filtresi dahil, eski örnek senaryosu elle hesaplandı).
+
 ## 2026-10-30 19:00 TR — E1 devamı: gerçek algılama gecikmesi
 - Sol denetiminin (`docs/DENETIM_ETRE_GECIS_2026-10-30.md`) önerdiği "E1'in asıl hız kazanımı" maddesinin ilk
   parçası: Worker zaten her dakika oda trader'larının dolumlarını çekiyordu (`fills()`), yalnız bunu kullanıp
