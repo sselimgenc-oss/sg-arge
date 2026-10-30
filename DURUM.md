@@ -1,6 +1,10 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-30, Claude (temizlik). Lider: Sonnet (K‑11, birleştirme yetkili). Denetçi: Codex (Sol).
+Son güncelleme: 2026-10-30, Claude (temizlik). Lider: Sonnet (K‑11, birleştirme yetkili).
+
+**Kullanıcı kararı (2026-10-30 gece):** Sol (Codex) denetimi artık **manuel** — zorunlu birleştirme koşulu değil,
+yalnız kullanıcı isterse ayrıca devreye girer. Birleştirme koşulu: **CI yeşil** (lider kendi birleştirir, denetim
+beklemez).
 
 ## Hedef (K‑11)
 Hyperliquid kaldıraç trader'larını sanal kasada, küçük sabit tutarla, Etre'nin çıkış kurallarıyla kopyalayan; tek panelde ve
@@ -55,3 +59,17 @@ zorunlu çıkışın nedeni `kapanis_nedenleri`de. 9 altın örnek, `pytest -q` 
 tetiklenmedi (pozisyon eşiğe değmiyor) — doğru, yanlış tetiklenme yok. **Sabit $ işlem tutarı sorulmadan
 atlandı** (eşik/strateji kararı, AGENTS.md): Etre'nin eğrisi (200$→5,2$, 1.000$→20,7$, 10.000$→150$, sonrası
 sabit) kesin sayı gerektiriyor, kullanıcı onayı bekliyor.
+
+## E4 (2026-10-30 gece): zaten büyük ölçüde mevcut — yeni kod yazılmadı
+İncelemede: Etre'nin "gerekçeli giriş/çıkış, bekleme süreli, değişmez olay günlüğü, odadan düşme kuralı" istekleri
+K-11'den ÖNCE kurulmuş, kullanıcı onaylı (ön kayıt 1.6) `copytrade/gecis.py` + `copytrade_haftalik.yml` (her
+Perşembe) tarafından zaten sağlanıyor: alt dilim + ardışık hafta çıkış kuralı, 28 günde ≤2 çıkış tavanı, değişmez
+`rotasyon/kayit.jsonl` olay günlüğü. Yeni kod yazmadım (kural 7: mevcut fonksiyonu kopyalama). Gerçek veri kontrolü:
+`rotasyon/kayit.jsonl` henüz yok — pilot 29.10'da başladı, ilk Perşembe koşusu henüz gerçekleşmedi (zamanlama,
+hata değil). "Aday sırası" kavramı `havuz` kolu ile zaten karşılanıyor.
+
+## E6 (2026-10-30 gece): mühendislik — mevcut durum zaten iyi
+`except Exception` taraması: `copytrade/`+`worker/`'da 11 yer, hepsi `# noqa: BLE001` ile gerekçeli ve hata
+sayılıp/loglanıyor (Etre'nin "128 yerde sessiz yutma" sorunu yok). İş akışı sayısı 12 (GOREV'in andığı 17 değil;
+#443 temizliği zaten indirmiş). Ayarlar tek dosyada (`kurallar.yaml`). Kullanılmayan iş akışı/arşiv kararı
+kullanıcı onayı gerektirir (silme-benzeri) — ayrı soru, şimdilik dokunulmadı.
