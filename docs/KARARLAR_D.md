@@ -116,3 +116,10 @@ Görev: `docs/GOREV_D_YOLU.md`.
 - Eski yöntem sürer: canlı gölge pilotu ve veri biriktirme, önce veri doğruluğu (`GOREV_VERI_DUZELTME.md`), kalıcılık; canlı kararı
   ileride kullanıcı verir. K‑7'deki güvenlik şartları (para çekme yetkisi olmayan anahtar, limitler, /dur, ≥14 gün canlı fiyatla gölge)
   canlıya ne zaman geçilirse geçilsin geçerli kalır. `GOREV_BOT.md` askıda (öncelik veri). K‑8 (havuz kolu, ileri ölçüm) sürer.
+
+### K‑9. Birleşik derin denetim düzeltmeleri (kullanıcı kararı 2026-10-30: "iletelim onayım var")
+- Kaynak: `docs/DENETIM_TRADER_2026-10-30.md` (lider) + Codex `DERIN_COPYTRADE_DENETIM_2026-10-30` (Sol). Görev: `GOREV_VERI_DUZELTME.md` 15–25.
+- Kopya hesap düzeltmeleri (tek motor, tasfiye, zamanla değişen payda, funding) **v2 hesap sürümü** olarak eklenir; v1 seri silinmez,
+  yeniden yazılmaz, yan yana yayımlanır. Ön kayıt analizi v1 üzerinde de raporlanır (sapma şeffaf).
+- Yeni kol `gecikme5` (5 dk gecikmeli sanal kopya, oda üyeleriyle aynı adresler, paralel; Telegram yok) ve oda brüt kaldıraç tavanı
+  yalnız **tanısal**: ön kayıtlı birincil analiz değişmez; eşikler kod değişmeden önce `kurallar.yaml`'a yazılır.
