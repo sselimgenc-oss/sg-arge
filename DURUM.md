@@ -20,3 +20,11 @@ Telegram'da canlı izlenen; her kuralı ileri testle ölçen sistem. Gerçek par
 Silindi (git geçmişinde duruyor): Faz 3, kalıcılık, inceleme, maliyet/makas, mutabakat, rejim, kapı satır teşhisi modülleri ve iş akışları;
 eski aday taraması; biten/askıdaki görev ve durum belgeleri (`GOREV_*`, `codex_*`, eski denetimler, fikirler); `arastirma/` (yalnız kapının okuduğu
 `arastirma/copytrade/bagimsiz_secim` kaldı); eski kapı anlık görüntüsü. Eski dallar ve çalıştırmalar da temizlendi.
+
+## E1 (2026-10-30 akşam, lider Sonnet)
+Lisans birleşti (`#439`, sg-pano `#46`). Sol'un bağımsız denetimi (`#442`, birleşti): lisans uygun; E1 PR'ında (`#441`)
+iki YÜKSEK bulgu — `sinyal_gecikme_dk_medyan` adı pozisyon yaşını ölçüyor (gerçek algılama gecikmesi değil), sağlık
+ışığının tazelik kontrolü yayım anında hesaplandığından her zaman ~0 dönüyor (durmuş akışı yakalamıyor). Düzeltiliyor:
+alan adı `acik_pozisyon_yasi_dk_medyan` olacak; tazelik kontrolü `saglik_hatti`'den çıkarılıp Worker'ın zaten var olan
+gerçek zamanlı 3 saatlik tazelik alarmına bırakılacak (tek yerde, kural 7). E1'in asıl hız kazanımı (dakikalık Worker
+yoklaması, tek veri kaynağı) henüz ayrı bir PR'da.
