@@ -130,3 +130,44 @@ doğrulanıp kaldırıldı (git geçmişinde duruyor):
 Dokunulmayanlar (hâlâ kullanılan, yeniden kullanılabilir araçlar): `golge_saglama.yml` (manuel `golge.py` sağlık
 kontrolü), `izleme_deneme.yml` (kural 1'in gerektirdiği "küçük gerçek veri denemesi" aracı — zorunlu, silinmez).
 İş akışı sayısı 12 → 10.
+
+## E5 devamı (2026-10-30 gece): pano/ofis/Telegram artık v1 değil **v3** gösteriyor (kullanıcı kararı)
+Kontrol sırasında bulundu: `sg-pano` (E5, Opus'ta ayrı yürütülmüş) hâlâ yalnız `sanal_kopya` (v1 — eski, trader
+hesabına ORANLI, risksiz kopya) okuyordu; `sanal_kopya_v2`'ye de hiç bağlı değildi. `sanal_kopya_v3` (bugünkü
+#453, sabit tutar + çıkış kuralları + tasfiye — "bitti tanımı"nın istediği motor) panoya/ofise/Telegram'a HİÇ
+ulaşmıyordu; görünen rakamlar güncel motoru yansıtmıyordu. Kullanıcı: "güncel motorumuz ona bağlansın ... eski
+olur mu hiç" — üç tüketici de v3'e geçirildi. **Kural 6 (yan yana):** v1/v2 silinmedi/değişmedi, `durum.json`'da
+hâlâ yayımlanıyor; yalnız HANGİ sürümü gösterdikleri değişti.
+- `sg-pano/index.html` (6 yer) ve `sg-pano/ofis/gercek.js` (3 yer): `t.sanal_kopya` → `t.sanal_kopya_v3`.
+- `worker/src/index.js` `sanalKohort()` (Telegram günlük özet): aynı değişiklik; ayrıca gerçek bir hata bulundu
+  ve düzeltildi — `.filter(Boolean)` bir `{"durum":"hesaplanamadi"}` yer tutucusunu ELEMİYORDU (nesne truthy),
+  bu da ortalama getiriyi (payda büyür, pay büyümez) ve ofisteki kohort `n` sayısını sessizce çekiyordu; artık
+  yalnız gerçek `getiri` sayısı olan girdiler sayılır (`copytrade/kopya_v3.py`'nin "hiç okunmadı" yer tutucusu
+  ilk kez gerçek bir tüketiciye ulaştığı için açığa çıktı). Aynı düzeltme `sg-pano/ofis/gercek.js`'in `kol()`
+  fonksiyonuna da uygulandı (ofisin Kohort↔Kontrol kartı aynı hatayı taşıyordu).
+- `copytrade/izleme_motoru.py::kasa_egrisi()`: pano'nun "Kasa eğrisi" grafiğinin sunucu tarafı toplamı da v3'e
+  geçti (v3 hesaplanamayan trader o günden dışarıda bırakılır, sıfır sayılmaz — yeni altın örnek test).
+- Örnek/demo veri (`izleme/ornek_durum.json`, iki repoda da): her trader'a `sanal_kopya_v3` eklendi (v1'in aynı
+  sayılarıyla — örnek veri zaten "ÖRNEK VERİ" etiketli, gerçek değil); pano'nun demo modu boş kalmasın diye.
+- **Gerçek veri kıyası (kural 6, bugünkü küçük deneme — O01/O02/B17, aynı koşu):**
+  | Trader | v1 (eski, artık gösterilmiyor) | v3 (yeni, artık gösterilen) |
+  |---|---|---|
+  | O01 | +%5,87 ($1.058,70) | −%0,36 ($996,45) |
+  | O02 | hesaplanamadı (hesap verisi yok) | hesaplanamadı (aynı neden) |
+  | B17 | +%0,16 ($1.001,62) | **−%32,73 ($672,72)** |
+
+  Fark açıklanabilir ve zaten `VERI_SOZLESMESI.md`'de belgeli: v1 trader hesabına ORANLI kopyalıyor (B17'nin
+  70,2 milyon $ hesabında kopya payı kırıntı kalıyor), v3 Etre'nin sabit-$ eğrisiyle KOPYANIN KENDİ (küçük)
+  değerine göre açıyor — aynı fiyat hareketi artık kopya sermayesinin çok daha büyük bir payını oynatıyor
+  (tasarımın amacı tam bu). **Önemli:** pano ve Telegram'da görünen sayılar bu PR'dan sonra BELİRGİN şekilde
+  değişecek (ör. B17 gibi büyük/kaldıraçlı trader'larda); bu bir hata değil, artık doğru motoru göstermenin
+  sonucu.
+- **Kasıtlı DOKUNULMADI (kullanıcı kararı gerektirir, ölçüm sürekliliği riski):** `copytrade/degisim_rapor.py`
+  (oda rotasyon "değişim alfası" raporu) hâlâ `sanal_kopya.toplam` (v1) okuyor. Bu, `izleme/degisim.json`'da
+  KALICI, önceden kaydedilmiş bir taban (`cikarilan_taban_net`) üzerine inşa edilen ön-kayıtlı (1.6) bir ölçüm;
+  kaynağı v3'e çevirmek, daha önce v1 ile hesaplanmış tabanları v3 sayılarıyla karıştırır (AGENTS.md: "ölçüm
+  yöntemi test penceresi içinde değiştirilmez"). Kullanıcı isterse ayrı bir kararla (yeni taban sıfırlanarak)
+  değiştirilir; bu PR'da dokunulmadı.
+- `python -m pytest -q`: 551 geçti (yeni `test_kasa_egrisi_v1i_degil_v3u_okur...`). `worker`: `node --test` 40
+  geçti (yeni "v3 hesaplanamamış trader ortalamaya 0 olarak girmez"). `sg-pano`: `node test/pano.test.js`,
+  `node ofis/test/gercek.test.js`, `node ofis/test/replik.test.js`, `node ofis/test/ui.test.js` hepsi geçti.

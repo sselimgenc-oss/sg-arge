@@ -242,8 +242,11 @@ const ESKI_DK = 90;
 const LIGHT = { yesil: "🟢", sari: "🟡", kirmizi: "🔴" };
 const VERI_UYARI_DK = 180;   // günlük uyarı eşiği: 3 saat (ayrı: /durum'un kendi 90 dk eşiğinden farklı, bilgi amaçlı)
 
+// Güncel motor (sanal_kopya_v3 — sabit tutar + çıkış kuralları + tasfiye); v1 (sanal_kopya) silinmez/değişmez
+// ama bu özetin kaynağı artık o değil (kullanıcı kararı 2026-10-30). v3 hesaplanamamış ("durum":"hesaplanamadi")
+// bir trader ortalamaya 0 olarak girmesin diye dışarıda bırakılır (yalnız gerçek getiri değeri varsa sayılır).
 function sanalKohort(all, kol) {
-  return all.filter(t => (t.kollar || [t.kol]).includes(kol)).map(t => t.sanal_kopya).filter(Boolean);
+  return all.filter(t => (t.kollar || [t.kol]).includes(kol)).map(t => t.sanal_kopya_v3).filter(c => c && typeof c.getiri === "number");
 }
 function ortalamaGetiri(copies) {
   return copies.length ? copies.reduce((sum, c) => sum + (Number(c.getiri) || 0), 0) / copies.length : null;
@@ -251,7 +254,7 @@ function ortalamaGetiri(copies) {
 function yuzdeYaz(v) { return v == null ? "bilinmiyor" : `${v >= 0 ? "+" : ""}${(v * 100).toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`; }
 
 // Günde bir, 09:00 TR'de (06:00 UTC): sanal kopya ölçeğinde oda kasası/getiri, oda−kontrol farkı (aynı dönem,
-// her ikisi de sanal_kopya.getiri ortalaması), son 24 saatteki işlem sayısı ve trader sayısı, ışıklar, veri yaşı.
+// her ikisi de sanal_kopya_v3.getiri ortalaması), son 24 saatteki işlem sayısı ve trader sayısı, ışıklar, veri yaşı.
 function dailySummaryText(status, nowMs = Date.now()) {
   const all = status.traderlar || [];
   const room = all.filter(isNotified);
