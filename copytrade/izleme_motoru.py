@@ -382,7 +382,8 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
         if execution not in prices.get(fill['coin'], {}):
             raise ValueError('Sanal defterde eksik mum var.')
         ledger_fills.append(dict(fill, _execution_time=execution, _execution_price=prices[fill['coin']][execution]))
-    ledger = copy_ledger(ledger_fills, Market(candles), account, delay, millis(t0), millis(now), daily=True)
+    market = Market(candles)
+    ledger = copy_ledger(ledger_fills, market, account, delay, millis(t0), millis(now), daily=True)
     if ledger['net'] is None:
         raise ValueError('Sanal defter için pozitif hesap değeri gerekli.')
     net = pd.Series(0.0, index=days)
@@ -449,6 +450,22 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
                 total_event['remaining'] += remaining
                 total_event['notional'] += notional
                 total_event['pnl'] += entry_cost
+    # Sanal açık lotlar (1.000 $ kopya ölçeğinde): trader'ın coin miktarı × 1000 / kopya_paydasi. Giriş = gecikmeli yürütme fiyatı (FIFO ağırlıklı ort.).
+    scale = 1000.0 / account
+    acik_lotlar = []
+    for coin, active in sorted(lots.items()):
+        size = sum(lot['remaining'] for lot in active)
+        if size < 1e-10:
+            continue
+        direction = active[0]['direction']
+        entry = sum(lot['remaining'] * lot['price'] for lot in active) / size
+        found = market.mark_at(coin, millis(now))
+        quantity = size * scale
+        row = {'coin': coin, 'yon': 'long' if direction > 0 else 'short', 'miktar': quantity, 'giris_fiyati': entry,
+               'isaret_fiyati': found[1] if found else None, 'isaret_zamani': at_ms(found[0]) if found else None}
+        row['notional_usd'] = quantity * (found[1] if found else entry)
+        row['acik_kz_usd'] = quantity * (found[1] - entry) * direction if found else None
+        acik_lotlar.append(row)
     peak = np.maximum.accumulate(np.r_[1000.0, equity.to_numpy()])
     drawdown = float(np.max(1 - np.r_[1000.0, equity.to_numpy()] / peak)) if len(equity) else 0.0
     balance = float(equity.iloc[-1]) if len(equity) else 1000.0
@@ -457,7 +474,8 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
             'egri': [[str(day.date()), float(value)] for day, value in equity.items()],
             # hesap değerine oranlı kesirler: gerçekleşmiş (maliyet + funding dahil), açık (işaretlenmiş) ve toplam; son işaret zamanı
             'gerceklesen': ledger['realized'] + funding_frac, 'acik': ledger['unrealized_end'], 'toplam': ledger['net'] + funding_frac,
-            'son_isaret': at_ms(ledger['mark_time']) if ledger['mark_time'] is not None else None, 'isaret_eksik': int(ledger['mark_missing']), 'eksik_degerleme': bool(ledger['mark_missing'])}
+            'son_isaret': at_ms(ledger['mark_time']) if ledger['mark_time'] is not None else None, 'isaret_eksik': int(ledger['mark_missing']),
+            'eksik_degerleme': bool(ledger['mark_missing']), 'kopya_paydasi': account, 'acik_lotlar': acik_lotlar}
     result['fiyatsiz_eylem'] = fiyatsiz_eylem
     result['fiyatsiz_coinler'] = sorted(fiyatsiz_net)
     # Fiyatsız eylemlerin net işaretli toplamı sıfır değilse o coinde gerçek kopya pozisyonu defterden farklı olabilir.

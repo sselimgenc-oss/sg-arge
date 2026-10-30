@@ -74,6 +74,11 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
   `kasa_egri` ve kol toplamları yalnız `gecerli=true` traderları, `kollar` üyeliğiyle toplar. Eğri = kasa (madde 17): `egri_eksik` = eğrisi
   olmayan geçerli üye sayısı (eksik kapsama; kasaya girmez), `kasa_son_nokta_usd` = `kasa_egri`nin son noktası, `kasa_fark_usd` = o nokta − eğrisi olan
   geçerli üyelerin `bakiye_usd` toplamı, `kasa_mutabik` = |fark| < 0,5 $ (aksi halde ekranlar uyarı göstermelidir).
+- `sanal_kopya.kopya_paydasi` ve `sanal_kopya.acik_lotlar` (v1.6, madde 6/23): `kopya_paydasi` = t0'da sabitlenen trader hesap değeri (USD, **trader hesabı** ölçeği;
+  v1 payda). `acik_lotlar[]` = sanal açık lotlar, **1.000 $ kopya ölçeğinde** (`miktar` = trader coin miktarı × 1000 / kopya_paydasi, coin birimi): `coin`, `yon`
+  (`long|short`), `miktar`, `giris_fiyati` (gecikmeli yürütme fiyatı, FIFO ağırlıklı ortalama), `isaret_fiyati` ve `isaret_zamani` (UTC; işaret yok/bayatsa null),
+  `notional_usd` (miktar × işaret ya da işaret yoksa giriş), `acik_kz_usd` (işaret yoksa null). Kasa tablosu yalnız bu lotlardan üretilmelidir (trader'ın güncel
+  pozisyonları hesap değeriyle ölçeklenmez).
 - `sanal_kopya.eksik_degerleme` (bool, v1.6, madde 18) = `isaret_eksik > 0`: açık lotlardan en az birinin işareti yok/bayat; bu satırın açık K/Z ve bakiyesi
   eksik değerlenmiştir. `kapsam[kol].eksik_degerleme` = böyle geçerli üye sayısı; >0 ise ekranlar kol kasasını "bilinmiyor/eksik" göstermelidir
   (sıfır varsaymaz). `null` teminat/değer 0 olarak toplanmaz.

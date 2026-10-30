@@ -214,8 +214,9 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     one = m.run(root, root / 'out', client, NOW)
     two = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
     first, second = one['traderlar'][0], two['traderlar'][0]
+    sans = lambda v: {a: ([{x: y for x, y in lot.items() if x != 'isaret_zamani'} for lot in b] if a == 'acik_lotlar' else b) for a, b in v.items() if a not in ignore['sanal_kopya']}
     ignore = {'sanal_kopya': {'son_isaret'}, 'sanal_kopya_v2': {'payda_okuma_sayisi'}}      # koşuyla ilerleyen sayaçlar; sayılar aynı kalmalı
-    drop = lambda t: {k: ({a: b for a, b in v.items() if a not in ignore[k]} if k in ignore else v)    # son_isaret koşuyla ilerler (işaret zamanı); sayılar aynı kalmalı
+    drop = lambda t: {k: (sans(v) if k == 'sanal_kopya' else ({a: b for a, b in v.items() if a not in ignore[k]} if k in ignore else v))
                       for k, v in t.items() if k != 'veri_zamani'}
     assert drop(first) == drop(second)
     assert second['veri_zamani'] == '2026-10-27T13:00:00Z'
@@ -245,7 +246,7 @@ def test_pinned_scale_does_not_rewrite_prior_copy_pnl(tmp_path):
     first = m.run(root, root / 'out', client, NOW)
     client.account = 2000
     second = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
-    strip = lambda p: {k: v for k, v in p.items() if k != 'son_isaret'}                             # son_isaret koşuyla ilerler; sayılar yeniden yazılmamalı
+    strip = lambda p: {k: ([{x: y for x, y in lot.items() if x != 'isaret_zamani'} for lot in v] if k == 'acik_lotlar' else v) for k, v in p.items() if k != 'son_isaret'}                             # son_isaret koşuyla ilerler; sayılar yeniden yazılmamalı
     assert strip(first['traderlar'][0]['sanal_kopya']) == strip(second['traderlar'][0]['sanal_kopya'])
 
 
@@ -912,3 +913,30 @@ def test_eksik_isaret_eksik_degerleme_bayragi_ve_kol_sayisi():
     traders = [{'kol': 'oda', 'gecerli': True, 'sanal_kopya': stale}, {'kol': 'oda', 'gecerli': True, 'sanal_kopya': fresh},
                {'kol': 'oda', 'gecerli': False, 'sanal_kopya': stale}]            # geçersiz üye sayılmaz (zaten toplama girmiyor)
     assert m.kapsam(traders, 'oda')['eksik_degerleme'] == 1
+
+
+# ---------------------------------------------------------------- madde 6: sanal açık lotlar (1.000 $ ölçeği)
+def test_acik_lotlar_altin_ornek_olcek_ve_defterle_tutarlilik():
+    # Trader 10:00'da 1 BTC alır; 30 dk gecikmeli giriş 10:30 açılışı 100. İşaret (11:59) 102. Hesap 10.000 $ → ölçek 1000/10000 = 0,1.
+    # Beklenen: miktar 0,1 BTC, giriş 100, işaret 102, notional 0,1×102 = 10,2 $, açık K/Z 0,1×(102−100) = 0,2 $.
+    f = fill('2026-10-27T10:00:00Z', 1, price=99)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:59:00Z'), 'o': 102.0}]}
+    r = m.copy_results([f], candles, [], 10000, T0, NOW, {})
+    assert r['kopya_paydasi'] == 10000
+    (lot,) = r['acik_lotlar']
+    assert lot['coin'] == 'BTC' and lot['yon'] == 'long'
+    assert lot['miktar'] == pytest.approx(0.1) and lot['giris_fiyati'] == pytest.approx(100.0)
+    assert lot['isaret_fiyati'] == 102.0 and lot['isaret_zamani'] == '2026-10-27T11:59:00Z'
+    assert lot['notional_usd'] == pytest.approx(10.2) and lot['acik_kz_usd'] == pytest.approx(0.2)
+    assert lot['acik_kz_usd'] == pytest.approx(1000 * r['acik'])         # defterin açık K/Z'si ile aynı sayı
+
+
+def test_kapali_pozisyonda_acik_lot_yok_ve_isaretsiz_lot_none_tasir():
+    opening = fill('2026-10-27T10:00:00Z', 1, price=99)
+    closing = fill('2026-10-27T10:20:00Z', 2, side='A', before=1, price=101)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T10:50:00Z'), 'o': 101.0}]}
+    assert m.copy_results([opening, closing], candles, [], 1000, T0, NOW, {})['acik_lotlar'] == []
+    early = fill('2026-10-27T08:00:00Z', 1, price=99)          # giriş mumu 08:30; NOW 12:00 → 210 dk > isaret_yas_max_dk (120)
+    stale = m.copy_results([early], {'BTC': [{'t': m.millis('2026-10-27T08:30:00Z'), 'o': 100.0}]}, [], 1000, T0, NOW, {})
+    (lot,) = stale['acik_lotlar']                                          # işaret bayat (isaret_yas_max_dk): uydurulmaz
+    assert lot['isaret_fiyati'] is None and lot['acik_kz_usd'] is None and lot['notional_usd'] == pytest.approx(100.0)
