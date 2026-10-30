@@ -217,3 +217,24 @@ def test_altin_kapanir_yeniden_acilir_ve_sonda_acik_kalir_ilk_tur_saglamaya_gire
     assert selected == rows
     diag = pozisyon_dokumu(rows)["BTC"]
     assert diag == {"son_pozisyon": "0.2", "en_kucuk_mutlak_pozisyon": "0.0", "sifira_donus_sayisi": 1}
+
+
+def test_v2_mark_eksik_olan_pozisyon_her_dolumda_bastan_taranmaz():
+    """Canlı izlemede bulundu (2026-10-30): bir coin'in işareti hiç yoksa v2 denetimi onu "denetlendi" saymıyor, başka coin'deki HER dolum
+    aynı büyüyen boşluğu baştan tarıyordu; saatlik koşu 150 dk zaman aşımına uğrayıp veri yayımlanamadı. Süre yerine mark sorgusu sayılır."""
+    from copytrade.golge import v2_cikislari
+    from copytrade.defter import Market
+
+    class Sayan(Market):
+        sorgu = 0
+
+        def mark(self, coin, hour):
+            Sayan.sorgu += 1
+            return super().mark(coin, hour)
+
+    market = Sayan({"BTC": [{"t": T0, "o": "100", "c": "100"}], "ETH": [{"t": T0 + h * HOUR, "o": "10", "c": "10"} for h in range(400)]})
+    rows = [fill(0, "B", 10, 0, 100)]
+    rows += [{**fill(i * 120, "B", 1 if i == 0 else 0.001, 0 if i == 0 else 1, 10, tid=2 + i), "coin": "ETH"} for i in range(200)]
+    allowed, exits, events = v2_cikislari(rows, market, 1000, "intraday", 0, T0 + 400 * HOUR, RULES)
+    assert len(allowed) == 201
+    assert Sayan.sorgu < 2 * 400 + 200      # eski kod bu senaryoda ~30.000 sorgu yapardı
