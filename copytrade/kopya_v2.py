@@ -11,9 +11,14 @@ K2-K4):
 - **Funding yalnız kopyalanan pozisyondan (K4):** t0 öncesi devralınan (kopyalanmayan) pozisyonun funding'i
   kopyaya yazılmaz; `defter.copy_ledger` zaten yalnız kopya zaman çizelgesindeki pencerelerin funding'ini sayar.
 
-Kapsam dışı (ayrı iş): Etre'nin sabit $ işlem tutarı (burada hâlâ trader hesabına oranlı ölçek) ve aşamalı
-zarar_kes/kar_al çıkış kuralları (E3; `golge.calistir(..., variant='V0')` bilerek bunları uygulamaz — yalnız
-çapraz teminat tasfiyesi).
+E3 (`docs/GOREV_ETRE_GECIS.md`): aşamalı zarar_kes/kar_al çıkışları da aynı motorla — `golge.calistir(...,
+variant='V2')`, ön kayıtlı/dondurulmuş eşikler (`kurallar.yaml` `golge_v2`, ONKAYIT_D v1.1, DEĞİŞTİRİLMEDİ):
+intraday zarar_kes −%50; swing gün 0 zarar_kes −%50, gün 7 zarar_kes −%30/kar_al %60, gün 14 zarar_kes −%20/kar_al
+%40 (ayrılmış teminata oranlı K/Z). Her zorunlu çıkışın nedeni (`likidasyon` | `zarar_kes` | `kar_al`) ve coin'i
+`kapanis_nedenleri`de yayımlanır — Etre'nin "her kapanışta neden kaydı" istediği (GOREV E3).
+
+Kapsam dışı (ayrı iş): Etre'nin sabit $ işlem tutarı (burada hâlâ trader hesabına oranlı ölçek — eşik/strateji
+kararı, kullanıcıya sorulacak).
 """
 
 from __future__ import annotations
@@ -27,6 +32,10 @@ from copytrade.defter import HOUR, capital_scale
 
 MINUTE = 60_000
 SERI_SINIR = 3000          # hesap_serisi: en çok bu kadar son okuma tutulur (saatlik okumayla ~125 gün)
+
+
+def iso_ms(moment: int) -> str:
+    return pd.Timestamp(int(moment), unit='ms', tz='UTC').strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def hesap_serisi_guncelle(saved: dict, t0_ms: int, now_ms: int, account: float) -> list[list[float]]:
@@ -93,7 +102,7 @@ def hesapla(fills: list[dict], saatlik: dict[str, list[dict]], isaret: dict[str,
     candles = {coin: sorted(saatlik.get(coin, []) + isaret.get(coin, []), key=lambda c: c['t'])
                for coin in {*saatlik, *isaret}}
     run = golge.calistir(annotated, candles, account, style=style, etiket_ms=t0_ms, end_ms=now_ms,
-                         funding=funding, variant='V0', delay_min=delay)
+                         funding=funding, variant='V2', delay_min=delay)
     ledger = run['defter']
     if ledger.get('net') is None:
         return {**base, 'durum': 'hesaplanamadi', 'neden': 'geçerli hesap değeri serisi yok'}
@@ -102,6 +111,8 @@ def hesapla(fills: list[dict], saatlik: dict[str, list[dict]], isaret: dict[str,
     if len(ledger['daily']):
         net = net.add(ledger['daily'].reindex(days, fill_value=0.0), fill_value=0.0)
     equity = 1000 * (1 + net.cumsum())
+    kapanis_nedenleri = [{'coin': e['coin'], 'neden': e['neden'], 'zaman': iso_ms(e['zaman_ms'])}
+                        for e in run['olaylar'] if e.get('durum') in ('likidasyon', 'v2_cikis')]
     liquidations = [e['zaman_ms'] for e in run['olaylar'] if e.get('durum') == 'likidasyon']
     when, source = (min(liquidations), 'mum') if liquidations else (None, None)
     broke = equity[equity <= 0]
@@ -114,10 +125,11 @@ def hesapla(fills: list[dict], saatlik: dict[str, list[dict]], isaret: dict[str,
     balance = float(equity.iloc[-1]) if len(equity) else 1000.0
     base_series = pd.concat([pd.Series([1000.0]), equity.reset_index(drop=True)])
     drawdown = float((1 - base_series / base_series.cummax()).max())
-    tasfiye_zamani = pd.Timestamp(int(when), unit='ms', tz='UTC').strftime('%Y-%m-%dT%H:%M:%SZ') if when is not None else None
+    tasfiye_zamani = iso_ms(when) if when is not None else None
     return {**base, 'bakiye_usd': balance, 'getiri': balance / 1000 - 1, 'dusus': drawdown,
             'egri': [[str(day.date()), float(value)] for day, value in equity.items()],
             'gerceklesen': ledger['realized'] + ledger['funding'], 'acik': ledger['unrealized_end'],
             'toplam': ledger['net'], 'funding': ledger['funding'], 'maliyet': ledger['costs'],
             'fiyatsiz_eylem': int(ledger.get('missing', 0)), 'tasfiye': when is not None,
-            'tasfiye_zamani': tasfiye_zamani, 'tasfiye_kaynagi': source}
+            'tasfiye_zamani': tasfiye_zamani, 'tasfiye_kaynagi': source,
+            'kapanis_nedenleri': kapanis_nedenleri}

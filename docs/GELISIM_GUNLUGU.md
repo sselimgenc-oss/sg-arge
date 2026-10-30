@@ -3,6 +3,21 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-30 20:45 TR — E3: aşamalı zarar_kes/kar_al canlıya bağlandı
+- Kullanıcı kararı: "Opus sana ne değişiklik verdiyse sırayla yap, sormana gerek yok" — E2'nin kalan parçası
+  (sabit $ işlem tutarı) eşik/strateji kararı gerektirdiği için (AGENTS.md: eşik kararı kullanıcının) atlanıp
+  E3'e geçildi: `golge.py`'de zaten yazılı, ön kayıtlı aşamalı çıkış kuralı (`v2_sinir`) canlıya hiç bağlı değildi.
+- `copytrade/kopya_v2.py`: `golge.calistir(..., variant='V0')` → `variant='V2'` — tek satır, ama motoru Etre'nin
+  kurallar.py'sindeki zamana bağlı stop/kâr mantığına denk hâle getiriyor (eşikler DEĞİŞMEDİ, zaten dondurulmuştu).
+  Her zorunlu çıkışın nedeni+coin'i yeni `kapanis_nedenleri` alanında (Etre'nin "her kapanışta neden kaydı" isteği).
+- Test: `tests/test_kopya_v2.py`'deki "tasfiye olmayan derin zarar" testi V2 altında artık erken zarar_kes'e
+  giriyor (eşik -%50) — elle yeniden hesaplanıp güncellendi (bakiye 196,96 $, kapanış nedeni kaydı doğrulandı);
+  eşiğe değmeyen bir senaryo için yeni ayrı test eklendi. 9 altın örnek, `pytest -q` 536 geçti.
+- Küçük gerçek veri denemesi (canlı HL, O01, 7,5 sn): `kapanis_nedenleri: []` — mevcut pozisyon eşiğe değmiyor,
+  yanlışlıkla tetiklenmedi (gerçek veriyle doğrulandı).
+- Kapsam dışı (ayrı iş, kullanıcıya sorulacak): sabit $ işlem tutarı — Etre'nin tam eğrisi (200$→5,2$, 1.000$→20,7$,
+  10.000$→150$, sonrası sabit) belgelerden yaklaşık çıkarılabilir ama kesin sayılar strateji/eşik kararı.
+
 ## 2026-10-30 20:15 TR — E2: kopya hesabı v2 (tek motor, tasfiye, pozisyon tavanı, doğru payda/funding)
 - `copytrade/kopya_v2.py` (yeni): canlı `sanal_kopya` (v1, `izleme_motoru.copy_results`) `defter.copy_ledger`'ı
   çıplak çağırıyordu — araştırma gölgesinde (`golge.py`) zaten var olan tasfiye/pozisyon tavanı mantığı canlıya

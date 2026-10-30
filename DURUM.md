@@ -47,3 +47,11 @@ pozisyon tavanı mantığı canlıya bağlı değildi (K3/K5/K6, `DENETIM_TRADER
 değişmedi. **Gerçek veri (canlı HL, O01):** v1 getiri +%7,18 ↔ v2 +%0,95 — fark açıklanabilir: O01'in gerçek açık
 pozisyonu hesabın %163'ü notional (HL'den doğrulandı), v1 kapsız kopyalıyor, v2'nin pozisyon tavanı (3,0x) kırpıyor.
 8 altın örnek testi; `python -m pytest -q` 535 geçti. Kapsam dışı (E3): sabit $ tutar, aşamalı zarar_kes/kar_al.
+
+## E3 (2026-10-30 gece): aşamalı zarar_kes/kar_al canlıya bağlandı
+Kullanıcı: "sırayla yap, sormana gerek yok." `golge.py`'deki ön kayıtlı aşamalı çıkış kuralı (intraday −%50; swing
+gün 0/7/14 kademeli) `kopya_v2`'ye `variant='V2'` ile bağlandı; eşikler değişmedi (zaten dondurulmuştu). Her
+zorunlu çıkışın nedeni `kapanis_nedenleri`de. 9 altın örnek, `pytest -q` 536 geçti. Gerçek veride (O01) henüz
+tetiklenmedi (pozisyon eşiğe değmiyor) — doğru, yanlış tetiklenme yok. **Sabit $ işlem tutarı sorulmadan
+atlandı** (eşik/strateji kararı, AGENTS.md): Etre'nin eğrisi (200$→5,2$, 1.000$→20,7$, 10.000$→150$, sonrası
+sabit) kesin sayı gerektiriyor, kullanıcı onayı bekliyor.
