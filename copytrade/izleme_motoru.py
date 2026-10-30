@@ -916,6 +916,42 @@ def write_event_archive(output: Path, all_events: dict) -> None:
 GECIKME5_DK = 5
 
 
+def risk_tanisi(traderlar: list[dict], sayac_24s: dict | None = None, rules: dict | None = None) -> dict:
+    """Kol başına sanal risk tanısı (madde 25; yalnız tanısal). Girdi: geçerli ve eksik değerlemesiz üyelerin v1 sanal açık lotları (1.000 $ ölçeği).
+
+    ``brut_kaldirac`` = Σ|notional| / sermaye (sermaye = üyelerin v1 sanal bakiyeleri toplamı), ``net_kaldirac`` işaretli (long − short) / sermaye,
+    ``en_buyuk_coin_payi`` = tek coinin brüt notional içindeki payı. ``coinler``: coin başına long/short notional (oda ↔ kontrol denge tablosu).
+    ``islem_sikligi_24s`` = son 24 saatte üye başına açılış+kapanış. Tavanlar kurallar.yaml'da tanımlıysa (`oda_brut_kaldirac_tavani`,
+    `oda_tek_coin_payi_tavani`) aşım ``uyarilar``a yazılır; tanımlı değilse yalnız ölçülür."""
+    rules = rules if rules is not None else load_rules()
+    result = {}
+    for kol in ('oda', 'kontrol'):
+        members = [t for t in kol_uyeleri(traderlar, kol) if t.get('gecerli', True) and not (t.get('sanal_kopya') or {}).get('eksik_degerleme')]
+        capital = sum(float((t.get('sanal_kopya') or {}).get('bakiye_usd') or 0.0) for t in members)
+        coins: dict[str, dict[str, float]] = {}
+        for trader in members:
+            for lot in (trader.get('sanal_kopya') or {}).get('acik_lotlar', []):
+                row = coins.setdefault(lot['coin'], {'long_usd': 0.0, 'short_usd': 0.0})
+                row['long_usd' if lot['yon'] == 'long' else 'short_usd'] += float(lot['notional_usd'])
+        gross = sum(r['long_usd'] + r['short_usd'] for r in coins.values())
+        net = sum(r['long_usd'] - r['short_usd'] for r in coins.values())
+        biggest = max(coins.items(), key=lambda item: item[1]['long_usd'] + item[1]['short_usd'], default=(None, None))
+        activity = (sayac_24s or {}).get(kol)
+        result[kol] = {'uye': len(members), 'sermaye_usd': capital, 'brut_notional_usd': gross, 'net_notional_usd': net,
+                       'brut_kaldirac': gross / capital if capital else None, 'net_kaldirac': net / capital if capital else None,
+                       'en_buyuk_coin': biggest[0], 'en_buyuk_coin_payi': (biggest[1]['long_usd'] + biggest[1]['short_usd']) / gross if gross else None,
+                       'islem_sikligi_24s': (activity['acilis'] + activity['kapanis']) / len(members) if activity and members else None,
+                       'coinler': [{'coin': coin, **{k: v for k, v in values.items()}} for coin, values in sorted(coins.items(), key=lambda i: -(i[1]['long_usd'] + i[1]['short_usd']))],
+                       'uyarilar': []}
+    room = result['oda']
+    cap, share = rules.get('oda_brut_kaldirac_tavani'), rules.get('oda_tek_coin_payi_tavani')
+    if cap is not None and room['brut_kaldirac'] is not None and room['brut_kaldirac'] > float(cap):
+        room['uyarilar'].append(f"oda brüt kaldıraç {room['brut_kaldirac']:.2f}x > tavan {float(cap):.2f}x")
+    if share is not None and room['en_buyuk_coin_payi'] is not None and room['en_buyuk_coin_payi'] > float(share):
+        room['uyarilar'].append(f"{room['en_buyuk_coin']} payı %{100 * room['en_buyuk_coin_payi']:.0f} > tavan %{100 * float(share):.0f}")
+    return result
+
+
 def gecikme5_ozeti(traderlar: list[dict]) -> dict:
     """`gecikme5` kolu (tanısal): oda üyelerinin 5 dk gecikmeli v2 sonuçları ↔ aynı adreslerin 30/120 dk gecikmeli v2 sonuçları (aynı hesap sürümü, aynı üyeler).
 
@@ -976,6 +1012,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
               'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')},
               'kapsam': {kol: kapsam(traders, kol) for kol in sorted({k for t in traders for k in (t.get('kollar') or [t.get('kol')]) if k})}}
     result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'], result['sayac_24s'] = olay_ozeti(all_events, traders, now, failed == 0)
+    result['risk'] = risk_tanisi(traders, result.get('sayac_24s'))
     if any('sanal_kopya_v2_gecikme5' in t for t in traders):
         result['gecikme5'] = gecikme5_ozeti(traders)
     oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']

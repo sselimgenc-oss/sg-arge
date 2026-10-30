@@ -178,3 +178,10 @@ v1 (`sanal_kopya`) silinmez ve yeniden yazılmaz; v2 yan yana yayımlanır. Biri
 - Üst düzey `gecikme5`: `{uye, karsilastirilan, getiri, oda_v2_getiri, fark, bakiye_usd, tasfiye}`. Yalnız iki taraf da hesaplanabilen ve `gecerli=true` oda üyeleri karşılaştırılır
   (`karsilastirilan`); `getiri`/`oda_v2_getiri` bu üyelerin 1.000 $ ölçeğindeki ortalama getirisi (kesir), `fark` = 5 dk − (30/120 dk) v2; `bakiye_usd` 5 dk kolunun toplamı.
 - Ön kayıtlı birincil analiz (v1/v2 oda ↔ kontrol) değişmez; `gecikme5` yalnız gecikmenin değerini gösterir (K1: kapı verisinde 5 dk'da avantaj büyük ölçüde gidiyor).
+
+## Risk tanısı — `risk` (v1.6, K-9, madde 25; yalnız tanısal)
+`risk.oda` ve `risk.kontrol`: `{uye, sermaye_usd, brut_notional_usd, net_notional_usd, brut_kaldirac, net_kaldirac, en_buyuk_coin, en_buyuk_coin_payi,
+islem_sikligi_24s, coinler[{coin, long_usd, short_usd}], uyarilar[]}`. Girdi: `gecerli=true` ve `eksik_degerleme=false` üyelerin v1 sanal açık lotları (1.000 $ ölçeği, USD).
+`sermaye_usd` üyelerin v1 sanal bakiyelerinin toplamı; kaldıraç "x" = |notional| / sermaye; `en_buyuk_coin_payi` oran (0,7 = %70); `islem_sikligi_24s` = üye başına son 24 saat açılış+kapanış.
+`coinler` oda ↔ kontrol denge tablosudur (coin, yön, notional). Tavanlar `kurallar.yaml` anahtarları `oda_brut_kaldirac_tavani` ve `oda_tek_coin_payi_tavani`dır;
+**tanımlı değilse yalnız ölçülür, uyarı üretilmez** (tavan değerleri kullanıcı kararıdır).

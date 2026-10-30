@@ -120,3 +120,23 @@ def test_motor_yalniz_oda_uyelerine_gecikme5_ekler(tmp_path):
     assert 'sanal_kopya_v2_gecikme5' in by_id['O1'] and by_id['O1']['sanal_kopya_v2_gecikme5']['gecikme_dk'] == 5
     assert 'sanal_kopya_v2_gecikme5' not in by_id['B1']
     assert result['gecikme5']['uye'] == 1 and result['gecikme5']['karsilastirilan'] == 1
+
+
+def test_risk_tanisi_altin_ornek():
+    # Oda: A (bakiye 1.000) BTC long 50 $ + ETH short 30 $; B (bakiye 1.000) BTC long 20 $. Sermaye 2.000 $, brüt 100 $ → 0,05x.
+    # Net = 50 − 30 + 20 = 40 → 0,02x. En büyük coin BTC: (50+20)/100 = %70. 24 saat: 4 açılış + 2 kapanış / 2 üye = 3.
+    # Kontrol: C (bakiye 1.000) SOL long 10 $ (eksik değerlemeli olduğu için hariç) → üye 0.
+    lot = lambda coin, yon, usd: {'coin': coin, 'yon': yon, 'notional_usd': usd}
+    sk = lambda lots, eksik=False: {'bakiye_usd': 1000.0, 'acik_lotlar': lots, 'eksik_degerleme': eksik}
+    traders = [{'kol': 'oda', 'kollar': ['oda'], 'gecerli': True, 'sanal_kopya': sk([lot('BTC', 'long', 50.0), lot('ETH', 'short', 30.0)])},
+               {'kol': 'oda', 'kollar': ['oda'], 'gecerli': True, 'sanal_kopya': sk([lot('BTC', 'long', 20.0)])},
+               {'kol': 'kontrol', 'kollar': ['kontrol'], 'gecerli': True, 'sanal_kopya': sk([lot('SOL', 'long', 10.0)], eksik=True)}]
+    risk = m.risk_tanisi(traders, {'oda': {'acilis': 4, 'kapanis': 2}}, rules={})
+    oda = risk['oda']
+    assert (oda['uye'], oda['sermaye_usd'], oda['brut_notional_usd'], oda['net_notional_usd']) == (2, 2000.0, 100.0, 40.0)
+    assert oda['brut_kaldirac'] == pytest.approx(0.05) and oda['net_kaldirac'] == pytest.approx(0.02)
+    assert oda['en_buyuk_coin'] == 'BTC' and oda['en_buyuk_coin_payi'] == pytest.approx(0.7) and oda['islem_sikligi_24s'] == 3
+    assert [c['coin'] for c in oda['coinler']] == ['BTC', 'ETH'] and oda['uyarilar'] == []          # tavan tanımsız → yalnız ölçüm
+    assert risk['kontrol']['uye'] == 0 and risk['kontrol']['brut_kaldirac'] is None
+    asilan = m.risk_tanisi(traders, None, rules={'oda_brut_kaldirac_tavani': 0.04, 'oda_tek_coin_payi_tavani': 0.6})['oda']['uyarilar']
+    assert len(asilan) == 2 and 'oda brüt kaldıraç 0.05x > tavan 0.04x' in asilan[0] and 'BTC payı %70 > tavan %60' in asilan[1]
