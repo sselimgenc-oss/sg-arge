@@ -161,8 +161,11 @@ yalnız yeni `tutar_egrisi` parametresiyle — `golge.calistir`'in ön işlemesi
   (v1) yerine `sanal_kopya_v3`'ü gösterir — v1/v2 silinmedi/değişmedi (kural 6), yalnız "canlı" gösterilen sürüm
   budur. Bir tüketici `durum: "hesaplanamadi"` girdisini ortalamaya/toplama **0 olarak katmamalı**; gerçek `getiri`
   sayısı olmayan girdiyi tamamen dışarıda bırakır (Telegram `sanalKohort()` ve ofis `gercek.js` `kol()`'daki
-  düzeltme deseni). `copytrade/degisim_rapor.py` (oda rotasyon ölçümü) kasıtlı olarak hâlâ v1 okur — kalıcı,
-  ön-kayıtlı bir tabanı karıştırmamak için; bu, kullanıcının ayrı bir kararı gerektirir.
+  düzeltme deseni). `copytrade/degisim_rapor.py` (oda rotasyon ölçümü, `izleme/degisim.json`) da artık
+  `sanal_kopya_v3.toplam` okur (kullanıcı kararı 2026-10-30). Rapora `kaynak: "sanal_kopya_v3"` ve
+  `taban_sifirlandi` (bool) eklendi: önceki rapor `kaynak`sız (v1 dönemi) ise kaydedilmiş `cikarilan_taban_net`
+  değerleri v3 sayılarıyla karıştırılmaz, taban v3'ten yeniden alınır. v3 hesaplanamamışsa değişim
+  "izleme verisi bekleniyor" kalır, v1'e düşülmez.
 
 ## 3. Sağlık ışığı ve form (hesap Codex'te, `pano/saglik.py` yeniden kullanılır)
 | Işık | Koşul (herhangi biri) |

@@ -40,15 +40,46 @@ def test_degisim_raporu_gerekceyi_ayri_ve_sanal_alfayi_yazar(tmp_path):
     record = tmp_path / 'degisim.jsonl'
     gecis.degisim_yaz(record, {'tarih': '2026-10-03', 'cikarilan': addr('a'), 'alinan': addr('b'), 'gerekce': 'kullanici_takdiri', 'not': ''})
     status = tmp_path / 'durum.json'
-    status.write_text(json.dumps({'traderlar': [{'adres': addr('a'), 'sanal_kopya': {'toplam': .01}}, {'adres': addr('b'), 'sanal_kopya': {'toplam': .03}}]}))
+    status.write_text(json.dumps({'traderlar': [{'adres': addr('a'), 'sanal_kopya_v3': {'toplam': .01}}, {'adres': addr('b'), 'sanal_kopya_v3': {'toplam': .03}}]}))
     result = rapor(record, status)
+    assert result['kaynak'] == 'sanal_kopya_v3' and result['taban_sifirlandi'] is False
     assert result['degisimler'][0]['degisim_alfasi'] == pytest.approx(.03)   # ilk raporda çıkarılanın tabanı = .01
     previous = tmp_path / 'degisim.json'
     previous.write_text(json.dumps(result))
-    status.write_text(json.dumps({'traderlar': [{'adres': addr('a'), 'sanal_kopya': {'toplam': .02}}, {'adres': addr('b'), 'sanal_kopya': {'toplam': .03}}]}))
+    status.write_text(json.dumps({'traderlar': [{'adres': addr('a'), 'sanal_kopya_v3': {'toplam': .02}}, {'adres': addr('b'), 'sanal_kopya_v3': {'toplam': .03}}]}))
     result = rapor(record, status, previous)
     assert result['degisimler'][0]['degisim_alfasi'] == pytest.approx(.02)   # .03 − (.02 − .01)
+    assert result['taban_sifirlandi'] is False
     assert result['gerekce_toplamlari']['kullanici_takdiri'] == {'adet': 1, 'ortalama_degisim_alfasi': pytest.approx(.02)}
+
+
+def test_degisim_raporu_v1_degil_v3u_okur_ve_v1_tabanini_karistirmaz(tmp_path):
+    record = tmp_path / 'degisim.jsonl'
+    gecis.degisim_yaz(record, {'tarih': '2026-10-03', 'cikarilan': addr('a'), 'alinan': addr('b'), 'gerekce': 'kullanici_takdiri', 'not': ''})
+    status = tmp_path / 'durum.json'
+    status.write_text(json.dumps({'traderlar': [
+        {'adres': addr('a'), 'sanal_kopya': {'toplam': .50}, 'sanal_kopya_v3': {'toplam': .02}},
+        {'adres': addr('b'), 'sanal_kopya': {'toplam': .90}, 'sanal_kopya_v3': {'toplam': .03}}]}))
+    # v1 çağrısından kalma rapor: `kaynak` alanı yok, taban v1 ölçeğinde (.40); v3 sayılarıyla karıştırılmamalı.
+    previous = tmp_path / 'degisim.json'
+    previous.write_text(json.dumps({'surum': 1, 'degisimler': [{'tarih': '2026-10-03', 'cikarilan': addr('a'), 'cikarilan_taban_net': .40}]}))
+    result = rapor(record, status, previous)
+    item = result['degisimler'][0]
+    assert result['taban_sifirlandi'] is True
+    assert item['cikarilan_sanal_net'] == .02 and item['alinan_sanal_net'] == .03   # v1'in .50 / .90'ı değil
+    assert item['cikarilan_taban_net'] == .02                                        # taban v3'ten yeniden alındı (.40 değil)
+    assert item['degisim_alfasi'] == pytest.approx(.03)                              # .03 − (.02 − .02)
+
+
+def test_degisim_raporu_v3_hesaplanamamissa_bekliyor_v1e_dusmez(tmp_path):
+    record = tmp_path / 'degisim.jsonl'
+    gecis.degisim_yaz(record, {'tarih': '2026-10-03', 'cikarilan': addr('a'), 'alinan': addr('b'), 'gerekce': 'kullanici_takdiri', 'not': ''})
+    status = tmp_path / 'durum.json'
+    status.write_text(json.dumps({'traderlar': [
+        {'adres': addr('a'), 'sanal_kopya': {'toplam': .50}, 'sanal_kopya_v3': {'surum': 'v3', 'durum': 'hesaplanamadi'}},
+        {'adres': addr('b'), 'sanal_kopya': {'toplam': .90}, 'sanal_kopya_v3': {'toplam': .03}}]}))
+    item = rapor(record, status)['degisimler'][0]
+    assert (item['cikarilan_sanal_net'], item['degisim_alfasi'], item['durum']) == (None, None, 'izleme verisi bekleniyor')
 
 
 def test_referans_odasi_uyesi_cikarilsa_da_listeden_dusmez(tmp_path):

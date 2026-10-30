@@ -162,12 +162,16 @@ hâlâ yayımlanıyor; yalnız HANGİ sürümü gösterdikleri değişti.
   (tasarımın amacı tam bu). **Önemli:** pano ve Telegram'da görünen sayılar bu PR'dan sonra BELİRGİN şekilde
   değişecek (ör. B17 gibi büyük/kaldıraçlı trader'larda); bu bir hata değil, artık doğru motoru göstermenin
   sonucu.
-- **Kasıtlı DOKUNULMADI (kullanıcı kararı gerektirir, ölçüm sürekliliği riski):** `copytrade/degisim_rapor.py`
-  (oda rotasyon "değişim alfası" raporu) hâlâ `sanal_kopya.toplam` (v1) okuyor. Bu, `izleme/degisim.json`'da
-  KALICI, önceden kaydedilmiş bir taban (`cikarilan_taban_net`) üzerine inşa edilen ön-kayıtlı (1.6) bir ölçüm;
-  kaynağı v3'e çevirmek, daha önce v1 ile hesaplanmış tabanları v3 sayılarıyla karıştırır (AGENTS.md: "ölçüm
-  yöntemi test penceresi içinde değiştirilmez"). Kullanıcı isterse ayrı bir kararla (yeni taban sıfırlanarak)
-  değiştirilir; bu PR'da dokunulmadı.
+- **`copytrade/degisim_rapor.py` (oda rotasyon "değişim alfası") — #454'te bilerek v1'de bırakılmıştı, sonra
+  kullanıcı kararıyla ("v3 olmalı, yeni çalışmamız o") v3'e çevrildi** (bkz. aşağıdaki "degisim_rapor v3" bölümü).
 - `python -m pytest -q`: 551 geçti (yeni `test_kasa_egrisi_v1i_degil_v3u_okur...`). `worker`: `node --test` 40
   geçti (yeni "v3 hesaplanamamış trader ortalamaya 0 olarak girmez"). `sg-pano`: `node test/pano.test.js`,
   `node ofis/test/gercek.test.js`, `node ofis/test/replik.test.js`, `node ofis/test/ui.test.js` hepsi geçti.
+
+## degisim_rapor v3 (2026-10-31 gece): oda rotasyon raporu da güncel motoru okuyor
+Kullanıcı: "V3 olmalı sonuçta, yeni çalışmamız o." `copytrade/degisim_rapor.py` artık `sanal_kopya_v3.toplam`
+okuyor (v1 değil). Önceki rapor `kaynak`sız ise (v1 dönemi) kayıtlı `cikarilan_taban_net` değerleri v3 sayılarıyla
+karıştırılmaz: taban v3'ten yeniden alınır, raporda `taban_sifirlandi: true`. v3 hesaplanamamışsa değişim "izleme
+verisi bekleniyor" kalır (v1'e düşmez). Henüz hiç rotasyon kaydı olmadığından (`copytrade/degisim.jsonl` yok)
+sıfırlanan canlı bir taban yok. Gerçek veri denemesi: O01→B17 örneği, alfa = alınanın v3 getirisi (−%32,73) −
+(çıkarılanın birikimi − taban = 0). Ön kayıt eşikleri/gerekçeler/tavanlar değişmedi.
