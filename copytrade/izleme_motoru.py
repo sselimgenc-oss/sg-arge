@@ -575,15 +575,39 @@ def with_data_error(trader: dict, error: Exception) -> dict:
     return previous
 
 
-def kasa_egrisi(traderlar: list[dict], kol: str, gun: int = 90) -> list[list[object]]:
-    """Koldaki sanal-kopya bakiyelerinin son ``gun`` günlük toplamı.
+def kol_uyeleri(traderlar: list[dict], kol: str) -> list[dict]:
+    """Kol üyeliği ``kollar`` ile (bir adres birden çok kolda olabilir; ana etiket ``kol`` yalnız gösterim içindir)."""
+    return [t for t in traderlar if kol in (t.get('kollar') or [t.get('kol')])]
 
-    Her trader kendi son bilinen günlük bakiyesiyle taşınır; eksik eğri uydurulmaz.
-    Bu isteğe bağlı pano alanıdır, kapı/seçim hesabına girmez.
+
+def kapsam(traderlar: list[dict], kol: str) -> dict:
+    """Kolun veri kapsamı: geçerli / eski (okuma hatası, önceki sonuç gösteriliyor) / yer tutucu (hiç okunmadı) sayıları.
+
+    ``perp_hesabi_bos`` eski ya da yer tutucudan ayrı raporlanır; toplam = hepsinin toplamı.
+    """
+    result = {'toplam': 0, 'gecerli': 0, 'eski': 0, 'yer_tutucu': 0, 'perp_hesabi_bos': 0}
+    for trader in kol_uyeleri(traderlar, kol):
+        result['toplam'] += 1
+        if trader.get('gecerli', True):
+            result['gecerli'] += 1
+        elif trader.get('veri_durumu') == 'perp_hesabi_bos':
+            result['perp_hesabi_bos'] += 1
+        elif trader.get('veri_zamani') is None:
+            result['yer_tutucu'] += 1
+        else:
+            result['eski'] += 1
+    return result
+
+
+def kasa_egrisi(traderlar: list[dict], kol: str, gun: int = 90) -> list[list[object]]:
+    """Koldaki GEÇERLİ traderların sanal-kopya bakiyelerinin son ``gun`` günlük toplamı.
+
+    Her trader kendi son bilinen günlük bakiyesiyle taşınır; eksik eğri uydurulmaz. ``gecerli=false`` (eski sonuç ya da
+    1.000 $ yer tutucu) toplama girmez, `kapsam` ile ayrı sayılır. Bu isteğe bağlı pano alanıdır, kapı/seçim hesabına girmez.
     """
     curves = []
-    for trader in traderlar:
-        if trader.get('kol') != kol:
+    for trader in kol_uyeleri(traderlar, kol):
+        if not trader.get('gecerli', True):
             continue
         values = {str(day): float(value) for day, value in trader.get('sanal_kopya', {}).get('egri', [])}
         if values:
@@ -807,7 +831,8 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     if watchlist and failed == len(watchlist):
         raise RuntimeError('Tüm trader verileri hatalı; önceki durum yayımlanmadı.')
     result = {'surum': 1, 'uretildi': iso(now), 'kaynak': 'hyperliquid', 'traderlar': traders,
-              'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')}}
+              'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')},
+              'kapsam': {kol: kapsam(traders, kol) for kol in sorted({k for t in traders for k in (t.get('kollar') or [t.get('kol')]) if k})}}
     result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'] = olay_ozeti(all_events, traders, now, failed == 0)
     oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']
     if oda_uyeleri:

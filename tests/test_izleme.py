@@ -180,7 +180,7 @@ def test_empty_list_writes_contract_and_never_uses_network(tmp_path):
             raise AssertionError(name)
     result = m.run(root, root / 'out', NoNetwork(), NOW)
     assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
-                      'kasa_egri': {'oda': [], 'kontrol': []}, 'olaylar': [], 'gunluk_sayac': [],
+                      'kasa_egri': {'oda': [], 'kontrol': []}, 'kapsam': {}, 'olaylar': [], 'gunluk_sayac': [],
                       'olay_kapsami': {'baslangic': None, 'tam': True, 'toplam': 0, 'kol_basina_son': 200, 'sayac_gun': 30}}
     assert json.loads((root / 'out/durum.json').read_text()) == result
 

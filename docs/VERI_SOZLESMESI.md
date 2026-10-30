@@ -62,6 +62,9 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
   diğer coinler ve trader geçerli kalır. Mum sonraki koşuda gelirse otomatik hesaplanır (önbellekte eksik saklanmaz).
 - `traderlar[].veri_durumu` (v1.6): `tamam` | `perp_hesabi_bos` (güncel perp hesap değeri 0; spot bakiye ayrı, "veri yok" değildir;
   `gecerli=false`, önceki sonuç korunur, kol üyeliği değişmez, analizde kapsam dışı sayımı raporlanır) | `veri_hatasi` (API/okuma hatası).
+- `kapsam` (v1.6, üst düzey): kol adı (`kollar` üyeliğiyle; ana etiket değil) → `{toplam, gecerli, eski, yer_tutucu, perp_hesabi_bos}` trader sayıları.
+  `eski` = okuma hatası, önceki sonuç gösteriliyor (`gecerli=false`, `veri_zamani` dolu); `yer_tutucu` = hiç okunmadı (1.000 $ varsayılan);
+  `perp_hesabi_bos` ayrı. `kasa_egri` ve kol toplamları yalnız `gecerli=true` traderları, `kollar` üyeliğiyle toplar.
 - `olay_kapsami` (v1.6): `{baslangic (ilk işlem olayı, UTC ISO), tam (bu koşuda hiç trader hatası yoksa true), toplam, kol_basina_son, sayac_gun}`.
 - Eski anlatım: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
 - **Olay kimliği (v1.2):** `{trader}-{oid}-{tur}` (ör. `T1-123456789-acilis`); ışık olayı `{trader}-{ms}-isik`.
