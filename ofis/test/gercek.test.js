@@ -44,7 +44,7 @@ const d13 = G.cevir(F.secim('2026-10-28', 'v1.3'), null, { simdi: SIMDI });
 ok('v1.3: sürüm etiketi; kapı durumu yoksa tarama satırı bilinmiyor', d13.secim.surum === 'v1.3' && d13.veri_kalitesi[0].durum === 'bilinmiyor' && d13.oda_sayilar.tarama.length === 0);
 const sCanli = F.secim('2026-10-28', 'v1.3'), aCanli = Object.keys(sCanli.adresler)[0];
 const izleme = { uretildi: '2026-10-29T12:00:00Z', traderlar: [{ id: 'O01', adres: aCanli, takma_ad: 'a001', secim: 'v1.3@2026-10-28', kol: 'oda', kollar: ['oda'], hesap_degeri: 10000, saglik: { isik: 'yesil', nedenler: [] }, pozisyonlar: [
-  { coin: 'BTC', yon: 'long', kaldirac: 3, anlik_kz_usd: -29.5, acilis: '2026-10-29T10:00:00Z' },
+  { coin: 'BTC', yon: 'long', kaldirac: 3, anlik_kz_usd: -29.5, buyukluk_usd: 3000, acilis: '2026-10-29T10:00:00Z' },
   { coin: 'ETH', yon: 'short', kaldirac: 5, anlik_kz_usd: 12.25, acilis: '2026-10-29T11:30:00Z' }
 ], sanal_kopya: { baslangic_usd: 1000, bakiye_usd: 1012, getiri: .012 }}, { id: 'K01', adres: Object.keys(sCanli.adresler)[1], takma_ad: 'k001', secim: 'v1.3@2026-10-28', kol: 'kontrol', kollar: ['kontrol'], saglik: { isik: 'yesil', nedenler: [] }, pozisyonlar: [{ coin: 'SOL', yon: 'long', kaldirac: 2, anlik_kz_usd: 5, acilis: '2026-10-29T11:00:00Z' }], sanal_kopya: { baslangic_usd: 1000, bakiye_usd: 990, getiri: -.01 }}, { id: 'R01', adres: Object.keys(sCanli.adresler)[2], takma_ad: 'r001', secim: 'v1.3@2026-10-28', kol: 'referans_oda', kollar: ['referans_oda'], saglik: { isik: 'yesil', nedenler: [] }, pozisyonlar: [], sanal_kopya: { baslangic_usd: 1000, bakiye_usd: 900, getiri: -.1 }}], olaylar: [{ id: 'O01-1-acilis', zaman: '2026-10-29T11:00:00Z', trader: 'O01', tur: 'acilis', coin: 'BTC', yon: 'long' }, { id: 'X-1-acilis', zaman: '2026-10-29T11:00:00Z', trader: 'X', tur: 'acilis', coin: 'ETH', yon: 'long' }] };
 const canli = G.cevir(sCanli, F.durum, { simdi: SIMDI, kapiTarihi: '2026-10-28', izleme: izleme });
@@ -54,7 +54,7 @@ ok('açık işlemler: yalnız oda üyelerinden (2), kontrol üyesinin pozisyonu 
 const btc = canli.acik_islemler.find(x => x.coin === 'BTC'), eth = canli.acik_islemler.find(x => x.coin === 'ETH');
 ok('altın örnek (BTC): yön/kaldıraç taşınır, K/Z 1.000 $ ölçeğinde (−29,5 × 1000 / 10.000 = −2,95), süre = uretildi − açılış (120 dk)', btc && btc.yon === 'long' && btc.kaldirac === 3 && Math.abs(btc.kz_usd + 2.95) < 1e-9 && btc.yas_dk === 120, JSON.stringify(btc));
 ok('altın örnek (ETH): short, 30 dk önce açıldı', eth && eth.yon === 'short' && eth.kaldirac === 5 && Math.abs(eth.kz_usd - 1.225) < 1e-9 && eth.yas_dk === 30, JSON.stringify(eth));
-ok('sahte veri yok: yüzde/teminat/likidasyon uydurulmaz (durum.json\'da yok), null kalır', canli.acik_islemler.every(x => x.kz_yuzde === null && x.teminat_usd === null && x.lik_uzaklik === null));
+ok('sahte veri yok: yüzde/likidasyon uydurulmaz; teminat yalnız büyüklük varsa (BTC: 3000 × 1000 / 10.000 / 3 = 100 $), yoksa null (ETH)', canli.acik_islemler.every(x => x.kz_yuzde === null && x.lik_uzaklik === null) && Math.abs(btc.teminat_usd - 100) < 1e-9 && eth.teminat_usd === null, JSON.stringify([btc.teminat_usd, eth.teminat_usd]));
 /* gölge kasası günü: t0'dan bu yana gün sayısı (t0 günü = 1), hafta × 7 değil (lider denetimi: "n=7 gün" → bugün 1 hatasıydı) */
 ok('kasa.gun_n: t0\'dan bu yana gün (hafta × 7 değil)', canli.kasa.gun_n === Math.floor((SIMDI.getTime() - Date.parse('2026-10-28T00:00:00Z')) / 86400000) + 1 && canli.kasa.gun_n !== canli.kohort_kontrol.hafta * 7, 'gun_n=' + canli.kasa.gun_n + ' hafta=' + canli.kohort_kontrol.hafta);
 

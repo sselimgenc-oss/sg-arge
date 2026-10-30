@@ -68,7 +68,8 @@
         acikIslemler.push({
           id: t.id + '-' + p.coin + '-' + j, trader: t.id, coin: p.coin || 'bilinmiyor', yon: p.yon === 'short' ? 'short' : 'long',
           kaldirac: sayi(p.kaldirac), yas_dk: isNaN(acilisMs) ? null : Math.max(0, (veriMs - acilisMs) / 60000),
-          kz_usd: sayi(t.hesap_degeri) > 0 && sayi(p.anlik_kz_usd) != null ? sayi(p.anlik_kz_usd) * 1000 / sayi(t.hesap_degeri) : null, kz_yuzde: null, lik_uzaklik: null, teminat_usd: null   // K/Z panoyla aynı 1.000 $ sanal ölçekte; yalnız durum.json'da gerçekten olan alanlar; sahte yüzde/teminat/likidasyon uydurulmaz
+          kz_usd: sayi(t.hesap_degeri) > 0 && sayi(p.anlik_kz_usd) != null ? sayi(p.anlik_kz_usd) * 1000 / sayi(t.hesap_degeri) : null, kz_yuzde: null, lik_uzaklik: null,
+          teminat_usd: sayi(t.hesap_degeri) > 0 && sayi(p.buyukluk_usd) != null && sayi(p.kaldirac) > 0 ? Math.abs(sayi(p.buyukluk_usd)) * 1000 / sayi(t.hesap_degeri) / sayi(p.kaldirac) : null   // K/Z ve teminat panoyla aynı 1.000 $ sanal ölçekte (teminat = nosyonel / kaldıraç); yalnız durum.json'da gerçekten olan alanlar; sahte yüzde/teminat/likidasyon uydurulmaz
         });
       });
       return Object.assign(olustur(e, kat, t.id.slice(0, 1), i), { id: t.id, adres: kisa(t.adres), takma_ad: t.takma_ad, kat: kat, kol: t.kol, saglik: t.saglik, sanal_kopya: t.sanal_kopya || null, veri_zamani: t.veri_zamani || live.uretildi });
