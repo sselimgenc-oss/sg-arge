@@ -528,21 +528,45 @@ def mutabakat_raporu(fills: list[dict], states: list[dict], now: pd.Timestamp, r
     rows, broken = mutabakat(defter_pozisyonlari(fills), exchange, float(rules['mutabakat_goreli_tolerans']), float(rules['mutabakat_mutlak_tolerans']))
     summary = ozet(rows)
     jump = (abs(hesap_degeri / onceki_hesap_degeri - 1) if onceki_hesap_degeri and hesap_degeri else 0.0)
+    health = mutabakat_sagligi(summary, broken, jump, rules)
+    return {**summary, 'saglik': health, 'hesap_degeri_sicramasi': jump, 'yetim_coinler': [r['coin'] for r in rows if r['durum'] == 'yetim'],
+            'sorunlu': [r for r in rows if r['durum'] != 'uyumlu'], 'bozuk_satir': broken, 'zaman': iso(now)}
+
+
+def mutabakat_sagligi(summary: dict, broken: int, jump: float, rules: dict) -> dict:
     # Kırmızı nedenler sarıdan önce gelir: sıçrama, yetim pozisyonu gizlememeli.
     if summary['yetim']:
         health = {'isik': 'kirmizi', 'neden': 'yetim pozisyon'}
     elif summary['uyumsuz_oran'] >= float(rules['mutabakat_saglik_kirmizi_uyumsuz_oran']):
         health = {'isik': 'kirmizi', 'neden': 'pozisyon oranı uyumsuz'}
     elif jump >= float(rules['mutabakat_saglik_hesap_degeri_sicrama_oran']):
-        health = {'isik': 'sari', 'neden': 'hesap değeri sıçraması (yatırma/çekme şüphesi)'}
+        health = {'isik': 'sari', 'neden': 'teşhis: hesap değeri sıçraması (yatırma/çekme kanıtı değil)'}
     elif summary['uyumsuz_oran'] >= float(rules['mutabakat_saglik_sari_uyumsuz_oran']):
         health = {'isik': 'sari', 'neden': 'kaçırılmış dolum olasılığı'}
     elif broken:
         health = {'isik': 'sari', 'neden': 'bozuk mutabakat satırı'}
     else:
         health = {'isik': 'yesil', 'neden': 'mutabakat uyumlu'}
-    return {**summary, 'saglik': health, 'hesap_degeri_sicramasi': jump, 'yetim_coinler': [r['coin'] for r in rows if r['durum'] == 'yetim'],
-            'sorunlu': [r for r in rows if r['durum'] != 'uyumlu'], 'bozuk_satir': broken, 'zaman': iso(now)}
+    return health
+
+
+def sanal_defter_mutabakati(actions: list[dict], paper: dict, now: pd.Timestamp, delay: int, rules: dict | None = None) -> dict:
+    """Sanal defter mutabakatı (madde 7): "trader geçmişi" mutabakatından AYRI ışık. Beklenen = yürütmesi gelmiş kopya eylemlerinin coin başına net
+    işaretli toplamı (trader birimi); gerçek = sanal defterin açık lotları (trader birimine çevrilmiş). Satır anlamı: ``defter`` = beklenen, ``borsa`` = sanal defter;
+    ``yetim`` = beklenen pozisyon var ama sanal lot yok (ör. fiyatsız eylem), ``eksik`` = sanal lot var ama beklenen yok. Yalnız rapor."""
+    rules = rules or load_rules()
+    expected: dict[str, float] = {}
+    for action in actions:
+        if math.ceil((int(action['time']) + delay * MINUTE) / MINUTE) * MINUTE <= millis(now):
+            expected[action['coin']] = expected.get(action['coin'], 0.0) + float(action['sz']) * (-1 if action['side'] == 'A' else 1)
+    expected = {coin: size for coin, size in expected.items() if abs(size) > 1e-10}
+    unit = float(paper.get('kopya_paydasi') or 0.0) / 1000.0         # 1.000 $ ölçeğinden trader birimine
+    book = {'assetPositions': [{'position': {'coin': lot['coin'], 'szi': str((1 if lot['yon'] == 'long' else -1) * lot['miktar'] * unit)}}
+                               for lot in paper.get('acik_lotlar', [])]}
+    rows, broken = mutabakat(expected, book, float(rules['mutabakat_goreli_tolerans']), float(rules['mutabakat_mutlak_tolerans']))
+    summary = ozet(rows)
+    return {**summary, 'saglik': mutabakat_sagligi(summary, broken, 0.0, rules), 'yetim_coinler': [r['coin'] for r in rows if r['durum'] == 'yetim'],
+            'sorunlu': [r for r in rows if r['durum'] != 'uyumlu'], 'bozuk_satir': broken, 'fiyatsiz_coinler': paper.get('fiyatsiz_coinler', []), 'zaman': iso(now)}
 
 
 def gate_result(root: Path, address: str) -> dict:
@@ -841,7 +865,9 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
     if row.get('kol') in oda_risk.YONSUZ_KOLLAR:
         trader['yonsuz_bayrak'] = yonsuz_guncelle(client, address, saved, states, fills, now)
     if row.get('kol') == 'oda':
-        trader['veri_kalitesi'] = {'mutabakat': mutabakat_raporu(fills, states, now, onceki_hesap_degeri=saved.get('son_hesap_degeri'), hesap_degeri=account)}
+        history = mutabakat_raporu(fills, states, now, onceki_hesap_degeri=saved.get('son_hesap_degeri'), hesap_degeri=account)
+        # `mutabakat` geriye dönük uyumlu takma ad (= trader geçmişi); sanal defter uyumsuzluğu ayrı ışık.
+        trader['veri_kalitesi'] = {'mutabakat': history, 'mutabakat_gecmis': history, 'mutabakat_sanal': sanal_defter_mutabakati(actions, paper, now, delay)}
     saved['son_hesap_degeri'] = account
     saved['son_trader'] = trader
     return trader

@@ -941,3 +941,32 @@ def test_kapali_pozisyonda_acik_lot_yok_ve_isaretsiz_lot_none_tasir():
     stale = m.copy_results([early], {'BTC': [{'t': m.millis('2026-10-27T08:30:00Z'), 'o': 100.0}]}, [], 1000, T0, NOW, {})
     (lot,) = stale['acik_lotlar']                                          # işaret bayat (isaret_yas_max_dk): uydurulmaz
     assert lot['isaret_fiyati'] is None and lot['acik_kz_usd'] is None and lot['notional_usd'] == pytest.approx(100.0)
+
+
+# ---------------------------------------------------------------- madde 7: mutabakat ikiye ayrıldı
+def test_sanal_defter_mutabakati_uyumlu_ve_fiyatsiz_yetim():
+    # Altın örnek: trader 1 BTC alır (10:00, yürütme 10:30 gelmiş), hesap 10.000 $ → sanal lot 0,1 BTC (1.000 $ ölçeği) = trader biriminde 1,0.
+    buy = fill('2026-10-27T10:00:00Z', 1, price=99)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:59:00Z'), 'o': 102.0}]}
+    paper = m.copy_results([buy], candles, [], 10000, T0, NOW, {})
+    ok = m.sanal_defter_mutabakati([buy], paper, NOW, 30)
+    assert (ok['uyumlu'], ok['yetim'], ok['toplam']) == (1, 0, 1) and ok['saglik']['isik'] == 'yesil'
+    # Aynı eylem için yürütme mumu yok → fiyatsız → sanal lot yok, beklenen +1: yetim, kırmızı ışık, fiyatsız coin işaretli.
+    bad = m.copy_results([buy], {}, [], 10000, T0, NOW, {}, fiyatsiz_izin=True)
+    broken = m.sanal_defter_mutabakati([buy], bad, NOW, 30)
+    assert (broken['yetim'], broken['yetim_coinler']) == (1, ['BTC'])
+    assert broken['saglik'] == {'isik': 'kirmizi', 'neden': 'yetim pozisyon'} and broken['fiyatsiz_coinler'] == ['BTC']
+    # Yürütmesi henüz gelmemiş eylem (gecikme dolmadı) beklenene girmez.
+    early = m.sanal_defter_mutabakati([buy], paper, m.timestamp('2026-10-27T10:10:00Z'), 30)
+    assert early['toplam'] == 1 and early['eksik'] == 1                    # beklenen 0, ama (şimdi sonrası) lot var: ayrıştırma testi
+
+
+def test_oda_uyesi_iki_ayri_mutabakat_isigi_ve_sicrama_metni(tmp_path):
+    row = {'id': 'O1', 'adres': ADDRESS, 'takma_ad': 'Oda', 'durum': 'izlemede', 't0': str(T0.date()), 'kol': 'oda', 'kollar': ['oda']}
+    root, client = project(tmp_path, [row]), Client()
+    m.run(root, root / 'out', client, NOW)
+    client.account = 1500                                                   # %50 hesap değeri sıçraması
+    second = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))['traderlar'][0]['veri_kalitesi']
+    assert second['mutabakat'] == second['mutabakat_gecmis']                # geriye dönük uyumlu takma ad
+    assert second['mutabakat_gecmis']['saglik']['neden'] == 'teşhis: hesap değeri sıçraması (yatırma/çekme kanıtı değil)'
+    assert 'saglik' in second['mutabakat_sanal'] and 'hesap_degeri_sicramasi' not in second['mutabakat_sanal']   # sanal ışık sıçramadan bağımsız

@@ -118,6 +118,10 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - `buyutme`/`azaltma`: aynı yönde pozisyonun **%25'inden fazla** değişimi (lider kararı); daha küçükleri olay sayılmaz.
 - `sanal_kopya.gerceklesen`, `.acik`, `.toplam`, `.son_isaret`, `.isaret_eksik` (v1.6): sonuç kanonik defterden (`defter.copy_ledger`) üretilir; `gerceklesen` (maliyet ve funding dahil), `acik` (işaretlenmiş açık K/Z) ve `toplam` hesap değerine oran kesirleridir (`bakiye_usd = 1000 × (1 + toplam)`); `son_isaret` açık pozisyonlarda kullanılan en eski işaretin 1 dk mum zamanı (açık pozisyon yoksa `null`); `isaret_eksik` işareti bulunamayan açık coin sayısı.
 - `traderlar[].veri_kalitesi.mutabakat` (v1.7, yalnız oda üyeleri, isteğe bağlı): defter (dolumlardan türetilen pozisyon) ↔ `clearinghouseState` mutabakatı — `uyumlu, yetim, eksik, yon_farki, boy_farki, toplam, uyumsuz_oran, yetim_coinler, sorunlu[], bozuk_satir, zaman`. **Yalnız rapor**: hiçbir pozisyon otomatik kapatılmaz.
+  **v1.6 (madde 7) iki ayrı ışık:** `veri_kalitesi.mutabakat_gecmis` = trader geçmişi (90 gün dolum ↔ borsa; `mutabakat` bunun geriye dönük uyumlu takma adıdır) ve
+  `veri_kalitesi.mutabakat_sanal` = sanal defter (beklenen = yürütmesi gelmiş kopya eylemlerinin coin başına net toplamı, trader birimi; `borsa` = sanal açık lotlar trader birimine çevrilmiş;
+  `yetim` = beklenen pozisyon var ama sanal lot yok, örn. fiyatsız eylem; `eksik` = sanal lot var ama beklenen yok; `fiyatsiz_coinler` eklenir; hesap sıçraması bu ışığa girmez).
+  Hesap değeri sıçraması **teşhistir, yatırma/çekme kanıtı değildir**: `saglik.neden = "teşhis: hesap değeri sıçraması (yatırma/çekme kanıtı değil)"`.
 - `sanal_kopya.egri` (v1.1): t0'dan bugüne günlük sanal bakiye (USD).
 - `olaylar[].sanal_sonuc` (v1.1, yalnız `acilis`/`buyutme`): bu olayın 30 dk gecikmeli kopyasının sonucu; pozisyon
   kapanınca `kapandi` ve maliyet sonrası `net_yuzde` (kopyalanan tutara göre). "Açtıklarım" istatistiği bununla
