@@ -6,6 +6,8 @@ Denetim puanı: 12 alan eşit ağırlıkta; **TAMAM = 1, KISMİ = 0,5, YOK = 0**
 
 **Kesit:** 30 Ekim 2026, 18:43 TSİ. `sg-arge main` = `1ca8d28` (#440), `sg-pano main` = `b43529d` (#45). Açık PR uçları: #439 `b7be479`, #441 `545c1b6`, #46 `75b31e7`. Bu rapor açık PR'ları **main'den ayrı** değerlendirir. [Görev](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/docs/GOREV_ETRE_GECIS.md#L1-L8), [K-11](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/docs/KARARLAR_D.md#L132-L136), [kurallar](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/AGENTS.md#L10-L28).
 
+**Kesit sonrası değişiklik:** `sg-arge` main'e 18:45 TSİ'de [#346](https://github.com/sselimgenc-oss/sg-arge/pull/346/files) (`d1a4f28`) birleşti. Altı dosyası HF geçmiş doğrulaması, yeni bir test ve yeni bir iş akışıyla ilgili; Etre geçiş dosyalarını değiştirmiyor. Dolayısıyla aşağıdaki Etre durumları aynı, fakat iş akışı sayısı kesitte 18 iken artık 19. Bu PR'ın hedefi güncel main'dir.
+
 ## 12 alan
 
 | Alan | Etre'de | Bizde: main / açık PR | Durum; eksik |
@@ -33,7 +35,7 @@ Denetim puanı: 12 alan eşit ağırlıkta; **TAMAM = 1, KISMİ = 0,5, YOK = 0**
 | E3 risk ve çıkış | **YOK** | Etre kural seti/labı için PR yok; [görev E3](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/docs/GOREV_ETRE_GECIS.md#L51-L56). |
 | E4 oda yönetimi | **YOK** | v1.3 seçim kalıyor, Etre gerekçeli terfi/düşme işine PR yok; [görev E4](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/docs/GOREV_ETRE_GECIS.md#L57-L61). |
 | E5 pano ve ofis | **YOK** | #46 yalnız lisans; Etre kartı, 5 dk veri ve gerçek ekran görüntüsü yok; [görev E5](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/docs/GOREV_ETRE_GECIS.md#L62-L66). |
-| E6 mühendislik/sadelik | **KISMİ** | #441 test/günlük ekliyor; tek motor, tek ayar dosyası, 18 iş akışından kullanılmayanların arşivi yok. Kullanıcı onayı gereken arşivleme yapılmamış; [görev E6](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/docs/GOREV_ETRE_GECIS.md#L67-L70). |
+| E6 mühendislik/sadelik | **KISMİ** | #441 test/günlük ekliyor; tek motor, tek ayar dosyası, kullanılmayan iş akışlarının arşivi yok (kesitte 18, #346 sonrası 19). Kullanıcı onayı gereken arşivleme yapılmamış; [görev E6](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/docs/GOREV_ETRE_GECIS.md#L67-L70). |
 
 [Bitti tanımının](https://github.com/sselimgenc-oss/sg-arge/blob/1ca8d28/docs/GOREV_ETRE_GECIS.md#L81-L83) tekil kontrolü:
 
