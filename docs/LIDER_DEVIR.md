@@ -1,3 +1,11 @@
+> **2026-10-30 gece (kullanıcı kararı: "tüm yetkilerini Sonnet'e devret, Pazartesi 14:00'e kadar her yetkin onda olsun"):**
+> **2.11.2026 Pazartesi 14:00 TR'ye kadar** Claude'un (Opus) tüm liderlik yetkileri Sonnet'te: görev yazma, karar kaydı, PR açma,
+> denetleyip birleştirme, temizlik/silme (sg-arge ve sg-pano), iş akışı ve belge yönetimi. Claude bu sürede iş yapmaz.
+> Sınırlar aynen: `AGENTS.md` değişmez kuralları; para, hesap, ücretli servis, eşik, repo silme kararları kullanıcının.
+> Devirde açık kalan: sg-pano temizliği yapılmadı (öneri: `ofis/kanit/` kanıt görselleri/videoları ve `docs/` altındaki eski ekran
+> görüntüleri ile durum belgeleri silinebilir; `test/pano.test.js` `docs/` klasörüne ekran görüntüsü yazdığı için `docs/TASARIM.md` kalsın;
+> silmeden sonra `node --test` ile testler doğrulanmalı). sg-arge temizliği #443 ile tamamlandı.
+
 > **2026-10-30 akşam (kullanıcı kararı K‑11):** Yeni Sonnet oturumu **tek lider** ve birleştirme yetkili (CI yeşil + Sol denetimi
 > sonrası). Görev `docs/GOREV_ETRE_GECIS.md`. Claude (Opus) bu işten çekildi. Codex (Sol) denetçi.
 
