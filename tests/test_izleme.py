@@ -180,7 +180,8 @@ def test_empty_list_writes_contract_and_never_uses_network(tmp_path):
             raise AssertionError(name)
     result = m.run(root, root / 'out', NoNetwork(), NOW)
     assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
-                      'kasa_egri': {'oda': [], 'kontrol': []}, 'olaylar': []}
+                      'kasa_egri': {'oda': [], 'kontrol': []}, 'olaylar': [], 'gunluk_sayac': [],
+                      'olay_kapsami': {'baslangic': None, 'tam': True, 'toplam': 0, 'kol_basina_son': 200, 'sayac_gun': 30}}
     assert json.loads((root / 'out/durum.json').read_text()) == result
 
 
@@ -691,3 +692,58 @@ def test_health_blind_keeps_leverage_and_staleness():
     result = m.health(h, h.index[-1], NOW, 10.01, False, m.millis(NOW) - 30 * m.DAY, performans_konisi=False)
     assert result['isik'] == 'kirmizi'
     assert result['nedenler'] == ['gerçek kaldıraç > 10x', 'son 30 günde işlem yok']
+
+
+# ---------------------------------------------------------------- v1.6: olay arşivi kesilmez (GOREV_VERI_DUZELTME madde 1)
+def _olay(i, trader, tur, zaman):
+    return {'id': f'{trader}-{i}-{tur}', 'zaman': zaman, 'trader': trader, 'tur': tur}
+
+
+def test_olay_ozeti_yogun_taban_oda_olaylarini_disarida_birakmaz():
+    # Altın örnek: B17 (taban) 300 açılış üretir, hepsi O01 (oda) olaylarından DAHA YENİ.
+    # Eski kod ortak [:200] aldığı için oda olaylarının hepsi düşerdi; şimdi kol başına 200.
+    events = {}
+    for i in range(300):
+        e = _olay(i, 'B17', 'acilis', f'2026-10-27T11:{i // 60:02d}:{i % 60:02d}Z')
+        events[e['id']] = e
+    for i, (tur, z) in enumerate([('acilis', '2026-10-27T01:00:00Z'), ('kapanis', '2026-10-27T02:00:00Z'),
+                                  ('acilis', '2026-10-26T23:00:00Z')]):
+        e = _olay(i, 'O01', tur, z)
+        events[e['id']] = e
+    traders = [{'id': 'B17', 'kol': 'taban'}, {'id': 'O01', 'kol': 'oda'}]
+    recent, sayac, scope = m.olay_ozeti(events, traders, NOW, tam=True)
+    assert sum(e['trader'] == 'B17' for e in recent) == 200
+    assert sum(e['trader'] == 'O01' for e in recent) == 3
+    assert len(recent) == 203
+    assert [e['zaman'] for e in recent] == sorted((e['zaman'] for e in recent), reverse=True)
+    oda = {(r['gun']): r for r in sayac if r['kol'] == 'oda'}
+    assert oda['2026-10-27'] == {'gun': '2026-10-27', 'kol': 'oda', 'acilis': 1, 'kapanis': 1, 'trader_sayisi': 1}
+    assert oda['2026-10-26']['acilis'] == 1 and oda['2026-10-26']['kapanis'] == 0
+    taban = next(r for r in sayac if r['kol'] == 'taban')
+    assert (taban['acilis'], taban['kapanis'], taban['trader_sayisi']) == (300, 0, 1)   # kesilmemiş sayım
+    assert scope == {'baslangic': '2026-10-26T23:00:00Z', 'tam': True, 'toplam': 303, 'kol_basina_son': 200, 'sayac_gun': 30}
+
+
+def test_olay_ozeti_isik_olayi_sayaca_girmez_ve_kapsam_islemden_baslar():
+    events = {e['id']: e for e in [_olay(1, 'O01', 'isik', '2026-10-20T00:00:00Z'), _olay(2, 'O01', 'acilis', '2026-10-27T09:00:00Z')]}
+    _, sayac, scope = m.olay_ozeti(events, [{'id': 'O01', 'kol': 'oda'}], NOW, tam=False)
+    assert len(sayac) == 1 and sayac[0]['acilis'] == 1
+    assert scope['baslangic'] == '2026-10-27T09:00:00Z' and scope['tam'] is False
+
+
+def test_olay_ozeti_bos_arsiv():
+    recent, sayac, scope = m.olay_ozeti({}, [], NOW, tam=True)
+    assert recent == [] and sayac == [] and scope['baslangic'] is None and scope['toplam'] == 0
+
+
+def test_kosu_kesilmemis_olay_arsivi_ve_kapsam_yazar(tmp_path):
+    import gzip
+    root, output = project(tmp_path, [styled_row()]), tmp_path / 'out'
+    client = Client([fill('2026-10-27T10:00:00Z', 1), fill('2026-10-27T10:30:00Z', 2, side='A', size=1, before=1, price=110)])
+    result = m.run(root, output, client, NOW)
+    lines = gzip.decompress((output / 'olay_arsivi.jsonl.gz').read_bytes()).decode().splitlines()
+    ids = [json.loads(x)['id'] for x in lines]
+    assert ids == ['T1-1-acilis', 'T1-2-kapanis']          # eskiden yeniye, hiçbiri kesilmemiş
+    assert result['olay_kapsami']['toplam'] == 2 and result['olay_kapsami']['tam'] is True
+    assert [(r['kol'], r['acilis'], r['kapanis']) for r in result['gunluk_sayac']] == [(result['traderlar'][0].get('kol', ''), 1, 1)]
+    assert json.loads((output / 'durum.json').read_text())['gunluk_sayac'] == result['gunluk_sayac']

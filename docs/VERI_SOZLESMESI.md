@@ -53,7 +53,12 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 }
 ```
 - `egri`: son 90 gün, günlük, t0'dan bağımsız trader'ın kümülatif PnL / hesap değeri (Hyperliquid `portfolio`).
-- `olaylar`: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
+- `olaylar` (v1.6): **kol başına** son 200 olay (kolların birleşimi), yeniden eskiye; yoğun bir taban trader'ı oda olaylarını
+  düşüremez. Kesilmemiş tüm olaylar `olay_arsivi.jsonl.gz` dosyasında (gzip JSONL, eskiden yeniye, her satır bir olay).
+- `gunluk_sayac` (v1.6): son 30 gün, `{gun (UTC, YYYY-MM-DD), kol (ana etiket), acilis, kapanis (olay sayısı), trader_sayisi}`;
+  `buyutme`/`azaltma`/`isik` sayılmaz; kesilmemiş olaylardan hesaplanır.
+- `olay_kapsami` (v1.6): `{baslangic (ilk işlem olayı, UTC ISO), tam (bu koşuda hiç trader hatası yoksa true), toplam, kol_basina_son, sayac_gun}`.
+- Eski anlatım: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
 - **Olay kimliği (v1.2):** `{trader}-{oid}-{tur}` (ör. `T1-123456789-acilis`); ışık olayı `{trader}-{ms}-isik`.
   Olaylar **emir (`oid`) düzeyinde** üretilir: aynı emrin dolumları birleştirilir (tek açılış sahte büyütmeler doğurmaz).
   Saatlik motor ve Cloudflare Worker aynı kuralla aynı kimliği üretir.

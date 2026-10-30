@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import copy
 import csv
+import gzip
 import hashlib
 import json
 import math
@@ -691,6 +692,47 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
     return trader
 
 
+KOL_SON_OLAY = 200
+SAYAC_GUN = 30
+
+
+def olay_ozeti(all_events: dict, traders: list[dict], now: pd.Timestamp, tam: bool) -> tuple[list[dict], list[dict], dict]:
+    """Kesilmemiş olaylardan: kol başına son N olay, günlük sayaçlar ve kapsam (veri sözleşmesi v1.6)."""
+    kol_of = {t['id']: t.get('kol', '') for t in traders}
+    ordered = sorted(all_events.values(), key=lambda e: (e['zaman'], e['id']), reverse=True)
+    taken: dict[str, int] = {}
+    recent = []
+    for event in ordered:
+        kol = kol_of.get(event['trader'], '')
+        if taken.get(kol, 0) < KOL_SON_OLAY:
+            taken[kol] = taken.get(kol, 0) + 1
+            recent.append(event)
+    since = (now.normalize() - pd.Timedelta(days=SAYAC_GUN - 1)).strftime('%Y-%m-%d')
+    counts: dict[tuple[str, str], dict] = {}
+    for event in ordered:
+        if event.get('tur') not in {'acilis', 'kapanis'} or event['zaman'][:10] < since:
+            continue
+        row = counts.setdefault((event['zaman'][:10], kol_of.get(event['trader'], '')), {'acilis': 0, 'kapanis': 0, 'traderlar': set()})
+        row[event['tur']] += 1
+        row['traderlar'].add(event['trader'])
+    sayac = [{'gun': gun, 'kol': kol, 'acilis': row['acilis'], 'kapanis': row['kapanis'], 'trader_sayisi': len(row['traderlar'])}
+             for (gun, kol), row in sorted(counts.items(), reverse=True)]
+    trade_times = [e['zaman'] for e in ordered if e.get('tur') != 'isik']
+    scope = {'baslangic': min(trade_times) if trade_times else None, 'tam': bool(tam), 'toplam': len(ordered),
+             'kol_basina_son': KOL_SON_OLAY, 'sayac_gun': SAYAC_GUN}
+    return recent, sayac, scope
+
+
+def write_event_archive(output: Path, all_events: dict) -> None:
+    """Kesilmemiş olay arşivi: tek gzip JSONL, zamana göre eskiden yeniye (deterministik bayt)."""
+    lines = ''.join(json.dumps(e, ensure_ascii=False, sort_keys=True, allow_nan=False) + '\n'
+                    for e in sorted(all_events.values(), key=lambda e: (e['zaman'], e['id'])))
+    temporary = output / 'olay_arsivi.jsonl.gz.tmp'
+    with open(temporary, 'wb') as raw, gzip.GzipFile(fileobj=raw, mode='wb', mtime=0) as handle:
+        handle.write(lines.encode('utf-8'))
+    temporary.replace(output / 'olay_arsivi.jsonl.gz')
+
+
 def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     now = timestamp(now or datetime.now(UTC))
     client = client or PublicClient(limiter=RateLimiter())
@@ -727,8 +769,8 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     if watchlist and failed == len(watchlist):
         raise RuntimeError('Tüm trader verileri hatalı; önceki durum yayımlanmadı.')
     result = {'surum': 1, 'uretildi': iso(now), 'kaynak': 'hyperliquid', 'traderlar': traders,
-              'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')},
-              'olaylar': sorted(all_events.values(), key=lambda e: (e['zaman'], e['id']), reverse=True)[:200]}
+              'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')}}
+    result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'] = olay_ozeti(all_events, traders, now, failed == 0)
     oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']
     if oda_uyeleri:
         result['kalabalik'] = {**oda_risk.kalabalik([t for t in oda_uyeleri if t.get('gecerli') and t.get('hesap_degeri')]), 'zaman': iso(now)}
@@ -736,6 +778,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     payloads = {name: json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + '\n'
                 for name, value in [('motor.json', state), ('durum.json', result)]}
     output.mkdir(parents=True, exist_ok=True)
+    write_event_archive(output, all_events)
     for name, value in payloads.items():
         temporary = output / (name + '.tmp')
         temporary.write_text(value, encoding='utf-8')

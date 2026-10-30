@@ -4,7 +4,7 @@ set -euo pipefail
 [ "${GITHUB_ACTIONS:-}" = true ] || { echo 'Yalnız GitHub Actions için.' >&2; exit 1; }
 archive=$(mktemp -d)
 trap 'rm -rf "$archive"' EXIT
-for path in durum.json binance_vadeli.txt kararlar.jsonl degisim.json; do
+for path in durum.json binance_vadeli.txt kararlar.jsonl degisim.json olay_arsivi.jsonl.gz; do
   if [ -f "izleme/$path" ]; then cp "izleme/$path" "$archive/"; fi
 done
 [ -s "$archive/durum.json" ]
@@ -28,7 +28,7 @@ cp -r "$archive"/. izleme/
 # Eski motor.json veri dalından kaldırılır (artık R2'de).
 git rm -q --cached --ignore-unmatch izleme/motor.json
 # Worker'ın kararlar.jsonl dosyası ve diğer arşivleri korunur.
-for path in durum.json binance_vadeli.txt kararlar.jsonl degisim.json; do
+for path in durum.json binance_vadeli.txt kararlar.jsonl degisim.json olay_arsivi.jsonl.gz; do
   if [ -f "$archive/$path" ]; then git add -f "izleme/$path"; fi
 done
 if git diff --cached --quiet; then exit 0; fi
