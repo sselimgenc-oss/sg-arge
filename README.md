@@ -13,7 +13,7 @@ Etre v2 · Trading Office (ismailkaraabc) projesinden esinlenmiştir: <https://g
 - **Canlı pilot görünümü (ön kayıt 1.5):** sanal kasa, kol toplamları ve yönetilen oda ↔ sabit kontrol kıyası görünür. Seçim etiketi ile canlı izleme eşleşmiyorsa sayfa sahte veri üretmez; ilgili alan "veri yok" kalır.
 - **Veride isteğe bağlı yeni alanlar** (yoksa "bilinmiyor" yazar, çökmez): trader başına `kol` (`oda|aday|kontrol|taban|elle`), `neden_secildi`, `kirmizi_bayraklar[]` (yoksa `saglik` ışığı/nedenleri); üst düzey `golge: {hafta, hafta_toplam (varsayılan 12), oda_kapasite, oda_n}`; keşifte `havuz`, `aday_sayisi` (yoksa `islenen` ve aday sayısı).
 - Testler: `node test/pano.test.js` (ana pano, Playwright; ağ yakalanır, yalnız örnek veri).
-- Tanım: `sg-arge/docs/PANO_COPYTRADE.md`; veri biçimi: `sg-arge/docs/VERI_SOZLESMESI.md` (v1.1, `surum` 1; başka sürüm reddedilir).
+- Görev: `sg-arge/docs/GOREV_ETRE_GECIS.md` (E5); veri biçimi: `sg-arge/docs/VERI_SOZLESMESI.md` (v1.1, `surum` 1; başka sürüm reddedilir).
 - Sayfa açıkken her 5 dakikada veriyi yeniden okur; üstteki **Yenile** düğmesi hemen okur.
 - Sahte veri yok: veri okunamazsa sayfa hata gösterir; olmayan alanlar "veri yok" der.
 - Paper/strateji araştırması kapandı; ona ait pano, sekmeler ve `data.json` kaldırıldı.
@@ -45,7 +45,6 @@ Keşif kaynağı `index.html` içindeki `KESIF_KAYNAK` sabitidir: veri dalındak
 |---|---|
 | `index.html` | Pano (tek sayfa). |
 | `test/` | Ana pano testi (`pano.test.js`) ve ortak yardımcı (`pano_yardim.js`). |
-| `docs/pano_sade/` | Önce / sonra ekran görüntüleri ve kabul notu. |
 | `izleme/` | Test için sabit örnek durum (sahte veri); canlıda kullanılmaz. |
 | `kesif/` | Keşif sekmesi için v1 şemasına uygun sahte aday verisi. |
 | `vendor/` | Sabit sürümlü kütüphaneler: Lucide 0.460.0 (ikonlar, ISC), Tailwind 3.4.17 ile derlenmiş CSS (MIT). Dış CDN kullanılmaz. |

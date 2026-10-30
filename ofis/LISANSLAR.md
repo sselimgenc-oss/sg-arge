@@ -59,9 +59,9 @@ Hedef: toplam varlık ≤ 15 MB. Gerçekleşen: **sayfanın görsel varlık dosy
 | `ad.js` | 6 361 |
 | **Toplam (gzip öncesi)** | **≈ 274 KB** |
 
-Ağ üzerinden ≈ 80 KB (gzip). `kanit/` klasörü (sürüm 2 ekran görüntüleri ve 30 sn kayıt `kanit/v2/`, sürüm 1'in önce/sonra karşılaştırmaları; toplam ≈ 13.0 MB) sayfanın parçası değildir, yalnız PR kanıtıdır;
+Ağ üzerinden ≈ 80 KB (gzip). (Eski `kanit/` PR kanıt klasörü 2026-10-30 temizliğinde silindi; git geçmişinde.)
 15 MB bütçesinin altındadır. (Etre karşılaştırma görseli #18 dalındadır; sürüm 2 dalına alınmadı.) Testler (`test/`) sayfayla yüklenmez.
 
 **Sürüm 2b eki:** yeni dosyalar `cekmece.js` (≈ 4,6 KB) ve `ses.js` (≈ 2 KB); ses WebAudio ile kodla üretilir, ses dosyası yoktur. Dış varlık eklenmedi; görsel varlık dosyası hâlâ 0 bayt.
-Tüm sayfa ≈ 313 KB (gzip öncesi). `kanit/` (v1 karşılaştırmaları, `v2/`, `v2b/`) ≈ 13 MB < 15 MB.
+Tüm sayfa ≈ 313 KB (gzip öncesi).
 
