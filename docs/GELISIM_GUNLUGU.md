@@ -3,6 +3,15 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-31 01:30 TR — degisim_rapor v3'e çevrildi (kullanıcı: "v3 olmalı, yeni çalışmamız o")
+`copytrade/degisim_rapor.py` (oda rotasyon "değişim alfası") `sanal_kopya.toplam` (v1) yerine `sanal_kopya_v3.toplam`
+okuyor. Rapora `kaynak` + `taban_sifirlandi` eklendi; `kaynak`sız (v1 dönemi) önceki rapordaki
+`cikarilan_taban_net` değerleri v3 ile karıştırılmaz, taban yeniden alınır. v3 `hesaplanamadi` ise v1'e düşülmez,
+değişim "bekleniyor" kalır. Gerçekte henüz hiç rotasyon kaydı yok (`copytrade/degisim.jsonl` yok; ilk Perşembe
+koşusu bekleniyor), yani sıfırlanacak canlı taban da yok — koruma ileriye dönük. Gerçek veri denemesi (O01 çıkarılan,
+B17 alınan, bugünkü HL durumu): çıkarılan −%0,36, alınan −%32,73, alfa −%32,73 (taban ilk raporda = çıkarılanın
+değeri). 2 yeni altın örnek + mevcut test v3'e uyarlandı. Ön kayıt eşikleri/gerekçeler değişmedi.
+
 ## 2026-10-31 00:40 TR — E5 devamı: pano/ofis/Telegram artık v1 değil v3 gösteriyor (kullanıcı: "güncel motorumuz ona bağlansın")
 Kontrolde bulundu: `sg-pano` (ayrı yürütülen E5) `sanal_kopya_v2`'ye hiç bağlı değildi, `sanal_kopya_v3`'e (#453,
 bugün birleşti) de hiç bağlı değildi — pano/ofis/Telegram hâlâ v1'i (eski, trader hesabına oranlı, risksiz kopya)
@@ -16,8 +25,7 @@ gösteriyordu. Üçü de v3'e geçirildi (`sg-pano/index.html` 6 yer, `ofis/gerc
   +%0,16 ↔ v3 **−%32,73** (büyük/kaldıraçlı trader'da sabit-$ eğrisi çok daha büyük pay oynatıyor — tasarımın
   kendisi, `sanal_kopya_v3` belgesinde zaten yazılı). Panodaki/Telegram'daki sayılar bu PR'dan sonra belirgin
   değişecek; hata değil.
-- Kasıtlı dokunulmadı: `copytrade/degisim_rapor.py` hâlâ v1 okuyor — ön-kayıtlı (1.6) rotasyon ölçümünün kalıcı
-  tabanını v3 ile karıştırmamak için (ölçüm yöntemi test penceresinde değiştirilmez); kullanıcı kararı gerekir.
+- `copytrade/degisim_rapor.py` bu PR'da bilerek v1'de bırakıldı; ardından kullanıcı kararıyla v3'e çevrildi (üstteki girdi).
 - `python -m pytest -q`: 551 geçti. `worker node --test`: 40 geçti. `sg-pano` testleri (pano, gercek, replik, ui) geçti.
 
 ## 2026-10-30 23:15 TR — E2 devamı 2: v3'e tasfiye + aşamalı çıkış (kullanıcı: "dokümanda ne yazıyorsa onu yap")
