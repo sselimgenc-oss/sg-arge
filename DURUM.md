@@ -1,6 +1,10 @@
 # DURUM (lider günceller; tek doğru kaynak budur)
 
-Son güncelleme: 2026-10-30, Claude (temizlik). Lider: Sonnet (K‑11, birleştirme yetkili). Denetçi: Codex (Sol).
+Son güncelleme: 2026-10-30, Claude (temizlik). Lider: Sonnet (K‑11, birleştirme yetkili).
+
+**Kullanıcı kararı (2026-10-30 gece):** Sol (Codex) denetimi artık **manuel** — zorunlu birleştirme koşulu değil,
+yalnız kullanıcı isterse ayrıca devreye girer. Birleştirme koşulu: **CI yeşil** (lider kendi birleştirir, denetim
+beklemez).
 
 ## Hedef (K‑11)
 Hyperliquid kaldıraç trader'larını sanal kasada, küçük sabit tutarla, Etre'nin çıkış kurallarıyla kopyalayan; tek panelde ve
