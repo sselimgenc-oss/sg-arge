@@ -3,8 +3,7 @@
 **Karar (kullanıcı, 2026-10-30, sorgusuz):** Etre'nin bizden iyi olduğu her alan Etre'deki gibi yapılır: program/kullanılabilirlik,
 plan/yol haritası, veri hattı, risk ve çıkış mantığı, mimari, yönetim/sadelik, mühendislik kalitesi, pano ve ofis, simülasyon
 gerçekçiliği, hız, kopya mekaniği ve çıkışlar, hedef netliği. Birebir alınır ya da bize çevrilir.
-**Yürüten:** Sonnet (tek lider, birleştirme yetkili). **Denetçi:** Codex (Sol). Önceki görev listeleri (`GOREV_VERI_DUZELTME.md`,
-K‑9/K‑10 maddeleri) bu görevle **askıya alınır**; yalnız buraya taşınan maddeler yapılır.
+**Yürüten:** Sonnet (tek lider, birleştirme yetkili). **Denetçi:** Codex (Sol). Önceki görev listeleri (K‑9/K‑10, `GOREV_VERI_DUZELTME.md`) 2026-10-30 temizliğinde silindi (git geçmişinde); tek görev listesi budur.
 
 Kaynak: <https://github.com/ismailkaraabc/etre-trading-office> (GPL‑3.0, son sürüm 2026-10-28). Önce `README.md`, `KULLANIM.md`,
 `ALANLAR.md`, `docs/GELISIM_GUNLUGU.md` (tamamı) okunur. Bizdeki analiz: `docs/etre_envanter.md`, `docs/DENETIM_TRADER_2026-10-30.md`.

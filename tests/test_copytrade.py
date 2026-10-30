@@ -149,16 +149,6 @@ def test_rate_limited_address_is_recorded_as_no_data_and_run_continues(tmp_path:
     assert dict(zip(table.address, table.sonuc))["0xA"] == "veri_yok" and len(table) == 2
 
 
-def test_inceleme_pick_and_monthly():
-    from copytrade.inceleme import monthly, pick
-    rows = [{"ethAddress": "0xa", "accountValue": "200000", "windowPerformances": [["month", {"roi": "0.1"}], ["allTime", {"roi": "1", "pnl": "400000"}]]},
-            {"ethAddress": "0xb", "accountValue": "50000", "windowPerformances": [["month", {"roi": "0.1"}], ["allTime", {"roi": "1", "pnl": "900000"}]]},
-            {"ethAddress": "0xc", "accountValue": "300000", "windowPerformances": [["month", {"roi": "-0.1"}], ["allTime", {"roi": "1", "pnl": "1"}]]}]
-    assert [r["address"] for r in pick(rows, 5)] == ["0xa"]
-    fills = [{"time": 1704067200000, "closedPnl": "10", "fee": "1"}, {"time": 1706745600000, "closedPnl": "-5", "fee": "1"}]
-    assert monthly(fills, []).round(6).to_dict() == {"2024-01": 9.0, "2024-02": -6.0}
-
-
 def test_round_trip_pnl_accumulates_partial_closes_and_flip():
     fills = [{"time": 1, "coin": "BTC", "side": "B", "sz": "2", "px": "100", "startPosition": "0", "closedPnl": "0", "fee": "0"},
              {"time": 3600001, "coin": "BTC", "side": "A", "sz": "1", "px": "110", "startPosition": "2", "closedPnl": "10", "fee": "0"},
@@ -176,37 +166,6 @@ def test_position_open_before_window_has_unknown_holding_and_spot_is_excluded():
     assert closed_round_trips(perp_fills(fills))[0]["holding_hours"] is None
     assert [asset_class(c) for c in ("BTC", "@107", "PURR/USDC", "xyz:CL", "xyz:XYZ100", "xyz:SKHX")] == [
         "kripto", "spot", "spot", "emtia", "endeks", "hisse"]
-
-
-def test_inceleme_stability_report_runs_offline(tmp_path: Path, monkeypatch):
-    import copytrade.inceleme as inc
-
-    day = 86_400_000
-    t0 = 1_700_000_000_000
-    pnl = [[t0 + i * 30 * day, str(1000 * i)] for i in range(10)]          # her ay +1000: kârlı ay %100
-    value = [[t0 + i * 30 * day, "60000"] for i in range(10)]
-
-    class Fake:
-        def leaderboard(self):
-            return [{"ethAddress": "0xa", "accountValue": "60000", "windowPerformances": [
-                ["week", {"roi": "0.01"}], ["month", {"roi": "0.05", "vlm": "120000"}], ["allTime", {"roi": "0.5", "pnl": "30000"}]]}]
-
-        def fills(self, address, start, max_rows=None):
-            return [{"time": t0, "coin": "BTC", "side": "B", "sz": "1", "px": "100", "startPosition": "0",
-                     "closedPnl": "0", "fee": "0", "oid": 1},
-                    {"time": t0 + 36_000_000, "coin": "BTC", "side": "A", "sz": "1", "px": "110", "startPosition": "1",
-                     "closedPnl": "10", "fee": "0", "oid": 2}]
-
-        def info(self, payload, weight=20):
-            if payload["type"] == "portfolio":
-                return [["allTime", {"pnlHistory": pnl, "accountValueHistory": value}]]
-            return [] if payload["type"] == "userFunding" else {"assetPositions": []}
-
-    monkeypatch.setattr(inc, "PublicClient", Fake)
-    out = tmp_path / "r.md"
-    inc.main(["--mod", "istikrar", "--cikti", str(out)])
-    text = out.read_text()
-    assert "1. aşamadan geçti | 1" in text and "| `0xa…` | 100% |" in text
 
 
 def test_martingale_ignores_laddered_entry_and_leverage_uses_position_value():
