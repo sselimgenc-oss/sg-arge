@@ -26,6 +26,7 @@ from copytrade.pozisyon_mutabakat import mutabakat, ozet
 from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, closed_round_trips, perp_fills
 from copytrade.tarama import PublicClient, RateLimiter
 from copytrade import oda_risk
+from copytrade import saglik_hatti
 from copytrade.kurallar import load_rules
 from pano.saglik import CUSUM_YELLOW, _cusum, _mdd, blok_bootstrap
 
@@ -732,6 +733,12 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']
     if oda_uyeleri:
         result['kalabalik'] = {**oda_risk.kalabalik([t for t in oda_uyeleri if t.get('gecerli') and t.get('hesap_degeri')]), 'zaman': iso(now)}
+    # E1 (GOREV_ETRE_GECIS.md) — Etre kalite.py deseninden esinlenilen veri hattı sağlığı (performans ışığından
+    # ayrı; yalnız rapor). Tazelik kontrolü kasıtlı olarak burada değil (bkz. saglik_hatti modül docstring'i).
+    # Boş izleme listesinde (ağ hiç kullanılmayan sözleşme testi) eklenmez — kalabalik alanıyla aynı desen.
+    if traders:
+        oda_olcu = saglik_hatti.olc(result)
+        result['saglik_hatti'] = {**oda_olcu, **saglik_hatti.kontrol(oda_olcu)}
     # Serialize both before replacing either; API/validation/NaN errors leave the archive untouched.
     payloads = {name: json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + '\n'
                 for name, value in [('motor.json', state), ('durum.json', result)]}
