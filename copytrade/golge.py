@@ -110,6 +110,10 @@ def _denetle_ve_kapat(held: dict[str, tuple[float, float, int, int]], until: int
     for hour in range(first, until + 1, HOUR):
         active = [c for c, st in held.items() if hour >= (st[2] // HOUR + 1) * HOUR and hour >= ((st[3] // HOUR) + 1) * HOUR]
         marks = {c: market.mark(c, hour) for c in active}
+        for c in active:                  # işareti olmayan saat denetlenmiş sayılır: yoksa her dolum aynı, büyüyen boşluğu baştan tarar (gerçek veri, 2026-10-30)
+            if marks[c] is None:
+                st = held[c]
+                held[c] = (st[0], st[1], st[2], hour)
         pnls = {c: held[c][0] * (marks[c] - held[c][1]) for c in active if marks[c] is not None}
         if not pnls:
             continue
