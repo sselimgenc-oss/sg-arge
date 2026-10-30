@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1.6, 2026-10-30; v1.6 `gecikme.json`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
+# Veri sözleşmesi — copy trade izleme (v1.7, 2026-10-30; v1.7 `gecikme.json`, v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -9,7 +9,7 @@ sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `suru
 | `izleme/durum.json` | sg-arge, `copytrade-izleme` dalı (main büyümesin) | Codex işi (Actions) | saatte bir |
 | `izleme/ornek_durum.json` | sg-arge `main` (sabit örnek, 4 trader) | lider (hazır) | sabit; Sonnet bununla başlar |
 | `izleme/kararlar.jsonl` (açtım/atladım) | sg-arge, `copytrade-izleme` dalı | saatlik iş, Worker'ın `GET /kararlar`'ından (Cloudflare'de GitHub anahtarı yok) | saatte bir |
-| `izleme/gecikme.json` (gerçek algılama gecikmesi, v1.6, E1 devamı) | sg-arge, `copytrade-izleme` dalı | saatlik iş, Worker'ın `GET /gecikme`'sinden (`copytrade/gecikme.py`) | saatte bir, `GECIKME_URL` tanımlıysa (yoksa adım atlanır, saatlik durum bozulmaz) |
+| `izleme/gecikme.json` (gerçek algılama gecikmesi, v1.7, E1 devamı) | sg-arge, `copytrade-izleme` dalı | saatlik iş, Worker'ın `GET /gecikme`'sinden (`copytrade/gecikme.py`) | saatte bir, `GECIKME_URL` tanımlıysa (yoksa adım atlanır, saatlik durum bozulmaz) |
 
 Repolar herkese açık (kullanıcı kararı 2026-10-27). Bu yüzden karar kaydında **tutar, bakiye, hesap, isim yoktur**;
 yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zincir verisidir.
@@ -67,6 +67,18 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - `traderlar[].yonsuz_bayrak` (isteğe bağlı, yalnız `kol` = `oda` | `kontrol`; `surum` 1 kalır; Argon A26, **yalnız bilgi**): `funding_payi`, `spot_perp_ters`, `maker_payi` — her biri `{deger, esik, asildi}`
   (`deger` hesaplanamazsa `null`; `spot_perp_ters` ayrıca `coin`), `bayrak` (herhangi biri aşıldıysa `true`), `pencere_gun` (90), `sezgisel: true`, okunamayan kaynak varsa `hata`.
   Funding ve spot durumu günde bir kez çekilir (önbellek `motor.json`'da). Eşikler `kurallar.yaml` `yonsuz_*`, sezgiseldir; seçim/kapı/oda kararını değiştirmez.
+- `saglik_hatti` (üst düzey, isteğe bağlı, oda üyesi varsa; v1.6, E1 `GOREV_ETRE_GECIS.md`, Etre `kalite.py`
+  deseninden esinlenilmiş — `copytrade/saglik_hatti.py`, saf fonksiyon, **yalnız rapor**; hiçbir pozisyon/kopya
+  bundan etkilenmez; oda için **performans ışığından (`traderlar[].saglik.isik`) ayrı**, veri hattının kendisinin
+  sağlığıdır): `{kol: "oda", n, yetim_golge_orani, isaret_eksik_toplam, veri_hata_orani, kirmizi_sayisi,
+  sari_sayisi, acik_pozisyon_yasi_dk_medyan, isik: "yesil|sari|kirmizi", nedenler: []}`. `yetim_golge_orani` =
+  oda'daki `veri_kalitesi.mutabakat.yetim` toplamı / `toplam` toplamı (mutabakat verisi yoksa `null`, sıfıra
+  bölünmez); `veri_hata_orani` = `gecerli: false` olan oda üyesi oranı; `acik_pozisyon_yasi_dk_medyan` = son 180 dk
+  içinde açılmış oda pozisyonlarının (`pozisyonlar[].acilis`) `uretildi`'ye göre medyan **yaşı** (dk) — bu **pozisyon
+  yaşıdır, gerçek sinyal/algılama gecikmesi değildir** (Sol denetimi 2026-10-30); kopya ekonomisini değiştirmez.
+  Eşikler `saglik_hatti.ESIKLER`. **Veri tazeliği burada değerlendirilmez** — yayım anında hesaplanırsa her zaman
+  ~0 döner ve durmuş akışı yakalayamaz; tazelik tek yerde Worker'ın okuma anındaki gerçek saatiyle yaptığı mevcut
+  3 saatlik kontrolündedir (`worker/src/index.js` `checkStateAlerts`).
 - `kalabalik` (üst düzey, isteğe bağlı, oda üyesi varsa; Argon A27): `{n_oda, coinler: [{coin, net_yon, net_pay, ayni_yon, toplam, cakisma}], uyari, uyari_metni, zaman, sezgisel}`.
   `net_pay` = |Σ x·yön| / Σ|x|, x = kopya ağırlığı × pozisyon nosyoneli / trader hesap değeri (kaldıraç ikinci kez çarpılmaz). `uyari_metni` yalnız `uyari` iken dolu (tek satır; Telegram `/durum` ve pano).
   Eşikler `kalabalik_*` (sezgisel). Otomatik işlem yoktur.
@@ -108,7 +120,7 @@ hesap, isim ve serbest metin yazılmaz. Eski `bakiye_yok` kayıtları içe aktar
 `copytrade-izleme` dalında `izleme/kararlar.jsonl`; v1'de karar yalnız Telegram düğmesiyle verilir.
 İstatistik: aynı trader için "tüm olaylar" ile "açtıklarım" sanal sonuçları ayrı hesaplanır.
 
-## 4a. Gerçek algılama gecikmesi (`izleme/gecikme.json`, v1.6, E1 devamı)
+## 4a. Gerçek algılama gecikmesi (`izleme/gecikme.json`, v1.7, E1 devamı)
 `{"n": <int>, "gecikme_dk_medyan": <float|null>, "gecikme_dk_maks": <float|null>, "trader_detay": [{"trader", "gecikme_dk", "zaman"}]}`.
 `gecikme_dk` = Worker'ın bir dolumu gördüğü an ile o dolumun Hyperliquid'deki **gerçek** zamanı arasındaki fark
 (dakika) — `copytrade/saglik_hatti.py`'deki `acik_pozisyon_yasi_dk_medyan` (pozisyon yaşı) ile **karıştırılmamalı**;
