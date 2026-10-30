@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1.11, 2026-10-30; v1.11 `sanal_kopya_v3` (E2 sabit tutar), v1.10 `sanal_kopya_v2.kapanis_nedenleri` (E3), v1.9 `sanal_kopya_v2`, v1.8 `gecikme.json` taze pencere, v1.7 `gecikme.json`, v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
+# Veri sözleşmesi — copy trade izleme (v1.12, 2026-10-30; v1.12 `sanal_kopya_v3` tasfiye/aşamalı çıkış (E3), v1.11 `sanal_kopya_v3` (E2 sabit tutar), v1.10 `sanal_kopya_v2.kapanis_nedenleri` (E3), v1.9 `sanal_kopya_v2`, v1.8 `gecikme.json` taze pencere, v1.7 `gecikme.json`, v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -132,24 +132,29 @@ kodu. v1'e göre dört gerçek düzeltme (`docs/DENETIM_TRADER_2026-10-30.md` K2
 "Etre eğrisini enterpolasyonla port et")
 v1/v2 **silinmez ve yeniden yazılmaz**; v3 yan yana yayımlanır (AGENTS.md kural 6). Birim: 1.000 $ sanal kopya
 ölçeği (v1/v2 ile aynı). **Tek motor** (kural 7): `copytrade/kopya_v3.py` → `defter.copy_ledger` (AYNI fonksiyon,
-yalnız yeni `tutar_egrisi` parametresiyle — `golge.calistir`'in ön işlemesinden GEÇMEZ, bkz. kapsam dışı). v1/v2'nin
-**trader hesabına ORANLI** kopya ölçeğinin yerine:
+yalnız yeni `tutar_egrisi` parametresiyle — `golge.calistir`'in ön işlemesinden GEÇMEZ, risk katmanı doğrudan
+`copy_ledger` içinde, bkz. aşağıda). v1/v2'nin **trader hesabına ORANLI** kopya ölçeğinin yerine:
 - **Açılış:** kopya hesabının KENDİ o anki $ değerine (1 + şimdiye kadarki gerçekleşen + gerçekleşmemiş K/Z, ×1.000)
   göre, Etre `kasa.py Kasa.islem_usd` eğrisinden (`defter.sabit_tutar_egrisi`, `kurallar.yaml` `sabit_tutar_*`,
   Etre'nin kendi varsayılanları — DEĞİŞTİRİLMEDİ) sabit $ tutarla açılır. Trader'ın o dolumdaki kendi işlem
   büyüklüğü artık kopya boyutunu etkilemez (v1/v2'den temel fark).
 - **Ekleme:** eğriden yeniden okunmaz; mevcut kopya pozisyonuna trader'ın kendi oranı kadar eklenir (Etre
   `masa.py _ekle` portu). **Azaltma/kapatma:** değişmedi (defterin ortak kuralı).
+- **Tasfiye ve aşamalı zarar_kes/kar_al (E3, v1.12):** v2'deki AYNI dondurulmuş eşikler (`golge_likidasyon_esigi`,
+  `golge_v2`, DEĞİŞTİRİLMEDİ) — ama `golge.py`'nin sentetik-dolum-enjekte-etme deseni değil, `defter.copy_ledger`
+  içinde gerçek (yol bağımlı) `held`/`entry` üzerinde çalışan ayrı bir risk katmanı (`_risk_denetle`/`_zorla_kapat`,
+  proportional `scale`'in sabit tutarda karşılığı olmadığı için). `tasfiye`, `tasfiye_zamani`, `tasfiye_kaynagi`,
+  `kapanis_nedenleri` v2 ile AYNI anlamda doluyor. **Gözlem:** sabit tutar küçük olduğundan (eğri $1.000'da ~%2,
+  $10.000 tavanında ~%15 açar), tek pozisyonun TEK BAŞINA gerçek fiyat hareketiyle bu eşiklere ulaşması pratikte
+  nadirdir (küçük/çeşitlendirilmiş pozisyonların hesabı tek başına batıramaması tasarımın kendisi) — asıl devreye
+  girme yolu art arda eklemelerin (Etre `_ekle`) pozisyonu büyütmesidir.
 - Diğer alanlar v2 ile aynı anlamda: `baslangic_usd`, `bakiye_usd`, `getiri`, `dusus`, `egri`, `gerceklesen`, `acik`,
   `toplam`, `funding`, `maliyet`, `gecikme_dk`, `t0`. `fiyatsiz_eylem` burada v2'nin ALT SINIRINDAN farklı olarak
   `defter.copy_ledger`'ın DOĞRUDAN/gerçek sayısıdır (`golge.calistir`'in ön filtrelemesinden geçmediği için).
   Gerçek veri denemesinde (B17, 2026-10-30) v2=0 (maskeli) ↔ v3=322 (gerçek) görüldü — v3'ün hatası değil, v2'nin
   raporlama eksiğinin açığa çıkması.
-- **Kapsam dışı (bu sürümde HENÜZ yok — `copytrade/kopya_v3.py` docstring'inde gerekçesiyle):** çapraz teminat
-  tasfiyesi, pozisyon tavanı, aşamalı zarar_kes/kar_al (v2'deki risk katmanı trader-hesabı-oranlı ölçeklemeye
-  kodlanmış; sabit tutar tabanına taşınması ayrı bir tasarım kararı). Bu yüzden `tasfiye` hep `false`,
-  `tasfiye_zamani`/`tasfiye_kaynagi` hep `null`, `kapanis_nedenleri` hep `[]`. Etre'nin kaldıraç kademesi, teminat/marj
-  modeli, "ikna" çarpanı da kapsam dışı (ayrı GOREV alt maddesi).
+- **Kapsam dışı (ayrı GOREV alt maddeleri):** pozisyon tavanı (`golge_pozisyon_tavan_carpani` — "bitti tanımı" bunu
+  adlandırmıyor), Etre'nin kaldıraç kademesi, teminat/marj modeli, "ikna" çarpanı.
 - Hesaplanamazsa `{"surum":"v3","durum":"hesaplanamadi","neden":...}`; v1/v2'yi etkilemez. Hiç okunmamış trader için
   `yer_tutucu: true`.
 
