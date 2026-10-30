@@ -100,6 +100,7 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - `traderlar[].tarz` (v1.3): `intraday` | `swing` (izleme listesinde `tarz` varsa o, yoksa en son kapı sonucundan; ikisi de yoksa
   `bilinmiyor` ve 30 dk gecikme). Sanal kopya gecikmesi tarza göre (intraday 30 dk, swing 120 dk);
   Telegram mesajında `[Intraday]` / `[Swing]` etiketi.
+- **Üst düzey zaman adları (v1.6, madde 19 / C#16):** `kosu_baslangic` (= `uretildi`) ve `kosu_bitis` (= `yayim_zamani`) eşanlamlı yeni adlardır; `kapsam[kol].en_eski_veri_zamani` = kolun en eski trader okuması (ekran veri yaşını buradan hesaplar, koşu zamanından değil).
 - **Üç ayrı zaman (v1.6, hepsi UTC ISO):** `uretildi` = koşu başlangıcı; `traderlar[].veri_zamani` = o trader'ın hesap durumunun gerçekten okunduğu an
   (uzun koşuda trader'lar arasında dakikalar/saatler fark eder); `yayim_zamani` (üst düzey) = `durum.json`'ın yazıldığı an. Veri yaşı için `veri_zamani`,
   yayım gecikmesi için `yayim_zamani − uretildi` kullanılır.
@@ -146,3 +147,11 @@ hesap, isim ve serbest metin yazılmaz. Eski `bakiye_yok` kayıtları içe aktar
 - Gizlilik (v1.4, kullanıcı kararı): yayımlanan karar kaydında `zaman` yalnız tarih; `bakiye_yok` nedeni yok.
 - Bot anahtarı ve sohbet kimliği yalnız GitHub Secrets'ta (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
   `TELEGRAM_WEBHOOK_SECRET`); dağıtım işi bunları Cloudflare secret'ına aktarır. Repoya, günlüğe, sohbete yazılmaz.
+
+
+## Worker (v1.6, madde 19)
+- Günlük özet: 06:00 UTC'den (09:00 TR) sonraki ilk dakikada ve o gün gönderilmediyse gider; 06:05'ten sonra kalırsa başlığa "(gecikmeli)" eklenir.
+- D1 `saglik_kayit(kaynak, ardisik, son_hata, zaman)`: `durum_okuma`, `dolum`, `tetikleme:<iş akışı>`, `ozet_durum` kaynaklarının ardışık hata sayısı;
+  3. ardışık hatada tek Telegram alarmı, başarıda sayaç sıfırlanır. Mevcut D1'e `worker/schema.sql`daki yeni tablo bir kez uygulanmalıdır.
+- `GET /kararlar`: Cloudflare secret `KARAR_ANAHTARI` tanımlıysa `Authorization: Bearer <anahtar>` zorunlu (yoksa 401); tanımlı değilse eski açık davranış sürer.
+  Saatlik içe aktarma (`izleme.yml`) aynı adlı GitHub secret'ını gönderir (boşsa başlıksız).

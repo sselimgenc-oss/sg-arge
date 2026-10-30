@@ -179,7 +179,7 @@ def test_empty_list_writes_contract_and_never_uses_network(tmp_path):
         def __getattr__(self, name):
             raise AssertionError(name)
     result = m.run(root, root / 'out', NoNetwork(), NOW)
-    assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'yayim_zamani': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
+    assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'yayim_zamani': '2026-10-27T12:00:00Z', 'kosu_baslangic': '2026-10-27T12:00:00Z', 'kosu_bitis': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
                       'kasa_egri': {'oda': [], 'kontrol': []}, 'kapsam': {}, 'olaylar': [], 'gunluk_sayac': [], 'sayac_24s': {},
                       'olay_kapsami': {'baslangic': None, 'tam': True, 'toplam': 0, 'kol_basina_son': 200, 'sayac_gun': 30}}
     assert json.loads((root / 'out/durum.json').read_text()) == result
@@ -863,11 +863,13 @@ def test_uretildi_veri_zamani_ve_yayim_zamani_ayri(tmp_path, monkeypatch):
         def now(tz=None):
             return next(ticks)
     monkeypatch.setattr(m, 'datetime', FakeDatetime)
-    root = project(tmp_path)
+    root = project(tmp_path, [{'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Test', 'durum': 'izlemede', 't0': str(T0.date()), 'kol': 'oda', 'kollar': ['oda']}])
     result = m.run(root, root / 'out', Client(), None)
     assert result['uretildi'] == '2026-10-27T12:00:00Z'
     assert result['traderlar'][0]['veri_zamani'] == '2026-10-27T12:07:30Z'
     assert result['yayim_zamani'] == '2026-10-27T12:09:00Z'
+    assert (result['kosu_baslangic'], result['kosu_bitis']) == (result['uretildi'], result['yayim_zamani'])   # C#16 adları
+    assert result['kapsam']['oda']['en_eski_veri_zamani'] == '2026-10-27T12:07:30Z'
 
 
 # ---------------------------------------------------------------- madde 16: kol başına 24 saat sayacı

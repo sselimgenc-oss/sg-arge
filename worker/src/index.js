@@ -127,6 +127,27 @@ async function accumulatedOrderEvents(env, trader, rows, account) {
   return events;
 }
 
+// Sağlık kaydı (madde 19): durum okuma / dolum / tetikleme / özet hataları sessiz yutulmaz. Her kaynak için ardışık hata sayısı D1'de
+// tutulur; 3. ardışık hatada Telegram alarmı (bir kez), başarıda sayaç sıfırlanır. Yazma yalnız hata sırasında ve düzelince olur.
+const SAGLIK_ALARM_ARDISIK = 3;
+async function saglikHata(env, kaynak, hata, fetcher = fetch) {
+  try {
+    const row = await env.DB.prepare("SELECT ardisik FROM saglik_kayit WHERE kaynak = ?").bind(kaynak).first();
+    const ardisik = (row ? Number(row.ardisik) : 0) + 1;
+    await env.DB.prepare("INSERT INTO saglik_kayit(kaynak, ardisik, son_hata, zaman) VALUES (?, ?, ?, ?) ON CONFLICT(kaynak) DO UPDATE SET ardisik=excluded.ardisik, son_hata=excluded.son_hata, zaman=excluded.zaman")
+      .bind(kaynak, ardisik, String(hata?.message || hata || "bilinmiyor").slice(0, 200), new Date().toISOString()).run();
+    if (ardisik === SAGLIK_ALARM_ARDISIK) {
+      await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: `⚠️ Worker hatası: ${kaynak} ${ardisik} dakikadır başarısız (${String(hata?.message || hata || "bilinmiyor").slice(0, 80)}).\nPano: ${PANO}` }, fetcher);
+    }
+  } catch { /* sağlık kaydı asıl işi asla bozmasın */ }
+}
+async function saglikTamam(env, kaynak) {
+  try {
+    const row = await env.DB.prepare("SELECT ardisik FROM saglik_kayit WHERE kaynak = ?").bind(kaynak).first();
+    if (row && Number(row.ardisik) > 0) await env.DB.prepare("UPDATE saglik_kayit SET ardisik = 0 WHERE kaynak = ?").bind(kaynak).run();
+  } catch { /* yoksay */ }
+}
+
 function isNotified(trader) { return trader.kol === "oda"; }
 
 // BILDIRIM_KIPI: "ozet" (varsayılan) — yalnız günlük özet + durum değişince uyarı; "islem" — açılış/kapanış/büyütme
@@ -158,13 +179,16 @@ async function tetiklemeKontrol(env, fetcher = fetch) {
     try {
       const runs = await workflowRuns(env, dosya, fetcher);
       if (tetiklemeKarari(runs, esikDk).tetikle) await dispatchWorkflow(env, dosya, fetcher);
-    } catch { /* bir iş akışındaki hata diğerinin kontrolünü engellemesin */ }
+      await saglikTamam(env, `tetikleme:${dosya}`);
+    } catch (error) { await saglikHata(env, `tetikleme:${dosya}`, error, fetcher); /* bir iş akışındaki hata diğerinin kontrolünü engellemesin */ }
   }
 }
 
 async function runCron(env, fetcher = fetch) {
   let status;
-  try { status = await currentStatus(fetcher); } catch { return; }
+  try { status = await currentStatus(fetcher); } catch (error) { await saglikHata(env, "durum_okuma", error, fetcher); return; }
+  await saglikTamam(env, "durum_okuma");
+  let dolumHatasi = null;
   // Bildirim yalnız kol = oda için; kontrol/taban/elle kolları sessiz izlenir (Worker onlar için Hyperliquid'e de gitmez).
   for (const trader of (status.traderlar || []).filter(isNotified)) {
     const stored = await env.DB.prepare("SELECT son_dolum FROM imlec WHERE trader = ?").bind(trader.id).first();
@@ -182,7 +206,7 @@ async function runCron(env, fetcher = fetch) {
       if (newest !== Number(stored.son_dolum)) {
         await env.DB.prepare("UPDATE imlec SET son_dolum = ? WHERE trader = ?").bind(newest, trader.id).run();
       }
-    } catch { /* the cursor intentionally remains unchanged */ }
+    } catch (error) { dolumHatasi = error; /* the cursor intentionally remains unchanged */ }
     const previous = await env.DB.prepare("SELECT isik FROM isik WHERE trader = ?").bind(trader.id).first();
     // The first observed colour is a baseline, not an alert. Alert only on a known non-red → red transition.
     if (previous && trader.saglik?.isik === "kirmizi" && previous.isik !== "kirmizi") {
@@ -194,6 +218,7 @@ async function runCron(env, fetcher = fetch) {
         .bind(trader.id, current).run();
     }
   }
+  if (dolumHatasi) await saglikHata(env, "dolum", dolumHatasi, fetcher); else await saglikTamam(env, "dolum");
   await checkStateAlerts(env, status, fetcher);
 }
 
@@ -264,7 +289,7 @@ function kapsamSatiri(status, kol) {
 
 // Günde bir, 09:00 TR'de (06:00 UTC): sanal kopya ölçeğinde oda kasası/getiri, oda−kontrol farkı (aynı dönem,
 // her ikisi de sanal_kopya.getiri ortalaması), son 24 saatteki işlem sayısı ve trader sayısı, ışıklar, veri yaşı.
-function dailySummaryText(status, nowMs = Date.now()) {
+function dailySummaryText(status, nowMs = Date.now(), gecikmeli = false) {
   const all = status.traderlar || [];
   const room = all.filter(isNotified);
   const odaKopya = sanalKohort(all, "oda"), kontrolKopya = sanalKohort(all, "kontrol");
@@ -277,7 +302,7 @@ function dailySummaryText(status, nowMs = Date.now()) {
   const age = Math.max(0, Math.floor((nowMs - Date.parse(status.uretildi)) / 60000));
   const count = c => room.filter(t => (t.saglik?.isik || "yesil") === c).length;
   return [
-    "📊 SG Arge · Günlük özet",
+    `📊 SG Arge · Günlük özet${gecikmeli ? " (gecikmeli)" : ""}`,
     "",
     `💰 Oda kasası (sanal): $${kasa.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} (${yuzdeYaz(odaGetiri)})`,
     `📐 Oda − Kontrol farkı (aynı dönem, sanal kopya): ${fark == null ? "bilinmiyor" : yuzdeYaz(fark)}`,
@@ -316,17 +341,18 @@ async function checkStateAlerts(env, status, fetcher = fetch) {
   if (oncekiKalabalik !== kalabalikDurum) await uyariDurumYaz(env, "kalabalik", kalabalikDurum);
 }
 
-// Günde yalnız bir kez (09:00 TR = 06:00 UTC); D1'de o günün TR tarihi işaretlenir ki dakikada bir çalışan
-// cron'da yanlışlıkla ikinci kez gönderilmesin.
+// Günde yalnız bir kez; 06:00 UTC (09:00 TR) sonrası ilk çalışmada ve o gün gönderilmediyse gönderilir. 06:05'ten sonra kalırsa (Cloudflare
+// cron'u ya da durum okuması kaçtıysa) telafi edilir ve "gecikmeli" etiketi taşır. D1'de o günün tarihi işaretlenir: ikinci kez gitmez.
 async function sendDailySummaryIfDue(env, fetcher = fetch, nowMs = Date.now()) {
   const d = new Date(nowMs);
-  if (d.getUTCHours() !== 6 || d.getUTCMinutes() !== 0) return;
+  if (d.getUTCHours() < 6) return;
+  const gecikmeli = !(d.getUTCHours() === 6 && d.getUTCMinutes() < 5);
   const gun = d.toISOString().slice(0, 10);
   const var_ = await env.DB.prepare("SELECT gun FROM ozet_gonderildi WHERE gun = ?").bind(gun).first();
   if (var_) return;
   let status;
-  try { status = await currentStatus(fetcher); } catch { return; }
-  await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: dailySummaryText(status, nowMs), disable_web_page_preview: true }, fetcher);
+  try { status = await currentStatus(fetcher); } catch (error) { await saglikHata(env, "ozet_durum", error, fetcher); return; }
+  await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: dailySummaryText(status, nowMs, gecikmeli), disable_web_page_preview: true }, fetcher);
   await env.DB.prepare("INSERT OR IGNORE INTO ozet_gonderildi(gun) VALUES (?)").bind(gun).run();
 }
 
@@ -371,11 +397,19 @@ function formatStatus(status, nowMs = Date.now()) {
   return lines.join("\n");
 }
 
+function anahtarEslesir(a, b) {          // sabit sürede karşılaştırma (uzunluk farkı da taranır)
+  let fark = a.length ^ b.length;
+  for (let i = 0; i < Math.max(a.length, b.length); i++) fark |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0);
+  return fark === 0;
+}
+
 export default {
   scheduled(event, env, ctx) { ctx.waitUntil(runCron(env)); ctx.waitUntil(tetiklemeKontrol(env)); ctx.waitUntil(sendDailySummaryIfDue(env)); },
   async fetch(request, env) {
     const url = new URL(request.url);
     if (request.method === "GET" && url.pathname === "/kararlar") {
+      // KARAR_ANAHTARI (Cloudflare secret) tanımlıysa `Authorization: Bearer <anahtar>` zorunlu; tanımlı değilse eski açık davranış sürer.
+      if (env.KARAR_ANAHTARI && !anahtarEslesir(request.headers.get("authorization") || "", `Bearer ${env.KARAR_ANAHTARI}`)) return new Response("unauthorized", { status: 401 });
       const rows = await env.DB.prepare("SELECT olay_id, substr(zaman, 1, 10) AS zaman, karar, CASE WHEN neden = 'bakiye_yok' THEN 'diger' ELSE neden END AS neden, etiket AS \"not\" FROM kararlar ORDER BY zaman").all();
       return json(rows.results || []);
     }
@@ -384,4 +418,4 @@ export default {
   },
 };
 
-export { accumulatedOrderEvents, bildirimKipi, callbackData, checkStateAlerts, dailySummaryText, decision, dispatchWorkflow, formatEvent, formatStatus, handleTelegram, isNotified, mergeFills, runCron, sendDailySummaryIfDue, sendOnce, tetiklemeKontrol, workflowRuns };
+export { saglikHata, saglikTamam, anahtarEslesir, accumulatedOrderEvents, bildirimKipi, callbackData, checkStateAlerts, dailySummaryText, decision, dispatchWorkflow, formatEvent, formatStatus, handleTelegram, isNotified, mergeFills, runCron, sendDailySummaryIfDue, sendOnce, tetiklemeKontrol, workflowRuns };

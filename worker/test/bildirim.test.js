@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bildirimKipi, checkStateAlerts, dailySummaryText, runCron, sendDailySummaryIfDue } from "../src/index.js";
+import worker, { anahtarEslesir, bildirimKipi, checkStateAlerts, dailySummaryText, runCron, saglikHata, sendDailySummaryIfDue } from "../src/index.js";
 
 function d1Mock(durumlar = {}) {
   const writes = [];
@@ -153,6 +153,58 @@ test("sendDailySummaryIfDue: yalnız 06:00 UTC'de (09:00 TR) ve günde bir kez g
   assert.equal(sent.length, 1, "aynı gün ikinci kez gönderilmemeli");
   await sendDailySummaryIfDue(env, fetcher, Date.parse("2026-10-31T06:00:00Z"));
   assert.equal(sent.length, 2, "ertesi gün yeniden gönderilmeli");
+});
+
+test("sendDailySummaryIfDue: 06:00'da kaçarsa sonraki dakikalarda telafi eder ('gecikmeli'), 06:00 öncesi göndermez, günde bir kez", async () => {
+  const mock = d1Mock({ gonderilenGunler: new Set() });
+  const sent = [];
+  const fetcher = async (url, init) => {
+    if (String(url).includes("durum.json")) return new Response(JSON.stringify({ uretildi: "2026-10-30T08:00:00Z", traderlar: [] }));
+    sent.push(JSON.parse(init.body).text); return new Response(JSON.stringify({ ok: true }));
+  };
+  const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB: mock.DB };
+  await sendDailySummaryIfDue(env, fetcher, Date.parse("2026-10-30T05:59:00Z"));
+  assert.equal(sent.length, 0);
+  await sendDailySummaryIfDue(env, fetcher, Date.parse("2026-10-30T06:03:00Z"));      // 06:03: hâlâ zamanında (< 06:05), etiket yok
+  assert.equal(sent.length, 1);
+  assert.doesNotMatch(sent[0], /gecikmeli/);
+  const mock2 = d1Mock({ gonderilenGunler: new Set() });
+  const env2 = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB: mock2.DB };
+  await sendDailySummaryIfDue(env2, fetcher, Date.parse("2026-10-30T09:30:00Z"));      // kaçmıştı: 09:30'da telafi
+  assert.equal(sent.length, 2);
+  assert.match(sent[1], /Günlük özet \(gecikmeli\)/);
+  await sendDailySummaryIfDue(env2, fetcher, Date.parse("2026-10-30T09:31:00Z"));
+  assert.equal(sent.length, 2, "telafiden sonra aynı gün tekrar gitmez");
+});
+
+test("saglikHata: ardışık hata D1'e yazılır, 3. hatada tek Telegram alarmı gider", async () => {
+  const kayit = {};
+  const sent = [];
+  const DB = { prepare(sql) { return { bind(...a) { return {
+    first: async () => (/FROM saglik_kayit/.test(sql) && kayit[a[0]] ? { ardisik: kayit[a[0]] } : undefined),
+    run: async () => { if (/INSERT INTO saglik_kayit/.test(sql)) kayit[a[0]] = a[1]; return {}; },
+  }; } }; } };
+  const fetcher = async (url, init) => { sent.push(JSON.parse(init.body).text); return new Response(JSON.stringify({ ok: true })); };
+  const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB };
+  await saglikHata(env, "durum_okuma", new Error("HTTP 500"), fetcher);
+  await saglikHata(env, "durum_okuma", new Error("HTTP 500"), fetcher);
+  assert.equal(sent.length, 0);
+  await saglikHata(env, "durum_okuma", new Error("HTTP 500"), fetcher);
+  assert.equal(kayit.durum_okuma, 3);
+  assert.equal(sent.length, 1);
+  assert.match(sent[0], /durum_okuma 3 dakikadır başarısız \(HTTP 500\)/);
+  await saglikHata(env, "durum_okuma", new Error("HTTP 500"), fetcher);
+  assert.equal(sent.length, 1, "alarm yalnız 3. hatada bir kez");
+});
+
+test("GET /kararlar: KARAR_ANAHTARI tanımlıysa anahtarsız 401, doğru anahtarla 200; tanımsızsa eski açık davranış", async () => {
+  const DB = { prepare() { return { all: async () => ({ results: [{ olay_id: "a" }] }) }; } };
+  const gor = (env, headers = {}) => worker.fetch(new Request("https://w.test/kararlar", { headers }), { DB, ...env });
+  assert.equal((await gor({ KARAR_ANAHTARI: "gizli" })).status, 401);
+  assert.equal((await gor({ KARAR_ANAHTARI: "gizli" }, { authorization: "Bearer yanlis" })).status, 401);
+  assert.equal((await gor({ KARAR_ANAHTARI: "gizli" }, { authorization: "Bearer gizli" })).status, 200);
+  assert.equal((await gor({})).status, 200);
+  assert.equal(anahtarEslesir("Bearer a", "Bearer ab"), false);
 });
 
 test("sendDailySummaryIfDue: durum.json okunamazsa sessizce atlar", async () => {

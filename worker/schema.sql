@@ -32,3 +32,10 @@ CREATE TABLE IF NOT EXISTS uyari_durum (
 CREATE TABLE IF NOT EXISTS ozet_gonderildi (
   gun TEXT PRIMARY KEY
 );
+-- Worker sağlık kaydı (madde 19): kaynak başına ardışık hata sayısı ve son hata; 3. ardışık hatada Telegram alarmı.
+CREATE TABLE IF NOT EXISTS saglik_kayit (
+  kaynak TEXT PRIMARY KEY,
+  ardisik INTEGER NOT NULL,
+  son_hata TEXT,
+  zaman TEXT
+);

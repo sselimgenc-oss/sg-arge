@@ -637,6 +637,9 @@ def kapsam(traderlar: list[dict], kol: str) -> dict:
             result['bayat' if trader.get('veri_durumu') == 'bayat' else 'okuma_hatasi'] += 1
             result['gecersiz_bakiye_usd'] += balance
     result['kapsama'] = result['gecerli'] / result['toplam'] if result['toplam'] else 0.0
+    # Kol bazında en eski veri zamanı (madde 19 / C#16): kolun en bayat okuması; ekran yaşı bundan hesaplar, koşu zamanından değil.
+    read_times = [t['veri_zamani'] for t in kol_uyeleri(traderlar, kol) if t.get('veri_zamani')]
+    result['en_eski_veri_zamani'] = min(read_times) if read_times else None
     # Eksik değerleme (madde 18): açık lotu işaretlenemeyen (işaret yok/bayat) geçerli üye sayısı; >0 ise kol kasası "bilinmiyor" gösterilmeli.
     result['eksik_degerleme'] = sum(1 for t in kol_uyeleri(traderlar, kol) if t.get('gecerli', True) and (t.get('sanal_kopya') or {}).get('eksik_degerleme'))
     # Eğri = kasa (madde 17): eğrisi olmayan geçerli üye "eksik kapsama"dır; eğrinin son noktası geçerli bakiyelerin toplamıyla mutabık olmalı.
@@ -910,7 +913,9 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
                 traders.append(unavailable_trader(root, row, error))
     if watchlist and failed == len(watchlist):
         raise RuntimeError('Tüm trader verileri hatalı; önceki durum yayımlanmadı.')
-    result = {'surum': 1, 'uretildi': iso(now), 'yayim_zamani': iso(clock() if clock else now), 'kaynak': 'hyperliquid', 'traderlar': traders,
+    finished = iso(clock() if clock else now)
+    result = {'surum': 1, 'uretildi': iso(now), 'yayim_zamani': finished, 'kosu_baslangic': iso(now), 'kosu_bitis': finished,
+              'kaynak': 'hyperliquid', 'traderlar': traders,
               'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')},
               'kapsam': {kol: kapsam(traders, kol) for kol in sorted({k for t in traders for k in (t.get('kollar') or [t.get('kol')]) if k})}}
     result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'], result['sayac_24s'] = olay_ozeti(all_events, traders, now, failed == 0)

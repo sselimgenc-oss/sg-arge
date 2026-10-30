@@ -69,6 +69,7 @@ jobs:
         continue-on-error: true
         env:
           KARAR_URL: ${{ vars.KARAR_URL }}
+          KARAR_ANAHTARI: ${{ secrets.KARAR_ANAHTARI }}
         run: python -m copytrade.kararlar --url "$KARAR_URL" --output izleme/kararlar.jsonl
       - name: Oda değişim raporunu üret
         run: python -m copytrade.degisim_rapor --kayit copytrade/degisim.jsonl --durum izleme/durum.json --cikti izleme/degisim.json
