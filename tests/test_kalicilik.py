@@ -8,7 +8,9 @@ import pytest
 from copytrade import deneme, kalicilik as k
 from copytrade.kurallar import load_rules
 
-RULES = load_rules()
+# Elle hesaplı örnekler 1.000 $ hesaplarla yazıldı: payda matematiği asgari payda (madde 13) olmadan sınanır; taban aşağıda ayrı testlerde.
+RULES = {**load_rules(), 'hesap_degeri_min_usd': 0}
+RULES_TABANLI = load_rules()
 ROOT = Path(__file__).resolve().parents[1]
 DAY = 86_400_000
 NOW = 1_793_000_000_000
@@ -38,7 +40,7 @@ def test_deneme_defterinde_bos_alan_olamaz_ve_bu_gorevin_uc_denemesi_kayitli():
         deneme.onkayit("x", " ", "s", "p", "o", yol=Path("/tmp/yok_defter.jsonl"), sha="a")
     satirlar = deneme.oku(ROOT / "arastirma/copytrade/deneme_defteri.jsonl")
     on = [r for r in satirlar if r["tur"] == "onkayit"]
-    assert [r["id"] for r in on] == ["kalicilik-getiri-90", "kalicilik-calmar-90", "kalicilik-karli-ay-180"]
+    assert [r["id"] for r in on] == ["kalicilik-getiri-90", "kalicilik-calmar-90", "kalicilik-karli-ay-180", "kalicilik-min-payda-5000"]   # sonuncusu madde 13 payda düzeltmesi
     assert all(r["kod_sha"] not in ("", "bilinmiyor") and r["basari_olcutu"] for r in on)
     assert not [r for r in satirlar if r["tur"] == "sonuc"]      # sonuçlar gerçek koşudan sonra eklenir
 
@@ -179,3 +181,26 @@ def test_is_akisi_elle_parcali_zaman_asimi_korumali_ve_sentetik_once():
 def test_yaml_anahtarlari():
     assert [RULES[x] for x in ("kalicilik_getiri_gun", "kalicilik_kar_ay_gun", "kalicilik_dilim", "kalicilik_adim_gun")] == [90, 180, 5, 14]
     assert RULES["kalicilik_ileri_gun"] == [28, 56] and RULES["kalicilik_kopya_ornek"] == 100 and RULES["kalicilik_kopya_gecikme_dk"] == [30, 120]
+
+
+# ------------------------------------------------------------------ madde 13/14: asgari payda ve önbellek kimliği
+def test_asgari_payda_sifira_yakin_hesabi_disarida_birakir():
+    # Altın örnek: hesap değeri 0,001 $ (sıfıra yakın) ama PnL 90 günde +50 $ → tabansız getiri 50/0,001 = 50.000 (milyon mertebesine giden patlama);
+    # tabanla (5.000 $) o T için skor ve ileri getiri None. 10.000 $ hesapta aynı PnL: 50/10.000 = 0,005.
+    z = [NOW - (300 - i) * DAY for i in range(301)]
+    kucuk = {"av": [[t, 0.001] for t in z], "pnl": [[t, 50.0 * i / 300] for i, t in enumerate(z)]}
+    buyuk = {"av": [[t, 10_000.0] for t in z], "pnl": kucuk["pnl"]}
+    assert k.skorlar(kucuk, NOW, RULES)["getiri"] > 1000                          # taban yok: patlama (kanıt)
+    assert k.skorlar(kucuk, NOW, RULES_TABANLI)["getiri"] is None
+    assert k.ileri_getiri(kucuk, NOW - 100 * DAY, 28, RULES_TABANLI) is None
+    assert k.skorlar(buyuk, NOW, RULES_TABANLI)["getiri"] == pytest.approx((50.0 - 50.0 * 210 / 300) / 10_000.0)   # son 90 gün PnL farkı 15 $
+    assert k.payda(buyuk, NOW, 90, taban=5000.0) == 10_000.0 and k.payda(kucuk, NOW, 90, taban=5000.0) is None
+
+
+def test_seri_onbellegi_id_yeniden_kullaniminda_bayat_seri_dondurmez():
+    # Madde 14: eski önbellek yalnız id ve uzunluğa bakıyordu; silinen listenin id'si aynı uzunlukta başka bir listeye geçerse bayat seri dönüyordu.
+    eski = [[1, 10.0], [2, 20.0]]
+    yeni = [[1, 99.0], [2, 98.0]]
+    k._SERI.clear()
+    k._SERI[id(yeni)] = (eski, k._seri(eski))             # id çakışmasını taklit et: kayıt başka bir listeye ait
+    assert list(k._seri(yeni).values) == [99.0, 98.0]
