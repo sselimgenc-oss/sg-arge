@@ -293,6 +293,18 @@ async function checkStateAlerts(env, status, fetcher = fetch) {
     await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: `⚠️ Kalabalık uyarısı başladı: ${status.kalabalik.uyari_metni || "ayrıntı yok"}\nPano: ${PANO}` }, fetcher);
   }
   if (oncekiKalabalik !== kalabalikDurum) await uyariDurumYaz(env, "kalabalik", kalabalikDurum);
+
+  // E1 (GOREV_ETRE_GECIS.md): veri hattı sağlığı (copytrade.saglik_hatti, performans ışığından ayrı). Yalnız
+  // yeşil/sarıdan kırmızıya geçişte uyarır; aynı kırmızı durumda tekrarlanmaz (diğer durum uyarılarıyla aynı desen).
+  const hatIsik = status.saglik_hatti?.isik;
+  if (hatIsik) {
+    const oncekiHat = await uyariDurumGetir(env, "saglik_hatti");
+    if (hatIsik === "kirmizi" && oncekiHat !== "kirmizi") {
+      const nedenler = (status.saglik_hatti.nedenler || []).join(", ") || "ayrıntı yok";
+      await telegram(env, "sendMessage", { chat_id: env.TELEGRAM_CHAT_ID, text: `⚠️ Veri hattı sağlığı kırmızı: ${nedenler}\nPano: ${PANO}` }, fetcher);
+    }
+    if (oncekiHat !== hatIsik) await uyariDurumYaz(env, "saglik_hatti", hatIsik);
+  }
 }
 
 // Günde yalnız bir kez (09:00 TR = 06:00 UTC); D1'de o günün TR tarihi işaretlenir ki dakikada bir çalışan

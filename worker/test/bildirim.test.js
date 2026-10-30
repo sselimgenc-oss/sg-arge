@@ -112,6 +112,34 @@ test("checkStateAlerts: kalabalık uyarısı başlayınca gider, aynı durumda t
   assert.equal(sent.length, 2);
 });
 
+test("checkStateAlerts: veri hattı sağlığı kırmızıya geçince uyarır, aynı kırmızıda tekrarlamaz", async () => {
+  const mock = d1Mock();
+  const sent = [];
+  const fetcher = async (url, init) => { sent.push(JSON.parse(init.body).text); return new Response(JSON.stringify({ ok: true })); };
+  const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB: mock.DB };
+  const yesil = { uretildi: new Date().toISOString(), saglik_hatti: { isik: "yesil", nedenler: [] } };
+  const kirmizi = { uretildi: new Date().toISOString(), saglik_hatti: { isik: "kirmizi", nedenler: ["yetim gölge payı %17", "veri hatası payı %50"] } };
+  await checkStateAlerts(env, yesil, fetcher);
+  assert.equal(sent.length, 0);
+  await checkStateAlerts(env, kirmizi, fetcher);
+  assert.equal(sent.length, 1);
+  assert.match(sent[0], /Veri hattı sağlığı kırmızı: yetim gölge payı %17, veri hatası payı %50/);
+  await checkStateAlerts(env, kirmizi, fetcher);   // hâlâ kırmızı, tekrar uyarmaz
+  assert.equal(sent.length, 1);
+  await checkStateAlerts(env, yesil, fetcher);
+  await checkStateAlerts(env, kirmizi, fetcher);   // yeniden kırmızıya döndü → yeniden uyarır
+  assert.equal(sent.length, 2);
+});
+
+test("checkStateAlerts: saglik_hatti yoksa (eski veri) çökmez, uyarı göndermez", async () => {
+  const mock = d1Mock();
+  const sent = [];
+  const fetcher = async (url, init) => { sent.push(JSON.parse(init.body).text); return new Response(JSON.stringify({ ok: true })); };
+  const env = { TELEGRAM_BOT_TOKEN: "x", TELEGRAM_CHAT_ID: "1", DB: mock.DB };
+  await checkStateAlerts(env, { uretildi: new Date().toISOString() }, fetcher);
+  assert.equal(sent.length, 0);
+});
+
 test("sendDailySummaryIfDue: yalnız 06:00 UTC'de (09:00 TR) ve günde bir kez gönderir", async () => {
   const mock = d1Mock({ gonderilenGunler: new Set() });
   const sent = [];
