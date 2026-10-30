@@ -38,6 +38,24 @@ def cost_rate(rules: dict | None = None) -> float:
     return float(rules["maliyet_taker"]) + float(rules["maliyet_kayma"])
 
 
+def v2_sinir(style: str, gecen_gun: float, getiri: float, rules: dict | None = None) -> str | None:
+    """Ön kayıttaki V2 eşiği; ``getiri`` ayrılan teminata oranlıdır. (`golge.py`'den taşındı: `defter.copy_ledger`
+    sabit tutar modunda da kullanır — tek yer, kural 7; `golge.py` burayı re-export eder.) Aşama günleri
+    (0/7/14) kodda sabit değil, `kurallar.yaml` `golge_v2.swing` anahtarlarından (``gun_<gün>``) okunur."""
+    rules = rules or load_rules()
+    if style == "intraday":
+        return "zarar_kes" if getiri <= float(rules["golge_v2"]["intraday"]["zarar_kes"]) else None
+    swing = rules["golge_v2"]["swing"]
+    days = sorted(int(key.split("_")[1]) for key in swing)
+    stage_day = max(day for day in days if gecen_gun >= day)
+    limits = swing[f"gun_{stage_day}"]
+    if getiri <= float(limits["zarar_kes"]):
+        return "zarar_kes"
+    if limits["kar_al"] is not None and getiri >= float(limits["kar_al"]):
+        return "kar_al"
+    return None
+
+
 def sabit_tutar_egrisi(rules: dict | None = None) -> Any:
     """E2 sabit işlem tutarı (kullanıcı kararı 2026-10-30: "Etre eğrisini enterpolasyonla port et").
 
@@ -95,6 +113,69 @@ def _sabit_tutar_signed(sign: float, signed: float, before_leader: float, own: f
         return _fresh_open(sign, price, when, held, entry, market, realized_so_far, tutar_egrisi, base_usd)
     f = abs(signed) / abs(before_leader) if before_leader else 0.0
     return sign * abs(own) * f
+
+
+def _zorla_kapat(coin: str, hour: int, mark: float, neden: str, held: dict[str, float], entry: dict[str, float],
+                 acilis: dict[str, int], son_kontrol: dict[str, int], rate: float, realized: float, costs: float,
+                 flow: dict[int, float], timeline: dict[str, list[tuple[int, float, float]]],
+                 olaylar: list[dict], suppressed: set[str]) -> tuple[float, float]:
+    """E2/E3 risk katmanı: pozisyonu o saatin markında zorunlu kapatır (gerçek `held`/`entry` üzerinde — sentetik
+    dolum YOK, `golge.py _kapat`'ın aksine). Trader'ın pozisyonu sıfırlanana dek coin bastırılır (``suppressed``)."""
+    size = held.pop(coin)
+    giris = entry.pop(coin)
+    acilis.pop(coin, None)
+    son_kontrol.pop(coin, None)
+    pnl = size * (mark - giris)
+    cost = abs(size) * mark * rate
+    realized += pnl - cost
+    costs += cost
+    flow[hour // DAY] = flow.get(hour // DAY, 0.0) + (pnl - cost)
+    timeline.setdefault(coin, []).append((hour, 0.0, mark))
+    olaylar.append({"coin": coin, "neden": neden, "zaman_ms": hour})
+    suppressed.add(coin)
+    return realized, costs
+
+
+def _risk_denetle(held: dict[str, float], entry: dict[str, float], acilis: dict[str, int], son_kontrol: dict[str, int],
+                  market: "Market", until_ms: int, rules: dict, style: str | None, rate: float, realized: float,
+                  costs: float, flow: dict[int, float], timeline: dict[str, list[tuple[int, float, float]]],
+                  olaylar: list[dict], suppressed: set[str]) -> tuple[float, float]:
+    """E2/E3 risk katmanı (sabit tutar): çapraz teminat tasfiyesi + (``style`` verilirse) aşamalı zarar_kes/kar_al —
+    `golge.py _denetle_ve_kapat` ile AYNI mantık ve AYNI dondurulmuş eşikler (`golge_likidasyon_esigi`, `golge_v2`),
+    ama gerçek (yol bağımlı) `held`/`entry` üzerinde, sentetik dolum enjekte etmeden (kural 7: hesap tek yerde) —
+    proportional `scale`'in sabit tutarda karşılığı yok, o yüzden `golge.v2_cikislari`'nin ön-simülasyon/enjeksiyon
+    deseni burada kullanılamaz."""
+    if not held:
+        return realized, costs
+    esik = float(rules["golge_likidasyon_esigi"])
+    first = min((son_kontrol[c] // HOUR + 1) * HOUR for c in held)
+    for hour in range(first, until_ms + 1, HOUR):
+        if not held:
+            break
+        active = [c for c in held if hour >= (son_kontrol[c] // HOUR + 1) * HOUR]
+        if not active:
+            continue
+        marks = {c: market.mark(c, hour) for c in active}
+        pnls = {c: held[c] * (marks[c] - entry[c]) for c in active if marks[c] is not None}
+        # Markı olmayan coin bu saatte DENETLENDİ SAYILIR (son_kontrol ilerler) — ilerlemezse sonraki her dolum
+        # aynı (markı hiç olmayan) saat aralığını baştan yeniden tarar (O(dolum × saat) tıkanma; gerçek veride görüldü).
+        likidasyon_hepsi = bool(pnls) and sum(pnls.values()) <= esik
+        for c in active:
+            if likidasyon_hepsi and c in pnls:
+                realized, costs = _zorla_kapat(c, hour, marks[c], "likidasyon", held, entry, acilis, son_kontrol,
+                                               rate, realized, costs, flow, timeline, olaylar, suppressed)
+                continue
+            if c not in pnls:
+                son_kontrol[c] = hour
+                continue
+            gecen_gun = (hour - acilis[c]) / DAY
+            neden = "likidasyon" if pnls[c] <= esik else (v2_sinir(style, gecen_gun, pnls[c], rules) if style else None)
+            if neden:
+                realized, costs = _zorla_kapat(c, hour, marks[c], neden, held, entry, acilis, son_kontrol,
+                                               rate, realized, costs, flow, timeline, olaylar, suppressed)
+            else:
+                son_kontrol[c] = hour
+    return realized, costs
 
 
 def delayed_execution_quality(fills: list[dict], market: "Market", delay_min: int,
@@ -277,7 +358,7 @@ def capital_scale(account: Any):
 
 def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int, start_ms: int, end_ms: int,
                 rates: FundingRates | None = None, rules: dict | None = None, daily: bool = False,
-                tutar_egrisi: Any = None, base_usd: float = 1000.0) -> dict[str, Any]:
+                tutar_egrisi: Any = None, base_usd: float = 1000.0, style: str | None = None) -> dict[str, Any]:
     """Tek kopya defteri. ``fills``: kaynak dolumlar (coin, side A/B, sz, startPosition, time, px), zamana göre sıralı olmak zorunda değil.
 
     Döner: ``net`` (gerçekleşen − maliyet + funding + pencere sonu gerçekleşmemiş K/Z; hesap değerine oranla), ``missing`` (eksik dolum),
@@ -287,6 +368,9 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
     ``tutar_egrisi`` verilirse (E2 sabit tutar, bkz. ``sabit_tutar_egrisi``): ``account``/trader hesabına ORANLI kopyalama
     YERİNE, her taze açılış kopya hesabının KENDİ o anki ``base_usd`` ölçeğindeki değerine göre sabit $ tutarla açılır;
     ekleme mevcut kopya pozisyonuna trader'ın oranı kadar eklenir (Etre `masa.py` portu). ``account`` bu modda okunmaz.
+    Bu modda AYRICA E2/E3 risk katmanı (çapraz teminat tasfiyesi + ``style`` verilirse aşamalı zarar_kes/kar_al,
+    ``golge.py``'deki ile AYNI dondurulmuş eşikler) gerçek `held`/`entry` üzerinde çalışır; zorunlu çıkışlar
+    ``olaylar``'da (``[{"coin","neden","zaman_ms"}]``) döner.
     """
     if tutar_egrisi is None:
         scale = capital_scale(account)
@@ -303,6 +387,10 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
     missing = executed = 0
     sells = _SELL
     execution = market.execution
+    acilis: dict[str, int] = {}       # E2/E3 risk katmanı (sabit tutar modu): coin -> açılış zamanı
+    son_kontrol: dict[str, int] = {}  # coin -> son risk denetimi zamanı
+    olaylar: list[dict] = []          # zorunlu çıkışlar: [{"coin","neden","zaman_ms"}]
+    suppressed: set[str] = set()      # zorunlu çıkıştan sonra trader pozisyonu sıfırlanana dek kopyalanmaz
     for fill in sorted(fills, key=_by_time):   # kararlı sıralama: aynı ms'deki dolumlar API sırasını korur
         coin = fill["coin"]
         sign = -1.0 if fill["side"] in sells else 1.0
@@ -311,7 +399,10 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
         signed = sign * size
         if abs(signed) < 1e-12:
             continue
-        own = held.get(coin, 0.0)
+        if coin in suppressed:
+            if abs(before_leader + signed) < 1e-12:
+                suppressed.discard(coin)
+            continue
         if "_execution_time" in fill:
             when, price = int(fill["_execution_time"]), float(fill["_execution_price"])
         elif delay_min == 0:
@@ -324,6 +415,14 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
             when, price = found
         if when > end_ms or when < start_ms:
             continue
+        if tutar_egrisi is not None:
+            realized, costs = _risk_denetle(held, entry, acilis, son_kontrol, market, when, rules, style, rate,
+                                            realized, costs, flow, timeline, olaylar, suppressed)
+            if coin in suppressed:    # bu dolumun kendi coin'i az önce bu saatte zorunlu kapandı
+                if abs(before_leader + signed) < 1e-12:   # trader da AYNI dolumla sıfırlandı: bastırma hemen kalkar
+                    suppressed.discard(coin)
+                continue
+        own = held.get(coin, 0.0)
         if tutar_egrisi is None:
             factor = scale(int(fill["time"]))     # kopya sermayesi 1 / trader'ın o andaki hesap değeri
             if before_leader * signed < 0:    # trader'ın pozisyonunu azaltıyor / kapatıyor / ters çeviriyor
@@ -355,10 +454,22 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
         realized += pnl - cost
         costs += cost
         flow[when // DAY] = flow.get(when // DAY, 0.0) + (pnl - cost)
-        held[coin], entry[coin] = after, new_entry
         timeline.setdefault(coin, []).append((when, after, new_entry))
         if after == 0.0:
+            held.pop(coin, None)
             entry.pop(coin, None)
+            if tutar_egrisi is not None:
+                acilis.pop(coin, None)
+                son_kontrol.pop(coin, None)
+        else:
+            held[coin], entry[coin] = after, new_entry
+            if tutar_egrisi is not None:
+                if own == 0.0 or own * after < 0:   # taze açılış ya da flip: risk saati sıfırlanır
+                    acilis[coin] = when
+                son_kontrol[coin] = when
+    if tutar_egrisi is not None:
+        realized, costs = _risk_denetle(held, entry, acilis, son_kontrol, market, end_ms, rules, style, rate,
+                                        realized, costs, flow, timeline, olaylar, suppressed)
     # Funding: kopyanın pozisyonu × saatlik açılış × oran; pozisyonun bulunduğu saat aralığı [dolum saati, sonraki olay saati)
     funding_total = 0.0
     funding_by_day: dict[int, float] = {}
@@ -410,7 +521,8 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
             open_notional += abs(size) * mark
     result: dict[str, Any] = {"net": realized + funding_total + unrealized_end, "missing": missing, "executed": executed, "costs": costs,
                               "funding": funding_total, "realized": realized, "unrealized_end": unrealized_end, "mark_missing": unknown_end,
-                              "mark_time": mark_time, "acik_pozisyon_sayisi": len(open_positions), "acik_pozisyon_notional": open_notional}
+                              "mark_time": mark_time, "acik_pozisyon_sayisi": len(open_positions), "acik_pozisyon_notional": open_notional,
+                              "olaylar": olaylar}
     if daily:
         days: dict[int, float] = {}
         previous_u = 0.0

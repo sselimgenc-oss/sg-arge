@@ -3,6 +3,33 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-30 23:15 TR — E2 devamı 2: v3'e tasfiye + aşamalı çıkış (kullanıcı: "dokümanda ne yazıyorsa onu yap")
+- GOREV_ETRE_GECIS.md'nin "bitti tanımı" kopya motorunun sabit tutar + çıkış kuralları + tasfiye üçünün BİRLİKTE
+  çalışmasını istiyor (önceki E2 devamı bunu kasıtlı ayırmıştı, kapsam notunda açıkça yazılıydı).
+- `golge.py`'nin risk katmanı (`_denetle_ve_kapat`/`kirp_pozisyon`/`v2_cikislari`) sentetik dolum enjekte edip
+  trader-hesabına-oranlı `scale`'den geçiriyor; sabit tutarda sizin böyle bir `scale` yok (yol bağımlı). Çözüm:
+  `defter.copy_ledger` içine AYRI bir risk katmanı (`_risk_denetle`/`_zorla_kapat`) — gerçek `held`/`entry` üzerinde,
+  sentetik dolum olmadan, AYNI dondurulmuş eşiklerle (`golge_likidasyon_esigi`, `golge_v2`). `v2_sinir` `golge.py`
+  → `defter.py`'ye taşındı (kural 7: tek yer; `golge.py` re-export eder, mevcut testler değişmedi).
+- Gerçek bug: `held[coin]` tam kapanışta hiç silinmiyordu (`entry` siliniyordu ama `held` sıfır değerle kalıyordu);
+  risk katmanının "pozisyon açık mı" kontrolü bu yüzden KeyError/sahte-açık veriyordu. İkisi de artık siliniyor.
+- `tests/test_kurallar_uygunluk.py` (kural 23, sayı sabiti yasağı): `v2_sinir`'in 7/14 gün eşikleri artık
+  `kurallar.yaml`'ın `golge_v2.swing` anahtarlarından (`gun_7`/`gun_14`) parse ediliyor — sabit değil (bu, `v2_sinir`
+  taşınınca denetlenen dosya listesine girdiği için açığa çıkan, ÖNCEDEN DE var olan bir eksiklikti).
+- 8 yeni altın örnek: `test_defter_sabit_tutar.py` (tasfiye, aşamalı zarar_kes, zorunlu-çıkıştan-sonra-bastırma —
+  Etre `masa.py`/`golge.py`'nin aynı deseni), `test_kopya_v3.py` (ikisi uçtan uca, `kopya_v3.hesapla` seviyesinde).
+- Gözlem (davranış doğru, hata değil): sabit tutar küçük olduğundan ($1.000'da ~%2, $10.000 tavanında ~%15), tek
+  pozisyon gerçek fiyat hareketiyle −1,0/−0,50 eşiklerine pratikte ulaşamıyor — testlerde eşik yalnız mekanizmayı
+  göstermek için (test_a19.py'deki yerel `rules` kopyalama deseniyle) gevşetildi, `kurallar.yaml` değişmedi.
+- Gerçek veri denemesi bir performans hatası buldu: `_risk_denetle` işaret (`market.mark`) yoksa `son_kontrol[c]`'yi
+  ilerletmiyordu → her sonraki dolumda aynı, büyüyen boşluk baştan taranıyordu (O(dolum × boş-saat)); B17'de
+  (çok sayıda kısa ömürlü coin) 30 dk'da çıktısız durdu, sentetik testler yakalamamıştı. Düzeltme: işaret yoksa da
+  `son_kontrol[c]=saat` her zaman ilerler (yalnız zorla kapatılan coin tamamen takipten çıkar); kalıcı regresyon
+  testi eklendi (2s sınır). Düzeltme sonrası küçük denemede (O01/O02/B17, prod listesinin TAMAMI değil) 3 trader
+  ~6dk48s'de bitti (CPU 29s — ağ gecikmesi, donma yok): O01/B17 `sanal_kopya_v3` sağlıklı (`tasfiye:false`,
+  `kapanis_nedenleri:[]`, gözlemle uyumlu), O02 beklenen `hesaplanamadi`.
+- `python -m pytest -q`: 550 geçti.
+
 ## 2026-10-30 22:30 TR — E2 devamı: sabit $ işlem tutarı (v3, Etre kasa.py portu)
 - Kullanıcı kararı: "Etre eğrisini enterpolasyonla port et" — `defter.sabit_tutar_egrisi` Etre `kasa.py
   Kasa.islem_usd`'nin birebir portu (varsayılanlar `ayar.py`'den, DEĞİŞTİRİLMEDİ): tutar_usd = 5,2 ×

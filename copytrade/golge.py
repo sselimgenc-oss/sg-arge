@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from copytrade.defter import HOUR, FundingRates, Market, capital_scale, copy_ledger
+from copytrade.defter import HOUR, FundingRates, Market, capital_scale, copy_ledger, v2_sinir
 from copytrade.kurallar import load_rules
 
 
@@ -59,20 +59,6 @@ def _band_fills(fills: list[dict], market: Market, delay: int, style: str, rules
             allowed.append(fill)
             shadow[coin] = shadow.get(coin, 0.0) + signed
     return allowed, skipped
-
-
-def v2_sinir(style: str, gecen_gun: float, getiri: float, rules: dict | None = None) -> str | None:
-    """Ön kayıttaki V2 eşiği; ``getiri`` ayrılan teminata oranlıdır."""
-    rules = rules or load_rules()
-    if style == "intraday":
-        return "zarar_kes" if getiri <= float(rules["golge_v2"]["intraday"]["zarar_kes"]) else None
-    stage = "gun_14" if gecen_gun >= 14 else "gun_7" if gecen_gun >= 7 else "gun_0"
-    limits = rules["golge_v2"]["swing"][stage]
-    if getiri <= float(limits["zarar_kes"]):
-        return "zarar_kes"
-    if limits["kar_al"] is not None and getiri >= float(limits["kar_al"]):
-        return "kar_al"
-    return None
 
 
 def kirp_pozisyon(fill: dict, shadow_before: float, account: float, rules: dict | None = None) -> tuple[dict, dict | None]:

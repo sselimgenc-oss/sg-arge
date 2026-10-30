@@ -25,9 +25,9 @@ def hourly(**prices):
     return {coin: [{'t': ms(f'2026-10-27T{h}:00Z'), 'o': p} for h, p in rows.items()] for coin, rows in prices.items()}
 
 
-def run(fills, saatlik, yurutme, funding=(), isaret=None, delay=30):
+def run(fills, saatlik, yurutme, funding=(), isaret=None, delay=30, style='intraday', now=NOW):
     execution = {coin: {ms(f'2026-10-27T{h}:00Z'): p for h, p in rows.items()} for coin, rows in yurutme.items()}
-    return kopya_v3.hesapla(fills, saatlik, isaret or {}, execution, list(funding), T0, NOW, delay, RULES)
+    return kopya_v3.hesapla(fills, saatlik, isaret or {}, execution, list(funding), T0, now, delay, style, RULES)
 
 
 def test_acilis_kopyanin_kendi_1000_degerine_gore_sabit_tutarla():
@@ -65,6 +65,40 @@ def test_ekleme_mevcut_pozisyona_oranla():
     entry = (100 * own + 110 * ek) / after
     net = -(own * 100 * 0.00095) - (ek * 110 * 0.00095) + after * (110 - entry)
     assert v3['bakiye_usd'] == pytest.approx(1000 * (1 + net))
+
+
+def test_tasfiye_ucdan_uca_gercek_egriyle():
+    # E2/E3 risk katmanı artık v3'te de var (defter._risk_denetle). Gerçek eğriyle açılan pozisyon (own ~%0,02)
+    # tek coin hareketiyle gerçek -1,0 eşiğine pratikte ULAŞAMAZ (tasarımın güvenlik özelliği — küçük, çeşitlendirilmiş
+    # pozisyonlar tek başına hesabı batıramaz); mekanizmayı uçtan uca göstermek için eşik yalnız BU testte gevşetilir
+    # (kurallar.yaml değişmedi — yalnız bu testin kendi rules kopyası, test_a19.py'deki desenin aynısı).
+    rules = {**RULES, "golge_likidasyon_esigi": -0.0001}
+    fills = [fill('2026-10-27T10:00:00Z', 'B', 10, 0, 100)]
+    execution = {'BTC': {ms('2026-10-27T10:30:00Z'): 100.0}}
+    v3 = kopya_v3.hesapla(fills, hourly(BTC={'10:00': 100.0, '11:00': 99.0}), {}, execution, [], T0, NOW, 30,
+                          'intraday', rules)
+    # "likidasyon" nedeni (gevşetilmiş eşikle de) v2'den DEĞİŞMEYEN sözleşmeyi tetikler: o günden sonraki özsermaye
+    # 0'da kalır (tasfiye = "1 birimin tamamını kaybet" anlamına gelir; eşik gevşetilse de davranış budur).
+    assert v3['bakiye_usd'] == 0.0 and v3['getiri'] == -1.0
+    assert v3['tasfiye'] is True and v3['tasfiye_zamani'] == '2026-10-27T11:00:00Z'
+    assert v3['kapanis_nedenleri'] == [{'coin': 'BTC', 'neden': 'likidasyon', 'zaman': '2026-10-27T11:00:00Z'}]
+
+
+def test_asamali_zarar_kes_ucdan_uca_tasfiyeden_once():
+    # Çapraz teminat eşiği (burada sıkı tutuldu) tetiklenmeden ÖNCE intraday zarar_kes (gevşetildi) tetiklenir —
+    # ikisi aynı mekanizmadan (defter._risk_denetle) ama farklı neden: tasfiye=False, v2_cikis/zarar_kes.
+    rules = {**RULES, "golge_likidasyon_esigi": -0.001,
+             "golge_v2": {**RULES["golge_v2"], "intraday": {"zarar_kes": -0.0001}}}
+    fills = [fill('2026-10-27T10:00:00Z', 'B', 10, 0, 100)]
+    execution = {'BTC': {ms('2026-10-27T10:30:00Z'): 100.0}}
+    v3 = kopya_v3.hesapla(fills, hourly(BTC={'10:00': 100.0, '11:00': 99.0}), {}, execution, [], T0, NOW, 30,
+                          'intraday', rules)
+    own = TUTAR_1000 / 100.0 / 1000.0
+    pnl = own * (99 - 100)
+    net = pnl - own * 100 * 0.00095 - own * 99 * 0.00095
+    assert v3['bakiye_usd'] == pytest.approx(1000 * (1 + net))
+    assert v3['tasfiye'] is False and v3['tasfiye_zamani'] is None
+    assert v3['kapanis_nedenleri'] == [{'coin': 'BTC', 'neden': 'zarar_kes', 'zaman': '2026-10-27T11:00:00Z'}]
 
 
 def test_dolum_yoksa_bakiye_1000de_kalir():

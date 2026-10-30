@@ -28,9 +28,9 @@ def fill(minutes, side, size, before, px=0.0, coin="BTC"):
     return {"time": T0 + minutes * 60_000, "coin": coin, "side": side, "sz": str(size), "startPosition": str(before), "px": str(px)}
 
 
-def run(fills, market, tutar, end_hours=24):
+def run(fills, market, tutar, end_hours=24, style=None):
     return copy_ledger(fills, Market(market), 1.0, 0, T0 - DAY, T0 + end_hours * HOUR, None, RULES, False,
-                       tutar_egrisi=tutar, base_usd=BASE)
+                       tutar_egrisi=tutar, base_usd=BASE, style=style)
 
 
 def test_sabit_tutar_egrisi_etre_varsayilanlariyla_eslesir():
@@ -95,6 +95,63 @@ def test_flip_kapanan_kisim_oranli_yeni_yon_egriyle_acilir():
     beklenen = pnl_kapanis - maliyet_acilis - maliyet_flip
     assert out["net"] == pytest.approx(beklenen)
     assert after < 0                              # kısa tarafa geçti
+
+
+def test_likidasyon_gercek_pozisyon_uzerinde_sentetik_dolum_olmadan():
+    """E2/E3 risk katmanı: golge.py'nin aynı eşiği (golge_likidasyon_esigi=-1,0), ama gerçek held/entry üzerinde.
+    tutar=1.000$ -> own=0,01 (price=100); 1. saatte fiyat 0'a düşer: K/Z=0,01x(0-100)=-1,0 <= -1,0 eşiği -> tasfiye."""
+    tutar = lambda hesap: 1000.0  # noqa: E731
+    out = run([fill(0, "B", 10, 0, px=100)], candles({0: 100, 1: 0, 2: 0}), tutar, style="intraday")
+    assert out["olaylar"] == [{"coin": "BTC", "neden": "likidasyon", "zaman_ms": T0 + HOUR}]
+    own = 1000.0 / 100.0 / BASE
+    maliyet_acilis = own * 100 * C
+    maliyet_tasfiye = own * 0 * C                     # mark=0 -> maliyet de 0
+    pnl = own * (0 - 100)
+    assert out["net"] == pytest.approx(pnl - maliyet_acilis - maliyet_tasfiye)
+    assert out["unrealized_end"] == 0.0                # pozisyon tasfiye edildi, pencere sonunda açık yok
+
+
+def test_asamali_zarar_kes_intraday_eksi50_cikar_tasfiyeden_once():
+    """Çapraz teminat eşiğinin (−1,0) ÜSTÜNDE ama intraday zarar_kes (−0,50) eşiğinde: tasfiye değil, v2_cikis/zarar_kes.
+    tutar=1.000$ -> own=0,01; fiyat 100->50: K/Z=0,01x(50-100)=-0,5 <= -0,5 (ama > -1,0, tasfiye değil)."""
+    tutar = lambda hesap: 1000.0  # noqa: E731
+    out = run([fill(0, "B", 10, 0, px=100)], candles({0: 100, 1: 50, 2: 50}), tutar, style="intraday")
+    assert out["olaylar"] == [{"coin": "BTC", "neden": "zarar_kes", "zaman_ms": T0 + HOUR}]
+    own = 1000.0 / 100.0 / BASE
+    pnl = own * (50 - 100)
+    maliyet = own * 100 * C + own * 50 * C
+    assert out["net"] == pytest.approx(pnl - maliyet)
+
+
+def test_zorunlu_cikistan_sonra_trader_pozisyonu_sifirlanana_dek_bastirilir():
+    """Etre masa.py / golge.py deseni: zorunlu çıkıştan sonra trader'ın ESKİ pozisyonunu kapatan dolum kopyalanmaz
+    (zaten yok); trader SIFIRLANINCA bastırma kalkar; sonraki TAZE açılış yeniden kopyalanır (eğriyle)."""
+    tutar = lambda hesap: 1000.0  # noqa: E731
+    fills = [fill(0, "B", 10, 0, px=100),                      # gün 0 açılış
+             fill(8 * 24 * 60, "A", 10, 10, px=69),             # gün 8: trader kapatıyor (zarar_kes'ten SONRA -> bastırılır)
+             fill(9 * 24 * 60, "B", 10, 0, px=70)]              # gün 9: trader TAZE açıyor -> yeniden kopyalanır
+    market = candles({h: (100 if h < 8 * 24 else 69 if h < 9 * 24 else 70) for h in range(0, 9 * 24 + 2)})
+    out = run(fills, market, tutar, end_hours=9 * 24 + 1, style="swing")
+    # gün 8'de swing gun_7 eşiği (zarar_kes -0,30): own=0,01, K/Z=0,01x(69-100)=-0,31 <= -0,30 -> zorunlu çıkış
+    assert out["olaylar"] == [{"coin": "BTC", "neden": "zarar_kes", "zaman_ms": T0 + 8 * 24 * HOUR}]
+    assert out["executed"] == 2                 # gün 0 açılış + gün 9 taze açılış; gün 8'in kapanışı bastırıldı (atlandı)
+    assert out["acik_pozisyon_sayisi"] == 1      # gün 9'daki taze açılış pencere sonunda hâlâ açık
+
+
+def test_mark_eksik_olan_pozisyon_her_dolumda_bastan_taranmaz():
+    """Gerçek veri denemesinde bulundu: bir coin'in mum/işareti HİÇ yoksa (ilk saatten sonra), risk denetimi o coin'i
+    "denetlendi" saymıyordu; başka bir coin'deki HER yeni dolum aynı (büyüyen) boşluğu baştan tarıyordu — O(dolum ×
+    saat) tıkanma. ``son_kontrol`` artık markı olmasa da ilerliyor (AGENTS.md kural 1: gerçek verinin uç durumu)."""
+    import time
+    market = {"BTC": [{"t": T0, "o": "100", "c": "100"}],
+             "ETH": [{"t": T0 + h * HOUR, "o": "10", "c": "10"} for h in range(400)]}
+    fills = [fill(0, "B", 10, 0, px=100, coin="BTC")]
+    fills += [fill(i * 120, "B", 1 if i == 0 else 0.001, 0 if i == 0 else 1, px=10, coin="ETH") for i in range(200)]
+    tutar = lambda hesap: 50.0  # noqa: E731
+    start = time.monotonic()
+    out = run(fills, market, tutar, end_hours=400, style="intraday")
+    assert time.monotonic() - start < 2.0          # eski kod bu senaryoda dakikalarca sürerdi
+    assert out["executed"] == 201
 
 
 def test_hesaplanamadi_donusu_sabit_tutar_modunda_hesaba_bakmaz():

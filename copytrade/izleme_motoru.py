@@ -677,7 +677,7 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
         # trader hesabına ORANLI değil, kopyanın KENDİ değerine göre sabit $ tutarla açılış (kopya_v3.py). v2'den
         # bağımsız hata yalıtımı (kural 6).
         try:
-            paper_v3 = kopya_v3.hesapla(copy_fills, saatlik, marks, yurutme, saved['funding'], t0, now, delay)
+            paper_v3 = kopya_v3.hesapla(copy_fills, saatlik, marks, yurutme, saved['funding'], t0, now, delay, style)
         except Exception as error:
             paper_v3 = {'surum': 'v3', 'durum': 'hesaplanamadi', 'neden': data_error_reason(error)}
     leverage = sum(p['buyukluk_usd'] for p in positions) / account

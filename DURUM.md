@@ -70,6 +70,37 @@ sayısına hiç girmiyor (maskeli alt sınır); v3 `copy_ledger`'ı doğrudan ç
 (`VERI_SOZLESMESI.md`'ye not düşüldü). O02 hesap=0 hata zaten v1/v2'yi de etkiliyor (benim değişikliğimden önce).
 `python -m pytest -q`: 544 geçti.
 
+## E2 devamı 2 (2026-10-30 gece): v3'e tasfiye + aşamalı çıkış de bağlandı
+Kullanıcı kararı: "dokümanda ne yazıyorsa onu yap" — GOREV_ETRE_GECIS.md'nin "bitti tanımı" kopya motorunun
+**sabit tutar + çıkış kuralları + tasfiye** üçünün BİRLİKTE çalışmasını istiyor; az önceki E2 devamı bunu kasıtlı
+ayırmıştı. `golge.py`'nin tasfiye/aşamalı-çıkış katmanı (`_denetle_ve_kapat`) sentetik dolum enjekte edip trader
+hesabına ORANLI `scale`'den geçirerek çalışıyor — sabit tutarda böyle bir `scale` yok (boyutlandırma yol bağımlı),
+o yüzden bu numara kullanılamadı. Çözüm: `defter.copy_ledger` içine, gerçek (yol bağımlı) `held`/`entry` durumu
+üzerinde çalışan AYRI bir risk katmanı (`_risk_denetle`/`_zorla_kapat`) — AYNI dondurulmuş eşikler
+(`golge_likidasyon_esigi`, `golge_v2`, DEĞİŞTİRİLMEDİ). `v2_sinir` tek yere (kural 7) taşındı: `golge.py` →
+`defter.py` (golge re-export eder, `test_golge.py`'nin importu değişmedi).
+- Gerçek bir hata bulundu ve düzeltildi: `held[coin]` tam kapanışta hiç silinmiyordu (yalnız `entry` siliniyordu) —
+  risk katmanının "açık mı" kontrolü buna dayandığından sahte-açık kayıt kalıyordu; artık ikisi de silinir (v1/v2
+  davranışını etkilemez, zaten her yerde `.get(coin,0.0)` kullanılıyor).
+- `tests/test_kurallar_uygunluk.py` (sayı sabiti yasağı, kural 23): `v2_sinir`'in 7/14 gün eşikleri artık
+  `kurallar.yaml`'daki `golge_v2.swing` anahtarlarından (`gun_7`/`gun_14`) okunuyor, kodda sabit değil.
+- 8 yeni altın örnek (`test_defter_sabit_tutar.py`: tasfiye, aşamalı zarar_kes, zorunlu-çıkıştan-sonra-bastırma;
+  `test_kopya_v3.py`: ikisi uçtan uca). **Gözlem (hata değil):** sabit tutar küçük olduğundan (~%2-15 hesap payı),
+  tek pozisyon gerçek fiyat hareketiyle bu eşiklere pratikte ulaşamıyor — testlerde eşik yalnız mekanizmayı
+  göstermek için gevşetildi (test_a19.py'deki yerel `rules` kopyalama deseniyle, `kurallar.yaml` değişmedi).
+- **Gerçek veri denemesi bir performans hatası buldu (kalite kuralı 1'in tam kanıtladığı an):** `_risk_denetle`,
+  bir coin'in o saat için piyasa işareti (`market.mark`) YOKSA `son_kontrol[c]`'yi ilerletmiyordu; bu, o coin'e
+  ait her sonraki dolumda (herhangi bir coin için çağrıldığında, tüm `held` coin'leri üzerinden minimum alındığı
+  için) aynı, büyüyen boşluğun baştan taranmasına yol açıyordu — O(dolum × boş-saat) patlaması. Gerçek veride
+  (B17, çok sayıda kısa ömürlü/düşük likiditeli coin) 30 dakikalık arka plan bütçesinde çıktısız durdu; sentetik
+  testler hiçbiri bunu yakalamamıştı. Düzeltme: işaret bulunamasa da `son_kontrol[c]=saat` her zaman ilerletilir
+  (yalnız zorla kapatılan coin takipten tamamen çıkar). Kalıcı regresyon testi eklendi
+  (`test_mark_eksik_olan_pozisyon_her_dolumda_bastan_taranmaz`, 2s sınır). Düzeltme sonrası küçük denemede
+  (O01/O02/B17) 3 trader ~6 dk 48s'de bitti (kullanıcı CPU'su 29s — süre ağ gecikmesinden, donma yok): O01 ve B17
+  için `sanal_kopya_v3` sağlıklı (`bakiye_usd`/`getiri` mantıklı, `tasfiye: false`, `kapanis_nedenleri: []` —
+  gözlemle uyumlu, eşiklere tek pozisyonla ulaşılmadı), O02 beklendiği gibi `hesaplanamadi`.
+- `python -m pytest -q`: 550 geçti.
+
 ## E3 (2026-10-30 gece): aşamalı zarar_kes/kar_al canlıya bağlandı
 Kullanıcı: "sırayla yap, sormana gerek yok." `golge.py`'deki ön kayıtlı aşamalı çıkış kuralı (intraday −%50; swing
 gün 0/7/14 kademeli) `kopya_v2`'ye `variant='V2'` ile bağlandı; eşikler değişmedi (zaten dondurulmuştu). Her
