@@ -1,3 +1,6 @@
+> **2026-10-30 akşam (kullanıcı kararı K‑11):** Yeni Sonnet oturumu **tek lider** ve birleştirme yetkili (CI yeşil + Sol denetimi
+> sonrası). Görev `docs/GOREV_ETRE_GECIS.md`. Claude (Opus) bu işten çekildi. Codex (Sol) denetçi.
+
 > **2026-10-30 güncelleme (kullanıcı kararı: "Sonneti kapatıcam yetkileri devral"):** Sonnet ortak liderliği sona erdi.
 > Tek lider Claude (bu oturum); Codex (Sol) denetçi. Sonnet'in açık PR'ı #434 (`claude/zen-heisenberg-lx1ond`) lidere devredildi:
 > önce `izleme_deneme.yml` ile küçük gerçek veri denemesi (O10, B17, O01, O02; motor süresi, v1↔v2), sonra Sol denetimi, sonra birleştirme.
