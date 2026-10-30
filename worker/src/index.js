@@ -129,6 +129,10 @@ async function accumulatedOrderEvents(env, trader, rows, account) {
 
 function isNotified(trader) { return trader.kol === "oda"; }
 
+// Gerçek algılama gecikmesi (dk): bir dolumun gerçek zamanı ile Worker'ın şu an onu görmesi arasındaki fark.
+// Pozisyon yaşıyla (copytrade.saglik_hatti) karıştırılmamalı — bu, Hyperliquid'den Worker'a kadar geçen gerçek süre.
+function gecikmeDk(fillTimeMs, nowMs = Date.now()) { return (nowMs - fillTimeMs) / 60000; }
+
 // BILDIRIM_KIPI: "ozet" (varsayılan) — yalnız günlük özet + durum değişince uyarı; "islem" — açılış/kapanış/büyütme
 // bildirimleri de (eski davranış) açık. Kod silinmez, yalnız bu ayarla kapatılır/açılır (lider kararı, kullanıcı).
 function bildirimKipi(env) { return env.BILDIRIM_KIPI === "islem" ? "islem" : "ozet"; }
@@ -181,6 +185,10 @@ async function runCron(env, fetcher = fetch) {
       // Her dakika çalıştığı için yalnız değişince yazılır (D1 ücretsiz yazma kotası).
       if (newest !== Number(stored.son_dolum)) {
         await env.DB.prepare("UPDATE imlec SET son_dolum = ? WHERE trader = ?").bind(newest, trader.id).run();
+        // E1 devamı (Sol denetimi 2026-10-30): gerçek algılama gecikmesi — trader'ın en yeni dolum zamanı ile
+        // Worker'ın onu şu an görmesi arasındaki fark. Yalnız en son örnek tutulur.
+        await env.DB.prepare("INSERT INTO son_gecikme(trader, gecikme_dk, zaman) VALUES (?, ?, ?) ON CONFLICT(trader) DO UPDATE SET gecikme_dk=excluded.gecikme_dk, zaman=excluded.zaman")
+          .bind(trader.id, gecikmeDk(newest), nowIso()).run();
       }
     } catch { /* the cursor intentionally remains unchanged */ }
     const previous = await env.DB.prepare("SELECT isik FROM isik WHERE trader = ?").bind(trader.id).first();
@@ -358,9 +366,13 @@ export default {
       const rows = await env.DB.prepare("SELECT olay_id, substr(zaman, 1, 10) AS zaman, karar, CASE WHEN neden = 'bakiye_yok' THEN 'diger' ELSE neden END AS neden, etiket AS \"not\" FROM kararlar ORDER BY zaman").all();
       return json(rows.results || []);
     }
+    if (request.method === "GET" && url.pathname === "/gecikme") {
+      const rows = await env.DB.prepare("SELECT trader, gecikme_dk, zaman FROM son_gecikme ORDER BY trader").all();
+      return json(rows.results || []);
+    }
     if (request.method === "POST" && url.pathname === "/telegram") return handleTelegram(request, env);
     return new Response("not found", { status: 404 });
   },
 };
 
-export { accumulatedOrderEvents, bildirimKipi, callbackData, checkStateAlerts, dailySummaryText, decision, dispatchWorkflow, formatEvent, formatStatus, handleTelegram, isNotified, mergeFills, runCron, sendDailySummaryIfDue, sendOnce, tetiklemeKontrol, workflowRuns };
+export { accumulatedOrderEvents, bildirimKipi, callbackData, checkStateAlerts, dailySummaryText, decision, dispatchWorkflow, formatEvent, formatStatus, gecikmeDk, handleTelegram, isNotified, mergeFills, runCron, sendDailySummaryIfDue, sendOnce, tetiklemeKontrol, workflowRuns };

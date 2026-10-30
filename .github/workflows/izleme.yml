@@ -70,6 +70,13 @@ jobs:
         env:
           KARAR_URL: ${{ vars.KARAR_URL }}
         run: python -m copytrade.kararlar --url "$KARAR_URL" --output izleme/kararlar.jsonl
+      - name: Worker'ın gerçek algılama gecikmesini içe al
+        if: ${{ vars.GECIKME_URL != '' }}
+        # E1 devamı (Sol denetimi): düşerse saatlik durum yine yayımlanır; gecikme bir sonraki saatte gelir.
+        continue-on-error: true
+        env:
+          GECIKME_URL: ${{ vars.GECIKME_URL }}
+        run: python -m copytrade.gecikme --url "$GECIKME_URL" --output izleme/gecikme.json
       - name: Oda değişim raporunu üret
         run: python -m copytrade.degisim_rapor --kayit copytrade/degisim.jsonl --durum izleme/durum.json --cikti izleme/degisim.json
       - name: Motor durumunu R2'ye yükle
