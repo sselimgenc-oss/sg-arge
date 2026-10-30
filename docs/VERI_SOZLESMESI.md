@@ -189,3 +189,11 @@ islem_sikligi_24s, coinler[{coin, long_usd, short_usd}], uyarilar[]}`. Girdi: `g
 `sermaye_usd` üyelerin v1 sanal bakiyelerinin toplamı; kaldıraç "x" = |notional| / sermaye; `en_buyuk_coin_payi` oran (0,7 = %70); `islem_sikligi_24s` = üye başına son 24 saat açılış+kapanış.
 `coinler` oda ↔ kontrol denge tablosudur (coin, yön, notional). Tavanlar `kurallar.yaml` anahtarları `oda_brut_kaldirac_tavani` ve `oda_tek_coin_payi_tavani`dır;
 **tanımlı değilse yalnız ölçülür, uyarı üretilmez** (tavan değerleri kullanıcı kararıdır).
+
+## `kol_ozet` — ekranların tek sayı kaynağı (v1.6, K-10 S1)
+Pano, ofis ve Worker/Telegram **hesap yapmaz**; kasa, getiri, kapsama, 24 saat ve ışık sayıları motorun yazdığı bu alandan gösterilir.
+`kol_ozet = {kollar: {<kol>: {...}}, oda_kontrol_fark, oda_kontrol_fark_v2}`. Kol üyeliği `kollar` ile. Toplamlar yalnız `gecerli=true` üyeler; `uye` (ITT) sabittir.
+Para **1.000 $ sanal kopya ölçeğinde** USD (trader hesabı DEĞİL); getiriler üyelerin ortalama getirisi, **kesir** (0,012 = %1,2); `oda_kontrol_fark*` kesir farkıdır (0,01 = 1 puan).
+`<kol>` alanları: `uye`, `gecerli`, `kapsama` (oran), `kasa_usd`, `baslangic_usd` (= 1.000 × hesaplanabilen geçerli üye), `getiri` (v1), `kasa_v2_usd`, `getiri_v2`, `tasfiye_v2` (sayı),
+`eksik_degerleme` (sayı), `acik_lot` (sayı), `acik_notional_usd` (sanal lotların |notional| toplamı), `isik` `{yesil,sari,kirmizi}` (tüm üyeler), `sayac_24s` (bkz. `sayac_24s`; yoksa null).
+`teminat` henüz yok: ofisin teminat tanımı yazılıp sözleşmeye alınana kadar ofis kendi hesabını sürdürür (S1 kalan işi).

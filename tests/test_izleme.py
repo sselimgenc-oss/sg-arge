@@ -182,11 +182,12 @@ def test_empty_list_writes_contract_and_never_uses_network(tmp_path):
         def __getattr__(self, name):
             raise AssertionError(name)
     result = m.run(root, root / 'out', NoNetwork(), NOW)
+    assert result.pop('kol_ozet') == {'kollar': {}, 'oda_kontrol_fark': None, 'oda_kontrol_fark_v2': None}
     assert result.pop('risk')['oda']['uye'] == 0           # boş listede risk tanısı boş ama sözleşmede var
     assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'yayim_zamani': '2026-10-27T12:00:00Z', 'kosu_baslangic': '2026-10-27T12:00:00Z', 'kosu_bitis': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
                       'kasa_egri': {'oda': [], 'kontrol': []}, 'kapsam': {}, 'olaylar': [], 'gunluk_sayac': [], 'sayac_24s': {},
                       'olay_kapsami': {'baslangic': None, 'tam': True, 'toplam': 0, 'kol_basina_son': 200, 'sayac_gun': 30}}
-    assert {k: v for k, v in json.loads((root / 'out/durum.json').read_text()).items() if k != 'risk'} == result
+    assert {k: v for k, v in json.loads((root / 'out/durum.json').read_text()).items() if k not in ('risk', 'kol_ozet')} == result
 
 
 def test_uses_current_main_list_without_changing_it():

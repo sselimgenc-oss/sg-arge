@@ -49,55 +49,37 @@ test("varsayılan kipte (ozet) açılış/kapanış Telegram'a gitmez, ama kırm
   assert.equal(sent.filter(t => /açtı/.test(t)).length, 0, "açılış bildirimi kipi kapalıyken hiç gitmemeli");
 });
 
-test("dailySummaryText: sanal kopya ölçeğinde oda kasası/getiri, oda−kontrol farkı, 24 saatlik işlem (altın örnek)", () => {
+test("dailySummaryText: yalnız motorun hazır kol_ozet alanını gösterir, hesap yapmaz (altın örnek)", () => {
   const now = Date.parse("2026-10-30T06:00:00Z");
-  const t = (id, kol, bakiye, baslangic, getiri, isik = "yesil") => ({ id, kol, kollar: [kol], takma_ad: id, saglik: { isik }, sanal_kopya: { bakiye_usd: bakiye, baslangic_usd: baslangic, getiri } });
+  // Rakamlar kasten traderlar listesiyle UYUMSUZ: Worker traderlardan hesap yapsaydı farklı çıkardı. Ekran yalnız kol_ozet'i okur.
   const status = {
     uretildi: "2026-10-30T05:50:00Z",   // 10 dk önce
-    traderlar: [
-      t("O1", "oda", 1100, 1000, 0.10, "yesil"), t("O2", "oda", 900, 1000, -0.10, "kirmizi"), t("O3", "oda", 1000, 1000, 0, "sari"),
-      t("K1", "kontrol", 1050, 1000, 0.05), t("K2", "kontrol", 950, 1000, -0.05),
-    ],
-    olaylar: [
-      { trader: "O1", coin: "BTC", tur: "acilis", zaman: new Date(now - 3600000).toISOString() },
-      { trader: "O2", coin: "ETH", tur: "kapanis", zaman: new Date(now - 7200000).toISOString() },
-      { trader: "O1", coin: "SOL", tur: "acilis", zaman: new Date(now - 48 * 3600000).toISOString() },   // 48 sa önce, sayılmaz
-    ],
+    traderlar: [{ id: "X", kol: "oda", kollar: ["oda"], gecerli: true, saglik: { isik: "kirmizi" }, sanal_kopya: { bakiye_usd: 1, getiri: 9 } }],
+    kol_ozet: {
+      kollar: { oda: { uye: 3, gecerli: 2, kapsama: 2 / 3, kasa_usd: 2000, getiri: 0, eksik_degerleme: 1,
+                       isik: { yesil: 1, sari: 1, kirmizi: 1 }, sayac_24s: { acilis: 7, kapanis: 5, trader_sayisi: 4, kapanan: 5, kazanan: 2 } } },
+      oda_kontrol_fark: 0,
+    },
   };
   const text = dailySummaryText(status, now);
-  // oda kasası = 1100+900+1000 = 3000; getiri ortalaması (10%,-10%,0%)/3 = 0 → "+0,0%"
-  assert.match(text, /Oda kasası \(sanal\): \$3\.000 \(\+0,0%\)/);
-  // oda−kontrol farkı: oda ort 0%, kontrol ort (5%,-5%)/2=0% → fark 0,0%
+  assert.match(text, /Oda kasası \(sanal\): \$2\.000 \(\+0,0%\)/);
   assert.match(text, /Oda − Kontrol farkı.*\+0,0%/);
-  // son 24 saat: 2 işlem (3. olay 48 saat önce, dışarıda), 2 farklı trader
-  assert.match(text, /Son 24 saat: 2 işlem · 2 trader/);
+  assert.match(text, /Son 24 saat: 12 işlem \(7 açılış, 5 kapanış\) · 4 trader · kazanma 2\/5/);
   assert.match(text, /🟢 1 {3}🟡 1 {3}🔴 1/);
+  assert.match(text, /Oda kapsama: 2\/3 geçerli \(%67\) · 1 geçersiz\/eski toplama girmez/);
+  assert.match(text, /1 trader'ın açık lotu eksik değerlenmiş/);
   assert.match(text, /Veri 10 dk önce/);
 });
 
-test("dailySummaryText: geçersiz trader toplama girmez, kapsama satırı üye sayısını sabit gösterir (altın örnek)", () => {
+test("dailySummaryText: kol_ozet yoksa uydurmaz, uyarır; 24 saat sayacı yoksa 'bilinmiyor'", () => {
   const now = Date.parse("2026-10-30T06:00:00Z");
-  const t = (id, bakiye, gecerli = true) => ({ id, kol: "oda", kollar: ["oda"], saglik: { isik: "yesil" }, gecerli, sanal_kopya: { bakiye_usd: bakiye, baslangic_usd: 1000, getiri: bakiye / 1000 - 1 } });
-  const status = {
-    uretildi: "2026-10-30T05:50:00Z",
-    traderlar: [t("O1", 1100), t("O2", 900), t("O3", 1500, false)],      // O3 eski sonuç: 1.500 $ toplama girmemeli
-    kapsam: { oda: { toplam: 3, gecerli: 2, gecersiz_bakiye_usd: 1500 } },
-    olaylar: [],
-  };
-  const text = dailySummaryText(status, now);
-  assert.match(text, /Oda kasası \(sanal\): \$2\.000 \(\+0,0%\)/);                  // 1100+900, ortalama getiri (10%,-10%)/2
-  assert.match(text, /Oda kapsama: 2\/3 geçerli \(%67\) · 1 geçersiz\/eski/);
-});
-
-test("dailySummaryText: sayac_24s varsa 24 saat satırı motor sayaçlarından (olaylar listesi kesik olsa da)", () => {
-  const now = Date.parse("2026-10-30T06:00:00Z");
-  const status = {
-    uretildi: "2026-10-30T05:50:00Z",
-    traderlar: [{ id: "O1", kol: "oda", kollar: ["oda"], saglik: { isik: "yesil" }, sanal_kopya: { bakiye_usd: 1000, baslangic_usd: 1000, getiri: 0 } }],
-    olaylar: [],                                                       // yoğun taban olayları oda olaylarını düşürmüş gibi: liste boş
-    sayac_24s: { oda: { acilis: 7, kapanis: 5, trader_sayisi: 4, kapanan: 5, kazanan: 2 } },
-  };
-  assert.match(dailySummaryText(status, now), /Son 24 saat: 12 işlem \(7 açılış, 5 kapanış\) · 4 trader · kazanma 2\/5/);
+  const eski = dailySummaryText({ uretildi: "2026-10-30T05:50:00Z", traderlar: [{ id: "O1", kol: "oda" }] }, now);
+  assert.match(eski, /kol_ozet\) bu veride yok/);
+  assert.doesNotMatch(eski, /Oda kasası/);
+  const sayacsiz = dailySummaryText({ uretildi: "2026-10-30T05:50:00Z", kol_ozet: { kollar: { oda: { uye: 1, gecerli: 1, kapsama: 1, kasa_usd: 1000, getiri: null,
+    eksik_degerleme: 0, isik: { yesil: 1, sari: 0, kirmizi: 0 }, sayac_24s: null } }, oda_kontrol_fark: null } }, now);
+  assert.match(sayacsiz, /Son 24 saat: bilinmiyor/);
+  assert.match(sayacsiz, /\(bilinmiyor\)/);
 });
 
 test("checkStateAlerts: veri 3 saatten eskiyse uyarı gider, aynı durumda tekrarlanmaz", async () => {

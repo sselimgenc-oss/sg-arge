@@ -140,3 +140,27 @@ def test_risk_tanisi_altin_ornek():
     assert risk['kontrol']['uye'] == 0 and risk['kontrol']['brut_kaldirac'] is None
     asilan = m.risk_tanisi(traders, None, rules={'oda_brut_kaldirac_tavani': 0.04, 'oda_tek_coin_payi_tavani': 0.6})['oda']['uyarilar']
     assert len(asilan) == 2 and 'oda brüt kaldıraç 0.05x > tavan 0.04x' in asilan[0] and 'BTC payı %70 > tavan %60' in asilan[1]
+
+
+def test_kol_ozeti_altin_ornek_geçerli_toplam_fark_ve_kapsama():
+    # Oda: O1 geçerli (v1 1.100 $, getiri +0,10; v2 1.090 $, +0,09), O2 geçerli (900 $, −0,10; v2 tasfiye 0 $, −1,0),
+    # O3 GEÇERSİZ (eski sonuç 1.500 $ toplama girmez). Kontrol: K1 (1.050 $, +0,05), K2 (950 $, −0,05).
+    sk = lambda b, g, **ek: {'bakiye_usd': b, 'getiri': g, **ek}
+    traders = [
+        {'kol': 'oda', 'kollar': ['oda'], 'gecerli': True, 'saglik': {'isik': 'yesil'}, 'sanal_kopya': sk(1100.0, 0.10, acik_lotlar=[{'notional_usd': 40.0}]),
+         'sanal_kopya_v2': sk(1090.0, 0.09, tasfiye=False)},
+        {'kol': 'oda', 'kollar': ['oda'], 'gecerli': True, 'saglik': {'isik': 'kirmizi'}, 'sanal_kopya': sk(900.0, -0.10, eksik_degerleme=True),
+         'sanal_kopya_v2': sk(0.0, -1.0, tasfiye=True)},
+        {'kol': 'oda', 'kollar': ['oda'], 'gecerli': False, 'saglik': {'isik': 'sari'}, 'sanal_kopya': sk(1500.0, 0.5)},
+        {'kol': 'kontrol', 'kollar': ['kontrol'], 'gecerli': True, 'saglik': {'isik': 'yesil'}, 'sanal_kopya': sk(1050.0, 0.05), 'sanal_kopya_v2': sk(1040.0, 0.04)},
+        {'kol': 'kontrol', 'kollar': ['kontrol'], 'gecerli': True, 'saglik': {'isik': 'yesil'}, 'sanal_kopya': sk(950.0, -0.05), 'sanal_kopya_v2': sk(960.0, -0.04)},
+    ]
+    ozet = m.kol_ozeti(traders, {'oda': {'acilis': 2, 'kapanis': 1}})
+    oda = ozet['kollar']['oda']
+    assert (oda['uye'], oda['gecerli'], oda['kapsama']) == (3, 2, pytest.approx(2 / 3))
+    assert oda['kasa_usd'] == 2000.0 and oda['baslangic_usd'] == 2000.0 and oda['getiri'] == pytest.approx(0.0)       # 1100+900; (0,10−0,10)/2; O3 hariç
+    assert oda['kasa_v2_usd'] == 1090.0 and oda['getiri_v2'] == pytest.approx(-0.455) and oda['tasfiye_v2'] == 1
+    assert oda['isik'] == {'yesil': 1, 'sari': 1, 'kirmizi': 1} and oda['eksik_degerleme'] == 1
+    assert (oda['acik_lot'], oda['acik_notional_usd']) == (1, 40.0) and oda['sayac_24s'] == {'acilis': 2, 'kapanis': 1}
+    assert ozet['kollar']['kontrol']['kasa_usd'] == 2000.0 and ozet['kollar']['kontrol']['getiri'] == pytest.approx(0.0)
+    assert ozet['oda_kontrol_fark'] == pytest.approx(0.0) and ozet['oda_kontrol_fark_v2'] == pytest.approx(-0.455 - 0.0)

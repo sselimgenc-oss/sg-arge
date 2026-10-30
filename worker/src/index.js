@@ -259,60 +259,29 @@ const ESKI_DK = 90;
 const LIGHT = { yesil: "🟢", sari: "🟡", kirmizi: "🔴" };
 const VERI_UYARI_DK = 180;   // günlük uyarı eşiği: 3 saat (ayrı: /durum'un kendi 90 dk eşiğinden farklı, bilgi amaçlı)
 
-function sanalKohort(all, kol) {
-  // Yalnız geçerli traderlar toplanır (gecerli=false: eski sonuç/yer tutucu); kapsama ayrıca gösterilir (kapsamSatiri).
-  return all.filter(t => (t.kollar || [t.kol]).includes(kol) && t.gecerli !== false).map(t => t.sanal_kopya).filter(Boolean);
-}
-function ortalamaGetiri(copies) {
-  return copies.length ? copies.reduce((sum, c) => sum + (Number(c.getiri) || 0), 0) / copies.length : null;
-}
 function yuzdeYaz(v) { return v == null ? "bilinmiyor" : `${v >= 0 ? "+" : ""}${(v * 100).toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`; }
 
-// Son 24 saat: motorun kesilmemiş olaylardan hesapladığı `sayac_24s.oda` varsa ondan (yayımlanan olay listesi kısa olsa da doğru);
-// yoksa olay listesinden (eski veri). Kazanma: sanal sonucu o pencerede biten kopyalardan kazananların oranı.
-function son24Satiri(status, islemOlaylari) {
-  const c = status.sayac_24s?.oda;
-  if (!c) return `🔁 Son 24 saat: ${islemOlaylari.length} işlem · ${new Set(islemOlaylari.map(e => e.trader)).size} trader`;
-  const kazanma = c.kapanan ? ` · kazanma ${c.kazanan}/${c.kapanan}` : "";
-  return `🔁 Son 24 saat: ${c.acilis + c.kapanis} işlem (${c.acilis} açılış, ${c.kapanis} kapanış) · ${c.trader_sayisi} trader${kazanma}`;
-}
-
-// Kol kapsaması: üye sayısı sabit (ITT), geçerli/geçersiz ayrı. Motor `kapsam` yayımlamadıysa satır yazılmaz.
-function kapsamSatiri(status, kol) {
-  const k = status.kapsam?.[kol];
-  if (!k || !k.toplam) return null;
-  const gecersiz = k.toplam - k.gecerli;
-  const yuzde = (k.gecerli / k.toplam * 100).toLocaleString("tr-TR", { maximumFractionDigits: 0 });
-  const ek = gecersiz ? ` · ${gecersiz} geçersiz/eski (toplama girmez${k.gecersiz_bakiye_usd ? `, önceki bakiyeleri $${Math.round(k.gecersiz_bakiye_usd).toLocaleString("tr-TR")}` : ""})` : "";
-  return `📡 ${kol === "oda" ? "Oda" : kol} kapsama: ${k.gecerli}/${k.toplam} geçerli (%${yuzde})${ek}`;
-}
-
-// Günde bir, 09:00 TR'de (06:00 UTC): sanal kopya ölçeğinde oda kasası/getiri, oda−kontrol farkı (aynı dönem,
-// her ikisi de sanal_kopya.getiri ortalaması), son 24 saatteki işlem sayısı ve trader sayısı, ışıklar, veri yaşı.
+// Günde bir, 09:00 TR'de (06:00 UTC). K-10 S1: Worker HESAP YAPMAZ; sayılar motorun `durum.json`'a yazdığı hazır `kol_ozet`ten okunur
+// (kasa/getiri 1.000 $ ölçeğinde, yalnız geçerli üyeler; oda − kontrol farkı; kapsama; son 24 saat; ışıklar). Alan yoksa uydurmaz, söyler.
 function dailySummaryText(status, nowMs = Date.now(), gecikmeli = false) {
-  const all = status.traderlar || [];
-  const room = all.filter(isNotified);
-  const odaKopya = sanalKohort(all, "oda"), kontrolKopya = sanalKohort(all, "kontrol");
-  const kasa = odaKopya.reduce((sum, c) => sum + (Number(c.bakiye_usd) || 0), 0);
-  const odaGetiri = ortalamaGetiri(odaKopya), kontrolGetiri = ortalamaGetiri(kontrolKopya);
-  const fark = odaGetiri != null && kontrolGetiri != null ? odaGetiri - kontrolGetiri : null;
-  const sonGunOlaylari = (status.olaylar || []).filter(e => { const t = Date.parse(e.zaman); return Number.isFinite(t) && nowMs - t <= 86400000 && nowMs - t >= 0; });
-  const odaIdleri = new Set(room.map(t => t.id));   // özet oda içindir; olaylar listesi tüm kolları taşır
-  const islemOlaylari = sonGunOlaylari.filter(e => ["acilis", "kapanis", "buyutme"].includes(e.tur) && odaIdleri.has(e.trader));
+  const ozet = status.kol_ozet, oda = ozet?.kollar?.oda;
   const age = Math.max(0, Math.floor((nowMs - Date.parse(status.uretildi)) / 60000));
-  const count = c => room.filter(t => (t.saglik?.isik || "yesil") === c).length;
-  return [
-    `📊 SG Arge · Günlük özet${gecikmeli ? " (gecikmeli)" : ""}`,
-    "",
-    `💰 Oda kasası (sanal): $${kasa.toLocaleString("tr-TR", { maximumFractionDigits: 0 })} (${yuzdeYaz(odaGetiri)})`,
-    `📐 Oda − Kontrol farkı (aynı dönem, sanal kopya): ${fark == null ? "bilinmiyor" : yuzdeYaz(fark)}`,
-    son24Satiri(status, islemOlaylari),
-    `🟢 ${count("yesil")}   🟡 ${count("sari")}   🔴 ${count("kirmizi")}`,
-    kapsamSatiri(status, "oda"),
-    age > ESKI_DK ? `⚠️ Veri ${age} dk önce — güncellenmedi` : `🕐 Veri ${age} dk önce`,
-    "",
-    `Pano: ${PANO}`,
-  ].filter(line => line !== null).join("\n");
+  const lines = [`📊 SG Arge · Günlük özet${gecikmeli ? " (gecikmeli)" : ""}`, ""];
+  if (!oda) {
+    lines.push("⚠️ Özet alanı (kol_ozet) bu veride yok — motor güncel değil.");
+  } else {
+    const c = oda.sayac_24s;
+    const yuzde = (oda.kapsama * 100).toLocaleString("tr-TR", { maximumFractionDigits: 0 });
+    lines.push(
+      `💰 Oda kasası (sanal): $${Number(oda.kasa_usd).toLocaleString("tr-TR", { maximumFractionDigits: 0 })} (${yuzdeYaz(oda.getiri)})`,
+      `📐 Oda − Kontrol farkı (aynı dönem, sanal kopya): ${yuzdeYaz(ozet.oda_kontrol_fark)}`,
+      c ? `🔁 Son 24 saat: ${c.acilis + c.kapanis} işlem (${c.acilis} açılış, ${c.kapanis} kapanış) · ${c.trader_sayisi} trader${c.kapanan ? ` · kazanma ${c.kazanan}/${c.kapanan}` : ""}` : "🔁 Son 24 saat: bilinmiyor",
+      `🟢 ${oda.isik.yesil}   🟡 ${oda.isik.sari}   🔴 ${oda.isik.kirmizi}`,
+      `📡 Oda kapsama: ${oda.gecerli}/${oda.uye} geçerli (%${yuzde})${oda.gecerli < oda.uye ? ` · ${oda.uye - oda.gecerli} geçersiz/eski toplama girmez` : ""}`);
+    if (oda.eksik_degerleme) lines.push(`⚠️ ${oda.eksik_degerleme} trader'ın açık lotu eksik değerlenmiş`);
+  }
+  lines.push(age > ESKI_DK ? `⚠️ Veri ${age} dk önce — güncellenmedi` : `🕐 Veri ${age} dk önce`, "", `Pano: ${PANO}`);
+  return lines.join("\n");
 }
 
 async function uyariDurumGetir(env, anahtar) {

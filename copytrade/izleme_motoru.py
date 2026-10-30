@@ -942,6 +942,39 @@ def write_event_archive(output: Path, all_events: dict) -> None:
 GECIKME5_DK = 5
 
 
+def kol_ozeti(traderlar: list[dict], sayac_24s: dict | None = None) -> dict:
+    """Ekranların (pano, ofis, Worker/Telegram) tek sayı kaynağı (K-10 S1): kol başına hazır özet; ekranlar hesap yapmaz, bunu gösterir.
+
+    Kol üyeliği ``kollar`` ile. Toplamlar yalnız ``gecerli=true`` üyelerdir; üye sayısı (``uye``) sabittir (ITT), ``kapsama`` = geçerli / üye.
+    Para 1.000 $ sanal kopya ölçeğindedir (trader hesabı değil); getiriler ortalama KESİRdir (0,012 = %1,2). v1 ve v2 yan yana.
+    ``oda_kontrol_fark``: oda − kontrol ortalama getiri farkı (kesir; puan değil, 0,01 = 1 puan), aynı dönem, ikisi de geçerli üyelerle."""
+    result: dict = {}
+    for kol in sorted({k for t in traderlar for k in (t.get('kollar') or [t.get('kol')]) if k}):
+        members = kol_uyeleri(traderlar, kol)
+        valid = [t for t in members if t.get('gecerli', True)]
+        v1 = [t['sanal_kopya'] for t in valid if (t.get('sanal_kopya') or {}).get('bakiye_usd') is not None]
+        v2 = [t['sanal_kopya_v2'] for t in valid if (t.get('sanal_kopya_v2') or {}).get('bakiye_usd') is not None]
+        lights = [(t.get('saglik') or {}).get('isik', 'yesil') for t in members]
+        lots = [lot for t in valid for lot in (t.get('sanal_kopya') or {}).get('acik_lotlar', [])]
+        result[kol] = {
+            'uye': len(members), 'gecerli': len(valid), 'kapsama': len(valid) / len(members) if members else 0.0,
+            'kasa_usd': sum(c['bakiye_usd'] for c in v1), 'baslangic_usd': 1000.0 * len(v1),
+            'getiri': sum(c['getiri'] for c in v1) / len(v1) if v1 else None,
+            'kasa_v2_usd': sum(c['bakiye_usd'] for c in v2) if v2 else None,
+            'getiri_v2': sum(c['getiri'] for c in v2) / len(v2) if v2 else None,
+            'tasfiye_v2': sum(1 for c in v2 if c.get('tasfiye')),
+            'eksik_degerleme': sum(1 for c in v1 if c.get('eksik_degerleme')),
+            'acik_lot': len(lots), 'acik_notional_usd': sum(float(lot['notional_usd']) for lot in lots),
+            'isik': {'yesil': lights.count('yesil'), 'sari': lights.count('sari'), 'kirmizi': lights.count('kirmizi')},
+            'sayac_24s': (sayac_24s or {}).get(kol)}
+    summary = {'kollar': result, 'oda_kontrol_fark': None, 'oda_kontrol_fark_v2': None}
+    if 'oda' in result and 'kontrol' in result:
+        for suffix in ('', '_v2'):
+            a, b = result['oda'].get('getiri' + suffix), result['kontrol'].get('getiri' + suffix)
+            summary['oda_kontrol_fark' + suffix] = None if a is None or b is None else a - b
+    return summary
+
+
 def risk_tanisi(traderlar: list[dict], sayac_24s: dict | None = None, rules: dict | None = None) -> dict:
     """Kol başına sanal risk tanısı (madde 25; yalnız tanısal). Girdi: geçerli ve eksik değerlemesiz üyelerin v1 sanal açık lotları (1.000 $ ölçeği).
 
@@ -1039,6 +1072,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
               'kapsam': {kol: kapsam(traders, kol) for kol in sorted({k for t in traders for k in (t.get('kollar') or [t.get('kol')]) if k})}}
     result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'], result['sayac_24s'] = olay_ozeti(all_events, traders, now, failed == 0)
     result['risk'] = risk_tanisi(traders, result.get('sayac_24s'))
+    result['kol_ozet'] = kol_ozeti(traders, result.get('sayac_24s'))
     if any('sanal_kopya_v2_gecikme5' in t for t in traders):
         result['gecikme5'] = gecikme5_ozeti(traders)
     oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']
