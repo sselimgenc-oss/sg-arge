@@ -6,6 +6,8 @@ Son güncelleme: 2026-10-29, lider (Claude).
 
 **Lider devri (kullanıcı, 2026-10-30):** Pazartesiye (2.11) kadar Sonnet ortak lider, Codex bağımsız denetçi (önce pano/ofis denetimi). Bkz. `docs/LIDER_DEVIR.md`.
 
+**Yetki devri (kullanıcı, 2026-10-30):** Sonnet durdu, yetki lider Claude'a (Opus) döndü; ayrıntı `docs/LIDER_DEVIR.md` "Devir notu". Veri düzeltme işleri sg-arge#434'te (taslak, birleşmedi).
+
 **K‑8 (kullanıcı, 2026-10-30):** izleme 61 → 91 (havuzdan 30 sessiz `havuz` trader'ı, t0 30.10); koşu süresi iyiyse havuzun tamamı. Canlı oda: ileri veriyle eleme + kapı puanıyla sıralama.
 
 **Kalite kuralları (kullanıcı, 2026-10-30):** `AGENTS.md` sonu — küçük gerçek veri denemesi, birimli veri sözleşmesi, denetimde gerçek çıktı.
