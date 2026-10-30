@@ -3,6 +3,23 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-31 00:40 TR — E5 devamı: pano/ofis/Telegram artık v1 değil v3 gösteriyor (kullanıcı: "güncel motorumuz ona bağlansın")
+Kontrolde bulundu: `sg-pano` (ayrı yürütülen E5) `sanal_kopya_v2`'ye hiç bağlı değildi, `sanal_kopya_v3`'e (#453,
+bugün birleşti) de hiç bağlı değildi — pano/ofis/Telegram hâlâ v1'i (eski, trader hesabına oranlı, risksiz kopya)
+gösteriyordu. Üçü de v3'e geçirildi (`sg-pano/index.html` 6 yer, `ofis/gercek.js` 3 yer, `worker/src/index.js`
+`sanalKohort()`, `izleme_motoru.py::kasa_egrisi()`). v1/v2 silinmedi (kural 6), yalnız gösterilen sürüm değişti.
+- Gerçek bir hata bulundu ve düzeltildi: Telegram'daki `.filter(Boolean)` ve ofisteki `kol()` fonksiyonu
+  `{"durum":"hesaplanamadi"}` yer tutucusunu ELEMİYORDU (truthy nesne) — ortalama getiriye payda olarak giriyor,
+  pay olarak girmiyordu (sessizce düşük gösterim). Artık yalnız gerçek `getiri` sayısı olan girdiler sayılır.
+- Örnek veri (`izleme/ornek_durum.json`, iki repo) her trader'a `sanal_kopya_v3` kazandı (v1 ile aynı sayılar).
+- **Kural 6 kıyası (gerçek veri, O01/O02/B17):** O01 v1 +%5,87 ↔ v3 −%0,36; O02 ikisi de hesaplanamadı; B17 v1
+  +%0,16 ↔ v3 **−%32,73** (büyük/kaldıraçlı trader'da sabit-$ eğrisi çok daha büyük pay oynatıyor — tasarımın
+  kendisi, `sanal_kopya_v3` belgesinde zaten yazılı). Panodaki/Telegram'daki sayılar bu PR'dan sonra belirgin
+  değişecek; hata değil.
+- Kasıtlı dokunulmadı: `copytrade/degisim_rapor.py` hâlâ v1 okuyor — ön-kayıtlı (1.6) rotasyon ölçümünün kalıcı
+  tabanını v3 ile karıştırmamak için (ölçüm yöntemi test penceresinde değiştirilmez); kullanıcı kararı gerekir.
+- `python -m pytest -q`: 551 geçti. `worker node --test`: 40 geçti. `sg-pano` testleri (pano, gercek, replik, ui) geçti.
+
 ## 2026-10-30 23:15 TR — E2 devamı 2: v3'e tasfiye + aşamalı çıkış (kullanıcı: "dokümanda ne yazıyorsa onu yap")
 - GOREV_ETRE_GECIS.md'nin "bitti tanımı" kopya motorunun sabit tutar + çıkış kuralları + tasfiye üçünün BİRLİKTE
   çalışmasını istiyor (önceki E2 devamı bunu kasıtlı ayırmıştı, kapsam notunda açıkça yazılıydı).

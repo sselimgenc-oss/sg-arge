@@ -546,14 +546,17 @@ def with_data_error(trader: dict, error: Exception) -> dict:
 def kasa_egrisi(traderlar: list[dict], kol: str, gun: int = 90) -> list[list[object]]:
     """Koldaki sanal-kopya bakiyelerinin son ``gun`` günlük toplamı.
 
-    Her trader kendi son bilinen günlük bakiyesiyle taşınır; eksik eğri uydurulmaz.
-    Bu isteğe bağlı pano alanıdır, kapı/seçim hesabına girmez.
+    Güncel motor (`sanal_kopya_v3` — sabit tutar + çıkış kuralları + tasfiye, `GOREV_ETRE_GECIS.md`
+    bitti tanımı); v1 (`sanal_kopya`) silinmez/değişmez ama bu toplamın kaynağı artık o değil (kullanıcı
+    kararı 2026-10-30: "güncel motorumuz [pano/ofis/Telegram'a] bağlansın"). v3 hesaplanamamış bir trader
+    o günden dışarıda bırakılır (sıfır olarak sayılmaz) — her trader kendi son bilinen günlük bakiyesiyle
+    taşınır; eksik eğri uydurulmaz. Bu isteğe bağlı pano alanıdır, kapı/seçim hesabına girmez.
     """
     curves = []
     for trader in traderlar:
         if trader.get('kol') != kol:
             continue
-        values = {str(day): float(value) for day, value in trader.get('sanal_kopya', {}).get('egri', [])}
+        values = {str(day): float(value) for day, value in trader.get('sanal_kopya_v3', {}).get('egri', [])}
         if values:
             curves.append(values)
     dates = sorted({day for curve in curves for day in curve})[-gun:]

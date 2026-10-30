@@ -157,6 +157,12 @@ yalnız yeni `tutar_egrisi` parametresiyle — `golge.calistir`'in ön işlemesi
   adlandırmıyor), Etre'nin kaldıraç kademesi, teminat/marj modeli, "ikna" çarpanı.
 - Hesaplanamazsa `{"surum":"v3","durum":"hesaplanamadi","neden":...}`; v1/v2'yi etkilemez. Hiç okunmamış trader için
   `yer_tutucu: true`.
+- **Tüketiciler (2026-10-30, kullanıcı kararı):** `sg-pano` (pano + ofis) ve Telegram günlük özeti artık `sanal_kopya`
+  (v1) yerine `sanal_kopya_v3`'ü gösterir — v1/v2 silinmedi/değişmedi (kural 6), yalnız "canlı" gösterilen sürüm
+  budur. Bir tüketici `durum: "hesaplanamadi"` girdisini ortalamaya/toplama **0 olarak katmamalı**; gerçek `getiri`
+  sayısı olmayan girdiyi tamamen dışarıda bırakır (Telegram `sanalKohort()` ve ofis `gercek.js` `kol()`'daki
+  düzeltme deseni). `copytrade/degisim_rapor.py` (oda rotasyon ölçümü) kasıtlı olarak hâlâ v1 okur — kalıcı,
+  ön-kayıtlı bir tabanı karıştırmamak için; bu, kullanıcının ayrı bir kararı gerektirir.
 
 ## 3. Sağlık ışığı ve form (hesap Codex'te, `pano/saglik.py` yeniden kullanılır)
 | Işık | Koşul (herhangi biri) |

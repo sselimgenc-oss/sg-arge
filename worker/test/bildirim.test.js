@@ -51,7 +51,7 @@ test("varsayılan kipte (ozet) açılış/kapanış Telegram'a gitmez, ama kırm
 
 test("dailySummaryText: sanal kopya ölçeğinde oda kasası/getiri, oda−kontrol farkı, 24 saatlik işlem (altın örnek)", () => {
   const now = Date.parse("2026-10-30T06:00:00Z");
-  const t = (id, kol, bakiye, baslangic, getiri, isik = "yesil") => ({ id, kol, kollar: [kol], takma_ad: id, saglik: { isik }, sanal_kopya: { bakiye_usd: bakiye, baslangic_usd: baslangic, getiri } });
+  const t = (id, kol, bakiye, baslangic, getiri, isik = "yesil") => ({ id, kol, kollar: [kol], takma_ad: id, saglik: { isik }, sanal_kopya_v3: { bakiye_usd: bakiye, baslangic_usd: baslangic, getiri } });
   const status = {
     uretildi: "2026-10-30T05:50:00Z",   // 10 dk önce
     traderlar: [
@@ -73,6 +73,22 @@ test("dailySummaryText: sanal kopya ölçeğinde oda kasası/getiri, oda−kontr
   assert.match(text, /Son 24 saat: 2 işlem · 2 trader/);
   assert.match(text, /🟢 1 {3}🟡 1 {3}🔴 1/);
   assert.match(text, /Veri 10 dk önce/);
+});
+
+test("dailySummaryText: v3 hesaplanamamış trader ortalamaya 0 olarak girmez (dışarıda bırakılır)", () => {
+  const now = Date.parse("2026-10-30T06:00:00Z");
+  const t = (id, kol, bakiye, baslangic, getiri) => ({ id, kol, kollar: [kol], takma_ad: id, saglik: { isik: "yesil" }, sanal_kopya_v3: { bakiye_usd: bakiye, baslangic_usd: baslangic, getiri } });
+  const status = {
+    uretildi: "2026-10-30T05:50:00Z",
+    traderlar: [
+      t("O1", "oda", 1100, 1000, 0.10),
+      { id: "O2", kol: "oda", kollar: ["oda"], takma_ad: "O2", saglik: { isik: "sari" }, sanal_kopya_v3: { surum: "v3", durum: "hesaplanamadi", yer_tutucu: true, neden: "hiç okunmadı" } },
+    ],
+    olaylar: [],
+  };
+  const text = dailySummaryText(status, now);
+  // yalnız O1 sayılır (bakiye 1.100, getiri +10%); O2 hesaplanamadığı için ne kasaya ne ortalamaya 0 olarak girer
+  assert.match(text, /Oda kasası \(sanal\): \$1\.100 \(\+10,0%\)/);
 });
 
 test("checkStateAlerts: veri 3 saatten eskiyse uyarı gider, aynı durumda tekrarlanmaz", async () => {
