@@ -1,0 +1,39 @@
+name: Tek seferlik temizlik (eski dallar + eski çalıştırmalar)
+
+# Kullanıcı kararı 2026-10-30: işi bitmiş dallar ve eski Action çalıştırmaları silinir.
+# Liste dosyası değişip main'e girince bir kez çalışır; elle de başlatılabilir.
+# Korunan dallar listede yoktur (main, veri dalları, açık PR dalları).
+on:
+  push:
+    branches: [main]
+    paths: ['.github/temizlik/silinecek_dallar.txt']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  temizlik:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Eski dalları sil
+        run: |
+          while read -r dal; do
+            [ -z "$dal" ] && continue
+            case "$dal" in main|copytrade-izleme|copytrade-kapi|faz1-son) echo "korunan: $dal"; continue;; esac
+            gh api -X DELETE "repos/$REPO/git/refs/heads/$dal" && echo "silindi: $dal" || echo "yok/atlandı: $dal"
+          done < .github/temizlik/silinecek_dallar.txt
+      - name: Eski çalıştırmaları sil (her iş akışında son 5 kalır)
+        run: |
+          for wf in $(gh api "repos/$REPO/actions/workflows" --jq '.workflows[].id'); do
+            gh api --paginate "repos/$REPO/actions/workflows/$wf/runs?status=completed&per_page=100" --jq '.workflow_runs[].id' \
+              | tail -n +6 | while read -r run; do
+                [ "$run" = "${{ github.run_id }}" ] && continue
+                gh api -X DELETE "repos/$REPO/actions/runs/$run" >/dev/null && echo "çalıştırma silindi: $run" || true
+              done
+          done
