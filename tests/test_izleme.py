@@ -210,13 +210,17 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     one = m.run(root, root / 'out', client, NOW)
     two = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
     first, second = one['traderlar'][0], two['traderlar'][0]
-    drop = lambda t: {k: ({a: b for a, b in v.items() if a != 'son_isaret'} if k == 'sanal_kopya' else v)    # son_isaret koşuyla ilerler (işaret zamanı); sayılar aynı kalmalı
+    # son_isaret/payda_yontemi/payda_okuma_sayisi koşuyla ilerler (işaret zamanı, hesap_serisi okuma sayısı); sayılar aynı kalmalı.
+    drop = lambda t: {k: ({a: b for a, b in v.items() if a != 'son_isaret'} if k == 'sanal_kopya'
+                          else {a: b for a, b in v.items() if a not in ('payda_yontemi', 'payda_okuma_sayisi')} if k == 'sanal_kopya_v2'
+                          else v)
                       for k, v in t.items() if k != 'veri_zamani'}
     assert drop(first) == drop(second)
     assert second['veri_zamani'] == '2026-10-27T13:00:00Z'
     assert one['olaylar'] == two['olaylar']
     assert client.portfolio_reads == 2  # sağlık eğrisi saatlik yenilenir
-    assert client.candle_reads == 1 and client.mark_reads == 2       # yürütme mumu önbellekten; işaret her koşuda bir kez
+    # yürütme mumu (v1) önbellekten (sabit 1); v2'nin saatlik tasfiye mumu her koşuda bir artımlı okuma ekler (+1/koşu, kendi önbelleği ayrı).
+    assert client.candle_reads == 3 and client.mark_reads == 2       # işaret her koşuda bir kez
     starts = [x['startTime'] for x in client.calls if x['type'] == 'userFillsByTime']
     assert starts[-1] == client.rows[-1]['time']  # inclusive boundary is deduplicated
     saved = json.loads((root / 'out/motor.json').read_text())

@@ -3,6 +3,28 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-30 20:15 TR — E2: kopya hesabı v2 (tek motor, tasfiye, pozisyon tavanı, doğru payda/funding)
+- `copytrade/kopya_v2.py` (yeni): canlı `sanal_kopya` (v1, `izleme_motoru.copy_results`) `defter.copy_ledger`'ı
+  çıplak çağırıyordu — araştırma gölgesinde (`golge.py`) zaten var olan tasfiye/pozisyon tavanı mantığı canlıya
+  hiç bağlı değildi (DENETIM_TRADER_2026-10-30.md K3/K5/K6). v2 aynı motoru (`golge.calistir`, V0) kullanır: eski
+  taslak PR #434'ten (birleştirilmeyecek) `sanal_kopya_v2` bölümü güncel main'e yeniden uyarlanıp getirildi.
+- İki küçük destek düzeltmesi (tek motor çalışabilsin diye): `defter.Market.funding_cum` artık yalnız tam saatlik
+  mumları funding ızgarasına alıyor (1 dk işaret mumu karışınca fazladan/eksik funding sayma riski); `golge.v2_cikislari`
+  dolum üzerindeki hazır `_execution_*` alanını (v1'in zaten çektiği gecikmeli dakika mumu) kullanıyor.
+- `izleme_motoru.update_trader()`: `sanal_kopya_v2` v1 yanında yazılıyor; hata olursa yalnız v2 `{"durum":"hesaplanamadi"}`
+  döner, v1 düşmez (try/except, kural 6).
+- **Küçük gerçek veri denemesi** (canlı Hyperliquid, tek gerçek oda trader'ı O01, 8 sn): v1 getiri **+%7,18**, v2
+  getiri **+%0,95**. **Açıklanan fark:** O01'in gerçek açık pozisyonu (NEAR, 10x, hesabın %163'ü notional — HL'den
+  doğrulandı) v1'de kapsız kopyalanıyor, v2'nin pozisyon tavanı (`golge_pozisyon_tavan_carpani`=3,0) bunu kırpıyor;
+  tasfiye tetiklenmedi (`tasfiye=false`). Bu v2'nin **doğru çalıştığının** kanıtı, hata değil.
+- Test: `tests/test_kopya_v2.py` 8 altın örnek (tek motor=v1 eşitliği, tasfiye, tasfiye olmayan derin zarar, zamanla
+  değişen payda, yalnız kopyalanan pozisyonun funding'i, dakika mumu funding ızgarasına girmez, eksik hesap serisi,
+  boş hesap). `tests/test_izleme.py` 2 küçük güncelleme (v2'nin koşuyla ilerleyen alanları karşılaştırma dışı;
+  v2'nin kendi saatlik mum önbelleği ayrı sayaçla +1/koşu — regresyon değil, yeni, beklenen davranış).
+- `python -m pytest -q`: 535 geçti. `docs/VERI_SOZLESMESI.md` v1.9: `sanal_kopya_v2` şeması belgelendi.
+- **Kapsam dışı (ayrı iş, E3):** Etre'nin sabit $ işlem tutarı (hâlâ trader hesabına oranlı ölçek) ve aşamalı
+  zarar_kes/kar_al çıkışları — `golge.calistir` bunları bilerek `variant='V0'` ile uygulamıyor.
+
 ## 2026-10-30 19:45 TR — Sol'un 2. denetimi (%33): #445'teki gerçek bulgu düzeltildi, canlı kanıt eklendi
 - `docs/DENETIM_ETRE_GECIS_TEKRAR_2026-10-30.md` (#446): ilerleme puanı 4/12 (%33) — bu, 12 geniş Etre alanının
   kaba oranı, "bugünün işi eksik" anlamına gelmez; E2–E5 (kopya motoru, risk kuralları, oda yönetimi, pano) henüz
