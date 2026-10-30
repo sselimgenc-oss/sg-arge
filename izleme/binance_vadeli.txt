@@ -1,1 +1,1 @@
-# https://fapi.binance.com/fapi/v1/exchangeInfo | 2026-10-30T01:15:43.313743+00:00 | erişim engeli: HTTP 451
+# https://fapi.binance.com/fapi/v1/exchangeInfo | 2026-10-30T02:31:45.193364+00:00 | erişim engeli: HTTP 451
