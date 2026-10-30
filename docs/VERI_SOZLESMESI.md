@@ -54,12 +54,14 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 ```
 - `egri`: son 90 gün, günlük, t0'dan bağımsız trader'ın kümülatif PnL / hesap değeri (Hyperliquid `portfolio`).
 - `olaylar` (v1.6): **kol başına** son 200 olay (kolların birleşimi), yeniden eskiye; yoğun bir taban trader'ı oda olaylarını
-  düşüremez. Kesilmemiş tüm olaylar `olay_arsivi.jsonl.gz` dosyasında (gzip JSONL, eskiden yeniye, her satır bir olay).
+  düşüremez. Kesilmemiş tüm olaylar `olaylar/YYYY-MM-DDTHH.jsonl.gz` dosyalarında (saat UTC; gzip JSONL, eskiden yeniye, satır = olay; `sanal_sonuc` hariç, o türetilmiştir). Geçmiş saat dosyaları değişmez.
 - `gunluk_sayac` (v1.6): son 30 gün, `{gun (UTC, YYYY-MM-DD), kol (ana etiket), acilis, kapanis (olay sayısı), trader_sayisi}`;
   `buyutme`/`azaltma`/`isik` sayılmaz; kesilmemiş olaylardan hesaplanır.
 - `sanal_kopya.fiyatsiz_eylem` (v1.6, sayı) ve `fiyatsiz_coinler` (liste): yürütme fiyatı (1 dk/1 sa mum) bulunamayan kopya eylemleri.
-  Bu coinlerin TÜM eylemleri sanal defter dışı bırakılır (yarım defter ters pozisyon doğurmasın), `not`: "fiyatsız eylem";
-  diğer coinler ve trader geçerli kalır. Mum sonraki koşuda gelirse otomatik hesaplanır (önbellekte eksik saklanmaz).
+  Fiyatlanamayan eylemler sanal defter dışı bırakılır, `not`: "fiyatsız eylem";
+  diğer coinler ve trader geçerli kalır. Yalnız fiyatlanamayan eylem çıkar; sonraki eylemler defterdeki gerçek ele göre kırpılır
+  (fazlası atılır, elde yokken azaltma atılır → ters pozisyon açılmaz). `fiyatsiz_acik_coinler`: fiyatsız eylemlerin net miktarı ≠ 0 olan
+  coinler (gerçek kopya pozisyonu defterden farklı olabilir). Mum sonraki koşuda gelirse otomatik hesaplanır (önbellekte eksik saklanmaz).
 - `traderlar[].veri_durumu` (v1.6): `tamam` | `perp_hesabi_bos` (güncel perp hesap değeri 0; spot bakiye ayrı, "veri yok" değildir;
   `gecerli=false`, önceki sonuç korunur, kol üyeliği değişmez, analizde kapsam dışı sayımı raporlanır) | `veri_hatasi` (API/okuma hatası).
 - `kapsam` (v1.6, üst düzey): kol adı (`kollar` üyeliğiyle; ana etiket değil) → `{toplam, gecerli, eski, yer_tutucu, perp_hesabi_bos}` trader sayıları.

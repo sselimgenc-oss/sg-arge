@@ -356,14 +356,14 @@ def test_exact_candle_required_and_cache_survives_window_rollover():
 def test_failure_preserves_last_successful_payloads(tmp_path):
     root, client = project(tmp_path), Client()
     m.run(root, root / 'out', client, NOW)
-    previous = {p.name: p.read_bytes() for p in (root / 'out').iterdir()}
+    previous = {str(p.relative_to(root / 'out')): p.read_bytes() for p in (root / 'out').rglob('*') if p.is_file()}
     client.rows.append(fill('2026-10-27T12:00Z', 2, 'B', 1, 1))
     def broken(*args, **kwargs):
         raise ValueError('API hatası')
     client.fills = broken      # madde 2 sonrası eksik mum hata değil "fiyatsız"; tüm trader'ların hatası başka nedenle
     with pytest.raises(RuntimeError, match='Tüm trader'):
         m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
-    assert previous == {p.name: p.read_bytes() for p in (root / 'out').iterdir()}
+    assert previous == {str(p.relative_to(root / 'out')): p.read_bytes() for p in (root / 'out').rglob('*') if p.is_file()}
 
 
 def test_eksik_mum_trader_i_gecersiz_yapmaz_fiyatsiz_raporlanir(tmp_path):
@@ -753,9 +753,13 @@ def test_kosu_kesilmemis_olay_arsivi_ve_kapsam_yazar(tmp_path):
     root, output = project(tmp_path, [styled_row()]), tmp_path / 'out'
     client = Client([fill('2026-10-27T10:00:00Z', 1), fill('2026-10-27T10:30:00Z', 2, side='A', size=1, before=1, price=110)])
     result = m.run(root, output, client, NOW)
-    lines = gzip.decompress((output / 'olay_arsivi.jsonl.gz').read_bytes()).decode().splitlines()
+    lines = gzip.decompress((output / 'olaylar/2026-10-27T10.jsonl.gz').read_bytes()).decode().splitlines()
     ids = [json.loads(x)['id'] for x in lines]
-    assert ids == ['T1-1-acilis', 'T1-2-kapanis']          # eskiden yeniye, hiçbiri kesilmemiş
+    assert ids == ['T1-1-acilis', 'T1-2-kapanis']          # 10:00 ve 10:30 aynı saat parçasında, kesilmemiş
+    assert all('sanal_sonuc' not in json.loads(x) for x in lines)   # türetilmiş alan arşive yazılmaz (parça değişmez kalır)
+    before = (output / 'olaylar/2026-10-27T10.jsonl.gz').read_bytes()
+    m.run(root, output, client, NOW + pd.Timedelta(hours=1))
+    assert (output / 'olaylar/2026-10-27T10.jsonl.gz').read_bytes() == before   # değişmeyen saat: aynı bayt, git'te yeni nesne yok
     assert result['olay_kapsami']['toplam'] == 2 and result['olay_kapsami']['tam'] is True
     assert [(r['kol'], r['acilis'], r['kapanis']) for r in result['gunluk_sayac']] == [(result['traderlar'][0].get('kol', ''), 1, 1)]
     assert json.loads((output / 'durum.json').read_text())['gunluk_sayac'] == result['gunluk_sayac']
@@ -771,20 +775,35 @@ def test_eksik_mum_kumeye_yazilir_hata_vermez():
     assert eksik == {('US500', m.millis('2026-10-27T10:30:00Z'))} and candles == {}
 
 
-def test_fiyatsiz_coin_defter_disi_diger_coin_hesaplanir():
-    # BTC: 10:00'da 1 adet al @100 (mum 10:30'da açılış 100), 11:00'de sat; mum 11:30'da 110.
-    # Altın örnek: brüt +10 $, maliyet 2×(110/100…) ~ hesap 1000 $ ölçeği → bakiye > 1000.
-    # US500 için mum yok → o coinin eylemi fiyatsız (1 eylem), BTC sonucu tek başına BTC defteri ile aynı.
-    btc = [fill('2026-10-27T10:00:00Z', 1, price=100), fill('2026-10-27T11:00:00Z', 2, side='A', before=1, price=110)]
-    us = [fill('2026-10-27T10:05:00Z', 3, coin='US500', price=5000)]
+def test_fiyatsiz_eylem_yalniz_kendisini_cikarir_baska_coin_ve_ayni_coin_etkilenmez():
+    # Altın örnek (BTC, hesap 1.000 $): al 1 @100 (fiyatlı), al 1 (10:20, mum YOK → fiyatsız), sat 2 @110 (fiyatlı).
+    # Defter: al 1 @100, sat → ele göre 1'e kırpılır @110. Beklenen = yalnız [al 1 @100, sat 1 @110] defteri.
+    btc = [fill('2026-10-27T10:00:00Z', 1, price=100),
+           fill('2026-10-27T10:20:00Z', 2, price=105, before=1),
+           fill('2026-10-27T11:00:00Z', 3, side='A', size=2, before=2, price=110)]
     candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:30:00Z'), 'o': 110.0}]}
-    ref = m.copy_results(btc, candles, [], 1000, T0, NOW, {})
-    mixed = m.copy_results(sorted(btc + us, key=lambda x: x['time']), candles, [], 1000, T0, NOW, {}, fiyatsiz_izin=True)
-    assert mixed['fiyatsiz_eylem'] == 1 and mixed['fiyatsiz_coinler'] == ['US500']
-    assert mixed['bakiye_usd'] == pytest.approx(ref['bakiye_usd']) and ref['fiyatsiz_eylem'] == 0
-    assert 'fiyatsız eylem' in mixed['not']
+    ref = m.copy_results([btc[0], dict(btc[2], sz='1', startPosition='1')], candles, [], 1000, T0, NOW, {})
+    got = m.copy_results(btc, candles, [], 1000, T0, NOW, {}, fiyatsiz_izin=True)
+    assert got['bakiye_usd'] == pytest.approx(ref['bakiye_usd']) and got['bakiye_usd'] > 1000
+    assert got['fiyatsiz_eylem'] == 1 and got['fiyatsiz_coinler'] == ['BTC']
+    assert got['fiyatsiz_acik_coinler'] == ['BTC']              # fiyatsız eylemin net miktarı +1: gerçek kopya defterden farklı
+    # Başka coin etkilenmez: US500'ün fiyatsız eylemi BTC sonucunu değiştirmez.
+    us = fill('2026-10-27T10:05:00Z', 9, coin='US500', price=5000)
+    mixed = m.copy_results(sorted(btc + [us], key=lambda x: x['time']), candles, [], 1000, T0, NOW, {}, fiyatsiz_izin=True)
+    assert mixed['bakiye_usd'] == pytest.approx(got['bakiye_usd']) and mixed['fiyatsiz_eylem'] == 2
+    assert mixed['fiyatsiz_coinler'] == ['BTC', 'US500'] and 'fiyatsız eylem' in mixed['not']
     with pytest.raises((ValueError, KeyError)):   # izin yoksa eski sıkı davranış
-        m.copy_results(sorted(btc + us, key=lambda x: x['time']), candles, [], 1000, T0, NOW, {})
+        m.copy_results(btc, candles, [], 1000, T0, NOW, {})
+
+
+def test_fiyatsiz_acilis_sonrasi_fiyatli_kapanis_ters_pozisyon_acmaz():
+    # al 1 (mum yok → fiyatsız), sat 1 @110 (fiyatlı) → elde yok, kapanış atılır; bakiye 1.000, ters pozisyon yok.
+    fills = [fill('2026-10-27T10:00:00Z', 1, price=100),
+             fill('2026-10-27T11:00:00Z', 2, side='A', size=1, before=1, price=110)]
+    candles = {'BTC': [{'t': m.millis('2026-10-27T11:30:00Z'), 'o': 110.0}]}
+    got = m.copy_results(fills, candles, [], 1000, T0, NOW, {}, fiyatsiz_izin=True)
+    assert got['bakiye_usd'] == 1000 and got['acik'] == 0 and got['fiyatsiz_eylem'] == 1
+
 
 
 # ---------------------------------------------------------------- madde 3: perp hesabı sıfır ≠ veri yok

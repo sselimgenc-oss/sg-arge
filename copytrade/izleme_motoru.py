@@ -335,20 +335,45 @@ def copy_actions(fills: list[dict]) -> list[dict]:
     return result
 
 
+def fiyatli_eylemler(mature: list[dict], prices: dict, delay: int) -> tuple[list[dict], int, dict[str, float]]:
+    """Fiyatlanamayan eylemleri ayırır; kalanları defterdeki gerçek elde tutulana göre kırpar.
+
+    Dönüş: (deftere girecek eylemler, fiyatsız eylem sayısı, coin → fiyatsız eylemlerin net işaretli miktarı).
+    """
+    held: dict[str, float] = {}
+    kept, net, count = [], {}, 0
+    for fill in mature:
+        coin = fill['coin']
+        signed = float(fill['sz']) * (-1 if fill['side'] == 'A' else 1)
+        execution = math.ceil((int(fill['time']) + delay * MINUTE) / MINUTE) * MINUTE
+        if execution not in prices.get(coin, {}):
+            count += 1
+            net[coin] = net.get(coin, 0.0) + signed
+            continue
+        current = held.get(coin, 0.0)
+        if current * signed < 0 and abs(signed) > abs(current):
+            signed = -current                      # fazlası ters pozisyon açardı: at
+        if abs(signed) < 1e-10:
+            continue
+        # Elde yokken azaltma/kapama (önceki açılış fiyatsızdı): deftere girmez.
+        if current == 0.0 and float(fill.get('startPosition', 0)) * signed < 0:
+            continue
+        held[coin] = current + signed
+        kept.append(dict(fill, sz=str(abs(signed)), startPosition=str(current)))
+    return kept, count, net
+
+
 def copy_results(fills: list[dict], candles: dict, funding: list[dict], account: float,
                  t0: pd.Timestamp, now: pd.Timestamp, events: dict, approximate: bool = False, delay: int = 30,
                  fiyatsiz_izin: bool = False) -> dict:
     prices = {coin: {int(c['t']): float(c['o']) for c in rows} for coin, rows in candles.items()}
     # Pending fills are not charged before their execution time (tarza göre gecikme: intraday 30, swing 120 dk).
     mature = [f for f in fills if math.ceil((int(f['time']) + delay * MINUTE) / MINUTE) * MINUTE <= millis(now)]
-    # Fiyatsız eylem (yürütme mumu yok): sayılır ve raporlanır, diğerleri hesaplanır. Yarım defter ters pozisyon
-    # doğurabileceğinden o coinin TÜM eylemleri defter dışı bırakılır (konservatif); başka coinler etkilenmez.
-    fiyatsiz_coinler: set[str] = set()
+    # Fiyatsız eylem (yürütme mumu yok): yalnız o eylem defter dışı kalır, sayılır ve raporlanır. Defter ters pozisyon
+    # doğurmasın diye sonraki eylemler defterdeki gerçek elde tutulana göre kırpılır (fazlalık atılır, elde yokken azaltma atılır).
+    fiyatsiz_eylem, fiyatsiz_net = 0, {}
     if fiyatsiz_izin:
-        fiyatsiz_coinler = {f['coin'] for f in mature
-                            if math.ceil((int(f['time']) + delay * MINUTE) / MINUTE) * MINUTE not in prices.get(f['coin'], {})}
-    fiyatsiz_eylem = sum(1 for f in mature if f['coin'] in fiyatsiz_coinler)
-    mature = [f for f in mature if f['coin'] not in fiyatsiz_coinler]
+        mature, fiyatsiz_eylem, fiyatsiz_net = fiyatli_eylemler(mature, prices, delay)
     days = pd.date_range(t0.normalize(), now.normalize(), freq='1D')
     # Sonuç kanonik defterden (defter.copy_ledger) gelir: gerçekleşmiş + açık (işaretlenmiş) K/Z ayrı yayımlanır.
     ledger_fills = []
@@ -434,7 +459,9 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
             'gerceklesen': ledger['realized'] + funding_frac, 'acik': ledger['unrealized_end'], 'toplam': ledger['net'] + funding_frac,
             'son_isaret': at_ms(ledger['mark_time']) if ledger['mark_time'] is not None else None, 'isaret_eksik': int(ledger['mark_missing'])}
     result['fiyatsiz_eylem'] = fiyatsiz_eylem
-    result['fiyatsiz_coinler'] = sorted(fiyatsiz_coinler)
+    result['fiyatsiz_coinler'] = sorted(fiyatsiz_net)
+    # Fiyatsız eylemlerin net işaretli toplamı sıfır değilse o coinde gerçek kopya pozisyonu defterden farklı olabilir.
+    result['fiyatsiz_acik_coinler'] = sorted(coin for coin, size in fiyatsiz_net.items() if abs(size) > 1e-10)
     notes = (['yaklaşık fiyat'] if approximate else []) + (['eksik işaretleme'] if ledger['mark_missing'] else []) \
         + (['fiyatsız eylem'] if fiyatsiz_eylem else [])
     if notes:
@@ -786,13 +813,22 @@ def olay_ozeti(all_events: dict, traders: list[dict], now: pd.Timestamp, tam: bo
 
 
 def write_event_archive(output: Path, all_events: dict) -> None:
-    """Kesilmemiş olay arşivi: tek gzip JSONL, zamana göre eskiden yeniye (deterministik bayt)."""
-    lines = ''.join(json.dumps(e, ensure_ascii=False, sort_keys=True, allow_nan=False) + '\n'
-                    for e in sorted(all_events.values(), key=lambda e: (e['zaman'], e['id'])))
-    temporary = output / 'olay_arsivi.jsonl.gz.tmp'
-    with open(temporary, 'wb') as raw, gzip.GzipFile(fileobj=raw, mode='wb', mtime=0) as handle:
-        handle.write(lines.encode('utf-8'))
-    temporary.replace(output / 'olay_arsivi.jsonl.gz')
+    """Kesilmemiş olay arşivi: saat (UTC) başına tek gzip JSONL, ``olaylar/YYYY-MM-DDTHH.jsonl.gz``.
+
+    Değişmez parçalar: bayt-deterministik (mtime=0, sıralı) ve türetilmiş ``sanal_sonuc`` yazılmaz (kapanışta değişir). Böylece geçmiş saat
+    dosyaları git'te yeni nesne üretmez; yalnız içinde bulunulan saatin dosyası değişir (veri dalı geçmişi şişmez).
+    """
+    by_hour: dict[str, list[dict]] = {}
+    for event in sorted(all_events.values(), key=lambda e: (e['zaman'], e['id'])):
+        by_hour.setdefault(event['zaman'][:13], []).append({k: v for k, v in event.items() if k != 'sanal_sonuc'})
+    folder = output / 'olaylar'
+    folder.mkdir(parents=True, exist_ok=True)
+    for hour, events in by_hour.items():
+        lines = ''.join(json.dumps(e, ensure_ascii=False, sort_keys=True, allow_nan=False) + '\n' for e in events)
+        temporary = folder / f'{hour}.jsonl.gz.tmp'
+        with open(temporary, 'wb') as raw, gzip.GzipFile(fileobj=raw, mode='wb', mtime=0) as handle:
+            handle.write(lines.encode('utf-8'))
+        temporary.replace(folder / f'{hour}.jsonl.gz')
 
 
 def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
