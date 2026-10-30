@@ -554,12 +554,24 @@ def clearinghouse_states(client: PublicClient, address: str, dexes: list[str]) -
     return states
 
 
+class PerpHesapBos(ValueError):
+    """Güncel perp hesap değeri 0: "veri yok" değil "perp hesabı boş/kapalı" (spot bakiye ayrı; madde 3)."""
+
+
+def veri_durumu(error: Exception | None) -> str:
+    """``tamam`` | ``perp_hesabi_bos`` | ``veri_hatasi`` (veri sözleşmesi v1.6)."""
+    if error is None:
+        return 'tamam'
+    return 'perp_hesabi_bos' if isinstance(error, PerpHesapBos) else 'veri_hatasi'
+
+
 def with_data_error(trader: dict, error: Exception) -> dict:
     previous = copy.deepcopy(trader)
     short = data_error_reason(error)
     reasons = [reason for reason in previous['saglik']['nedenler'] if not reason.startswith('veri hatası:')]
     previous['saglik']['nedenler'] = reasons + [f'veri hatası: {short}']
     previous['gecerli'] = False
+    previous['veri_durumu'] = veri_durumu(error)
     return previous
 
 
@@ -598,6 +610,7 @@ def unavailable_trader(root: Path, row: dict, error: Exception) -> dict:
     style = resolve_style(root, row)
     return {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': None, 'gecerli': False,
             'kapi': gate_result(root, row['adres']),
+            'veri_durumu': veri_durumu(error),
             'saglik': {'isik': 'sari', 'nedenler': [f'veri hatası: {data_error_reason(error)}']},
             'form': {'skor': 0.0, 'getiri_30g': 0.0, 'getiri_90g': 0.0},
             'hesap_degeri': 0.0, 'pozisyonlar': [], 'egri': [],
@@ -654,7 +667,9 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
     history = portfolio_curve(saved['portfolio'], now, float(saved['saglik_paydasi']))
     states = clearinghouse_states(client, address, dexes)
     account, positions = positions_from_state(states, fills, symbols, now)
-    if account <= 0:
+    if account == 0:
+        raise PerpHesapBos(f'{ident}: perp hesabı boş/kapalı (hesap değeri 0); spot bakiye ayrı, sanal defter hesaplanmadı.')
+    if account < 0:
         raise ValueError(f'{ident}: pozitif hesap değeri gerekli; sanal defter hesaplanamadı.')
     saved.setdefault('kopya_paydasi', account)
     copy_fills = [f for f in perp_fills(fills) if int(f['time']) >= millis(t0)]
@@ -700,7 +715,7 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
         last_trade = {'coin': last['coin'], 'yon': 'long' if float(ending.get('startPosition', 0)) > 0 else 'short',
                       'acilis': iso(last['open_time']) if last['open_time'] is not None else '',
                       'kapanis': iso(last['close_time']), 'net_yuzde': last['net_pnl'] / notional if notional else 0.0}
-    trader = {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': iso(now), 'gecerli': True,
+    trader = {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': iso(now), 'gecerli': True, 'veri_durumu': 'tamam',
               'kapi': gate_result(root, address), 'saglik': light,
               'form': {'skor': ret30 / volatility if volatility > 0 and math.isfinite(volatility) else 0.0,
                        'getiri_30g': ret30, 'getiri_90g': float(recent.iloc[-1] - recent.iloc[0]) if len(recent) else 0.0},

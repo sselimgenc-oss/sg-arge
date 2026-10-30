@@ -785,3 +785,47 @@ def test_fiyatsiz_coin_defter_disi_diger_coin_hesaplanir():
     assert 'fiyatsız eylem' in mixed['not']
     with pytest.raises((ValueError, KeyError)):   # izin yoksa eski sıkı davranış
         m.copy_results(sorted(btc + us, key=lambda x: x['time']), candles, [], 1000, T0, NOW, {})
+
+
+# ---------------------------------------------------------------- madde 3: perp hesabı sıfır ≠ veri yok
+def test_perp_hesabi_sifir_ayri_durum_kodu_alir(tmp_path):
+    rows = [{'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Bir', 'durum': 'izlemede', 't0': str(T0.date())},
+            {'id': 'T2', 'adres': '0x' + '2' * 40, 'takma_ad': 'İki', 'durum': 'izlemede', 't0': str(T0.date())},
+            {'id': 'T3', 'adres': '0x' + '3' * 40, 'takma_ad': 'Üç', 'durum': 'izlemede', 't0': str(T0.date())}]
+    root = project(tmp_path, rows)
+
+    class Karisik(Client):
+        def info(self, payload, weight=20):
+            if payload['type'] == 'clearinghouseState' and not payload.get('dex'):
+                self.account = 0 if payload['user'] == rows[1]['adres'] else 1000
+            return super().info(payload, weight)
+
+        def fills(self, address, start):
+            if address == rows[2]['adres']:
+                raise RuntimeError('API yok')
+            return super().fills(address, start)
+    result = m.run(root, root / 'out', Karisik(), NOW)
+    durum = {t['id']: (t['veri_durumu'], t['gecerli']) for t in result['traderlar']}
+    assert durum == {'T1': ('tamam', True), 'T2': ('perp_hesabi_bos', False), 'T3': ('veri_hatasi', False)}
+    bos = next(t for t in result['traderlar'] if t['id'] == 'T2')
+    assert 'perp hesabı boş/kapalı' in bos['saglik']['nedenler'][0]
+
+
+def test_perp_hesabi_sifir_onceki_sonucu_korur_ve_etiketler(tmp_path):
+    rows = [{'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Bir', 'durum': 'izlemede', 't0': str(T0.date())},
+            {'id': 'T2', 'adres': '0x' + '2' * 40, 'takma_ad': 'İki', 'durum': 'izlemede', 't0': str(T0.date())}]
+    root, client = project(tmp_path, rows), Client()
+    first = m.run(root, root / 'out', client, NOW)
+    original = client.info
+
+    def info(payload, weight=20):
+        if payload['type'] == 'clearinghouseState' and not payload.get('dex') and payload['user'] == ADDRESS:
+            client.account = 0
+        else:
+            client.account = 1000
+        return original(payload, weight)
+    client.info = info
+    result = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
+    t = next(x for x in result['traderlar'] if x['id'] == 'T1')
+    assert (t['gecerli'], t['veri_durumu']) == (False, 'perp_hesabi_bos')
+    assert t['sanal_kopya']['bakiye_usd'] == pytest.approx(next(x for x in first['traderlar'] if x['id'] == 'T1')['sanal_kopya']['bakiye_usd'])
