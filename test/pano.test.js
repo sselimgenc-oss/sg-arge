@@ -88,7 +88,7 @@ function kollu() {                                   // kol alanı olan varyant
   ok('Kasa: açık işlem ve son kapanan tabloları, eksik likidasyon verisini dürüstçe gösterir', /Açık işlemler/.test(kasa) && /Son kapananlar/.test(kasa) && /veri yok/.test(kasa));
   await ctx.close();
   ({ ctx, pg } = await ac({ durum: kasaSentetik })); await pg.click('[data-nav=kasa]'); await sleep(200);
-  ok('Kasa sentetik altın örneği: oda 1.050 $, kontrol 1.020 $, teminat 100 $ (nosyonel 200 $ / 2x)', /1\.050 \$/.test(await metin(pg, '#kasaMain')) && /1\.020 \$/.test(await metin(pg, '#kasaMain')) && /100 \$/.test(await metin(pg, '#kasaMain')));
+  ok('Kasa sentetik altın örneği: oda 1.050 $, kontrol 2.120 $ (K1 1.020 + E1 1.100: kollar üyeliği, ana etiketi elle), teminat 100 $ (nosyonel 200 $ / 2x)', /1\.050 \$/.test(await metin(pg, '#kasaMain')) && /2\.120 \$/.test(await metin(pg, '#kasaMain')) && /100 \$/.test(await metin(pg, '#kasaMain')));
   await ctx.close();
   ({ ctx, pg } = await ac({ durum: kollu() }));
   await pg.click('[data-nav=traderlar]'); await sleep(300);

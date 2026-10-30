@@ -60,7 +60,7 @@
     $('#acikN').textContent = P.ornekMi() || rows.length ? rows.length : '–';
     if (!rows.length) { $('#acikIcerik').innerHTML = P.ornekMi() ? '<p class="bos">Açık gölge işlemi yok.</p>' : '<p class="bos">' + GRIN + '</p>'; return; }
     const lc = v => (v == null ? '' : v <= 10 ? 'dn' : v <= 20 ? 'wr' : 'fl');
-    $('#acikIcerik').innerHTML = '<table class="tab"><caption class="sr">Açık gölge işlemleri</caption><thead><tr><th scope="col">İşlem</th><th scope="col">Trader</th><th scope="col" class="r">Süre</th><th scope="col" class="r">K/Z</th><th scope="col" class="r" title="Likidasyona uzaklık">Lik.</th></tr></thead><tbody>' +
+    $('#acikIcerik').innerHTML = '<table class="tab"><caption class="sr">Açık gölge işlemleri</caption><thead><tr><th scope="col">İşlem</th><th scope="col">Trader</th><th scope="col" class="r">Süre</th><th scope="col" class="r" title="Trader K/Z, 1.000 $ sanal ölçeğe çevrilmiş">K/Z (1.000 $)</th><th scope="col" class="r" title="Likidasyona uzaklık">Lik.</th></tr></thead><tbody>' +
       rows.map(x => {
         const t = st.traders[x.trader] || {};
         return '<tr data-id="' + esc(x.id) + '"><td><button class="sb" data-trader="' + esc(x.trader) + '"><i class="kt ' + (x.yon === 'long' ? 'lg' : 'sh') + '"></i><b>' + esc(x.coin) + '</b> <span class="yon ' + (x.yon === 'long' ? 'lg' : 'sh') + '">' + (x.yon === 'long' ? 'LONG' : 'SHORT') + ' ' + x.kaldirac + 'x</span></button></td>' +
