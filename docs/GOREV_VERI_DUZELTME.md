@@ -48,3 +48,37 @@ Her madde için test; sg-arge ve sg-pano ayrı PR; Sol 6.1'e tekrar denetim içi
     ya da sıra tabanlı ölçü (dilim içi medyan + Spearman); sentetik doğrulamaya "küçük payda" vakası ekle. Ardından yeniden koşu.
 14. **Kararsız test (orta):** PR #421'in CI koşusunda `tests/test_kalicilik.py` skor testi bir kez başarısız (calmar/kar_ay
     beklenen değerden farklı); yerelde 6/6 ve sonraki CI'lar yeşil. Sıra/ortak durum bağımlılığını bul ve düzelt.
+
+## Ek 2 (lider, birleşik derin denetim — K‑9 onaylı) — Sonnet
+Kaynak: `docs/DENETIM_TRADER_2026-10-30.md` + Codex derin denetimi (bulgu no'ları `C#`). Sıra: önce 15–19 (teknik), sonra 20–23 (v2), sonra 24–25.
+Her madde test ile; önce küçük gerçek veri denemesi (AGENTS.md kalite kuralı 1); çıktıyı gerçek `durum.json`'da göster.
+
+**Teknik / gösterim (onay gerekmez)**
+15. **Geçerlilik ayrımı (C#3, C#8):** `gecerli` yerine durum kodu `tamam | fiyatsiz | perp_bos | okuma_hatasi | bayat`. 1.000 $ yer
+    tutucu yayımlanmasın (`yer_tutucu=true` ya da null). Pano/Worker toplamları: geçerli alt toplam + geçersiz/eski alt toplam + kapsama %;
+    üye sayısı (ITT) sabit gösterilir. Tek coin fiyatsızsa yalnız o coin ölçüm dışı (dışlama günlüğü), trader düşmez.
+16. **Olaylar ve 24 saat (C#5):** `olaylar[:200]` kesmesi 24 saat sayacını bozuyor (200 olay ≈ 30 dk). Kol/gün sayaçları motorda
+    hesaplansın (`sayac_24s`: açılış, kapanış, trader, kazanma); pano/Worker bunları kullansın. Arşiv şişmesi notunla birlikte çöz.
+17. **Eğri = kasa (C#4):** `kasa_egri` üyeliği `kollar` ile; eğrisi olmayan "eksik kapsama". Son nokta kasa ile mutabık değilse uyarı.
+18. **Eksik işaret fiyatı (C#9):** `mark_missing>0` satır ve kasa `eksik_degerleme=true`; pano "bilinmiyor" gösterir. Ofis teminat
+    `null`'u 0 toplamasın (C#13).
+19. **Worker (C#10, C#11, G1):** günlük özet "06:00 UTC sonrası ve bugün gönderilmedi" koşuluyla (kaçarsa telafi, "gecikmeli" etiketi);
+    durum okuma/dolum/tetikleme hataları D1 sağlık kaydına + alarm; `GET /kararlar` anahtar ile (Secrets), pano okumuyorsa 404 iddiası kalksın.
+    Zaman alanları (C#16): `kosu_baslangic`, `kosu_bitis`, trader `veri_zamani`, kol bazında en eski yaş.
+
+**Kopya hesap v2 (K‑9: v1 silinmez, yan yana)**
+20. **Tek motor (C#1):** canlı `copy_results` ile `golge.calistir` aynı yürütme + tasfiye fonksiyonunu kullansın. Altın örnek testi:
+    aynı girdi → aynı sonuç (O10 dahil).
+21. **Tasfiye / taban (C#2, K3):** sanal özsermaye ≤ 0 → tasfiye, bakiye 0'da kalır, `tasfiye_zamani` yayımlanır. O10 v2 değeri raporlanır.
+22. **Zamanla değişen payda (C#7, K2):** `kopya_paydasi` sabit değil; `capital_scale` hesap değeri zaman serisiyle (saatlik okumalar;
+    t0–ilk okuma arası veri yoksa ilk okuma, `payda_yontemi` etiketiyle). O10 13.629→28.550 vakası testte.
+23. **Funding yalnız kopyalanan pozisyondan (K4):** t0 öncesi devralınan, kopyalanmayan pozisyonların funding'i sanal kasaya yazılmaz;
+    sanal lot büyüklüğü × oran. Sanal açık lotlar `durum.json`'da (madde 6/8 ile birleşir); kasa tablosu yalnız bunlardan.
+
+**Tanısal (K‑9: birincil analiz değişmez)**
+24. **`gecikme5` kolu:** oda adresleri 5 dk gecikmeyle paralel v2 sanal kopya; Telegram yok; panoda oda yanında tek satır.
+25. **Risk tanısı:** oda brüt kaldıraç (Σ|notional| / sermaye) ve en büyük tek coin payı yayımlansın; tavan (önce `kurallar.yaml`)
+    aşılırsa uyarı. Eksik veri >%5 ise karar fonksiyonu `sinanamadi` döner (C#15). Oda–kontrol denge tablosu (coin, yön, kaldıraç,
+    sıklık) tanısal rapor (C#14).
+
+Teslim: her grup (15–19, 20–23, 24–25) ayrı PR; Sol'a tekrar denetim notu.
