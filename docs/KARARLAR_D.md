@@ -128,3 +128,9 @@ Görev: `docs/GOREV_D_YOLU.md`.
 - `AGENTS.md` kural 4–8: yeni özellik dondurması, strateji kilidi, hesap değişikliği yan yana (v2), her iş tek yerde, tek yazar/tek denetçi.
 - Plan: `GOREV_VERI_DUZELTME.md` "Sadeleştirme" (S1–S5). Ayrı büyük yeniden yazım yok; mevcut maddelerin içinde yapılır.
 - K‑8 havuz genişletmesi (30 → +30, motor ≈ 60 dk) dondurma bitene kadar bekler; 91 trader'da motor adımı 45 dk.
+
+### K‑11. Etre'nin üstün olduğu her şey alınır (kullanıcı kararı 2026-10-30: "sorgusuz sualsiz bizden iyi olduğu her şeyi alıp bizimkinin yerine koymak")
+- Alanlar: program/kullanılabilirlik, plan, veri hattı, risk/çıkış, mimari, yönetim/sadelik, mühendislik, pano/ofis, simülasyon
+  gerçekçiliği, hız, kopya mekaniği, hedef netliği. Görev: `docs/GOREV_ETRE_GECIS.md`. K‑9/K‑10 görev listeleri askıda.
+- Korunan: güvenlik (gerçek para/emir/çekim yok), ölçüm yöntemi, seçim mantığı, bulut işletim. Etre kodu alınırsa GPL‑3.0 + atıf.
+- Yürütme: Sonnet tek lider ve birleştirme yetkili; Codex (Sol) denetçi.

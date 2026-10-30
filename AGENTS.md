@@ -44,7 +44,7 @@ Belgeler ve durum notları Türkçe, kısa ve maddeli.
    çıktıya (sayı, ekran görüntüsü, rapor) bakar ve akıl sağlığını kontrol eder (ör. getiri milyonlarca % olamaz, sanal kasa 1.000 $
    ölçeğinden sapamaz, sayılar ofis ↔ pano ↔ Telegram'da aynı). Bulgusuz denetim de PR'a "kontrol edilen çıktı" diye not düşülür.
 
-## Sadeleştirme kuralları (kullanıcı kararı 2026-10-30; K‑10)
+## Sadeleştirme kuralları (kullanıcı kararı 2026-10-30; K‑10; K‑11 ile kural 4 `GOREV_ETRE_GECIS.md` için kalktı)
 4. **Yeni özellik dondurması.** `GOREV_VERI_DUZELTME.md` 15–23 bitene kadar yeni kol, gösterge, ekran, iş akışı eklenmez (havuz
    genişletmesi dahil). Yalnız düzeltme ve sadeleştirme.
 5. **Strateji kilitli.** Seçim sürümü, oda/kontrol listeleri, eşikler ve ön kayıt yalnız kullanıcının açık kararıyla değişir.
@@ -52,4 +52,4 @@ Belgeler ve durum notları Türkçe, kısa ve maddeli.
    PR'da eski ↔ yeni sayılar yan yana (oda, kontrol, O10); açıklanamayan fark varsa birleştirilmez. O10 altın örnek testi zorunlu.
 7. **Her iş tek yerde.** Aynı hesap ikinci bir yerde yazılmaz: veri bir kez çekilir, hesap yalnız motorda yapılır, ekranlar
    (pano/ofis/Telegram) yalnız `durum.json`'daki hazır sayıyı gösterir. Yeni kod mevcut bir fonksiyonu kopyalıyorsa birleştirilir.
-8. **Tek yazar, tek denetçi.** Bir dönemde kodu bir ajan yazar (2026-10-30'dan itibaren lider Claude), bir ajan denetler (Codex/Sol).
+8. **Tek yazar, tek denetçi.** Bir dönemde kodu bir ajan yazar (K‑11 ile Sonnet, tek lider ve birleştirme yetkili), bir ajan denetler (Codex/Sol).
