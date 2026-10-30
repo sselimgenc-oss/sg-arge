@@ -66,15 +66,18 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - `traderlar[].yonsuz_bayrak` (isteğe bağlı, yalnız `kol` = `oda` | `kontrol`; `surum` 1 kalır; Argon A26, **yalnız bilgi**): `funding_payi`, `spot_perp_ters`, `maker_payi` — her biri `{deger, esik, asildi}`
   (`deger` hesaplanamazsa `null`; `spot_perp_ters` ayrıca `coin`), `bayrak` (herhangi biri aşıldıysa `true`), `pencere_gun` (90), `sezgisel: true`, okunamayan kaynak varsa `hata`.
   Funding ve spot durumu günde bir kez çekilir (önbellek `motor.json`'da). Eşikler `kurallar.yaml` `yonsuz_*`, sezgiseldir; seçim/kapı/oda kararını değiştirmez.
-- `saglik_hatti` (üst düzey, isteğe bağlı, oda üyesi varsa; v1.6, E1 `GOREV_ETRE_GECIS.md`, Etre `kalite.py` karşılığı —
-  `copytrade/saglik_hatti.py`, saf fonksiyon, **yalnız rapor**; hiçbir pozisyon/kopya bundan etkilenmez; oda için
-  **performans ışığından (`traderlar[].saglik.isik`) ayrı**, veri hattının kendisinin sağlığıdır):
-  `{kol: "oda", n, veri_tazeligi_dk, yetim_golge_orani, isaret_eksik_toplam, veri_hata_orani, kirmizi_sayisi,
-  sari_sayisi, sinyal_gecikme_dk_medyan, isik: "yesil|sari|kirmizi", nedenler: []}`. `veri_tazeligi_dk` = `uretildi`'den
-  bu yana geçen dakika; `yetim_golge_orani` = oda'daki `veri_kalitesi.mutabakat.yetim` toplamı / `toplam` toplamı
-  (mutabakat verisi yoksa `null`, sıfıra bölünmez); `veri_hata_orani` = `gecerli: false` olan oda üyesi oranı;
-  `sinyal_gecikme_dk_medyan` = son 180 dk içinde açılmış oda pozisyonlarının (`pozisyonlar[].acilis`) `uretildi`'ye
-  göre medyan yaşı (dk) — işleme gecikmesinin kaba ölçüsü, kopya ekonomisini değiştirmez. Eşikler `saglik_hatti.ESIKLER`.
+- `saglik_hatti` (üst düzey, isteğe bağlı, oda üyesi varsa; v1.6, E1 `GOREV_ETRE_GECIS.md`, Etre `kalite.py`
+  deseninden esinlenilmiş — `copytrade/saglik_hatti.py`, saf fonksiyon, **yalnız rapor**; hiçbir pozisyon/kopya
+  bundan etkilenmez; oda için **performans ışığından (`traderlar[].saglik.isik`) ayrı**, veri hattının kendisinin
+  sağlığıdır): `{kol: "oda", n, yetim_golge_orani, isaret_eksik_toplam, veri_hata_orani, kirmizi_sayisi,
+  sari_sayisi, acik_pozisyon_yasi_dk_medyan, isik: "yesil|sari|kirmizi", nedenler: []}`. `yetim_golge_orani` =
+  oda'daki `veri_kalitesi.mutabakat.yetim` toplamı / `toplam` toplamı (mutabakat verisi yoksa `null`, sıfıra
+  bölünmez); `veri_hata_orani` = `gecerli: false` olan oda üyesi oranı; `acik_pozisyon_yasi_dk_medyan` = son 180 dk
+  içinde açılmış oda pozisyonlarının (`pozisyonlar[].acilis`) `uretildi`'ye göre medyan **yaşı** (dk) — bu **pozisyon
+  yaşıdır, gerçek sinyal/algılama gecikmesi değildir** (Sol denetimi 2026-10-30); kopya ekonomisini değiştirmez.
+  Eşikler `saglik_hatti.ESIKLER`. **Veri tazeliği burada değerlendirilmez** — yayım anında hesaplanırsa her zaman
+  ~0 döner ve durmuş akışı yakalayamaz; tazelik tek yerde Worker'ın okuma anındaki gerçek saatiyle yaptığı mevcut
+  3 saatlik kontrolündedir (`worker/src/index.js` `checkStateAlerts`).
 - `kalabalik` (üst düzey, isteğe bağlı, oda üyesi varsa; Argon A27): `{n_oda, coinler: [{coin, net_yon, net_pay, ayni_yon, toplam, cakisma}], uyari, uyari_metni, zaman, sezgisel}`.
   `net_pay` = |Σ x·yön| / Σ|x|, x = kopya ağırlığı × pozisyon nosyoneli / trader hesap değeri (kaldıraç ikinci kez çarpılmaz). `uyari_metni` yalnız `uyari` iken dolu (tek satır; Telegram `/durum` ve pano).
   Eşikler `kalabalik_*` (sezgisel). Otomatik işlem yoktur.

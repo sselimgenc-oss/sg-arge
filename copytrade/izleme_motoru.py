@@ -733,10 +733,11 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']
     if oda_uyeleri:
         result['kalabalik'] = {**oda_risk.kalabalik([t for t in oda_uyeleri if t.get('gecerli') and t.get('hesap_degeri')]), 'zaman': iso(now)}
-    # E1 (GOREV_ETRE_GECIS.md) — Etre kalite.py karşılığı: veri hattı sağlığı (performans ışığından ayrı; yalnız rapor).
+    # E1 (GOREV_ETRE_GECIS.md) — Etre kalite.py deseninden esinlenilen veri hattı sağlığı (performans ışığından
+    # ayrı; yalnız rapor). Tazelik kontrolü kasıtlı olarak burada değil (bkz. saglik_hatti modül docstring'i).
     # Boş izleme listesinde (ağ hiç kullanılmayan sözleşme testi) eklenmez — kalabalik alanıyla aynı desen.
     if traders:
-        oda_olcu = saglik_hatti.olc(result, now)
+        oda_olcu = saglik_hatti.olc(result)
         result['saglik_hatti'] = {**oda_olcu, **saglik_hatti.kontrol(oda_olcu)}
     # Serialize both before replacing either; API/validation/NaN errors leave the archive untouched.
     payloads = {name: json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + '\n'
