@@ -3,6 +3,17 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-30 21:00 TR — E4/E6 incelemesi: yeni kod yok (kural 7 — mevcut fonksiyonu kopyalama)
+- **Yönetim kararı:** Sol (Codex) denetimi manuel oldu (kullanıcı); birleştirme koşulu artık yalnız CI yeşil.
+- **E4 (oda yönetimi):** Etre'nin istediği gerekçeli giriş/çıkış + bekleme süresi + değişmez olay günlüğü +
+  odadan düşme kuralı K-11'den önce kurulmuş: `copytrade/gecis.py` (alt dilim + ardışık hafta çıkış, 28 günde
+  ≤2 çıkış tavanı) + `copytrade_haftalik.yml` (her Perşembe, ön kayıt 1.6 onaylı). Yeni kod yazmadım. Gerçek veri
+  kontrolü: `rotasyon/kayit.jsonl` henüz yok (pilot 29.10 başladı, ilk Perşembe koşusu gelmedi — zamanlama).
+- **E6 (mühendislik):** `except Exception` taraması — 11 yer, hepsi gerekçeli ve loglanıyor (Etre'nin sorunu yok).
+  İş akışı sayısı 12 (#443 zaten indirmiş). Ayarlar tek dosyada. Kullanılmayan iş akışı arşivi kullanıcı onayı
+  gerektiriyor, ayrı soru.
+- E5 (pano/ofis) kapsam dışı — bu oturumun işi değil (sg-pano, kullanıcı kararıyla ayrı atandı).
+
 ## 2026-10-30 20:45 TR — E3: aşamalı zarar_kes/kar_al canlıya bağlandı
 - Kullanıcı kararı: "Opus sana ne değişiklik verdiyse sırayla yap, sormana gerek yok" — E2'nin kalan parçası
   (sabit $ işlem tutarı) eşik/strateji kararı gerektirdiği için (AGENTS.md: eşik kararı kullanıcının) atlanıp
