@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1.6, 2026-10-30; v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
+# Veri sözleşmesi — copy trade izleme (v1.7, 2026-10-30; v1.7 `gecikme.json`, v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -9,6 +9,7 @@ sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `suru
 | `izleme/durum.json` | sg-arge, `copytrade-izleme` dalı (main büyümesin) | Codex işi (Actions) | saatte bir |
 | `izleme/ornek_durum.json` | sg-arge `main` (sabit örnek, 4 trader) | lider (hazır) | sabit; Sonnet bununla başlar |
 | `izleme/kararlar.jsonl` (açtım/atladım) | sg-arge, `copytrade-izleme` dalı | saatlik iş, Worker'ın `GET /kararlar`'ından (Cloudflare'de GitHub anahtarı yok) | saatte bir |
+| `izleme/gecikme.json` (gerçek algılama gecikmesi, v1.7, E1 devamı) | sg-arge, `copytrade-izleme` dalı | saatlik iş, Worker'ın `GET /gecikme`'sinden (`copytrade/gecikme.py`) | saatte bir, `GECIKME_URL` tanımlıysa (yoksa adım atlanır, saatlik durum bozulmaz) |
 
 Repolar herkese açık (kullanıcı kararı 2026-10-27). Bu yüzden karar kaydında **tutar, bakiye, hesap, isim yoktur**;
 yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zincir verisidir.
@@ -118,6 +119,14 @@ Kayıt: `{"olay_id", "zaman", "karar": "acti | atladi", "neden": "gec_gordum | b
 hesap, isim ve serbest metin yazılmaz. Eski `bakiye_yok` kayıtları içe aktarmada `diger`e çevrilir.
 `copytrade-izleme` dalında `izleme/kararlar.jsonl`; v1'de karar yalnız Telegram düğmesiyle verilir.
 İstatistik: aynı trader için "tüm olaylar" ile "açtıklarım" sanal sonuçları ayrı hesaplanır.
+
+## 4a. Gerçek algılama gecikmesi (`izleme/gecikme.json`, v1.7, E1 devamı)
+`{"n": <int>, "gecikme_dk_medyan": <float|null>, "gecikme_dk_maks": <float|null>, "trader_detay": [{"trader", "gecikme_dk", "zaman"}]}`.
+`gecikme_dk` = Worker'ın bir dolumu gördüğü an ile o dolumun Hyperliquid'deki **gerçek** zamanı arasındaki fark
+(dakika) — `copytrade/saglik_hatti.py`'deki `acik_pozisyon_yasi_dk_medyan` (pozisyon yaşı) ile **karıştırılmamalı**;
+bu gerçek uçtan uca algılama süresidir. Worker yalnız her trader için **en son** örneği tutar (D1 ücretsiz yazma
+kotası); `trader_detay` oda üyesi sayısı kadar satır taşır, geçmiş birikmez. `n=0` → hiçbir oda üyesinde henüz
+yeni dolum görülmedi (ilk koşu ya da sakin piyasa); medyan/maks `null`. Yalnız rapor; kopya ekonomisini değiştirmez.
 
 ## 5. Telegram
 - Gönderen: Cloudflare Worker, 5 dakikada bir (`docs/GOREV_TELEGRAM.md`). Olay türleri: `acilis`, `kapanis`, `buyutme`,

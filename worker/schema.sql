@@ -32,3 +32,11 @@ CREATE TABLE IF NOT EXISTS uyari_durum (
 CREATE TABLE IF NOT EXISTS ozet_gonderildi (
   gun TEXT PRIMARY KEY
 );
+-- Gerçek algılama gecikmesi (E1 devamı, Sol denetimi 2026-10-30): trader'ın son dolum zamanı ile Worker'ın onu
+-- gördüğü an arasındaki fark. Yalnız en son örnek tutulur (D1 ücretsiz yazma kotası); oda genelinde medyan okuma
+-- tarafında (GET /gecikme tüketicisi) hesaplanır.
+CREATE TABLE IF NOT EXISTS son_gecikme (
+  trader TEXT PRIMARY KEY,
+  gecikme_dk REAL NOT NULL,
+  zaman TEXT NOT NULL
+);

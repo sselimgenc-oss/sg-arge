@@ -22,9 +22,12 @@ eski aday taraması; biten/askıdaki görev ve durum belgeleri (`GOREV_*`, `code
 `arastirma/copytrade/bagimsiz_secim` kaldı); eski kapı anlık görüntüsü. Eski dallar ve çalıştırmalar da temizlendi.
 
 ## E1 (2026-10-30 akşam, lider Sonnet)
-Lisans birleşti (`#439`, sg-pano `#46`). Sol'un bağımsız denetimi (`#442`, birleşti): lisans uygun; E1 PR'ında (`#441`)
-iki YÜKSEK bulgu — `sinyal_gecikme_dk_medyan` adı pozisyon yaşını ölçüyor (gerçek algılama gecikmesi değil), sağlık
-ışığının tazelik kontrolü yayım anında hesaplandığından her zaman ~0 dönüyor (durmuş akışı yakalamıyor). Düzeltildi:
-alan adı `acik_pozisyon_yasi_dk_medyan`; tazelik kontrolü `saglik_hatti`'den çıkarıldı, Worker'ın zaten var olan
-gerçek zamanlı 3 saatlik tazelik alarmına bırakıldı (tek yerde, kural 7). Yeniden denetime hazır. E1'in asıl hız
-kazanımı (dakikalık Worker yoklaması, tek veri kaynağı) henüz ayrı bir PR'da.
+Lisans (`#439`, sg-pano `#46`), Sol'un denetim raporu (`#442`) ve veri hattı sağlığı (`#441`) birleşti. `#441`
+Sol'un iki YÜKSEK bulgusuna göre düzeltilmişti (alan adı pozisyon yaşı oldu, yanlış tazelik kontrolü çıkarıldı).
+Pano temizliği Opus'ta; bu dal (sg-arge) E1-E6'ya devam ediyor.
+
+## E1 devamı (2026-10-30 akşam): gerçek algılama gecikmesi
+`#445`: Worker'ın zaten çektiği dolumlardan **gerçek** algılama gecikmesi (Hyperliquid dolum zamanı → Worker'ın
+görmesi) ölçülüyor (`son_gecikme` D1 tablosu, `GET /gecikme`, `copytrade/gecikme.py` → `izleme/gecikme.json`).
+`#441`'deki pozisyon yaşından (tahmini) tamamen ayrı, gerçek ölçüm. Dağıtım: D1'e `son_gecikme` tablosu bir kez
+uygulanmalı, `GECIKME_URL` Actions değişkeni tanımlanmalı (yoksa adım atlanır).
