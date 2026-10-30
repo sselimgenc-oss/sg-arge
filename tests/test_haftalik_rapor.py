@@ -112,12 +112,6 @@ def test_is_akisi_persembe_zamanlamasi_pilot_veri_once_ve_hata_yutma_yok():
     assert "|| true" not in text and "continue-on-error" not in text
 
 
-def test_bosluk_is_akisi_elle_ve_hata_yutmaz():
-    text = (ROOT / ".github/workflows/pilot_bosluk.yml").read_text(encoding="utf-8")
-    assert "workflow_dispatch:" in text and "schedule:" not in text and "python -m copytrade.pilot_veri" in text and "--bosluk-doldur" in text
-    assert "|| true" not in text and "continue-on-error" not in text
-
-
 def test_rapor_kosu_suresini_yazar(tmp_path):
     secim = tmp_path / "s.json"
     secim.write_text(json.dumps({"secim_surumu": "v1.3", "kapi_tarihi": "2026-10-28", "adresler": {}}))

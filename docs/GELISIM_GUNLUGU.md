@@ -3,6 +3,16 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-30 21:30 TR — E6: kullanılmayan iş akışı arşivi
+- Kullanıcı onayı ("onaylıyorum devam et"): iki tek seferlik, tamamlanmış iş akışı Actions geçmişi doğrulanarak
+  kaldırıldı (git geçmişinde duruyor, kural: hiçbir şey kalıcı silinmez).
+  - `hf_dogrulama.yml` — son koşusu (28.10, run #3) başarılı; `docs/GOREV_HF_DOGRULAMA.md` görevi bitti.
+  - `pilot_bosluk.yml` — dosyasının kendi başlığı "TEK SEFER, elle"; son koşusu (29.10 16:03, run #6) başarılı,
+    boşluk dolduruldu, tekrar koşulacak bir durum yok.
+- Dokunulmadı: `golge_saglama.yml` (yeniden kullanılabilir manuel sağlık kontrolü), `izleme_deneme.yml` (kural 1'in
+  zorunlu kıldığı "küçük gerçek veri denemesi" aracı — görev sürüyor, silinmez). İş akışı sayısı 12 → 10.
+- Kod/davranış değişikliği yok, test etkisi yok.
+
 ## 2026-10-30 21:00 TR — E4/E6 incelemesi: yeni kod yok (kural 7 — mevcut fonksiyonu kopyalama)
 - **Yönetim kararı:** Sol (Codex) denetimi manuel oldu (kullanıcı); birleştirme koşulu artık yalnız CI yeşil.
 - **E4 (oda yönetimi):** Etre'nin istediği gerekçeli giriş/çıkış + bekleme süresi + değişmez olay günlüğü +

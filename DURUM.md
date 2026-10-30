@@ -70,6 +70,14 @@ hata değil). "Aday sırası" kavramı `havuz` kolu ile zaten karşılanıyor.
 
 ## E6 (2026-10-30 gece): mühendislik — mevcut durum zaten iyi
 `except Exception` taraması: `copytrade/`+`worker/`'da 11 yer, hepsi `# noqa: BLE001` ile gerekçeli ve hata
-sayılıp/loglanıyor (Etre'nin "128 yerde sessiz yutma" sorunu yok). İş akışı sayısı 12 (GOREV'in andığı 17 değil;
-#443 temizliği zaten indirmiş). Ayarlar tek dosyada (`kurallar.yaml`). Kullanılmayan iş akışı/arşiv kararı
-kullanıcı onayı gerektirir (silme-benzeri) — ayrı soru, şimdilik dokunulmadı.
+sayılıp/loglanıyor (Etre'nin "128 yerde sessiz yutma" sorunu yok). Ayarlar tek dosyada (`kurallar.yaml`).
+
+**İş akışı arşivi (kullanıcı onayı "onaylıyorum devam et" ile, 2026-10-30 gece):** 12 iş akışı incelendi (GOREV'in
+andığı 17 değil; #443 temizliği zaten indirmiş). İkisi tamamlanmış tek seferlik işti, Actions geçmişinden
+doğrulanıp kaldırıldı (git geçmişinde duruyor):
+- `hf_dogrulama.yml` — HF geçmiş veri doğrulaması (`docs/GOREV_HF_DOGRULAMA.md`), son koşu (28.10) başarılı, görev bitti.
+- `pilot_bosluk.yml` — dosyasında "TEK SEFER, elle" yazıyordu; son koşu (29.10 16:03) başarılı, boşluk dolduruldu.
+
+Dokunulmayanlar (hâlâ kullanılan, yeniden kullanılabilir araçlar): `golge_saglama.yml` (manuel `golge.py` sağlık
+kontrolü), `izleme_deneme.yml` (kural 1'in gerektirdiği "küçük gerçek veri denemesi" aracı — zorunlu, silinmez).
+İş akışı sayısı 12 → 10.
