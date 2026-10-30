@@ -256,8 +256,12 @@ def cached_candle(value: object) -> tuple[float, bool]:
     return float(value), False
 
 
-def execution_candles(client, fills: list[dict], cache: dict, now_ms: int, delay: int = 30) -> tuple[dict[str, list[dict]], bool]:
-    """Use 1m opens when retained; fall back to the matching 1h opening, never a later price."""
+def execution_candles(client, fills: list[dict], cache: dict, now_ms: int, delay: int = 30,
+                      eksik: set | None = None) -> tuple[dict[str, list[dict]], bool]:
+    """Use 1m opens when retained; fall back to the matching 1h opening, never a later price.
+
+    ``eksik`` verilirse fiyatı bulunamayan (coin, hedef_ms) çiftleri hata yerine bu kümeye yazılır (madde 2:
+    tek eksik mum bütün trader'ı düşürmez); verilmezse eski davranış: ValueError."""
     needed = {}
     approximate = any(cached_candle(value)[1] for rows in cache.values() for value in rows.values())
     for fill in fills:
@@ -272,6 +276,9 @@ def execution_candles(client, fills: list[dict], cache: dict, now_ms: int, delay
             prices = {int(c['t']): float(c['o']) for c in candles}
             for target in exact:
                 if target not in prices or prices[target] <= 0:
+                    if eksik is not None:
+                        eksik.add((coin, target))
+                        continue
                     raise ValueError(f'{coin}: gecikmeli 1 dk mum eksik ({target}); defter yayımlanmadı.')
                 cache.setdefault(coin, {})[str(target)] = {'fiyat': prices[target], 'yaklasik': False}
         if older:
@@ -281,6 +288,9 @@ def execution_candles(client, fills: list[dict], cache: dict, now_ms: int, delay
             for target in older:
                 hour = target // (60 * MINUTE) * (60 * MINUTE)
                 if hour not in prices or prices[hour] <= 0:
+                    if eksik is not None:
+                        eksik.add((coin, target))
+                        continue
                     raise ValueError(f'{coin}: gecikmeli 1 saat mum eksik ({hour}); defter yayımlanmadı.')
                 cache.setdefault(coin, {})[str(target)] = {'fiyat': prices[hour], 'yaklasik': True}
                 approximate = True
@@ -326,10 +336,19 @@ def copy_actions(fills: list[dict]) -> list[dict]:
 
 
 def copy_results(fills: list[dict], candles: dict, funding: list[dict], account: float,
-                 t0: pd.Timestamp, now: pd.Timestamp, events: dict, approximate: bool = False, delay: int = 30) -> dict:
+                 t0: pd.Timestamp, now: pd.Timestamp, events: dict, approximate: bool = False, delay: int = 30,
+                 fiyatsiz_izin: bool = False) -> dict:
     prices = {coin: {int(c['t']): float(c['o']) for c in rows} for coin, rows in candles.items()}
     # Pending fills are not charged before their execution time (tarza göre gecikme: intraday 30, swing 120 dk).
     mature = [f for f in fills if math.ceil((int(f['time']) + delay * MINUTE) / MINUTE) * MINUTE <= millis(now)]
+    # Fiyatsız eylem (yürütme mumu yok): sayılır ve raporlanır, diğerleri hesaplanır. Yarım defter ters pozisyon
+    # doğurabileceğinden o coinin TÜM eylemleri defter dışı bırakılır (konservatif); başka coinler etkilenmez.
+    fiyatsiz_coinler: set[str] = set()
+    if fiyatsiz_izin:
+        fiyatsiz_coinler = {f['coin'] for f in mature
+                            if math.ceil((int(f['time']) + delay * MINUTE) / MINUTE) * MINUTE not in prices.get(f['coin'], {})}
+    fiyatsiz_eylem = sum(1 for f in mature if f['coin'] in fiyatsiz_coinler)
+    mature = [f for f in mature if f['coin'] not in fiyatsiz_coinler]
     days = pd.date_range(t0.normalize(), now.normalize(), freq='1D')
     # Sonuç kanonik defterden (defter.copy_ledger) gelir: gerçekleşmiş + açık (işaretlenmiş) K/Z ayrı yayımlanır.
     ledger_fills = []
@@ -414,7 +433,10 @@ def copy_results(fills: list[dict], candles: dict, funding: list[dict], account:
             # hesap değerine oranlı kesirler: gerçekleşmiş (maliyet + funding dahil), açık (işaretlenmiş) ve toplam; son işaret zamanı
             'gerceklesen': ledger['realized'] + funding_frac, 'acik': ledger['unrealized_end'], 'toplam': ledger['net'] + funding_frac,
             'son_isaret': at_ms(ledger['mark_time']) if ledger['mark_time'] is not None else None, 'isaret_eksik': int(ledger['mark_missing'])}
-    notes = (['yaklaşık fiyat'] if approximate else []) + (['eksik işaretleme'] if ledger['mark_missing'] else [])
+    result['fiyatsiz_eylem'] = fiyatsiz_eylem
+    result['fiyatsiz_coinler'] = sorted(fiyatsiz_coinler)
+    notes = (['yaklaşık fiyat'] if approximate else []) + (['eksik işaretleme'] if ledger['mark_missing'] else []) \
+        + (['fiyatsız eylem'] if fiyatsiz_eylem else [])
     if notes:
         result['not'] = ', '.join(notes)
     return result
@@ -645,10 +667,11 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
     actions = copy_actions(copy_fills)
     style = resolve_style(root, row)
     delay = delay_for_style(style)
-    candles, approximate = execution_candles(client, actions, saved['mumlar'], millis(now), delay)
+    eksik: set = set()
+    candles, approximate = execution_candles(client, actions, saved['mumlar'], millis(now), delay, eksik)
     marks = mark_candles(client, actions, millis(now))
     priced = {coin: rows + marks.get(coin, []) for coin, rows in {**{c: [] for c in marks}, **candles}.items()}
-    paper = copy_results(actions, priced, saved['funding'], saved['kopya_paydasi'], t0, now, own_events, approximate, delay)
+    paper = copy_results(actions, priced, saved['funding'], saved['kopya_paydasi'], t0, now, own_events, approximate, delay, fiyatsiz_izin=True)
     leverage = sum(p['buyukluk_usd'] for p in positions) / account
     metrics = calculate_metrics(perp_fills(fills), account_value=account)
     light = health(history, t0, now, leverage, metrics['martingale_signal'],

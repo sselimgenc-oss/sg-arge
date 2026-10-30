@@ -358,10 +358,22 @@ def test_failure_preserves_last_successful_payloads(tmp_path):
     m.run(root, root / 'out', client, NOW)
     previous = {p.name: p.read_bytes() for p in (root / 'out').iterdir()}
     client.rows.append(fill('2026-10-27T12:00Z', 2, 'B', 1, 1))
-    client.candles = lambda *args, **kwargs: []
+    def broken(*args, **kwargs):
+        raise ValueError('API hatası')
+    client.fills = broken      # madde 2 sonrası eksik mum hata değil "fiyatsız"; tüm trader'ların hatası başka nedenle
     with pytest.raises(RuntimeError, match='Tüm trader'):
         m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
     assert previous == {p.name: p.read_bytes() for p in (root / 'out').iterdir()}
+
+
+def test_eksik_mum_trader_i_gecersiz_yapmaz_fiyatsiz_raporlanir(tmp_path):
+    root, client = project(tmp_path), Client()
+    client.candles = lambda *args, **kwargs: []
+    result = m.run(root, root / 'out', client, NOW)
+    trader = result['traderlar'][0]
+    assert trader['gecerli'] is True
+    assert trader['sanal_kopya']['fiyatsiz_eylem'] == 1 and trader['sanal_kopya']['fiyatsiz_coinler'] == ['BTC']
+    assert trader['sanal_kopya']['bakiye_usd'] == 1000
 
 
 def test_hip3_positions_and_actual_account_leverage(tmp_path):
@@ -747,3 +759,29 @@ def test_kosu_kesilmemis_olay_arsivi_ve_kapsam_yazar(tmp_path):
     assert result['olay_kapsami']['toplam'] == 2 and result['olay_kapsami']['tam'] is True
     assert [(r['kol'], r['acilis'], r['kapanis']) for r in result['gunluk_sayac']] == [(result['traderlar'][0].get('kol', ''), 1, 1)]
     assert json.loads((output / 'durum.json').read_text())['gunluk_sayac'] == result['gunluk_sayac']
+
+
+# ---------------------------------------------------------------- madde 2: tek eksik fiyat trader'ı düşürmez
+def test_eksik_mum_kumeye_yazilir_hata_vermez():
+    f = fill('2026-10-27T10:00:00Z', 1, coin='US500')
+    eksik: set = set()
+    client = Client([])
+    client.candles = lambda *args, **kwargs: []
+    candles, _ = m.execution_candles(client, [f], {}, m.millis(NOW), 30, eksik)
+    assert eksik == {('US500', m.millis('2026-10-27T10:30:00Z'))} and candles == {}
+
+
+def test_fiyatsiz_coin_defter_disi_diger_coin_hesaplanir():
+    # BTC: 10:00'da 1 adet al @100 (mum 10:30'da açılış 100), 11:00'de sat; mum 11:30'da 110.
+    # Altın örnek: brüt +10 $, maliyet 2×(110/100…) ~ hesap 1000 $ ölçeği → bakiye > 1000.
+    # US500 için mum yok → o coinin eylemi fiyatsız (1 eylem), BTC sonucu tek başına BTC defteri ile aynı.
+    btc = [fill('2026-10-27T10:00:00Z', 1, price=100), fill('2026-10-27T11:00:00Z', 2, side='A', before=1, price=110)]
+    us = [fill('2026-10-27T10:05:00Z', 3, coin='US500', price=5000)]
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:30:00Z'), 'o': 110.0}]}
+    ref = m.copy_results(btc, candles, [], 1000, T0, NOW, {})
+    mixed = m.copy_results(sorted(btc + us, key=lambda x: x['time']), candles, [], 1000, T0, NOW, {}, fiyatsiz_izin=True)
+    assert mixed['fiyatsiz_eylem'] == 1 and mixed['fiyatsiz_coinler'] == ['US500']
+    assert mixed['bakiye_usd'] == pytest.approx(ref['bakiye_usd']) and ref['fiyatsiz_eylem'] == 0
+    assert 'fiyatsız eylem' in mixed['not']
+    with pytest.raises((ValueError, KeyError)):   # izin yoksa eski sıkı davranış
+        m.copy_results(sorted(btc + us, key=lambda x: x['time']), candles, [], 1000, T0, NOW, {})
