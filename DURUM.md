@@ -38,4 +38,12 @@ görmesi) ölçülüyor (`son_gecikme` D1 tablosu, `GET /gecikme`, `copytrade/ge
   `KARAR_URL`'in yanına, aynı yöntemle). Eklenmezse saatlik iş adımı sessizce atlanır, hiçbir şey bozulmaz.
 - Sol'un 2. denetimindeki (`docs/DENETIM_ETRE_GECIS_TEKRAR_2026-10-30.md`) YÜKSEK bulgusu — eski/eylemsiz
   trader'ın tek D1 örneğinin oda medyanını bozması — `copytrade/gecikme.py`'de pencere filtresiyle (120 dk)
-  düzeltildi: `claude/e1-gecikme-pencere` dalı.
+  düzeltildi (`#447`, birleşti).
+
+## E2 (2026-10-30 gece): kopya hesabı v2 — tek motor, tasfiye, pozisyon tavanı
+Canlı `sanal_kopya` (v1) `defter.copy_ledger`'ı çıplak çağırıyordu; araştırma gölgesindeki (`golge.py`) tasfiye ve
+pozisyon tavanı mantığı canlıya bağlı değildi (K3/K5/K6, `DENETIM_TRADER_2026-10-30.md`). `copytrade/kopya_v2.py`
+(eski taslak #434'ten güncel main'e uyarlanarak) bunu düzeltiyor; `sanal_kopya_v2` v1 yanında yayımlanıyor, v1
+değişmedi. **Gerçek veri (canlı HL, O01):** v1 getiri +%7,18 ↔ v2 +%0,95 — fark açıklanabilir: O01'in gerçek açık
+pozisyonu hesabın %163'ü notional (HL'den doğrulandı), v1 kapsız kopyalıyor, v2'nin pozisyon tavanı (3,0x) kırpıyor.
+8 altın örnek testi; `python -m pytest -q` 535 geçti. Kapsam dışı (E3): sabit $ tutar, aşamalı zarar_kes/kar_al.

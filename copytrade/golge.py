@@ -179,7 +179,10 @@ def v2_cikislari(fills: list[dict], market: Market, account: Any, style: str, de
                 suppressed.discard(coin)
             continue
         target = int(fill["time"]) + delay * 60_000
-        execution = market.execution(coin, target) if delay else (int(fill["time"]), float(fill["px"]))
+        if "_execution_time" in fill:        # canlı yol (kopya_v2): yürütme fiyatı dakika mumundan önceden eklenmiş
+            execution = (int(fill["_execution_time"]), float(fill["_execution_price"]))
+        else:
+            execution = market.execution(coin, target) if delay else (int(fill["time"]), float(fill["px"]))
         if execution is None:
             continue
         when, price = execution

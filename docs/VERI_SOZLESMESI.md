@@ -1,4 +1,4 @@
-# Veri sözleşmesi — copy trade izleme (v1.8, 2026-10-30; v1.8 `gecikme.json` taze pencere, v1.7 `gecikme.json`, v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
+# Veri sözleşmesi — copy trade izleme (v1.9, 2026-10-30; v1.9 `sanal_kopya_v2`, v1.8 `gecikme.json` taze pencere, v1.7 `gecikme.json`, v1.6 `saglik_hatti`, v1.5 `kol`, v1.2 olay kimliği, v1.3 tarz, v1.4 veri geçerliliği ve karar gizliliği)
 
 Üretici: **Codex** (sg-arge). Tüketici: **Sonnet** (sg-pano panosu) ve Telegram bildirimi. İkisi de yalnız bu
 sözleşmeye göre çalışır; alan eklemek/değiştirmek lider onayıyla `surum` artırılarak yapılır.
@@ -102,6 +102,25 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
   sekmesi "yetersiz veri" yazar.
 - `sanal_kopya`: t0 sonrası, 30 dk gecikmeli, maliyetli (taker %0,045 + kayma %0,05 + funding) — CT-Kapı
   `delayed_copy` ile aynı hesap.
+
+### `traderlar[].sanal_kopya_v2` (v1.9, E2 `GOREV_ETRE_GECIS.md`)
+v1 (`sanal_kopya`) **silinmez ve yeniden yazılmaz**; v2 yan yana yayımlanır (AGENTS.md kural 6). Birim: 1.000 $
+sanal kopya ölçeği (USD); getiri/oranlar kesirdir (0,012 = %1,2). **Tek motor** (kural 7): `copytrade/kopya_v2.py`
+→ `golge.calistir` (variant V0) → `defter.copy_ledger` — araştırma gölgesiyle aynı yürütme/maliyet/tasfiye kodu.
+v1'e göre üç gerçek düzeltme (`docs/DENETIM_TRADER_2026-10-30.md` K2-K4):
+- **Tasfiye:** kopya K/Z'si ayrılmış 1 birimin `golge_likidasyon_esigi`sine (kurallar.yaml) inerse pozisyonlar o
+  saatin mum markında tasfiye edilir. `tasfiye` (bool), `tasfiye_zamani` (UTC ISO, yoksa `null`), `tasfiye_kaynagi`
+  (`mum` | `gunluk_ozsermaye`). Tasfiyeden sonra `bakiye_usd` 0'da kalır; v1'de olduğu gibi **negatif olmaz**.
+- **Pozisyon tavanı:** `golge_pozisyon_tavan_carpani` (3,0 = %300 notional) — v1'de yok; büyük/kaldıraçlı tek
+  pozisyonun kopya hesabını orantısız oynatması (K5/K6) engellenir.
+- **Zamanla değişen payda:** her koşuda trader hesap değeri `hesap_serisi`ye eklenir (motor.json, en çok 3000
+  okuma); `payda_yontemi` (`ilk_okuma` | `saatlik_okuma`), `payda_okuma_sayisi`.
+- **Funding yalnız kopyalanan pozisyondan:** t0 öncesi devralınan pozisyonun funding'i kopyaya yazılmaz.
+- Diğer alanlar: `baslangic_usd`, `bakiye_usd`, `getiri`, `dusus`, `egri`, `gerceklesen` (maliyet+funding dahil),
+  `acik`, `toplam`, `funding`, `maliyet`, `fiyatsiz_eylem` (yürütme fiyatı bulunamayan dolum sayısı), `gecikme_dk`, `t0`.
+- Hesaplanamazsa `{"surum":"v2","durum":"hesaplanamadi","neden":...}`; v1'i etkilemez. Hiç okunmamış trader için
+  `yer_tutucu: true`. **Kapsam dışı (E3'e bırakıldı):** Etre'nin sabit $ işlem tutarı (hâlâ trader hesabına oranlı
+  ölçek) ve aşamalı zarar_kes/kar_al çıkışları.
 
 ## 3. Sağlık ışığı ve form (hesap Codex'te, `pano/saglik.py` yeniden kullanılır)
 | Işık | Koşul (herhangi biri) |

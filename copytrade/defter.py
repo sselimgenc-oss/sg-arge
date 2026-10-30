@@ -132,10 +132,17 @@ class Market:
         return self._bad[coin]
 
     def funding_cum(self, coin: str, rates: FundingRates) -> tuple[list[int], list[float]]:
-        """Saat başına (açılış fiyatı × funding oranı) kümülatif toplamı: bir pozisyonun funding'i = −adet × (cum[j] − cum[i])."""
+        """Saat başına (açılış fiyatı × funding oranı) kümülatif toplamı: bir pozisyonun funding'i = −adet × (cum[j] − cum[i]).
+
+        Yalnız tam saatlik (``t % interval == 0``) mumlar funding ızgarasına girer: çağıran (``kopya_v2``) tasfiye
+        denetimi için 1 dk'lık işaret mumunu saatlik mumlarla aynı ``Market``'e karıştırabilir; o dakika mumu bir
+        saat gibi sayılırsa funding o pencerede fazladan bir kez (ya da eksik) sayılır (E2, Sol denetimi)."""
         key = (coin, id(rates))
         if key not in self._cum:
             times, opens, _ = self.arrays(coin)
+            if len(times):
+                hourly = times % self.interval == 0
+                times, opens = times[hourly], opens[hourly]
             per_hour = opens * rates.array(coin, times) if len(times) else np.zeros(0)
             self._cum[key] = (times.tolist(), np.concatenate([[0.0], np.cumsum(per_hour)]).tolist())
         return self._cum[key]
