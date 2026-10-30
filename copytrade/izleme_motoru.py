@@ -793,6 +793,15 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
                                     series, saved['funding'], t0, now, delay, style)
     except Exception as error:
         paper_v2 = {'surum': 'v2', 'durum': 'hesaplanamadi', 'neden': data_error_reason(error)}
+    # gecikme5 (K-9, madde 24; tanısal): oda adresleri 5 dk gecikmeyle paralel v2. Telegram yok; birincil analiz değişmez.
+    paper_g5 = None
+    if 'oda' in (row.get('kollar') or [row.get('kol')]):
+        try:
+            candles5, _ = execution_candles(client, actions, saved['mumlar'], millis(now), GECIKME5_DK, set())
+            paper_g5 = kopya_v2.hesapla(copy_fills, hourly, marks, {coin: {int(c['t']): float(c['o']) for c in rows} for coin, rows in candles5.items()},
+                                        series, saved['funding'], t0, now, GECIKME5_DK, style)
+        except Exception as error:
+            paper_g5 = {'surum': 'v2', 'durum': 'hesaplanamadi', 'neden': data_error_reason(error)}
     leverage = sum(p['buyukluk_usd'] for p in positions) / account
     metrics = calculate_metrics(perp_fills(fills), account_value=account)
     light = health(history, t0, now, leverage, metrics['martingale_signal'],
@@ -827,6 +836,8 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
                        'getiri_30g': ret30, 'getiri_90g': float(recent.iloc[-1] - recent.iloc[0]) if len(recent) else 0.0},
               'hesap_degeri': account, 'pozisyonlar': positions, 'son_islem': last_trade,
               'egri': [[str(day.date()), float(value)] for day, value in recent.items()], 'sanal_kopya': paper, 'sanal_kopya_v2': paper_v2}
+    if paper_g5 is not None:
+        trader['sanal_kopya_v2_gecikme5'] = paper_g5
     if row.get('kol') in oda_risk.YONSUZ_KOLLAR:
         trader['yonsuz_bayrak'] = yonsuz_guncelle(client, address, saved, states, fills, now)
     if row.get('kol') == 'oda':
@@ -902,6 +913,25 @@ def write_event_archive(output: Path, all_events: dict) -> None:
         temporary.replace(folder / f'{hour}.jsonl.gz')
 
 
+GECIKME5_DK = 5
+
+
+def gecikme5_ozeti(traderlar: list[dict]) -> dict:
+    """`gecikme5` kolu (tanısal): oda üyelerinin 5 dk gecikmeli v2 sonuçları ↔ aynı adreslerin 30/120 dk gecikmeli v2 sonuçları (aynı hesap sürümü, aynı üyeler).
+
+    Yalnız iki taraf da hesaplanabilir ve geçerli olan üyeler karşılaştırılır; getiriler 1.000 $ ölçeğinde kesirdir.
+    """
+    pairs = [(t['sanal_kopya_v2_gecikme5'], t['sanal_kopya_v2']) for t in traderlar
+             if t.get('gecerli', True) and t.get('sanal_kopya_v2_gecikme5', {}).get('bakiye_usd') is not None and t.get('sanal_kopya_v2', {}).get('bakiye_usd') is not None]
+    uye = sum(1 for t in traderlar if 'sanal_kopya_v2_gecikme5' in t)
+    if not pairs:
+        return {'uye': uye, 'karsilastirilan': 0, 'getiri': None, 'oda_v2_getiri': None, 'fark': None, 'bakiye_usd': None, 'tasfiye': 0}
+    fast = sum(p['getiri'] for p, _ in pairs) / len(pairs)
+    slow = sum(q['getiri'] for _, q in pairs) / len(pairs)
+    return {'uye': uye, 'karsilastirilan': len(pairs), 'getiri': fast, 'oda_v2_getiri': slow, 'fark': fast - slow,
+            'bakiye_usd': sum(p['bakiye_usd'] for p, _ in pairs), 'tasfiye': sum(1 for p, _ in pairs if p.get('tasfiye'))}
+
+
 def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
     # Üç ayrı zaman: `uretildi` = koşu başlangıcı; trader `veri_zamani` = o trader'ın gerçek okuma anı; `yayim_zamani` = dosyanın yazıldığı an.
     # `now` verilirse (test/yeniden üretim) gerçek saat kullanılmaz, üçü de `now` olur.
@@ -946,6 +976,8 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
               'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')},
               'kapsam': {kol: kapsam(traders, kol) for kol in sorted({k for t in traders for k in (t.get('kollar') or [t.get('kol')]) if k})}}
     result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'], result['sayac_24s'] = olay_ozeti(all_events, traders, now, failed == 0)
+    if any('sanal_kopya_v2_gecikme5' in t for t in traders):
+        result['gecikme5'] = gecikme5_ozeti(traders)
     oda_uyeleri = [t for t in traders if t.get('kol') == 'oda']
     if oda_uyeleri:
         result['kalabalik'] = {**oda_risk.kalabalik([t for t in oda_uyeleri if t.get('gecerli') and t.get('hesap_degeri')]), 'zaman': iso(now)}

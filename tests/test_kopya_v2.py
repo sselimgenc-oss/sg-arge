@@ -19,9 +19,9 @@ def hourly(**prices):            # {'BTC': {'10:00': 100.0, ...}} -> saatlik aç
     return {coin: [{'t': ms(f'2026-10-27T{h}:00Z'), 'o': p} for h, p in rows.items()] for coin, rows in prices.items()}
 
 
-def run(fills, saatlik, yurutme, serisi, funding=(), isaret=None):
+def run(fills, saatlik, yurutme, serisi, funding=(), isaret=None, delay=30):
     execution = {coin: {ms(f'2026-10-27T{h}:00Z'): p for h, p in rows.items()} for coin, rows in yurutme.items()}
-    return kopya_v2.hesapla(fills, saatlik, isaret or {}, execution, serisi, list(funding), T0, NOW, 30, 'intraday')
+    return kopya_v2.hesapla(fills, saatlik, isaret or {}, execution, serisi, list(funding), T0, NOW, delay, 'intraday')
 
 
 ACCOUNT_1000 = [[ms('2026-10-27T00:00:00Z'), 1000.0]]
@@ -93,3 +93,30 @@ def test_dakika_mumu_funding_izgarasina_girmez():
     market = Market({'BTC': [{'t': ms('2026-10-27T11:00:00Z'), 'o': 100.0}, {'t': ms('2026-10-27T11:59:00Z'), 'o': 100.0}]})
     times, cum = market.funding_cum('BTC', FundingRates([]))
     assert times == [ms('2026-10-27T11:00:00Z')]
+
+
+def test_gecikme5_ozeti_altin_ornek():
+    # Al 1 BTC @10:00, sat @11:00. 5 dk gecikme: giriş 10:05 @101, çıkış 11:05 @110 → brüt 0,009, maliyet 0,00020045 → 1.008,79955 $.
+    # 30 dk gecikme: giriş 10:30 @103, çıkış 11:30 @108 → brüt 0,005, maliyet 0,00020045 → 1.004,79955 $. Fark (getiri) = 0,004.
+    fills = [fill('2026-10-27T10:00:00Z', 'B', 1, 0, 100), fill('2026-10-27T11:00:00Z', 'A', 1, 1, 110)]
+    saatlik = hourly(BTC={'10:00': 100.0, '11:00': 110.0})
+    fast = run(fills, saatlik, {'BTC': {'10:05': 101.0, '11:05': 110.0}}, ACCOUNT_1000, delay=5)
+    slow = run(fills, saatlik, {'BTC': {'10:30': 103.0, '11:30': 108.0}}, ACCOUNT_1000, delay=30)
+    assert fast['bakiye_usd'] == pytest.approx(1008.79955) and slow['bakiye_usd'] == pytest.approx(1004.79955)
+    ozet = m.gecikme5_ozeti([{'gecerli': True, 'sanal_kopya_v2_gecikme5': fast, 'sanal_kopya_v2': slow},
+                             {'gecerli': False, 'sanal_kopya_v2_gecikme5': fast, 'sanal_kopya_v2': slow},          # geçersiz üye karşılaştırmaya girmez
+                             {'gecerli': True, 'sanal_kopya_v2_gecikme5': {'durum': 'hesaplanamadi'}, 'sanal_kopya_v2': slow}])
+    assert ozet['uye'] == 3 and ozet['karsilastirilan'] == 1
+    assert ozet['fark'] == pytest.approx(0.004) and ozet['bakiye_usd'] == pytest.approx(1008.79955) and ozet['tasfiye'] == 0
+
+
+def test_motor_yalniz_oda_uyelerine_gecikme5_ekler(tmp_path):
+    import tests.test_izleme as ti
+    rows = [{'id': 'O1', 'adres': ti.ADDRESS, 'takma_ad': 'Oda', 'durum': 'izlemede', 't0': str(ti.T0.date()), 'kol': 'oda', 'kollar': ['oda']},
+            {'id': 'B1', 'adres': '0x' + '2' * 40, 'takma_ad': 'Taban', 'durum': 'izlemede', 't0': str(ti.T0.date()), 'kol': 'taban', 'kollar': ['taban']}]
+    root = ti.project(tmp_path, rows)
+    result = m.run(root, root / 'out', ti.Client(), ti.NOW)
+    by_id = {t['id']: t for t in result['traderlar']}
+    assert 'sanal_kopya_v2_gecikme5' in by_id['O1'] and by_id['O1']['sanal_kopya_v2_gecikme5']['gecikme_dk'] == 5
+    assert 'sanal_kopya_v2_gecikme5' not in by_id['B1']
+    assert result['gecikme5']['uye'] == 1 and result['gecikme5']['karsilastirilan'] == 1

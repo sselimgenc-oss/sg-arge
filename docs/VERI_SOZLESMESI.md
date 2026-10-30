@@ -172,3 +172,9 @@ v1 (`sanal_kopya`) silinmez ve yeniden yazılmaz; v2 yan yana yayımlanır. Biri
 - **Funding (madde 23):** kopyalanan pozisyon büyüklüğü × saatlik oran; t0 öncesi devralınan pozisyonun funding'i girmez (`funding` alanı kesir, hesap değerine oran).
 - Diğer alanlar: `baslangic_usd`, `bakiye_usd`, `getiri`, `dusus`, `egri`, `gerceklesen` (maliyet+funding dahil), `acik`, `toplam`, `funding`, `maliyet`, `fiyatsiz_eylem` (yürütme fiyatı bulunamayan dolum sayısı), `gecikme_dk`, `t0`.
 - Hesaplanamazsa `{"surum":"v2","durum":"hesaplanamadi","neden":...}`; v1'i etkilemez. Hiç okunmamış trader için `yer_tutucu: true`.
+
+## `gecikme5` kolu (v1.6, K-9, madde 24; yalnız tanısal)
+- Oda üyesi her trader için `traderlar[].sanal_kopya_v2_gecikme5`: v2 ile aynı alanlar, `gecikme_dk: 5` (yürütme 5 dk sonraki dakika mumunun açılışı). Telegram bildirimi yoktur.
+- Üst düzey `gecikme5`: `{uye, karsilastirilan, getiri, oda_v2_getiri, fark, bakiye_usd, tasfiye}`. Yalnız iki taraf da hesaplanabilen ve `gecerli=true` oda üyeleri karşılaştırılır
+  (`karsilastirilan`); `getiri`/`oda_v2_getiri` bu üyelerin 1.000 $ ölçeğindeki ortalama getirisi (kesir), `fark` = 5 dk − (30/120 dk) v2; `bakiye_usd` 5 dk kolunun toplamı.
+- Ön kayıtlı birincil analiz (v1/v2 oda ↔ kontrol) değişmez; `gecikme5` yalnız gecikmenin değerini gösterir (K1: kapı verisinde 5 dk'da avantaj büyük ölçüde gidiyor).
