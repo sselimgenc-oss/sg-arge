@@ -179,7 +179,7 @@ def test_empty_list_writes_contract_and_never_uses_network(tmp_path):
         def __getattr__(self, name):
             raise AssertionError(name)
     result = m.run(root, root / 'out', NoNetwork(), NOW)
-    assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
+    assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'yayim_zamani': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
                       'kasa_egri': {'oda': [], 'kontrol': []}, 'kapsam': {}, 'olaylar': [], 'gunluk_sayac': [],
                       'olay_kapsami': {'baslangic': None, 'tam': True, 'toplam': 0, 'kol_basina_son': 200, 'sayac_gun': 30}}
     assert json.loads((root / 'out/durum.json').read_text()) == result
@@ -848,3 +848,23 @@ def test_perp_hesabi_sifir_onceki_sonucu_korur_ve_etiketler(tmp_path):
     t = next(x for x in result['traderlar'] if x['id'] == 'T1')
     assert (t['gecerli'], t['veri_durumu']) == (False, 'perp_hesabi_bos')
     assert t['sanal_kopya']['bakiye_usd'] == pytest.approx(next(x for x in first['traderlar'] if x['id'] == 'T1')['sanal_kopya']['bakiye_usd'])
+
+
+# ---------------------------------------------------------------- madde 5: üç ayrı zaman
+def test_uretildi_veri_zamani_ve_yayim_zamani_ayri(tmp_path, monkeypatch):
+    # Altın örnek: koşu 12:00:00'de başlar, trader okuması 12:07:30, yayım 12:09:00.
+    # Sahte saat: 1. çağrı koşu başlangıcı, 2. trader okuması, 3. yayım.
+    from datetime import UTC, datetime
+    ticks = iter([datetime(2026, 10, 27, 12, 0, 0, tzinfo=UTC), datetime(2026, 10, 27, 12, 7, 30, tzinfo=UTC),
+                  datetime(2026, 10, 27, 12, 9, 0, tzinfo=UTC)])
+
+    class FakeDatetime:
+        @staticmethod
+        def now(tz=None):
+            return next(ticks)
+    monkeypatch.setattr(m, 'datetime', FakeDatetime)
+    root = project(tmp_path)
+    result = m.run(root, root / 'out', Client(), None)
+    assert result['uretildi'] == '2026-10-27T12:00:00Z'
+    assert result['traderlar'][0]['veri_zamani'] == '2026-10-27T12:07:30Z'
+    assert result['yayim_zamani'] == '2026-10-27T12:09:00Z'

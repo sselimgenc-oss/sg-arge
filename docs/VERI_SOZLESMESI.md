@@ -87,6 +87,9 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - `traderlar[].tarz` (v1.3): `intraday` | `swing` (izleme listesinde `tarz` varsa o, yoksa en son kapı sonucundan; ikisi de yoksa
   `bilinmiyor` ve 30 dk gecikme). Sanal kopya gecikmesi tarza göre (intraday 30 dk, swing 120 dk);
   Telegram mesajında `[Intraday]` / `[Swing]` etiketi.
+- **Üç ayrı zaman (v1.6, hepsi UTC ISO):** `uretildi` = koşu başlangıcı; `traderlar[].veri_zamani` = o trader'ın hesap durumunun gerçekten okunduğu an
+  (uzun koşuda trader'lar arasında dakikalar/saatler fark eder); `yayim_zamani` (üst düzey) = `durum.json`'ın yazıldığı an. Veri yaşı için `veri_zamani`,
+  yayım gecikmesi için `yayim_zamani − uretildi` kullanılır.
 - `traderlar[].veri_zamani` ve `gecerli` (v1.4): trader verisinin son başarılı okuma zamanı ve geçerliliği. Bir saatlik
   okuma hata verirse önceki trader gösterilir, `gecerli: false` olur ve sağlık nedenlerinde `veri hatası` yer alır.
   Önceki başarılı kayıt hiç yoksa trader yine yayımlanır: `veri_zamani: null`, `gecerli: false`, sarı sağlık ışığı ve

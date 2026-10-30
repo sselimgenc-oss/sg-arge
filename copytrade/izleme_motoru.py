@@ -695,7 +695,7 @@ def yonsuz_guncelle(client, address: str, saved: dict, states: list[dict], fills
 
 
 def update_trader(root: Path, client, dexes: list[str], state: dict, all_events: dict,
-                  row: dict, now: pd.Timestamp, symbols: set[str] | None) -> dict:
+                  row: dict, now: pd.Timestamp, symbols: set[str] | None, clock=None) -> dict:
     ident, address, t0 = row['id'], row['adres'], timestamp(row['t0'])
     saved = state['traderlar'].setdefault(ident, {'adres': address.lower(), 't0': iso(t0),
                                                    'fills': [], 'funding': [], 'mumlar': {}})
@@ -717,6 +717,7 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
         saved['saglik_paydasi_t0'] = str(t0.date())
     history = portfolio_curve(saved['portfolio'], now, float(saved['saglik_paydasi']))
     states = clearinghouse_states(client, address, dexes)
+    read_at = timestamp(clock()) if clock else now    # trader'ın hesap durumunun gerçekten okunduğu an
     account, positions = positions_from_state(states, fills, symbols, now)
     if account == 0:
         raise PerpHesapBos(f'{ident}: perp hesabı boş/kapalı (hesap değeri 0); spot bakiye ayrı, sanal defter hesaplanmadı.')
@@ -766,7 +767,7 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
         last_trade = {'coin': last['coin'], 'yon': 'long' if float(ending.get('startPosition', 0)) > 0 else 'short',
                       'acilis': iso(last['open_time']) if last['open_time'] is not None else '',
                       'kapanis': iso(last['close_time']), 'net_yuzde': last['net_pnl'] / notional if notional else 0.0}
-    trader = {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': iso(now), 'gecerli': True, 'veri_durumu': 'tamam',
+    trader = {**{k: v for k, v in row.items() if k != 'tarz'}, 'tarz': style, 'veri_zamani': iso(read_at), 'gecerli': True, 'veri_durumu': 'tamam',
               'kapi': gate_result(root, address), 'saglik': light,
               'form': {'skor': ret30 / volatility if volatility > 0 and math.isfinite(volatility) else 0.0,
                        'getiri_30g': ret30, 'getiri_90g': float(recent.iloc[-1] - recent.iloc[0]) if len(recent) else 0.0},
@@ -832,6 +833,9 @@ def write_event_archive(output: Path, all_events: dict) -> None:
 
 
 def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
+    # Üç ayrı zaman: `uretildi` = koşu başlangıcı; trader `veri_zamani` = o trader'ın gerçek okuma anı; `yayim_zamani` = dosyanın yazıldığı an.
+    # `now` verilirse (test/yeniden üretim) gerçek saat kullanılmaz, üçü de `now` olur.
+    clock = None if now is not None else (lambda: datetime.now(UTC))
     now = timestamp(now or datetime.now(UTC))
     client = client or PublicClient(limiter=RateLimiter())
     watchlist = load_list(root / 'copytrade/izleme_listesi.yaml')
@@ -852,7 +856,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
         if retained and (retained['adres'] != row['adres'].lower() or retained['t0'] != iso(timestamp(row['t0']))):
             raise ValueError(f"{row['id']}: adres/t0 değiştirilemez; yeni izleme için yeni id kullanın.")
         try:
-            traders.append(update_trader(root, client, dexes, state, all_events, row, now, symbols))
+            traders.append(update_trader(root, client, dexes, state, all_events, row, now, symbols, clock))
         except Exception as error:
             failed += 1
             print(f"{row['id']}: veri hatası: {data_error_reason(error)}")
@@ -866,7 +870,7 @@ def run(root: Path, output: Path, client=None, now=None, symbols=None) -> dict:
                 traders.append(unavailable_trader(root, row, error))
     if watchlist and failed == len(watchlist):
         raise RuntimeError('Tüm trader verileri hatalı; önceki durum yayımlanmadı.')
-    result = {'surum': 1, 'uretildi': iso(now), 'kaynak': 'hyperliquid', 'traderlar': traders,
+    result = {'surum': 1, 'uretildi': iso(now), 'yayim_zamani': iso(clock() if clock else now), 'kaynak': 'hyperliquid', 'traderlar': traders,
               'kasa_egri': {'oda': kasa_egrisi(traders, 'oda'), 'kontrol': kasa_egrisi(traders, 'kontrol')},
               'kapsam': {kol: kapsam(traders, kol) for kol in sorted({k for t in traders for k in (t.get('kollar') or [t.get('kol')]) if k})}}
     result['olaylar'], result['gunluk_sayac'], result['olay_kapsami'] = olay_ozeti(all_events, traders, now, failed == 0)
