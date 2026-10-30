@@ -3,6 +3,27 @@
 Kronolojik, en yeni üstte. İkinci doğru kaynak değil: kararların ayrıntısı `DURUM.md`, `docs/KARARLAR_D.md` ve
 görev belgelerinde durur; burada yalnız hangi değişikliğin hangi ölçümü/veriyi etkilediği kısaca kayıtlıdır.
 
+## 2026-10-30 22:30 TR — E2 devamı: sabit $ işlem tutarı (v3, Etre kasa.py portu)
+- Kullanıcı kararı: "Etre eğrisini enterpolasyonla port et" — `defter.sabit_tutar_egrisi` Etre `kasa.py
+  Kasa.islem_usd`'nin birebir portu (varsayılanlar `ayar.py`'den, DEĞİŞTİRİLMEDİ): tutar_usd = 5,2 ×
+  (clamp(hesap,1,10.000)/200)^0,86. `copytrade/kopya_v3.py` (`sanal_kopya_v3`, v1/v2 yanında): açılış kopyanın
+  KENDİ 1.000 $ değerine göre bu eğriden, ekleme mevcut pozisyona trader'ın oranı kadar (Etre `masa.py _ekle`).
+- `defter.copy_ledger`'a yeni `tutar_egrisi`/`base_usd` parametresi (varsayılan `None` → v1/v2 davranışı AYNEN
+  korunur, regresyon yok); verildiğinde `account`/trader hesabı hiç okunmaz. Yardımcı `_fresh_open`/
+  `_sabit_tutar_signed`: açılış/flip'in yeni tarafı eğriyle (kopyanın o anki gerçekleşen+gerçekleşmemiş K/Z'sinden
+  tahmini $ değeri), ekleme/azaltma/kapatma mevcut mantıkla.
+- **Kapsam dışı (ayrı tasarım kararı gerektirir):** tasfiye, pozisyon tavanı, aşamalı zarar_kes/kar_al —
+  `golge.py`'nin bu katmanı (`_denetle_ve_kapat`/`kirp_pozisyon`/`v2_cikislari`) trader hesabına ORANLI
+  ölçeklemeye kodlanmış; v3 bu yüzden `golge.calistir`'i değil `defter.copy_ledger`'ı DOĞRUDAN çağırıyor.
+  Kaldıraç kademesi/marj modeli/"ikna" çarpanı da kapsam dışı.
+- Test: `tests/test_defter_sabit_tutar.py` (5, `copy_ledger` seviyesinde — eğri/trader-büyüklüğünden bağımsızlık/
+  ekleme/flip) + `tests/test_kopya_v3.py` (5, `kopya_v3.hesapla` seviyesinde). `python -m pytest -q`: 544 geçti.
+- Küçük gerçek veri denemesi (canlı HL, O01/O02/B17): O01 v3 −%0,34 (v1 +%7,68, v2 +%0,91 — makul). B17 (taban,
+  hesap 70,2M $) v3 **+%18,8** (v1/v2 ~+%0,8) — beklenen: v1/v2 devasa hesaba oranlı kırıntı kopyalıyor, v3 sabit
+  $ açıyor (tasarımın amacı). Yan bulgu: B17'de `fiyatsiz_eylem` v2=0 ↔ v3=322 — v2'nin `golge.v2_cikislari`'ı
+  yürütülemeyen dolumu sessizce atıp hiç saymıyor (maskeli alt sınır); v3 `copy_ledger`'ı doğrudan çağırdığından
+  gerçek sayıyı yayımlıyor (v3 hatası değil, v2 raporlama eksiği — `VERI_SOZLESMESI.md`'ye not düşüldü).
+
 ## 2026-10-30 21:30 TR — E6: kullanılmayan iş akışı arşivi
 - Kullanıcı onayı ("onaylıyorum devam et"): iki tek seferlik, tamamlanmış iş akışı Actions geçmişi doğrulanarak
   kaldırıldı (git geçmişinde duruyor, kural: hiçbir şey kalıcı silinmez).

@@ -27,6 +27,7 @@ from copytrade.olcut import _funding_amount, asset_class, calculate_metrics, clo
 from copytrade.tarama import PublicClient, RateLimiter
 from copytrade import oda_risk
 from copytrade import kopya_v2
+from copytrade import kopya_v3
 from copytrade import saglik_hatti
 from copytrade.kurallar import load_rules
 from pano.saglik import CUSUM_YELLOW, _cusum, _mdd, blok_bootstrap
@@ -583,7 +584,8 @@ def unavailable_trader(root: Path, row: dict, error: Exception) -> dict:
             'son_islem': {'coin': '', 'yon': '', 'acilis': '', 'kapanis': '', 'net_yuzde': 0.0},
             'sanal_kopya': {'baslangic_usd': 1000, 'bakiye_usd': 1000.0, 'getiri': 0.0, 'dusus': 0.0,
                             'gecikme_dk': delay_for_style(style), 't0': str(timestamp(row['t0']).date()), 'egri': []},
-            'sanal_kopya_v2': {'surum': 'v2', 'durum': 'hesaplanamadi', 'yer_tutucu': True, 'neden': 'hiç okunmadı'}}
+            'sanal_kopya_v2': {'surum': 'v2', 'durum': 'hesaplanamadi', 'yer_tutucu': True, 'neden': 'hiç okunmadı'},
+            'sanal_kopya_v3': {'surum': 'v3', 'durum': 'hesaplanamadi', 'yer_tutucu': True, 'neden': 'hiç okunmadı'}}
 
 
 def yonsuz_guncelle(client, address: str, saved: dict, states: list[dict], fills: list[dict], now: pd.Timestamp) -> dict:
@@ -651,17 +653,33 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
     marks = mark_candles(client, actions, millis(now))
     priced = {coin: rows + marks.get(coin, []) for coin, rows in {**{c: [] for c in marks}, **candles}.items()}
     paper = copy_results(actions, priced, saved['funding'], saved['kopya_paydasi'], t0, now, own_events, approximate, delay)
-    # E2 (GOREV_ETRE_GECIS.md): v2 — tek motor (golge.calistir), tasfiye, zamanla değişen payda, yalnız kopyalanan
-    # pozisyonun funding'i. v1 (paper/sanal_kopya) yanında yayımlanır, değiştirmez; hata v1'i düşürmez (kural 6).
+    # E2 (GOREV_ETRE_GECIS.md): v2/v3 — tek motor (golge.calistir / defter.copy_ledger), ORTAK saatlik mum + yürütme
+    # girdisi (tek fetch, kural 7). v1 (paper/sanal_kopya) yanında yayımlanır, değiştirmez; hata v1'i düşürmez (kural 6).
     try:
-        hesap_serisi = kopya_v2.hesap_serisi_guncelle(saved, millis(t0), millis(now), account)
         saatlik = kopya_v2.saatlik_mumlar(client, saved.setdefault('mumlar_1s', {}), copy_fills,
                                           open_copy_coins(actions), millis(now))
         yurutme = {coin: {int(c['t']): float(c['o']) for c in rows} for coin, rows in candles.items()}
-        paper_v2 = kopya_v2.hesapla(copy_fills, saatlik, marks, yurutme, hesap_serisi, saved['funding'],
-                                    t0, now, delay, style)
+        mum_error = None
     except Exception as error:
-        paper_v2 = {'surum': 'v2', 'durum': 'hesaplanamadi', 'neden': data_error_reason(error)}
+        saatlik = yurutme = None
+        mum_error = error
+    if mum_error is not None:
+        paper_v2 = {'surum': 'v2', 'durum': 'hesaplanamadi', 'neden': data_error_reason(mum_error)}
+        paper_v3 = {'surum': 'v3', 'durum': 'hesaplanamadi', 'neden': data_error_reason(mum_error)}
+    else:
+        try:
+            hesap_serisi = kopya_v2.hesap_serisi_guncelle(saved, millis(t0), millis(now), account)
+            paper_v2 = kopya_v2.hesapla(copy_fills, saatlik, marks, yurutme, hesap_serisi, saved['funding'],
+                                        t0, now, delay, style)
+        except Exception as error:
+            paper_v2 = {'surum': 'v2', 'durum': 'hesaplanamadi', 'neden': data_error_reason(error)}
+        # E2 sabit tutar (kullanıcı kararı 2026-10-30, "Etre eğrisini enterpolasyonla port et"): v3 — aynı motor,
+        # trader hesabına ORANLI değil, kopyanın KENDİ değerine göre sabit $ tutarla açılış (kopya_v3.py). v2'den
+        # bağımsız hata yalıtımı (kural 6).
+        try:
+            paper_v3 = kopya_v3.hesapla(copy_fills, saatlik, marks, yurutme, saved['funding'], t0, now, delay)
+        except Exception as error:
+            paper_v3 = {'surum': 'v3', 'durum': 'hesaplanamadi', 'neden': data_error_reason(error)}
     leverage = sum(p['buyukluk_usd'] for p in positions) / account
     metrics = calculate_metrics(perp_fills(fills), account_value=account)
     light = health(history, t0, now, leverage, metrics['martingale_signal'],
@@ -696,7 +714,7 @@ def update_trader(root: Path, client, dexes: list[str], state: dict, all_events:
                        'getiri_30g': ret30, 'getiri_90g': float(recent.iloc[-1] - recent.iloc[0]) if len(recent) else 0.0},
               'hesap_degeri': account, 'pozisyonlar': positions, 'son_islem': last_trade,
               'egri': [[str(day.date()), float(value)] for day, value in recent.items()], 'sanal_kopya': paper,
-              'sanal_kopya_v2': paper_v2}
+              'sanal_kopya_v2': paper_v2, 'sanal_kopya_v3': paper_v3}
     if row.get('kol') in oda_risk.YONSUZ_KOLLAR:
         trader['yonsuz_bayrak'] = yonsuz_guncelle(client, address, saved, states, fills, now)
     if row.get('kol') == 'oda':
