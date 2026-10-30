@@ -7,9 +7,11 @@ trap 'rm -rf "$archive"' EXIT
 for path in durum.json binance_vadeli.txt kararlar.jsonl degisim.json; do
   if [ -f "izleme/$path" ]; then cp "izleme/$path" "$archive/"; fi
 done
+if [ -d izleme/olaylar ]; then cp -r izleme/olaylar "$archive/olaylar"; fi   # gün başına olay arşivi (yalnız bugünün dosyası değişir)
 [ -s "$archive/durum.json" ]
 # motor.json R2'de tutulur (izleme.yml); GitHub 100 MB sınırı için yayımlanan her dosya 90 MB altında olmalı.
-for f in "$archive"/*; do
+for f in "$archive"/* "$archive"/olaylar/*; do
+  [ -f "$f" ] || continue
   if [ "$(stat -c %s "$f")" -gt 94371840 ]; then echo "Çok büyük: $(basename "$f") ($(stat -c %s "$f") bayt)" >&2; exit 1; fi
 done
 git config user.name 'github-actions[bot]'
@@ -31,6 +33,7 @@ git rm -q --cached --ignore-unmatch izleme/motor.json
 for path in durum.json binance_vadeli.txt kararlar.jsonl degisim.json; do
   if [ -f "$archive/$path" ]; then git add -f "izleme/$path"; fi
 done
+if [ -d "$archive/olaylar" ]; then git add -f izleme/olaylar; fi
 if git diff --cached --quiet; then exit 0; fi
 git commit -m "izleme: saatlik durum $(date -u +%FT%TZ)"
 for attempt in 1 2 3; do

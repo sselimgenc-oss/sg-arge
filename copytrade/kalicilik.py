@@ -36,15 +36,19 @@ def hesap_olustur(portfolio: list) -> dict[str, list] | None:
     return {"av": av, "pnl": pnl} if av and pnl else None
 
 
-_SERI: dict[int, pd.Series] = {}
+_SERI: dict[int, tuple[list, pd.Series]] = {}
 
 
 def _seri(noktalar: list) -> pd.Series:
-    """Nokta listesi → zaman indeksli seri; aynı liste nesnesi için önbellekli (uzun koşuda tekrar kurma maliyeti)."""
+    """Nokta listesi → zaman indeksli seri; aynı liste nesnesi için önbellekli (uzun koşuda tekrar kurma maliyeti).
+
+    Önbellek ``id``'ye göre ama listenin KENDİSİNİ de tutar ve ``is`` ile doğrular: nesne silinip aynı ``id`` ve aynı uzunlukta başka bir listeye
+    verilirse bayat seri dönmez (madde 14: tam pakette arada düşen test buydu)."""
     anahtar = id(noktalar)
-    if anahtar not in _SERI or len(_SERI[anahtar]) != len(noktalar):
-        _SERI[anahtar] = pd.Series({int(t): float(v) for t, v in noktalar}, dtype=float).sort_index()
-    return _SERI[anahtar]
+    kayit = _SERI.get(anahtar)
+    if kayit is None or kayit[0] is not noktalar or len(kayit[1]) != len(noktalar):
+        _SERI[anahtar] = (noktalar, pd.Series({int(t): float(v) for t, v in noktalar}, dtype=float).sort_index())
+    return _SERI[anahtar][1]
 
 
 def _son(seri: pd.Series, t_ms: int) -> tuple[int, float] | None:
@@ -53,11 +57,16 @@ def _son(seri: pd.Series, t_ms: int) -> tuple[int, float] | None:
     return None if kesik.empty else (int(kesik.index[-1]), float(kesik.iloc[-1]))
 
 
-def payda(hesap: dict, t_ms: int, gun: int) -> float | None:
+def payda(hesap: dict, t_ms: int, gun: int, taban: float = 0.0) -> float | None:
     """Pencere ``[t − gun, t]`` pozitif hesap değerlerinin medyanı (kapı 1. aşama ile aynı fikir); yoksa ``None``."""
     av = _seri(hesap["av"])
     pencere = av[(av.index >= t_ms - gun * DAY_MS) & (av.index <= t_ms) & (av > 0)]
-    return None if pencere.empty else float(pencere.median())
+    if pencere.empty:
+        return None
+    medyan = float(pencere.median())
+    # Asgari payda (madde 13): kapı 1. aşama hesap değeri tabanı (`hesap_degeri_min_usd`, kurallar.yaml; yeni eşik değil; çağıran ``taban`` olarak geçer, varsayılan 0 = eski davranış). Tabanın altındaki hesapta
+    # sıfıra yakın payda getiriyi milyonlarca katına patlatıyordu (D1 17.476.474); o T için skor/ileri getiri None → dışarıda.
+    return medyan if medyan >= taban else None
 
 
 def skorlar(hesap: dict, t_ms: int, rules: dict) -> dict[str, float | None]:
@@ -67,7 +76,7 @@ def skorlar(hesap: dict, t_ms: int, rules: dict) -> dict[str, float | None]:
     out: dict[str, float | None] = {k: None for k in SKORLAR}
     g = int(rules["kalicilik_getiri_gun"])
     bas = t_ms - g * DAY_MS
-    den = payda(hesap, t_ms, g)
+    den = payda(hesap, t_ms, g, float(rules.get("hesap_degeri_min_usd", 0.0)))
     if not pnl.empty and pnl.index[0] <= bas and den:
         pencere = pnl[pnl.index >= bas]
         ilk = _son(pnl, bas)
@@ -91,7 +100,7 @@ def ileri_getiri(hesap: dict, t_ms: int, gun: int, rules: dict) -> float | None:
     """T..T+gun getirisi (PnL farkı / T anı payda). Pencere sonuna ``kalicilik_veri_bosluk_gun`` günden yakın veri yoksa ``None`` (dışarıda)."""
     pnl = _seri(hesap["pnl"])
     bas, son = _son(pnl, t_ms), _son(pnl, t_ms + gun * DAY_MS)
-    den = payda(hesap, t_ms, int(rules["kalicilik_getiri_gun"]))
+    den = payda(hesap, t_ms, int(rules["kalicilik_getiri_gun"]), float(rules.get("hesap_degeri_min_usd", 0.0)))
     if bas is None or son is None or not den or t_ms + gun * DAY_MS - son[0] > int(rules["kalicilik_veri_bosluk_gun"]) * DAY_MS:
         return None
     return (son[1] - bas[1]) / den
@@ -224,12 +233,12 @@ def sentetik_hesaplar(n: int, simdi_ms: int, kalici_beceri: bool, tohum: int = 0
     out = {}
     for i in range(n):
         mu = rng.normal(0.0006, 0.0008) if kalici_beceri else 0.0
-        gunluk = rng.normal(mu, 0.012, gun) * 1000.0            # 1000 $ hesap, sabit boy
+        gunluk = rng.normal(mu, 0.012, gun) * 10_000.0          # 10.000 $ hesap, sabit boy (asgari payda `hesap_degeri_min_usd` = 5.000 $ üstünde; oranlar eskisiyle aynı)
         pnl = np.cumsum(gunluk)
-        av = 1000.0 + pnl
+        av = 10_000.0 + pnl
         for k in rng.integers(30, gun - 30, 3):                    # yatırma/çekme: hesap değeri sıçrar, PnL değil
-            av[k:] += rng.choice([-300.0, 500.0])
-        av = np.maximum(av, 50.0)
+            av[k:] += rng.choice([-3000.0, 5000.0])
+        av = np.maximum(av, 500.0)
         zaman = [simdi_ms - (gun - j) * DAY_MS for j in range(gun)]
         out[f"0x{i:040x}"] = {"av": [[t, float(v)] for t, v in zip(zaman, av)], "pnl": [[t, float(v)] for t, v in zip(zaman, pnl)]}
     return out

@@ -131,11 +131,18 @@ class Market:
                 self._bad[coin] = set()
         return self._bad[coin]
 
+    def hourly(self, coin: str) -> tuple[np.ndarray, np.ndarray]:
+        """Yalnız tam saatlik (t % saat == 0) mumların (zaman, açılış) dizileri: funding ızgarası. Canlı yürütme/işaret dakika mumları listede
+        olsa da funding'e fazladan "saat" olarak girmez; yalnız saatlik mumlu listelerde (kapı, Faz 3) sonuç değişmez."""
+        times, opens, _ = self.arrays(coin)
+        mask = times % HOUR == 0
+        return times[mask], opens[mask]
+
     def funding_cum(self, coin: str, rates: FundingRates) -> tuple[list[int], list[float]]:
         """Saat başına (açılış fiyatı × funding oranı) kümülatif toplamı: bir pozisyonun funding'i = −adet × (cum[j] − cum[i])."""
         key = (coin, id(rates))
         if key not in self._cum:
-            times, opens, _ = self.arrays(coin)
+            times, opens = self.hourly(coin)
             per_hour = opens * rates.array(coin, times) if len(times) else np.zeros(0)
             self._cum[key] = (times.tolist(), np.concatenate([[0.0], np.cumsum(per_hour)]).tolist())
         return self._cum[key]
@@ -298,7 +305,7 @@ def copy_ledger(fills: list[dict], market: Market, account: Any, delay_min: int,
                     continue
                 funding_total += -after * (cum[last] - cum[first])
                 if daily:
-                    _, opens, _ = market.lists(coin)
+                    opens = market.hourly(coin)[1].tolist()
                     grid_rates = rates.array(coin, np.array(times[first:last], dtype=np.int64))
                     for hour, price, rate_h in zip(times[first:last], opens[first:last], grid_rates.tolist()):
                         funding_by_day[hour // DAY] = funding_by_day.get(hour // DAY, 0.0) - after * price * rate_h

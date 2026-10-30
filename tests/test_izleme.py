@@ -134,6 +134,7 @@ class Client:
         self.portfolio_reads = 0
         self.candle_reads = 0
         self.mark_reads = 0
+        self.hourly_reads = 0
         self.dexes = [None]
         self.funding = []
 
@@ -158,7 +159,9 @@ class Client:
 
     def candles(self, coin, start, end, interval='1m'):
         assert interval in {'1m', '1h'}
-        if end - start <= 15 * m.MINUTE:        # işaretleme (açık pozisyonun son 1 dk mumu): her koşuda yenilenir, önbelleğe girmez
+        if interval == '1h':                    # v2 tasfiye denetimi için saatlik mumlar (yürütme/işaret sayaçlarından ayrı)
+            self.hourly_reads += 1
+        elif end - start <= 15 * m.MINUTE:        # işaretleme (açık pozisyonun son 1 dk mumu): her koşuda yenilenir, önbelleğe girmez
             self.mark_reads += 1
         else:
             self.candle_reads += 1
@@ -179,9 +182,12 @@ def test_empty_list_writes_contract_and_never_uses_network(tmp_path):
         def __getattr__(self, name):
             raise AssertionError(name)
     result = m.run(root, root / 'out', NoNetwork(), NOW)
-    assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
-                      'kasa_egri': {'oda': [], 'kontrol': []}, 'olaylar': []}
-    assert json.loads((root / 'out/durum.json').read_text()) == result
+    assert result.pop('kol_ozet') == {'kollar': {}, 'oda_kontrol_fark': None, 'oda_kontrol_fark_v2': None}
+    assert result.pop('risk')['oda']['uye'] == 0           # boş listede risk tanısı boş ama sözleşmede var
+    assert result == {'surum': 1, 'uretildi': '2026-10-27T12:00:00Z', 'yayim_zamani': '2026-10-27T12:00:00Z', 'kosu_baslangic': '2026-10-27T12:00:00Z', 'kosu_bitis': '2026-10-27T12:00:00Z', 'kaynak': 'hyperliquid', 'traderlar': [],
+                      'kasa_egri': {'oda': [], 'kontrol': []}, 'kapsam': {}, 'olaylar': [], 'gunluk_sayac': [], 'sayac_24s': {},
+                      'olay_kapsami': {'baslangic': None, 'tam': True, 'toplam': 0, 'kol_basina_son': 200, 'sayac_gun': 30}}
+    assert {k: v for k, v in json.loads((root / 'out/durum.json').read_text()).items() if k not in ('risk', 'kol_ozet')} == result
 
 
 def test_uses_current_main_list_without_changing_it():
@@ -210,13 +216,16 @@ def test_incremental_overlap_daily_portfolio_and_repeatable_ledger(tmp_path):
     one = m.run(root, root / 'out', client, NOW)
     two = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
     first, second = one['traderlar'][0], two['traderlar'][0]
-    drop = lambda t: {k: ({a: b for a, b in v.items() if a != 'son_isaret'} if k == 'sanal_kopya' else v)    # son_isaret koşuyla ilerler (işaret zamanı); sayılar aynı kalmalı
+    sans = lambda v: {a: ([{x: y for x, y in lot.items() if x != 'isaret_zamani'} for lot in b] if a == 'acik_lotlar' else b) for a, b in v.items() if a not in ignore['sanal_kopya']}
+    ignore = {'sanal_kopya': {'son_isaret'}, 'sanal_kopya_v2': {'payda_okuma_sayisi'}}      # koşuyla ilerleyen sayaçlar; sayılar aynı kalmalı
+    drop = lambda t: {k: (sans(v) if k == 'sanal_kopya' else ({a: b for a, b in v.items() if a not in ignore[k]} if k in ignore else v))
                       for k, v in t.items() if k != 'veri_zamani'}
     assert drop(first) == drop(second)
     assert second['veri_zamani'] == '2026-10-27T13:00:00Z'
     assert one['olaylar'] == two['olaylar']
     assert client.portfolio_reads == 2  # sağlık eğrisi saatlik yenilenir
     assert client.candle_reads == 1 and client.mark_reads == 2       # yürütme mumu önbellekten; işaret her koşuda bir kez
+    assert client.hourly_reads == 2                                  # v2: açık coin için her koşuda tek artımlı saatlik okuma
     starts = [x['startTime'] for x in client.calls if x['type'] == 'userFillsByTime']
     assert starts[-1] == client.rows[-1]['time']  # inclusive boundary is deduplicated
     saved = json.loads((root / 'out/motor.json').read_text())
@@ -239,7 +248,7 @@ def test_pinned_scale_does_not_rewrite_prior_copy_pnl(tmp_path):
     first = m.run(root, root / 'out', client, NOW)
     client.account = 2000
     second = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
-    strip = lambda p: {k: v for k, v in p.items() if k != 'son_isaret'}                             # son_isaret koşuyla ilerler; sayılar yeniden yazılmamalı
+    strip = lambda p: {k: ([{x: y for x, y in lot.items() if x != 'isaret_zamani'} for lot in v] if k == 'acik_lotlar' else v) for k, v in p.items() if k != 'son_isaret'}                             # son_isaret koşuyla ilerler; sayılar yeniden yazılmamalı
     assert strip(first['traderlar'][0]['sanal_kopya']) == strip(second['traderlar'][0]['sanal_kopya'])
 
 
@@ -355,12 +364,24 @@ def test_exact_candle_required_and_cache_survives_window_rollover():
 def test_failure_preserves_last_successful_payloads(tmp_path):
     root, client = project(tmp_path), Client()
     m.run(root, root / 'out', client, NOW)
-    previous = {p.name: p.read_bytes() for p in (root / 'out').iterdir()}
+    previous = {str(p.relative_to(root / 'out')): p.read_bytes() for p in (root / 'out').rglob('*') if p.is_file()}
     client.rows.append(fill('2026-10-27T12:00Z', 2, 'B', 1, 1))
-    client.candles = lambda *args, **kwargs: []
+    def broken(*args, **kwargs):
+        raise ValueError('API hatası')
+    client.fills = broken      # madde 2 sonrası eksik mum hata değil "fiyatsız"; tüm trader'ların hatası başka nedenle
     with pytest.raises(RuntimeError, match='Tüm trader'):
         m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
-    assert previous == {p.name: p.read_bytes() for p in (root / 'out').iterdir()}
+    assert previous == {str(p.relative_to(root / 'out')): p.read_bytes() for p in (root / 'out').rglob('*') if p.is_file()}
+
+
+def test_eksik_mum_trader_i_gecersiz_yapmaz_fiyatsiz_raporlanir(tmp_path):
+    root, client = project(tmp_path), Client()
+    client.candles = lambda *args, **kwargs: []
+    result = m.run(root, root / 'out', client, NOW)
+    trader = result['traderlar'][0]
+    assert trader['gecerli'] is True
+    assert trader['sanal_kopya']['fiyatsiz_eylem'] == 1 and trader['sanal_kopya']['fiyatsiz_coinler'] == ['BTC']
+    assert trader['sanal_kopya']['bakiye_usd'] == 1000
 
 
 def test_hip3_positions_and_actual_account_leverage(tmp_path):
@@ -691,3 +712,262 @@ def test_health_blind_keeps_leverage_and_staleness():
     result = m.health(h, h.index[-1], NOW, 10.01, False, m.millis(NOW) - 30 * m.DAY, performans_konisi=False)
     assert result['isik'] == 'kirmizi'
     assert result['nedenler'] == ['gerçek kaldıraç > 10x', 'son 30 günde işlem yok']
+
+
+# ---------------------------------------------------------------- v1.6: olay arşivi kesilmez (GOREV_VERI_DUZELTME madde 1)
+def _olay(i, trader, tur, zaman):
+    return {'id': f'{trader}-{i}-{tur}', 'zaman': zaman, 'trader': trader, 'tur': tur}
+
+
+def test_olay_ozeti_yogun_taban_oda_olaylarini_disarida_birakmaz():
+    # Altın örnek: B17 (taban) 300 açılış üretir, hepsi O01 (oda) olaylarından DAHA YENİ.
+    # Eski kod ortak [:200] aldığı için oda olaylarının hepsi düşerdi; şimdi kol başına 200.
+    events = {}
+    for i in range(300):
+        e = _olay(i, 'B17', 'acilis', f'2026-10-27T11:{i // 60:02d}:{i % 60:02d}Z')
+        events[e['id']] = e
+    for i, (tur, z) in enumerate([('acilis', '2026-10-27T01:00:00Z'), ('kapanis', '2026-10-27T02:00:00Z'),
+                                  ('acilis', '2026-10-26T23:00:00Z')]):
+        e = _olay(i, 'O01', tur, z)
+        events[e['id']] = e
+    traders = [{'id': 'B17', 'kol': 'taban'}, {'id': 'O01', 'kol': 'oda'}]
+    recent, sayac, scope, _ = m.olay_ozeti(events, traders, NOW, tam=True)
+    assert sum(e['trader'] == 'B17' for e in recent) == 200
+    assert sum(e['trader'] == 'O01' for e in recent) == 3
+    assert len(recent) == 203
+    assert [e['zaman'] for e in recent] == sorted((e['zaman'] for e in recent), reverse=True)
+    oda = {(r['gun']): r for r in sayac if r['kol'] == 'oda'}
+    assert oda['2026-10-27'] == {'gun': '2026-10-27', 'kol': 'oda', 'acilis': 1, 'kapanis': 1, 'trader_sayisi': 1}
+    assert oda['2026-10-26']['acilis'] == 1 and oda['2026-10-26']['kapanis'] == 0
+    taban = next(r for r in sayac if r['kol'] == 'taban')
+    assert (taban['acilis'], taban['kapanis'], taban['trader_sayisi']) == (300, 0, 1)   # kesilmemiş sayım
+    assert scope == {'baslangic': '2026-10-26T23:00:00Z', 'tam': True, 'toplam': 303, 'kol_basina_son': 200, 'sayac_gun': 30}
+
+
+def test_olay_ozeti_isik_olayi_sayaca_girmez_ve_kapsam_islemden_baslar():
+    events = {e['id']: e for e in [_olay(1, 'O01', 'isik', '2026-10-20T00:00:00Z'), _olay(2, 'O01', 'acilis', '2026-10-27T09:00:00Z')]}
+    _, sayac, scope, _ = m.olay_ozeti(events, [{'id': 'O01', 'kol': 'oda'}], NOW, tam=False)
+    assert len(sayac) == 1 and sayac[0]['acilis'] == 1
+    assert scope['baslangic'] == '2026-10-27T09:00:00Z' and scope['tam'] is False
+
+
+def test_olay_ozeti_bos_arsiv():
+    recent, sayac, scope, _ = m.olay_ozeti({}, [], NOW, tam=True)
+    assert recent == [] and sayac == [] and scope['baslangic'] is None and scope['toplam'] == 0
+
+
+def test_kosu_kesilmemis_olay_arsivi_ve_kapsam_yazar(tmp_path):
+    import gzip
+    root, output = project(tmp_path, [styled_row()]), tmp_path / 'out'
+    client = Client([fill('2026-10-27T10:00:00Z', 1), fill('2026-10-27T10:30:00Z', 2, side='A', size=1, before=1, price=110)])
+    result = m.run(root, output, client, NOW)
+    lines = gzip.decompress((output / 'olaylar/2026-10-27T10.jsonl.gz').read_bytes()).decode().splitlines()
+    ids = [json.loads(x)['id'] for x in lines]
+    assert ids == ['T1-1-acilis', 'T1-2-kapanis']          # 10:00 ve 10:30 aynı saat parçasında, kesilmemiş
+    assert all('sanal_sonuc' not in json.loads(x) for x in lines)   # türetilmiş alan arşive yazılmaz (parça değişmez kalır)
+    before = (output / 'olaylar/2026-10-27T10.jsonl.gz').read_bytes()
+    m.run(root, output, client, NOW + pd.Timedelta(hours=1))
+    assert (output / 'olaylar/2026-10-27T10.jsonl.gz').read_bytes() == before   # değişmeyen saat: aynı bayt, git'te yeni nesne yok
+    assert result['olay_kapsami']['toplam'] == 2 and result['olay_kapsami']['tam'] is True
+    assert [(r['kol'], r['acilis'], r['kapanis']) for r in result['gunluk_sayac']] == [(result['traderlar'][0].get('kol', ''), 1, 1)]
+    assert json.loads((output / 'durum.json').read_text())['gunluk_sayac'] == result['gunluk_sayac']
+
+
+# ---------------------------------------------------------------- madde 2: tek eksik fiyat trader'ı düşürmez
+def test_eksik_mum_kumeye_yazilir_hata_vermez():
+    f = fill('2026-10-27T10:00:00Z', 1, coin='US500')
+    eksik: set = set()
+    client = Client([])
+    client.candles = lambda *args, **kwargs: []
+    candles, _ = m.execution_candles(client, [f], {}, m.millis(NOW), 30, eksik)
+    assert eksik == {('US500', m.millis('2026-10-27T10:30:00Z'))} and candles == {}
+
+
+def test_fiyatsiz_eylem_yalniz_kendisini_cikarir_baska_coin_ve_ayni_coin_etkilenmez():
+    # Altın örnek (BTC, hesap 1.000 $): al 1 @100 (fiyatlı), al 1 (10:20, mum YOK → fiyatsız), sat 2 @110 (fiyatlı).
+    # Defter: al 1 @100, sat → ele göre 1'e kırpılır @110. Beklenen = yalnız [al 1 @100, sat 1 @110] defteri.
+    btc = [fill('2026-10-27T10:00:00Z', 1, price=100),
+           fill('2026-10-27T10:20:00Z', 2, price=105, before=1),
+           fill('2026-10-27T11:00:00Z', 3, side='A', size=2, before=2, price=110)]
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:30:00Z'), 'o': 110.0}]}
+    ref = m.copy_results([btc[0], dict(btc[2], sz='1', startPosition='1')], candles, [], 1000, T0, NOW, {})
+    got = m.copy_results(btc, candles, [], 1000, T0, NOW, {}, fiyatsiz_izin=True)
+    assert got['bakiye_usd'] == pytest.approx(ref['bakiye_usd']) and got['bakiye_usd'] > 1000
+    assert got['fiyatsiz_eylem'] == 1 and got['fiyatsiz_coinler'] == ['BTC']
+    assert got['fiyatsiz_acik_coinler'] == ['BTC']              # fiyatsız eylemin net miktarı +1: gerçek kopya defterden farklı
+    # Başka coin etkilenmez: US500'ün fiyatsız eylemi BTC sonucunu değiştirmez.
+    us = fill('2026-10-27T10:05:00Z', 9, coin='US500', price=5000)
+    mixed = m.copy_results(sorted(btc + [us], key=lambda x: x['time']), candles, [], 1000, T0, NOW, {}, fiyatsiz_izin=True)
+    assert mixed['bakiye_usd'] == pytest.approx(got['bakiye_usd']) and mixed['fiyatsiz_eylem'] == 2
+    assert mixed['fiyatsiz_coinler'] == ['BTC', 'US500'] and 'fiyatsız eylem' in mixed['not']
+    with pytest.raises((ValueError, KeyError)):   # izin yoksa eski sıkı davranış
+        m.copy_results(btc, candles, [], 1000, T0, NOW, {})
+
+
+def test_fiyatsiz_acilis_sonrasi_fiyatli_kapanis_ters_pozisyon_acmaz():
+    # al 1 (mum yok → fiyatsız), sat 1 @110 (fiyatlı) → elde yok, kapanış atılır; bakiye 1.000, ters pozisyon yok.
+    fills = [fill('2026-10-27T10:00:00Z', 1, price=100),
+             fill('2026-10-27T11:00:00Z', 2, side='A', size=1, before=1, price=110)]
+    candles = {'BTC': [{'t': m.millis('2026-10-27T11:30:00Z'), 'o': 110.0}]}
+    got = m.copy_results(fills, candles, [], 1000, T0, NOW, {}, fiyatsiz_izin=True)
+    assert got['bakiye_usd'] == 1000 and got['acik'] == 0 and got['fiyatsiz_eylem'] == 1
+
+
+
+# ---------------------------------------------------------------- madde 3: perp hesabı sıfır ≠ veri yok
+def test_perp_hesabi_sifir_ayri_durum_kodu_alir(tmp_path):
+    rows = [{'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Bir', 'durum': 'izlemede', 't0': str(T0.date())},
+            {'id': 'T2', 'adres': '0x' + '2' * 40, 'takma_ad': 'İki', 'durum': 'izlemede', 't0': str(T0.date())},
+            {'id': 'T3', 'adres': '0x' + '3' * 40, 'takma_ad': 'Üç', 'durum': 'izlemede', 't0': str(T0.date())}]
+    root = project(tmp_path, rows)
+
+    class Karisik(Client):
+        def info(self, payload, weight=20):
+            if payload['type'] == 'clearinghouseState' and not payload.get('dex'):
+                self.account = 0 if payload['user'] == rows[1]['adres'] else 1000
+            return super().info(payload, weight)
+
+        def fills(self, address, start):
+            if address == rows[2]['adres']:
+                raise RuntimeError('API yok')
+            return super().fills(address, start)
+    result = m.run(root, root / 'out', Karisik(), NOW)
+    durum = {t['id']: (t['veri_durumu'], t['gecerli']) for t in result['traderlar']}
+    assert durum == {'T1': ('tamam', True), 'T2': ('perp_bos', False), 'T3': ('okuma_hatasi', False)}
+    bos = next(t for t in result['traderlar'] if t['id'] == 'T2')
+    assert 'perp hesabı boş/kapalı' in bos['saglik']['nedenler'][0]
+
+
+def test_perp_hesabi_sifir_onceki_sonucu_korur_ve_etiketler(tmp_path):
+    rows = [{'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Bir', 'durum': 'izlemede', 't0': str(T0.date())},
+            {'id': 'T2', 'adres': '0x' + '2' * 40, 'takma_ad': 'İki', 'durum': 'izlemede', 't0': str(T0.date())}]
+    root, client = project(tmp_path, rows), Client()
+    first = m.run(root, root / 'out', client, NOW)
+    original = client.info
+
+    def info(payload, weight=20):
+        if payload['type'] == 'clearinghouseState' and not payload.get('dex') and payload['user'] == ADDRESS:
+            client.account = 0
+        else:
+            client.account = 1000
+        return original(payload, weight)
+    client.info = info
+    result = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))
+    t = next(x for x in result['traderlar'] if x['id'] == 'T1')
+    assert (t['gecerli'], t['veri_durumu']) == (False, 'perp_bos')
+    assert t['sanal_kopya']['bakiye_usd'] == pytest.approx(next(x for x in first['traderlar'] if x['id'] == 'T1')['sanal_kopya']['bakiye_usd'])
+
+
+# ---------------------------------------------------------------- madde 5: üç ayrı zaman
+def test_uretildi_veri_zamani_ve_yayim_zamani_ayri(tmp_path, monkeypatch):
+    # Altın örnek: koşu 12:00:00'de başlar, trader okuması 12:07:30, yayım 12:09:00.
+    # Sahte saat: 1. çağrı koşu başlangıcı, 2. trader okuması, 3. yayım.
+    from datetime import UTC, datetime
+    ticks = iter([datetime(2026, 10, 27, 12, 0, 0, tzinfo=UTC), datetime(2026, 10, 27, 12, 7, 30, tzinfo=UTC),
+                  datetime(2026, 10, 27, 12, 9, 0, tzinfo=UTC)])
+
+    class FakeDatetime:
+        @staticmethod
+        def now(tz=None):
+            return next(ticks)
+    monkeypatch.setattr(m, 'datetime', FakeDatetime)
+    root = project(tmp_path, [{'id': 'T1', 'adres': ADDRESS, 'takma_ad': 'Test', 'durum': 'izlemede', 't0': str(T0.date()), 'kol': 'oda', 'kollar': ['oda']}])
+    result = m.run(root, root / 'out', Client(), None)
+    assert result['uretildi'] == '2026-10-27T12:00:00Z'
+    assert result['traderlar'][0]['veri_zamani'] == '2026-10-27T12:07:30Z'
+    assert result['yayim_zamani'] == '2026-10-27T12:09:00Z'
+    assert (result['kosu_baslangic'], result['kosu_bitis']) == (result['uretildi'], result['yayim_zamani'])   # C#16 adları
+    assert result['kapsam']['oda']['en_eski_veri_zamani'] == '2026-10-27T12:07:30Z'
+
+
+# ---------------------------------------------------------------- madde 16: kol başına 24 saat sayacı
+def test_sayac_24s_altin_ornek():
+    # NOW = 12:00. Oda (O1, O2) ve taban (B1). Pencere 24 saat = 26.10 12:00 – 27.10 12:00.
+    # O1: acilis 11:00 (kapanan, kazanan +1%), kapanis 11:30 → sanal sonuc 11:30'da biter (kazanan).
+    # O2: acilis 10:00 (kapanan, -2%, kapanış 10:30 → kaybeden), kapanis 10:20; acilis dün 11:00 (pencere dışı kalmaz: 25 sa önce → dışarıda).
+    # B1: 300 açılış (taban; oda sayısını etkilemez).
+    ev = {}
+    def add(i, tr, tur, z, sonuc=None):
+        e = _olay(i, tr, tur, z)
+        if sonuc: e['sanal_sonuc'] = sonuc
+        ev[e['id']] = e
+    add(1, 'O1', 'acilis', '2026-10-27T11:00:00Z', {'durum': 'kapandi', 'net_yuzde': 0.01, 'kapanis': '2026-10-27T11:30:00Z'})
+    add(2, 'O1', 'kapanis', '2026-10-27T11:30:00Z')
+    add(3, 'O2', 'acilis', '2026-10-27T10:00:00Z', {'durum': 'kapandi', 'net_yuzde': -0.02, 'kapanis': '2026-10-27T10:30:00Z'})
+    add(4, 'O2', 'kapanis', '2026-10-27T10:20:00Z')
+    add(5, 'O2', 'acilis', '2026-10-26T11:00:00Z', {'durum': 'kapandi', 'net_yuzde': 0.05, 'kapanis': '2026-10-26T11:30:00Z'})   # 25 sa önce: dışarıda
+    for i in range(300):
+        add(100 + i, 'B1', 'acilis', f'2026-10-27T11:{i // 60:02d}:{i % 60:02d}Z')
+    traders = [{'id': 'O1', 'kol': 'oda'}, {'id': 'O2', 'kol': 'oda'}, {'id': 'B1', 'kol': 'taban'}]
+    *_, sayac_24s = m.olay_ozeti(ev, traders, NOW, tam=True)
+    assert sayac_24s['oda'] == {'acilis': 2, 'kapanis': 2, 'trader_sayisi': 2, 'kapanan': 2, 'kazanan': 1}
+    assert sayac_24s['taban']['acilis'] == 300 and sayac_24s['taban']['trader_sayisi'] == 1 and sayac_24s['taban']['kapanan'] == 0
+
+
+# ---------------------------------------------------------------- madde 18: eksik işaret fiyatı
+def test_eksik_isaret_eksik_degerleme_bayragi_ve_kol_sayisi():
+    early = fill('2026-10-27T08:00:00Z', 1, price=99)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T08:30:00Z'), 'o': 100.0}]}      # işaret 210 dk eski > isaret_yas_max_dk (120)
+    stale = m.copy_results([early], candles, [], 1000, T0, NOW, {})
+    assert stale['isaret_eksik'] == 1 and stale['eksik_degerleme'] is True
+    fresh = m.copy_results([early], {'BTC': [{'t': m.millis('2026-10-27T08:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:59:00Z'), 'o': 101.0}]}, [], 1000, T0, NOW, {})
+    assert fresh['isaret_eksik'] == 0 and fresh['eksik_degerleme'] is False
+    traders = [{'kol': 'oda', 'gecerli': True, 'sanal_kopya': stale}, {'kol': 'oda', 'gecerli': True, 'sanal_kopya': fresh},
+               {'kol': 'oda', 'gecerli': False, 'sanal_kopya': stale}]            # geçersiz üye sayılmaz (zaten toplama girmiyor)
+    assert m.kapsam(traders, 'oda')['eksik_degerleme'] == 1
+
+
+# ---------------------------------------------------------------- madde 6: sanal açık lotlar (1.000 $ ölçeği)
+def test_acik_lotlar_altin_ornek_olcek_ve_defterle_tutarlilik():
+    # Trader 10:00'da 1 BTC alır; 30 dk gecikmeli giriş 10:30 açılışı 100. İşaret (11:59) 102. Hesap 10.000 $ → ölçek 1000/10000 = 0,1.
+    # Beklenen: miktar 0,1 BTC, giriş 100, işaret 102, notional 0,1×102 = 10,2 $, açık K/Z 0,1×(102−100) = 0,2 $.
+    f = fill('2026-10-27T10:00:00Z', 1, price=99)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:59:00Z'), 'o': 102.0}]}
+    r = m.copy_results([f], candles, [], 10000, T0, NOW, {})
+    assert r['kopya_paydasi'] == 10000
+    (lot,) = r['acik_lotlar']
+    assert lot['coin'] == 'BTC' and lot['yon'] == 'long'
+    assert lot['miktar'] == pytest.approx(0.1) and lot['giris_fiyati'] == pytest.approx(100.0)
+    assert lot['isaret_fiyati'] == 102.0 and lot['isaret_zamani'] == '2026-10-27T11:59:00Z'
+    assert lot['notional_usd'] == pytest.approx(10.2) and lot['acik_kz_usd'] == pytest.approx(0.2)
+    assert lot['acik_kz_usd'] == pytest.approx(1000 * r['acik'])         # defterin açık K/Z'si ile aynı sayı
+
+
+def test_kapali_pozisyonda_acik_lot_yok_ve_isaretsiz_lot_none_tasir():
+    opening = fill('2026-10-27T10:00:00Z', 1, price=99)
+    closing = fill('2026-10-27T10:20:00Z', 2, side='A', before=1, price=101)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T10:50:00Z'), 'o': 101.0}]}
+    assert m.copy_results([opening, closing], candles, [], 1000, T0, NOW, {})['acik_lotlar'] == []
+    early = fill('2026-10-27T08:00:00Z', 1, price=99)          # giriş mumu 08:30; NOW 12:00 → 210 dk > isaret_yas_max_dk (120)
+    stale = m.copy_results([early], {'BTC': [{'t': m.millis('2026-10-27T08:30:00Z'), 'o': 100.0}]}, [], 1000, T0, NOW, {})
+    (lot,) = stale['acik_lotlar']                                          # işaret bayat (isaret_yas_max_dk): uydurulmaz
+    assert lot['isaret_fiyati'] is None and lot['acik_kz_usd'] is None and lot['notional_usd'] == pytest.approx(100.0)
+
+
+# ---------------------------------------------------------------- madde 7: mutabakat ikiye ayrıldı
+def test_sanal_defter_mutabakati_uyumlu_ve_fiyatsiz_yetim():
+    # Altın örnek: trader 1 BTC alır (10:00, yürütme 10:30 gelmiş), hesap 10.000 $ → sanal lot 0,1 BTC (1.000 $ ölçeği) = trader biriminde 1,0.
+    buy = fill('2026-10-27T10:00:00Z', 1, price=99)
+    candles = {'BTC': [{'t': m.millis('2026-10-27T10:30:00Z'), 'o': 100.0}, {'t': m.millis('2026-10-27T11:59:00Z'), 'o': 102.0}]}
+    paper = m.copy_results([buy], candles, [], 10000, T0, NOW, {})
+    ok = m.sanal_defter_mutabakati([buy], paper, NOW, 30)
+    assert (ok['uyumlu'], ok['yetim'], ok['toplam']) == (1, 0, 1) and ok['saglik']['isik'] == 'yesil'
+    # Aynı eylem için yürütme mumu yok → fiyatsız → sanal lot yok, beklenen +1: yetim, kırmızı ışık, fiyatsız coin işaretli.
+    bad = m.copy_results([buy], {}, [], 10000, T0, NOW, {}, fiyatsiz_izin=True)
+    broken = m.sanal_defter_mutabakati([buy], bad, NOW, 30)
+    assert (broken['yetim'], broken['yetim_coinler']) == (1, ['BTC'])
+    assert broken['saglik'] == {'isik': 'kirmizi', 'neden': 'yetim pozisyon'} and broken['fiyatsiz_coinler'] == ['BTC']
+    # Yürütmesi henüz gelmemiş eylem (gecikme dolmadı) beklenene girmez.
+    early = m.sanal_defter_mutabakati([buy], paper, m.timestamp('2026-10-27T10:10:00Z'), 30)
+    assert early['toplam'] == 1 and early['eksik'] == 1                    # beklenen 0, ama (şimdi sonrası) lot var: ayrıştırma testi
+
+
+def test_oda_uyesi_iki_ayri_mutabakat_isigi_ve_sicrama_metni(tmp_path):
+    row = {'id': 'O1', 'adres': ADDRESS, 'takma_ad': 'Oda', 'durum': 'izlemede', 't0': str(T0.date()), 'kol': 'oda', 'kollar': ['oda']}
+    root, client = project(tmp_path, [row]), Client()
+    m.run(root, root / 'out', client, NOW)
+    client.account = 1500                                                   # %50 hesap değeri sıçraması
+    second = m.run(root, root / 'out', client, NOW + pd.Timedelta(hours=1))['traderlar'][0]['veri_kalitesi']
+    assert second['mutabakat'] == second['mutabakat_gecmis']                # geriye dönük uyumlu takma ad
+    assert second['mutabakat_gecmis']['saglik']['neden'] == 'teşhis: hesap değeri sıçraması (yatırma/çekme kanıtı değil)'
+    assert 'saglik' in second['mutabakat_sanal'] and 'hesap_degeri_sicramasi' not in second['mutabakat_sanal']   # sanal ışık sıçramadan bağımsız

@@ -53,7 +53,40 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 }
 ```
 - `egri`: son 90 gün, günlük, t0'dan bağımsız trader'ın kümülatif PnL / hesap değeri (Hyperliquid `portfolio`).
-- `olaylar`: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
+- `olaylar` (v1.6): **kol başına** son 200 olay (kolların birleşimi), yeniden eskiye; yoğun bir taban trader'ı oda olaylarını
+  düşüremez. Kesilmemiş tüm olaylar `olaylar/YYYY-MM-DDTHH.jsonl.gz` dosyalarında (saat UTC; gzip JSONL, eskiden yeniye, satır = olay; `sanal_sonuc` hariç, o türetilmiştir). Geçmiş saat dosyaları değişmez.
+- `gunluk_sayac` (v1.6): son 30 gün, `{gun (UTC, YYYY-MM-DD), kol (ana etiket), acilis, kapanis (olay sayısı), trader_sayisi}`;
+  `buyutme`/`azaltma`/`isik` sayılmaz; kesilmemiş olaylardan hesaplanır.
+- `sanal_kopya.fiyatsiz_eylem` (v1.6, sayı) ve `fiyatsiz_coinler` (liste): yürütme fiyatı (1 dk/1 sa mum) bulunamayan kopya eylemleri.
+  Fiyatlanamayan eylemler sanal defter dışı bırakılır, `not`: "fiyatsız eylem";
+  diğer coinler ve trader geçerli kalır. Yalnız fiyatlanamayan eylem çıkar; sonraki eylemler defterdeki gerçek ele göre kırpılır
+  (fazlası atılır, elde yokken azaltma atılır → ters pozisyon açılmaz). `fiyatsiz_acik_coinler`: fiyatsız eylemlerin net miktarı ≠ 0 olan
+  coinler (gerçek kopya pozisyonu defterden farklı olabilir). Mum sonraki koşuda gelirse otomatik hesaplanır (önbellekte eksik saklanmaz).
+- `traderlar[].veri_durumu` (v1.6, GOREV madde 15): `tamam` | `fiyatsiz` (trader geçerli; yalnız fiyatı bulunamayan coinler ölçüm dışı, bkz. `sanal_kopya.fiyatsiz_*`) |
+  `perp_bos` (güncel perp hesap değeri 0; spot bakiye ayrı, "veri yok" değildir) | `okuma_hatasi` (son okuma başarısız, önceki sonuç gösteriliyor) |
+  `bayat` (okuma hatası ve önceki başarılı okuma > 180 dk). `gecerli` geriye dönük uyumlu türevdir: `tamam`/`fiyatsiz` → true, diğerleri false.
+  Hiç okunmamış trader için `yer_tutucu: true` (trader ve `sanal_kopya` düzeyinde) yayımlanır; bu satırdaki 1.000 $ / 0 değerleri ölçüm DEĞİLDİR
+  ve hiçbir toplama girmez.
+- `kapsam` (v1.6, üst düzey): kol adı (`kollar` üyeliğiyle; ana etiket değil) → `{toplam, gecerli, fiyatsiz, perp_bos, yer_tutucu, bayat, okuma_hatasi,
+  kapsama, gecerli_bakiye_usd, gecersiz_bakiye_usd}`. `toplam` üye sayısıdır ve sabit kalır (ITT); her üye `gecerli | perp_bos | yer_tutucu | bayat |
+  okuma_hatasi` kovalarından tam birindedir (`fiyatsiz`, `gecerli`nin alt kümesi). `kapsama` = gecerli/toplam (oran, 0,67 = %67). Bakiye alt
+  toplamları 1.000 $ kopya ölçeğinde USD'dir; `gecersiz_bakiye_usd` eski sonuçların önceki bakiyeleridir (yer tutucu ve perp_bos hariç).
+  `kasa_egri` ve kol toplamları yalnız `gecerli=true` traderları, `kollar` üyeliğiyle toplar. Eğri = kasa (madde 17): `egri_eksik` = eğrisi
+  olmayan geçerli üye sayısı (eksik kapsama; kasaya girmez), `kasa_son_nokta_usd` = `kasa_egri`nin son noktası, `kasa_fark_usd` = o nokta − eğrisi olan
+  geçerli üyelerin `bakiye_usd` toplamı, `kasa_mutabik` = |fark| < 0,5 $ (aksi halde ekranlar uyarı göstermelidir).
+- `sanal_kopya.kopya_paydasi` ve `sanal_kopya.acik_lotlar` (v1.6, madde 6/23): `kopya_paydasi` = t0'da sabitlenen trader hesap değeri (USD, **trader hesabı** ölçeği;
+  v1 payda). `acik_lotlar[]` = sanal açık lotlar, **1.000 $ kopya ölçeğinde** (`miktar` = trader coin miktarı × 1000 / kopya_paydasi, coin birimi): `coin`, `yon`
+  (`long|short`), `miktar`, `giris_fiyati` (gecikmeli yürütme fiyatı, FIFO ağırlıklı ortalama), `isaret_fiyati` ve `isaret_zamani` (UTC; işaret yok/bayatsa null),
+  `notional_usd` (miktar × işaret ya da işaret yoksa giriş), `acik_kz_usd` (işaret yoksa null). Kasa tablosu yalnız bu lotlardan üretilmelidir (trader'ın güncel
+  pozisyonları hesap değeriyle ölçeklenmez).
+- `sanal_kopya.eksik_degerleme` (bool, v1.6, madde 18) = `isaret_eksik > 0`: açık lotlardan en az birinin işareti yok/bayat; bu satırın açık K/Z ve bakiyesi
+  eksik değerlenmiştir. `kapsam[kol].eksik_degerleme` = böyle geçerli üye sayısı; >0 ise ekranlar kol kasasını "bilinmiyor/eksik" göstermelidir
+  (sıfır varsaymaz). `null` teminat/değer 0 olarak toplanmaz.
+- `sayac_24s` (v1.6, üst düzey, madde 16): kol → `{acilis, kapanis, trader_sayisi, kapanan, kazanan}`; koşu başlangıcından geriye 24 saat, kesilmemiş
+  olaylardan. `kapanan`/`kazanan`: sanal sonucu (`sanal_sonuc.kapanis`) o pencerede biten kopyalar ve bunlardan `net_yuzde > 0` olanlar.
+  Ekranlar 24 saat sayısı için `olaylar` listesini DEĞİL bunu kullanır.
+- `olay_kapsami` (v1.6): `{baslangic (ilk işlem olayı, UTC ISO), tam (bu koşuda hiç trader hatası yoksa true), toplam, kol_basina_son, sayac_gun}`.
+- Eski anlatım: son 200 olay, yeniden eskiye. `id` kalıcı ve tekildir (bildirim tekrarını ve kararı buna bağlarız).
 - **Olay kimliği (v1.2):** `{trader}-{oid}-{tur}` (ör. `T1-123456789-acilis`); ışık olayı `{trader}-{ms}-isik`.
   Olaylar **emir (`oid`) düzeyinde** üretilir: aynı emrin dolumları birleştirilir (tek açılış sahte büyütmeler doğurmaz).
   Saatlik motor ve Cloudflare Worker aynı kuralla aynı kimliği üretir.
@@ -72,6 +105,10 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - `traderlar[].tarz` (v1.3): `intraday` | `swing` (izleme listesinde `tarz` varsa o, yoksa en son kapı sonucundan; ikisi de yoksa
   `bilinmiyor` ve 30 dk gecikme). Sanal kopya gecikmesi tarza göre (intraday 30 dk, swing 120 dk);
   Telegram mesajında `[Intraday]` / `[Swing]` etiketi.
+- **Üst düzey zaman adları (v1.6, madde 19 / C#16):** `kosu_baslangic` (= `uretildi`) ve `kosu_bitis` (= `yayim_zamani`) eşanlamlı yeni adlardır; `kapsam[kol].en_eski_veri_zamani` = kolun en eski trader okuması (ekran veri yaşını buradan hesaplar, koşu zamanından değil).
+- **Üç ayrı zaman (v1.6, hepsi UTC ISO):** `uretildi` = koşu başlangıcı; `traderlar[].veri_zamani` = o trader'ın hesap durumunun gerçekten okunduğu an
+  (uzun koşuda trader'lar arasında dakikalar/saatler fark eder); `yayim_zamani` (üst düzey) = `durum.json`'ın yazıldığı an. Veri yaşı için `veri_zamani`,
+  yayım gecikmesi için `yayim_zamani − uretildi` kullanılır.
 - `traderlar[].veri_zamani` ve `gecerli` (v1.4): trader verisinin son başarılı okuma zamanı ve geçerliliği. Bir saatlik
   okuma hata verirse önceki trader gösterilir, `gecerli: false` olur ve sağlık nedenlerinde `veri hatası` yer alır.
   Önceki başarılı kayıt hiç yoksa trader yine yayımlanır: `veri_zamani: null`, `gecerli: false`, sarı sağlık ışığı ve
@@ -81,6 +118,10 @@ yalnız olay kimliği, karar ve neden. Trader adresleri zaten herkese açık zin
 - `buyutme`/`azaltma`: aynı yönde pozisyonun **%25'inden fazla** değişimi (lider kararı); daha küçükleri olay sayılmaz.
 - `sanal_kopya.gerceklesen`, `.acik`, `.toplam`, `.son_isaret`, `.isaret_eksik` (v1.6): sonuç kanonik defterden (`defter.copy_ledger`) üretilir; `gerceklesen` (maliyet ve funding dahil), `acik` (işaretlenmiş açık K/Z) ve `toplam` hesap değerine oran kesirleridir (`bakiye_usd = 1000 × (1 + toplam)`); `son_isaret` açık pozisyonlarda kullanılan en eski işaretin 1 dk mum zamanı (açık pozisyon yoksa `null`); `isaret_eksik` işareti bulunamayan açık coin sayısı.
 - `traderlar[].veri_kalitesi.mutabakat` (v1.7, yalnız oda üyeleri, isteğe bağlı): defter (dolumlardan türetilen pozisyon) ↔ `clearinghouseState` mutabakatı — `uyumlu, yetim, eksik, yon_farki, boy_farki, toplam, uyumsuz_oran, yetim_coinler, sorunlu[], bozuk_satir, zaman`. **Yalnız rapor**: hiçbir pozisyon otomatik kapatılmaz.
+  **v1.6 (madde 7) iki ayrı ışık:** `veri_kalitesi.mutabakat_gecmis` = trader geçmişi (90 gün dolum ↔ borsa; `mutabakat` bunun geriye dönük uyumlu takma adıdır) ve
+  `veri_kalitesi.mutabakat_sanal` = sanal defter (beklenen = yürütmesi gelmiş kopya eylemlerinin coin başına net toplamı, trader birimi; `borsa` = sanal açık lotlar trader birimine çevrilmiş;
+  `yetim` = beklenen pozisyon var ama sanal lot yok, örn. fiyatsız eylem; `eksik` = sanal lot var ama beklenen yok; `fiyatsiz_coinler` eklenir; hesap sıçraması bu ışığa girmez).
+  Hesap değeri sıçraması **teşhistir, yatırma/çekme kanıtı değildir**: `saglik.neden = "teşhis: hesap değeri sıçraması (yatırma/çekme kanıtı değil)"`.
 - `sanal_kopya.egri` (v1.1): t0'dan bugüne günlük sanal bakiye (USD).
 - `olaylar[].sanal_sonuc` (v1.1, yalnız `acilis`/`buyutme`): bu olayın 30 dk gecikmeli kopyasının sonucu; pozisyon
   kapanınca `kapandi` ve maliyet sonrası `net_yuzde` (kopyalanan tutara göre). "Açtıklarım" istatistiği bununla
@@ -115,3 +156,44 @@ hesap, isim ve serbest metin yazılmaz. Eski `bakiye_yok` kayıtları içe aktar
 - Gizlilik (v1.4, kullanıcı kararı): yayımlanan karar kaydında `zaman` yalnız tarih; `bakiye_yok` nedeni yok.
 - Bot anahtarı ve sohbet kimliği yalnız GitHub Secrets'ta (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`,
   `TELEGRAM_WEBHOOK_SECRET`); dağıtım işi bunları Cloudflare secret'ına aktarır. Repoya, günlüğe, sohbete yazılmaz.
+
+
+## Worker (v1.6, madde 19)
+- Günlük özet: 06:00 UTC'den (09:00 TR) sonraki ilk dakikada ve o gün gönderilmediyse gider; 06:05'ten sonra kalırsa başlığa "(gecikmeli)" eklenir.
+- D1 `saglik_kayit(kaynak, ardisik, son_hata, zaman)`: `durum_okuma`, `dolum`, `tetikleme:<iş akışı>`, `ozet_durum` kaynaklarının ardışık hata sayısı;
+  3. ardışık hatada tek Telegram alarmı, başarıda sayaç sıfırlanır. Mevcut D1'e `worker/schema.sql`daki yeni tablo bir kez uygulanmalıdır.
+- `GET /kararlar`: Cloudflare secret `KARAR_ANAHTARI` tanımlıysa `Authorization: Bearer <anahtar>` zorunlu (yoksa 401); tanımlı değilse eski açık davranış sürer.
+  Saatlik içe aktarma (`izleme.yml`) aynı adlı GitHub secret'ını gönderir (boşsa başlıksız).
+
+## Kopya hesap v2 — `traderlar[].sanal_kopya_v2` (v1.6, K-9, madde 20-23)
+v1 (`sanal_kopya`) silinmez ve yeniden yazılmaz; v2 yan yana yayımlanır. Birim: 1.000 $ sanal kopya ölçeği (USD), getiri/oranlar kesirdir (0,012 = %1,2).
+- **Tek motor:** v2 `golge.calistir` (V0) → `defter.copy_ledger` ile hesaplanır; araştırma gölgesiyle aynı yürütme, maliyet ve tasfiye fonksiyonu.
+  Yürütme fiyatı v1'in dakika mumundan dolum üzerine eklenir (`_execution_*`); tasfiye denetimi ve funding saatlik mumlarla yapılır (dakika mumları funding ızgarasına girmez).
+- **Tasfiye (madde 21):** kopya K/Z'si ayrılmış 1 birimin `golge_likidasyon_esigi`ne (kurallar.yaml, −1,0) ya da altına inerse pozisyonlar o saatin işaretinde tasfiye edilir.
+  Alanlar: `tasfiye` (bool), `tasfiye_zamani` (UTC ISO, yoksa null), `tasfiye_kaynagi` (`mum` | `gunluk_ozsermaye`). Tasfiyeden sonra `bakiye_usd` 0'da kalır, `egri` o günden itibaren 0'dır; bakiye negatif olmaz (v1'de olabilir).
+- **Zamanla değişen payda (madde 22):** her koşuda trader hesap değeri `hesap_serisi`ne eklenir (motor.json); ilk kayıt t0'da sabitlenen `kopya_paydasi`. Dolum, o ana kadarki son okumayla ölçeklenir; ilk okumadan önce ilk okuma geçerlidir.
+  `payda_yontemi`: `ilk_okuma` (tek okuma) | `saatlik_okuma` (≥2 okuma); `payda_okuma_sayisi`. Geçmiş saatler için okuma yoktur (v2 dağıtım anından başlar; t0 ↔ dağıtım arası ilk okuma kullanılır).
+- **Funding (madde 23):** kopyalanan pozisyon büyüklüğü × saatlik oran; t0 öncesi devralınan pozisyonun funding'i girmez (`funding` alanı kesir, hesap değerine oran).
+- Diğer alanlar: `baslangic_usd`, `bakiye_usd`, `getiri`, `dusus`, `egri`, `gerceklesen` (maliyet+funding dahil), `acik`, `toplam`, `funding`, `maliyet`, `fiyatsiz_eylem` (yürütme fiyatı bulunamayan dolum sayısı), `gecikme_dk`, `t0`.
+- Hesaplanamazsa `{"surum":"v2","durum":"hesaplanamadi","neden":...}`; v1'i etkilemez. Hiç okunmamış trader için `yer_tutucu: true`.
+
+## `gecikme5` kolu (v1.6, K-9, madde 24; yalnız tanısal)
+- Oda üyesi her trader için `traderlar[].sanal_kopya_v2_gecikme5`: v2 ile aynı alanlar, `gecikme_dk: 5` (yürütme 5 dk sonraki dakika mumunun açılışı). Telegram bildirimi yoktur.
+- Üst düzey `gecikme5`: `{uye, karsilastirilan, getiri, oda_v2_getiri, fark, bakiye_usd, tasfiye}`. Yalnız iki taraf da hesaplanabilen ve `gecerli=true` oda üyeleri karşılaştırılır
+  (`karsilastirilan`); `getiri`/`oda_v2_getiri` bu üyelerin 1.000 $ ölçeğindeki ortalama getirisi (kesir), `fark` = 5 dk − (30/120 dk) v2; `bakiye_usd` 5 dk kolunun toplamı.
+- Ön kayıtlı birincil analiz (v1/v2 oda ↔ kontrol) değişmez; `gecikme5` yalnız gecikmenin değerini gösterir (K1: kapı verisinde 5 dk'da avantaj büyük ölçüde gidiyor).
+
+## Risk tanısı — `risk` (v1.6, K-9, madde 25; yalnız tanısal)
+`risk.oda` ve `risk.kontrol`: `{uye, sermaye_usd, brut_notional_usd, net_notional_usd, brut_kaldirac, net_kaldirac, en_buyuk_coin, en_buyuk_coin_payi,
+islem_sikligi_24s, coinler[{coin, long_usd, short_usd}], uyarilar[]}`. Girdi: `gecerli=true` ve `eksik_degerleme=false` üyelerin v1 sanal açık lotları (1.000 $ ölçeği, USD).
+`sermaye_usd` üyelerin v1 sanal bakiyelerinin toplamı; kaldıraç "x" = |notional| / sermaye; `en_buyuk_coin_payi` oran (0,7 = %70); `islem_sikligi_24s` = üye başına son 24 saat açılış+kapanış.
+`coinler` oda ↔ kontrol denge tablosudur (coin, yön, notional). Tavanlar `kurallar.yaml` anahtarları `oda_brut_kaldirac_tavani` ve `oda_tek_coin_payi_tavani`dır;
+**tanımlı değilse yalnız ölçülür, uyarı üretilmez** (tavan değerleri kullanıcı kararıdır).
+
+## `kol_ozet` — ekranların tek sayı kaynağı (v1.6, K-10 S1)
+Pano, ofis ve Worker/Telegram **hesap yapmaz**; kasa, getiri, kapsama, 24 saat ve ışık sayıları motorun yazdığı bu alandan gösterilir.
+`kol_ozet = {kollar: {<kol>: {...}}, oda_kontrol_fark, oda_kontrol_fark_v2}`. Kol üyeliği `kollar` ile. Toplamlar yalnız `gecerli=true` üyeler; `uye` (ITT) sabittir.
+Para **1.000 $ sanal kopya ölçeğinde** USD (trader hesabı DEĞİL); getiriler üyelerin ortalama getirisi, **kesir** (0,012 = %1,2); `oda_kontrol_fark*` kesir farkıdır (0,01 = 1 puan).
+`<kol>` alanları: `uye`, `gecerli`, `kapsama` (oran), `kasa_usd`, `baslangic_usd` (= 1.000 × hesaplanabilen geçerli üye), `getiri` (v1), `kasa_v2_usd`, `getiri_v2`, `tasfiye_v2` (sayı),
+`eksik_degerleme` (sayı), `acik_lot` (sayı), `acik_notional_usd` (sanal lotların |notional| toplamı), `isik` `{yesil,sari,kirmizi}` (tüm üyeler), `sayac_24s` (bkz. `sayac_24s`; yoksa null).
+`teminat` henüz yok: ofisin teminat tanımı yazılıp sözleşmeye alınana kadar ofis kendi hesabını sürdürür (S1 kalan işi).

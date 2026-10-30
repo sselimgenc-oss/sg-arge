@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import re
 from pathlib import Path
@@ -49,7 +50,10 @@ def merge(path: Path, incoming: list[object]) -> list[dict]:
 
 def fetch(url: str) -> list[object]:
     # Cloudflare varsayılan Python-urllib kimliğini 403 ile reddediyor; açık bir User-Agent gerekir.
-    request = Request(url, headers={'User-Agent': 'sg-arge-izleme/1.0', 'Accept': 'application/json'})
+    headers = {'User-Agent': 'sg-arge-izleme/1.0', 'Accept': 'application/json'}
+    if os.environ.get('KARAR_ANAHTARI'):         # Worker KARAR_ANAHTARI secret'ı tanımlıysa zorunlu (madde 19)
+        headers['Authorization'] = f"Bearer {os.environ['KARAR_ANAHTARI']}"
+    request = Request(url, headers=headers)
     with urlopen(request, timeout=20) as response:  # nosec B310: URL is a reviewed GitHub variable.
         data = json.load(response)
     if not isinstance(data, list):

@@ -55,6 +55,11 @@ jobs:
               k = t['sanal_kopya']
               print(f"{t['id']} kol={t['kol']} gecerli={t['gecerli']} durum={t.get('veri_durumu')} hesap=${t['hesap_degeri']:.0f} "
                     f"bakiye=${k['bakiye_usd']:.2f} getiri={k['getiri']:.4f} fiyatsiz={k.get('fiyatsiz_eylem')} {k.get('fiyatsiz_coinler')}")
+              v2 = t.get('sanal_kopya_v2', {})
+              print(f"   v2: durum={v2.get('durum', 'tamam')} bakiye={v2.get('bakiye_usd')} tasfiye={v2.get('tasfiye')} {v2.get('tasfiye_zamani')} "
+                    f"payda={v2.get('payda_yontemi')}({v2.get('payda_okuma_sayisi')}) funding={v2.get('funding')} neden={v2.get('neden')}")
+              for lot in k.get('acik_lotlar', []):
+                  print('   lot:', json.dumps(lot, ensure_ascii=False))
           files = sorted(pathlib.Path('deneme_cikti/olaylar').glob('*.jsonl.gz'))
           sizes = [f.stat().st_size for f in files]
           print(f'olay arşivi: {len(files)} saat parçası, toplam {sum(sizes)} bayt, min/medyan/max = {min(sizes, default=0)}/{statistics.median(sizes) if sizes else 0}/{max(sizes, default=0)}')
