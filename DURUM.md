@@ -13,7 +13,8 @@ Telegram'da canlı izlenen; her kuralı ileri testle ölçen sistem. Gerçek par
 ## Şu an çalışan (yeni sistem canlıya geçene kadar kalır)
 - `izleme.yml` saatlik izleme (Worker tetikler, `TETIK_TOKEN`) → `copytrade-izleme` veri dalı (`izleme/durum.json`), motor durumu R2.
 - `arsiv.yml` dolum arşivi (R2), `arsiv_alarm.yml`; `copytrade_kapi.yml` / `copytrade_secim.yml` seçim (v1.3); `copytrade_haftalik.yml` ön kayıt raporu.
-- Worker: günlük özet 09:00 TR + alarm (işlem bildirimleri kapalı). Pano/ofis: `sg-pano`.
+- Worker: günlük özet 09:00 TR + alarm (işlem bildirimleri kapalı). Pano/ofis: `sg-pano/` (artık bu repo içinde,
+  ayrı bir repo değil — `sg-pano` reposu geçmişiyle birlikte `git subtree` ile buraya taşındı).
 
 ## Belgeler
 `AGENTS.md` (kurallar) · `docs/KARARLAR_D.md` (kullanıcı kararları) · `docs/ONKAYIT_D.md` (ön kayıt) · `docs/VERI_SOZLESMESI.md` ·
