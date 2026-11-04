@@ -34,3 +34,8 @@
 {"zaman_ms":1793825505986,"olay":"telegram","metin":"SAHA giriş: 0x79743d… — bos_slot","acik":false}
 {"zaman_ms":1793825507583,"olay":"saha_giris","adres":"0xf90c9edfd2ee7fa07615978b348b99500bb17963","neden":"bos_slot","yerine":null,"slot_usd":90.9090909090909}
 {"zaman_ms":1793825507583,"olay":"telegram","metin":"SAHA giriş: 0xf90c9e… — bos_slot","acik":false}
+{"zaman_ms":1793829492107,"olay":"emir_yok","adres":"0xc932b5727945e08b4e7a36a64a66c84b7c9eb1dd","coin":"xyz:BE","eylem":"ac","karar":"engel","neden":"inen_trader","trader_dolum_ms":1793829491868,"gorme_ms":1793829492107}
+{"zaman_ms":1793829492107,"olay":"emir_yok","adres":"0xc932b5727945e08b4e7a36a64a66c84b7c9eb1dd","coin":"xyz:BE","eylem":"ac","karar":"engel","neden":"inen_trader","trader_dolum_ms":1793829491868,"gorme_ms":1793829492107}
+{"zaman_ms":1793829534395,"olay":"emir_yok","adres":"0xc932b5727945e08b4e7a36a64a66c84b7c9eb1dd","coin":"xyz:BE","eylem":"ac","karar":"engel","neden":"inen_trader","trader_dolum_ms":1793829534043,"gorme_ms":1793829534395}
+{"zaman_ms":1793829540665,"olay":"emir_yok","adres":"0xc932b5727945e08b4e7a36a64a66c84b7c9eb1dd","coin":"xyz:BE","eylem":"ac","karar":"engel","neden":"inen_trader","trader_dolum_ms":1793829540274,"gorme_ms":1793829540665}
+{"zaman_ms":1793829564369,"olay":"emir_yok","adres":"0xc932b5727945e08b4e7a36a64a66c84b7c9eb1dd","coin":"xyz:BE","eylem":"ac","karar":"engel","neden":"inen_trader","trader_dolum_ms":1793829564002,"gorme_ms":1793829564369}
