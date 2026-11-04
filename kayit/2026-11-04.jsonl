@@ -123,3 +123,5 @@
 {"zaman_ms":1793833033911,"olay":"emir_yok","adres":"0x62edf4fae01255c64496e2241e5da680ac959c1c","coin":"xyz:CL","eylem":"artir","karar":"atlandi","neden":"min_emir_atlandi","trader_dolum_ms":1793833033413,"gorme_ms":1793833033668}
 {"zaman_ms":1793833033912,"olay":"emir_yok","adres":"0x62edf4fae01255c64496e2241e5da680ac959c1c","coin":"xyz:CL","eylem":"artir","karar":"atlandi","neden":"min_emir_atlandi","trader_dolum_ms":1793833033413,"gorme_ms":1793833033668}
 {"zaman_ms":1793833033912,"olay":"emir_yok","adres":"0x62edf4fae01255c64496e2241e5da680ac959c1c","coin":"xyz:CL","eylem":"artir","karar":"atlandi","neden":"min_emir_atlandi","trader_dolum_ms":1793833033413,"gorme_ms":1793833033668}
+{"zaman_ms":1793833274881,"olay":"emir_yok","adres":"0xc932b5727945e08b4e7a36a64a66c84b7c9eb1dd","coin":"xyz:GEV","eylem":"artir","karar":"engel","neden":"inen_trader","trader_dolum_ms":1793833274554,"gorme_ms":1793833274881}
+{"zaman_ms":1793833617387,"olay":"emir_yok","adres":"0xc932b5727945e08b4e7a36a64a66c84b7c9eb1dd","coin":"xyz:GEV","eylem":"artir","karar":"engel","neden":"inen_trader","trader_dolum_ms":1793833617107,"gorme_ms":1793833617387}
