@@ -1,6 +1,7 @@
 {
  "acilis_durdu": {
   "gunluk_kayip": false,
+  "kapanis_eksik": false,
   "kasa_siniri": false,
   "mutabakat": false
  },
@@ -13,7 +14,15 @@
  "gun": "2026-11-05",
  "gun_basi": 999.7464232022094,
  "yeni_coin": {
-  "0x62edf4fae01255c64496e2241e5da680ac959c1c": [],
+  "0x62edf4fae01255c64496e2241e5da680ac959c1c": [
+   1793855357999,
+   1793855357999,
+   1793855358045,
+   1793855358045,
+   1793855358947,
+   1793855360227,
+   1793855360867
+  ],
   "0x79743dfeb5cf36203b820d897b5202a32f40f15d": [
    1793841424533
   ],
