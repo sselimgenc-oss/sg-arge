@@ -1,56 +1,51 @@
-# Canlı rapor — 2026-11-05 13:49 UTC
+# Canlı rapor — 2026-11-05 20:29 UTC
 
-**Kip** sanal · vardiya `42003417160` · saha 10/11 (inen 1)
+**Kip** sanal · vardiya `42062223571` · saha 8/11 (inen 3)
 
 ## Kasa
 
 | kasa | özsermaye | gün | hafta | toplam | zirveden düşüş |
 |---|---|---|---|---|---|
-| 1,000.00 $ | 984.37 $ | -1.54% | — (geçmiş < 7 gün) | -1.56% | -1.70% |
+| 1,000.00 $ | 949.34 $ | -5.04% | — (geçmiş < 7 gün) | -5.07% | -5.20% |
 
 ## Açık pozisyonlar
 
 | trader | coin | yön | $ | K/Z |
 |---|---|---|---|---|
-| 0x62edf4… | xyz:CL | L | 275.51 $ | +2.78 $ |
-| 0xc932b5… | xyz:GEV | L | 263.89 $ | -8.84 $ |
-| 0x241c8d… | HYPE | L | 258.66 $ | -4.98 $ |
-| 0x323f5a… | xyz:GOLD | L | 171.15 $ | -0.15 $ |
-| 0xf43a34… | BTC | L | 141.18 $ | +0.33 $ |
-| 0xf43a34… | ETH | L | 81.64 $ | +0.07 $ |
-| 0xf43a34… | NEAR | L | 11.03 $ | +0.03 $ |
-| 0xfbd234… | ZEC | L | 11.00 $ | -0.00 $ |
-| 0xf43a34… | xyz:INTC | L | 10.97 $ | -0.03 $ |
-| 0x79743d… | ONDO | L | 10.81 $ | -0.19 $ |
-| 0xfbd234… | HYPE | L | 10.70 $ | -0.30 $ |
+| 0xc932b5… | xyz:GEV | L | 254.22 $ | -18.51 $ |
+| 0x323f5a… | xyz:GOLD | L | 170.34 $ | -0.95 $ |
+| 0xf90c9e… | xyz:NVDA | L | 62.25 $ | -1.53 $ |
+| 0xf90c9e… | xyz:MU | L | 33.81 $ | -1.76 $ |
+| 0xf90c9e… | BTC | L | 27.12 $ | -0.28 $ |
+| 0xf90c9e… | xyz:SOXL | L | 24.20 $ | -2.37 $ |
+| 0xf90c9e… | ZEC | L | 10.86 $ | -0.14 $ |
+| 0xf90c9e… | NEAR | L | 10.80 $ | -0.20 $ |
+| 0xfbd234… | ZEC | L | 10.41 $ | -0.59 $ |
+| 0xfbd234… | HYPE | L | 10.26 $ | -0.74 $ |
+| 0xf90c9e… | xyz:SPCX | L | 0.97 $ | -0.01 $ |
 
 ## Son 24 saat
 
-- emir 75 · dolum 71 · kayma p50 +0.00% / max +0.13% (n=71)
-- funding -0.03 $ · ücret 0.90 $
+- emir 138 · dolum 125 · kayma p50 +0.00% / max +0.18% (n=125)
+- funding -0.18 $ · ücret 1.49 $
 
 ## Saha değişiklikleri (24 sa)
 
-- 2026-11-04 20:14 giriş 0x241c8d… — ilk_gun
-- 2026-11-04 20:14 giriş 0x20ad98… — ilk_gun
-- 2026-11-04 20:14 giriş 0x323f5a… — ilk_gun
-- 2026-11-04 20:14 giriş 0xc32f19… — ilk_gun
-- 2026-11-04 20:14 giriş 0x62edf4… — ilk_gun
-- 2026-11-04 20:14 giriş 0xfbd234… — ilk_gun
-- 2026-11-04 20:14 giriş 0xf43a34… — ilk_gun
-- 2026-11-04 20:14 giriş 0xc932b5… — ilk_gun
 - 2026-11-04 20:51 çıkış 0xc932b5… — kadro_disi
 - 2026-11-04 20:51 giriş 0x79743d… — bos_slot
 - 2026-11-04 20:51 giriş 0xf90c9e… — bos_slot
 - 2026-11-05 00:04 giriş 0xe34aea… — bos_slot
+- 2026-11-05 16:15 çıkış 0x241c8d… — slot_dusus
+- 2026-11-05 16:15 çıkış 0xf43a34… — slot_dusus
 
 ## Risk olayları (24 sa)
 
-olay yok
+- 16:14 `vardiya_boslugu`
+- 17:40 `risk` gunluk_kayip
 
 ## Vardiya sağlığı
 
-- süre 255 dk · WS kopma 2 / yeniden bağlanma 2 · boşluk yok · REST 429 0
+- süre 255 dk · WS kopma 1 / yeniden bağlanma 1 · boşluk 144.6 dk · REST 429 0
 
 ## Seçim isabeti (son 7)
 
