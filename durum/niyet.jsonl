@@ -54,3 +54,5 @@
 {"t":"sonuc","cloid":"0xd94bb6fd12d9f895523d249dc31fd585","durum":"dolu","ms":1793874444861,"sz":1.738714687296754,"px":7.5201}
 {"t":"niyet","kimlik":"0x79743dfeb5cf36203b820d897b5202a32f40f15d:915926872381507","eylem":"artir","adres":"0x79743dfeb5cf36203b820d897b5202a32f40f15d","coin":"UNI","yon":"B","usd":80.175406,"reduce_only":false,"cloid":"0x116fcbeb44914334d30ce8f8fb78da16","ms":1793874447442}
 {"t":"sonuc","cloid":"0x116fcbeb44914334d30ce8f8fb78da16","durum":"dolu","ms":1793874447596,"sz":10.661339563665255,"px":7.520200000000001}
+{"t":"niyet","kimlik":"0xf43a34220cc930b573554d5e1454d5c8d7ca8872:1121715861692004","eylem":"ac","adres":"0xf43a34220cc930b573554d5e1454d5c8d7ca8872","coin":"@142","yon":"B","usd":11.0,"reduce_only":false,"cloid":"0xf79079b3136ffc78d919de03fd95f919","ms":1793876579365}
+{"t":"sonuc","cloid":"0xf79079b3136ffc78d919de03fd95f919","durum":"dolu","ms":1793876579514,"sz":0.0001370596957274755,"px":80257.0}
