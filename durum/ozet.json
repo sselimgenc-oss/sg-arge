@@ -1,6 +1,6 @@
 {
- "acik_pozisyon": 2,
- "brut_usd": 543.4383440248179,
+ "acik_pozisyon": 8,
+ "brut_usd": 719.6694629777256,
  "dinleyici": {
   "abonelik_oncesi_snapshot_gibi": 0,
   "dolgu": 0,
@@ -14,49 +14,55 @@
   "hakem_yeniden_deneme": 0,
   "kapanis_atlanan": 0,
   "kopma": 1,
-  "ping": 606,
-  "rest_abonelik_oncesi_atlanan": 4,
+  "ping": 607,
+  "rest_abonelik_oncesi_atlanan": 7,
   "rest_tur_atlanan": 0,
-  "subscription_response": 713,
-  "tekrar": 166,
-  "trades_mesaj": 473568,
-  "userfills_mesaj": 68,
+  "subscription_response": 714,
+  "tekrar": 379,
+  "trades_mesaj": 533855,
+  "userfills_mesaj": 88,
   "yeniden_baglanma": 1,
   "yeniden_baslama": 0
  },
  "dur": false,
  "emir": {
-  "atlandi": 39,
+  "atlandi": 201,
   "dolmadi": 0,
-  "dolu": 3,
-  "emir": 3,
-  "engel": 65,
+  "dolu": 6,
+  "emir": 6,
+  "engel": 106,
   "gec_goruldu": 0,
   "kismi": 0,
   "red": 0
  },
- "getiri": -0.0022677286914404293,
+ "getiri": -0.009207875511375141,
  "inen": 1,
  "kasa_usd": 1000.0,
  "kayit_sayac": {
-  "emir": 3,
-  "emir_yok": 104,
+  "emir": 6,
+  "emir_yok": 307,
   "kacan_tamamlandi": 1,
-  "kor_kirpildi": 12,
-  "saha_dus": 1,
-  "saha_giris": 11,
-  "telegram": 17
+  "kor_kirpildi": 50,
+  "telegram": 7
  },
- "kayma_n": 3,
+ "kayma_n": 6,
  "kip": "sanal",
- "kor_kirpildi": 12,
+ "kor_kirpildi": 50,
+ "marj_yok": 0,
+ "neden_say": {
+  "hesap_yok": 194,
+  "min_emir_yuvarlandi": 5,
+  "patlama_freni": 106,
+  "slot_tavani": 7
+ },
  "ortalama_kayma_ref": 0.0,
- "ortalama_kayma_trader": 0.0008167775722488117,
- "ozsermaye_usd": 997.7322713085596,
+ "ortalama_kayma_trader": 7.162455868796483e-05,
+ "ozsermaye_usd": 990.7921244886248,
  "saha": 10,
  "saha_n": 11,
+ "slot_tavani": 7,
  "slot_usd": 90.9090909090909,
- "sure_dk": 255.72718333333333,
+ "sure_dk": 255.57106666666667,
  "tasfiye": 0,
  "telegram_hata": 0,
  "uyeler": [
@@ -71,5 +77,5 @@
   "0xf90c9edfd2ee7fa07615978b348b99500bb17963",
   "0xfbd234f73a3cfa398f36f396ba527c85006c3f9e"
  ],
- "vardiya": "41904629030"
+ "vardiya": "41926718012"
 }
