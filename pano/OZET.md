@@ -1,4 +1,4 @@
-# Canlı rapor — 2026-11-06 03:39 UTC
+# Canlı rapor — 2026-11-06 03:54 UTC
 
 **Kip** sanal · vardiya `42146851712` · saha 6/11 (inen 4)
 
@@ -6,20 +6,20 @@
 
 | kasa | özsermaye | gün | hafta | toplam | zirveden düşüş |
 |---|---|---|---|---|---|
-| 1.000,00 $ | 937,93 $ | −%0,33 | — (geçmiş < 7 gün) | −%6,21 | −%6,34 |
+| 1.000,00 $ | 936,94 $ | −%0,43 | — (geçmiş < 7 gün) | −%6,31 | −%6,44 |
 
 ## Açık pozisyonlar
 
 | trader | coin | yön | $ | K/Z |
 |---|---|---|---|---|
-| 0x20ad98… | LIT | L | 192,36 $ | −6,51 $ |
-| 0x323f5a… | xyz:GOLD | L | 167,71 $ | −3,58 $ |
-| 0x20ad98… | ZEC | L | 64,93 $ | −2,08 $ |
-| 0xf90c9e… | xyz:NVDA | L | 62,79 $ | −0,98 $ |
-| 0x62edf4… | xyz:SKHX | L | 49,53 $ | +1,89 $ |
-| 0xf90c9e… | xyz:MU | L | 34,43 $ | −1,13 $ |
-| 0xf90c9e… | BTC | L | 27,06 $ | −0,35 $ |
-| 0xf90c9e… | xyz:SOXL | L | 24,34 $ | −2,23 $ |
+| 0x20ad98… | LIT | L | 192,26 $ | −6,61 $ |
+| 0x323f5a… | xyz:GOLD | L | 167,71 $ | −3,59 $ |
+| 0x20ad98… | ZEC | L | 64,52 $ | −2,49 $ |
+| 0xf90c9e… | xyz:NVDA | L | 62,89 $ | −0,88 $ |
+| 0x62edf4… | xyz:SKHX | L | 48,89 $ | +1,25 $ |
+| 0xf90c9e… | xyz:MU | L | 34,40 $ | −1,16 $ |
+| 0xf90c9e… | BTC | L | 27,05 $ | −0,35 $ |
+| 0xf90c9e… | xyz:SOXL | L | 24,43 $ | −2,14 $ |
 | 0xf90c9e… | NEAR | L | 10,73 $ | −0,27 $ |
 
 ## Son 24 saat
@@ -42,7 +42,7 @@
 
 ## Vardiya sağlığı
 
-- süre 105 dk · WS kopma 0 / yeniden bağlanma 0 · boşluk 144.6 dk, 61.1 dk · REST 429 0
+- süre 120 dk · WS kopma 0 / yeniden bağlanma 0 · boşluk 144.6 dk, 61.1 dk · REST 429 0
 
 ## Seçim isabeti (son 7)
 
