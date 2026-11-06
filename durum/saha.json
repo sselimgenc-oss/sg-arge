@@ -7,8 +7,8 @@
   "0xf90c9edfd2ee7fa07615978b348b99500bb17963": 1795123857073
  },
  "degisiklik": {
-  "adet": 1,
-  "gun": "2026-11-05"
+  "adet": 0,
+  "gun": "2026-11-06"
  },
  "gun_kadro": {
   "gun": "2026-11-04",
@@ -395,7 +395,7 @@
    "giris_ms": 1793823262867,
    "giris_sira": 6,
    "sira_ust": 0,
-   "son_islem_ms": 1793922643500
+   "son_islem_ms": 1793923706194
   },
   "0x79743dfeb5cf36203b820d897b5202a32f40f15d": {
    "giris_ms": 1793825502848,
