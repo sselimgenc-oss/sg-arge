@@ -4,50 +4,50 @@
    "adres": "0x20ad988487d6a53fea7918657f45fe0bb8fd8183",
    "coin": "LIT",
    "giris": 3.5282661537430555,
-   "kz_usd": -10.55815355540059,
-   "mark": 3.34095,
+   "kz_usd": -10.591972807006243,
+   "mark": 3.34035,
    "sz": 56.365419342761896,
-   "usd": 188.31404775320036
+   "usd": 188.2802285015947
   },
   {
    "adres": "0x20ad988487d6a53fea7918657f45fe0bb8fd8183",
    "coin": "ZEC",
    "giris": 1331.7999999999997,
-   "kz_usd": 0.18364073351757343,
-   "mark": 1335.45,
+   "kz_usd": 0.012578132432720853,
+   "mark": 1332.05,
    "sz": 0.05031252973083765,
-   "usd": 67.18986782904715
+   "usd": 67.01880522796229
   },
   {
    "adres": "0x323f5af42fad4f877e84488b39443f42b964b88d",
    "coin": "xyz:GOLD",
    "giris": 4129.294794393973,
-   "kz_usd": -2.2543822340785837,
-   "mark": 4074.95,
+   "kz_usd": -2.212899286922037,
+   "mark": 4075.95,
    "sz": 0.041482947156547025,
-   "usd": 169.04093551557128
+   "usd": 169.08241846272784
   },
   {
    "adres": "0x62edf4fae01255c64496e2241e5da680ac959c1c",
    "coin": "xyz:SKHX",
    "giris": 830.2608535482171,
-   "kz_usd": 0.808506053834487,
-   "mark": 866.35,
+   "kz_usd": 0.8098502353405483,
+   "mark": 866.41,
    "sz": 0.022403025101042397,
-   "usd": 19.40886079628808
+   "usd": 19.41020497779414
   },
   {
    "adres": "0xc32f19039aee519e22bd8c6145ef03951274e558",
    "coin": "ETH",
    "giris": 2226.3,
-   "kz_usd": 0.6880012410768162,
-   "mark": 2242.15,
+   "kz_usd": 0.6228907135301139,
+   "mark": 2240.65,
    "sz": 0.04340701836446814,
-   "usd": 97.32504622589225
+   "usd": 97.25993569834554
   }
  ],
  "acik_pozisyon": 5,
- "brut_usd": 541.2787581199991,
+ "brut_usd": 541.0515928684246,
  "dinleyici": {
   "abonelik_oncesi_snapshot_gibi": 7,
   "dolgu": 0,
@@ -61,19 +61,19 @@
   "hakem_yeniden_deneme": 0,
   "kapanis_atlanan": 0,
   "kopma": 1,
-  "ping": 571,
+  "ping": 606,
   "rest_abonelik_oncesi_atlanan": 15,
   "rest_tur_atlanan": 0,
   "subscription_response": 714,
   "tekrar": 252,
-  "trades_mesaj": 380200,
+  "trades_mesaj": 397685,
   "userfills_mesaj": 29,
   "yeniden_baglanma": 1,
   "yeniden_baslama": 0
  },
  "dur": false,
  "emir": {
-  "atlandi": 552,
+  "atlandi": 597,
   "dolmadi": 0,
   "dolu": 7,
   "emir": 13,
@@ -97,23 +97,23 @@
  "funding_oran_yok": 0,
  "funding_usd": 0.20601267848732108,
  "gec_acilis": 41,
- "getiri": -0.06157211193651513,
- "hip3_atlandi": 266,
+ "getiri": -0.06179927718808986,
+ "hip3_atlandi": 311,
  "inen": 1,
  "kapanis_eksik": 0,
  "kapanis_kuyrugu": 0,
  "kasa_usd": 1000.0,
  "kayit_sayac": {
   "emir": 13,
-  "emir_yok": 552,
+  "emir_yok": 597,
   "funding": 5,
   "kacan_tamamlandi": 1,
   "kor_kirpildi": 5,
   "poz_senkron": 2,
   "saha_giris": 3,
   "senkron_kapanis": 6,
-  "telegram": 7,
-  "tur": 17,
+  "telegram": 8,
+  "tur": 18,
   "vardiya_boslugu": 1
  },
  "kayma_n": 13,
@@ -121,8 +121,8 @@
  "kor_kirpildi": 5,
  "kuyruk_gecikme_ms": {
   "max": 634,
-  "n": 1691,
-  "p50": 2
+  "n": 1792,
+  "p50": 1
  },
  "marj_yok": 0,
  "min_emir_say": {
@@ -132,28 +132,28 @@
  "min_nosyonel": 0,
  "neden_say": {
   "gec_acilis": 41,
-  "hip3_atlandi": 266,
+  "hip3_atlandi": 311,
   "min_emir_atlandi": 245,
   "min_emir_yuvarlandi": 1,
   "trader_kapali_senkron": 6
  },
  "ortalama_kayma_ref": -9.13827736611332e-18,
  "ortalama_kayma_trader": -0.001237342627782629,
- "ozsermaye_usd": 938.4278880634848,
+ "ozsermaye_usd": 938.2007228119102,
  "rest_429": 0,
- "rest_istek": 12403,
+ "rest_istek": 13000,
  "saha": 11,
  "saha_n": 11,
  "slot_tavani": 0,
  "slot_usd": 90.9090909090909,
  "spot_atlandi": 0,
- "sure_dk": 240.62061666666668,
+ "sure_dk": 255.4028,
  "tasfiye": 0,
  "telegram_hata": 0,
  "ters_netlesme": 0,
  "trader_atlanan": {
   "hip3_atlandi": {
-   "0x62edf4fae01255c64496e2241e5da680ac959c1c": 255,
+   "0x62edf4fae01255c64496e2241e5da680ac959c1c": 300,
    "0x72e23fd5c700b2754c3399e5b7b38577113c86b4": 11
   },
   "spot_atlandi": {}
@@ -174,5 +174,5 @@
   "0xfbd234f73a3cfa398f36f396ba527c85006c3f9e"
  ],
  "vardiya": "42267464454",
- "yazildi_ms": 1794002767336
+ "yazildi_ms": 1794003654267
 }
