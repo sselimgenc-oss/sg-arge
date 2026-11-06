@@ -1,4 +1,4 @@
-# Canlı rapor — 2026-11-06 20:35 UTC
+# Canlı rapor — 2026-11-06 20:50 UTC
 
 **Kip** sanal · vardiya `42267464454` · saha 11/11 (inen 2)
 
@@ -6,22 +6,22 @@
 
 | kasa | özsermaye | gün | hafta | toplam | zirveden düşüş |
 |---|---|---|---|---|---|
-| 1.000,00 $ | 937,06 $ | −%0,42 | — (geçmiş < 7 gün) | −%6,29 | −%6,43 |
+| 1.000,00 $ | 935,73 $ | −%0,55 | — (geçmiş < 7 gün) | −%6,43 | −%6,56 |
 
 ## Açık pozisyonlar
 
 | trader | coin | yön | $ | K/Z |
 |---|---|---|---|---|
-| 0x20ad98… | LIT | L | 187,58 $ | −11,29 $ |
-| 0x323f5a… | xyz:GOLD | L | 168,77 $ | −2,53 $ |
-| 0xc32f19… | ETH | L | 96,99 $ | +0,35 $ |
-| 0x20ad98… | ZEC | L | 67,18 $ | +0,17 $ |
-| 0x62edf4… | xyz:SKHX | L | 30,41 $ | +1,16 $ |
+| 0x20ad98… | LIT | L | 186,70 $ | −12,18 $ |
+| 0x323f5a… | xyz:GOLD | L | 168,73 $ | −2,57 $ |
+| 0xc32f19… | ETH | L | 96,87 $ | +0,23 $ |
+| 0x20ad98… | ZEC | L | 67,08 $ | +0,08 $ |
+| 0x62edf4… | xyz:SKHX | L | 19,18 $ | +0,58 $ |
 
 ## Son 24 saat
 
-- emir 43 · dolum 43 · kayma p50 −%0,01 / max +%0,09 (n=43)
-- funding +0,14 $ · ücret 0,56 $
+- emir 44 · dolum 44 · kayma p50 −%0,01 / max +%0,09 (n=44)
+- funding +0,14 $ · ücret 0,57 $
 
 ## Saha değişiklikleri (24 sa)
 
@@ -40,7 +40,7 @@
 
 ## Vardiya sağlığı
 
-- süre 150 dk · WS kopma 0 / yeniden bağlanma 0 · boşluk 61.1 dk, 715.6 dk · REST 429 0
+- süre 165 dk · WS kopma 0 / yeniden bağlanma 0 · boşluk 61.1 dk, 715.6 dk · REST 429 0
 
 ## Seçim isabeti (son 7)
 
