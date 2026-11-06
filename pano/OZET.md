@@ -1,27 +1,27 @@
-# Canlı rapor — 2026-11-06 05:39 UTC
+# Canlı rapor — 2026-11-06 05:54 UTC
 
-**Kip** sanal · vardiya `42146851712` · saha 6/11 (inen 4)
+**Kip** sanal · vardiya `42146851712` · saha 8/11 (inen 4)
 
 ## Kasa
 
 | kasa | özsermaye | gün | hafta | toplam | zirveden düşüş |
 |---|---|---|---|---|---|
-| 1.000,00 $ | 939,87 $ | −%0,14 | — (geçmiş < 7 gün) | −%6,01 | −%6,14 |
+| 1.000,00 $ | 937,09 $ | −%0,42 | — (geçmiş < 7 gün) | −%6,29 | −%6,42 |
 
 ## Açık pozisyonlar
 
 | trader | coin | yön | $ | K/Z |
 |---|---|---|---|---|
-| 0x20ad98… | LIT | L | 196,05 $ | −2,82 $ |
-| 0xfbd234… | HYPE | L | 189,67 $ | −0,38 $ |
-| 0x323f5a… | xyz:GOLD | L | 167,70 $ | −3,59 $ |
-| 0x20ad98… | ZEC | L | 63,84 $ | −3,17 $ |
-| 0xf90c9e… | xyz:NVDA | L | 63,02 $ | −0,76 $ |
-| 0x62edf4… | xyz:SKHX | L | 49,01 $ | +1,37 $ |
-| 0xf90c9e… | xyz:MU | L | 34,28 $ | −1,28 $ |
-| 0xf90c9e… | BTC | L | 26,98 $ | −0,42 $ |
-| 0xf90c9e… | xyz:SOXL | L | 24,67 $ | −1,90 $ |
-| 0xf90c9e… | NEAR | L | 10,74 $ | −0,26 $ |
+| 0x20ad98… | LIT | L | 194,54 $ | −4,34 $ |
+| 0xfbd234… | HYPE | L | 189,16 $ | −0,89 $ |
+| 0x323f5a… | xyz:GOLD | L | 167,83 $ | −3,47 $ |
+| 0x20ad98… | ZEC | L | 63,85 $ | −3,16 $ |
+| 0xf90c9e… | xyz:NVDA | L | 62,89 $ | −0,89 $ |
+| 0x62edf4… | xyz:SKHX | L | 48,58 $ | +0,94 $ |
+| 0xf90c9e… | xyz:MU | L | 34,13 $ | −1,44 $ |
+| 0xf90c9e… | BTC | L | 27,00 $ | −0,40 $ |
+| 0xf90c9e… | xyz:SOXL | L | 24,49 $ | −2,09 $ |
+| 0xf90c9e… | NEAR | L | 10,72 $ | −0,28 $ |
 
 ## Son 24 saat
 
@@ -34,6 +34,8 @@
 - 2026-11-05 16:15 çıkış 0xf43a34… — slot_dusus
 - 2026-11-05 21:32 çıkış 0xf90c9e… — slot_dusus
 - 2026-11-06 01:23 çıkış 0x20ad98… — slot_dusus
+- 2026-11-06 05:48 giriş 0x4b9b60… — bos_slot
+- 2026-11-06 05:48 giriş 0xa577a0… — bos_slot
 
 ## Risk olayları (24 sa)
 
@@ -43,7 +45,7 @@
 
 ## Vardiya sağlığı
 
-- süre 225 dk · WS kopma 1 / yeniden bağlanma 1 · boşluk 144.6 dk, 61.1 dk · REST 429 0
+- süre 240 dk · WS kopma 1 / yeniden bağlanma 1 · boşluk 144.6 dk, 61.1 dk · REST 429 0
 
 ## Seçim isabeti (son 7)
 
