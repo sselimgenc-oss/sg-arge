@@ -4,50 +4,50 @@
    "adres": "0x20ad988487d6a53fea7918657f45fe0bb8fd8183",
    "coin": "LIT",
    "giris": 3.5282661537430555,
-   "kz_usd": -11.110534664959646,
-   "mark": 3.33115,
+   "kz_usd": -13.737163206332362,
+   "mark": 3.28455,
    "sz": 56.365419342761896,
-   "usd": 187.7616666436413
+   "usd": 185.13503810226857
   },
   {
    "adres": "0x20ad988487d6a53fea7918657f45fe0bb8fd8183",
    "coin": "ZEC",
    "giris": 1331.7999999999997,
-   "kz_usd": 0.4754534059564295,
-   "mark": 1341.25,
+   "kz_usd": -0.41004711730630855,
+   "mark": 1323.65,
    "sz": 0.05031252973083765,
-   "usd": 67.481680501486
+   "usd": 66.59617997822326
   },
   {
    "adres": "0x323f5af42fad4f877e84488b39443f42b964b88d",
    "coin": "xyz:GOLD",
    "giris": 4129.294794393973,
-   "kz_usd": -2.5779492218996394,
-   "mark": 4067.15,
+   "kz_usd": -2.6111355796248845,
+   "mark": 4066.35,
    "sz": 0.041482947156547025,
-   "usd": 168.71736852775024
+   "usd": 168.684182170025
   },
   {
    "adres": "0x62edf4fae01255c64496e2241e5da680ac959c1c",
    "coin": "xyz:SKHX",
    "giris": 830.2608535482171,
-   "kz_usd": 0.7640360490089175,
-   "mark": 864.365,
+   "kz_usd": 0.6537011503862847,
+   "mark": 859.44,
    "sz": 0.022403025101042397,
-   "usd": 19.36439079146251
+   "usd": 19.25405589283988
   },
   {
    "adres": "0xc32f19039aee519e22bd8c6145ef03951274e558",
    "coin": "ETH",
    "giris": 2226.3,
-   "kz_usd": 0.19316123172187533,
-   "mark": 2230.75,
+   "kz_usd": -0.02821456193690824,
+   "mark": 2225.65,
    "sz": 0.04340701836446814,
-   "usd": 96.8302062165373
+   "usd": 96.60883042287853
   }
  ],
  "acik_pozisyon": 5,
- "brut_usd": 540.1553126808774,
+ "brut_usd": 536.2782865662352,
  "dinleyici": {
   "abonelik_oncesi_snapshot_gibi": 7,
   "dolgu": 0,
@@ -61,19 +61,19 @@
   "hakem_yeniden_deneme": 0,
   "kapanis_atlanan": 0,
   "kopma": 1,
-  "ping": 463,
+  "ping": 499,
   "rest_abonelik_oncesi_atlanan": 15,
   "rest_tur_atlanan": 0,
   "subscription_response": 714,
   "tekrar": 169,
-  "trades_mesaj": 321702,
+  "trades_mesaj": 342967,
   "userfills_mesaj": 28,
   "yeniden_baglanma": 1,
   "yeniden_baslama": 0
  },
  "dur": false,
  "emir": {
-  "atlandi": 390,
+  "atlandi": 437,
   "dolmadi": 0,
   "dolu": 7,
   "emir": 13,
@@ -95,17 +95,17 @@
  },
  "funding_gercek_usd": 0.0,
  "funding_oran_yok": 0,
- "funding_usd": 0.1432345923246292,
+ "funding_usd": 0.2230187059424098,
  "gec_acilis": 41,
- "getiri": -0.06267855134818201,
- "hip3_atlandi": 104,
- "inen": 2,
+ "getiri": -0.06655557746282392,
+ "hip3_atlandi": 151,
+ "inen": 1,
  "kapanis_eksik": 0,
  "kapanis_kuyrugu": 0,
  "kasa_usd": 1000.0,
  "kayit_sayac": {
   "emir": 13,
-  "emir_yok": 390,
+  "emir_yok": 437,
   "funding": 4,
   "kacan_tamamlandi": 1,
   "kor_kirpildi": 5,
@@ -113,7 +113,7 @@
   "saha_giris": 3,
   "senkron_kapanis": 6,
   "telegram": 7,
-  "tur": 14,
+  "tur": 15,
   "vardiya_boslugu": 1
  },
  "kayma_n": 13,
@@ -121,8 +121,8 @@
  "kor_kirpildi": 5,
  "kuyruk_gecikme_ms": {
   "max": 634,
-  "n": 1233,
-  "p50": 3
+  "n": 1319,
+  "p50": 2
  },
  "marj_yok": 0,
  "min_emir_say": {
@@ -132,28 +132,28 @@
  "min_nosyonel": 0,
  "neden_say": {
   "gec_acilis": 41,
-  "hip3_atlandi": 104,
+  "hip3_atlandi": 151,
   "min_emir_atlandi": 245,
   "min_emir_yuvarlandi": 1,
   "trader_kapali_senkron": 6
  },
  "ortalama_kayma_ref": -9.13827736611332e-18,
  "ortalama_kayma_trader": -0.001237342627782629,
- "ozsermaye_usd": 937.321448651818,
+ "ozsermaye_usd": 933.444422537176,
  "rest_429": 0,
- "rest_istek": 9989,
+ "rest_istek": 10897,
  "saha": 11,
  "saha_n": 11,
  "slot_tavani": 0,
  "slot_usd": 90.9090909090909,
  "spot_atlandi": 0,
- "sure_dk": 195.16081666666668,
+ "sure_dk": 210.42318333333333,
  "tasfiye": 0,
  "telegram_hata": 0,
  "ters_netlesme": 0,
  "trader_atlanan": {
   "hip3_atlandi": {
-   "0x62edf4fae01255c64496e2241e5da680ac959c1c": 93,
+   "0x62edf4fae01255c64496e2241e5da680ac959c1c": 140,
    "0x72e23fd5c700b2754c3399e5b7b38577113c86b4": 11
   },
   "spot_atlandi": {}
@@ -174,5 +174,5 @@
   "0xfbd234f73a3cfa398f36f396ba527c85006c3f9e"
  ],
  "vardiya": "42267464454",
- "yazildi_ms": 1794000039749
+ "yazildi_ms": 1794000955490
 }

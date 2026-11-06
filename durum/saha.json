@@ -446,10 +446,6 @@
   "0x20ad988487d6a53fea7918657f45fe0bb8fd8183": {
    "inis_ms": 1793928205260,
    "neden": "slot_dusus"
-  },
-  "0xf90c9edfd2ee7fa07615978b348b99500bb17963": {
-   "inis_ms": 1793914257073,
-   "neden": "slot_dusus"
   }
  },
  "k39_gecis": true,
@@ -491,7 +487,7 @@
    "giris_ms": 1793823262867,
    "giris_sira": 6,
    "sira_ust": 0,
-   "son_islem_ms": 1794000030043
+   "son_islem_ms": 1794000948003
   },
   "0x72e23fd5c700b2754c3399e5b7b38577113c86b4": {
    "giris_ms": 1793988330100,
