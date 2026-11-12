@@ -8,8 +8,10 @@
  "dur": false,
  "dur_neden": null,
  "fren_bitis": {},
- "gun": "2026-11-08",
- "gun_basi": 1000.0,
+ "gun": "2026-11-12",
+ "gun_basi": 600.0,
+ "kapat_gunu": null,
+ "son_oz": 600.0,
  "yeni_coin": {},
- "zirve": 1000.0
+ "zirve": 600.0
 }
