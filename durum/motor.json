@@ -2,7 +2,16 @@
  "dur_bekliyor": false,
  "funding_gercek_usd": 0.0,
  "funding_kimlik": [],
- "hesap_tr": {},
+ "hesap_tr": {
+  "0x424d756e19469ddb13c753b280cc0e9d8c95420e": {
+   "deger": 38700.01453322,
+   "ms": 1794477347655
+  },
+  "0x8abc3b8b07082cc8752a1342ece30b9798aac9ad": {
+   "deger": 55334.93606021,
+   "ms": 1794477347655
+  }
+ },
  "hl_ofset": null,
  "islenen": [
   "0x424d756e19469ddb13c753b280cc0e9d8c95420e:174872751740002",
@@ -18,9 +27,7 @@
  "ozet_gunu": "2026-11-12",
  "ozet_oz": 600.0,
  "poz_tr": {
-  "0x424d756e19469ddb13c753b280cc0e9d8c95420e": {
-   "@107": 236.88468851
-  },
+  "0x424d756e19469ddb13c753b280cc0e9d8c95420e": {},
   "0x8abc3b8b07082cc8752a1342ece30b9798aac9ad": {},
   "0xde29121a6858d90ae486855b127f9d5ee4035232": {
    "HYPE": 11.09
@@ -31,7 +38,10 @@
   "0x8abc3b8b07082cc8752a1342ece30b9798aac9ad|HYPE": 1794235633703,
   "0xde29121a6858d90ae486855b127f9d5ee4035232|HYPE": 1794453488702
  },
- "poz_tr_senk_ms": {},
+ "poz_tr_senk_ms": {
+  "0x424d756e19469ddb13c753b280cc0e9d8c95420e": 1794477349626,
+  "0x8abc3b8b07082cc8752a1342ece30b9798aac9ad": 1794477349626
+ },
  "son_funding_ms": null,
  "son_funding_saat": 498465,
  "son_olay_ms": 1794466204939,
@@ -39,5 +49,5 @@
  "ucret_gercek_usd": 0.0,
  "ucret_tahmin_say": 0,
  "vardiya": "43170063692",
- "yazildi_ms": 1794476604120
+ "yazildi_ms": 1794477517699
 }

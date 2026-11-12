@@ -50,3 +50,12 @@
 {"zaman_ms":1794476030218,"olay":"kadro_kadro_bayat"}
 {"zaman_ms":1794476157378,"olay":"tur","ozsermaye_usd":600.0}
 {"zaman_ms":1794476349116,"olay":"kadro_kadro_bayat"}
+{"zaman_ms":1794476638575,"olay":"telegram","metin":"🧾 Son 1 saat (11:43–12:43 TSİ): emir yok · sistem çalışıyor\n💰 Kasa: 600,00 $ · bugün 🟢 +0,00 $ (%0,0) · başlangıçtan 🟢 +0,00 $ (%0,0)","acik":false}
+{"zaman_ms":1794476670428,"olay":"kadro_kadro_bayat"}
+{"zaman_ms":1794476993110,"olay":"saha_giris","adres":"0x8abc3b8b07082cc8752a1342ece30b9798aac9ad","neden":"ilk_gun","yerine":null,"slot_usd":200.0}
+{"zaman_ms":1794476993110,"olay":"telegram","metin":"➕ Yeni trader takibe alındı: 0x8abc3b…\n↳ Neden: ilk kadro","acik":false}
+{"zaman_ms":1794476998135,"olay":"saha_giris","adres":"0x424d756e19469ddb13c753b280cc0e9d8c95420e","neden":"ilk_gun","yerine":null,"slot_usd":200.0}
+{"zaman_ms":1794476998135,"olay":"telegram","metin":"➕ Yeni trader takibe alındı: 0x424d75…\n↳ Neden: ilk kadro","acik":false}
+{"zaman_ms":1794476998135,"olay":"kor_kirpildi","adres":"0xc22db2c04e054786426671cec0b766c07304fb20","uyeler":["0x8abc3b8b07082cc8752a1342ece30b9798aac9ad","0x424d756e19469ddb13c753b280cc0e9d8c95420e"]}
+{"zaman_ms":1794476998135,"olay":"kor_kirpildi","adres":"0xfc76f730c3e2939825484e0a777368075d779ef9","uyeler":["0x8abc3b8b07082cc8752a1342ece30b9798aac9ad","0x424d756e19469ddb13c753b280cc0e9d8c95420e"]}
+{"zaman_ms":1794477029952,"olay":"tur","ozsermaye_usd":600.0}
