@@ -1,0 +1,2760 @@
+{
+ "tur": "tur1",
+ "boyutlar": {
+  "lider_tablosu": 48230,
+  "bugun_10k_ustu_islemli": 16092,
+  "bugun_10k_alti_buyuk_zarar_ya_da_hacim": 18641,
+  "evren": 34733,
+  "portfolio_okunan": 34733,
+  "k50_herhangi_T": 8749,
+  "k10_herhangi_T": 11748,
+  "ornek50": 700,
+  "ornek10": 300,
+  "ucuz_kural_adayi_(>=10k ve kural2, herhangi T)": 2252,
+  "dolum_seti": 3033
+ },
+ "slot_usd": 200.0,
+ "kollar": {
+  "A": {
+   "tablo": [
+    {
+     "T": 1785283200000,
+     "tarih": "2026-07-29",
+     "secilen_n": 6,
+     "kontrol_n": 180,
+     "cikarilan_secim_adayi": 161,
+     "cikarilan_kontrol": 80,
+     "secilen_ortanca": -0.005274844130876144,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.18950766908601258,
+     "dusus_ortanca": 0.0656035186303483,
+     "yuzdelik": 0.128,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xf25df1972b89d3cdb051cf8b2bf385b5dcb9aa21",
+       "t": 2.2333404380257487,
+       "getiri": -0.18029280871164455,
+       "dusus": 0.18950766908601258,
+       "hesap": 111401.689401,
+       "veto": null
+      },
+      {
+       "adres": "0xfdb03a2574e9e7d1c77d9ed752d99cdf25c3db25",
+       "t": 1.6503781047745045,
+       "getiri": 0.05173772105098173,
+       "dusus": 0.027948977152917887,
+       "hesap": 66058.644714,
+       "veto": "veto_zarara_ekleme"
+      },
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 1.0983105496797316,
+       "getiri": -0.10180177402903834,
+       "dusus": 0.12980186748462907,
+       "hesap": 50415.90685,
+       "veto": null
+      },
+      {
+       "adres": "0xed7c40e138cb25e79d94295882c66ac8197fb66e",
+       "t": 1.035701295291148,
+       "getiri": 0.06346177692041599,
+       "dusus": 0.04465128040940736,
+       "hesap": 230142.163211,
+       "veto": null
+      },
+      {
+       "adres": "0x4c921317a8301044a2287dfa34b18c37005b42db",
+       "t": 0.4841583755564349,
+       "getiri": 0.02502165958750746,
+       "dusus": 0.0042916851504060105,
+       "hesap": 103691.964604,
+       "veto": "veto_zarara_ekleme"
+      }
+     ],
+     "ilk5_ortanca": 0.02502165958750746,
+     "ilk5_yuzdelik": 0.962
+    },
+    {
+     "T": 1785888000000,
+     "tarih": "2026-08-05",
+     "secilen_n": 2,
+     "kontrol_n": 177,
+     "cikarilan_secim_adayi": 150,
+     "cikarilan_kontrol": 69,
+     "secilen_ortanca": -0.02761899420837849,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.10075854321126843,
+     "dusus_ortanca": 0.05037927160563421,
+     "yuzdelik": 0.221,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xac5c66fbad98b49979cd1cbaa800ace76e947866",
+       "t": 4.678450318183556,
+       "getiri": 0.038801803921817424,
+       "dusus": 0.0,
+       "hesap": 107724.424533,
+       "veto": null
+      },
+      {
+       "adres": "0xc0ad5d21ff19a4e85b016bfd53ced8842995c151",
+       "t": 1.7561639022256257,
+       "getiri": -0.0940397923385744,
+       "dusus": 0.10075854321126843,
+       "hesap": 95831.87219,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": -0.02761899420837849,
+     "ilk5_yuzdelik": 0.174
+    },
+    {
+     "T": 1786492800000,
+     "tarih": "2026-08-12",
+     "secilen_n": 5,
+     "kontrol_n": 191,
+     "cikarilan_secim_adayi": 161,
+     "cikarilan_kontrol": 66,
+     "secilen_ortanca": -0.035002501675135966,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.14288677920344994,
+     "dusus_ortanca": 0.09197369363362351,
+     "yuzdelik": 0.039,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 2.2631115557246964,
+       "getiri": -0.1269259547980789,
+       "dusus": 0.13045362844223696,
+       "hesap": 51234.936433,
+       "veto": null
+      },
+      {
+       "adres": "0xc0ad5d21ff19a4e85b016bfd53ced8842995c151",
+       "t": 2.022429020829154,
+       "getiri": -0.08978031867530156,
+       "dusus": 0.09197369363362351,
+       "hesap": 95831.87219,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.9345742788322369,
+       "getiri": 0.09382353647540365,
+       "dusus": 0.03447896216561219,
+       "hesap": 78417.195106,
+       "veto": null
+      },
+      {
+       "adres": "0x5beae772444a36572bc7e26040988edc88e7a02f",
+       "t": 1.7098053552712396,
+       "getiri": -0.035002501675135966,
+       "dusus": 0.14288677920344994,
+       "hesap": 89547.678778,
+       "veto": null
+      },
+      {
+       "adres": "0x4c921317a8301044a2287dfa34b18c37005b42db",
+       "t": 0.43991517519352,
+       "getiri": 0.01079003078412577,
+       "dusus": 0.00022512616393965956,
+       "hesap": 104063.361626,
+       "veto": "veto_zarara_ekleme"
+      }
+     ],
+     "ilk5_ortanca": -0.035002501675135966,
+     "ilk5_yuzdelik": 0.026
+    },
+    {
+     "T": 1787097600000,
+     "tarih": "2026-08-19",
+     "secilen_n": 2,
+     "kontrol_n": 176,
+     "cikarilan_secim_adayi": 151,
+     "cikarilan_kontrol": 65,
+     "secilen_ortanca": -0.1179291444708272,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.27895542620389235,
+     "dusus_ortanca": 0.17715500758588104,
+     "yuzdelik": 0.1,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x5beae772444a36572bc7e26040988edc88e7a02f",
+       "t": 1.8796280329381923,
+       "getiri": -0.27895542620389235,
+       "dusus": 0.27895542620389235,
+       "hesap": 90940.497459,
+       "veto": null
+      },
+      {
+       "adres": "0xa9062f5ba14189e0740eae6724357f5800cefc67",
+       "t": 1.8201865316538222,
+       "getiri": 0.04309713726223796,
+       "dusus": 0.07535458896786973,
+       "hesap": 191141.569635,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.1179291444708272,
+     "ilk5_yuzdelik": 0.11
+    },
+    {
+     "T": 1787702400000,
+     "tarih": "2026-08-26",
+     "secilen_n": 2,
+     "kontrol_n": 208,
+     "cikarilan_secim_adayi": 153,
+     "cikarilan_kontrol": 73,
+     "secilen_ortanca": -0.022897042823073477,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.11114884527173796,
+     "dusus_ortanca": 0.05793630665120536,
+     "yuzdelik": 0.151,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.5239519809108124,
+       "getiri": -0.06564962765344795,
+       "dusus": 0.11114884527173796,
+       "hesap": 83970.127436,
+       "veto": null
+      },
+      {
+       "adres": "0x9448462650f87420e5ca537290e32c1b71ad58b6",
+       "t": 1.1455333882952048,
+       "getiri": 0.019855542007300997,
+       "dusus": 0.004723768030672759,
+       "hesap": 68997.821966,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.022897042823073477,
+     "ilk5_yuzdelik": 0.137
+    },
+    {
+     "T": 1788307200000,
+     "tarih": "2026-09-02",
+     "secilen_n": 7,
+     "kontrol_n": 231,
+     "cikarilan_secim_adayi": 164,
+     "cikarilan_kontrol": 93,
+     "secilen_ortanca": -0.009897577228736298,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.28370600207560104,
+     "dusus_ortanca": 0.09212095612957383,
+     "yuzdelik": 0.005,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.6726684540352648,
+       "getiri": -0.048952775689004024,
+       "dusus": 0.11257216408525339,
+       "hesap": 58253.202259,
+       "veto": null
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.483070487642007,
+       "getiri": -0.08848269738184922,
+       "dusus": 0.11506870502973221,
+       "hesap": 90814.925881,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.391021400310124,
+       "getiri": 0.030837369091157862,
+       "dusus": 0.0383022517649817,
+       "hesap": 203610.035901,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.000100286444718,
+       "getiri": 0.0002792904683912578,
+       "dusus": 0.04418637387365254,
+       "hesap": 65411.921433,
+       "veto": null
+      },
+      {
+       "adres": "0x2a0b9f2f8d00f0fc64d6c869ad8405c942ca637d",
+       "t": 0.8910485960612119,
+       "getiri": -0.20773650608984173,
+       "dusus": 0.28370600207560104,
+       "hesap": 112505.566831,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.048952775689004024,
+     "ilk5_yuzdelik": 0.0045000000000000005
+    },
+    {
+     "T": 1788912000000,
+     "tarih": "2026-09-09",
+     "secilen_n": 6,
+     "kontrol_n": 236,
+     "cikarilan_secim_adayi": 178,
+     "cikarilan_kontrol": 78,
+     "secilen_ortanca": -0.031013765801966575,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.3787022692501313,
+     "dusus_ortanca": 0.062494165609034424,
+     "yuzdelik": 0.006,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x2a0b9f2f8d00f0fc64d6c869ad8405c942ca637d",
+       "t": 1.727399108392981,
+       "getiri": -0.19629707746590896,
+       "dusus": 0.2504491833065703,
+       "hesap": 114117.306887,
+       "veto": null
+      },
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 1.726469124854118,
+       "getiri": 0.1257578154857808,
+       "dusus": 0.04074796404437475,
+       "hesap": 61879.73137,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.6315768991505954,
+       "getiri": 0.04195316830147955,
+       "dusus": 0.03836241997597856,
+       "hesap": 205921.57795,
+       "veto": null
+      },
+      {
+       "adres": "0xf37bb31d618a4ed22fc38e677f7dc430987a3617",
+       "t": 1.5006058201708041,
+       "getiri": -0.2782196431886552,
+       "dusus": 0.3787022692501313,
+       "hesap": 64828.622731,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.1296796391941595,
+       "getiri": -0.0810938581955134,
+       "dusus": 0.0842403671736941,
+       "hesap": 91588.248631,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.0810938581955134,
+     "ilk5_yuzdelik": 0.0
+    },
+    {
+     "T": 1789516800000,
+     "tarih": "2026-09-16",
+     "secilen_n": 8,
+     "kontrol_n": 254,
+     "cikarilan_secim_adayi": 183,
+     "cikarilan_kontrol": 88,
+     "secilen_ortanca": -0.020014908157048317,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.36216224975930633,
+     "dusus_ortanca": 0.07921675127089745,
+     "yuzdelik": 0.016,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 2.315680702250227,
+       "getiri": -0.010197116258587324,
+       "dusus": 0.09176303681187437,
+       "hesap": 64558.739196,
+       "veto": null
+      },
+      {
+       "adres": "0xf37bb31d618a4ed22fc38e677f7dc430987a3617",
+       "t": 2.0280476872997975,
+       "getiri": -0.35392996503801344,
+       "dusus": 0.36216224975930633,
+       "hesap": 106265.13503,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.7949234415956632,
+       "getiri": -0.1318980132993297,
+       "dusus": 0.1343427787004664,
+       "hesap": 91905.327399,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.7425042991587663,
+       "getiri": 0.08169503229162878,
+       "dusus": 0.016598715670041453,
+       "hesap": 64685.041164,
+       "veto": null
+      },
+      {
+       "adres": "0xdd14ff1c206df689465f3c8559f6eb71b09df955",
+       "t": 1.4500636973606345,
+       "getiri": -0.020510219778842598,
+       "dusus": 0.06261130519497615,
+       "hesap": 55534.971189,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.020510219778842598,
+     "ilk5_yuzdelik": 0.041
+    },
+    {
+     "T": 1790121600000,
+     "tarih": "2026-09-23",
+     "secilen_n": 5,
+     "kontrol_n": 234,
+     "cikarilan_secim_adayi": 169,
+     "cikarilan_kontrol": 65,
+     "secilen_ortanca": 0.000498827596572271,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.12602098679768303,
+     "dusus_ortanca": 0.012808684543189064,
+     "yuzdelik": 0.913,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 3.465546173182341,
+       "getiri": -0.04934226606666814,
+       "dusus": 0.12602098679768303,
+       "hesap": 66620.149122,
+       "veto": null
+      },
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.1820050322967752,
+       "getiri": -0.07649007439350264,
+       "dusus": 0.10825496805669355,
+       "hesap": 58443.691029,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.611373782406519,
+       "getiri": 0.058984018227556945,
+       "dusus": 0.012808684543189064,
+       "hesap": 63638.713451,
+       "veto": null
+      },
+      {
+       "adres": "0xc1791da88cc94c9a39e606d8760183d21268dcbb",
+       "t": 1.5851369925708194,
+       "getiri": 0.000498827596572271,
+       "dusus": 0.006831984809211322,
+       "hesap": 161077.410019,
+       "veto": null
+      },
+      {
+       "adres": "0xa12156da455437e075d243f7091a667c7121a73c",
+       "t": 1.3086033005482458,
+       "getiri": 0.02395427164489705,
+       "dusus": 0.0042989559579087455,
+       "hesap": 99725.397024,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.000498827596572271,
+     "ilk5_yuzdelik": 0.934
+    },
+    {
+     "T": 1790726400000,
+     "tarih": "2026-09-30",
+     "secilen_n": 3,
+     "kontrol_n": 274,
+     "cikarilan_secim_adayi": 192,
+     "cikarilan_kontrol": 82,
+     "secilen_ortanca": 0.0,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.03932644846412592,
+     "dusus_ortanca": 0.037126555517246196,
+     "yuzdelik": 0.6094999999999999,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x9448462650f87420e5ca537290e32c1b71ad58b6",
+       "t": 3.0115206595537383,
+       "getiri": -0.035548348578582356,
+       "dusus": 0.037126555517246196,
+       "hesap": 75926.131879,
+       "veto": null
+      },
+      {
+       "adres": "0x399ccf8a60473fa12cf6c747e82e959de3e02179",
+       "t": 2.1633808758375697,
+       "getiri": 0.009307778817667645,
+       "dusus": 0.03932644846412592,
+       "hesap": 74755.4852,
+       "veto": null
+      },
+      {
+       "adres": "0xc1791da88cc94c9a39e606d8760183d21268dcbb",
+       "t": 1.956594346167662,
+       "getiri": 0.0,
+       "dusus": 0.0,
+       "hesap": 148378.587158,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.0,
+     "ilk5_yuzdelik": 0.598
+    },
+    {
+     "T": 1791331200000,
+     "tarih": "2026-10-07",
+     "secilen_n": 3,
+     "kontrol_n": 293,
+     "cikarilan_secim_adayi": 183,
+     "cikarilan_kontrol": 73,
+     "secilen_ortanca": -0.029027736311305063,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.08973960801451908,
+     "dusus_ortanca": 0.05623427030077899,
+     "yuzdelik": 0.197,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x399ccf8a60473fa12cf6c747e82e959de3e02179",
+       "t": 2.199610775143824,
+       "getiri": -0.05848239336538663,
+       "dusus": 0.08973960801451908,
+       "hesap": 74513.380814,
+       "veto": null
+      },
+      {
+       "adres": "0x21a1faec036c45b3d3038cd2cebfbad4c9c3fb8d",
+       "t": 1.8023140999755802,
+       "getiri": -0.029027736311305063,
+       "dusus": 0.05623427030077899,
+       "hesap": 82740.934879,
+       "veto": null
+      },
+      {
+       "adres": "0x8950868caab7606f8332992d1c94c42869c6a2c5",
+       "t": -0.2359090841061163,
+       "getiri": -0.005268581669190531,
+       "dusus": 0.006879707238509614,
+       "hesap": 289810.254415,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": -0.029027736311305063,
+     "ilk5_yuzdelik": 0.176
+    }
+   ],
+   "tur1": {
+    "s1_yuzdelik": 0.063,
+    "s1": false,
+    "s2_iyi": 1,
+    "s2_tarih": 11,
+    "s2_gerek": 8,
+    "s2": false,
+    "s3_ortanca": -0.019519596535254036,
+    "s3": false,
+    "gecti": false,
+    "dolu_tarih": 11,
+    "secilen_toplam": 49
+   },
+   "son": null,
+   "t12_acik": false,
+   "bugun": [
+    {
+     "adres": "0x1a19f1eb20023906accb989289645a5bf6300562",
+     "hesap": 104662.603359,
+     "t": 1.2721694732986748,
+     "kopya28_slot": 0.02843505909547628,
+     "islem28": 3,
+     "islem56": 7,
+     "devir": 0.7772644897907044,
+     "tutma_dk": 1297.7119333333333,
+     "kaldirac": 0.38283970314172816,
+     "veto": null
+    },
+    {
+     "adres": "0x915f49be1efad69bf644a500274db9b7ec24840f",
+     "hesap": 82520.72217,
+     "t": 1.2116317830062693,
+     "kopya28_slot": 0.08161905251721668,
+     "islem28": 46,
+     "islem56": 97,
+     "devir": 12.963046092517008,
+     "tutma_dk": 523.7910333333334,
+     "kaldirac": 1.5698580026132607,
+     "veto": null
+    },
+    {
+     "adres": "0xe69a487b1b9b74122dc8e6afc5fc046aca799125",
+     "hesap": 113181.836222,
+     "t": 1.0000009833825894,
+     "kopya28_slot": 0.19581013878094078,
+     "islem28": 4,
+     "islem56": 6,
+     "devir": 3.222406821374816,
+     "tutma_dk": 1438.25775,
+     "kaldirac": 1.5969220275370275,
+     "veto": "veto_zarara_ekleme"
+    },
+    {
+     "adres": "0x4854b8835c434edf95adf27f81ab9588ca6739be",
+     "hesap": 156528.083489,
+     "t": 0.6199569383507196,
+     "kopya28_slot": 0.008237876900528684,
+     "islem28": 7,
+     "islem56": 11,
+     "devir": 1.3900707098371314,
+     "tutma_dk": 469.71816666666666,
+     "kaldirac": 0.582165947278105,
+     "veto": null
+    }
+   ]
+  },
+  "B": {
+   "tablo": [
+    {
+     "T": 1785283200000,
+     "tarih": "2026-07-29",
+     "secilen_n": 4,
+     "kontrol_n": 180,
+     "cikarilan_secim_adayi": 161,
+     "cikarilan_kontrol": 80,
+     "secilen_ortanca": -0.06868656093914904,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.18950766908601258,
+     "dusus_ortanca": 0.10817881216795916,
+     "yuzdelik": 0.022,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xf25df1972b89d3cdb051cf8b2bf385b5dcb9aa21",
+       "t": 2.2333404380257487,
+       "getiri": -0.18029280871164455,
+       "dusus": 0.18950766908601258,
+       "hesap": 111401.689401,
+       "veto": null
+      },
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 1.0983105496797316,
+       "getiri": -0.10180177402903834,
+       "dusus": 0.12980186748462907,
+       "hesap": 50415.90685,
+       "veto": null
+      },
+      {
+       "adres": "0xed7c40e138cb25e79d94295882c66ac8197fb66e",
+       "t": 1.035701295291148,
+       "getiri": 0.06346177692041599,
+       "dusus": 0.04465128040940736,
+       "hesap": 230142.163211,
+       "veto": null
+      },
+      {
+       "adres": "0x009fdc047e8771b8be1371fc277468a9547220f8",
+       "t": 0.35385630207964874,
+       "getiri": -0.03557134784925975,
+       "dusus": 0.08655575685128925,
+       "hesap": 69502.113163,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.06868656093914904,
+     "ilk5_yuzdelik": 0.019
+    },
+    {
+     "T": 1785888000000,
+     "tarih": "2026-08-05",
+     "secilen_n": 1,
+     "kontrol_n": 177,
+     "cikarilan_secim_adayi": 150,
+     "cikarilan_kontrol": 69,
+     "secilen_ortanca": 0.038801803921817424,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.0,
+     "dusus_ortanca": 0.0,
+     "yuzdelik": 0.855,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xac5c66fbad98b49979cd1cbaa800ace76e947866",
+       "t": 4.678450318183556,
+       "getiri": 0.038801803921817424,
+       "dusus": 0.0,
+       "hesap": 107724.424533,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.038801803921817424,
+     "ilk5_yuzdelik": 0.849
+    },
+    {
+     "T": 1786492800000,
+     "tarih": "2026-08-12",
+     "secilen_n": 3,
+     "kontrol_n": 191,
+     "cikarilan_secim_adayi": 161,
+     "cikarilan_kontrol": 66,
+     "secilen_ortanca": -0.035002501675135966,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.14288677920344994,
+     "dusus_ortanca": 0.13045362844223696,
+     "yuzdelik": 0.051,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 2.2631115557246964,
+       "getiri": -0.1269259547980789,
+       "dusus": 0.13045362844223696,
+       "hesap": 51234.936433,
+       "veto": null
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.9345742788322369,
+       "getiri": 0.09382353647540365,
+       "dusus": 0.03447896216561219,
+       "hesap": 78417.195106,
+       "veto": null
+      },
+      {
+       "adres": "0x5beae772444a36572bc7e26040988edc88e7a02f",
+       "t": 1.7098053552712396,
+       "getiri": -0.035002501675135966,
+       "dusus": 0.14288677920344994,
+       "hesap": 89547.678778,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.035002501675135966,
+     "ilk5_yuzdelik": 0.059
+    },
+    {
+     "T": 1787097600000,
+     "tarih": "2026-08-19",
+     "secilen_n": 2,
+     "kontrol_n": 176,
+     "cikarilan_secim_adayi": 151,
+     "cikarilan_kontrol": 65,
+     "secilen_ortanca": -0.1179291444708272,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.27895542620389235,
+     "dusus_ortanca": 0.17715500758588104,
+     "yuzdelik": 0.111,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x5beae772444a36572bc7e26040988edc88e7a02f",
+       "t": 1.8796280329381923,
+       "getiri": -0.27895542620389235,
+       "dusus": 0.27895542620389235,
+       "hesap": 90940.497459,
+       "veto": null
+      },
+      {
+       "adres": "0xa9062f5ba14189e0740eae6724357f5800cefc67",
+       "t": 1.8201865316538222,
+       "getiri": 0.04309713726223796,
+       "dusus": 0.07535458896786973,
+       "hesap": 191141.569635,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.1179291444708272,
+     "ilk5_yuzdelik": 0.094
+    },
+    {
+     "T": 1787702400000,
+     "tarih": "2026-08-26",
+     "secilen_n": 2,
+     "kontrol_n": 208,
+     "cikarilan_secim_adayi": 153,
+     "cikarilan_kontrol": 73,
+     "secilen_ortanca": -0.022897042823073477,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.11114884527173796,
+     "dusus_ortanca": 0.05793630665120536,
+     "yuzdelik": 0.122,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.5239519809108124,
+       "getiri": -0.06564962765344795,
+       "dusus": 0.11114884527173796,
+       "hesap": 83970.127436,
+       "veto": null
+      },
+      {
+       "adres": "0x9448462650f87420e5ca537290e32c1b71ad58b6",
+       "t": 1.1455333882952048,
+       "getiri": 0.019855542007300997,
+       "dusus": 0.004723768030672759,
+       "hesap": 68997.821966,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.022897042823073477,
+     "ilk5_yuzdelik": 0.128
+    },
+    {
+     "T": 1788307200000,
+     "tarih": "2026-09-02",
+     "secilen_n": 6,
+     "kontrol_n": 231,
+     "cikarilan_secim_adayi": 164,
+     "cikarilan_kontrol": 93,
+     "secilen_ortanca": -0.024336742610306383,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.28370600207560104,
+     "dusus_ortanca": 0.07837926897945297,
+     "yuzdelik": 0.007,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.6726684540352648,
+       "getiri": -0.048952775689004024,
+       "dusus": 0.11257216408525339,
+       "hesap": 58253.202259,
+       "veto": null
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.483070487642007,
+       "getiri": -0.08848269738184922,
+       "dusus": 0.11506870502973221,
+       "hesap": 90814.925881,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.391021400310124,
+       "getiri": 0.030837369091157862,
+       "dusus": 0.0383022517649817,
+       "hesap": 203610.035901,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.000100286444718,
+       "getiri": 0.0002792904683912578,
+       "dusus": 0.04418637387365254,
+       "hesap": 65411.921433,
+       "veto": null
+      },
+      {
+       "adres": "0x2a0b9f2f8d00f0fc64d6c869ad8405c942ca637d",
+       "t": 0.8910485960612119,
+       "getiri": -0.20773650608984173,
+       "dusus": 0.28370600207560104,
+       "hesap": 112505.566831,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.048952775689004024,
+     "ilk5_yuzdelik": 0.001
+    },
+    {
+     "T": 1788912000000,
+     "tarih": "2026-09-09",
+     "secilen_n": 5,
+     "kontrol_n": 236,
+     "cikarilan_secim_adayi": 178,
+     "cikarilan_kontrol": 78,
+     "secilen_ortanca": 0.01906632659158025,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.2504491833065703,
+     "dusus_ortanca": 0.04074796404437475,
+     "yuzdelik": 0.92,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x2a0b9f2f8d00f0fc64d6c869ad8405c942ca637d",
+       "t": 1.727399108392981,
+       "getiri": -0.19629707746590896,
+       "dusus": 0.2504491833065703,
+       "hesap": 114117.306887,
+       "veto": null
+      },
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 1.726469124854118,
+       "getiri": 0.1257578154857808,
+       "dusus": 0.04074796404437475,
+       "hesap": 61879.73137,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.6315768991505954,
+       "getiri": 0.04195316830147955,
+       "dusus": 0.03836241997597856,
+       "hesap": 205921.57795,
+       "veto": null
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.1296796391941595,
+       "getiri": -0.0810938581955134,
+       "dusus": 0.0842403671736941,
+       "hesap": 91588.248631,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.0001037976129779,
+       "getiri": 0.01906632659158025,
+       "dusus": 0.025230117163173027,
+       "hesap": 65825.124218,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.01906632659158025,
+     "ilk5_yuzdelik": 0.921
+    },
+    {
+     "T": 1789516800000,
+     "tarih": "2026-09-16",
+     "secilen_n": 7,
+     "kontrol_n": 254,
+     "cikarilan_secim_adayi": 183,
+     "cikarilan_kontrol": 88,
+     "secilen_ortanca": -0.019519596535254036,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.2050086325633621,
+     "dusus_ortanca": 0.06667046572992052,
+     "yuzdelik": 0.026,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 2.315680702250227,
+       "getiri": -0.010197116258587324,
+       "dusus": 0.09176303681187437,
+       "hesap": 64558.739196,
+       "veto": null
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.7949234415956632,
+       "getiri": -0.1318980132993297,
+       "dusus": 0.1343427787004664,
+       "hesap": 91905.327399,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.7425042991587663,
+       "getiri": 0.08169503229162878,
+       "dusus": 0.016598715670041453,
+       "hesap": 64685.041164,
+       "veto": null
+      },
+      {
+       "adres": "0xdd14ff1c206df689465f3c8559f6eb71b09df955",
+       "t": 1.4500636973606345,
+       "getiri": -0.020510219778842598,
+       "dusus": 0.06261130519497615,
+       "hesap": 55534.971189,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.3095814984047842,
+       "getiri": -0.019519596535254036,
+       "dusus": 0.06667046572992052,
+       "hesap": 208433.682243,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.019519596535254036,
+     "ilk5_yuzdelik": 0.063
+    },
+    {
+     "T": 1790121600000,
+     "tarih": "2026-09-23",
+     "secilen_n": 5,
+     "kontrol_n": 234,
+     "cikarilan_secim_adayi": 169,
+     "cikarilan_kontrol": 65,
+     "secilen_ortanca": 0.000498827596572271,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.12602098679768303,
+     "dusus_ortanca": 0.012808684543189064,
+     "yuzdelik": 0.929,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 3.465546173182341,
+       "getiri": -0.04934226606666814,
+       "dusus": 0.12602098679768303,
+       "hesap": 66620.149122,
+       "veto": null
+      },
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.1820050322967752,
+       "getiri": -0.07649007439350264,
+       "dusus": 0.10825496805669355,
+       "hesap": 58443.691029,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.611373782406519,
+       "getiri": 0.058984018227556945,
+       "dusus": 0.012808684543189064,
+       "hesap": 63638.713451,
+       "veto": null
+      },
+      {
+       "adres": "0xc1791da88cc94c9a39e606d8760183d21268dcbb",
+       "t": 1.5851369925708194,
+       "getiri": 0.000498827596572271,
+       "dusus": 0.006831984809211322,
+       "hesap": 161077.410019,
+       "veto": null
+      },
+      {
+       "adres": "0xa12156da455437e075d243f7091a667c7121a73c",
+       "t": 1.3086033005482458,
+       "getiri": 0.02395427164489705,
+       "dusus": 0.0042989559579087455,
+       "hesap": 99725.397024,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.000498827596572271,
+     "ilk5_yuzdelik": 0.915
+    },
+    {
+     "T": 1790726400000,
+     "tarih": "2026-09-30",
+     "secilen_n": 3,
+     "kontrol_n": 274,
+     "cikarilan_secim_adayi": 192,
+     "cikarilan_kontrol": 82,
+     "secilen_ortanca": 0.0,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.03932644846412592,
+     "dusus_ortanca": 0.037126555517246196,
+     "yuzdelik": 0.616,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x9448462650f87420e5ca537290e32c1b71ad58b6",
+       "t": 3.0115206595537383,
+       "getiri": -0.035548348578582356,
+       "dusus": 0.037126555517246196,
+       "hesap": 75926.131879,
+       "veto": null
+      },
+      {
+       "adres": "0x399ccf8a60473fa12cf6c747e82e959de3e02179",
+       "t": 2.1633808758375697,
+       "getiri": 0.009307778817667645,
+       "dusus": 0.03932644846412592,
+       "hesap": 74755.4852,
+       "veto": null
+      },
+      {
+       "adres": "0xc1791da88cc94c9a39e606d8760183d21268dcbb",
+       "t": 1.956594346167662,
+       "getiri": 0.0,
+       "dusus": 0.0,
+       "hesap": 148378.587158,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.0,
+     "ilk5_yuzdelik": 0.6214999999999999
+    },
+    {
+     "T": 1791331200000,
+     "tarih": "2026-10-07",
+     "secilen_n": 2,
+     "kontrol_n": 293,
+     "cikarilan_secim_adayi": 183,
+     "cikarilan_kontrol": 73,
+     "secilen_ortanca": -0.04375506483834585,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.08973960801451908,
+     "dusus_ortanca": 0.07298693915764903,
+     "yuzdelik": 0.317,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x399ccf8a60473fa12cf6c747e82e959de3e02179",
+       "t": 2.199610775143824,
+       "getiri": -0.05848239336538663,
+       "dusus": 0.08973960801451908,
+       "hesap": 74513.380814,
+       "veto": null
+      },
+      {
+       "adres": "0x21a1faec036c45b3d3038cd2cebfbad4c9c3fb8d",
+       "t": 1.8023140999755802,
+       "getiri": -0.029027736311305063,
+       "dusus": 0.05623427030077899,
+       "hesap": 82740.934879,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.04375506483834585,
+     "ilk5_yuzdelik": 0.327
+    }
+   ],
+   "tur1": {
+    "s1_yuzdelik": 0.101,
+    "s1": false,
+    "s2_iyi": 3,
+    "s2_tarih": 11,
+    "s2_gerek": 8,
+    "s2": false,
+    "s3_ortanca": -0.020014908157048317,
+    "s3": false,
+    "gecti": false,
+    "dolu_tarih": 11,
+    "secilen_toplam": 40
+   },
+   "son": null,
+   "t12_acik": false,
+   "bugun": [
+    {
+     "adres": "0x1a19f1eb20023906accb989289645a5bf6300562",
+     "hesap": 104662.603359,
+     "t": 1.2721694732986748,
+     "kopya28_slot": 0.02843505909547628,
+     "islem28": 3,
+     "islem56": 7,
+     "devir": 0.7772644897907044,
+     "tutma_dk": 1297.7119333333333,
+     "kaldirac": 0.38283970314172816,
+     "veto": null
+    },
+    {
+     "adres": "0x915f49be1efad69bf644a500274db9b7ec24840f",
+     "hesap": 82520.72217,
+     "t": 1.2116317830062693,
+     "kopya28_slot": 0.08161905251721668,
+     "islem28": 46,
+     "islem56": 97,
+     "devir": 12.963046092517008,
+     "tutma_dk": 523.7910333333334,
+     "kaldirac": 1.5698580026132607,
+     "veto": null
+    },
+    {
+     "adres": "0x4854b8835c434edf95adf27f81ab9588ca6739be",
+     "hesap": 156528.083489,
+     "t": 0.6199569383507196,
+     "kopya28_slot": 0.008237876900528684,
+     "islem28": 7,
+     "islem56": 11,
+     "devir": 1.3900707098371314,
+     "tutma_dk": 469.71816666666666,
+     "kaldirac": 0.582165947278105,
+     "veto": null
+    }
+   ]
+  },
+  "C": {
+   "tablo": [
+    {
+     "T": 1785283200000,
+     "tarih": "2026-07-29",
+     "secilen_n": 1,
+     "kontrol_n": 180,
+     "cikarilan_secim_adayi": 80,
+     "cikarilan_kontrol": 80,
+     "secilen_ortanca": -0.0740852149017196,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.10497682366291283,
+     "dusus_ortanca": 0.10497682366291283,
+     "yuzdelik": 0.091,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1785888000000,
+     "tarih": "2026-08-05",
+     "secilen_n": 2,
+     "kontrol_n": 177,
+     "cikarilan_secim_adayi": 69,
+     "cikarilan_kontrol": 69,
+     "secilen_ortanca": -0.041577347867954584,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.10506458835014221,
+     "dusus_ortanca": 0.06318058871426557,
+     "yuzdelik": 0.172,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1786492800000,
+     "tarih": "2026-08-12",
+     "secilen_n": 1,
+     "kontrol_n": 191,
+     "cikarilan_secim_adayi": 66,
+     "cikarilan_kontrol": 66,
+     "secilen_ortanca": -0.02899408045239693,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.031089965674873654,
+     "dusus_ortanca": 0.031089965674873654,
+     "yuzdelik": 0.1825,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1787097600000,
+     "tarih": "2026-08-19",
+     "secilen_n": 1,
+     "kontrol_n": 176,
+     "cikarilan_secim_adayi": 65,
+     "cikarilan_kontrol": 65,
+     "secilen_ortanca": 0.0952508724001,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.031089965674873654,
+     "dusus_ortanca": 0.031089965674873654,
+     "yuzdelik": 0.918,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1787702400000,
+     "tarih": "2026-08-26",
+     "secilen_n": 1,
+     "kontrol_n": 208,
+     "cikarilan_secim_adayi": 73,
+     "cikarilan_kontrol": 73,
+     "secilen_ortanca": 0.01441628274079676,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.019617017217929966,
+     "dusus_ortanca": 0.019617017217929966,
+     "yuzdelik": 0.7324999999999999,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1788307200000,
+     "tarih": "2026-09-02",
+     "secilen_n": 2,
+     "kontrol_n": 231,
+     "cikarilan_secim_adayi": 93,
+     "cikarilan_kontrol": 93,
+     "secilen_ortanca": 0.018091041701527866,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.11257216408525339,
+     "dusus_ortanca": 0.06506907263911926,
+     "yuzdelik": 0.639,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1788912000000,
+     "tarih": "2026-09-09",
+     "secilen_n": 1,
+     "kontrol_n": 236,
+     "cikarilan_secim_adayi": 78,
+     "cikarilan_kontrol": 78,
+     "secilen_ortanca": 0.02497192588167052,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.012548697768959283,
+     "dusus_ortanca": 0.012548697768959283,
+     "yuzdelik": 0.7515,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1789516800000,
+     "tarih": "2026-09-16",
+     "secilen_n": 1,
+     "kontrol_n": 254,
+     "cikarilan_secim_adayi": 88,
+     "cikarilan_kontrol": 88,
+     "secilen_ortanca": 0.2070358459712085,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.03139617100400505,
+     "dusus_ortanca": 0.03139617100400505,
+     "yuzdelik": 0.9954999999999999,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1790121600000,
+     "tarih": "2026-09-23",
+     "secilen_n": 4,
+     "kontrol_n": 234,
+     "cikarilan_secim_adayi": 65,
+     "cikarilan_kontrol": 65,
+     "secilen_ortanca": 0.00572471992301371,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.10825496805669355,
+     "dusus_ortanca": 0.015387127505276377,
+     "yuzdelik": 0.888,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1790726400000,
+     "tarih": "2026-09-30",
+     "secilen_n": 2,
+     "kontrol_n": 274,
+     "cikarilan_secim_adayi": 82,
+     "cikarilan_kontrol": 82,
+     "secilen_ortanca": 0.004342330543070094,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.015563684407534084,
+     "dusus_ortanca": 0.014997921239609524,
+     "yuzdelik": 0.824,
+     "cekilis_yerine_koyarak": false
+    },
+    {
+     "T": 1791331200000,
+     "tarih": "2026-10-07",
+     "secilen_n": 1,
+     "kontrol_n": 293,
+     "cikarilan_secim_adayi": 73,
+     "cikarilan_kontrol": 73,
+     "secilen_ortanca": -0.017122734889282176,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.03058346535230072,
+     "dusus_ortanca": 0.03058346535230072,
+     "yuzdelik": 0.3285,
+     "cekilis_yerine_koyarak": false
+    }
+   ],
+   "tur1": {
+    "s1_yuzdelik": 0.801,
+    "s1": false,
+    "s2_iyi": 7,
+    "s2_tarih": 11,
+    "s2_gerek": 8,
+    "s2": false,
+    "s3_ortanca": 0.0023780401883699565,
+    "s3": true,
+    "gecti": false,
+    "dolu_tarih": 11,
+    "secilen_toplam": 17
+   },
+   "son": null,
+   "t12_acik": false,
+   "bugun": []
+  },
+  "D": {
+   "tablo": [
+    {
+     "T": 1785283200000,
+     "tarih": "2026-07-29",
+     "secilen_n": 9,
+     "kontrol_n": 87,
+     "cikarilan_secim_adayi": 206,
+     "cikarilan_kontrol": 26,
+     "secilen_ortanca": 0.0070660091498842,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.18950766908601258,
+     "dusus_ortanca": 0.04778910286136806,
+     "yuzdelik": 0.875,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xf25df1972b89d3cdb051cf8b2bf385b5dcb9aa21",
+       "t": 2.2333404380257487,
+       "getiri": -0.18029280871164455,
+       "dusus": 0.18950766908601258,
+       "hesap": 111401.689401,
+       "veto": null
+      },
+      {
+       "adres": "0xfdb03a2574e9e7d1c77d9ed752d99cdf25c3db25",
+       "t": 1.6503781047745045,
+       "getiri": 0.05173772105098173,
+       "dusus": 0.027948977152917887,
+       "hesap": 66058.644714,
+       "veto": "veto_zarara_ekleme"
+      },
+      {
+       "adres": "0xcff9c002355ac218a9e5a56135fd74ffef580e52",
+       "t": 1.57263253148942,
+       "getiri": 0.03782716319721602,
+       "dusus": 0.04778910286136806,
+       "hesap": 43101.06134,
+       "veto": null
+      },
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 1.0983105496797316,
+       "getiri": -0.10180177402903834,
+       "dusus": 0.12980186748462907,
+       "hesap": 50415.90685,
+       "veto": null
+      },
+      {
+       "adres": "0xed7c40e138cb25e79d94295882c66ac8197fb66e",
+       "t": 1.035701295291148,
+       "getiri": 0.06346177692041599,
+       "dusus": 0.04465128040940736,
+       "hesap": 230142.163211,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.03782716319721602,
+     "ilk5_yuzdelik": 0.916
+    },
+    {
+     "T": 1785888000000,
+     "tarih": "2026-08-05",
+     "secilen_n": 5,
+     "kontrol_n": 84,
+     "cikarilan_secim_adayi": 192,
+     "cikarilan_kontrol": 23,
+     "secilen_ortanca": -0.0940397923385744,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.13709255801328368,
+     "dusus_ortanca": 0.12311914723242445,
+     "yuzdelik": 0.028,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xac5c66fbad98b49979cd1cbaa800ace76e947866",
+       "t": 4.678450318183556,
+       "getiri": 0.038801803921817424,
+       "dusus": 0.0,
+       "hesap": 107724.424533,
+       "veto": null
+      },
+      {
+       "adres": "0xe006b02ec9f5caa7c5cbcb3804e10bf4f45036c8",
+       "t": 3.664993705104938,
+       "getiri": -0.13468891580083686,
+       "dusus": 0.13709255801328368,
+       "hesap": 29609.541891,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 2.6768248165402153,
+       "getiri": -0.11243922648261573,
+       "dusus": 0.1300770231696241,
+       "hesap": 49781.549552,
+       "veto": null
+      },
+      {
+       "adres": "0xc0ad5d21ff19a4e85b016bfd53ced8842995c151",
+       "t": 1.7561639022256257,
+       "getiri": -0.0940397923385744,
+       "dusus": 0.10075854321126843,
+       "hesap": 95831.87219,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x7630cc114b2fbc6d7b2f9cbae9c7a8b7aef77e11",
+       "t": 1.534446108931345,
+       "getiri": -0.07924308607571595,
+       "dusus": 0.12311914723242445,
+       "hesap": 21295.614471,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": -0.0940397923385744,
+     "ilk5_yuzdelik": 0.02
+    },
+    {
+     "T": 1786492800000,
+     "tarih": "2026-08-12",
+     "secilen_n": 8,
+     "kontrol_n": 88,
+     "cikarilan_secim_adayi": 198,
+     "cikarilan_kontrol": 26,
+     "secilen_ortanca": -0.035922758080682016,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.36874716193264934,
+     "dusus_ortanca": 0.09247482872679152,
+     "yuzdelik": 0.016,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x22dfa5d3751aa194a119a4eaebce903cc5a635b5",
+       "t": 2.269918876210658,
+       "getiri": -0.036843014486228065,
+       "dusus": 0.05275720685197327,
+       "hesap": 16925.167841,
+       "veto": null
+      },
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 2.2631115557246964,
+       "getiri": -0.1269259547980789,
+       "dusus": 0.13045362844223696,
+       "hesap": 51234.936433,
+       "veto": null
+      },
+      {
+       "adres": "0xc0ad5d21ff19a4e85b016bfd53ced8842995c151",
+       "t": 2.022429020829154,
+       "getiri": -0.08978031867530156,
+       "dusus": 0.09197369363362351,
+       "hesap": 95831.87219,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.9345742788322369,
+       "getiri": 0.09382353647540365,
+       "dusus": 0.03447896216561219,
+       "hesap": 78417.195106,
+       "veto": null
+      },
+      {
+       "adres": "0x5beae772444a36572bc7e26040988edc88e7a02f",
+       "t": 1.7098053552712396,
+       "getiri": -0.035002501675135966,
+       "dusus": 0.14288677920344994,
+       "hesap": 89547.678778,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.036843014486228065,
+     "ilk5_yuzdelik": 0.045
+    },
+    {
+     "T": 1787097600000,
+     "tarih": "2026-08-19",
+     "secilen_n": 6,
+     "kontrol_n": 84,
+     "cikarilan_secim_adayi": 193,
+     "cikarilan_kontrol": 29,
+     "secilen_ortanca": 0.03037975889616018,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.27895542620389235,
+     "dusus_ortanca": 0.08598354484221277,
+     "yuzdelik": 0.966,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x22dfa5d3751aa194a119a4eaebce903cc5a635b5",
+       "t": 2.475824575815862,
+       "getiri": 0.0176623805300824,
+       "dusus": 0.04854943920705512,
+       "hesap": 17203.373405,
+       "veto": null
+      },
+      {
+       "adres": "0x5beae772444a36572bc7e26040988edc88e7a02f",
+       "t": 1.8796280329381923,
+       "getiri": -0.27895542620389235,
+       "dusus": 0.27895542620389235,
+       "hesap": 90940.497459,
+       "veto": null
+      },
+      {
+       "adres": "0xa9062f5ba14189e0740eae6724357f5800cefc67",
+       "t": 1.8201865316538222,
+       "getiri": 0.04309713726223796,
+       "dusus": 0.07535458896786973,
+       "hesap": 191141.569635,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.0000270007913992,
+       "getiri": 0.06832124136526674,
+       "dusus": 0.0966125007165558,
+       "hesap": 21515.197162,
+       "veto": null
+      },
+      {
+       "adres": "0x424d756e19469ddb13c753b280cc0e9d8c95420e",
+       "t": 0.4244025240813998,
+       "getiri": 0.1275421080930006,
+       "dusus": 0.0244741385858932,
+       "hesap": 41547.893021,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.04309713726223796,
+     "ilk5_yuzdelik": 0.969
+    },
+    {
+     "T": 1787702400000,
+     "tarih": "2026-08-26",
+     "secilen_n": 8,
+     "kontrol_n": 106,
+     "cikarilan_secim_adayi": 191,
+     "cikarilan_kontrol": 31,
+     "secilen_ortanca": 0.041634789351663315,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.15869213600021748,
+     "dusus_ortanca": 0.04317888823169913,
+     "yuzdelik": 0.911,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.634955302820446,
+       "getiri": 0.05623771763612173,
+       "dusus": 0.1161562223833712,
+       "hesap": 48823.038158,
+       "veto": null
+      },
+      {
+       "adres": "0x75f0f24a090ee2923b2662d40ca44d14e33faf5e",
+       "t": 2.057994449025521,
+       "getiri": 0.0467637628657136,
+       "dusus": 0.021353675821590423,
+       "hesap": 10292.069651,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x22dfa5d3751aa194a119a4eaebce903cc5a635b5",
+       "t": 1.946788185116652,
+       "getiri": -0.15863825072788829,
+       "dusus": 0.15869213600021748,
+       "hesap": 16910.729918,
+       "veto": null
+      },
+      {
+       "adres": "0xb1decfd7f09402c37f91c4abd13910847b17f2ee",
+       "t": 1.5660055214731825,
+       "getiri": 0.12847262570846785,
+       "dusus": 0.042180871043916435,
+       "hesap": 36988.947678,
+       "veto": null
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.5239519809108124,
+       "getiri": -0.06564962765344795,
+       "dusus": 0.11114884527173796,
+       "hesap": 83970.127436,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.0467637628657136,
+     "ilk5_yuzdelik": 0.839
+    },
+    {
+     "T": 1788307200000,
+     "tarih": "2026-09-02",
+     "secilen_n": 11,
+     "kontrol_n": 122,
+     "cikarilan_secim_adayi": 201,
+     "cikarilan_kontrol": 33,
+     "secilen_ortanca": -0.009897577228736298,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.28370600207560104,
+     "dusus_ortanca": 0.09212095612957383,
+     "yuzdelik": 0.017,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.6726684540352648,
+       "getiri": -0.048952775689004024,
+       "dusus": 0.11257216408525339,
+       "hesap": 58253.202259,
+       "veto": null
+      },
+      {
+       "adres": "0x7b72875cd6af0346f637e696fd462c40b6098e2d",
+       "t": 2.2651499549453833,
+       "getiri": -0.03291638946640585,
+       "dusus": 0.11756145524302986,
+       "hesap": 26142.904224,
+       "veto": null
+      },
+      {
+       "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+       "t": 1.8134411070661824,
+       "getiri": -0.057018897600903395,
+       "dusus": 0.10298761671460432,
+       "hesap": 20132.970464,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.483070487642007,
+       "getiri": -0.08848269738184922,
+       "dusus": 0.11506870502973221,
+       "hesap": 90814.925881,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.391021400310124,
+       "getiri": 0.030837369091157862,
+       "dusus": 0.0383022517649817,
+       "hesap": 203610.035901,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.048952775689004024,
+     "ilk5_yuzdelik": 0.008
+    },
+    {
+     "T": 1788912000000,
+     "tarih": "2026-09-09",
+     "secilen_n": 9,
+     "kontrol_n": 120,
+     "cikarilan_secim_adayi": 216,
+     "cikarilan_kontrol": 34,
+     "secilen_ortanca": -0.02041211269653509,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.3787022692501313,
+     "dusus_ortanca": 0.0842403671736941,
+     "yuzdelik": 0.004,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+       "t": 2.1825919767016133,
+       "getiri": 0.012549282113881732,
+       "dusus": 0.10268862501439102,
+       "hesap": 21264.983223,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x2a0b9f2f8d00f0fc64d6c869ad8405c942ca637d",
+       "t": 1.727399108392981,
+       "getiri": -0.19629707746590896,
+       "dusus": 0.2504491833065703,
+       "hesap": 114117.306887,
+       "veto": null
+      },
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 1.726469124854118,
+       "getiri": 0.1257578154857808,
+       "dusus": 0.04074796404437475,
+       "hesap": 61879.73137,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.6315768991505954,
+       "getiri": 0.04195316830147955,
+       "dusus": 0.03836241997597856,
+       "hesap": 205921.57795,
+       "veto": null
+      },
+      {
+       "adres": "0xf37bb31d618a4ed22fc38e677f7dc430987a3617",
+       "t": 1.5006058201708041,
+       "getiri": -0.2782196431886552,
+       "dusus": 0.3787022692501313,
+       "hesap": 64828.622731,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": 0.012549282113881732,
+     "ilk5_yuzdelik": 0.82
+    },
+    {
+     "T": 1789516800000,
+     "tarih": "2026-09-16",
+     "secilen_n": 11,
+     "kontrol_n": 120,
+     "cikarilan_secim_adayi": 225,
+     "cikarilan_kontrol": 35,
+     "secilen_ortanca": -0.019519596535254036,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.36216224975930633,
+     "dusus_ortanca": 0.09176303681187437,
+     "yuzdelik": 0.014,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 2.315680702250227,
+       "getiri": -0.010197116258587324,
+       "dusus": 0.09176303681187437,
+       "hesap": 64558.739196,
+       "veto": null
+      },
+      {
+       "adres": "0xf37bb31d618a4ed22fc38e677f7dc430987a3617",
+       "t": 2.0280476872997975,
+       "getiri": -0.35392996503801344,
+       "dusus": 0.36216224975930633,
+       "hesap": 106265.13503,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.7949234415956632,
+       "getiri": -0.1318980132993297,
+       "dusus": 0.1343427787004664,
+       "hesap": 91905.327399,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.7425042991587663,
+       "getiri": 0.08169503229162878,
+       "dusus": 0.016598715670041453,
+       "hesap": 64685.041164,
+       "veto": null
+      },
+      {
+       "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+       "t": 1.7016571038076296,
+       "getiri": -0.0188896094357921,
+       "dusus": 0.10335734652689887,
+       "hesap": 19796.376484,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": -0.0188896094357921,
+     "ilk5_yuzdelik": 0.099
+    },
+    {
+     "T": 1790121600000,
+     "tarih": "2026-09-23",
+     "secilen_n": 8,
+     "kontrol_n": 116,
+     "cikarilan_secim_adayi": 206,
+     "cikarilan_kontrol": 29,
+     "secilen_ortanca": -0.0029373547319599957,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.12602098679768303,
+     "dusus_ortanca": 0.04151927801227584,
+     "yuzdelik": 0.409,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 3.465546173182341,
+       "getiri": -0.04934226606666814,
+       "dusus": 0.12602098679768303,
+       "hesap": 66620.149122,
+       "veto": null
+      },
+      {
+       "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+       "t": 3.0833732166029826,
+       "getiri": -0.029184963849047674,
+       "dusus": 0.10370990178597828,
+       "hesap": 21359.107011,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.1820050322967752,
+       "getiri": -0.07649007439350264,
+       "dusus": 0.10825496805669355,
+       "hesap": 58443.691029,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.611373782406519,
+       "getiri": 0.058984018227556945,
+       "dusus": 0.012808684543189064,
+       "hesap": 63638.713451,
+       "veto": null
+      },
+      {
+       "adres": "0x888d5db38ec660529cc51a8e4b7c530f7d0a5243",
+       "t": 1.6053040417146274,
+       "getiri": 0.052482852337125685,
+       "dusus": 0.06485363965841873,
+       "hesap": 20801.648177,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": -0.029184963849047674,
+     "ilk5_yuzdelik": 0.147
+    },
+    {
+     "T": 1790726400000,
+     "tarih": "2026-09-30",
+     "secilen_n": 7,
+     "kontrol_n": 116,
+     "cikarilan_secim_adayi": 244,
+     "cikarilan_kontrol": 29,
+     "secilen_ortanca": -0.013019148437675154,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.1976649616280407,
+     "dusus_ortanca": 0.037126555517246196,
+     "yuzdelik": 0.271,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x37594c27f242d95a8e7ac88fbd4ed25ab09e0d28",
+       "t": 3.211386667782097,
+       "getiri": -0.12762729942513817,
+       "dusus": 0.1976649616280407,
+       "hesap": 10385.343375,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x9448462650f87420e5ca537290e32c1b71ad58b6",
+       "t": 3.0115206595537383,
+       "getiri": -0.035548348578582356,
+       "dusus": 0.037126555517246196,
+       "hesap": 75926.131879,
+       "veto": null
+      },
+      {
+       "adres": "0x399ccf8a60473fa12cf6c747e82e959de3e02179",
+       "t": 2.1633808758375697,
+       "getiri": 0.009307778817667645,
+       "dusus": 0.03932644846412592,
+       "hesap": 74755.4852,
+       "veto": null
+      },
+      {
+       "adres": "0xc1791da88cc94c9a39e606d8760183d21268dcbb",
+       "t": 1.956594346167662,
+       "getiri": 0.0,
+       "dusus": 0.0,
+       "hesap": 148378.587158,
+       "veto": null
+      },
+      {
+       "adres": "0x888d5db38ec660529cc51a8e4b7c530f7d0a5243",
+       "t": 1.9490918769016752,
+       "getiri": 0.1458085138967491,
+       "dusus": 0.06946229774425716,
+       "hesap": 23125.786993,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": 0.0,
+     "ilk5_yuzdelik": 0.7084999999999999
+    },
+    {
+     "T": 1791331200000,
+     "tarih": "2026-10-07",
+     "secilen_n": 10,
+     "kontrol_n": 119,
+     "cikarilan_secim_adayi": 229,
+     "cikarilan_kontrol": 27,
+     "secilen_ortanca": -0.016540123238530935,
+     "kontrol_ortanca": -0.011323769506526027,
+     "en_buyuk_dusus": 0.20059275117667974,
+     "dusus_ortanca": 0.06773886421424097,
+     "yuzdelik": 0.393,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x37594c27f242d95a8e7ac88fbd4ed25ab09e0d28",
+       "t": 3.512539396178225,
+       "getiri": -0.16786510342976957,
+       "dusus": 0.19455213476616162,
+       "hesap": 11396.804746,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0xf208ff0e4d31aa30def8af97348e9dee9b38dba9",
+       "t": 3.2928773740618875,
+       "getiri": 0.07211857337484529,
+       "dusus": 0.20059275117667974,
+       "hesap": 16793.455673,
+       "veto": null
+      },
+      {
+       "adres": "0x888d5db38ec660529cc51a8e4b7c530f7d0a5243",
+       "t": 2.2481277632684122,
+       "getiri": -0.0008601181440481831,
+       "dusus": 0.07924345812770295,
+       "hesap": 22933.508336,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x399ccf8a60473fa12cf6c747e82e959de3e02179",
+       "t": 2.199610775143824,
+       "getiri": -0.05848239336538663,
+       "dusus": 0.08973960801451908,
+       "hesap": 74513.380814,
+       "veto": null
+      },
+      {
+       "adres": "0x21a1faec036c45b3d3038cd2cebfbad4c9c3fb8d",
+       "t": 1.8023140999755802,
+       "getiri": -0.029027736311305063,
+       "dusus": 0.05623427030077899,
+       "hesap": 82740.934879,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.029027736311305063,
+     "ilk5_yuzdelik": 0.326
+    }
+   ],
+   "tur1": {
+    "s1_yuzdelik": 0.056,
+    "s1": false,
+    "s2_iyi": 3,
+    "s2_tarih": 11,
+    "s2_gerek": 8,
+    "s2": false,
+    "s3_ortanca": -0.0141185979636832,
+    "s3": false,
+    "gecti": false,
+    "dolu_tarih": 11,
+    "secilen_toplam": 92
+   },
+   "son": null,
+   "t12_acik": false,
+   "bugun": [
+    {
+     "adres": "0xc22db2c04e054786426671cec0b766c07304fb20",
+     "hesap": 17851.823801,
+     "t": 3.6542569436503185,
+     "kopya28_slot": 0.048861605676988606,
+     "islem28": 41,
+     "islem56": 74,
+     "devir": 4.100022844775108,
+     "tutma_dk": 201.2251833333333,
+     "kaldirac": 1.228253009015905,
+     "veto": "veto_omur_zarar"
+    },
+    {
+     "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+     "hesap": 20698.874798,
+     "t": 3.4125369860007013,
+     "kopya28_slot": 0.03411255609345076,
+     "islem28": 11,
+     "islem56": 35,
+     "devir": 2.2622244945423047,
+     "tutma_dk": 108.97241666666666,
+     "kaldirac": 0.9233395827799624,
+     "veto": "veto_omur_zarar"
+    },
+    {
+     "adres": "0x1f3aae75dfd99dee9890fcebe3fc3e48b633bf87",
+     "hesap": 44973.929241,
+     "t": 2.066741715762808,
+     "kopya28_slot": 0.024778740186736092,
+     "islem28": 5,
+     "islem56": 22,
+     "devir": 5.56738938459789,
+     "tutma_dk": 854.0514166666668,
+     "kaldirac": 3.133450878059561,
+     "veto": null
+    },
+    {
+     "adres": "0x1a19f1eb20023906accb989289645a5bf6300562",
+     "hesap": 104662.603359,
+     "t": 1.2721694732986748,
+     "kopya28_slot": 0.02843505909547628,
+     "islem28": 3,
+     "islem56": 7,
+     "devir": 0.7772644897907044,
+     "tutma_dk": 1297.7119333333333,
+     "kaldirac": 0.38283970314172816,
+     "veto": null
+    },
+    {
+     "adres": "0x8c5676eb3ca69d96143b3a8ee02f706d56877dac",
+     "hesap": 20674.560814,
+     "t": 1.2717535462483416,
+     "kopya28_slot": 0.03797410503070475,
+     "islem28": 4,
+     "islem56": 16,
+     "devir": 5.87705632531363,
+     "tutma_dk": 35.97726666666667,
+     "kaldirac": 2.2167067001958327,
+     "veto": "veto_omur_zarar"
+    },
+    {
+     "adres": "0x915f49be1efad69bf644a500274db9b7ec24840f",
+     "hesap": 82520.72217,
+     "t": 1.2116317830062693,
+     "kopya28_slot": 0.08161905251721668,
+     "islem28": 46,
+     "islem56": 97,
+     "devir": 12.963046092517008,
+     "tutma_dk": 523.7910333333334,
+     "kaldirac": 1.5698580026132607,
+     "veto": null
+    },
+    {
+     "adres": "0xe69a487b1b9b74122dc8e6afc5fc046aca799125",
+     "hesap": 113181.836222,
+     "t": 1.0000009833825894,
+     "kopya28_slot": 0.19581013878094078,
+     "islem28": 4,
+     "islem56": 6,
+     "devir": 3.222406821374816,
+     "tutma_dk": 1438.25775,
+     "kaldirac": 1.5969220275370275,
+     "veto": "veto_zarara_ekleme"
+    },
+    {
+     "adres": "0x4854b8835c434edf95adf27f81ab9588ca6739be",
+     "hesap": 156528.083489,
+     "t": 0.6199569383507196,
+     "kopya28_slot": 0.008237876900528684,
+     "islem28": 7,
+     "islem56": 11,
+     "devir": 1.3900707098371314,
+     "tutma_dk": 469.71816666666666,
+     "kaldirac": 0.582165947278105,
+     "veto": null
+    }
+   ]
+  },
+  "D2": {
+   "tablo": [
+    {
+     "T": 1785283200000,
+     "tarih": "2026-07-29",
+     "secilen_n": 9,
+     "kontrol_n": 180,
+     "cikarilan_secim_adayi": 206,
+     "cikarilan_kontrol": 80,
+     "secilen_ortanca": 0.0070660091498842,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.18950766908601258,
+     "dusus_ortanca": 0.04778910286136806,
+     "yuzdelik": 0.963,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xf25df1972b89d3cdb051cf8b2bf385b5dcb9aa21",
+       "t": 2.2333404380257487,
+       "getiri": -0.18029280871164455,
+       "dusus": 0.18950766908601258,
+       "hesap": 111401.689401,
+       "veto": null
+      },
+      {
+       "adres": "0xfdb03a2574e9e7d1c77d9ed752d99cdf25c3db25",
+       "t": 1.6503781047745045,
+       "getiri": 0.05173772105098173,
+       "dusus": 0.027948977152917887,
+       "hesap": 66058.644714,
+       "veto": "veto_zarara_ekleme"
+      },
+      {
+       "adres": "0xcff9c002355ac218a9e5a56135fd74ffef580e52",
+       "t": 1.57263253148942,
+       "getiri": 0.03782716319721602,
+       "dusus": 0.04778910286136806,
+       "hesap": 43101.06134,
+       "veto": null
+      },
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 1.0983105496797316,
+       "getiri": -0.10180177402903834,
+       "dusus": 0.12980186748462907,
+       "hesap": 50415.90685,
+       "veto": null
+      },
+      {
+       "adres": "0xed7c40e138cb25e79d94295882c66ac8197fb66e",
+       "t": 1.035701295291148,
+       "getiri": 0.06346177692041599,
+       "dusus": 0.04465128040940736,
+       "hesap": 230142.163211,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.03782716319721602,
+     "ilk5_yuzdelik": 0.96
+    },
+    {
+     "T": 1785888000000,
+     "tarih": "2026-08-05",
+     "secilen_n": 5,
+     "kontrol_n": 177,
+     "cikarilan_secim_adayi": 192,
+     "cikarilan_kontrol": 69,
+     "secilen_ortanca": -0.0940397923385744,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.13709255801328368,
+     "dusus_ortanca": 0.12311914723242445,
+     "yuzdelik": 0.008,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xac5c66fbad98b49979cd1cbaa800ace76e947866",
+       "t": 4.678450318183556,
+       "getiri": 0.038801803921817424,
+       "dusus": 0.0,
+       "hesap": 107724.424533,
+       "veto": null
+      },
+      {
+       "adres": "0xe006b02ec9f5caa7c5cbcb3804e10bf4f45036c8",
+       "t": 3.664993705104938,
+       "getiri": -0.13468891580083686,
+       "dusus": 0.13709255801328368,
+       "hesap": 29609.541891,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 2.6768248165402153,
+       "getiri": -0.11243922648261573,
+       "dusus": 0.1300770231696241,
+       "hesap": 49781.549552,
+       "veto": null
+      },
+      {
+       "adres": "0xc0ad5d21ff19a4e85b016bfd53ced8842995c151",
+       "t": 1.7561639022256257,
+       "getiri": -0.0940397923385744,
+       "dusus": 0.10075854321126843,
+       "hesap": 95831.87219,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x7630cc114b2fbc6d7b2f9cbae9c7a8b7aef77e11",
+       "t": 1.534446108931345,
+       "getiri": -0.07924308607571595,
+       "dusus": 0.12311914723242445,
+       "hesap": 21295.614471,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": -0.0940397923385744,
+     "ilk5_yuzdelik": 0.004
+    },
+    {
+     "T": 1786492800000,
+     "tarih": "2026-08-12",
+     "secilen_n": 8,
+     "kontrol_n": 191,
+     "cikarilan_secim_adayi": 198,
+     "cikarilan_kontrol": 66,
+     "secilen_ortanca": -0.035922758080682016,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.36874716193264934,
+     "dusus_ortanca": 0.09247482872679152,
+     "yuzdelik": 0.006,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x22dfa5d3751aa194a119a4eaebce903cc5a635b5",
+       "t": 2.269918876210658,
+       "getiri": -0.036843014486228065,
+       "dusus": 0.05275720685197327,
+       "hesap": 16925.167841,
+       "veto": null
+      },
+      {
+       "adres": "0x4b6d234f7976f91b77408c7e1728db1d07bec573",
+       "t": 2.2631115557246964,
+       "getiri": -0.1269259547980789,
+       "dusus": 0.13045362844223696,
+       "hesap": 51234.936433,
+       "veto": null
+      },
+      {
+       "adres": "0xc0ad5d21ff19a4e85b016bfd53ced8842995c151",
+       "t": 2.022429020829154,
+       "getiri": -0.08978031867530156,
+       "dusus": 0.09197369363362351,
+       "hesap": 95831.87219,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.9345742788322369,
+       "getiri": 0.09382353647540365,
+       "dusus": 0.03447896216561219,
+       "hesap": 78417.195106,
+       "veto": null
+      },
+      {
+       "adres": "0x5beae772444a36572bc7e26040988edc88e7a02f",
+       "t": 1.7098053552712396,
+       "getiri": -0.035002501675135966,
+       "dusus": 0.14288677920344994,
+       "hesap": 89547.678778,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.036843014486228065,
+     "ilk5_yuzdelik": 0.017
+    },
+    {
+     "T": 1787097600000,
+     "tarih": "2026-08-19",
+     "secilen_n": 6,
+     "kontrol_n": 176,
+     "cikarilan_secim_adayi": 193,
+     "cikarilan_kontrol": 65,
+     "secilen_ortanca": 0.03037975889616018,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.27895542620389235,
+     "dusus_ortanca": 0.08598354484221277,
+     "yuzdelik": 0.991,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x22dfa5d3751aa194a119a4eaebce903cc5a635b5",
+       "t": 2.475824575815862,
+       "getiri": 0.0176623805300824,
+       "dusus": 0.04854943920705512,
+       "hesap": 17203.373405,
+       "veto": null
+      },
+      {
+       "adres": "0x5beae772444a36572bc7e26040988edc88e7a02f",
+       "t": 1.8796280329381923,
+       "getiri": -0.27895542620389235,
+       "dusus": 0.27895542620389235,
+       "hesap": 90940.497459,
+       "veto": null
+      },
+      {
+       "adres": "0xa9062f5ba14189e0740eae6724357f5800cefc67",
+       "t": 1.8201865316538222,
+       "getiri": 0.04309713726223796,
+       "dusus": 0.07535458896786973,
+       "hesap": 191141.569635,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.0000270007913992,
+       "getiri": 0.06832124136526674,
+       "dusus": 0.0966125007165558,
+       "hesap": 21515.197162,
+       "veto": null
+      },
+      {
+       "adres": "0x424d756e19469ddb13c753b280cc0e9d8c95420e",
+       "t": 0.4244025240813998,
+       "getiri": 0.1275421080930006,
+       "dusus": 0.0244741385858932,
+       "hesap": 41547.893021,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.04309713726223796,
+     "ilk5_yuzdelik": 0.987
+    },
+    {
+     "T": 1787702400000,
+     "tarih": "2026-08-26",
+     "secilen_n": 8,
+     "kontrol_n": 208,
+     "cikarilan_secim_adayi": 191,
+     "cikarilan_kontrol": 73,
+     "secilen_ortanca": 0.041634789351663315,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.15869213600021748,
+     "dusus_ortanca": 0.04317888823169913,
+     "yuzdelik": 0.986,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.634955302820446,
+       "getiri": 0.05623771763612173,
+       "dusus": 0.1161562223833712,
+       "hesap": 48823.038158,
+       "veto": null
+      },
+      {
+       "adres": "0x75f0f24a090ee2923b2662d40ca44d14e33faf5e",
+       "t": 2.057994449025521,
+       "getiri": 0.0467637628657136,
+       "dusus": 0.021353675821590423,
+       "hesap": 10292.069651,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x22dfa5d3751aa194a119a4eaebce903cc5a635b5",
+       "t": 1.946788185116652,
+       "getiri": -0.15863825072788829,
+       "dusus": 0.15869213600021748,
+       "hesap": 16910.729918,
+       "veto": null
+      },
+      {
+       "adres": "0xb1decfd7f09402c37f91c4abd13910847b17f2ee",
+       "t": 1.5660055214731825,
+       "getiri": 0.12847262570846785,
+       "dusus": 0.042180871043916435,
+       "hesap": 36988.947678,
+       "veto": null
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.5239519809108124,
+       "getiri": -0.06564962765344795,
+       "dusus": 0.11114884527173796,
+       "hesap": 83970.127436,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": 0.0467637628657136,
+     "ilk5_yuzdelik": 0.966
+    },
+    {
+     "T": 1788307200000,
+     "tarih": "2026-09-02",
+     "secilen_n": 11,
+     "kontrol_n": 231,
+     "cikarilan_secim_adayi": 201,
+     "cikarilan_kontrol": 93,
+     "secilen_ortanca": -0.009897577228736298,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.28370600207560104,
+     "dusus_ortanca": 0.09212095612957383,
+     "yuzdelik": 0.002,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.6726684540352648,
+       "getiri": -0.048952775689004024,
+       "dusus": 0.11257216408525339,
+       "hesap": 58253.202259,
+       "veto": null
+      },
+      {
+       "adres": "0x7b72875cd6af0346f637e696fd462c40b6098e2d",
+       "t": 2.2651499549453833,
+       "getiri": -0.03291638946640585,
+       "dusus": 0.11756145524302986,
+       "hesap": 26142.904224,
+       "veto": null
+      },
+      {
+       "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+       "t": 1.8134411070661824,
+       "getiri": -0.057018897600903395,
+       "dusus": 0.10298761671460432,
+       "hesap": 20132.970464,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.483070487642007,
+       "getiri": -0.08848269738184922,
+       "dusus": 0.11506870502973221,
+       "hesap": 90814.925881,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.391021400310124,
+       "getiri": 0.030837369091157862,
+       "dusus": 0.0383022517649817,
+       "hesap": 203610.035901,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.048952775689004024,
+     "ilk5_yuzdelik": 0.001
+    },
+    {
+     "T": 1788912000000,
+     "tarih": "2026-09-09",
+     "secilen_n": 9,
+     "kontrol_n": 236,
+     "cikarilan_secim_adayi": 216,
+     "cikarilan_kontrol": 78,
+     "secilen_ortanca": -0.02041211269653509,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.3787022692501313,
+     "dusus_ortanca": 0.0842403671736941,
+     "yuzdelik": 0.0,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+       "t": 2.1825919767016133,
+       "getiri": 0.012549282113881732,
+       "dusus": 0.10268862501439102,
+       "hesap": 21264.983223,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x2a0b9f2f8d00f0fc64d6c869ad8405c942ca637d",
+       "t": 1.727399108392981,
+       "getiri": -0.19629707746590896,
+       "dusus": 0.2504491833065703,
+       "hesap": 114117.306887,
+       "veto": null
+      },
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 1.726469124854118,
+       "getiri": 0.1257578154857808,
+       "dusus": 0.04074796404437475,
+       "hesap": 61879.73137,
+       "veto": null
+      },
+      {
+       "adres": "0x01d8296a6645ec20a3f9d19ae36aad7f4143c830",
+       "t": 1.6315768991505954,
+       "getiri": 0.04195316830147955,
+       "dusus": 0.03836241997597856,
+       "hesap": 205921.57795,
+       "veto": null
+      },
+      {
+       "adres": "0xf37bb31d618a4ed22fc38e677f7dc430987a3617",
+       "t": 1.5006058201708041,
+       "getiri": -0.2782196431886552,
+       "dusus": 0.3787022692501313,
+       "hesap": 64828.622731,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": 0.012549282113881732,
+     "ilk5_yuzdelik": 0.889
+    },
+    {
+     "T": 1789516800000,
+     "tarih": "2026-09-16",
+     "secilen_n": 11,
+     "kontrol_n": 254,
+     "cikarilan_secim_adayi": 225,
+     "cikarilan_kontrol": 88,
+     "secilen_ortanca": -0.019519596535254036,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.36216224975930633,
+     "dusus_ortanca": 0.09176303681187437,
+     "yuzdelik": 0.012,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 2.315680702250227,
+       "getiri": -0.010197116258587324,
+       "dusus": 0.09176303681187437,
+       "hesap": 64558.739196,
+       "veto": null
+      },
+      {
+       "adres": "0xf37bb31d618a4ed22fc38e677f7dc430987a3617",
+       "t": 2.0280476872997975,
+       "getiri": -0.35392996503801344,
+       "dusus": 0.36216224975930633,
+       "hesap": 106265.13503,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x1c1083dd783fd00cfb6be64a6af65cb6198775b9",
+       "t": 1.7949234415956632,
+       "getiri": -0.1318980132993297,
+       "dusus": 0.1343427787004664,
+       "hesap": 91905.327399,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.7425042991587663,
+       "getiri": 0.08169503229162878,
+       "dusus": 0.016598715670041453,
+       "hesap": 64685.041164,
+       "veto": null
+      },
+      {
+       "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+       "t": 1.7016571038076296,
+       "getiri": -0.0188896094357921,
+       "dusus": 0.10335734652689887,
+       "hesap": 19796.376484,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": -0.0188896094357921,
+     "ilk5_yuzdelik": 0.055
+    },
+    {
+     "T": 1790121600000,
+     "tarih": "2026-09-23",
+     "secilen_n": 8,
+     "kontrol_n": 234,
+     "cikarilan_secim_adayi": 206,
+     "cikarilan_kontrol": 65,
+     "secilen_ortanca": -0.0029373547319599957,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.12602098679768303,
+     "dusus_ortanca": 0.04151927801227584,
+     "yuzdelik": 0.191,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x8f8f014e138e6f1c39e41dce3b5de0cf38679838",
+       "t": 3.465546173182341,
+       "getiri": -0.04934226606666814,
+       "dusus": 0.12602098679768303,
+       "hesap": 66620.149122,
+       "veto": null
+      },
+      {
+       "adres": "0xde29121a6858d90ae486855b127f9d5ee4035232",
+       "t": 3.0833732166029826,
+       "getiri": -0.029184963849047674,
+       "dusus": 0.10370990178597828,
+       "hesap": 21359.107011,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x0a28e5451456279f485c37e0765b542a93ce1646",
+       "t": 2.1820050322967752,
+       "getiri": -0.07649007439350264,
+       "dusus": 0.10825496805669355,
+       "hesap": 58443.691029,
+       "veto": null
+      },
+      {
+       "adres": "0x7f24852fb705c6e8f9f6fd2d23acf7e423a10343",
+       "t": 1.611373782406519,
+       "getiri": 0.058984018227556945,
+       "dusus": 0.012808684543189064,
+       "hesap": 63638.713451,
+       "veto": null
+      },
+      {
+       "adres": "0x888d5db38ec660529cc51a8e4b7c530f7d0a5243",
+       "t": 1.6053040417146274,
+       "getiri": 0.052482852337125685,
+       "dusus": 0.06485363965841873,
+       "hesap": 20801.648177,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": -0.029184963849047674,
+     "ilk5_yuzdelik": 0.051
+    },
+    {
+     "T": 1790726400000,
+     "tarih": "2026-09-30",
+     "secilen_n": 7,
+     "kontrol_n": 274,
+     "cikarilan_secim_adayi": 244,
+     "cikarilan_kontrol": 82,
+     "secilen_ortanca": -0.013019148437675154,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.1976649616280407,
+     "dusus_ortanca": 0.037126555517246196,
+     "yuzdelik": 0.084,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x37594c27f242d95a8e7ac88fbd4ed25ab09e0d28",
+       "t": 3.211386667782097,
+       "getiri": -0.12762729942513817,
+       "dusus": 0.1976649616280407,
+       "hesap": 10385.343375,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x9448462650f87420e5ca537290e32c1b71ad58b6",
+       "t": 3.0115206595537383,
+       "getiri": -0.035548348578582356,
+       "dusus": 0.037126555517246196,
+       "hesap": 75926.131879,
+       "veto": null
+      },
+      {
+       "adres": "0x399ccf8a60473fa12cf6c747e82e959de3e02179",
+       "t": 2.1633808758375697,
+       "getiri": 0.009307778817667645,
+       "dusus": 0.03932644846412592,
+       "hesap": 74755.4852,
+       "veto": null
+      },
+      {
+       "adres": "0xc1791da88cc94c9a39e606d8760183d21268dcbb",
+       "t": 1.956594346167662,
+       "getiri": 0.0,
+       "dusus": 0.0,
+       "hesap": 148378.587158,
+       "veto": null
+      },
+      {
+       "adres": "0x888d5db38ec660529cc51a8e4b7c530f7d0a5243",
+       "t": 1.9490918769016752,
+       "getiri": 0.1458085138967491,
+       "dusus": 0.06946229774425716,
+       "hesap": 23125.786993,
+       "veto": "veto_omur_zarar"
+      }
+     ],
+     "ilk5_ortanca": 0.0,
+     "ilk5_yuzdelik": 0.595
+    },
+    {
+     "T": 1791331200000,
+     "tarih": "2026-10-07",
+     "secilen_n": 10,
+     "kontrol_n": 293,
+     "cikarilan_secim_adayi": 229,
+     "cikarilan_kontrol": 73,
+     "secilen_ortanca": -0.016540123238530935,
+     "kontrol_ortanca": 0.0,
+     "en_buyuk_dusus": 0.20059275117667974,
+     "dusus_ortanca": 0.06773886421424097,
+     "yuzdelik": 0.126,
+     "cekilis_yerine_koyarak": false,
+     "ilk5": [
+      {
+       "adres": "0x37594c27f242d95a8e7ac88fbd4ed25ab09e0d28",
+       "t": 3.512539396178225,
+       "getiri": -0.16786510342976957,
+       "dusus": 0.19455213476616162,
+       "hesap": 11396.804746,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0xf208ff0e4d31aa30def8af97348e9dee9b38dba9",
+       "t": 3.2928773740618875,
+       "getiri": 0.07211857337484529,
+       "dusus": 0.20059275117667974,
+       "hesap": 16793.455673,
+       "veto": null
+      },
+      {
+       "adres": "0x888d5db38ec660529cc51a8e4b7c530f7d0a5243",
+       "t": 2.2481277632684122,
+       "getiri": -0.0008601181440481831,
+       "dusus": 0.07924345812770295,
+       "hesap": 22933.508336,
+       "veto": "veto_omur_zarar"
+      },
+      {
+       "adres": "0x399ccf8a60473fa12cf6c747e82e959de3e02179",
+       "t": 2.199610775143824,
+       "getiri": -0.05848239336538663,
+       "dusus": 0.08973960801451908,
+       "hesap": 74513.380814,
+       "veto": null
+      },
+      {
+       "adres": "0x21a1faec036c45b3d3038cd2cebfbad4c9c3fb8d",
+       "t": 1.8023140999755802,
+       "getiri": -0.029027736311305063,
+       "dusus": 0.05623427030077899,
+       "hesap": 82740.934879,
+       "veto": null
+      }
+     ],
+     "ilk5_ortanca": -0.029027736311305063,
+     "ilk5_yuzdelik": 0.128
+    }
+   ],
+   "tur1": {
+    "s1_yuzdelik": 0.013,
+    "s1": false,
+    "s2_iyi": 3,
+    "s2_tarih": 11,
+    "s2_gerek": 8,
+    "s2": false,
+    "s3_ortanca": -0.0141185979636832,
+    "s3": false,
+    "gecti": false,
+    "dolu_tarih": 11,
+    "secilen_toplam": 92
+   },
+   "son": null,
+   "t12_acik": false,
+   "bugun": []
+  }
+ }
+}
